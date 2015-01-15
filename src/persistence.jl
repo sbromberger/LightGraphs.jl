@@ -1,0 +1,71 @@
+# The format of simplegraph files is as follows:
+# a one line header: <num_vertices>, {"d" | "u"}
+#   - num_vertices is an integer
+#   - "d" for directed graph, "u" for undirected. Note that this
+#       option does not perform any additional edge construction; it's
+#       merely used to return the correct type of graph.
+# header followed by a list of (comma-delimited) edges.
+
+function readfastgraph(fn::AbstractString)
+    readedges = Set{(Int,Int)}()
+    directed = true
+    f = GZip.open(fn,"r")        # will work even if uncompressed
+    line = chomp(readline(f))
+    nstr, dirundir  = split (line,r"\s*,\s*")
+    n = int(nstr)
+    if dirundir == "u"
+        directed = false
+    end
+
+    if directed
+        g = FastDiGraph(n)
+    else
+        g = FastGraph(n)
+    end
+    while !eof(f)
+        line = chomp(readline(f))
+        src_s,dst_s = split(line,r"\s*,\s*")
+        src = int(src_s)
+        dst = int(dst_s)
+        add_edge!(g,src, dst)
+    end
+    return g
+end
+
+function write(io::IO, g::FastGraph)
+    # write header line
+    line = join([nv(g), "u"], ",")
+    write(io, "$line\n")
+    # write edges
+    for (i,j) in edges(g)
+        write(io, "$i, $j\n")
+    end
+    return (nv(g), ne(g))
+end
+
+function write(io::IO, g::FastDiGraph)
+    # write header line
+    line = join([nv(g), "d"], ",")
+    write(io, "$line\n")
+    for (i,j) in edges(g)
+        write(io, "$i,$j\n")
+    end
+    return (nv(g), ne(g))
+end
+
+write(g::AbstractFastGraph) = write(STDOUT, g)
+
+function write(
+    g::AbstractFastGraph,
+    fn::AbstractString;
+    compress=true)
+    if compress
+        f = GZip.open(fn,"w")
+    else
+        f = open(fn,"w")
+    end
+
+    res = write(f, g)
+    close(f)
+    return res
+end
