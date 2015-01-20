@@ -6,7 +6,11 @@ type FastGraph<:AbstractFastGraph
 end
 
 function show(io::IO, g::FastGraph)
-    print(io, "{$(nv(g)), $(ne(g))} undirected graph")
+    if length(vertices(g)) == 0
+        print(io, "empty directed graph")
+    else
+        print(io, "{$(nv(g)), $(ne(g))} undirected graph")
+    end
 end
 
 function FastGraph(n::Int)
@@ -23,10 +27,12 @@ function FastGraph(n::Int)
     return FastGraph(1:n, Set{Edge}(), binclist, finclist)
 end
 
+FastGraph() = FastGraph(0)
+
 function add_edge!(g::FastGraph, e::Edge)
     reve = rev(e)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
-        raise(BoundsError)
+        throw(BoundsError)
     elseif (e in edges(g)) || (reve in edges(g))
         error("Edge $e is already in graph")
     else
@@ -39,6 +45,8 @@ function add_edge!(g::FastGraph, e::Edge)
     end
     return e
 end
+
+has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
 
 degree(g::FastGraph, v::Int) = indegree(g,v)
 all_neighbors(g::FastGraph, v::Int) = union(neighbors(g,v), [e.dst for e in g.binclist[v]])

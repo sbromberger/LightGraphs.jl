@@ -4,7 +4,7 @@
 #   - "d" for directed graph, "u" for undirected. Note that this
 #       option does not perform any additional edge construction; it's
 #       merely used to return the correct type of graph.
-# header followed by a list of (comma-delimited) edges.
+# header followed by a list of (comma-delimited) edges - src,dst,dist.
 
 function readfastgraph(fn::AbstractString)
     readedges = Set{(Int,Int)}()
@@ -24,31 +24,23 @@ function readfastgraph(fn::AbstractString)
     end
     while !eof(f)
         line = chomp(readline(f))
-        src_s,dst_s = split(line,r"\s*,\s*")
+        src_s, dst_s, dist_s = split(line,r"\s*,\s*")
         src = int(src_s)
         dst = int(dst_s)
-        add_edge!(g,src, dst)
+        dst = float(dist_s)
+        add_edge!(g,src, dst, dist)
     end
     return g
 end
 
-function write(io::IO, g::FastGraph)
+function write(io::IO, g::AbstractFastGraph)
     # write header line
-    line = join([nv(g), "u"], ",")
+    dir = is_directed(g)? "d" : "u"
+    line = join([nv(g), dir], ",")
     write(io, "$line\n")
     # write edges
-    for (i,j) in edges(g)
-        write(io, "$i, $j\n")
-    end
-    return (nv(g), ne(g))
-end
-
-function write(io::IO, g::FastDiGraph)
-    # write header line
-    line = join([nv(g), "d"], ",")
-    write(io, "$line\n")
-    for (i,j) in edges(g)
-        write(io, "$i,$j\n")
+    for e in edges(g)
+        write(io, "$(src(e)), $(dst(e)), $(dist(e))\n")
     end
     return (nv(g), ne(g))
 end

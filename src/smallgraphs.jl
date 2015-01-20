@@ -1,4 +1,4 @@
-# Portions of the generators.jl package are derived from NetworkX, which
+# Portions of the smallgraphs.jl package are derived from NetworkX, which
 # is licensed under the BSD License as follows:
 #
 # > NetworkX Python library and are BSD Licensed as follows:

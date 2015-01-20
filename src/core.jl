@@ -48,13 +48,21 @@ function issubset{T<:AbstractFastGraph}(g::T, h::T)
 end
 
 function add_vertex!(g::AbstractFastGraph)
-    n = vertices(g)[end] + 1
+    n = length(vertices(g)) + 1
     g.vertices = 1:n
     push!(g.binclist, Edge[])
     push!(g.finclist, Edge[])
 
     return n
 end
+
+function add_vertices!(g::AbstractFastGraph, n::Integer)
+    for i = 1:n
+        add_vertex!(g)
+    end
+end
+
+has_edge(g::AbstractFastGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 
 in_edges(g::AbstractFastGraph, v::Int) = g.binclist[v]
 # out_edges(g::FastGraph, v::Int) = filter(x->x.src in union(g.binclist[v], g.finclist[v]), edges(g))
@@ -64,19 +72,16 @@ out_edges(g::AbstractFastGraph, v::Int) = g.finclist[v]
 # out_edges(g::FastGraph, v::Int) = filter(x->x.src in g.finclist[v], edges(g))
 # out_edges(g::FastDiGraph, v::Int) = [Edge(v,x) for x in g.finclist[v]]
 
-function has_edge(g::AbstractFastGraph, e::Edge)
-    return e in edges(g)
-end
 
-has_edge(g::AbstractFastGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 has_vertex(g::AbstractFastGraph, v::Int) = v in vertices(g)
 
 nv(g::AbstractFastGraph) = vertices(g)[end]
 ne(g::AbstractFastGraph) = length(g.edges)
 
 add_edge!(g::AbstractFastGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+add_edge!(g::AbstractFastGraph, src::Int, dst::Int, dist::Float64) = add_edge!(g, Edge(src,dst,dist))
 
-
+is_directed(g::AbstractFastGraph) = (typeof(g) == FastGraph? false : true)
 
 indegree(g::AbstractFastGraph, v::Int) = length(g.binclist[v])
 outdegree(g::AbstractFastGraph, v::Int) = length(g.finclist[v])

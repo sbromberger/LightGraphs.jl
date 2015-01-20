@@ -5,8 +5,13 @@ type FastDiGraph<:AbstractFastGraph
     binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
 end
 
+
 function show(io::IO, g::FastDiGraph)
-    print(io, "{$(nv(g)), $(ne(g))} directed graph")
+    if length(vertices(g)) == 0
+        print(io, "empty directed graph")
+    else
+        print(io, "{$(nv(g)), $(ne(g))} directed graph")
+    end
 end
 
 function FastDiGraph(n::Int)
@@ -18,6 +23,8 @@ function FastDiGraph(n::Int)
     end
     return FastDiGraph(1:n, Set{Edge}(), binclist, finclist)
 end
+
+FastDiGraph() = FastDiGraph(0)
 
 function add_edge!(g::FastDiGraph, e::Edge)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
@@ -32,6 +39,8 @@ function add_edge!(g::FastDiGraph, e::Edge)
     end
     return e
 end
+
+has_edge(g::FastDiGraph, e::Edge) = e in edges(g)
 
 degree(g::FastDiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
 all_neighbors(g::FastDiGraph, v::Int) = neighbors(g, v)

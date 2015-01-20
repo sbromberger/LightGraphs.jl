@@ -1,24 +1,30 @@
+@doc doc"""
+        betweenness_centrality(g::AbstractFastGraph, k::Integer=0; normalize=true, endpoints=false)
+
+    Computes betweenness centrality of a graph, based on all vertices (default)
+    or on a specified subset.
+    """ ->
 function betweenness_centrality(
     g::AbstractFastGraph,
     k::Integer=0;
     normalize=true,
-    endpoints=false,
-    weightfn= x->1)
+    endpoints=false)
 
+    n_v = nv(g)
     is_directed = (typeof(g) == FastDiGraph)
 
-    betweenness = zeros(nv(g))
+    betweenness = zeros(n_v)
     if k == 0
-        nodes = 1:nv
+        nodes = 1:n_v
     else
-        nodes = sample(1:nv, k, replace=false)   #112
+        nodes = sample(1:n_v, k, replace=false)   #112
     end
     for si in nodes
         s = vertices(g)[si]
         # if length(weights) == 0
         #     state = dijkstra_predecessor_and_distance(g, s)
         # else
-            state = dijkstra_predecessor_and_distance(g, weightfn, s)
+            state = dijkstra_predecessor_and_distance(g, s)
         # end
         if endpoints            # 120
             betweenness = _accumulate_endpoints(betweenness, state, g, si)
@@ -26,7 +32,7 @@ function betweenness_centrality(
             betweenness = _accumulate_basic(betweenness, state, g, si)
         end
     end
-    betweenness = _rescale(betweenness, nv(g),
+    betweenness = _rescale(betweenness, n_v,
                            normalize,
                            is_directed,
                            k)
@@ -35,10 +41,10 @@ function betweenness_centrality(
 end
 
 
-function _accumulate_basic{V}(
+function _accumulate_basic(
     betweenness::Vector{Float64},
     state::DijkstraStatesWithPred,
-    g::AbstractGraph{V},
+    g::AbstractFastGraph,
     si::Integer
     )
 
@@ -50,8 +56,8 @@ function _accumulate_basic{V}(
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source nodes by decreasing distance for this to work.
-    v1 = [1:nv][state.hasparent] # the state.hasparent will fix P[si] = [] when it's merged
-    v2 = state.dists[state.hasparent]
+    v1 = [1:nv]
+    v2 = state.dists
     S = Int[x[2] for x in sort(collect(zip(v2,v1)), rev=true)]
     # println("S = $S, P = $P, σ = $σ, si = $si")
     for w in S
@@ -59,9 +65,8 @@ function _accumulate_basic{V}(
         # println("coeff of $w = $coeff, δ[w] = $(δ[w])")
         # println("*** P[w] = P[$w] = $(P[w])")
         for v in P[w]
-            vi = vertex_index(v, g)
-            if vi > 0
-                δ[vi] += (σ[vi] * coeff)
+            if v > 0
+                δ[v] += (σ[v] * coeff)
                 # println("setting δ[$vi] to $(δ[vi]), δ = $δ")
             end
         end
@@ -72,10 +77,10 @@ function _accumulate_basic{V}(
     return betweenness
 end
 
-function _accumulate_endpoints{V}(
+function _accumulate_endpoints(
     betweenness::Vector{Float64},
     state::DijkstraStatesWithPred,
-    g::AbstractGraph{V},
+    g::AbstractFastGraph,
     si::Integer
     )
 
@@ -83,8 +88,10 @@ function _accumulate_endpoints{V}(
     δ = zeros(nv)
     σ = state.pathcounts
     P = state.predecessors
-    v1 = [1:nv][state.hasparent] # the state.hasparent will fix P[si] = [] when it's merged
-    v2 = state.dists[state.hasparent]
+    v1 = [1:nv]
+    v2 = state.dists
+    # v1 = [1:nv][state.hasparent] # the state.hasparent will fix P[si] = [] when it's merged
+    # v2 = state.dists[state.hasparent]
     S = Int[x[2] for x in sort(collect(zip(v2,v1)), rev=true)]
     s = g.vertices[si]
     betweenness[s] += length(S) - 1    # 289
@@ -92,8 +99,7 @@ function _accumulate_endpoints{V}(
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
         for v in P[w]
-            vi = vertex_index(v, g)
-            δ[vi] += σ[vi] * coeff
+            δ[v] += σ[v] * coeff
         end
         if w != si
             betweenness[w] += (δ[w] + 1)

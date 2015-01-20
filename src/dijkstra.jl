@@ -5,13 +5,6 @@ end
 
 < (e1::DijkstraHEntry, e2::DijkstraHEntry) = e1.dist < e2.dist
 
-abstract AbstractDistanceFunction
-
-type OnesDistance <: AbstractDistanceFunction
-end
-
-call(::Type{OnesDistance}, e::Edge) = 1
-
 abstract AbstractDijkstraVisitor
 
 # invoked when a new vertex is first encountered
@@ -42,6 +35,160 @@ abstract AbstractDijkstraStates
 #
 ###################################################################
 
+# standard dijkstra state
+type DijkstraStates<: AbstractDijkstraStates
+    parents::Vector{Int}
+    dists::Vector{Float64}
+    colormap::Vector{Int}
+    heap::MutableBinaryHeap{DijkstraHEntry,DataStructures.LessThan}
+    hmap::Vector{Int}
+end
+
+function create_dijkstra_states(g::AbstractFastGraph)
+    n = nv(g)
+    parents = Array(Int, n)
+    dists = fill(typemax(Float64), n)
+    colormap = zeros(Int, n)
+    heap = mutable_binary_minheap(DijkstraHEntry)
+    hmap = zeros(Int, n)
+    DijkstraStates(parents, dists, colormap, heap, hmap)
+end
+
+function set_source!(state::DijkstraStates, g::AbstractFastGraph, s::Int)
+    state.parents[s] = 0        # we are setting the parent of source to 0
+    state.dists[s] = 0.0
+    state.colormap[s] = 2
+end
+
+function process_neighbors!(
+    state::DijkstraStates,
+    graph::AbstractFastGraph,
+    # edge_dist_fn::T,
+    u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
+
+    dists::Vector{Float64} = state.dists
+    parents::Vector{Int} = state.parents
+    colormap::Vector{Int} = state.colormap
+    heap::MutableBinaryHeap{DijkstraHEntry,DataStructures.LessThan} = state.heap
+    hmap::Vector{Int} = state.hmap
+    dv::Float64 = zero(Float64)
+
+    for e in out_edges(graph, u)
+        v::Int = dst(e)
+        v_color::Int = colormap[v]
+
+        if v_color == 0
+            dists[v] = dv = du + dist(e)
+            parents[v] = u
+            colormap[v] = 1
+            discover_vertex!(visitor, u, v, dv)
+            # push new vertex to the heap
+            hmap[v] = push!(heap, DijkstraHEntry(v, dv))
+
+        elseif v_color == 1
+            dv = du + dist(e)
+            if dv < dists[v]
+                dists[v] = dv
+                parents[v] = u
+                # update the value on the heap
+                update_vertex!(visitor, u, v, dv)
+                update!(heap, hmap[v], DijkstraHEntry(v, dv))
+            end
+        end
+    end
+end
+
+function dijkstra_shortest_paths!(
+    graph::AbstractFastGraph,                # the graph
+    # edge_dist_fn::T, # distances associated with edges
+    sources::AbstractVector{Int},             # the sources
+    visitor::AbstractDijkstraVisitor,       # visitor object
+    state::DijkstraStates      # the states
+    )
+
+    # get state fields
+
+    parents::Vector{Int} = state.parents
+    dists::Vector{Float64} = state.dists
+    colormap::Vector{Int} = state.colormap
+    heap::MutableBinaryHeap{DijkstraHEntry,DataStructures.LessThan} = state.heap
+    hmap::Vector{Int} = state.hmap
+
+    # initialize for sources
+
+    d0 = zero(Float64)
+
+    for s in sources
+        set_source!(state, graph, s)
+        if !include_vertex!(visitor, s, s, d0)
+            return state
+        end
+    end
+
+    # process direct neighbors of all sources
+
+    for s in sources
+        process_neighbors!(state, graph, s, d0, visitor)
+        close_vertex!(visitor, s)
+    end
+
+    # main loop
+
+    while !isempty(heap)
+        # pick next vertex to include
+        entry = pop!(heap)
+        u::Int = entry.vertex
+        du::Float64 = entry.dist
+        colormap[u] = 2
+        if !include_vertex!(visitor, parents[u], u, du)
+            return state
+        end
+
+        # process u's neighbors
+
+        process_neighbors!(state, graph, u, du, visitor)
+        close_vertex!(visitor, u)
+    end
+
+    state
+end
+
+function dijkstra_shortest_paths(
+    graph::AbstractFastGraph,                # the graph
+    # edge_dist_fn::T, # distances associated with edges
+    sources::AbstractVector{Int};
+    visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
+    state::DijkstraStates = create_dijkstra_states(graph)
+    dijkstra_shortest_paths!(graph, sources, visitor, state)
+end
+
+function dijkstra_shortest_paths(
+    graph::AbstractFastGraph, s::Int;
+    visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
+    state = create_dijkstra_states(graph)
+    dijkstra_shortest_paths!(graph, [s], visitor, state)
+end
+
+
+dijkstra_shortest_paths(graph::AbstractFastGraph, s::Int) =
+    dijkstra_shortest_paths(graph, [s])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # This DijkstraState tracks predecessors and path counts
 type DijkstraStatesWithPred<: AbstractDijkstraStates
     parents::Vector{Int}
@@ -52,6 +199,7 @@ type DijkstraStatesWithPred<: AbstractDijkstraStates
     heap::MutableBinaryHeap{DijkstraHEntry,DataStructures.LessThan}
     hmap::Vector{Int}
 end
+
 
 # Create Dijkstra state that tracks predecessors and path counts
 function create_dijkstra_states_with_pred(g::AbstractFastGraph)
@@ -75,7 +223,7 @@ function set_source_with_pred!(state::DijkstraStatesWithPred, g::AbstractFastGra
     state.dists[s] = 0.0
     state.colormap[s] = 2
     state.pathcounts[s] = 1
-    state.predecessors[s] = [s]
+    state.predecessors[s] = []
 end
 
 function process_neighbors_with_pred!(
