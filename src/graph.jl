@@ -29,6 +29,19 @@ end
 
 FastGraph() = FastGraph(0)
 
+function FastGraph(g::FastDiGraph)
+    gnv = nv(g)
+
+    h = FastGraph(gnv)
+
+    for e in edges(g)
+        if !(e in edges(h))
+            add_edge!(h, e)
+        end
+    end
+    return h
+end
+
 function add_edge!(g::FastGraph, e::Edge)
     reve = rev(e)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
