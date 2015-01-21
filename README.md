@@ -4,7 +4,7 @@
 
 An optimized graphs package.
 
-Simple graphs (no multi / hypergraphs; no self loops) are represented in a memory- and time-efficient
+Simple graphs[^sgr] are represented in a memory- and time-efficient
 manner with incidence lists and edge sets. Vertices are represented as integer ranges.
 
 Both directed and undirected graphs are supported.
@@ -12,10 +12,23 @@ Both directed and undirected graphs are supported.
 The project goal is to mirror the functionality of robust network and graph
 analysis libraries such as [NetworkX](http://networkx.github.io) while being simpler
 to use and more efficient than existing Julian graph libraries such as
-[Graphs.jl](https://github.com/JuliaLang/Graphs.jl).
+[Graphs.jl](https://github.com/JuliaLang/Graphs.jl). It is an explicit design
+decision that any data not required for graph manipulation (attributes and other
+information, for example) is expected to be stored outside of the graph
+structure itself. Such data lends itself to storage in more traditional and
+better-optimized mechanisms.
 
+### Core Concepts
+A graph `G` is described by a set of vertices `V` and edges `E`:
+`G = {V, E}`. `V` is an integer range `1:n`; `E` is stored as a set
+of `Edge` types containing `(src::Int, dst::Int, dist::Float64)` values. `Edge`
+relationships are stored as forward and backward incidence vectors, indexed by
+vertex.
 
-Usage (all examples apply to `FastDiGraph` unless otherwise noted):
+Edges must be unique; an attempt to add an edge that already exists in a graph
+will result in an error.
+
+Usage (all examples apply equally to `FastDiGraph` unless otherwise noted):
 
 ```
 g = FastGraph()      # create an empty undirected graph
@@ -29,7 +42,7 @@ neighbors(g, 4)      # get the neighbors of vertex 4
 dijkstra_shortest_paths(g, 2) # show distances between vertex 2 and all other vertices
 
 g = readfastgraph("mygraph.jfz") # read a graph from file
-
+write(g,"mygraph.jfz")           # write a graph to a file
 
 ```
 Current functionality includes
@@ -78,3 +91,5 @@ Current functionality includes
 
 
 - persistence (proprietary compressed format)
+
+[^sgr]: A simple graph is not a multi- or hypergraphs and has no self loops.
