@@ -63,7 +63,7 @@ end
 function process_neighbors!(
     state::DijkstraStates,
     graph::AbstractFastGraph,
-    # edge_dist_fn::T,
+    edge_dists::AbstractArray{Float64, 2},
     u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
 
     dists::Vector{Float64} = state.dists
@@ -73,12 +73,19 @@ function process_neighbors!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
+    use_dists = length(edge_dists) > 0
+
     for e in out_edges(graph, u)
         v::Int = dst(e)
         v_color::Int = colormap[v]
 
         if v_color == 0
-            dists[v] = dv = du + dist(e)
+            if use_dists
+                newdist = edge_dists[src(e), dst(e)]
+            else
+                newdist = 1.0
+            end
+            dists[v] = dv = du + newdist
             parents[v] = u
             colormap[v] = 1
             discover_vertex!(visitor, u, v, dv)
@@ -100,6 +107,7 @@ end
 
 function dijkstra_shortest_paths!(
     graph::AbstractFastGraph,                # the graph
+    edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
@@ -128,7 +136,7 @@ function dijkstra_shortest_paths!(
     # process direct neighbors of all sources
 
     for s in sources
-        process_neighbors!(state, graph, s, d0, visitor)
+        process_neighbors!(state, graph, edge_dists, s, d0, visitor)
         close_vertex!(visitor, s)
     end
 
@@ -146,7 +154,7 @@ function dijkstra_shortest_paths!(
 
         # process u's neighbors
 
-        process_neighbors!(state, graph, u, du, visitor)
+        process_neighbors!(state, graph, edge_dists, u, du, visitor)
         close_vertex!(visitor, u)
     end
 
@@ -155,6 +163,7 @@ end
 
 function dijkstra_shortest_paths(
     graph::AbstractFastGraph,                # the graph
+    edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
@@ -163,15 +172,17 @@ function dijkstra_shortest_paths(
 end
 
 function dijkstra_shortest_paths(
-    graph::AbstractFastGraph, s::Int;
+    graph::AbstractFastGraph,
+    s::Int;
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     state = create_dijkstra_states(graph)
-    dijkstra_shortest_paths!(graph, [s], visitor, state)
+    dijkstra_shortest_paths!(graph, edge_dists, [s], visitor, state)
 end
 
 
-dijkstra_shortest_paths(graph::AbstractFastGraph, s::Int) =
-    dijkstra_shortest_paths(graph, [s])
+# dijkstra_shortest_paths(graph::AbstractFastGraph, s::Int) =
+#     dijkstra_shortest_paths(graph, Array(Float64,(0,0)), s)
 
 
 
@@ -229,6 +240,7 @@ end
 function process_neighbors_with_pred!(
     state::DijkstraStatesWithPred,
     graph::AbstractFastGraph,
+    edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T,
     u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
 
@@ -241,12 +253,19 @@ function process_neighbors_with_pred!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
+    use_dists = length(edge_dists) > 0
+
     for e in out_edges(graph, u)
         v::Int = dst(e)
         v_color::Int = colormap[v]
 
+        if use_dists
+            newdist = edge_dist[src(e), dst(e)]
+        else
+            newdist = 1.0
+        end
         if v_color == 0
-            dists[v] = dv = du + dist(e)
+            dists[v] = dv = du + newdist
             parents[v] = u
             colormap[v] = 1
             discover_vertex!(visitor, u, v, dv)
@@ -260,7 +279,7 @@ function process_neighbors_with_pred!(
             hmap[v] = push!(heap, DijkstraHEntry(v, dv))
 
         elseif v_color == 1
-            dv = du + dist(e)
+            dv = du + newdist
             if dv < dists[v]
                 dists[v] = dv
                 parents[v] = u
@@ -278,6 +297,7 @@ end
 
 function dijkstra_predecessor_and_distance!(
     graph::AbstractFastGraph,                # the graph
+    edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
@@ -306,7 +326,7 @@ function dijkstra_predecessor_and_distance!(
     # process direct neighbors of all sources
 
     for s in sources
-        process_neighbors_with_pred!(state, graph, s, d0, visitor)
+        process_neighbors_with_pred!(state, graph, edge_dists, s, d0, visitor)
         close_vertex!(visitor, s)
     end
 
@@ -324,7 +344,7 @@ function dijkstra_predecessor_and_distance!(
 
         # process u's neighbors
 
-        process_neighbors_with_pred!(state, graph, u, du, visitor)
+        process_neighbors_with_pred!(state, graph, edge_dists, u, du, visitor)
         close_vertex!(visitor, u)
     end
 
@@ -333,20 +353,23 @@ end
 
 function dijkstra_predecessor_and_distance(
     graph::AbstractFastGraph,                # the graph
+    edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     state::DijkstraStatesWithPred = create_dijkstra_states_with_pred(graph)
-    dijkstra_predecessor_and_distance!(graph, sources, visitor, state)
+    dijkstra_predecessor_and_distance!(graph, edge_dists, sources, visitor, state)
 end
 
 function dijkstra_predecessor_and_distance(
-    graph::AbstractFastGraph, s::Int;
+    graph::AbstractFastGraph,
+    edge_dists::AbstractArray{Float64, 2},
+    s::Int;
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     state = create_dijkstra_states_with_pred(graph)
-    dijkstra_predecessor_and_distance!(graph, [s], visitor, state)
+    dijkstra_predecessor_and_distance!(graph, edge_dists, [s], visitor, state)
 end
 
 
 dijkstra_predecessor_and_distance(graph::AbstractFastGraph, s::Int) =
-    dijkstra_predecessor_and_distance(graph, [s])
+    dijkstra_predecessor_and_distance(graph, Array(Float64,(0,0)), s)
