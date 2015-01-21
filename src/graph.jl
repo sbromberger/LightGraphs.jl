@@ -63,4 +63,4 @@ has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
 
 degree(g::FastGraph, v::Int) = indegree(g,v)
 all_neighbors(g::FastGraph, v::Int) = union(neighbors(g,v), [e.dst for e in g.binclist[v]])
-density(g::FastGraph) = (2*ne(g)) / (nv * (nv(g)-1))
+density(g::FastGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
