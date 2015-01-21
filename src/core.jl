@@ -3,34 +3,19 @@ abstract AbstractFastGraph
 immutable Edge
     src::Int
     dst::Int
-    dist::Float64
 end
 
 Edge(s::Int, d::Int) = Edge(s, d, 1.0)
 
 src(e::Edge) = e.src
 dst(e::Edge) = e.dst
-dist(e::Edge) = e.dist
 
-rev(e::Edge) = Edge(e.dst,e.src,e.dist)
+rev(e::Edge) = Edge(e.dst,e.src)
 
-==(e1::Edge, e2::Edge) = (e1.src == e2.src && e1.dst == e2.dst && e1.dist == e2.dist)
-
-# immutable TargetIterator
-#     g::AbstractFastGraph
-#     lst::Vector{Edge}
-# end
-#
-# length(a::TargetIterator) = length(a.lst)
-# isempty(a::TargetIterator) = isempty(a.lst)
-# getindex(a::TargetIterator, i::Integer) = dst(a.lst[i], a.g)
-#
-# start(a::TargetIterator) = start(a.lst)
-# done(a::TargetIterator, s) = done(a.lst, s)
-# next(a::TargetIterator, s::Int) = ((e, s) = next(a.lst, s); (dst(e, a.g), s))
+==(e1::Edge, e2::Edge) = (e1.src == e2.src && e1.dst == e2.dst)
 
 function show(io::IO, e::Edge)
-    print(io, "edge $(e.src) - $(e.dst) with dist $(e.dist)")
+    print(io, "edge $(e.src) - $(e.dst)")
 end
 
 vertices(g::AbstractFastGraph) = g.vertices
@@ -65,13 +50,7 @@ end
 has_edge(g::AbstractFastGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 
 in_edges(g::AbstractFastGraph, v::Int) = g.binclist[v]
-# out_edges(g::FastGraph, v::Int) = filter(x->x.src in union(g.binclist[v], g.finclist[v]), edges(g))
-# out_edges(g::FastGraph, v::Int) = [Edge(v,x) for x in union(g.binclist[v], g.finclist[v])]
 out_edges(g::AbstractFastGraph, v::Int) = g.finclist[v]
-# in_edges(g::FastDiGraph, v::Int) = [Edge(x,v) for x in g.binclist[v]]
-# out_edges(g::FastGraph, v::Int) = filter(x->x.src in g.finclist[v], edges(g))
-# out_edges(g::FastDiGraph, v::Int) = [Edge(v,x) for x in g.finclist[v]]
-
 
 has_vertex(g::AbstractFastGraph, v::Int) = v in vertices(g)
 
@@ -79,7 +58,6 @@ nv(g::AbstractFastGraph) = vertices(g)[end]
 ne(g::AbstractFastGraph) = length(g.edges)
 
 add_edge!(g::AbstractFastGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
-add_edge!(g::AbstractFastGraph, src::Int, dst::Int, dist::Float64) = add_edge!(g, Edge(src,dst,dist))
 
 is_directed(g::AbstractFastGraph) = (typeof(g) == FastGraph? false : true)
 
