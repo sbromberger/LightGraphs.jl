@@ -73,7 +73,7 @@ function process_neighbors!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = length(edge_dists) > 0
+    use_dists = nnz(edge_dists) > 0
 
     for e in out_edges(graph, u)
         v::Int = dst(e)
@@ -82,6 +82,9 @@ function process_neighbors!(
         if v_color == 0
             if use_dists
                 newdist = edge_dists[src(e), dst(e)]
+                if newdist == 0.0
+                    newdist = 1.0
+                end
             else
                 newdist = 1.0
             end
@@ -253,7 +256,7 @@ function process_neighbors_with_pred!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = length(edge_dists) > 0
+    use_dists = nnz(edge_dists) > 0
 
     for e in out_edges(graph, u)
         v::Int = dst(e)
@@ -363,8 +366,8 @@ end
 
 function dijkstra_predecessor_and_distance(
     graph::AbstractFastGraph,
-    edge_dists::AbstractArray{Float64, 2},
     s::Int;
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     state = create_dijkstra_states_with_pred(graph)
     dijkstra_predecessor_and_distance!(graph, edge_dists, [s], visitor, state)
