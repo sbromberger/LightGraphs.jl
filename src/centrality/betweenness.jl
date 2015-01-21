@@ -1,9 +1,9 @@
-@doc doc"""
-        betweenness_centrality(g::AbstractFastGraph, k::Integer=0; normalize=true, endpoints=false)
-
-    Computes betweenness centrality of a graph, based on all vertices (default)
-    or on a specified subset.
-    """ ->
+# @doc doc"""
+#         betweenness_centrality(g::AbstractFastGraph, k::Integer=0; normalize=true, endpoints=false)
+#
+#     Computes betweenness centrality of a graph, based on all vertices (default)
+#     or on a specified subset.
+#     """ ->
 function betweenness_centrality(
     g::AbstractFastGraph,
     k::Integer=0;

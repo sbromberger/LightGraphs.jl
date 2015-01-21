@@ -3,14 +3,14 @@ type FloydWarshallState
     parents::Vector{Vector{Int}}
 end
 
-@doc doc"""
-    Returns a FloydWarshallState, which includes distances and parents.
-    Each is a (vertex-indexed) vector of vectors containing the metric
-    for each other vertex in the graph.
-
-    Note that it is possible to consume large amounts of memory as the
-    space required for the FloydWarshallState is O(n^2).
-    """ ->
+# @doc doc"""
+#     Returns a FloydWarshallState, which includes distances and parents.
+#     Each is a (vertex-indexed) vector of vectors containing the metric
+#     for each other vertex in the graph.
+#
+#     Note that it is possible to consume large amounts of memory as the
+#     space required for the FloydWarshallState is O(n^2).
+#     """ ->
 function floyd_warshall(g::AbstractFastGraph)
 
     n_v = nv(g)

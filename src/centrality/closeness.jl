@@ -1,8 +1,8 @@
-@doc doc"""
-        closeness_centrality(g::AbstractFastGraph; normalize=true)
-
-    Computes closeness centrality of a graph, based on all vertices.
-    """ ->
+# @doc doc"""
+#         closeness_centrality(g::AbstractFastGraph; normalize=true)
+#
+#     Computes closeness centrality of a graph, based on all vertices.
+#     """ ->
 function closeness_centrality(
     g::AbstractFastGraph;
     normalize=true)
