@@ -2,8 +2,6 @@ module FastGraphs
 
     using GZip
     using DataStructures
-    using FastAnonymous
-
 
     import Base:write, ==, issubset, show, print, complement, union, intersect
 
@@ -48,8 +46,8 @@ module FastGraphs
     a_star_sp
 
     include("core.jl")
-        include("graph.jl")
         include("digraph.jl")
+        include("graph.jl")
             include("astar.jl")
             include("distance.jl")
             include("dijkstra.jl")
