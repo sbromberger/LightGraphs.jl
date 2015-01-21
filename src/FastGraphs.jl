@@ -2,6 +2,7 @@ module FastGraphs
 
     using GZip
     using DataStructures
+    using Compat
 
     import Base:write, ==, issubset, show, print, complement, union, intersect
 

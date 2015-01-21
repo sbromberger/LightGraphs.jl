@@ -1,3 +1,4 @@
 julia 0.3
+Compat 0.2.6
 GZip 0.2
 DataStructures 0.3
