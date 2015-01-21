@@ -4,7 +4,7 @@
 
 An optimized graphs package.
 
-Simple graphs[^sgr] are represented in a memory- and time-efficient
+Simple graphs (not multi- or hypergraphs, and no self loops) are represented in a memory- and time-efficient
 manner with incidence lists and edge sets. Vertices are represented as integer ranges.
 
 Both directed and undirected graphs are supported.
@@ -19,33 +19,43 @@ structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
 
 ### Core Concepts
-A graph `G` is described by a set of vertices `V` and edges `E`:
-`G = {V, E}`. `V` is an integer range `1:n`; `E` is stored as a set
-of `Edge` types containing `(src::Int, dst::Int, dist::Float64)` values. `Edge`
+A graph *G* is described by a set of vertices *V* and edges *E*:
+*G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
+of `Edge` types containing `(src::Int, dst::Int, dist::Float64)` values. Edge
 relationships are stored as forward and backward incidence vectors, indexed by
 vertex.
 
 Edges must be unique; an attempt to add an edge that already exists in a graph
 will result in an error.
 
-Usage (all examples apply equally to `FastDiGraph` unless otherwise noted):
+### Usage
+(all examples apply equally to `FastDiGraph` unless otherwise noted):
 
 ```
-g = FastGraph()      # create an empty undirected graph
-g = FastGraph(10)    # create a 10-node undirected graph with no edges
-g = FastGraph(10,30) # create a 10-node undirected graph with 30 randomly-selected edges
+# create an empty undirected graph
+g = FastGraph()
 
-add_edge!(g, 4, 5)   # add an edge between vertices 4 and 5
+# create a 10-node undirected graph with no edges
+g = FastGraph(10)
 
-neighbors(g, 4)      # get the neighbors of vertex 4
+# create a 10-node undirected graph with 30 randomly-selected edges using default distances
+g = FastGraph(10,30)
 
-dijkstra_shortest_paths(g, 2) # show distances between vertex 2 and all other vertices
+# add an edge between vertices 4 and 5 with a default distance of 1.0
+add_edge!(g, 4, 5)
 
-g = readfastgraph("mygraph.jfz") # read a graph from file
-write(g,"mygraph.jfz")           # write a graph to a file
+# get the neighbors of vertex 4
+neighbors(g, 4)
 
+# show distances between vertex 2 and all other vertices
+dijkstra_shortest_paths(g, 2).dists  
+
+# graph I/O
+g = readfastgraph("mygraph.jfz")
+write(g,"mygraph.jfz")
 ```
-Current functionality includes
+
+### Current functionality
 - core functions
     - degree (in/out/histogram)
     - neighbors (in/out/all/common)
@@ -70,8 +80,9 @@ Current functionality includes
 
 
 - shortest path
-    - dijkstra / dijkstra with predecessors
-    - floyd-warshall
+    - Dijkstra / Dijkstra with predecessors
+    - Bellman-Ford
+    - Floyd-Warshall
     - A*
 
 
@@ -87,9 +98,7 @@ Current functionality includes
 
 - linear algebra
     - adjacency matrix
-    - laplacian matrix
+    - Laplacian matrix
 
 
 - persistence (proprietary compressed format)
-
-[^sgr]: A simple graph is not a multi- or hypergraphs and has no self loops.

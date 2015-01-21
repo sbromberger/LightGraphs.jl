@@ -4,7 +4,7 @@ module FastGraphs
     using DataStructures
     using Compat
 
-    import Base:write, ==, issubset, show, print, complement, union, intersect
+    import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
 
     # core
     export AbstractFastGraph, Edge, FastGraph, FastDiGraph, vertices, edges, in_edges, out_edges,
@@ -22,6 +22,9 @@ module FastGraphs
 
     # dijkstra
     dijkstra_shortest_paths, dijkstra_predecessor_and_distance,
+
+    # bellman-ford
+    bellman_ford_shortest_paths, enumerate_paths,
 
     # floyd-warshall
     floyd_warshall,
@@ -51,6 +54,7 @@ module FastGraphs
         include("graph.jl")
             include("astar.jl")
             include("distance.jl")
+            include("bellman-ford.jl")
             include("dijkstra.jl")
             include("floyd-warshall.jl")
             include("linalg.jl")
