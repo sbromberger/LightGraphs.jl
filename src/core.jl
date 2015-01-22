@@ -5,8 +5,6 @@ immutable Edge
     dst::Int
 end
 
-Edge(s::Int, d::Int) = Edge(s, d, 1.0)
-
 src(e::Edge) = e.src
 dst(e::Edge) = e.dst
 

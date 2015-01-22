@@ -73,7 +73,7 @@ function process_neighbors!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = nnz(edge_dists) > 0
+    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
 
     for e in out_edges(graph, u)
         v::Int = dst(e)
@@ -81,14 +81,14 @@ function process_neighbors!(
 
         if v_color == 0
             if use_dists
-                newdist = edge_dists[src(e), dst(e)]
-                if newdist == 0.0
-                    newdist = 1.0
+                edist = edge_dists[src(e), dst(e)]
+                if edist == 0.0
+                    edist = 1.0
                 end
             else
-                newdist = 1.0
+                edist = 1.0
             end
-            dists[v] = dv = du + newdist
+            dists[v] = dv = du + edist
             parents[v] = u
             colormap[v] = 1
             discover_vertex!(visitor, u, v, dv)
@@ -256,19 +256,21 @@ function process_neighbors_with_pred!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = nnz(edge_dists) > 0
+    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
 
     for e in out_edges(graph, u)
         v::Int = dst(e)
         v_color::Int = colormap[v]
-
         if use_dists
-            newdist = edge_dist[src(e), dst(e)]
+            edist = edge_dists[src(e), dst(e)]
+            if edist == 0.0
+                edist = 1.0
+            end
         else
-            newdist = 1.0
+            edist = 1.0
         end
         if v_color == 0
-            dists[v] = dv = du + newdist
+            dists[v] = dv = du + edist
             parents[v] = u
             colormap[v] = 1
             discover_vertex!(visitor, u, v, dv)
@@ -282,7 +284,7 @@ function process_neighbors_with_pred!(
             hmap[v] = push!(heap, DijkstraHEntry(v, dv))
 
         elseif v_color == 1
-            dv = du + newdist
+            dv = du + edist
             if dv < dists[v]
                 dists[v] = dv
                 parents[v] = u

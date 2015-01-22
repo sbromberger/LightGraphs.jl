@@ -7,8 +7,8 @@ module FastGraphs
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
 
     # core
-    export AbstractFastGraph, Edge, FastGraph, FastDiGraph, vertices, edges, in_edges, out_edges,
-    has_vertex, has_edge,
+    export AbstractFastGraph, Edge, FastGraph, FastDiGraph, vertices, edges, src, dst,
+    in_edges, out_edges, has_vertex, has_edge,
     nv, ne, add_edge!, add_vertex!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
     neighbors, all_neighbors, common_neighbors,
@@ -47,7 +47,7 @@ module FastGraphs
     # linalg
     adjacency_matrix, laplacian_matrix,
     # astar
-    a_star_sp
+    a_star
 
     include("core.jl")
         include("digraph.jl")

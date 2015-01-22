@@ -21,12 +21,17 @@ better-optimized mechanisms.
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
-of `Edge` types containing `(src::Int, dst::Int, dist::Float64)` values. Edge
+of `Edge` types containing `(src::Int, dst::Int)` values. Edge
 relationships are stored as forward and backward incidence vectors, indexed by
 vertex.
 
 Edges must be unique; an attempt to add an edge that already exists in a graph
 will result in an error.
+
+Edge distances for most traversals may be passed in as a sparse or dense array
+of `Float64` values, indexed by `[src,dst]` vertices. That is, `edge_dists[2,4] = 2.5`
+assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
+Note that for undirected graphs, `edge_dists[4,2]` should also be set.
 
 ### Usage
 (all examples apply equally to `FastDiGraph` unless otherwise noted):
@@ -38,17 +43,23 @@ g = FastGraph()
 # create a 10-node undirected graph with no edges
 g = FastGraph(10)
 
-# create a 10-node undirected graph with 30 randomly-selected edges using default distances
+# create a 10-node undirected graph with 30 randomly-selected edges
 g = FastGraph(10,30)
 
-# add an edge between vertices 4 and 5 with a default distance of 1.0
+# add an edge between vertices 4 and 5
 add_edge!(g, 4, 5)
 
 # get the neighbors of vertex 4
 neighbors(g, 4)
 
-# show distances between vertex 2 and all other vertices
-dijkstra_shortest_paths(g, 2).dists  
+# show distances between vertex 4 and all other vertices
+dijkstra_shortest_paths(g, 4).dists  
+
+# as above, but with non-default edge distances
+edge_dists = zeros(10,10)
+edge_dists[4,5] = 2.5
+edge_dists[5,4] = 2.5
+dijkstra_shortest_paths(g, 4, edge_dists=edge_dists).dists
 
 # graph I/O
 g = readfastgraph("mygraph.jfz")

@@ -25,8 +25,11 @@ end
 
 function bellman_ford_shortest_paths!(
     graph::AbstractFastGraph,
+    edge_dists::AbstractArray{Float64, 2},
     sources::AbstractVector{Int},
     state::BellmanFordStates)
+
+    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
 
     active = Set{Int}()
     for v in sources
@@ -41,7 +44,15 @@ function bellman_ford_shortest_paths!(
         for u in active
             for e in out_edges(graph, u)
                 v = dst(e)
-                edist = dist(e)
+                if use_dists
+                    edist = edge_dists[src(e), dst(e)]
+                    if edist == 0.0
+                        edist = 1.0
+                    end
+                else
+                    edist = 1.0
+                end
+
                 if state.dists[v] > state.dists[u] + edist
                     state.dists[v] = state.dists[u] + edist
                     state.parents[v] = u
@@ -64,10 +75,13 @@ end
 
 function bellman_ford_shortest_paths(
     graph::AbstractFastGraph,
-    sources::AbstractVector{Int})
+
+    sources::AbstractVector{Int};
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+    )
 
     state = create_bellman_ford_states(graph)
-    bellman_ford_shortest_paths!(graph, sources, state)
+    bellman_ford_shortest_paths!(graph, edge_dists, sources, state)
 end
 
 bellman_ford_shortest_paths(graph::AbstractFastGraph, v::Int) = bellman_ford_shortest_paths(graph, [v])
