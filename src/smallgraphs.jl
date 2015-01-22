@@ -315,7 +315,7 @@ function OctahedralGraph()
         (4, 5), (4, 6),
         (5, 6)
     ]
-    return _make_simple_undirected_graph(10,e)
+    return _make_simple_undirected_graph(6,e)
 end
 
 function PappusGraph()
