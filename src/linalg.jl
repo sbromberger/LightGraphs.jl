@@ -2,9 +2,9 @@ function adjacency_matrix(g::AbstractFastGraph)
     n_v = nv(g)
     mx = spzeros(n_v, n_v)
     for e in edges(g)
-        mx[src(e), dst(e)] = dist(e)
+        mx[src(e), dst(e)] = true
         if typeof(g) == FastGraph
-            mx[dst(e), src(e)] = dist(e)
+            mx[dst(e), src(e)] = true
         end
     end
     return mx

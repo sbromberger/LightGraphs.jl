@@ -108,7 +108,7 @@ write(g,"mygraph.jfz")
 
 
 - linear algebra
-    - adjacency matrix
+    - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl))
     - Laplacian matrix
 
 
