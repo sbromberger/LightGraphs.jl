@@ -26,10 +26,12 @@ vertex.
 Edges must be unique; an attempt to add an edge that already exists in a graph
 will result in an error.
 
-Edge distances for most traversals may be passed in as a sparse or dense array
+Edge distances for most traversals may be passed in as a sparse or dense matrix
 of `Float64` values, indexed by `[src,dst]` vertices. That is, `edge_dists[2,4] = 2.5`
 assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
 Note that for undirected graphs, `edge_dists[4,2]` should also be set.
+
+Edge distances for undefined edges are ignored, and edge distances cannot be zero: any unassigned values (for sparse matrices) or zero values (for sparse or dense matrices) in the edge distance matrix are assumed to be the default distance of 1.0.
 
 ### Usage
 (all examples apply equally to `FastDiGraph` unless otherwise noted):
