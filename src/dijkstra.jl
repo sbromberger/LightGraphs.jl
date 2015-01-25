@@ -74,7 +74,6 @@ function process_neighbors!(
     dv::Float64 = zero(Float64)
 
     use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
-
     for e in out_edges(graph, u)
         v::Int = dst(e)
         v_color::Int = colormap[v]
@@ -96,7 +95,11 @@ function process_neighbors!(
             hmap[v] = push!(heap, DijkstraHEntry(v, dv))
 
         elseif v_color == 1
-            dv = du + dist(e)
+            if use_dists
+                dv = du + edge_dists[src(e), dst(e)]
+            else
+                dv = du + 1.0
+            end
             if dv < dists[v]
                 dists[v] = dv
                 parents[v] = u
