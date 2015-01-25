@@ -26,6 +26,22 @@ end
 
 FastDiGraph() = FastDiGraph(0)
 
+function FastDiGraph{T<:Number}(adjmx::AbstractArray{T,2})
+    dima, dimb = size(adjmx)
+    if dima != dimb
+        error("Adjacency matrices must be square")
+    else
+        g = FastDiGraph(dima)
+        for i=1:dima, j=1:dima
+            if adjmx[i,j] > 0
+                add_edge!(g,i,j)
+            end
+        end
+    end
+    return g
+end
+
+
 function add_edge!(g::FastDiGraph, e::Edge)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
         throw(BoundsError)

@@ -29,6 +29,22 @@ end
 
 FastGraph() = FastGraph(0)
 
+function FastGraph{T<:Number}(adjmx::Array{T, 2})
+    dima, dimb = size(adjmx)
+    if dima != dimb
+        error("Adjacency matrices must be square")
+    else
+        g = FastGraph(dima)
+        for i=1:dima, j=1:dima
+            if adjmx[i,j] > 0
+                add_edge!(g,i,j)
+            end
+        end
+    end
+    return g
+end
+
+
 function FastGraph(g::FastDiGraph)
     gnv = nv(g)
 
