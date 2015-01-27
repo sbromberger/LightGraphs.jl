@@ -1,9 +1,9 @@
 module FastGraphs
-
+    using Compat
     using GZip
     using DataStructures
     using StatsBase
-    using Compat
+
 
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
 
