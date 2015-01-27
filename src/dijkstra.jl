@@ -373,11 +373,8 @@ function dijkstra_predecessor_and_distance(
     graph::AbstractFastGraph,
     s::Int;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
-    visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
+    visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor()
+)
     state = create_dijkstra_states_with_pred(graph)
     dijkstra_predecessor_and_distance!(graph, edge_dists, [s], visitor, state)
 end
-
-
-dijkstra_predecessor_and_distance(graph::AbstractFastGraph, s::Int) =
-    dijkstra_predecessor_and_distance(graph, Array(Float64,(0,0)), s)

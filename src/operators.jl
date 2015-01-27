@@ -70,6 +70,7 @@ function intersect{T<:AbstractFastGraph}(g::T, h::T)
     return r
 end
 
+# edges in G but not in H
 function difference{T<:AbstractFastGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -83,6 +84,7 @@ function difference{T<:AbstractFastGraph}(g::T, h::T)
     return r
 end
 
+# only include edges from G or H that do not exist in the other.
 function symmetric_difference{T<:AbstractFastGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -101,6 +103,7 @@ function symmetric_difference{T<:AbstractFastGraph}(g::T, h::T)
     return r
 end
 
+# merge G and H by union of all vertices and edges.
 function compose{T<:AbstractFastGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)

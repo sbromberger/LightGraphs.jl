@@ -2,6 +2,7 @@ module FastGraphs
 
     using GZip
     using DataStructures
+    using StatsBase
     using Compat
 
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
@@ -43,6 +44,7 @@ module FastGraphs
 
     # centrality
     betweenness_centrality, closeness_centrality, degree_centrality,
+    indegree_centrality, outdegree_centrality,
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
