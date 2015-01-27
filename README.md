@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/sbromberger/FastGraphs.jl.svg?branch=master)](https://travis-ci.org/sbromberger/FastGraphs.jl)
 [![Coverage Status](https://coveralls.io/repos/sbromberger/FastGraphs.jl/badge.svg)](https://coveralls.io/r/sbromberger/FastGraphs.jl)
 
+
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs, and no self loops) are represented in a memory- and time-efficient
