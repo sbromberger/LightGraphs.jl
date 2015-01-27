@@ -46,7 +46,7 @@ end
 
 function create_dijkstra_states(g::AbstractFastGraph)
     n = nv(g)
-    parents = Array(Int, n)
+    parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry)
@@ -221,7 +221,7 @@ end
 # Create Dijkstra state that tracks predecessors and path counts
 function create_dijkstra_states_with_pred(g::AbstractFastGraph)
     n = nv(g)
-    parents = Array(Int, n)
+    parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
     colormap = zeros(Int, n)
     pathcounts = zeros(Int, n)

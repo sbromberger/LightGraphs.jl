@@ -11,8 +11,12 @@ end
 #     Note that it is possible to consume large amounts of memory as the
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
-function floyd_warshall(g::AbstractFastGraph)
+function floyd_warshall(
+    g::AbstractFastGraph;
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+)
 
+    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
     n_v = nv(g)
     dists = fill(convert(Float64,Inf), (n_v,n_v))
     parents = zeros(Int, (n_v,n_v))
@@ -25,7 +29,11 @@ function floyd_warshall(g::AbstractFastGraph)
     for e in edges(g)
         u = src(e)
         v = dst(e)
-        d = dist(e)
+        if use_dists
+            d = edge_dists[u,v]
+        else
+            d = 1.0
+        end
         dists[u,v] = min(d, dists[u,v])
         parents[u,v] = u
         if undirected

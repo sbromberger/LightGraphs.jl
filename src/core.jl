@@ -43,6 +43,7 @@ function add_vertices!(g::AbstractFastGraph, n::Integer)
     for i = 1:n
         add_vertex!(g)
     end
+    return nv(g)
 end
 
 has_edge(g::AbstractFastGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))

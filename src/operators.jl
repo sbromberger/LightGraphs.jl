@@ -54,7 +54,7 @@ function union{T<:AbstractFastGraph}(g::T, h::T)
         add_edge!(r,e)
     end
     for e in edges(h)
-        add_edge!(r, gnv+src(e), gnv+dst(e), dist(e))
+        add_edge!(r, gnv+src(e), gnv+dst(e))
     end
     return r
 end
@@ -76,7 +76,7 @@ function difference{T<:AbstractFastGraph}(g::T, h::T)
 
     r = T(gnv)
     for e in edges(g)
-        if !(e in edges(h))
+        if !has_edge(h, e)
             add_edge!(r,e)
         end
     end
@@ -89,12 +89,12 @@ function symmetric_difference{T<:AbstractFastGraph}(g::T, h::T)
 
     r = T(max(gnv, hnv))
     for e in edges(g)
-        if !(e in edges(h))
+        if !has_edge(h, e)
             add_edge!(r, e)
         end
     end
     for e in edges(h)
-        if !(e in edges(g)) && !(e in edges(r))
+        if !has_edge(g, e) && !has_edge(r, e)
             add_edge!(r, e)
         end
     end

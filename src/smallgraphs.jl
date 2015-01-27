@@ -250,7 +250,7 @@ function HouseGraph()
 end
 
 function HouseXGraph()
-    g = simple_house_graph()
+    g = HouseGraph()
     add_edge!(g, 1, 4)
     add_edge!(g, 2, 3)
     return g

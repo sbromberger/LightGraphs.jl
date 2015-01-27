@@ -7,7 +7,7 @@ end
 
 function show(io::IO, g::FastGraph)
     if length(vertices(g)) == 0
-        print(io, "empty directed graph")
+        print(io, "empty undirected graph")
     else
         print(io, "{$(nv(g)), $(ne(g))} undirected graph")
     end
@@ -51,12 +51,14 @@ function FastGraph(g::FastDiGraph)
     h = FastGraph(gnv)
 
     for e in edges(g)
-        if !(e in edges(h))
+        if !has_edge(h, e)
             add_edge!(h, e)
         end
     end
     return h
 end
+
+has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
 
 function add_edge!(g::FastGraph, e::Edge)
     reve = rev(e)
@@ -75,8 +77,11 @@ function add_edge!(g::FastGraph, e::Edge)
     return e
 end
 
-has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
+
 
 degree(g::FastGraph, v::Int) = indegree(g,v)
-all_neighbors(g::FastGraph, v::Int) = union(neighbors(g,v), [e.dst for e in g.binclist[v]])
+all_neighbors(g::FastGraph, v::Int) =
+    filter(x->x!=v,
+        union(neighbors(g,v), [e.dst for e in g.binclist[v]])
+    )
 density(g::FastGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

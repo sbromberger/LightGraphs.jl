@@ -67,15 +67,21 @@ function a_star(
     a_star_impl!(graph, frontier, colormap, edge_dists, heuristic, t)
 end
 
-function a_star(
-    graph::AbstractFastGraph,  # the graph
-    s::Int,                       # the start vertex
-    t::Int,                       # the end vertex
-    heuristic::Function = n -> 0
-    )
-    a_star(graph, Array(Float64,(0,0)), s, t, heuristic)
-end
+# function a_star(
+#     graph::AbstractFastGraph,  # the graph
+#     s::Int,                       # the start vertex
+#     t::Int,                       # the end vertex
+#     heuristic::Function = n -> 0
+#     )
+#     a_star(graph, Array(Float64,(0,0)), s, t, heuristic)
+# end
 
+a_star(
+    graph::AbstractFastGraph,
+    s::Int, t::Int;
+    heuristic::Function = n->0,
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+) = a_star(graph, edge_dists, s, t, heuristic)
 
 end
 

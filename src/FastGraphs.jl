@@ -8,8 +8,8 @@ module FastGraphs
 
     # core
     export AbstractFastGraph, Edge, FastGraph, FastDiGraph, vertices, edges, src, dst,
-    in_edges, out_edges, has_vertex, has_edge,
-    nv, ne, add_edge!, add_vertex!,
+    in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
+    nv, ne, add_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
     neighbors, all_neighbors, common_neighbors,
 
@@ -24,7 +24,7 @@ module FastGraphs
     dijkstra_shortest_paths, dijkstra_predecessor_and_distance,
 
     # bellman-ford
-    bellman_ford_shortest_paths, enumerate_paths,
+    bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 
     # floyd-warshall
     floyd_warshall,
@@ -45,9 +45,12 @@ module FastGraphs
     betweenness_centrality, closeness_centrality, degree_centrality,
 
     # linalg
-    adjacency_matrix, laplacian_matrix,
+    adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
     # astar
-    a_star
+    a_star,
+
+    # persistence
+    readfastgraph
 
     include("core.jl")
         include("digraph.jl")

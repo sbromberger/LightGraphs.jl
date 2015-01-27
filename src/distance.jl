@@ -1,4 +1,11 @@
-eccentricity(g::AbstractFastGraph, v::Int) = maximum(dijkstra_shortest_paths(g,v).dists)
+function eccentricity(g::AbstractFastGraph, v::Int)
+    e = maximum(dijkstra_shortest_paths(g,v).dists)
+    if isinf(e)
+        error("Infinite path length detected")
+    else
+        return e
+    end
+end
 
 _all_eccentricities(g::AbstractFastGraph) = [eccentricity(g,v) for v in vertices(g)]
 
