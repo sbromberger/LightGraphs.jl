@@ -10,6 +10,6 @@ notifications:
 # uncomment the following lines to override the default test script
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("FastGraphs"); Pkg.test("FastGraphs"; coverage=true)'
+  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("SimpleGraphs"); Pkg.test("SimpleGraphs"; coverage=true)'
 after_success:
-  - julia -e 'cd(Pkg.dir("FastGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'cd(Pkg.dir("SimpleGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'

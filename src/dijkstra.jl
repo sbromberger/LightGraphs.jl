@@ -44,7 +44,7 @@ type DijkstraStates<: AbstractDijkstraStates
     hmap::Vector{Int}
 end
 
-function create_dijkstra_states(g::AbstractFastGraph)
+function create_dijkstra_states(g::AbstractSimpleGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
@@ -54,7 +54,7 @@ function create_dijkstra_states(g::AbstractFastGraph)
     DijkstraStates(parents, dists, colormap, heap, hmap)
 end
 
-function set_source!(state::DijkstraStates, g::AbstractFastGraph, s::Int)
+function set_source!(state::DijkstraStates, g::AbstractSimpleGraph, s::Int)
     state.parents[s] = 0        # we are setting the parent of source to 0
     state.dists[s] = 0.0
     state.colormap[s] = 2
@@ -62,7 +62,7 @@ end
 
 function process_neighbors!(
     state::DijkstraStates,
-    graph::AbstractFastGraph,
+    graph::AbstractSimpleGraph,
     edge_dists::AbstractArray{Float64, 2},
     u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
 
@@ -112,7 +112,7 @@ function process_neighbors!(
 end
 
 function dijkstra_shortest_paths!(
-    graph::AbstractFastGraph,                # the graph
+    graph::AbstractSimpleGraph,                # the graph
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
@@ -168,7 +168,7 @@ function dijkstra_shortest_paths!(
 end
 
 function dijkstra_shortest_paths(
-    graph::AbstractFastGraph,                # the graph
+    graph::AbstractSimpleGraph,                # the graph
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
@@ -178,7 +178,7 @@ function dijkstra_shortest_paths(
 end
 
 function dijkstra_shortest_paths(
-    graph::AbstractFastGraph,
+    graph::AbstractSimpleGraph,
     s::Int;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
@@ -187,7 +187,7 @@ function dijkstra_shortest_paths(
 end
 
 
-# dijkstra_shortest_paths(graph::AbstractFastGraph, s::Int) =
+# dijkstra_shortest_paths(graph::AbstractSimpleGraph, s::Int) =
 #     dijkstra_shortest_paths(graph, Array(Float64,(0,0)), s)
 
 
@@ -219,7 +219,7 @@ end
 
 
 # Create Dijkstra state that tracks predecessors and path counts
-function create_dijkstra_states_with_pred(g::AbstractFastGraph)
+function create_dijkstra_states_with_pred(g::AbstractSimpleGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
@@ -235,7 +235,7 @@ function create_dijkstra_states_with_pred(g::AbstractFastGraph)
     DijkstraStatesWithPred(parents, dists, colormap, pathcounts, predecessors, heap, hmap)
 end
 
-function set_source_with_pred!(state::DijkstraStatesWithPred, g::AbstractFastGraph, s::Int)
+function set_source_with_pred!(state::DijkstraStatesWithPred, g::AbstractSimpleGraph, s::Int)
     state.parents[s] = 0        # we are setting the parent of source to 0
     state.dists[s] = 0.0
     state.colormap[s] = 2
@@ -245,7 +245,7 @@ end
 
 function process_neighbors_with_pred!(
     state::DijkstraStatesWithPred,
-    graph::AbstractFastGraph,
+    graph::AbstractSimpleGraph,
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T,
     u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
@@ -304,7 +304,7 @@ function process_neighbors_with_pred!(
 end
 
 function dijkstra_predecessor_and_distance!(
-    graph::AbstractFastGraph,                # the graph
+    graph::AbstractSimpleGraph,                # the graph
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
@@ -360,7 +360,7 @@ function dijkstra_predecessor_and_distance!(
 end
 
 function dijkstra_predecessor_and_distance(
-    graph::AbstractFastGraph,                # the graph
+    graph::AbstractSimpleGraph,                # the graph
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
@@ -370,7 +370,7 @@ function dijkstra_predecessor_and_distance(
 end
 
 function dijkstra_predecessor_and_distance(
-    graph::AbstractFastGraph,
+    graph::AbstractSimpleGraph,
     s::Int;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor()

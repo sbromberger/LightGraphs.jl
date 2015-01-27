@@ -1,7 +1,7 @@
 # These are test functions only, used for consistent centrality comparisons.
 
-function FastGraph(nv::Integer, ne::Integer)
-    g = FastGraph(nv)
+function SimpleGraph(nv::Integer, ne::Integer)
+    g = SimpleGraph(nv)
 
     i = 1
     while i <= ne
@@ -16,8 +16,8 @@ function FastGraph(nv::Integer, ne::Integer)
     return g
 end
 
-function FastDiGraph(nv::Integer, ne::Integer)
-    g = FastDiGraph(nv)
+function SimpleDiGraph(nv::Integer, ne::Integer)
+    g = SimpleDiGraph(nv)
 
     i = 1
     while i <= ne

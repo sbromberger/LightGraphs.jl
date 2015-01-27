@@ -1,4 +1,4 @@
-The FastGraphs.jl package is licensed under the Simplified "2-clause" BSD License:
+The SimpleGraphs.jl package is licensed under the Simplified "2-clause" BSD License:
 
 > Copyright (c) 2015: Seth Bromberger.
 >

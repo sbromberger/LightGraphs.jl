@@ -1,11 +1,11 @@
-type FastGraph<:AbstractFastGraph
+type SimpleGraph<:AbstractSimpleGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
     binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
 end
 
-function show(io::IO, g::FastGraph)
+function show(io::IO, g::SimpleGraph)
     if length(vertices(g)) == 0
         print(io, "empty undirected graph")
     else
@@ -13,7 +13,7 @@ function show(io::IO, g::FastGraph)
     end
 end
 
-function FastGraph(n::Int)
+function SimpleGraph(n::Int)
     finclist = Vector{Edge}[]
     binclist = Vector{Edge}[]
     sizehint!(binclist,n)
@@ -24,17 +24,17 @@ function FastGraph(n::Int)
         push!(binclist, Edge[])
         push!(finclist, Edge[])
     end
-    return FastGraph(1:n, Set{Edge}(), binclist, finclist)
+    return SimpleGraph(1:n, Set{Edge}(), binclist, finclist)
 end
 
-FastGraph() = FastGraph(0)
+SimpleGraph() = SimpleGraph(0)
 
-function FastGraph{T<:Number}(adjmx::Array{T, 2})
+function SimpleGraph{T<:Number}(adjmx::Array{T, 2})
     dima, dimb = size(adjmx)
     if dima != dimb
         error("Adjacency matrices must be square")
     else
-        g = FastGraph(dima)
+        g = SimpleGraph(dima)
         for i=1:dima, j=i:dima
             if adjmx[i,j] > 0
                 add_edge!(g,i,j)
@@ -45,10 +45,10 @@ function FastGraph{T<:Number}(adjmx::Array{T, 2})
 end
 
 
-function FastGraph(g::FastDiGraph)
+function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
 
-    h = FastGraph(gnv)
+    h = SimpleGraph(gnv)
 
     for e in edges(g)
         if !has_edge(h, e)
@@ -58,9 +58,9 @@ function FastGraph(g::FastDiGraph)
     return h
 end
 
-has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
+has_edge(g::SimpleGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
 
-function add_edge!(g::FastGraph, e::Edge)
+function add_edge!(g::SimpleGraph, e::Edge)
     reve = rev(e)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
         throw(BoundsError())
@@ -79,9 +79,9 @@ end
 
 
 
-degree(g::FastGraph, v::Int) = indegree(g,v)
-all_neighbors(g::FastGraph, v::Int) =
+degree(g::SimpleGraph, v::Int) = indegree(g,v)
+all_neighbors(g::SimpleGraph, v::Int) =
     filter(x->x!=v,
         union(neighbors(g,v), [e.dst for e in g.binclist[v]])
     )
-density(g::FastGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
+density(g::SimpleGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

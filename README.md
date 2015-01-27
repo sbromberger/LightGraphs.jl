@@ -1,7 +1,7 @@
-# FastGraphs
+# SimpleGraphs
 
-[![Build Status](https://travis-ci.org/sbromberger/FastGraphs.jl.svg?branch=master)](https://travis-ci.org/sbromberger/FastGraphs.jl)
-[![Coverage Status](https://coveralls.io/repos/sbromberger/FastGraphs.jl/badge.svg)](https://coveralls.io/r/sbromberger/FastGraphs.jl)
+[![Build Status](https://travis-ci.org/sbromberger/SimpleGraphs.jl.svg?branch=master)](https://travis-ci.org/sbromberger/SimpleGraphs.jl)
+[![Coverage Status](https://coveralls.io/repos/sbromberger/SimpleGraphs.jl/badge.svg)](https://coveralls.io/r/sbromberger/SimpleGraphs.jl)
 
 
 An optimized graphs package.
@@ -36,17 +36,17 @@ Note that for undirected graphs, `edge_dists[4,2]` should also be set.
 Edge distances for undefined edges are ignored, and edge distances cannot be zero: any unassigned values (for sparse matrices) or zero values (for sparse or dense matrices) in the edge distance matrix are assumed to be the default distance of 1.0.
 
 ### Usage
-(all examples apply equally to `FastDiGraph` unless otherwise noted):
+(all examples apply equally to `SimpleDiGraph` unless otherwise noted):
 
 ```
 # create an empty undirected graph
-g = FastGraph()
+g = SimpleGraph()
 
 # create a 10-node undirected graph with no edges
-g = FastGraph(10)
+g = SimpleGraph(10)
 
 # create a 10-node undirected graph with 30 randomly-selected edges
-g = FastGraph(10,30)
+g = SimpleGraph(10,30)
 
 # add an edge between vertices 4 and 5
 add_edge!(g, 4, 5)
@@ -64,7 +64,7 @@ edge_dists[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, edge_dists=edge_dists).dists
 
 # graph I/O
-g = readfastgraph("mygraph.jfz")
+g = readsimplegraph("mygraph.jfz")
 write(g,"mygraph.jfz")
 ```
 
@@ -100,7 +100,7 @@ write(g,"mygraph.jfz")
 
 
 - small graph generators
-    - see [smallgraphs.jl](https://github.com/sbromberger/FastGraphs.jl/blob/master/src/smallgraphs.jl) for list
+    - see [smallgraphs.jl](https://github.com/sbromberger/SimpleGraphs.jl/blob/master/src/smallgraphs.jl) for list
 
 
 - centrality
