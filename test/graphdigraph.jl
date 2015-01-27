@@ -30,3 +30,19 @@ add_edge!(h, 3, 5)
 @test has_edge(h, e1)
 @test !has_edge(g, e0)
 @test !has_edge(h, e0)
+
+@test degree(g4, 1) == 1
+@test all_neighbors(g4, 3) == [4]
+@test density(g4) == 0.2
+
+@test nv(a1) == 3
+@test ne(a1) == 2
+@test nv(a2) == 3
+@test ne(a2) == 5
+
+badadjmx = [ 0 1 0; 1 0 1]
+@test_throws ErrorException FastGraph(badadjmx)
+@test_throws ErrorException FastDiGraph(badadjmx)
+
+@test_throws BoundsError add_edge!(g, 100, 100)
+@test_throws BoundsError add_edge!(h, 100, 100)

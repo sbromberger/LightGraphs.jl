@@ -30,7 +30,7 @@ p2 = readfastgraph(joinpath(testdir,"testdata","pathdigraph.jgz"))
 adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
 adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
 
-# a1 = FastGraph(adjmx1)
+a1 = FastGraph(adjmx1)
 a2 = FastDiGraph(adjmx2)
 
 tests = [

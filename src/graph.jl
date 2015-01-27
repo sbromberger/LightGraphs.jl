@@ -35,7 +35,7 @@ function FastGraph{T<:Number}(adjmx::Array{T, 2})
         error("Adjacency matrices must be square")
     else
         g = FastGraph(dima)
-        for i=1:dima, j=1:dima
+        for i=1:dima, j=i:dima
             if adjmx[i,j] > 0
                 add_edge!(g,i,j)
             end
@@ -63,7 +63,7 @@ has_edge(g::FastGraph, e::Edge) = e in edges(g) || rev(e) in edges(g)
 function add_edge!(g::FastGraph, e::Edge)
     reve = rev(e)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
-        throw(BoundsError)
+        throw(BoundsError())
     elseif (e in edges(g)) || (reve in edges(g))
         error("Edge $e is already in graph")
     else

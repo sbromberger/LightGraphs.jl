@@ -44,7 +44,7 @@ end
 
 function add_edge!(g::FastDiGraph, e::Edge)
     if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
-        throw(BoundsError)
+        throw(BoundsError())
     elseif e in edges(g)
         error("Edge $e is already in graph")
     else

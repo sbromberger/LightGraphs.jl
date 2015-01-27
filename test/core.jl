@@ -34,10 +34,13 @@ add_edge!(h, 3, 5)
 @test ne(g) == 5
 @test !is_directed(g)
 @test is_directed(h)
+@test degree(g, [1, 2]) == [3, 2]
 @test indegree(g, [1, 2]) == [3, 2]
 @test outdegree(g, [1, 2]) == [3, 2]
+@test degree(h, [1, 2]) == [3, 2]
 @test indegree(h, [1, 2]) == [0, 1]
 @test outdegree(h, [1, 2]) == [3, 1]
+
 
 @test δ(g) == 0
 @test Δ(g) == 3
