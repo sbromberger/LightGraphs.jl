@@ -11,3 +11,5 @@ notifications:
 #script:
 #  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 #  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("FastGraphs"); Pkg.test("FastGraphs"; coverage=true)'
+after_success:
+  - julia -e 'cd(Pkg.dir("GraphCentrality")); Pkg.add("FastGraphs"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
