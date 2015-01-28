@@ -15,32 +15,38 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
-
-@test LightGraphs.rev(e1) == re1
+@test rev(e1) == re1
 
 @test sprint(show, e1) == "edge 1 - 2"
 @test vertices(g) == 1:5
 @test edges(g) == Set([e1, e2, e3, e4, e5])
 
+@test degree(g) == [3, 2, 2, 1, 2]
+@test indegree(g) == [3, 2, 2, 1, 2]
+@test indegree(g,1) == 3
+@test outdegree(g) == [3, 2, 2, 1, 2]
+@test outdegree(g,1) == 3
+@test degree(h) == [3, 2, 2, 1, 2]
+@test indegree(h) == [0, 1, 1, 1, 2]
+@test indegree(h,1) == 0
+@test outdegree(h) == [3, 1, 1, 0, 0]
+@test outdegree(h,1) == 3
+
+
 @test p1 == g2
 @test issubset(h2, h1)
-@test add_vertex!(g) == 6
-@test add_vertices!(g,5) == 11
+
 @test has_edge(g, 1, 2)
 @test in_edges(g, 2) == [e1, rev(e4)]
 @test out_edges(g, 1) == [e1, e2, e3]
+
+@test add_vertex!(g) == 6
+@test add_vertices!(g,5) == 11
 @test has_vertex(g, 11)
 @test nv(g) == 11
 @test ne(g) == 5
 @test !is_directed(g)
 @test is_directed(h)
-@test degree(g, [1, 2]) == [3, 2]
-@test indegree(g, [1, 2]) == [3, 2]
-@test outdegree(g, [1, 2]) == [3, 2]
-@test degree(h, [1, 2]) == [3, 2]
-@test indegree(h, [1, 2]) == [0, 1]
-@test outdegree(h, [1, 2]) == [3, 1]
-
 
 @test δ(g) == 0
 @test Δ(g) == 3

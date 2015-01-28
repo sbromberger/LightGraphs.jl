@@ -1,4 +1,9 @@
 
-f = IOBuffer()
-@test write(f,p1) == (46, 69)
+(f,fio) = mktemp()
+@test write(p1, f) == (46, 69)
+@test write(fio, p1) == (46, 69)
 @test (ne(p2), nv(p2)) == (9, 10)
+@test length(sprint(write, p1)) == 461
+@test length(sprint(write, p2)) == 51
+
+rm(f)

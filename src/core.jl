@@ -64,12 +64,9 @@ indegree(g::AbstractGraph, v::Int) = length(g.binclist[v])
 outdegree(g::AbstractGraph, v::Int) = length(g.finclist[v])
 
 
-indegree(g::AbstractGraph, v::Vector{Int}) = [indegree(g,x) for x in v]
-outdegree(g::AbstractGraph, v::Vector{Int}) = [outdegree(g,x) for x in v]
-degree(g::AbstractGraph, v::Vector{Int}) = [degree(g,x) for x in v]
-indegree(g::AbstractGraph) = [indegree(g,x) for x in vertices(g)]
-outdegree(g::AbstractGraph) = [outdegree(g,x) for x in vertices(g)]
-degree(g::AbstractGraph) = [degree(g,x) for x in vertices(g)]
+indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
+outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
+degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 Δ(g::AbstractGraph) = maximum(degree(g))
 δ(g::AbstractGraph) = minimum(degree(g))
 
