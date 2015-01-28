@@ -15,7 +15,7 @@ end
 
 # create Bellman Ford states
 
-function create_bellman_ford_states(g::AbstractSimpleGraph)
+function create_bellman_ford_states(g::AbstractGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
@@ -24,7 +24,7 @@ function create_bellman_ford_states(g::AbstractSimpleGraph)
 end
 
 function bellman_ford_shortest_paths!(
-    graph::AbstractSimpleGraph,
+    graph::AbstractGraph,
     edge_dists::AbstractArray{Float64, 2},
     sources::AbstractVector{Int},
     state::BellmanFordStates)
@@ -74,7 +74,7 @@ end
 
 
 function bellman_ford_shortest_paths(
-    graph::AbstractSimpleGraph,
+    graph::AbstractGraph,
 
     sources::AbstractVector{Int};
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
@@ -84,9 +84,9 @@ function bellman_ford_shortest_paths(
     bellman_ford_shortest_paths!(graph, edge_dists, sources, state)
 end
 
-bellman_ford_shortest_paths(graph::AbstractSimpleGraph, v::Int; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) = bellman_ford_shortest_paths(graph, [v]; edge_dists=edge_dists)
+bellman_ford_shortest_paths(graph::AbstractGraph, v::Int; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) = bellman_ford_shortest_paths(graph, [v]; edge_dists=edge_dists)
 
-function has_negative_edge_cycle(graph::AbstractSimpleGraph)
+function has_negative_edge_cycle(graph::AbstractGraph)
     try
         bellman_ford_shortest_paths(graph, vertices(graph))
     catch e

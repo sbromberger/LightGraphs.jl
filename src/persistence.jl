@@ -6,7 +6,7 @@
 #       merely used to return the correct type of graph.
 # header followed by a list of (comma-delimited) edges - src,dst.
 
-function readsimplegraph(fn::AbstractString)
+function readgraph(fn::AbstractString)
     readedges = Set{(Int,Int)}()
     directed = true
     f = GZip.open(fn,"r")        # will work even if uncompressed
@@ -18,9 +18,9 @@ function readsimplegraph(fn::AbstractString)
     end
 
     if directed
-        g = SimpleDiGraph(n)
+        g = DiGraph(n)
     else
-        g = SimpleGraph(n)
+        g = Graph(n)
     end
     while !eof(f)
         line = chomp(readline(f))
@@ -32,7 +32,7 @@ function readsimplegraph(fn::AbstractString)
     return g
 end
 
-function write(io::IO, g::AbstractSimpleGraph)
+function write(io::IO, g::AbstractGraph)
     # write header line
     dir = is_directed(g)? "d" : "u"
     line = join([nv(g), dir], ",")
@@ -44,10 +44,10 @@ function write(io::IO, g::AbstractSimpleGraph)
     return (nv(g), ne(g))
 end
 
-write(g::AbstractSimpleGraph) = write(STDOUT, g)
+write(g::AbstractGraph) = write(STDOUT, g)
 
 function write(
-    g::AbstractSimpleGraph,
+    g::AbstractGraph,
     fn::AbstractString;
     compress=true)
     if compress

@@ -1,6 +1,6 @@
-function complement(g::SimpleGraph)
+function complement(g::Graph)
     gnv = nv(g)
-    h = SimpleGraph(gnv)
+    h = Graph(gnv)
     for i=1:gnv
         for j=i+1:gnv
             if !(has_edge(g,i,j))
@@ -11,9 +11,9 @@ function complement(g::SimpleGraph)
     return h
 end
 
-function complement(g::SimpleDiGraph)
+function complement(g::DiGraph)
     gnv = nv(g)
-    h = SimpleDiGraph(gnv)
+    h = DiGraph(gnv)
     for i=1:gnv
         for j=1:gnv
             if i != j
@@ -26,17 +26,17 @@ function complement(g::SimpleDiGraph)
     return h
 end
 
-function reverse(g::SimpleDiGraph)
+function reverse(g::DiGraph)
     gnv = nv(g)
     gne = ne(g)
-    h = SimpleDiGraph(gnv)
+    h = DiGraph(gnv)
     for e in edges(g)
         add_edge!(h, rev(e))
     end
     return h
 end
 
-function reverse!(g::SimpleDiGraph)
+function reverse!(g::DiGraph)
     gne = ne(g)
     reve = Set{Edge}()
     for e in edges(g)
@@ -47,7 +47,7 @@ function reverse!(g::SimpleDiGraph)
     return g
 end
 
-function union{T<:AbstractSimpleGraph}(g::T, h::T)
+function union{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -59,7 +59,7 @@ function union{T<:AbstractSimpleGraph}(g::T, h::T)
     return r
 end
 
-function intersect{T<:AbstractSimpleGraph}(g::T, h::T)
+function intersect{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -71,7 +71,7 @@ function intersect{T<:AbstractSimpleGraph}(g::T, h::T)
 end
 
 # edges in G but not in H
-function difference{T<:AbstractSimpleGraph}(g::T, h::T)
+function difference{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -85,7 +85,7 @@ function difference{T<:AbstractSimpleGraph}(g::T, h::T)
 end
 
 # only include edges from G or H that do not exist in the other.
-function symmetric_difference{T<:AbstractSimpleGraph}(g::T, h::T)
+function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -104,7 +104,7 @@ function symmetric_difference{T<:AbstractSimpleGraph}(g::T, h::T)
 end
 
 # merge G and H by union of all vertices and edges.
-function compose{T<:AbstractSimpleGraph}(g::T, h::T)
+function compose{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 

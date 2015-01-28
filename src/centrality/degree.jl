@@ -1,9 +1,9 @@
-function _degree_centrality(g::AbstractSimpleGraph, gtype::Integer; normalize=true)
+function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
    n_v = nv(g)
    c = zeros(n_v)
    for v in 1:n_v
        if gtype == 0    # count both in and out degree if appropriate
-           deg = outdegree(g, v) + (typeof(g) == SimpleDiGraph? indegree(g, v) : 0.0)
+           deg = outdegree(g, v) + (typeof(g) == DiGraph? indegree(g, v) : 0.0)
        elseif gtype == 1    # count only in degree
            deg = indegree(g, v)
        else                 # count only out degree
@@ -15,6 +15,6 @@ function _degree_centrality(g::AbstractSimpleGraph, gtype::Integer; normalize=tr
    return c
 end
 
-degree_centrality(g::AbstractSimpleGraph; all...) = _degree_centrality(g, 0; all...)
-indegree_centrality(g::AbstractSimpleGraph; all...) = _degree_centrality(g, 1; all...)
-outdegree_centrality(g::AbstractSimpleGraph; all...) = _degree_centrality(g, 2; all...)
+degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
+indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
+outdegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 2; all...)

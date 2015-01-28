@@ -1,4 +1,4 @@
-abstract AbstractSimpleGraph
+abstract AbstractGraph
 
 immutable Edge
     src::Int
@@ -16,21 +16,21 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.src) - $(e.dst)")
 end
 
-vertices(g::AbstractSimpleGraph) = g.vertices
-edges(g::AbstractSimpleGraph) = g.edges
+vertices(g::AbstractGraph) = g.vertices
+edges(g::AbstractGraph) = g.edges
 
-function =={T<:AbstractSimpleGraph}(g::T, h::T)
+function =={T<:AbstractGraph}(g::T, h::T)
     return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
 end
 
-function issubset{T<:AbstractSimpleGraph}(g::T, h::T)
+function issubset{T<:AbstractGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
     return (hmin <= gmin <= gmax <= hmax) &&
     issubset(edges(g), edges(h))
 end
 
-function add_vertex!(g::AbstractSimpleGraph)
+function add_vertex!(g::AbstractGraph)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
     push!(g.binclist, Edge[])
@@ -39,41 +39,41 @@ function add_vertex!(g::AbstractSimpleGraph)
     return n
 end
 
-function add_vertices!(g::AbstractSimpleGraph, n::Integer)
+function add_vertices!(g::AbstractGraph, n::Integer)
     for i = 1:n
         add_vertex!(g)
     end
     return nv(g)
 end
 
-has_edge(g::AbstractSimpleGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
+has_edge(g::AbstractGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 
-in_edges(g::AbstractSimpleGraph, v::Int) = g.binclist[v]
-out_edges(g::AbstractSimpleGraph, v::Int) = g.finclist[v]
+in_edges(g::AbstractGraph, v::Int) = g.binclist[v]
+out_edges(g::AbstractGraph, v::Int) = g.finclist[v]
 
-has_vertex(g::AbstractSimpleGraph, v::Int) = v in vertices(g)
+has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
 
-nv(g::AbstractSimpleGraph) = vertices(g)[end]
-ne(g::AbstractSimpleGraph) = length(g.edges)
+nv(g::AbstractGraph) = vertices(g)[end]
+ne(g::AbstractGraph) = length(g.edges)
 
-add_edge!(g::AbstractSimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
-is_directed(g::AbstractSimpleGraph) = (typeof(g) == SimpleGraph? false : true)
+is_directed(g::AbstractGraph) = (typeof(g) == Graph? false : true)
 
-indegree(g::AbstractSimpleGraph, v::Int) = length(g.binclist[v])
-outdegree(g::AbstractSimpleGraph, v::Int) = length(g.finclist[v])
+indegree(g::AbstractGraph, v::Int) = length(g.binclist[v])
+outdegree(g::AbstractGraph, v::Int) = length(g.finclist[v])
 
 
-indegree(g::AbstractSimpleGraph, v::Vector{Int}) = [indegree(g,x) for x in v]
-outdegree(g::AbstractSimpleGraph, v::Vector{Int}) = [outdegree(g,x) for x in v]
-degree(g::AbstractSimpleGraph, v::Vector{Int}) = [degree(g,x) for x in v]
-indegree(g::AbstractSimpleGraph) = [indegree(g,x) for x in vertices(g)]
-outdegree(g::AbstractSimpleGraph) = [outdegree(g,x) for x in vertices(g)]
-degree(g::AbstractSimpleGraph) = [degree(g,x) for x in vertices(g)]
-Δ(g::AbstractSimpleGraph) = maximum(degree(g))
-δ(g::AbstractSimpleGraph) = minimum(degree(g))
+indegree(g::AbstractGraph, v::Vector{Int}) = [indegree(g,x) for x in v]
+outdegree(g::AbstractGraph, v::Vector{Int}) = [outdegree(g,x) for x in v]
+degree(g::AbstractGraph, v::Vector{Int}) = [degree(g,x) for x in v]
+indegree(g::AbstractGraph) = [indegree(g,x) for x in vertices(g)]
+outdegree(g::AbstractGraph) = [outdegree(g,x) for x in vertices(g)]
+degree(g::AbstractGraph) = [degree(g,x) for x in vertices(g)]
+Δ(g::AbstractGraph) = maximum(degree(g))
+δ(g::AbstractGraph) = minimum(degree(g))
 
-degree_histogram(g::AbstractSimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
+degree_histogram(g::AbstractGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
-neighbors(g::AbstractSimpleGraph, v::Int) = [e.dst for e in g.finclist[v]]
-common_neighbors(g::AbstractSimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+neighbors(g::AbstractGraph, v::Int) = [e.dst for e in g.finclist[v]]
+common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
