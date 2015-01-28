@@ -1,7 +1,14 @@
-@test_throws ErrorException LightGraphs.eccentricity(g4)
-z = LightGraphs.eccentricity(g3)
-@test z == [4, 3, 2, 3, 4]
-@test diameter(z) == diameter(g3) == 4.0
-@test periphery(z) == periphery(g3) == [1,5]
-@test radius(z) == radius(g3) == 2.0
-@test center(z) == center(g3) == [3]
+@test_throws ErrorException eccentricity(g4)
+z = eccentricity(a1; edge_dists=distmx1)
+@test z == [6.2, 4.2, 6.2]
+@test diameter(z) == diameter(a1; edge_dists=distmx1) == 6.2
+@test periphery(z) == periphery(a1; edge_dists=distmx1) == [1,3]
+@test radius(z) == radius(a1; edge_dists=distmx1) == 4.2
+@test center(z) == center(a1; edge_dists=distmx1) == [2]
+
+z = eccentricity(a2; edge_dists=distmx2)
+@test z == [6.2, 4.2, 6.1]
+@test diameter(z) == diameter(a2; edge_dists=distmx2) == 6.2
+@test periphery(z) == periphery(a2; edge_dists=distmx2) == [1]
+@test radius(z) == radius(a2; edge_dists=distmx2) == 4.2
+@test center(z) == center(a2; edge_dists=distmx2) == [2]
