@@ -1,17 +1,17 @@
 # @doc doc"""
-#         betweenness_centrality(g::AbstractFastGraph, k::Integer=0; normalize=true, endpoints=false)
+#         betweenness_centrality(g::AbstractGraph, k::Integer=0; normalize=true, endpoints=false)
 #
 #     Computes betweenness centrality of a graph, based on all vertices (default)
 #     or on a specified subset.
 #     """ ->
 function betweenness_centrality(
-    g::AbstractFastGraph,
+    g::AbstractGraph,
     k::Integer=0;
     normalize=true,
     endpoints=false)
 
     n_v = nv(g)
-    is_directed = (typeof(g) == FastDiGraph)
+    is_directed = (typeof(g) == DiGraph)
 
     betweenness = zeros(n_v)
     if k == 0
@@ -44,7 +44,7 @@ end
 function _accumulate_basic(
     betweenness::Vector{Float64},
     state::DijkstraStatesWithPred,
-    g::AbstractFastGraph,
+    g::AbstractGraph,
     si::Integer
     )
 
@@ -80,7 +80,7 @@ end
 function _accumulate_endpoints(
     betweenness::Vector{Float64},
     state::DijkstraStatesWithPred,
-    g::AbstractFastGraph,
+    g::AbstractGraph,
     si::Integer
     )
 

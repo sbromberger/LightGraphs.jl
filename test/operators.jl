@@ -31,7 +31,7 @@ z = symmetric_difference(h,g3)
 @test nv(z) == 5
 @test ne(z) == 1
 
-h = FastGraph(6)
+h = Graph(6)
 add_edge!(h, 5, 6)
 e = Edge(5, 6)
 z = compose(g3, h)

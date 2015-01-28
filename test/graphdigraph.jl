@@ -1,20 +1,20 @@
 @test sprint(show, h1) == "{5, 0} undirected graph"
 @test sprint(show, h3) == "empty undirected graph"
 
-@test FastGraph(g4) == g3
+@test Graph(g4) == g3
 
 @test degree(g3, 1) == 1
 @test all_neighbors(g3, 3) == [2, 4]
 @test density(g3) == 0.4
 
-g = FastGraph(5)
+g = Graph(5)
 @test add_edge!(g, 1, 2) == e1
 e2 = add_edge!(g, 1, 3)
 e3 = add_edge!(g, 1, 4)
 e4 = add_edge!(g, 2, 5)
 e5 = add_edge!(g, 3, 5)
 
-h = FastDiGraph(5)
+h = DiGraph(5)
 @test add_edge!(h, 1, 2) == e1
 add_edge!(h, 1, 3)
 add_edge!(h, 1, 4)
@@ -41,8 +41,8 @@ add_edge!(h, 3, 5)
 @test ne(a2) == 5
 
 badadjmx = [ 0 1 0; 1 0 1]
-@test_throws ErrorException FastGraph(badadjmx)
-@test_throws ErrorException FastDiGraph(badadjmx)
+@test_throws ErrorException Graph(badadjmx)
+@test_throws ErrorException DiGraph(badadjmx)
 
 @test_throws BoundsError add_edge!(g, 100, 100)
 @test_throws BoundsError add_edge!(h, 100, 100)

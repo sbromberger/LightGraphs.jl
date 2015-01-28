@@ -5,13 +5,13 @@ module AStar
 # PriorityQueues) conflict with those used for queues. Hence we wrap the A*
 # code in its own module.
 
-using FastGraphs
+using LightGraphs
 using Base.Collections
 
 export a_star
 
 function a_star_impl!(
-    graph::AbstractFastGraph,# the graph
+    graph::AbstractGraph,# the graph
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
     edge_dists::AbstractArray{Float64, 2},
@@ -53,7 +53,7 @@ end
 
 
 function a_star(
-    graph::AbstractFastGraph,  # the graph
+    graph::AbstractGraph,  # the graph
     edge_dists::AbstractArray{Float64, 2},
     s::Int,                       # the start vertex
     t::Int,                       # the end vertex
@@ -68,7 +68,7 @@ function a_star(
 end
 
 # function a_star(
-#     graph::AbstractFastGraph,  # the graph
+#     graph::AbstractGraph,  # the graph
 #     s::Int,                       # the start vertex
 #     t::Int,                       # the end vertex
 #     heuristic::Function = n -> 0
@@ -77,7 +77,7 @@ end
 # end
 
 a_star(
-    graph::AbstractFastGraph,
+    graph::AbstractGraph,
     s::Int, t::Int;
     heuristic::Function = n->0,
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))

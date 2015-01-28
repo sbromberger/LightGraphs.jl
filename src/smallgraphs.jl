@@ -39,7 +39,7 @@
 # > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function CompleteGraph(n::Integer; is_directed=true)
-    g = FastGraph(n)
+    g = Graph(n)
     for i = 1:n, j=1:n
         if i < j
             add_edge!(g,i,j)
@@ -49,7 +49,7 @@ function CompleteGraph(n::Integer; is_directed=true)
 end
 
 function CompleteDiGraph(n::Integer)
-    g = FastDiGraph(n)
+    g = DiGraph(n)
     for i = 1:n, j=1:n
         if i != j
             add_edge!(g,i,j)
@@ -60,7 +60,7 @@ end
 
 
 function StarGraph(n::Integer)
-    g = FastGraph(n)
+    g = Graph(n)
     for i = 2:n
         add_edge!(g,1,i)
     end
@@ -68,7 +68,7 @@ function StarGraph(n::Integer)
 end
 
 function StarDiGraph(n::Integer)
-    g = FastDiGraph(n)
+    g = DiGraph(n)
     for i = 2:n
         add_edge!(g,1,i)
     end
@@ -77,7 +77,7 @@ end
 
 
 function PathGraph(n::Integer)
-    g = FastGraph(n)
+    g = Graph(n)
     for i = 2:n
         add_edge!(g, i-1, i)
     end
@@ -86,7 +86,7 @@ end
 
 
 function PathDiGraph(n::Integer)
-    g = FastDiGraph(n)
+    g = DiGraph(n)
     for i = 2:n
         add_edge!(g, i-1, i)
     end
@@ -118,7 +118,7 @@ end
 
 
 function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{(T,T)})
-    g = FastGraph(n)
+    g = Graph(n)
     for (s,d) in edgelist
         add_edge!(g,s,d)
     end

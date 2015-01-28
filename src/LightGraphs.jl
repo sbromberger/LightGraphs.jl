@@ -1,4 +1,4 @@
-module FastGraphs
+module LightGraphs
     using Compat
     using GZip
     using DataStructures
@@ -8,7 +8,7 @@ module FastGraphs
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
 
     # core
-    export AbstractFastGraph, Edge, FastGraph, FastDiGraph, vertices, edges, src, dst,
+    export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
     in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
     nv, ne, add_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
@@ -52,7 +52,7 @@ module FastGraphs
     a_star,
 
     # persistence
-    readfastgraph
+    readgraph
 
     include("core.jl")
         include("digraph.jl")

@@ -12,7 +12,7 @@ end
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
 function floyd_warshall(
-    g::AbstractFastGraph;
+    g::AbstractGraph;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
 )
 
