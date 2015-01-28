@@ -29,11 +29,11 @@ DiGraph() = DiGraph(0)
 function DiGraph{T<:Number}(adjmx::AbstractArray{T,2})
     dima, dimb = size(adjmx)
     if dima != dimb
-        error("Adjacency matrices must be square")
+        error("Adjacency / distance matrices must be square")
     else
         g = DiGraph(dima)
         for i=1:dima, j=1:dima
-            if adjmx[i,j] > 0
+            if adjmx[i,j] > 0 && !isinf(adjmx[i,j])
                 add_edge!(g,i,j)
             end
         end
