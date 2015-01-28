@@ -1,5 +1,5 @@
-@test_throws ErrorException LightGraphs._all_eccentricities(g4)
-z = LightGraphs._all_eccentricities(g3)
+@test_throws ErrorException LightGraphs.eccentricity(g4)
+z = LightGraphs.eccentricity(g3)
 @test z == [4, 3, 2, 3, 4]
 @test diameter(z) == diameter(g3) == 4.0
 @test periphery(z) == periphery(g3) == [1,5]

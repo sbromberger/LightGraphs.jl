@@ -1,5 +1,9 @@
-function eccentricity(g::AbstractGraph, v::Int)
-    e = maximum(dijkstra_shortest_paths(g,v).dists)
+function eccentricity(
+    g::AbstractGraph,
+    v::Int;
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+)
+    e = maximum(dijkstra_shortest_paths(g,v; edge_dists=edge_dists).dists)
     if isinf(e)
         error("Infinite path length detected")
     else
@@ -7,10 +11,16 @@ function eccentricity(g::AbstractGraph, v::Int)
     end
 end
 
-_all_eccentricities(g::AbstractGraph) = [eccentricity(g,v) for v in vertices(g)]
+eccentricity(
+    g::AbstractGraph,
+    vs::AbstractArray{Int, 1}=vertices(g);
+    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+) =
+    [eccentricity(g,v; edge_dists=edge_dists) for v in vs]
 
 diameter(all_e::Vector{Float64}) = maximum(all_e)
-diameter(g::AbstractGraph) = maximum(_all_eccentricities(g))
+diameter(g::AbstractGraph; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) =
+    maximum(eccentricity(g; edge_dists=edge_dists))
 
 function periphery(all_e::Vector{Float64})
 
@@ -18,14 +28,17 @@ function periphery(all_e::Vector{Float64})
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
 
-periphery(g::AbstractGraph) = periphery(_all_eccentricities(g))
+periphery(g::AbstractGraph; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) =
+    periphery(eccentricity(g; edge_dists=edge_dists))
 
 radius(all_e::Vector{Float64}) = minimum(all_e)
-radius(g::AbstractGraph) = minimum(_all_eccentricities(g))
+radius(g::AbstractGraph; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) =
+    minimum(eccentricity(g; edge_dists=edge_dists))
 
 function center(all_e::Vector{Float64})
     rad = radius(all_e)
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center(g::AbstractGraph) = center(_all_eccentricities(g))
+center(g::AbstractGraph; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) =
+    center(eccentricity(g; edge_dists=edge_dists))
