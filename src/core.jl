@@ -53,8 +53,8 @@ out_edges(g::AbstractGraph, v::Int) = g.finclist[v]
 
 has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
 
-nv(g::AbstractGraph) = vertices(g)[end]
-ne(g::AbstractGraph) = length(g.edges)
+nv(g::AbstractGraph) = length(vertices(g))
+ne(g::AbstractGraph) = length(edges(g))
 
 add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
