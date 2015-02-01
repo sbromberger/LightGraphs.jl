@@ -31,10 +31,12 @@ julia> Pkg.install("LightGraphs")
 ```
 
 *LightGraphs.jl* requires the following packages:
-*   [Compat](https://github.com/JuliaLang/Compat.jl)
-*   [GZip](https://github.com/JuliaLang/GZip.jl)
-*   [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
-*   [DataStructures](https://github.com/JuliaLang/DataStructures.jl)
+-   [Compat](https://github.com/JuliaLang/Compat.jl)
+-   [GZip](https://github.com/JuliaLang/GZip.jl)
+-   [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
+-   [DataStructures](https://github.com/JuliaLang/DataStructures.jl)
+
+
 ### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
 

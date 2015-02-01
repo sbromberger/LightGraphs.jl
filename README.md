@@ -5,8 +5,6 @@
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](https://readthedocs.org/projects/lightgraphsjl/?badge=latest)
 
 
-***Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org)***
-
 
 An optimized graphs package.
 
@@ -68,8 +66,8 @@ edge_dists[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, edge_dists=edge_dists).dists
 
 # graph I/O
-g = readgraph("mygraph.jfz")
-write(g,"mygraph.jfz")
+g = readgraph("mygraph.jgz")
+write(g,"mygraph.jgz")
 ```
 
 ### Current functionality
@@ -119,3 +117,6 @@ write(g,"mygraph.jfz")
 
 
 - persistence (proprietary compressed format)
+
+###Documentation
+Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

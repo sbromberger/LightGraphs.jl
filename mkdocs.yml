@@ -14,6 +14,6 @@ pages:
 - ['linalg.md', 'Linear Algebra']
 - ['generators.md', 'Graph Generators']
 - ['persistence.md', 'Reading / Writing Graphs']
-- ['internals.md', '*LightGraphs.jl* Internals']
+- ['integration.md', 'Integration with other Packages']
 
 docs_dir: 'doc'
