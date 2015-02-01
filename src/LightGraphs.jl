@@ -12,7 +12,7 @@ module LightGraphs
     in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
     nv, ne, add_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
-    neighbors, all_neighbors, common_neighbors,
+    neighbors, common_neighbors,
 
     # distance
     eccentricity, diameter, periphery, radius, center,
