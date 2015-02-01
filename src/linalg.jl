@@ -12,11 +12,11 @@ end
 
 function laplacian_matrix(g::Graph)
     n_v = nv(g)
-    A = adjacency_matrix(g)
+    A = int(adjacency_matrix(g))
     D = spdiagm(sum(A,2)[:])
     return D - A
 end
 
 laplacian_spectrum(g::Graph) = eigvals(full(laplacian_matrix(g)))
 
-adjacency_spectrum(g::AbstractGraph) = eigvals(full(adjacency_matrix(g)))
+adjacency_spectrum(g::AbstractGraph) = eigvals(full(int(adjacency_matrix(g))))
