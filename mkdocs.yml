@@ -1,0 +1,19 @@
+site_name: LightGraphs.jl
+site_author: Seth Bromberger
+repo_url: https://github.com/sbromberger/LightGraphs.jl/
+theme: readthedocs
+pages:
+- ['index.md', 'Home']
+- ['about.md', 'About']
+- ['gettingstarted.md', 'Getting Started']
+- ['basicmeasures.md', 'Basic Functions & Measurements']
+- ['operators.md', 'Operators']
+- ['pathing.md', 'Pathing and Traversal']
+- ['distance.md', 'Distance Measures']
+- ['centrality.md', 'Centrality Measures']
+- ['linalg.md', 'Linear Algebra']
+- ['generators.md', 'Graph Generators']
+- ['persistence.md', 'Reading / Writing Graphs']
+- ['internals.md', '*LightGraphs.jl* Internals']
+
+docs_dir: 'doc'
