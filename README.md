@@ -2,6 +2,11 @@
 
 [![Build Status](https://travis-ci.org/sbromberger/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/sbromberger/LightGraphs.jl)
 [![Coverage Status](https://coveralls.io/repos/sbromberger/LightGraphs.jl/badge.svg?branch=master)](https://coveralls.io/r/sbromberger/LightGraphs.jl?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](https://readthedocs.org/projects/lightgraphsjl/?badge=latest)
+
+
+***Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org)***
+
 
 An optimized graphs package.
 
