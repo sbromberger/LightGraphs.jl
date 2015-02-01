@@ -80,8 +80,8 @@ end
 
 
 degree(g::Graph, v::Int) = indegree(g,v)
-all_neighbors(g::Graph, v::Int) =
-    filter(x->x!=v,
-        union(neighbors(g,v), [e.dst for e in g.binclist[v]])
-    )
+# all_neighbors(g::Graph, v::Int) =
+#     filter(x->x!=v,
+#         union(neighbors(g,v), [e.dst for e in g.binclist[v]])
+#     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
