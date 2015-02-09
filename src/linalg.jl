@@ -11,7 +11,6 @@ function adjacency_matrix(g::AbstractGraph)
 end
 
 function laplacian_matrix(g::Graph)
-    n_v = nv(g)
     A = int(adjacency_matrix(g))
     D = spdiagm(sum(A,2)[:])
     return D - A
