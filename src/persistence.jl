@@ -12,7 +12,7 @@ function readgraph(fn::AbstractString)
     f = GZip.open(fn,"r")        # will work even if uncompressed
     line = chomp(readline(f))
     nstr, dirundir  = split (line,r"\s*,\s*")
-    n = int(nstr)
+    n = parseint(nstr)
     if dirundir == "u"
         directed = false
     end
@@ -25,8 +25,8 @@ function readgraph(fn::AbstractString)
     while !eof(f)
         line = chomp(readline(f))
         src_s, dst_s = split(line,r"\s*,\s*")
-        src = int(src_s)
-        dst = int(dst_s)
+        src = parseint(src_s)
+        dst = parseint(dst_s)
         add_edge!(g, src, dst)
     end
     return g

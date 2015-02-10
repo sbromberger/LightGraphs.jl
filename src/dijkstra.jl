@@ -198,7 +198,7 @@ function dijkstra_shortest_paths(
     sources::AbstractVector{Int};
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     state::DijkstraStates = create_dijkstra_states(graph)
-    dijkstra_shortest_paths!(graph, sources, visitor, state)
+    dijkstra_shortest_paths!(graph, edge_dists, sources, visitor, state)
 end
 
 function dijkstra_shortest_paths(
