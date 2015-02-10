@@ -24,10 +24,12 @@ function readgraph(fn::AbstractString)
     end
     while !eof(f)
         line = chomp(readline(f))
-        src_s, dst_s = split(line,r"\s*,\s*")
-        src = parseint(src_s)
-        dst = parseint(dst_s)
-        add_edge!(g, src, dst)
+        if length(line) > 0
+            src_s, dst_s = split(line,r"\s*,\s*")
+            src = parseint(src_s)
+            dst = parseint(dst_s)
+            add_edge!(g, src, dst)
+        end
     end
     return g
 end
