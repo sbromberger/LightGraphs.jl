@@ -11,11 +11,11 @@ function adjacency_matrix(g::AbstractGraph)
 end
 
 function laplacian_matrix(g::Graph)
-    A = int(adjacency_matrix(g))
+    A = map(Int, adjacency_matrix(g))
     D = spdiagm(sum(A,2)[:])
     return D - A
 end
 
 laplacian_spectrum(g::Graph) = eigvals(full(laplacian_matrix(g)))
 
-adjacency_spectrum(g::AbstractGraph) = eigvals(full(int(adjacency_matrix(g))))
+adjacency_spectrum(g::AbstractGraph) = eigvals(full(map(Int, adjacency_matrix(g))))
