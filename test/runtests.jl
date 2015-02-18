@@ -48,6 +48,9 @@ tests = [
     "linalg",
     "operators",
     "randgraphs",
+    "bfs",
+    "dfs",
+    "maxadjvisit",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree"
