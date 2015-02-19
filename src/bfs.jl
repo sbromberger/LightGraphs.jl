@@ -112,12 +112,10 @@ end
 
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
-immutable GDistanceVisitor{G<:AbstractGraph} <: AbstractGraphVisitor
-    graph::G
+immutable GDistanceVisitor <: AbstractGraphVisitor
+    graph::AbstractGraph
     dists::Vector{Int}
 end
-
-GDistanceVisitor{G<:AbstractGraph}(g::G, dists) = GDistanceVisitor{G}(g, dists)
 
 function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
     if vcolor == 0

@@ -31,7 +31,8 @@ add_edge!(h, 3, 5)
 @test indegree(h,1) == 0
 @test outdegree(h) == [3, 1, 1, 0, 0]
 @test outdegree(h,1) == 3
-
+@test in_neighbors(h,5) == [2, 3]
+@test out_neighbors(h,1) == [2, 3, 4]
 
 @test p1 == g2
 @test issubset(h2, h1)
