@@ -73,4 +73,6 @@ degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) f
 degree_histogram(g::AbstractGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
 neighbors(g::AbstractGraph, v::Int) = [e.dst for e in g.finclist[v]]
+in_neighbors(g::AbstractGraph, v::Int) = [e.src for e in g.binclist[v]]
+out_neighbors(g::AbstractGraph, v::Int) = [e.dst for e in g.finclist[v]]
 common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))

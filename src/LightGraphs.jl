@@ -12,7 +12,7 @@ module LightGraphs
     in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
     nv, ne, add_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
-    neighbors, common_neighbors,
+    neighbors, in_neighbors, out_neighbors, common_neighbors,
 
     # distance
     eccentricity, diameter, periphery, radius, center,
@@ -20,6 +20,21 @@ module LightGraphs
     # operators
     complement, reverse, reverse!, union, intersect,
     difference, symmetric_difference, compose,
+
+    # graph visit
+    AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
+    discover_vertex!, open_vertex!, close_vertex!,
+    examine_neighbor!, examine_edge!, visited_vertices,
+    traverse_graph, traverse_graph_withlog,
+
+    # bfs
+    BreadthFirst, gdistances, gdistances!,
+
+    # dfs
+    DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
+
+    # maximum_adjacency_visit
+    MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
     # dijkstra
     dijkstra_shortest_paths, dijkstra_predecessor_and_distance,
@@ -48,6 +63,7 @@ module LightGraphs
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+
     # astar
     a_star,
 
@@ -58,6 +74,10 @@ module LightGraphs
         include("digraph.jl")
         include("graph.jl")
             include("astar.jl")
+            include("graphvisit.jl")
+                include("bfs.jl")
+                include("dfs.jl")
+                include("maxadjvisit.jl")
             include("distance.jl")
             include("bellman-ford.jl")
             include("dijkstra.jl")
