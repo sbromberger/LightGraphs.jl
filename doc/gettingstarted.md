@@ -10,10 +10,18 @@ Graphs are created using `Graph()` or `DiGraph()`; there are several options
 
 Edges are added to a graph using `add_edge!(g, e)`. Instead of an edge type
 integers may be passed denoting the source and destination vertices (e.g.,
-`add_edge(g, 1, 2)`).
+`add_edge!(g, 1, 2)`).
 
-Edges must be unique; an attempt to add an edge that already exists in a graph
+Edges must be unique; an attempt to add an edge that already exists in the graph
 will result in an error.
+
+Edges may be removed using `rem_edge!(g, e)`. Alternately, integers may be passed
+denoting the source and destination vertices (e.g., `rem_edge!(g, 1, 2)`). Note
+that, particularly for very large graphs, edge removal is a (relatively)
+expensive operation.
+
+An attempt to remove an edge that does not exist in the graph will result in an
+error.
 
 Edge distances for most traversals may be passed in as a sparse or dense matrix
 of `Float64` values, indexed by `[src,dst]` vertices. That is, `edge_dists[2,4] = 2.5`
@@ -53,6 +61,9 @@ g = Graph(10,30)
 
 # add an edge between vertices 4 and 5
 add_edge!(g, 4, 5)
+
+# remove an edge between vertices 9 and 10
+rem_edge!(g, 9, 10)
 
 # get the neighbors of vertex 4
 neighbors(g, 4)

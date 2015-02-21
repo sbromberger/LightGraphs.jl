@@ -56,6 +56,20 @@ function add_edge!(g::DiGraph, e::Edge)
     return e
 end
 
+function rem_edge!(g::DiGraph, e::Edge)
+    reve = rev(e)
+    if !(has_edge(g,e))
+        error("Edge $e is not in graph")
+    end
+
+    i = findfirst(g.finclist[e.src], e)
+    splice!(g.finclist[e.src], i)
+    i = findfirst(g.binclist[e.dst], e)
+    splice!(g.binclist[e.dst], i)
+    pop!(g.edges, e)
+    return e
+end
+
 has_edge(g::DiGraph, e::Edge) = e in edges(g)
 
 degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)

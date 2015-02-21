@@ -58,6 +58,8 @@ ne(g::AbstractGraph) = length(edges(g))
 
 add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
+rem_edge!(g::AbstractGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
+
 is_directed(g::AbstractGraph) = (typeof(g) == Graph? false : true)
 
 indegree(g::AbstractGraph, v::Int) = length(g.binclist[v])
