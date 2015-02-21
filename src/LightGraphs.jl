@@ -68,7 +68,10 @@ module LightGraphs
     a_star,
 
     # persistence
-    readgraph
+    readgraph,
+
+    # randgraphs
+    erdos_renyi, watts_strogatz
 
     include("core.jl")
         include("digraph.jl")
