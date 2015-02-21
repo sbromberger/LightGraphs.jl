@@ -108,6 +108,11 @@ write(g,"mygraph.jgz")
     - see [smallgraphs.jl](https://github.com/sbromberger/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
 
 
+- random graph generators
+    - Erdős–Rényi
+    - Watts-Strogatz
+
+
 - centrality
     - betweenness
     - closeness

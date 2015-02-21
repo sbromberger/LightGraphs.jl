@@ -1,5 +1,18 @@
+### Random Graphs
+*LightGraphs.jl* implements two common random graph generators:
 
-*LightGraphs.jl* implements a collection of classic graph generators:
+`erdos_renyi(n, p[, is_directed=false])`  
+Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
+graph with *n* vertices. Edges are added between pairs of vertices with probability
+*p*. Undirected graphs are created by default; use `is_directed=true` to override.
+
+`watts_strogatz(n, k, β[, is_directed=false])`  
+Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model) small
+model random graph with *n* vertices, each with degree *k*. Edges are randomized per
+the model based on probability *β*. Undirected graphs are created by default; use `is_directed=true` to override.
+
+### Static Graphs
+*LightGraphs.jl* also implements a collection of classic graph generators:
 
 
 `CompleteGraph(n)`  
