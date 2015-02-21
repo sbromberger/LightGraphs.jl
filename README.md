@@ -37,7 +37,7 @@ Note that for undirected graphs, `edge_dists[4,2]` should also be set.
 
 Edge distances for undefined edges are ignored, and edge distances cannot be zero: any unassigned values (for sparse matrices) or zero values (for sparse or dense matrices) in the edge distance matrix are assumed to be the default distance of 1.0.
 
-### Usage
+### Basic Usage
 (all examples apply equally to `DiGraph` unless otherwise noted):
 
 ```
@@ -52,6 +52,9 @@ g = Graph(10,30)
 
 # add an edge between vertices 4 and 5
 add_edge!(g, 4, 5)
+
+# remove an edge between vertices 9 and 10
+rem_edge!(g, 9, 10)
 
 # get the neighbors of vertex 4
 neighbors(g, 4)

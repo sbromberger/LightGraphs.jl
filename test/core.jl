@@ -55,3 +55,11 @@ add_edge!(h, 3, 5)
 @test neighbors(g, 1) == [2, 3, 4]
 @test common_neighbors(g, 2, 3) == [1, 5]
 @test common_neighbors(h, 2, 3) == [5]
+
+@test rem_edge!(g, 1, 2) == e1
+@test_throws ErrorException rem_edge!(g, 2, 1)
+add_edge!(g, 1, 2)
+@test rem_edge!(g, 2, 1) == e1
+
+@test rem_edge!(h, 1, 2) == e1
+@test_throws ErrorException rem_edge!(h, 1, 2)
