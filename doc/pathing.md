@@ -55,13 +55,26 @@ Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algori
 
 Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex *s* or a set of source vertices *ss*. Returns a `BellmanFordState` with relevant traversal information (see below).
 
-### Path discovery / enumeration
-`enumerate_paths(bfs[, d])`  
-`enumerate_paths(bfs,[, ds])`  
-Given a `BellmanFordState`, returns a vector (indexed by vertex) of the paths between the source vertex *s* used to compute the `BellmanFordState` and a destination vertex, a set of destination vertices, or the entire graph. For multiple destination vertices, each path is represented by a vector of vertices on the path between *s* and the destination. Nonexistent paths will be indicated by an empty vector. For single destinations, the path is represented by a single vector of vertices, and will be length 0 if the path does not exist.
+`floyd_warshall_shortest_paths(g[, edge_dists])`  
+`floyd_warshall_shortest_paths(g[, edge_dists])`  
 
-### Algorithm States
-The `bellman-ford_shortest_paths`, `dijkstra_shortest_paths`, and `dijkstra_predecessor_and_distance` functions return a state that contains various information about the graph learned during traversal. The three state types have the following common information, accessible via the type:
+Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm) to compute shortest paths between all pairs of vertices in graph *g*. Returns a `FloydWarshallState` with relevant traversal information (see below).
+
+Note that this algorithm may return a large amount of data (it will allocate on the order of
+*O(nv^2)*).
+
+
+### Path discovery / enumeration
+`enumerate_paths(state[, v])`  
+`enumerate_paths(state,[, vs])`  
+Given a path state *state* of type `AbstractPathState` (see below), returns a vector (indexed by vertex) of the paths between the source vertex used to compute the path state and a destination vertex *v*, a set of destination vertices *vs*, or the entire graph. For multiple destination vertices, each path is represented by a vector of vertices on the path between the source and the destination. Nonexistent paths will be indicated by an empty vector. For single destinations, the path is represented by a single vector of vertices, and will be length 0 if the path does not exist.
+
+For Floyd-Warshall path states, please note that the output is a bit different, since this
+algorithm calculates all shortest paths for all pairs of vertices: `enumerate_paths(state)` will
+return a vector (indexed by source vertex) of vectors (indexed by destination vertex) of paths. `enumerate_paths(state, v)` will return a vector (indexed by destination vertex) of paths from source *v* to all other vertices. In addition, `enumerate_paths(state, v, d)` will return a vector representing the path from vertex *v* to vertex *d*.
+
+### Path States
+The `floyd_warshall_shortest_paths`, `bellman_ford_shortest_paths`, `dijkstra_shortest_paths`, and `dijkstra_predecessor_and_distance` functions return a state that contains various information about the graph learned during traversal. The three state types have the following common information, accessible via the type:
 
 `.dists`  
 Holds a vector of distances computed, indexed by source vertex.

@@ -43,7 +43,7 @@ end
 
 function _accumulate_basic(
     betweenness::Vector{Float64},
-    state::DijkstraStatesWithPred,
+    state::DijkstraStateWithPred,
     g::AbstractGraph,
     si::Integer
     )
@@ -79,7 +79,7 @@ end
 
 function _accumulate_endpoints(
     betweenness::Vector{Float64},
-    state::DijkstraStatesWithPred,
+    state::DijkstraStateWithPred,
     g::AbstractGraph,
     si::Integer
     )

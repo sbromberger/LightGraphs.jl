@@ -43,7 +43,7 @@ module LightGraphs
     bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 
     # floyd-warshall
-    floyd_warshall,
+    floyd_warshall_shortest_paths,
 
     # smallgraphs
     CompleteGraph, StarGraph, PathGraph, WheelGraph,

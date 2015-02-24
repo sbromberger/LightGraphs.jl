@@ -6,3 +6,6 @@ z = dijkstra_shortest_paths(g4, 2; edge_dists=d)
 
 z = dijkstra_predecessor_and_distance(g4, 2; edge_dists=d)
 @test z.predecessors[3] == [2]
+
+@test enumerate_paths(z)[2] == []
+@test enumerate_paths(z)[4] == enumerate_paths(z,4) == [2,3,4]
