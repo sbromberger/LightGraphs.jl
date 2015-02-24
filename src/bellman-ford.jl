@@ -25,32 +25,33 @@
 
 ###################################################################
 #
-#   The type that capsulates the states of Bellman Ford algorithm
+#   The type that capsulates the state of Bellman Ford algorithm
 #
 ###################################################################
 
 type NegativeCycleError <: Exception end
 
-type BellmanFordStates
+# AbstractPathState is defined in core
+type BellmanFordState<:AbstractPathState
     parents::Vector{Int}
     dists::Vector{Float64}
 end
 
-# create Bellman Ford states
+# create Bellman Ford state
 
-function create_bellman_ford_states(g::AbstractGraph)
+function create_bellman_ford_state(g::AbstractGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
 
-    BellmanFordStates(parents, dists)
+    BellmanFordState(parents, dists)
 end
 
 function bellman_ford_shortest_paths!(
     graph::AbstractGraph,
     edge_dists::AbstractArray{Float64, 2},
     sources::AbstractVector{Int},
-    state::BellmanFordStates)
+    state::BellmanFordState)
 
     use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
 
@@ -103,7 +104,7 @@ function bellman_ford_shortest_paths(
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
     )
 
-    state = create_bellman_ford_states(graph)
+    state = create_bellman_ford_state(graph)
     bellman_ford_shortest_paths!(graph, edge_dists, sources, state)
 end
 
@@ -121,7 +122,7 @@ function has_negative_edge_cycle(graph::AbstractGraph)
 end
 
 
-function enumerate_paths(state::BellmanFordStates, dest::Vector{Int})
+function enumerate_paths(state::AbstractPathState, dest::Vector{Int})
     parents = state.parents
 
     num_dest = length(dest)
@@ -141,5 +142,5 @@ function enumerate_paths(state::BellmanFordStates, dest::Vector{Int})
     all_paths
 end
 
-enumerate_paths(state::BellmanFordStates, dest) = enumerate_paths(state, [dest])[1]
-enumerate_paths(state::BellmanFordStates) = enumerate_paths(state, [1:length(state.parents)])
+enumerate_paths(state::AbstractPathState, dest) = enumerate_paths(state, [dest])[1]
+enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents)])

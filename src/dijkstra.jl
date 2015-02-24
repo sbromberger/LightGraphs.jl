@@ -52,15 +52,16 @@ type TrivialDijkstraVisitor <: AbstractDijkstraVisitor
 end
 
 
-abstract AbstractDijkstraStates
+
+abstract AbstractDijkstraState<:AbstractPathState
 ###################################################################
 #
 #   dijkstra_predecessor_and_distance functions
 #
 ###################################################################
 
-# standard dijkstra state
-type DijkstraStates<: AbstractDijkstraStates
+# standard dijkstra state - AbstractPathState is defined in core
+type DijkstraState<: AbstractDijkstraState
     parents::Vector{Int}
     dists::Vector{Float64}
     colormap::Vector{Int}
@@ -68,24 +69,24 @@ type DijkstraStates<: AbstractDijkstraStates
     hmap::Vector{Int}
 end
 
-function create_dijkstra_states(g::AbstractGraph)
+function create_dijkstra_state(g::AbstractGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry)
     hmap = zeros(Int, n)
-    DijkstraStates(parents, dists, colormap, heap, hmap)
+    DijkstraState(parents, dists, colormap, heap, hmap)
 end
 
-function set_source!(state::DijkstraStates, g::AbstractGraph, s::Int)
+function set_source!(state::DijkstraState, g::AbstractGraph, s::Int)
     state.parents[s] = 0        # we are setting the parent of source to 0
     state.dists[s] = 0.0
     state.colormap[s] = 2
 end
 
 function process_neighbors!(
-    state::DijkstraStates,
+    state::DijkstraState,
     graph::AbstractGraph,
     edge_dists::AbstractArray{Float64, 2},
     u::Int, du::Float64, visitor::AbstractDijkstraVisitor)
@@ -141,7 +142,7 @@ function dijkstra_shortest_paths!(
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
-    state::DijkstraStates      # the states
+    state::DijkstraState      # the state
     )
 
     # get state fields
@@ -197,7 +198,7 @@ function dijkstra_shortest_paths(
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
-    state::DijkstraStates = create_dijkstra_states(graph)
+    state::DijkstraState = create_dijkstra_state(graph)
     dijkstra_shortest_paths!(graph, edge_dists, sources, visitor, state)
 end
 
@@ -206,7 +207,7 @@ function dijkstra_shortest_paths(
     s::Int;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
-    state = create_dijkstra_states(graph)
+    state = create_dijkstra_state(graph)
     dijkstra_shortest_paths!(graph, edge_dists, [s], visitor, state)
 end
 
@@ -231,7 +232,7 @@ end
 
 
 # This DijkstraState tracks predecessors and path counts
-type DijkstraStatesWithPred<: AbstractDijkstraStates
+type DijkstraStateWithPred<: AbstractDijkstraState
     parents::Vector{Int}
     dists::Vector{Float64}
     colormap::Vector{Int}
@@ -243,7 +244,7 @@ end
 
 
 # Create Dijkstra state that tracks predecessors and path counts
-function create_dijkstra_states_with_pred(g::AbstractGraph)
+function create_dijkstra_state_with_pred(g::AbstractGraph)
     n = nv(g)
     parents = zeros(Int, n)
     dists = fill(typemax(Float64), n)
@@ -256,10 +257,10 @@ function create_dijkstra_states_with_pred(g::AbstractGraph)
     for i = 1:n
         predecessors[i] = []
     end
-    DijkstraStatesWithPred(parents, dists, colormap, pathcounts, predecessors, heap, hmap)
+    DijkstraStateWithPred(parents, dists, colormap, pathcounts, predecessors, heap, hmap)
 end
 
-function set_source_with_pred!(state::DijkstraStatesWithPred, g::AbstractGraph, s::Int)
+function set_source_with_pred!(state::DijkstraStateWithPred, g::AbstractGraph, s::Int)
     state.parents[s] = 0        # we are setting the parent of source to 0
     state.dists[s] = 0.0
     state.colormap[s] = 2
@@ -268,7 +269,7 @@ function set_source_with_pred!(state::DijkstraStatesWithPred, g::AbstractGraph, 
 end
 
 function process_neighbors_with_pred!(
-    state::DijkstraStatesWithPred,
+    state::DijkstraStateWithPred,
     graph::AbstractGraph,
     edge_dists::AbstractArray{Float64, 2},
     # edge_dist_fn::T,
@@ -333,7 +334,7 @@ function dijkstra_predecessor_and_distance!(
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
-    state::DijkstraStatesWithPred      # the states
+    state::DijkstraStateWithPred      # the state
     )
 
     # get state fields
@@ -389,7 +390,7 @@ function dijkstra_predecessor_and_distance(
     # edge_dist_fn::T, # distances associated with edges
     sources::AbstractVector{Int};
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
-    state::DijkstraStatesWithPred = create_dijkstra_states_with_pred(graph)
+    state::DijkstraStateWithPred = create_dijkstra_state_with_pred(graph)
     dijkstra_predecessor_and_distance!(graph, edge_dists, sources, visitor, state)
 end
 
@@ -399,6 +400,6 @@ function dijkstra_predecessor_and_distance(
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0)),
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor()
 )
-    state = create_dijkstra_states_with_pred(graph)
+    state = create_dijkstra_state_with_pred(graph)
     dijkstra_predecessor_and_distance!(graph, edge_dists, [s], visitor, state)
 end

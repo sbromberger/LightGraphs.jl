@@ -22,7 +22,8 @@
 # > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-type FloydWarshallState
+
+type FloydWarshallState<:AbstractPathState
     dists::Vector{Vector{Float64}}
     parents::Vector{Vector{Int}}
 end
@@ -35,7 +36,7 @@ end
 #     Note that it is possible to consume large amounts of memory as the
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
-function floyd_warshall(
+function floyd_warshall_shortest_paths(
     g::AbstractGraph;
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
 )
@@ -80,3 +81,25 @@ function floyd_warshall(
 
     return fws
 end
+
+function enumerate_paths(s::FloydWarshallState, v::Integer)
+    pathinfo = s.parents[v]
+    paths = Vector{Int}[]
+    for i in 1:length(pathinfo)
+        if i == v
+            push!(paths, Int[])
+        else
+            path = Int[]
+            currpathindex = i
+            while currpathindex != 0
+                push!(path,currpathindex)
+                currpathindex = pathinfo[currpathindex]
+            end
+            push!(paths, reverse(path))
+        end
+    end
+    return paths
+end
+
+enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:length(s.parents)]
+enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]

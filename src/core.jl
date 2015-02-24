@@ -1,4 +1,5 @@
 abstract AbstractGraph
+abstract AbstractPathState
 
 immutable Edge
     src::Int
