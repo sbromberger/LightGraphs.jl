@@ -18,8 +18,8 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int)
     n = nv(g)                           # dimension of matrix
     ## number of nonzeros in the result is 2*ne(g) for Graph, ne(g) for DiGraph
     nz = ne(g) * (isa(g,LightGraphs.Graph) + 1)
-    colpt = ones(T,n + 1)
-    rowval = sizehint!(T[],nz)
+    colpt = ones(Int,n + 1)
+    rowval = sizehint!(Int[],nz)
     for j in 1:n
         ev = [dst(e) for e in g.finclist[j]]
         colpt[j+1] = colpt[j] + length(ev)
