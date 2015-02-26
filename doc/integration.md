@@ -19,3 +19,13 @@ julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
 ```
 producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/5848475/b31c41f2-a18d-11e4-8a4d-fcd148335bc9.png)
+
+###[Metis.jl](https://github.com/JuliaSparse/Metis.jl)
+The Metis graph partitioning package can interface with *LightGraphs.jl*:
+
+```julia
+julia> g = Graph(100,1000)
+{100, 1000} undirected graph
+
+julia> partGraphKway(g, 6)  # 6 partitions
+```

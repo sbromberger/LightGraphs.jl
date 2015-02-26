@@ -120,7 +120,7 @@ write(g,"mygraph.jgz")
 
 
 - linear algebra
-    - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl))
+    - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
 
 
