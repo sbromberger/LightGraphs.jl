@@ -14,26 +14,18 @@
 # end
 
 # this function is optimized for speed.
-function adjacency_matrix(g::AbstractGraph, as::DataType=Int)
-    n_v = nv(g)
-    mx = spzeros(as,0,0)
-    mx.n = n_v
-    mx.m = n_v
-    colindex = 1
-    for r in g.finclist
-        colvals = Int[]
-        for e in r
-
-            push!(colvals, dst(e))
-            push!(mx.nzval, one(as))
-            colindex += 1
-        end
-        sort!(colvals)
-        append!(mx.rowval, colvals)
-        push!(mx.colptr, colindex)
+function adjacency_matrix(g::AbstractGraph, T::DataType=Int)
+    n = nv(g)                           # dimension of matrix
+    ## number of nonzeros in the result is 2*ne(g) for Graph, ne(g) for DiGraph
+    nz = ne(g) * (isa(g,LightGraphs.Graph) + 1)
+    colpt = ones(T,n + 1)
+    rowval = sizehint!(T[],nz)
+    for j in 1:n
+        ev = [dst(e) for e in g.finclist[j]]
+        colpt[j+1] = colpt[j] + length(ev)
+        append!(rowval,sort!(ev))
     end
-
-    return mx
+    return SparseMatrixCSC(n,n,colpt,rowval,ones(T,nz))
 end
 
 function laplacian_matrix(g::Graph)
