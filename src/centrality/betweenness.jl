@@ -56,7 +56,7 @@ function _accumulate_basic(
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source nodes by decreasing distance for this to work.
-    v1 = [1:nv]
+    v1 = [1:nv;]
     v2 = state.dists
     S = Int[x[2] for x in sort(collect(zip(v2,v1)), rev=true)]
     # println("S = $S, P = $P, σ = $σ, si = $si")
@@ -88,7 +88,7 @@ function _accumulate_endpoints(
     δ = zeros(nv)
     σ = state.pathcounts
     P = state.predecessors
-    v1 = [1:nv]
+    v1 = [1:nv;]
     v2 = state.dists
     # v1 = [1:nv][state.hasparent] # the state.hasparent will fix P[si] = [] when it's merged
     # v2 = state.dists[state.hasparent]
