@@ -24,6 +24,6 @@ Produces a graph with edges from graph *g* that do not exist in graph *h*, and v
 `compose(g, h)`  
 Merges graphs *g* and *h* by taking the set union of all vertices and edges.
 
-`function inducedsubgraph(g, vs)`  
+`inducedsubgraph(g, vs)`  
 Filters graph *g* to include only the vertices present in *vs*. Returns the subgraph of *g* induced by set(*vs*) along with the mapping from old to new vertex indices.
 
