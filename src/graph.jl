@@ -107,3 +107,5 @@ degree(g::Graph, v::Int) = indegree(g,v)
 #         union(neighbors(g,v), [e.dst for e in g.binclist[v]])
 #     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
+
+

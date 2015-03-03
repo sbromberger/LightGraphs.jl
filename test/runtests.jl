@@ -53,7 +53,8 @@ tests = [
     "maxadjvisit",
     "centrality/betweenness",
     "centrality/closeness",
-    "centrality/degree"
+    "centrality/degree",
+    "subgraphs"
     ]
 
 

@@ -114,3 +114,29 @@ function compose{T<:AbstractGraph}(g::T, h::T)
     end
     return r
 end
+
+#@doc "filter g to include only the vertices present in iter which should not have duplicates
+#returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
+function inducedsubgraph(g::AbstractGraph, iter)
+    n = length(iter)
+    h = Graph(n)
+    newvid = Dict()
+    i=1
+    for v in iter
+        newvid[v] = i
+        i +=1
+    end
+    inducedsubgraph!(h,edges(g),newvid)
+    return h, newvid
+end
+
+#@doc "inplace filtering for preallocated output, edge iterable, vertex mapping" ->
+function inducedsubgraph!(h::AbstractGraph, edges, newvid)
+    for edg in edges
+        newsrc = get(newvid, src(edg), 0)
+        newdst = get(newvid, dst(edg), 0)
+        if newsrc > 0 && newdst > 0
+            add_edge!(h, newsrc, newdst)
+        end
+    end
+end
