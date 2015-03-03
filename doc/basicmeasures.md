@@ -58,5 +58,9 @@ Returns the density of graph *g*. Density is defined as the ratio of the number 
 `neighbors(g, v)`  
 Returns a list of all neighbors of vertex *v* in *g*.
 
+`in_neighbors(g, v)`  
+`out_neighbors(g, v)`  
+Returns a list of all neighbors connected to vertex *v* by an outgoing (incoming) edge.
+
 `common_neighbors(g, u, v)`  
 Returns the neighbors common to vertices *u* and *v* in *g*.

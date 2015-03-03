@@ -1,31 +1,16 @@
-# This function is not very efficient due to assignment within sparse matrices.
-# Deprecated in favor of the function below.
-# function adjacency_matrix(g::AbstractGraph; T::DataType=Int)
-#     n_v = nv(g)
-#     mx = spzeros(T, n_v, n_v)
-#     # sizehint!(mx, ne(g))
-#     for e in edges(g)
-#         mx[src(e), dst(e)] = one(T)
-#         if !is_directed(g)
-#             mx[dst(e), src(e)] = one(T)
-#         end
-#     end
-#     return mx
-# end
-
 # this function is optimized for speed.
 function adjacency_matrix(g::AbstractGraph, T::DataType=Int)
-    n = nv(g)                           # dimension of matrix
+    n_v = nv(g)                           # dimension of matrix
     ## number of nonzeros in the result is 2*ne(g) for Graph, ne(g) for DiGraph
-    nz = ne(g) * (isa(g,LightGraphs.Graph) + 1)
-    colpt = ones(Int,n + 1)
+    nz = ne(g) * (is_directed(g)? 1 : 2)
+    colpt = ones(Int,n_v + 1)
     rowval = sizehint!(Int[],nz)
-    for j in 1:n
-        ev = [dst(e) for e in g.finclist[j]]
-        colpt[j+1] = colpt[j] + length(ev)
-        append!(rowval,sort!(ev))
+    for j in 1:n_v
+        dsts = out_neighbors(g, j)
+        colpt[j+1] = colpt[j] + length(dsts)
+        append!(rowval,sort!(dsts))
     end
-    return SparseMatrixCSC(n,n,colpt,rowval,ones(T,nz))
+    return SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
 end
 
 function laplacian_matrix(g::Graph)

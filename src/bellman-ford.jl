@@ -143,4 +143,4 @@ function enumerate_paths(state::AbstractPathState, dest::Vector{Int})
 end
 
 enumerate_paths(state::AbstractPathState, dest) = enumerate_paths(state, [dest])[1]
-enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents)])
+enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
