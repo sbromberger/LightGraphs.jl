@@ -23,3 +23,10 @@ Produces a graph with edges from graph *g* that do not exist in graph *h*, and v
 
 `compose(g, h)`  
 Merges graphs *g* and *h* by taking the set union of all vertices and edges.
+
+`function inducedsubgraph(g::AbstractGraph, iter)`
+Filter *g* to include only the vertices present in iter which should not have duplicates.
+Returns the subgraph of *g* induced by set(iter) along with the mapping from the old vertex names to the new vertex names.
+
+`inducedsubgraph!(h, g, newvid)`
+Inplace filtering for preallocated output, edge iterable, vertex mapping.
