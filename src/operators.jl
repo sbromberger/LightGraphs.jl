@@ -129,7 +129,7 @@ function inducedsubgraph{T<:AbstractGraph}(g::T, iter)
     for s in iter
         for d in intersect(iter, out_neighbors(g, s))
             newe = Edge(newvid[s], newvid[d])
-            if haskey(newvid, d) && !has_edge(h, newe)
+            if !has_edge(h, newe)
                 add_edge!(h,newvid[s], newvid[d])
             end
         end
