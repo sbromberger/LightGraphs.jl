@@ -20,6 +20,7 @@ module LightGraphs
     # operators
     complement, reverse, reverse!, union, intersect,
     difference, symmetric_difference, compose,
+    inducedsubgraph,
 
     # graph visit
     AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
