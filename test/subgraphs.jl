@@ -4,7 +4,7 @@ using Base.Test
 
 g = BullGraph()
 n = 3
-h, vmap = inducedsubgraph(g, [1:n])
+h, vmap = inducedsubgraph(g, [1:n;])
 @test nv(h) == n
 @test ne(h) == 3
 
