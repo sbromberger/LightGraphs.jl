@@ -119,8 +119,8 @@ end
 #returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
 function inducedsubgraph(g::AbstractGraph, iter)
     n = length(iter)
-    h = Graph(n)
-    newvid = Dict()
+    h = typeof(g)(n)
+    newvid = Dict{Int,Int}()
     i=1
     for v in iter
         newvid[v] = i
