@@ -93,8 +93,9 @@ write(g,"mygraph.jgz")
     - union
     - intersect
     - difference
-    - symmetric_difference
+    - symmetric difference
     - compose
+    - induced subgraphs
 
 
 - shortest path
