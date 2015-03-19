@@ -1,6 +1,6 @@
 site_name: LightGraphs.jl
 site_author: Seth Bromberger
-repo_url: https://github.com/sbromberger/LightGraphs.jl/
+repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
 theme: readthedocs
 pages:
 - ['index.md', 'Home']
