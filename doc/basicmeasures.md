@@ -49,6 +49,14 @@ Returns the degree (indegree, outdegree) of vertex *v* in *g*.
 `δ(g)`  
 Returns the maximum (minimum) degree of *g* across all vertices.
 
+`Δout(g)`
+`δout(g)`
+Returns the maximum (minimum) outdegree of *g* across all vertices.
+
+`δin(g)`
+`Δin(g)`
+Returns the maximum (minimum) indegree of *g* across all vertices.
+
 `degree_histogram(g)`  
 Produces a histogram of degree values across all vertices for the graph *g*. The number of histogram buckets is based on the number of vertices in *g*.
 
