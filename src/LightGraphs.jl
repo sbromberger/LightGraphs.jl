@@ -2,7 +2,7 @@ module LightGraphs
     using Compat
     using GZip
     using DataStructures
-    using StatsBase
+    using Distributions
 
 
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
