@@ -5,8 +5,9 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int)
     nz = ne(g) * (is_directed(g)? 1 : 2)
     colpt = ones(Int,n_v + 1)
     rowval = sizehint!(Int[],nz)
+    storage = Array(Int, Δout(g))
     for j in 1:n_v
-        dsts = out_neighbors(g, j)
+        dsts = outneighbors!(storage, g, j)
         colpt[j+1] = colpt[j] + length(dsts)
         append!(rowval,sort!(dsts))
     end
@@ -17,6 +18,15 @@ function laplacian_matrix(g::Graph)
     A = adjacency_matrix(g)
     D = spdiagm(sum(A,2)[:])
     return D - A
+end
+
+function outneighbors!(outneighborhood, g, j)
+    edgecollection = out_edges(g, j)
+    degj = outdegree(g, j)
+    for i =1:degj
+        outneighborhood[i] = edgecollection[i].dst
+    end
+    return sub(outneighborhood, 1:degj)
 end
 
 laplacian_spectrum(g::Graph) = eigvals(full(laplacian_matrix(g)))

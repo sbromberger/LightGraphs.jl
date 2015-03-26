@@ -70,8 +70,26 @@ outdegree(g::AbstractGraph, v::Int) = length(g.finclist[v])
 indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
 outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
 degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
-Δ(g::AbstractGraph) = maximum(degree(g))
-δ(g::AbstractGraph) = minimum(degree(g))
+#Δ(g::AbstractGraph) = maximum(degree(g))
+#δ(g::AbstractGraph) = minimum(degree(g))
+Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
+δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
+δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
+Δin(g)  = noallocextreme(indegree,(>), typemin(Int), g)
+δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
+Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
+
+#"computes the extreme value of [f(g,i) for i=i:nv(g)] without gathering them all"
+function noallocextreme(f, comparison, initial, g)
+    value = initial
+    for i in 1:nv(g)
+        funci = f(g, i)
+        if comparison(funci, value)
+            value = funci
+        end
+    end
+    return value
+end
 
 degree_histogram(g::AbstractGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
