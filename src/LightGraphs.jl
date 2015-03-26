@@ -2,7 +2,7 @@ module LightGraphs
     using Compat
     using GZip
     using DataStructures
-    using StatsBase
+    using Distributions
 
 
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
@@ -72,7 +72,7 @@ module LightGraphs
     readgraph,
 
     # randgraphs
-    erdos_renyi, watts_strogatz
+    erdos_renyi, sparse_erdos_renyi, watts_strogatz
 
     include("core.jl")
         include("digraph.jl")

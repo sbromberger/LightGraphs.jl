@@ -6,6 +6,10 @@ Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 graph with *n* vertices. Edges are added between pairs of vertices with probability
 *p*. Undirected graphs are created by default; use `is_directed=true` to override.
 
+`sparse_erdos_renyi(n, p[, is_directed=false])`  
+When *p* is small do only O(n) work to generate a uniform random sparse graph.
+See `erdos_renyi(n, p[, is_directed=false])` for more information.
+
 `watts_strogatz(n, k, β[, is_directed=false])`  
 Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model) small
 model random graph with *n* vertices, each with degree *k*. Edges are randomized per
