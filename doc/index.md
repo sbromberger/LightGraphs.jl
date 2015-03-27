@@ -1,7 +1,7 @@
 # LightGraphs.jl
 
-[![Build Status](https://travis-ci.org/sbromberger/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/sbromberger/LightGraphs.jl)
-[![Coverage Status](https://coveralls.io/repos/sbromberger/LightGraphs.jl/badge.svg?branch=master)](https://coveralls.io/r/sbromberger/LightGraphs.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
+[![Coverage Status](https://coveralls.io/repos/JuliaGraphs/LightGraphs.jl/badge.svg?branch=master)](https://coveralls.io/r/JuliaGraphs/LightGraphs.jl?branch=master)
 
 An optimized graphs package.
 
