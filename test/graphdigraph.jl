@@ -46,3 +46,24 @@ badadjmx = [ 0 1 0; 1 0 1]
 
 @test_throws BoundsError add_edge!(g, 100, 100)
 @test_throws BoundsError add_edge!(h, 100, 100)
+
+#println("sparse graph gen")
+n = 100
+p = 30/n
+a = sprandbool(n, n, p)
+a += a'
+a = int(a)
+for i = 1:n
+	if a[i,i] != 0
+		a[i,i] = 0
+	end
+end
+fulla = full(a)
+h = Graph(fulla)
+h = Graph(fulla)
+
+g = Graph(a)
+g = Graph(a)
+b = adjacency_matrix(g)
+#@show a-b
+@test a == b

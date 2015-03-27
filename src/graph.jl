@@ -44,6 +44,60 @@ function Graph{T<:Number}(adjmx::Array{T, 2})
     return g
 end
 
+#function convert(::Type{Vector{Vector{T}}}, a::SparseMatrixCSC{T})
+function raggedize(a::SparseMatrixCSC)
+    numcols = size(a,2)
+    cols = Array(Vector{Int}, numcols)
+    for i=1:numcols
+        rangidx = a.colptr[i]:a.colptr[i+1]-1
+        cols[i] = a.rowval[rangidx]
+    end
+    return cols
+end
+
+function getfinclist(neighborhood, i)
+    degi = length(neighborhood)
+    edges = Array(Edge, degi)
+    for j = 1:degi
+        edges[j] = Edge(i, neighborhood[j])
+    end
+    return edges
+end
+
+function getbinclist(neighborhood, i)
+    degi = length(neighborhood)
+    edges = Array(Edge, degi)
+    for j = 1:degi
+        edges[j] = Edge(neighborhood[j], i)
+    end
+    return edges
+end
+
+function Graph{T<:Number}(adjmx::SparseMatrixCSC{T})
+    numrows = size(adjmx,1)
+    numcols = size(adjmx,2)
+    numrows == numcols || error("Adjacency matrices must be square: $numrows == $numcols")
+    finclist = Array(Vector{Edge}, numrows)
+    binclist = Array(Vector{Edge}, numrows)
+    g = Graph(1:numrows, Set{Edge}(), binclist, finclist)
+    cols = raggedize(adjmx)
+    println("pushing edges")
+    @time for i=1:numcols
+        neighborhood = cols[i]
+        degi = length(neighborhood)
+        newedges = getfinclist(neighborhood, i)
+        g.finclist[i] = newedges
+        union!(g.edges, newedges)
+    end
+    rows = raggedize(adjmx')
+    for j=1:numrows
+        neighborhood = rows[j]
+        degj = length(neighborhood)
+        newedges = getbinclist(neighborhood, j)
+        g.binclist[j] = newedges
+    end
+    return g
+end
 
 function Graph(g::DiGraph)
     gnv = nv(g)
