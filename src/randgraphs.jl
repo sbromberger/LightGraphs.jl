@@ -1,5 +1,4 @@
 # These are test functions only, used for consistent centrality comparisons.
-
 function Graph(nv::Integer, ne::Integer)
     g = Graph(nv)
 
@@ -47,6 +46,31 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false)
             end
         end
     end
+    return g
+end
+
+
+using Distributions
+#faster for sparse erdos renyi graphs if p≈1, then use the erdos_renyi function
+function sparse_erdos_renyi(n::Integer, p::Real; is_directed=false)
+    if is_directed
+        possibleedges = n*(n - 1)
+        g = DiGraph(n)
+    else
+        possibleedges = div(n^2-n, 2)
+        g = Graph(n)
+    end
+    numedges = rand(Binomial(possibleedges, p))
+    vtxdist  = DiscreteUniform(1, n)
+    k = 0
+    while k < numedges
+        i, j = rand(vtxdist), rand(vtxdist)
+        if !has_edge(g, i, j)
+            add_edge!(g, i, j)
+            k += 1
+        end
+    end
+    @assert ne(g)==numedges "the number of edges is wrong"
     return g
 end
 
