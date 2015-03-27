@@ -72,7 +72,7 @@ module LightGraphs
     readgraph,
 
     # randgraphs
-    erdos_renyi, sparse_erdos_renyi, watts_strogatz
+    erdos_renyi, watts_strogatz
 
     include("core.jl")
         include("digraph.jl")

@@ -6,14 +6,14 @@ Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 graph with *n* vertices. Edges are added between pairs of vertices with probability
 *p*. Undirected graphs are created by default; use `is_directed=true` to override.
 
-`sparse_erdos_renyi(n, p[, is_directed=false])`  
-When *p* is small do only O(n) work to generate a uniform random sparse graph.
-See `erdos_renyi(n, p[, is_directed=false])` for more information.
+Note also that Erdős–Rényi graphs may be generated quickly using the `Graph(nv, ne)`
+constructor, which randomly includes *ne* edges from the set of vertices.
+
 
 `watts_strogatz(n, k, β[, is_directed=false])`  
-Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model) small
-model random graph with *n* vertices, each with degree *k*. Edges are randomized per
-the model based on probability *β*. Undirected graphs are created by default; use `is_directed=true` to override.
+Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+small model random graph with *n* vertices, each with degree *k*. Edges are randomized per the model based on probability *β*. Undirected graphs are created
+by default; use `is_directed=true` to override.
 
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
