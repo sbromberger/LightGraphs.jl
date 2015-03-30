@@ -66,10 +66,9 @@ function bellman_ford_shortest_paths!(
         no_changes = true
         new_active = Set{Int}()
         for u in active
-            for e in out_edges(graph, u)
-                v = dst(e)
+            for v in fadj(graph, u)
                 if use_dists
-                    edist = edge_dists[src(e), dst(e)]
+                    edist = edge_dists[u, v]
                     if edist == 0.0
                         edist = 1.0
                     end

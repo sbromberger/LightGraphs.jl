@@ -32,7 +32,7 @@ Returns the edges with vertex *v* as a destination or as a source.
 `dst(e)`  
 Returns the source or destination vertex of edge *e*.
 
-`rev(e)`  
+`reverse(e)`  
 Returns an edge whose source and destination are switched from edge *e*.
 
 `==(e, f)`  

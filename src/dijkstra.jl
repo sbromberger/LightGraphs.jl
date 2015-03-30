@@ -99,13 +99,12 @@ function process_neighbors!(
     dv::Float64 = zero(Float64)
 
     use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
-    for e in out_edges(graph, u)
-        v::Int = dst(e)
+    for v in fadj(graph,u)
         v_color::Int = colormap[v]
 
         if v_color == 0
             if use_dists
-                edist = edge_dists[src(e), dst(e)]
+                edist = edge_dists[u, v]
                 if edist == 0.0
                     edist = 1.0
                 end
@@ -121,7 +120,7 @@ function process_neighbors!(
 
         elseif v_color == 1
             if use_dists
-                dv = du + edge_dists[src(e), dst(e)]
+                dv = du + edge_dists[u, v]
             else
                 dv = du + 1.0
             end
@@ -286,11 +285,10 @@ function process_neighbors_with_pred!(
 
     use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
 
-    for e in out_edges(graph, u)
-        v::Int = dst(e)
+    for v in fadj(graph, u)
         v_color::Int = colormap[v]
         if use_dists
-            edist = edge_dists[src(e), dst(e)]
+            edist = edge_dists[u, v]
             if edist == 0.0
                 edist = 1.0
             end

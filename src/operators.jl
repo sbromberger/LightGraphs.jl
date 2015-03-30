@@ -31,7 +31,7 @@ function reverse(g::DiGraph)
     gne = ne(g)
     h = DiGraph(gnv)
     for e in edges(g)
-        add_edge!(h, rev(e))
+        add_edge!(h, reverse(e))
     end
     return h
 end
@@ -40,10 +40,10 @@ function reverse!(g::DiGraph)
     gne = ne(g)
     reve = Set{Edge}()
     for e in edges(g)
-        push!(reve, rev(e))
+        push!(reve, reverse(e))
     end
     g.edges = reve
-    g.finclist, g.binclist = g.binclist, g.finclist
+    g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
 

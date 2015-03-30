@@ -10,12 +10,12 @@ er = erdos_renyi(10, 0.5, is_directed=true)
 @test nv(er) == 10
 @test is_directed(er) == true
 
-er = sparse_erdos_renyi(10, 0.5)
-@test nv(er) == 10
-@test is_directed(er) == false
-er = sparse_erdos_renyi(10, 0.5, is_directed=true)
-@test nv(er) == 10
-@test is_directed(er) == true
+# er = sparse_erdos_renyi(10, 0.5)
+# @test nv(er) == 10
+# @test is_directed(er) == false
+# er = sparse_erdos_renyi(10, 0.5, is_directed=true)
+# @test nv(er) == 10
+# @test is_directed(er) == true
 
 ws = watts_strogatz(10,4,0.2)
 @test nv(ws) == 10

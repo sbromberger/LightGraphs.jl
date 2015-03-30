@@ -1,8 +1,8 @@
 type DiGraph<:AbstractGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
-    finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
-    binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
+    fadjlist::Vector{Vector{Int}} # [src]: (dst), (dst), (dst)
+    badjlist::Vector{Vector{Int}} # [dst]: (src), (src), (src)
 end
 
 
@@ -15,13 +15,13 @@ function show(io::IO, g::DiGraph)
 end
 
 function DiGraph(n::Int)
-    finclist = Vector{Edge}[]
-    binclist = Vector{Edge}[]
+    fadjlist = Vector{Int}[]
+    badjlist = Vector{Int}[]
     for i = 1:n
-        push!(binclist, Edge[])
-        push!(finclist, Edge[])
+        push!(badjlist, Int[])
+        push!(fadjlist, Int[])
     end
-    return DiGraph(1:n, Set{Edge}(), binclist, finclist)
+    return DiGraph(1:n, Set{Edge}(), badjlist, fadjlist)
 end
 
 DiGraph() = DiGraph(0)
@@ -43,29 +43,29 @@ end
 
 
 function add_edge!(g::DiGraph, e::Edge)
-    if !(has_vertex(g,e.src) && has_vertex(g,e.dst))
+    if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
         throw(BoundsError())
     elseif e in edges(g)
         error("Edge $e is already in graph")
     else
-        reve = rev(e)
-        push!(g.finclist[e.src], e)
-        push!(g.binclist[e.dst], e)
+        reve = reverse(e)
+        push!(g.fadjlist[src(e)], dst(e))
+        push!(g.badjlist[dst(e)], src(e))
         push!(g.edges, e)
     end
     return e
 end
 
 function rem_edge!(g::DiGraph, e::Edge)
-    reve = rev(e)
+    reve = reverse(e)
     if !(has_edge(g,e))
         error("Edge $e is not in graph")
     end
 
-    i = findfirst(g.finclist[e.src], e)
-    splice!(g.finclist[e.src], i)
-    i = findfirst(g.binclist[e.dst], e)
-    splice!(g.binclist[e.dst], i)
+    i = findfirst(g.fadjlist[src(e)], dst(e))
+    splice!(g.fadjlist[src(e)], i)
+    i = findfirst(g.badjlist[dst(e)], src(e))
+    splice!(g.badjlist[dst(e)], i)
     pop!(g.edges, e)
     return e
 end

@@ -1,24 +1,37 @@
 abstract AbstractGraph
 abstract AbstractPathState
 
-immutable Edge
-    src::Int
-    dst::Int
+if VERSION < v"0.4.0-dev+818"
+    immutable Pair{T1,T2}
+        first::T1
+        second::T2
+    end
+
 end
 
-src(e::Edge) = e.src
-dst(e::Edge) = e.dst
+if VERSION < v"0.4.0-dev+4103"
+    reverse(p::Pair) = Pair(p.second, p.first)
+end
 
-rev(e::Edge) = Edge(e.dst,e.src)
+typealias Edge Pair{Int,Int}
 
-==(e1::Edge, e2::Edge) = (e1.src == e2.src && e1.dst == e2.dst)
+src(e::Edge) = e.first
+dst(e::Edge) = e.second
+
+
+==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 
 function show(io::IO, e::Edge)
-    print(io, "edge $(e.src) - $(e.dst)")
+    print(io, "edge $(e.first) - $(e.second)")
 end
 
 vertices(g::AbstractGraph) = g.vertices
 edges(g::AbstractGraph) = g.edges
+fadj(g::AbstractGraph) = g.fadjlist
+fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
+badj(g::AbstractGraph) = g.badjlist
+badj(g::AbstractGraph, v::Int) = g.badjlist[v]
+
 
 function =={T<:AbstractGraph}(g::T, h::T)
     return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
@@ -34,8 +47,8 @@ end
 function add_vertex!(g::AbstractGraph)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
-    push!(g.binclist, Edge[])
-    push!(g.finclist, Edge[])
+    push!(g.badjlist, Int[])
+    push!(g.fadjlist, Int[])
 
     return n
 end
@@ -49,8 +62,8 @@ end
 
 has_edge(g::AbstractGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 
-in_edges(g::AbstractGraph, v::Int) = g.binclist[v]
-out_edges(g::AbstractGraph, v::Int) = g.finclist[v]
+in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
+out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
 
 has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
 
@@ -63,8 +76,8 @@ rem_edge!(g::AbstractGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
 is_directed(g::AbstractGraph) = (typeof(g) == Graph? false : true)
 
-indegree(g::AbstractGraph, v::Int) = length(g.binclist[v])
-outdegree(g::AbstractGraph, v::Int) = length(g.finclist[v])
+indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
+outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
 
 
 indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
@@ -93,7 +106,7 @@ end
 
 degree_histogram(g::AbstractGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
-neighbors(g::AbstractGraph, v::Int) = [e.dst for e in g.finclist[v]]
-in_neighbors(g::AbstractGraph, v::Int) = [e.src for e in g.binclist[v]]
-out_neighbors(g::AbstractGraph, v::Int) = [e.dst for e in g.finclist[v]]
+neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
+in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
+out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))

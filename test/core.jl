@@ -1,5 +1,5 @@
-@test e1.src == src(e1) == 1
-@test e1.dst == dst(e1) == 2
+@test e1.first == src(e1) == 1
+@test e1.second == dst(e1) == 2
 
 g = Graph(5)
 add_edge!(g, 1, 2)
@@ -15,7 +15,7 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
-@test rev(e1) == re1
+@test reverse(e1) == re1
 
 @test sprint(show, e1) == "edge 1 - 2"
 @test vertices(g) == 1:5
@@ -38,7 +38,7 @@ add_edge!(h, 3, 5)
 @test issubset(h2, h1)
 
 @test has_edge(g, 1, 2)
-@test in_edges(g, 2) == [e1, rev(e4)]
+@test in_edges(g, 2) == [e1, reverse(e4)]
 @test out_edges(g, 1) == [e1, e2, e3]
 
 @test add_vertex!(g) == 6
