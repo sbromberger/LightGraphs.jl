@@ -23,9 +23,9 @@
 # > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-type FloydWarshallState<:AbstractPathState
-    dists::Vector{Vector{Float64}}
-    parents::Vector{Vector{Int}}
+type FloydWarshallState{T<:Real} <: AbstractPathState
+    dists::Matrix{T}
+    parents::Matrix{Int}
 end
 
 # @doc doc"""
@@ -36,17 +36,17 @@ end
 #     Note that it is possible to consume large amounts of memory as the
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
-function floyd_warshall_shortest_paths(
+function floyd_warshall_shortest_paths{T<:Real}(
     g::AbstractGraph;
-    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+    edge_dists::AbstractArray{T,2} = zeros(0,0)
 )
 
     use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
     n_v = nv(g)
-    dists = fill(convert(Float64,Inf), (n_v,n_v))
-    parents = zeros(Int, (n_v,n_v))
+    S = typeof(one(T) + one(T))
+    dists = fill(typemax(S), n_v, n_v)
+    parents = zeros(Int, n_v, n_v)
 
-    fws = FloydWarshallState(Vector{Float64}[], Vector{Int}[])
     for v in 1:n_v
         dists[v,v] = 0.0
     end
@@ -67,23 +67,21 @@ function floyd_warshall_shortest_paths(
         end
     end
     for w in vertices(g), u in vertices(g), v in vertices(g)
-        if dists[u,v] > dists[u,w] + dists[w,v]
-            dists[u,v] = dists[u,w] + dists[w,v]
+        if dists[u,w] == typemax(S) || dists[w,v] == typemax(S)
+            continue
+        end
+        d = dists[u,w] + dists[w,v]
+        if dists[u,v] > d
+            dists[u,v] = d
             parents[u,v] = parents[w,v]
         end
     end
-    for r in 1:size(parents,1)    # row by row
-        push!(fws.parents, vec(parents[r,:]))
-    end
-    for r in 1:size(dists,1)
-        push!(fws.dists, vec(dists[r,:]))
-    end
 
-    return fws
+    return FloydWarshallState{S}(dists, parents)
 end
 
-function enumerate_paths(s::FloydWarshallState, v::Integer)
-    pathinfo = s.parents[v]
+function enumerate_paths(s::FloydWarshallState, v::Int)
+    pathinfo = slice(s.parents, v, :)
     paths = Vector{Int}[]
     for i in 1:length(pathinfo)
         if i == v
@@ -101,5 +99,5 @@ function enumerate_paths(s::FloydWarshallState, v::Integer)
     return paths
 end
 
-enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:length(s.parents)]
-enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]
+enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
+enumerate_paths(st::FloydWarshallState, s::Int, d::Int) = enumerate_paths(st, s)[d]
