@@ -21,9 +21,8 @@ Produces a graph with edges in graph *g* that are not in graph *h*. Note that th
 `symmetric_difference(g, h)`  
 Produces a graph with edges from graph *g* that do not exist in graph *h*, and vice versa. Note that this function may produce a graph with 0-degree vertices.
 
-`compose(g, h)`  
+`merge(g, h)`  
 Merges graphs *g* and *h* by taking the set union of all vertices and edges.
 
 `inducedsubgraph(g, vs)`  
 Filters graph *g* to include only the vertices present in *vs*. Returns the subgraph of *g* induced by set(*vs*) along with the mapping from old to new vertex indices.
-
