@@ -69,7 +69,7 @@ module LightGraphs
     a_star,
 
     # persistence
-    readgraph,
+    readgraph, read_graphml,
 
     # randgraphs
     erdos_renyi, watts_strogatz
