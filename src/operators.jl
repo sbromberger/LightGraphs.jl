@@ -104,7 +104,7 @@ function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
 end
 
 # merge G and H by union of all vertices and edges.
-function compose{T<:AbstractGraph}(g::T, h::T)
+function merge{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
