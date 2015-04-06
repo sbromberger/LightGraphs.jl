@@ -95,7 +95,7 @@ write(g,"mygraph.jgz")
     - intersect
     - difference
     - symmetric difference
-    - merge
+    - blkdiag
     - induced subgraphs
 
 
