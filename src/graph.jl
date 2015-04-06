@@ -29,7 +29,7 @@ end
 
 Graph() = Graph(0)
 
-function Graph{T<:Number}(adjmx::Array{T, 2})
+function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     dima, dimb = size(adjmx)
     if dima != dimb
         error("Adjacency / distance matrices must be square")
@@ -107,5 +107,4 @@ degree(g::Graph, v::Int) = indegree(g,v)
 #         union(neighbors(g,v), [e.dst for e in g.binclist[v]])
 #     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
-
 
