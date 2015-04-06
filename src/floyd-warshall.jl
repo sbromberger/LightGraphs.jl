@@ -41,7 +41,9 @@ function floyd_warshall_shortest_paths(
     edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
 )
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = has_distances(edge_dists)
+
     n_v = nv(g)
     dists = fill(convert(Float64,Inf), (n_v,n_v))
     parents = zeros(Int, (n_v,n_v))

@@ -53,7 +53,8 @@ function bellman_ford_shortest_paths!(
     sources::AbstractVector{Int},
     state::BellmanFordState)
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = has_distances(edge_dists)
 
     active = Set{Int}()
     for v in sources

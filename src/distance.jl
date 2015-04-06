@@ -1,3 +1,7 @@
+# used in shortest path calculations
+has_distances{T}(edge_dists::AbstractArray{T,2}) =
+    issparse(edge_dists)? (nnz(edge_dists) > 0) : !isempty(edge_dists)
+
 function eccentricity(
     g::AbstractGraph,
     v::Int;
