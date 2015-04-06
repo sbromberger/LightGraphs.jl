@@ -47,7 +47,7 @@ function reverse!(g::DiGraph)
     return g
 end
 
-function union{T<:AbstractGraph}(g::T, h::T)
+function blkdiag{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -104,7 +104,7 @@ function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
 end
 
 # merge G and H by union of all vertices and edges.
-function merge{T<:AbstractGraph}(g::T, h::T)
+function union{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
