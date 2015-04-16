@@ -18,7 +18,8 @@ function a_star_impl!(
     heuristic::Function,    # heuristic fn (under)estimating distance to target
     t::Int)  # the end vertex
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = LightGraphs.has_distances(edge_dists)
 
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)

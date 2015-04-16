@@ -11,7 +11,7 @@ g = reverse(g4)
 reverse!(g)
 @test g == g4
 
-g = union(g3, g3)
+g = blkdiag(g3, g3)
 @test nv(g) == 10
 @test ne(g) == 8
 
@@ -34,6 +34,6 @@ z = symmetric_difference(h,g3)
 h = Graph(6)
 add_edge!(h, 5, 6)
 e = Edge(5, 6)
-z = compose(g3, h)
+z = union(g3, h)
 @test has_edge(z, e)
 @test z == PathGraph(6)

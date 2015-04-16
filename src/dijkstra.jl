@@ -98,8 +98,11 @@ function process_neighbors!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
-    for v in fadj(graph,u)
+    # has_distances in distance.jl
+    use_dists = has_distances(edge_dists)
+
+    for e in out_edges(graph, u)
+        v::Int = dst(e)
         v_color::Int = colormap[v]
 
         if v_color == 0
@@ -283,7 +286,8 @@ function process_neighbors_with_pred!(
     hmap::Vector{Int} = state.hmap
     dv::Float64 = zero(Float64)
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = has_distances(edge_dists)
 
     for v in fadj(graph, u)
         v_color::Int = colormap[v]

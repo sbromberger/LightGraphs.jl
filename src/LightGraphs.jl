@@ -20,7 +20,7 @@ module LightGraphs
 
     # operators
     complement, reverse, reverse!, union, intersect,
-    difference, symmetric_difference, compose,
+    difference, symmetric_difference, blkdiag,
     inducedsubgraph,
 
     # graph visit
@@ -70,7 +70,7 @@ module LightGraphs
     a_star,
 
     # persistence
-    readgraph,
+    readgraph, read_graphml,
 
     # randgraphs
     erdos_renyi, watts_strogatz

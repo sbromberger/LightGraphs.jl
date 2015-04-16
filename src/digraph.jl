@@ -26,7 +26,7 @@ end
 
 DiGraph() = DiGraph(0)
 
-function DiGraph{T<:Number}(adjmx::AbstractArray{T,2})
+function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
     dima, dimb = size(adjmx)
     if dima != dimb
         error("Adjacency / distance matrices must be square")
