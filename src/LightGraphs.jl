@@ -9,7 +9,7 @@ module LightGraphs
 
     # core
     export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-    in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
+    in_edges, out_edges, has_vertex, has_edge, is_directed,
     nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
     Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,

@@ -18,6 +18,7 @@ typealias Edge Pair{Int,Int}
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
 
+@deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 

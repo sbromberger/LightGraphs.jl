@@ -1,5 +1,6 @@
 julia 0.3
-Compat 0.2.6
+Compat 0.3
 GZip 0.2
 Distributions 0.6.6
 DataStructures 0.3
+LightXML 0.1.10

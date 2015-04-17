@@ -18,6 +18,6 @@ h, vmap = inducedsubgraph(g, [1,5])
 @test typeof(h) == typeof(g)
 
 g = DiGraph(100,200)
-h, vmap = inducedsubgraph(g, [5:26])
+h, vmap = inducedsubgraph(g, [5:26;])
 @test nv(h) == 22
 @test typeof(h) == typeof(g)

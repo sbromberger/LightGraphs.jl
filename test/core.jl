@@ -15,6 +15,9 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
+
+@test LightGraphs.fadj(g)[1] == [2,3,4]
+
 @test reverse(e1) == re1
 
 @test sprint(show, e1) == "edge 1 - 2"
@@ -31,8 +34,8 @@ add_edge!(h, 3, 5)
 @test indegree(h,1) == 0
 @test outdegree(h) == [3, 1, 1, 0, 0]
 @test outdegree(h,1) == 3
-@test in_neighbors(h,5) == [2, 3]
-@test out_neighbors(h,1) == [2, 3, 4]
+@test in_neighbors(h,5) == LightGraphs.badj(h)[5] == LightGraphs.badj(h,5) == [2, 3]
+@test out_neighbors(h,1) == LightGraphs.fadj(h)[1] == LightGraphs.fadj(h,1) == [2, 3, 4]
 
 @test p1 == g2
 @test issubset(h2, h1)
@@ -49,8 +52,14 @@ add_edge!(h, 3, 5)
 @test !is_directed(g)
 @test is_directed(h)
 
-@test δ(g) == 0
-@test Δ(g) == 3
+@test δ(g) == δin(g) == δout(g) == 0
+@test Δ(g) == Δout(g) == 3
+@test Δin(h) == 2
+@test δ(h) == 1
+@test δin(h) == 0
+@test δout(h) == 0
+
+
 @test degree_histogram(g)[1:4] == [1, 3, 1, 0]
 @test neighbors(g, 1) == [2, 3, 4]
 @test common_neighbors(g, 2, 3) == [1, 5]
