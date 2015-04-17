@@ -15,10 +15,14 @@ Graphs stored using the `write` functions above may be loaded using `readgraph`:
 `readgraph(fn)`  
 Returns a graph loaded from file `fn`.
 
+`read_graphml(fn)`  
+Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
+
 
 ###Examples
 ```julia
 julia> write(STDOUT, g)
 julia> write(g, "mygraph.jgz")
 julia> g = readgraph("mygraph.jgz")
+julia> g = read_graphml("mygraph.xml")
 ```
