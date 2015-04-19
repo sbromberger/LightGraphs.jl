@@ -4,7 +4,7 @@ using LightGraphs
 using Base.Test
 
 type GraphTest
-    graph_edges::Array{(Int,Int),1}
+    graph_edges::Array{@compat(Tuple{Int,Int}),1}
     dfs_path::Array{Int,1}
     is_cyclic::Bool
     topo_sort::Array{Int,1}
