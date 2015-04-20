@@ -107,7 +107,7 @@ write(g,"mygraph.jgz")
 
 
 - small graph generators
-    - see [smallgraphs.jl](https://github.com/sbromberger/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
+    - see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
 
 
 - random graph generators

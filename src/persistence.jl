@@ -7,7 +7,7 @@
 # header followed by a list of (comma-delimited) edges - src,dst.
 
 function readgraph(fn::AbstractString)
-    readedges = Set{(Int,Int)}()
+    readedges = Set{@compat Tuple{Int,Int}}()
     directed = true
     f = GZip.open(fn,"r")        # will work even if uncompressed
     line = chomp(readline(f))
@@ -91,13 +91,13 @@ function read_graphml(filename::String)
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = (String, AbstractGraph)[]
+    graphs = @compat Tuple{String, AbstractGraph}[]
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance
             if name(e) == "graph"
                 nodes = Dict{String,Int}()
-                edges = (Int, Int)[]
+                edges = @compat Tuple{Int, Int}[]
                 graphname = has_attribute(e, "id") ? attribute(e, "id") : nothing
                 edgedefault = attribute(e, "edgedefault")
                 isdirected = edgedefault=="directed" ? true :

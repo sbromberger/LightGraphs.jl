@@ -7,6 +7,7 @@ module AStar
 
 using LightGraphs
 using Base.Collections
+using Compat
 
 export a_star
 
@@ -21,6 +22,7 @@ function a_star_impl!(
     # has_distances in distance.jl
     use_dists = LightGraphs.has_distances(edge_dists)
 
+    println("in a_star_impl")
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
         if u == t
@@ -60,7 +62,9 @@ function a_star(
     heuristic::Function = n -> 0
     )
             # heuristic (under)estimating distance to target
-    frontier = VERSION < v"0.4-" ? PriorityQueue{(Float64,Array{Edge,1},Int),Float64}() : PriorityQueue((Float64,Array{Edge,1},Int),Float64)
+    frontier = VERSION < v"0.4-" ?
+        PriorityQueue{@compat(Tuple{Float64,Array{Edge,1},Int}),Float64}() :
+        PriorityQueue(@compat(Tuple{Float64,Array{Edge,1},Int}),Float64)
     frontier[(zero(Float64), Edge[], s)] = zero(Float64)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1
