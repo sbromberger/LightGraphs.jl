@@ -26,6 +26,8 @@ function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     dima, dimb = size(adjmx)
     if dima != dimb
         error("Adjacency / distance matrices must be square")
+    elseif !issym(adjmx)
+        error("Adjacency / distance matrices must be symmetric")
     else
         g = Graph(dima)
         for i=1:dima, j=i:dima
