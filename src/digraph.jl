@@ -35,12 +35,12 @@ end
 
 function DiGraph(g::Graph)
     h = DiGraph(nv(g))
-    h.edges = union(edges(g), Set{Pair{Int64,Int64}}(map(reverse, edges(g))))
-    h.fadjlist = fadj(g)
-    h.badjlist = badj(g)
+    for e in edges(g)
+        add_edge!(h,e)
+        add_edge!(h,reverse(e))
+    end
     return h
 end
-
 
 function add_edge!(g::DiGraph, e::Edge)
     if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
