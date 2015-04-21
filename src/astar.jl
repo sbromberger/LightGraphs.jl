@@ -1,3 +1,6 @@
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
+
 # A* shortest-path algorithm
 module AStar
 
@@ -22,7 +25,6 @@ function a_star_impl!(
     # has_distances in distance.jl
     use_dists = LightGraphs.has_distances(edge_dists)
 
-    println("in a_star_impl")
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
         if u == t

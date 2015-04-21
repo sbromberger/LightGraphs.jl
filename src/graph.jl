@@ -1,10 +1,3 @@
-type Graph<:AbstractGraph
-    vertices::UnitRange{Int}
-    edges::Set{Edge}
-    finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
-    binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
-end
-
 function show(io::IO, g::Graph)
     if length(vertices(g)) == 0
         print(io, "empty undirected graph")
@@ -107,4 +100,3 @@ degree(g::Graph, v::Int) = indegree(g,v)
 #         union(neighbors(g,v), [e.dst for e in g.binclist[v]])
 #     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
-
