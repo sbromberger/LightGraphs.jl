@@ -6,10 +6,26 @@ immutable Edge
     dst::Int
 end
 
+type Graph<:AbstractGraph
+    vertices::UnitRange{Int}
+    edges::Set{Edge}
+    finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
+    binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
+end
+
+type DiGraph<:AbstractGraph
+    vertices::UnitRange{Int}
+    edges::Set{Edge}
+    finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
+    binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
+end
+
+
 src(e::Edge) = e.src
 dst(e::Edge) = e.dst
 
 rev(e::Edge) = Edge(e.dst,e.src)
+reverse(e::Edge) = Edge(e.dst,e.src)
 
 ==(e1::Edge, e2::Edge) = (e1.src == e2.src && e1.dst == e2.dst)
 

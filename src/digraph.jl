@@ -1,11 +1,3 @@
-type DiGraph<:AbstractGraph
-    vertices::UnitRange{Int}
-    edges::Set{Edge}
-    finclist::Vector{Vector{Edge}} # [src]: ((src,dst), (src,dst), (src,dst))
-    binclist::Vector{Vector{Edge}} # [dst]: ((src,dst), (src,dst), (src,dst))
-end
-
-
 function show(io::IO, g::DiGraph)
     if length(vertices(g)) == 0
         print(io, "empty directed graph")
@@ -39,6 +31,16 @@ function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
         end
     end
     return g
+end
+
+function DiGraph(g::Graph)
+    h = DiGraph(nv(g))
+    for e in edges(g)
+        add_edge!(h,e)
+        add_edge!(h,reverse(e))
+    end
+
+    return h
 end
 
 
