@@ -15,6 +15,26 @@ end
 
 typealias Edge Pair{Int,Int}
 
+type Graph<:AbstractGraph
+    vertices::UnitRange{Int}
+    edges::Set{Edge}
+    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
+    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
+end
+
+type DiGraph<:AbstractGraph
+    vertices::UnitRange{Int}
+    edges::Set{Edge}
+    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
+    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
+end
+
+
+src(e::Edge) = e.src
+dst(e::Edge) = e.dst
+
+
+
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
 

@@ -1,11 +1,3 @@
-type DiGraph<:AbstractGraph
-    vertices::UnitRange{Int}
-    edges::Set{Edge}
-    fadjlist::Vector{Vector{Int}} # [src]: (dst), (dst), (dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src), (src), (src)
-end
-
-
 function show(io::IO, g::DiGraph)
     if length(vertices(g)) == 0
         print(io, "empty directed graph")
@@ -39,6 +31,14 @@ function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
         end
     end
     return g
+end
+
+function DiGraph(g::Graph)
+    h = DiGraph(nv(g))
+    h.edges = union(edges(g), Set{Pair{Int64,Int64}}(map(reverse, edges(g))))
+    h.fadjlist = fadj(g)
+    h.badjlist = badj(g)
+    return h
 end
 
 

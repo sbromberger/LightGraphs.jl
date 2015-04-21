@@ -1,10 +1,3 @@
-type Graph<:AbstractGraph
-    vertices::UnitRange{Int}
-    edges::Set{Edge}
-    fadjlist::Vector{Vector{Int}} # [src]: (dst), (dst), (dst))
-    badjlist::Vector{Vector{Int}} # [dst]: (src), (src), (src))
-end
-
 function show(io::IO, g::Graph)
     if length(vertices(g)) == 0
         print(io, "empty undirected graph")
@@ -33,6 +26,8 @@ function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     dima, dimb = size(adjmx)
     if dima != dimb
         error("Adjacency / distance matrices must be square")
+    elseif !issym(adjmx)
+        error("Adjacency / distance matrices must be symmetric")
     else
         g = Graph(dima)
         for i=1:dima, j=i:dima
@@ -106,4 +101,3 @@ degree(g::Graph, v::Int) = indegree(g,v)
 #         union(neighbors(g,v), [dst(e) for e in g.binclist[v]])
 #     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
-

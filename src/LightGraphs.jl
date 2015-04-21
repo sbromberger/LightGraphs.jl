@@ -65,6 +65,7 @@ module LightGraphs
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+    pagerank,
 
     # astar
     a_star,
