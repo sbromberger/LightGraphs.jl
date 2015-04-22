@@ -126,7 +126,9 @@ write(g,"mygraph.jgz")
     - Laplacian matrix
 
 
-- persistence (proprietary compressed format)
+- persistence
+    - proprietary compressed format
+    - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
