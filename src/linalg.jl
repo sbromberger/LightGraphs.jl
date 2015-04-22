@@ -29,7 +29,7 @@ adjacency_spectrum(g::AbstractGraph) = eigvals(full(adjacency_matrix(g)))
 function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
     M = adjacency_matrix(g)
     S = vec(sum(M,1))
-    S = S=1./S; S[find(S .== Inf)]=0.0
+    S = 1./S; S[find(S .== Inf)]=0.0
     Q = spdiagm(S)
     M = Q * M'
     N = nv(g)
