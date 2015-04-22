@@ -1,7 +1,7 @@
 @test sprint(show, h1) == "{5, 0} undirected graph"
 @test sprint(show, h3) == "empty undirected graph"
 
-@test Graph(g4) == g3
+@test Graph(DiGraph(g3)) == g3
 
 @test degree(g3, 1) == 1
 # @test all_neighbors(g3, 3) == [2, 4]

@@ -53,6 +53,12 @@ function Graph(g::DiGraph)
     return h
 end
 
+function ==(g::Graph, h::Graph)
+    gdigraph = DiGraph(g)
+    hdigraph = DiGraph(h)
+    return (gdigraph == hdigraph)
+end
+
 has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
 
 function add_edge!(g::Graph, e::Edge)

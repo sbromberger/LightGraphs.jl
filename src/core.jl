@@ -54,10 +54,6 @@ badj(g::AbstractGraph) = g.badjlist
 badj(g::AbstractGraph, v::Int) = g.badjlist[v]
 
 
-function =={T<:AbstractGraph}(g::T, h::T)
-    return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
-end
-
 function issubset{T<:AbstractGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
