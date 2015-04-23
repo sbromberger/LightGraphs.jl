@@ -22,17 +22,17 @@ function depth_first_visit_impl!(
 
 
     while !isempty(stack)
-        u, uegs, tstate = pop!(stack)
+        u, udsts, tstate = pop!(stack)
         found_new_vertex = false
 
-        while !done(uegs, tstate) && !found_new_vertex
-            v_edge, tstate = next(uegs, tstate)
-            v = dst(v_edge)
+        while !done(udsts, tstate) && !found_new_vertex
+            v, tstate = next(udsts, tstate)
             v_color = vertexcolormap[v]
+            v_edge = Edge(u,v)
             if haskey(edgecolormap, v_edge)
                 e_color = edgecolormap[v_edge]
             else
-                e_color = edgecolormap[rev(v_edge)]
+                e_color = edgecolormap[reverse(v_edge)]
             end
             examine_neighbor!(visitor, u, v, v_color, e_color)
 
@@ -46,11 +46,11 @@ function depth_first_visit_impl!(
                 if !discover_vertex!(visitor, v)
                     return
                 end
-                push!(stack, (u, uegs, tstate))
+                push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
-                vegs = out_edges(graph, v)
-                push!(stack, (v, vegs, start(vegs)))
+                vdsts = fadj(graph, v)
+                push!(stack, (v, vdsts, start(vdsts)))
             end
         end
 
@@ -82,9 +82,9 @@ function traverse_graph(
         return
     end
 
-    segs = out_edges(graph, s)
-    sstate = start(segs)
-    stack = [(s, segs, sstate)]
+    sdsts = fadj(graph, s)
+    sstate = start(sdsts)
+    stack = [(s, sdsts, sstate)]
 
     depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
 end

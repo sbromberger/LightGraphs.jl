@@ -31,12 +31,11 @@ function a_star_impl!(
             return path
         end
 
-        for edge in out_edges(graph, u)
+        for v in LightGraphs.fadj(graph, u)
 
-            v = edge.dst
             if colormap[v] < 2
                 if use_dists
-                    edist = edge_dists[src(edge), dst(edge)]
+                    edist = edge_dists[u, v]
                     if edist == 0.0
                         edist = 1.0
                     end
@@ -44,7 +43,7 @@ function a_star_impl!(
                     edist = 1.0
                 end
                 colormap[v] = 1
-                new_path = cat(1, path, edge)
+                new_path = cat(1, path, Edge(u,v))
                 path_cost = cost_so_far + edist
                 enqueue!(frontier,
                         (path_cost, new_path, v),

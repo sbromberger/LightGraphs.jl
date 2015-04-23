@@ -24,12 +24,11 @@ function maximum_adjacency_visit_impl!(
   while !isempty(pq)
     u = Collections.dequeue!(pq)
     discover_vertex!(visitor, u)
-    for e in out_edges(graph, u)
-      examine_edge!(visitor, e, 0)
-      v = dst(e)
+    for v in fadj(graph, u)
+      examine_edge!(visitor, Edge(u,v), 0)
 
       if haskey(pq,v)
-          ed = visitor.edge_dists[src(e), dst(e)]
+          ed = visitor.edge_dists[u, v]
           if ed == zero(Float64)
               ed = 1.0
           end
