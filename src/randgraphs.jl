@@ -70,7 +70,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
                             d += 1
                         end
                     end
-                    if !has_edge(g, s, d)
+                    if !has_edge(g, s, d) && s != d
                         add_edge!(g, s, d)
 
                         break
