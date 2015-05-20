@@ -10,7 +10,7 @@
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs, and no self loops) are represented in a memory- and time-efficient
-manner with incidence lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
+manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
 analysis libraries such as [NetworkX](http://networkx.github.io) while being simpler
