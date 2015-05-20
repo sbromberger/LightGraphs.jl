@@ -5,7 +5,7 @@ module LightGraphs
     using Distributions
 
 
-    import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
+    import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
 
     # core
     export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -20,7 +20,7 @@ module LightGraphs
 
     # operators
     complement, reverse, reverse!, union, intersect,
-    difference, symmetric_difference, blkdiag,
+    difference, symmetric_difference,
     inducedsubgraph,
 
     # graph visit
