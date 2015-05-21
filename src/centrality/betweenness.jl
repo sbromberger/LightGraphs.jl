@@ -58,10 +58,7 @@ function _accumulate_basic(
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source nodes by decreasing distance for this to work.
-    v1 = [1:nv;]
-    v2 = state.dists
-    S = Int[x[2] for x in sort(collect(zip(v2,v1)), rev=true)]
-    # println("S = $S, P = $P, σ = $σ, si = $si")
+    S = sortperm(state.dists, rev=true)
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
         # println("coeff of $w = $coeff, δ[w] = $(δ[w])")
