@@ -1,11 +1,49 @@
-# @doc doc"""
-#         betweenness_centrality(g::AbstractGraph, k::Integer=0; normalize=true, endpoints=false)
-#
-#     Computes betweenness centrality of a graph, based on all vertices (default)
-#     or on a specified subset.
-#     """ ->
+# Betweenness centrality measures
+# TODO - weighted, separate unweighted, edge betweenness
 
-# uses Distributions
+
+@doc """ Betweenness centrality
+
+$$bc(v) = \frac{1}{\mathcal{N}} 
+          \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+
+
+## Parameters
+
+g: AbstractGraph
+    A Graph, directed or undirected.
+
+weights: AbstractArray{Float64, 2}, optional
+    Matrix containing the weight associated with each edge (i,j)
+    `ω[i, j]` is the weight between vertices `i` and `j`.
+    If no weights are specified, shortest paths are computed using equal
+    weights. If values are missing, they are assumed equal to `1`.
+    *Advice* Use sparse matrices for better performances.
+
+k: Integer, optional
+    Use `k` nodes sample to estimate the betweenness centrality. If none,
+    betweenness centrality is computed using the `n` nodes in the graph.
+
+normalize: bool, optional
+    If true, the betweenness values are normalized by the total number
+    of possible distinct paths between all pairs in the graphs. For an undirected graph,
+    this number if `((n-1)*(n-2))/2` and for a directed graph, `(n-1)*(n-2)`
+    where `n` is the number of nodes in the graph.
+
+endpoints: bool, optional
+    If true, endpoints are included in the shortest path count.
+
+## Returns
+
+betweenness: Array{Float64}
+    Betweenness centrality value per node id.
+
+## Examples
+
+## References
+
+[1] Brandes 2001 & Brandes 2008
+""" ->
 function betweenness_centrality(
     g::AbstractGraph,
     k::Integer=0;
