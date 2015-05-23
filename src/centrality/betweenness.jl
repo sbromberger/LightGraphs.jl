@@ -4,8 +4,8 @@
 
 @doc """ Betweenness centrality
 
-bc(v) = \frac{1}{\mathcal{N}} 
-        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}
+\$bc(v) = \frac{1}{\mathcal{N}} 
+        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}\$
 
 
 ## Parameters
