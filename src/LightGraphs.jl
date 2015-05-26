@@ -3,7 +3,9 @@ module LightGraphs
     using GZip
     using DataStructures
     using Distributions
-
+    if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
+        using Docile
+    end
 
     import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
 
