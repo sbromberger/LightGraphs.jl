@@ -30,11 +30,6 @@ type DiGraph<:AbstractGraph
 end
 
 
-src(e::Edge) = e.src
-dst(e::Edge) = e.dst
-
-
-
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
 
