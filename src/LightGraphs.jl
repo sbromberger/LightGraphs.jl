@@ -3,11 +3,12 @@ module LightGraphs
     using GZip
     using DataStructures
     using Distributions
+    using Base.Collections
     if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
         using Docile
     end
 
-    import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
+    import Base:write, ==, isless, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
 
     # core
     export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -41,7 +42,7 @@ module LightGraphs
     MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
     # dijkstra
-    dijkstra_shortest_paths, dijkstra_predecessor_and_distance,
+    dijkstra_shortest_paths,
 
     # bellman-ford
     bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,

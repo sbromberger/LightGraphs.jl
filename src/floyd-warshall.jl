@@ -2,9 +2,9 @@
 # licensing details.
 
 
-type FloydWarshallState<:AbstractPathState
-    dists::Vector{Vector{Float64}}
-    parents::Vector{Vector{Int}}
+type FloydWarshallState{T}<:AbstractPathState
+    dists::Matrix{T}
+    parents::Matrix{Int}
 end
 
 # @doc doc"""
@@ -15,31 +15,26 @@ end
 #     Note that it is possible to consume large amounts of memory as the
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
-function floyd_warshall_shortest_paths(
-    g::AbstractGraph;
-    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+function floyd_warshall_shortest_paths{T}(
+    g::AbstractGraph,
+    edge_dists::AbstractArray{T, 2} = DefaultDistance()
 )
 
-    # has_distances in distance.jl
-    use_dists = has_distances(edge_dists)
-
     n_v = nv(g)
-    dists = fill(convert(Float64,Inf), (n_v,n_v))
+    dists = fill(typemax(T), (n_v,n_v))
     parents = zeros(Int, (n_v,n_v))
 
-    fws = FloydWarshallState(Vector{Float64}[], Vector{Int}[])
+    # fws = FloydWarshallState(Matrix{T}(), Matrix{Int}())
     for v in 1:n_v
-        dists[v,v] = 0.0
+        dists[v,v] = zero(T)
     end
     undirected = !is_directed(g)
     for e in edges(g)
         u = src(e)
         v = dst(e)
-        if use_dists
-            d = edge_dists[u,v]
-        else
-            d = 1.0
-        end
+
+        d = edge_dists[u,v]
+
         dists[u,v] = min(d, dists[u,v])
         parents[u,v] = u
         if undirected
@@ -48,23 +43,29 @@ function floyd_warshall_shortest_paths(
         end
     end
     for w in vertices(g), u in vertices(g), v in vertices(g)
-        if dists[u,v] > dists[u,w] + dists[w,v]
+        if dists[u,w] == typemax(T) || dists[w,v] == typemax(T)
+            ans = typemax(T)
+        else
+            ans = dists[u,w] + dists[w,v]
+        end
+        if dists[u,v] > ans
             dists[u,v] = dists[u,w] + dists[w,v]
             parents[u,v] = parents[w,v]
         end
     end
-    for r in 1:size(parents,1)    # row by row
-        push!(fws.parents, vec(parents[r,:]))
-    end
-    for r in 1:size(dists,1)
-        push!(fws.dists, vec(dists[r,:]))
-    end
+    fws = FloydWarshallState(dists, parents)
+    # for r in 1:size(parents,1)    # row by row
+    #     push!(fws.parents, vec(parents[r,:]))
+    # end
+    # for r in 1:size(dists,1)
+    #     push!(fws.dists, vec(dists[r,:]))
+    # end
 
     return fws
 end
 
 function enumerate_paths(s::FloydWarshallState, v::Integer)
-    pathinfo = s.parents[v]
+    pathinfo = s.parents[v,:]
     paths = Vector{Int}[]
     for i in 1:length(pathinfo)
         if i == v
@@ -82,5 +83,5 @@ function enumerate_paths(s::FloydWarshallState, v::Integer)
     return paths
 end
 
-enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:length(s.parents)]
+enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:size(s.parents,1)]
 enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]

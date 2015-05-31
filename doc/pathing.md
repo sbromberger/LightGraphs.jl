@@ -6,18 +6,6 @@
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
-During traversal, each vertex maintains a status (also called *color*), which is an integer value defined as below:
-
-* `0`: the vertex has not been encountered (*i.e.* discovered)
-* `1`: the vertex has been discovered and remains open
-* `2`: the vertex has been closed (*i.e.*, all its neighbors have been examined).
-
-Many graph algorithms can be implemented based on graph traversal through certain *visitors* or by using the colormap in certain ways. For example, in this package, topological sorting, connected components, and cycle detection are all implemented using ``traverse_graph`` with specifically designed visitors.
-
-`traverse_graph(graph, alg, source, visitor[, colormap])`  
-Performs a traversal of `graph` using one of the available traversal algorithms, from a `source` vertex using a `visitor` which is an instance of a subtype of type `AbstractGraphVisitor`. Can optionally take a vector of integers that indicates the status of each vertex. If this is not specified, an internal colormap will be used.
-
-In general, `traverse_graph()` will not be called directly, but rather will be used by other specialized functions.
 
 ###Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex ``v`` and ends up at ``v``.
@@ -44,11 +32,10 @@ Returns the vertices in `graph` traversed by maximum adjacency search. An option
 `a_star(g, s, t[, heuristic, edge_dists])`  
 Computes the shortest path between vertices *s* and *t* using the [A* search algorithm](http://en.wikipedia.org/wiki/A*_search_algorithm). An optional heuristic function and edge distance matrix may be supplied.
 
-`dijkstra_shortest_paths(g, s[, edge_dists])`  
+`dijkstra_shortest_paths(g, s[, edge_dists; allpaths=false])`  
 Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) on a graph, computing shortest distances between a source vertex *s* and all other nodes. Returns a `DijkstraState` that contains various traversal information (see below).
 
-`dijkstra_predecessor_and_distance(g, s[, edge_dists])`  
-Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) on a graph similar to `dijkstra_shortest_paths` but returns a `DijkstraStateWithPreds` that keeps track of all predecessors of a given vertex (see below).
+With `allpaths=true`, returns a `DijkstraState` that keeps track of all predecessors of a given vertex (see below).
 
 `bellman_ford_shortest_paths(g, s[, edge_dists])`  
 `bellman_ford_shortest_paths(g, ss[, edge_dists])`  
