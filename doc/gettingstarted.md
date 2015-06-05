@@ -44,6 +44,7 @@ julia> Pkg.install("LightGraphs")
 - [GZip](https://github.com/JuliaLang/GZip.jl)
 - [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
 - [DataStructures](https://github.com/JuliaLang/DataStructures.jl)
+- [Docile](https://github.com/MichaelHatherly/Docile.jl)
 
 
 ### Usage Examples
@@ -78,6 +79,6 @@ edge_dists[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, edge_dists=edge_dists).dists
 
 # graph I/O
-g = readgraph("mygraph.jfz")
-write(g,"mygraph.jfz")
+g = readgraph("mygraph.jgz")
+write(g,"mygraph.jgz")
 ```

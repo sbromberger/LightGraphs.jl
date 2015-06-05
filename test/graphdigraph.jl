@@ -51,3 +51,12 @@ badadjmx = [ 0 1 0; 1 0 1]
 
 @test_throws BoundsError add_edge!(g, 100, 100)
 @test_throws BoundsError add_edge!(h, 100, 100)
+
+@test_throws ErrorException Graph(sparse(adjmx2))
+
+g = Graph(sparse(adjmx1))
+h = DiGraph(sparse(adjmx1))
+
+@test (nv(g), ne(g)) == (3, 2)
+@test (nv(h), ne(h)) == (3, 4)
+@test Graph(h) == g
