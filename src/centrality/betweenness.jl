@@ -4,7 +4,7 @@
 
 @doc """ Betweenness centrality
 
-\$bc(v) = \frac{1}{\mathcal{N}} 
+\$bc(v) = \frac{1}{\mathcal{N}}
         \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}\$
 
 
@@ -59,17 +59,16 @@ function betweenness_centrality(
     else
         nodes = sample(1:n_v, k, replace=false)   #112
     end
-    for si in nodes
-        s = vertices(g)[si]
-        state = dijkstra_predecessor_and_distance(g, s)
+    for s in nodes
+        state = dijkstra_shortest_paths(g, s; allpaths=true)
         if endpoints
-            _accumulate_endpoints!(betweenness, state, g, si)
+            _accumulate_endpoints!(betweenness, state, g, s)
         else
-            _accumulate_basic!(betweenness, state, g, si)
+            _accumulate_basic!(betweenness, state, g, s)
         end
     end
 
-    _rescale!(betweenness, 
+    _rescale!(betweenness,
               n_v,
               normalize,
               is_directed,
@@ -81,13 +80,13 @@ end
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
-    state::DijkstraStateWithPred,
+    state::DijkstraState,
     g::AbstractGraph,
     si::Integer
     )
 
-    nv = length(state.parents) # this is the ttl number of vertices
-    δ = zeros(nv)
+    n_v = length(state.parents) # this is the ttl number of vertices
+    δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
 
@@ -108,20 +107,22 @@ function _accumulate_basic!(
     end
 end
 
+
+
 function _accumulate_endpoints!(
     betweenness::Vector{Float64},
-    state::DijkstraStateWithPred,
+    state::DijkstraState,
     g::AbstractGraph,
     si::Integer
     )
 
-    nv = length(state.parents) # this is the ttl number of vertices
-    δ = zeros(nv)
+    n_v = nv(g) # this is the ttl number of vertices
+    δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
-    v1 = [1:nv;]
+    v1 = [1:n_v;]
     v2 = state.dists
-    S = Int[x[2] for x in sort(collect(zip(v2,v1)), rev=true)]
+    S = sortperm(state.dists, rev=true)
     s = g.vertices[si]
     betweenness[s] += length(S) - 1    # 289
 
@@ -154,7 +155,7 @@ function _rescale!(betweenness::Vector{Float64}, n::Int, normalize::Bool, direct
     end
     if do_scale
         if k > 0
-            scale = scale * n / k 
+            scale = scale * n / k
         end
         for v = 1:length(betweenness)
             betweenness[v] *= scale

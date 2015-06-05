@@ -12,7 +12,7 @@ function closeness_centrality(
 
     for u = 1:n_v
         d = dijkstra_shortest_paths(g,u).dists
-        δ = d[!isinf(d)]
+        δ = filter(x->x != typemax(x), d)
         σ = sum(δ)
         l = length(δ) - 1
         if σ > 0
