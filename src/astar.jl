@@ -14,16 +14,14 @@ using Compat
 
 export a_star
 
-function a_star_impl!(
+function a_star_impl!{T<:Number}(
     graph::AbstractGraph,# the graph
+    t::Int, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
-    edge_dists::AbstractArray{Float64, 2},
-    heuristic::Function,    # heuristic fn (under)estimating distance to target
-    t::Int)  # the end vertex
-
-    # has_distances in distance.jl
-    use_dists = LightGraphs.has_distances(edge_dists)
+    distmx::AbstractArray{T, 2},
+    heuristic::Function    # heuristic fn (under)estimating distance to target
+    )
 
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
@@ -34,17 +32,11 @@ function a_star_impl!(
         for v in LightGraphs.fadj(graph, u)
 
             if colormap[v] < 2
-                if use_dists
-                    edist = edge_dists[u, v]
-                    if edist == 0.0
-                        edist = 1.0
-                    end
-                else
-                    edist = 1.0
-                end
+                dist = distmx[u, v]
+
                 colormap[v] = 1
                 new_path = cat(1, path, Edge(u,v))
-                path_cost = cost_so_far + edist
+                path_cost = cost_so_far + dist
                 enqueue!(frontier,
                         (path_cost, new_path, v),
                         path_cost + heuristic(v))
@@ -56,38 +48,29 @@ function a_star_impl!(
 end
 
 
-function a_star(
+function a_star{T<:Number}(
     graph::AbstractGraph,  # the graph
-    edge_dists::AbstractArray{Float64, 2},
+
     s::Int,                       # the start vertex
     t::Int,                       # the end vertex
+    distmx::AbstractArray{T, 2} = LightGraphs.DefaultDistance(),
     heuristic::Function = n -> 0
     )
             # heuristic (under)estimating distance to target
     frontier = VERSION < v"0.4-" ?
-        PriorityQueue{@compat(Tuple{Float64,Array{Edge,1},Int}),Float64}() :
-        PriorityQueue(@compat(Tuple{Float64,Array{Edge,1},Int}),Float64)
-    frontier[(zero(Float64), Edge[], s)] = zero(Float64)
+        PriorityQueue{@compat(Tuple{T,Array{Edge,1},Int}),T}() :
+        PriorityQueue(@compat(Tuple{T,Array{Edge,1},Int}),T)
+    frontier[(zero(T), Edge[], s)] = zero(T)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1
-    a_star_impl!(graph, frontier, colormap, edge_dists, heuristic, t)
+    a_star_impl!(graph, t, frontier, colormap, distmx, heuristic)
 end
 
-# function a_star(
-#     graph::AbstractGraph,  # the graph
-#     s::Int,                       # the start vertex
-#     t::Int,                       # the end vertex
-#     heuristic::Function = n -> 0
-#     )
-#     a_star(graph, Array(Float64,(0,0)), s, t, heuristic)
-# end
-
-a_star(
-    graph::AbstractGraph,
-    s::Int, t::Int;
-    heuristic::Function = n->0,
-    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
-) = a_star(graph, edge_dists, s, t, heuristic)
+# a_star{T<:Number}(
+#     graph::AbstractGraph,
+#     s::Int, t::Int;
+#     distmx::AbstractArray{T, 2} = LightGraphs.DefaultDistance()
+# ) = a_star(graph, s, t, DefaultDistance() heuristic)
 
 end
 

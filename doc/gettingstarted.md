@@ -24,11 +24,11 @@ An attempt to remove an edge that does not exist in the graph will result in an
 error.
 
 Edge distances for most traversals may be passed in as a sparse or dense matrix
-of `Float64` values, indexed by `[src,dst]` vertices. That is, `edge_dists[2,4] = 2.5`
+of  values, indexed by `[src,dst]` vertices. That is, `distmx[2,4] = 2.5`
 assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
-Note that for undirected graphs, `edge_dists[4,2]` should also be set.
+Note that for undirected graphs, `distmx[4,2]` should also be set.
 
-Edge distances for undefined edges are ignored, and edge distances cannot be zero: any unassigned values (for sparse matrices) or zero values (for sparse or dense matrices) in the edge distance matrix are assumed to be the default distance of 1.0.
+Edge distances for undefined edges are ignored.
 
 *LightGraphs.jl* provides two graph types: `Graph` is an undirected graph, and `DiGraph` is its directed counterpart.
 
@@ -73,10 +73,10 @@ neighbors(g, 4)
 dijkstra_shortest_paths(g, 4).dists  
 
 # as above, but with non-default edge distances
-edge_dists = zeros(10,10)
-edge_dists[4,5] = 2.5
-edge_dists[5,4] = 2.5
-dijkstra_shortest_paths(g, 4, edge_dists=edge_dists).dists
+distmx = zeros(10,10)
+distmx[4,5] = 2.5
+distmx[5,4] = 2.5
+dijkstra_shortest_paths(g, 4, distmx=distmx).dists
 
 # graph I/O
 g = readgraph("mygraph.jgz")

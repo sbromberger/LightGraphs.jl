@@ -1,4 +1,4 @@
-*LightGraphs.jl* provides several traversal and shortest-path algorithms. Where appropriate, edge distances may be passed in (by an `edge_dists` keyword argument) as a matrix of `Float` values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
+*LightGraphs.jl* provides several traversal and shortest-path algorithms. Where appropriate, edge distances may be passed in (by an `distmx` keyword argument) as a matrix of `Float` values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
 
 ### Graph Traversal
 *Graph traversal* refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
@@ -16,11 +16,11 @@ Tests whether a graph contains a cycle through depth-first search. It returns ``
 ###Simple Minimum Cut
 Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 
-`mincut(graph[, edge_dists])`  
-Returns a tuple  ``(parity, bestcut)``, where ``parity`` is a vector of boolean values that determines the partition in `graph` and ``bestcut`` is the weight of the cut that makes this partition. An optional edge_dists matrix may be specified; if omitted, edge distances are assumed to be 1.
+`mincut(graph[, distmx])`  
+Returns a tuple  ``(parity, bestcut)``, where ``parity`` is a vector of boolean values that determines the partition in `graph` and ``bestcut`` is the weight of the cut that makes this partition. An optional distmx matrix may be specified; if omitted, edge distances are assumed to be 1.
 
-`maximum_adjacency_visit(graph[, edge_dists]; log, io)`  
-Returns the vertices in `graph` traversed by maximum adjacency search. An optional edge_dists matrix may be specified; if omitted, edge distances are assumed to be 1. If `log` (default `false`) is `true`, visitor events will be printed to `io`, which defaults to `STDOUT`; otherwise, no event information will be displayed.
+`maximum_adjacency_visit(graph[, distmx]; log, io)`  
+Returns the vertices in `graph` traversed by maximum adjacency search. An optional distmx matrix may be specified; if omitted, edge distances are assumed to be 1. If `log` (default `false`) is `true`, visitor events will be printed to `io`, which defaults to `STDOUT`; otherwise, no event information will be displayed.
 
 
 ### Shortest-Path Algorithms
@@ -29,21 +29,21 @@ Returns the vertices in `graph` traversed by maximum adjacency search. An option
 *   The distance between two vertices with no connecting edge is always `Inf`.
 
 
-`a_star(g, s, t[, heuristic, edge_dists])`  
+`a_star(g, s, t[, heuristic, distmx])`  
 Computes the shortest path between vertices *s* and *t* using the [A* search algorithm](http://en.wikipedia.org/wiki/A*_search_algorithm). An optional heuristic function and edge distance matrix may be supplied.
 
-`dijkstra_shortest_paths(g, s[, edge_dists; allpaths=false])`  
+`dijkstra_shortest_paths(g, s[, distmx; allpaths=false])`  
 Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) on a graph, computing shortest distances between a source vertex *s* and all other nodes. Returns a `DijkstraState` that contains various traversal information (see below).
 
 With `allpaths=true`, returns a `DijkstraState` that keeps track of all predecessors of a given vertex (see below).
 
-`bellman_ford_shortest_paths(g, s[, edge_dists])`  
-`bellman_ford_shortest_paths(g, ss[, edge_dists])`  
+`bellman_ford_shortest_paths(g, s[, distmx])`  
+`bellman_ford_shortest_paths(g, ss[, distmx])`  
 
 Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex *s* or a set of source vertices *ss*. Returns a `BellmanFordState` with relevant traversal information (see below).
 
-`floyd_warshall_shortest_paths(g[, edge_dists])`  
-`floyd_warshall_shortest_paths(g[, edge_dists])`  
+`floyd_warshall_shortest_paths(g[, distmx])`  
+`floyd_warshall_shortest_paths(g[, distmx])`  
 
 Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm) to compute shortest paths between all pairs of vertices in graph *g*. Returns a `FloydWarshallState` with relevant traversal information (see below).
 
