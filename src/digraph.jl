@@ -45,7 +45,7 @@ function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
     else
         g = DiGraph(dima)
         for i=1:dima, j=1:dima
-            if adjmx[i,j] > 0 && !isinf(adjmx[i,j])
+            if adjmx[i,j] != zero(T)
                 add_edge!(g,i,j)
             end
         end
