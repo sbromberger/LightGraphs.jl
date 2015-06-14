@@ -20,7 +20,7 @@ end
 function dijkstra_shortest_paths{T}(
     g::AbstractGraph,
     srcs::Vector{Int},
-    edge_dists::AbstractArray{T, 2}=DefaultDistance();
+    distmx::AbstractArray{T, 2}=DefaultDistance();
     allpaths=false
 )
     nvg = nv(g)
@@ -47,7 +47,7 @@ function dijkstra_shortest_paths{T}(
             if dists[u] == typemax(T)
                 alt = typemax(T)
             else
-                alt = dists[u] + edge_dists[u,v]
+                alt = dists[u] + distmx[u,v]
             end
             if !visited[v]
                 dists[v] = alt
@@ -86,5 +86,5 @@ function dijkstra_shortest_paths{T}(
     return DijkstraState{T}(parents, dists, preds, pathcounts)
 end
 
-dijkstra_shortest_paths{T}(g::AbstractGraph, src::Int, edge_dists::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
-  dijkstra_shortest_paths(g, [src;], edge_dists; allpaths=allpaths)
+dijkstra_shortest_paths{T}(g::AbstractGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
+  dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)

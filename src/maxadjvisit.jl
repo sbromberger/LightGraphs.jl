@@ -15,9 +15,9 @@ end
 
 abstract AbstractMASVisitor <: AbstractGraphVisitor
 
-function maximum_adjacency_visit_impl!(
+function maximum_adjacency_visit_impl!{T}(
   graph::AbstractGraph,	                      # the graph
-  pq::Collections.PriorityQueue{Int, Float64},               # priority queue
+  pq::Collections.PriorityQueue{Int, T},               # priority queue
   visitor::AbstractMASVisitor,                      # the visitor
   colormap::Vector{Int})                            # traversal status
 
@@ -28,8 +28,8 @@ function maximum_adjacency_visit_impl!(
       examine_edge!(visitor, Edge(u,v), 0)
 
       if haskey(pq,v)
-          ed = visitor.edge_dists[u, v]
-          if ed == zero(Float64)
+          ed = visitor.distmx[u, v]
+          if ed == zero(T)
               ed = 1.0
           end
         pq[v] += ed
@@ -42,27 +42,28 @@ end
 
 function traverse_graph(
   graph::AbstractGraph,
+  T::DataType,
   alg::MaximumAdjacency,
   s::Int,
   visitor::AbstractMASVisitor,
   colormap::Vector{Int})
 
   if VERSION > v"0.4.0-"
-    pq = Collections.PriorityQueue(Int,Float64,Base.Order.Reverse)
+    pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
   else
-    pq = Collections.PriorityQueue{Int, Float64}(Base.Order.Reverse)
+    pq = Collections.PriorityQueue{Int, T}(Base.Order.Reverse)
   end
 
   # Set number of visited neighbours for all vertices to 0
   for v in vertices(graph)
-    pq[v] = zero(Float64)
+    pq[v] = zero(T)
   end
 
   @assert haskey(pq,s)
   @assert nv(graph) >= 2
 
   #Give the starting vertex high priority
-  pq[s] = one(Float64)
+  pq[s] = one(T)
 
   #start traversing the graph
   maximum_adjacency_visit_impl!(graph, pq, visitor, colormap)
@@ -82,21 +83,21 @@ end
 #
 #################################################
 
-type MinCutVisitor <: AbstractMASVisitor
+type MinCutVisitor{T} <: AbstractMASVisitor
   graph::AbstractGraph
-  parities::Vector{Bool}
+  parities::AbstractArray{Bool,1}
   colormap::Vector{Int}
-  bestweight::Float64
-  cutweight::Float64
+  bestweight::T
+  cutweight::T
   visited::Integer
-  edge_dists::AbstractArray{Float64, 2}
+  distmx::AbstractArray{T, 2}
   vertices::Vector{Int}
 end
 
-function MinCutVisitor(graph::AbstractGraph, edge_dists::AbstractArray{Float64, 2})
+function MinCutVisitor{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2})
   n = nv(graph)
   parities = falses(n)
-  MinCutVisitor(graph, parities, zeros(n), Inf, 0.0, 0.0, edge_dists, Int[])
+  MinCutVisitor(graph, parities, zeros(Int,n), typemax(T), zero(T), zero(Int), distmx, Int[])
 end
 
 function discover_vertex!(vis::MinCutVisitor, v::Int)
@@ -108,10 +109,7 @@ end
 
 function examine_edge!(vis::MinCutVisitor, e::Edge, color::Int)
   vi = dst(e)
-  ew = vis.edge_dists[src(e), dst(e)]
-  if ew == zero(Float64)
-      ew = 1.0
-  end
+  ew = vis.distmx[src(e), dst(e)]
 
   # if the target of e is already marked then decrease cutweight
   # otherwise, increase it
@@ -141,14 +139,14 @@ end
 #
 #################################################
 
-type MASVisitor <: AbstractMASVisitor
+type MASVisitor{T} <: AbstractMASVisitor
   io::IO
   vertices::Vector{Int}
-  edge_dists::AbstractArray{Float64, 2}
+  distmx::AbstractArray{T, 2}
   log::Bool
 end
 
-function discover_vertex!(visitor::MASVisitor, v::Int)
+function discover_vertex!{T}(visitor::MASVisitor{T}, v::Int)
   push!(visitor.vertices,v)
   visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
 end
@@ -167,49 +165,42 @@ end
 #
 #################################################
 
-function mincut(
+# function mincut{T}(
+#   graph::AbstractGraph,
+#   distmx::AbstractArray{T, 2},
+#   visitor = MinCutVisitor(graph, distmx),
+#   colormap = zeros(Int, nv(graph)))
+#
+#   traverse_graph(graph, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
+#
+#   return( visitor.parities, visitor.bestweight)
+# end
+
+function mincut{T}(
   graph::AbstractGraph,
-  edge_dists::AbstractArray{Float64, 2},
-  visitor = MinCutVisitor(graph, edge_dists),
-  colormap = zeros(Int, nv(graph)))
+  distmx::AbstractArray{T, 2})
 
-  traverse_graph(graph, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
-
-  return( visitor.parities, visitor.bestweight)
-end
-
-function mincut(
-  graph::AbstractGraph,
-  edge_dists::AbstractArray{Float64, 2})
-
-  visitor = MinCutVisitor(graph, edge_dists)
+  visitor = MinCutVisitor(graph, distmx)
   colormap = zeros(Int, nv(graph))
 
-  traverse_graph(graph, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
+  traverse_graph(graph, T, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
 
   return( visitor.parities, visitor.bestweight)
 end
 
 function mincut(graph::AbstractGraph)
   nvg = nv(graph)
-  mincut(graph,spzeros(nvg,nvg))
+  mincut(graph,DefaultDistance())
 end
 
-function maximum_adjacency_visit(graph::AbstractGraph, edge_dists::AbstractArray{Float64, 2}; log::Bool=false, io::IO=STDOUT)
-  visitor = MASVisitor(io, Int[],edge_dists,log)
-  traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, nv(graph)))
+function maximum_adjacency_visit{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2}; log::Bool=false, io::IO=STDOUT)
+  visitor = MASVisitor(io, Int[],distmx,log)
+  traverse_graph(graph, T, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, nv(graph)))
   visitor.vertices
 end
 
-# function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=STDOUT)
-#   edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
-#   visitor = MASVisitor(io, V[],edge_weights,log)
-#   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
-#   visitor.vertices
-# end
-
 function maximum_adjacency_visit(graph::AbstractGraph; log::Bool=false, io::IO=STDOUT)
   n = nv(graph)
-  edge_dists = sparse(zeros(n,n))
-  maximum_adjacency_visit(graph,edge_dists; log=log, io=io)
+  distmx = sparse(zeros(n,n))
+  maximum_adjacency_visit(graph,distmx; log=log, io=io)
 end

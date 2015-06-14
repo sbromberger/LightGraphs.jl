@@ -17,7 +17,7 @@ end
 #     """ ->
 function floyd_warshall_shortest_paths{T}(
     g::AbstractGraph,
-    edge_dists::AbstractArray{T, 2} = DefaultDistance()
+    distmx::AbstractArray{T, 2} = DefaultDistance()
 )
 
     n_v = nv(g)
@@ -33,7 +33,7 @@ function floyd_warshall_shortest_paths{T}(
         u = src(e)
         v = dst(e)
 
-        d = edge_dists[u,v]
+        d = distmx[u,v]
 
         dists[u,v] = min(d, dists[u,v])
         parents[u,v] = u

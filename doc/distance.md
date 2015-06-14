@@ -2,8 +2,8 @@
 
 ###Eccentricity
 
-`eccentricity(g, v[, edge_dists])`  
-`eccentricity(g[, vs, edge_dists])`  
+`eccentricity(g, v[, distmx])`  
+`eccentricity(g[, vs, distmx])`  
 Calculates the eccentricity[ies] of a vertex *v*, vertex vector *vs*, or the entire graph. An optional matrix of edge distances may be supplied.
 
 The eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.
@@ -18,20 +18,20 @@ Note that the eccentricity vector returned by `eccentricity()` may be used as in
 
 ###Radius
 `radius(ev)`  
-`radius(g[, edge_dists])`  
+`radius(g[, distmx])`  
 Calculates the radius of a graph. The radius is defined as the minimum eccentricity of the graph.
 
 ###Diameter
 `diameter(ev)`  
-`diameter(g[, edge_dists])`  
+`diameter(g[, distmx])`  
 Calculates the diameter of a graph. The diameter is defined as the maximum eccentricity of the graph.
 
 ###Center
 `center(ev)`  
-`center(g[, edge_dists])`  
+`center(g[, distmx])`  
 Calculates the center of a graph. The center of a graph is the set of all vertices whose eccentricity is equal to the graph's radius (that is, the set of vertices with the smallest eccentricity).
 
 ###Periphery
 `periphery(ev)`  
-`periphery(g[, edge_dists])`  
+`periphery(g[, distmx])`  
 Calculates the periphery of a graph. The periphery of a graph is the set of all vertices whose eccentricity is equal to the graph's diameter (that is, the set of vertices with the largest eccentricity).

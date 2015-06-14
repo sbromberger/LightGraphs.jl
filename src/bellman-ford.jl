@@ -12,29 +12,17 @@
 type NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
-type BellmanFordState<:AbstractPathState
+type BellmanFordState{T<:Number}<:AbstractPathState
     parents::Vector{Int}
-    dists::Vector{Float64}
-end
-
-# create Bellman Ford state
-
-function create_bellman_ford_state(g::AbstractGraph)
-    n = nv(g)
-    parents = zeros(Int, n)
-    dists = fill(typemax(Float64), n)
-
-    BellmanFordState(parents, dists)
+    dists::Vector{T}
 end
 
 function bellman_ford_shortest_paths!(
     graph::AbstractGraph,
-    edge_dists::AbstractArray{Float64, 2},
     sources::AbstractVector{Int},
-    state::BellmanFordState)
-
-    # has_distances in distance.jl
-    use_dists = has_distances(edge_dists)
+    distmx::AbstractArray{Float64, 2},
+    state::BellmanFordState
+)
 
     active = Set{Int}()
     for v in sources
@@ -48,15 +36,7 @@ function bellman_ford_shortest_paths!(
         new_active = Set{Int}()
         for u in active
             for v in fadj(graph, u)
-                if use_dists
-                    edist = edge_dists[u, v]
-                    if edist == 0.0
-                        edist = 1.0
-                    end
-                else
-                    edist = 1.0
-                end
-
+                edist = distmx[u, v]
                 if state.dists[v] > state.dists[u] + edist
                     state.dists[v] = state.dists[u] + edist
                     state.parents[v] = u
@@ -77,18 +57,22 @@ function bellman_ford_shortest_paths!(
 end
 
 
-function bellman_ford_shortest_paths(
+function bellman_ford_shortest_paths{T}(
     graph::AbstractGraph,
 
-    sources::AbstractVector{Int};
-    edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))
+    sources::AbstractVector{Int},
+    distmx::AbstractArray{T, 2} = DefaultDistance()
     )
-
-    state = create_bellman_ford_state(graph)
-    bellman_ford_shortest_paths!(graph, edge_dists, sources, state)
+    nvg = nv(graph)
+    state = BellmanFordState(zeros(Int,nvg), fill(typemax(T), nvg))
+    bellman_ford_shortest_paths!(graph, sources, distmx, state)
 end
 
-bellman_ford_shortest_paths(graph::AbstractGraph, v::Int; edge_dists::AbstractArray{Float64, 2} = Array(Float64,(0,0))) = bellman_ford_shortest_paths(graph, [v]; edge_dists=edge_dists)
+bellman_ford_shortest_paths{T}(
+    graph::AbstractGraph,
+    v::Int,
+    distmx::AbstractArray{T, 2} = DefaultDistance()
+) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 function has_negative_edge_cycle(graph::AbstractGraph)
     try
