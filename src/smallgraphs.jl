@@ -88,6 +88,14 @@ function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compa
     return g
 end
 
+function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
+    g = DiGraph(n)
+    for (s,d) in edgelist
+        add_edge!(g,s,d)
+    end
+    return g
+end
+
 DiamondGraph() =
     _make_simple_undirected_graph(4, [(1,2), (1,3), (2,3), (2,4), (3,4)])
 
@@ -378,6 +386,22 @@ function TruncatedTetrahedronGraph()
     return _make_simple_undirected_graph(12,e)
 end
 
+function TruncatedTetrahedronDiGraph()
+    e = [
+        (1, 2),(1, 3),(1, 10),
+        (2, 3),(2, 7),
+        (3, 4),
+        (4, 5),(4, 12),
+        (5, 6),(5, 12),
+        (6, 7),(6, 8),
+        (7, 8),
+        (8, 9),
+        (9, 10),(9, 11),
+        (10, 11),
+        (11, 12)
+    ]
+    return _make_simple_directed_graph(12,e)
+end
 function TutteGraph()
     e = [
     (1, 2),(1, 3),(1, 4),

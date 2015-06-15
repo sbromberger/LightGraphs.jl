@@ -79,7 +79,10 @@ g = TruncatedCubeGraph()
 @test nv(g) == 24 && ne(g) == 36
 
 g = TruncatedTetrahedronGraph()
-@test nv(g) == 12 && ne(g) == 18
+@test nv(g) == 12 && ne(g) == 18 && !is_directed(g)
+
+g = TruncatedTetrahedronDiGraph()
+@test nv(g) == 12 && ne(g) == 18 && is_directed(g)
 
 g = TutteGraph()
 @test nv(g) == 46 && ne(g) == 69
