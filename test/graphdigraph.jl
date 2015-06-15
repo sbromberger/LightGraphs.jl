@@ -45,7 +45,9 @@ add_edge!(h, 3, 5)
 
 badadjmx = [ 0 1 0; 1 0 1]
 @test_throws ErrorException Graph(badadjmx)
+@test_throws ErrorException Graph(sparse(badadjmx))
 @test_throws ErrorException DiGraph(badadjmx)
+@test_throws ErrorException DiGraph(sparse(badadjmx))
 @test_throws ErrorException Graph([1 0; 1 1])
 
 
