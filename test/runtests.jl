@@ -54,6 +54,7 @@ tests = [
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
+    "centrality/katz",
     "subgraphs"
     ]
 

@@ -60,11 +60,11 @@ module LightGraphs
     KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
     PappusGraph, PetersenGraph, SedgewickMazeGraph,
     TetrahedralGraph, TruncatedCubeGraph,
-    TruncatedTetrahedronGraph, TutteGraph,
+    TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
 
     # centrality
     betweenness_centrality, closeness_centrality, degree_centrality,
-    indegree_centrality, outdegree_centrality,
+    indegree_centrality, outdegree_centrality, katz_centrality,
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -99,4 +99,5 @@ module LightGraphs
             include("centrality/betweenness.jl")
             include("centrality/closeness.jl")
             include("centrality/degree.jl")
+            include("centrality/katz.jl")
 end # module
