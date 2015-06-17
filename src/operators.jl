@@ -115,27 +115,39 @@ function union{T<:AbstractGraph}(g::T, h::T)
     return r
 end
 
-#@doc "filter g to include only the vertices present in iter which should not have duplicates
-#returns the subgraph of g. Mappings are in iter. ->
-function inducedsubgraph{T<:AbstractGraph}(g::T, iter)
-    n = length(iter)
-    if length(unique(iter)) != n
-        error("vertices in subgraph must be unique")
-    else
-        h = T(n)
-        newvid = Dict{Int, Int}()
+isunique(iter::Range) = true
+isunique(iter::Set) = true
+isunique(iter) = (length(unique(iter)) == length(iter))
 
-        for (i, v) in enumerate(iter)
-            newvid[v] = i
-        end
-        for s in iter
-            for d in intersect(iter, out_neighbors(g, s))
-                newe = Edge(newvid[s], newvid[d])
-                if !has_edge(h, newe)
-                    add_edge!(h,newvid[s], newvid[d])
-                end
+#@doc "filter g to include only the vertices present in iter which should not have duplicates
+#returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
+function induced_subgraph{T<:AbstractGraph}(g::T, iter)
+    !isunique(iter) && error("Vertices in subgraph list must be unique")
+
+    if length(iter) == nv(g)
+        return copy(g) # if iter is not a proper subgraph
+    end
+
+    n = length(iter)
+    h = T(n)
+    newvid = Dict{Int, Int}()
+    i=1
+    for v in iter
+        newvid[v] = i
+        i += 1
+    end
+
+    for s in iter
+        for d in intersect(iter, out_neighbors(g, s))
+            newe = Edge(newvid[s], newvid[d])
+            if !has_edge(h, newe)
+                add_edge!(h,newvid[s], newvid[d])
             end
         end
         return h
     end
 end
+
+# dispatch for g[[1,2,3]], g[1:3], g[Set([1,2,3])]
+# these are the only allowed dispatches, everything else is slow
+getindex(g::AbstractGraph, iter) = first(induced_subgraph(g, iter))

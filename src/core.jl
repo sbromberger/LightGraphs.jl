@@ -122,3 +122,7 @@ neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
 out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+
+function copy{T<:AbstractGraph}(g::T)
+    return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+end
