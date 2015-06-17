@@ -8,7 +8,8 @@ module LightGraphs
         using Docile
     end
 
-    import Base:write, ==, isless, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
+    import Base: write, ==, isless, issubset, complement, union, intersect, reverse, reverse!, blkdiag
+    import Base: getindex, show, print, copy
 
     # core
     export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -24,7 +25,7 @@ module LightGraphs
     # operators
     complement, reverse, reverse!, union, intersect,
     difference, symmetric_difference,
-    inducedsubgraph,
+    induced_subgraph,
 
     # graph visit
     AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
