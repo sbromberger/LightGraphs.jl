@@ -64,11 +64,10 @@ module LightGraphs
 
     # centrality
     betweenness_centrality, closeness_centrality, degree_centrality,
-    indegree_centrality, outdegree_centrality, katz_centrality,
+    indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-    pagerank,
 
     # astar
     a_star,
@@ -100,4 +99,5 @@ module LightGraphs
             include("centrality/closeness.jl")
             include("centrality/degree.jl")
             include("centrality/katz.jl")
+            include("centrality/pagerank.jl")
 end # module
