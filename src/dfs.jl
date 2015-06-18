@@ -118,7 +118,7 @@ end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-function test_cyclic_by_dfs(graph::AbstractGraph)
+function is_cyclic(graph::AbstractGraph)
     cmap = zeros(Int, nv(graph))
     visitor = DFSCyclicTestVisitor()
 
