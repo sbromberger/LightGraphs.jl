@@ -22,4 +22,4 @@ h = inducedsubgraph(g, [5:26;])
 @test nv(h) == 22
 @test typeof(h) == typeof(g)
 
-@test_throws ErrorException h = inducedsubgraph(g, [1:6, 1])
+@test_throws ErrorException h = inducedsubgraph(g, [1:6; 1])

@@ -48,8 +48,13 @@ function discover_vertex!(vis::TarjanVisitor, v)
 end
 
 function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
+<<<<<<< HEAD
     if w_color == 1 # 1 means added seen, but not explored
         while vis.index[w] < vis.lowlink[end]
+=======
+    if w_color > 0 # 1 means added seen, but not explored; 2 means closed
+        while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
+>>>>>>> f39cdb2... bfs / dfs enhancements, connectivity, and modifications to subgraphs
             pop!(vis.lowlink)
         end
     end
