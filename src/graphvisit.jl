@@ -12,16 +12,16 @@ abstract AbstractGraphVisitor
 discover_vertex!(vis::AbstractGraphVisitor, v) = true
 
 # invoked when the algorithm is about to examine v's neighbors
-open_vertex!(vis::AbstractGraphVisitor, v) = nothing
+open_vertex!(vis::AbstractGraphVisitor, v) = true
 
 # invoked when a neighbor is discovered & examined
-examine_neighbor!(vis::AbstractGraphVisitor, u, v, color::Int, ecolor::Int) = nothing
+examine_neighbor!(vis::AbstractGraphVisitor, u, v, color::Int, ecolor::Int) = true
 
 # invoked when an edge is discovered & examined
-examine_edge!(vis::AbstractGraphVisitor, e, color::Int) = nothing
+examine_edge!(vis::AbstractGraphVisitor, e, color::Int) = true
 
 # invoked when all of v's neighbors have been examined
-close_vertex!(vis::AbstractGraphVisitor, v) = nothing
+close_vertex!(vis::AbstractGraphVisitor, v) = true
 
 
 type TrivialGraphVisitor <: AbstractGraphVisitor

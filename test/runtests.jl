@@ -50,6 +50,7 @@ tests = [
     "randgraphs",
     "bfs",
     "dfs",
+    "connectivity",
     "maxadjvisit",
     "centrality/betweenness",
     "centrality/closeness",

@@ -116,23 +116,26 @@ function union{T<:AbstractGraph}(g::T, h::T)
 end
 
 #@doc "filter g to include only the vertices present in iter which should not have duplicates
-#returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
+#returns the subgraph of g. Mappings are in iter. ->
 function inducedsubgraph{T<:AbstractGraph}(g::T, iter)
-    n = length(iter)
-    h = T(n)
-    newvid = Dict{Int, Int}()
-    i=1
-    for v in iter
-        newvid[v] = i
-        i += 1
-    end
-    for s in iter
-        for d in intersect(iter, out_neighbors(g, s))
-            newe = Edge(newvid[s], newvid[d])
-            if !has_edge(h, newe)
-                add_edge!(h,newvid[s], newvid[d])
+    if unique(iter) != iter
+        error("vertices in subgraph must be unique")
+    else
+        n = length(iter)
+        h = T(n)
+        newvid = Dict{Int, Int}()
+
+        for (i, v) in enumerate(iter)
+            newvid[v] = i
+        end
+        for s in iter
+            for d in intersect(iter, out_neighbors(g, s))
+                newe = Edge(newvid[s], newvid[d])
+                if !has_edge(h, newe)
+                    add_edge!(h,newvid[s], newvid[d])
+                end
             end
         end
+        return h
     end
-    return h, newvid
 end

@@ -33,11 +33,13 @@ module LightGraphs
     traverse_graph, traverse_graph_withlog,
 
     # bfs
-    BreadthFirst, gdistances, gdistances!,
+    BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, traverse_bfs,
 
     # dfs
-    DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
+    DepthFirst, has_cycles, is_cyclic, topological_sort_by_dfs, dfs_tree, traverse_dfs,
 
+    # connectivity
+    strongly_connected_components, weakly_connected_components, connected_components,
     # maximum_adjacency_visit
     MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
@@ -86,6 +88,7 @@ module LightGraphs
                 include("bfs.jl")
                 include("dfs.jl")
                 include("maxadjvisit.jl")
+            include("connectivity.jl")
             include("distance.jl")
             include("bellman-ford.jl")
             include("dijkstra.jl")
