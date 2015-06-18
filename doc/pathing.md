@@ -10,7 +10,7 @@
 ###Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex ``v`` and ends up at ``v``.
 
-`test_cyclic_by_dfs(g)`  
+`is_cyclic(g)`  
 Tests whether a graph contains a cycle through depth-first search. It returns ``true`` when it finds a cycle, otherwise ``false``.
 
 ###Simple Minimum Cut

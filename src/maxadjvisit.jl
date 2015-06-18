@@ -165,42 +165,32 @@ end
 #
 #################################################
 
-# function mincut{T}(
-#   graph::AbstractGraph,
-#   distmx::AbstractArray{T, 2},
-#   visitor = MinCutVisitor(graph, distmx),
-#   colormap = zeros(Int, nv(graph)))
-#
-#   traverse_graph(graph, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
-#
-#   return( visitor.parities, visitor.bestweight)
-# end
 
 function mincut{T}(
   graph::AbstractGraph,
-  distmx::AbstractArray{T, 2})
+  distmx::AbstractArray{T, 2}
+ )
 
   visitor = MinCutVisitor(graph, distmx)
   colormap = zeros(Int, nv(graph))
 
-  traverse_graph(graph, T, MaximumAdjacency(), first( vertices(graph) ), visitor, colormap)
+  traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, colormap)
 
   return( visitor.parities, visitor.bestweight)
 end
 
-function mincut(graph::AbstractGraph)
-  nvg = nv(graph)
-  mincut(graph,DefaultDistance())
-end
+mincut(graph::AbstractGraph) = mincut(graph,DefaultDistance())
 
-function maximum_adjacency_visit{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2}; log::Bool=false, io::IO=STDOUT)
+
+function maximum_adjacency_visit{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2}, log::Bool, io::IO)
   visitor = MASVisitor(io, Int[],distmx,log)
-  traverse_graph(graph, T, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, nv(graph)))
-  visitor.vertices
+  traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
+  return visitor.vertices
 end
 
-function maximum_adjacency_visit(graph::AbstractGraph; log::Bool=false, io::IO=STDOUT)
-  n = nv(graph)
-  distmx = sparse(zeros(n,n))
-  maximum_adjacency_visit(graph,distmx; log=log, io=io)
-end
+maximum_adjacency_visit(graph::AbstractGraph) = maximum_adjacency_visit(
+    graph,
+    DefaultDistance(),
+    false,
+    STDOUT
+)

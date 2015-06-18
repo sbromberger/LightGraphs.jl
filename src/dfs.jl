@@ -118,7 +118,7 @@ end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-function test_cyclic_by_dfs(graph::AbstractGraph)
+function is_cyclic(graph::AbstractGraph)
     cmap = zeros(Int, nv(graph))
     visitor = DFSCyclicTestVisitor()
 
@@ -169,4 +169,33 @@ function topological_sort_by_dfs(graph::AbstractGraph)
     end
 
     reverse(visitor.vertices)
+end
+
+
+type TreeDFSVisitor <:AbstractGraphVisitor
+    tree::DiGraph
+    predecessor::Vector{Int}
+end
+
+TreeDFSVisitor(n::Int) = TreeDFSVisitor(DiGraph(n), zeros(Int,n))
+
+function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    if (vcolor == 0)
+        visitor.predecessor[v] = u
+    end
+    return true
+end
+
+function dfs_tree(g::AbstractGraph, s::Int)
+    nvg = nv(g)
+    visitor = TreeDFSVisitor(nvg)
+    traverse_graph(g, DepthFirst(), s, visitor)
+    # visitor = traverse_dfs(g, s, TreeDFSVisitor(nvg))
+    h = DiGraph(nvg)
+    for (v, u) in enumerate(visitor.predecessor)
+        if u != 0
+            add_edge!(h, u, v)
+        end
+    end
+    return h
 end

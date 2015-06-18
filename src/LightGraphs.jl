@@ -1,103 +1,108 @@
 module LightGraphs
-    using Compat
-    using GZip
-    using DataStructures
-    using Distributions
-    using Base.Collections
-    if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
-        using Docile
-    end
 
-    import Base:write, ==, isless, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
+using Compat
+using GZip
+using DataStructures
+using Distributions
+using Base.Collections
+if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
+    using Docile
+end
 
-    # core
-    export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-    in_edges, out_edges, has_vertex, has_edge, is_directed,
-    nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
-    indegree, outdegree, degree, degree_histogram, density, Δ, δ,
-    Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-    common_neighbors,
+import Base: write, ==, isless, issubset, show, print, complement, union
+import Base: intersect, reverse, reverse!, blkdiag
 
-    # distance
-    eccentricity, diameter, periphery, radius, center,
+# core
+export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+in_edges, out_edges, has_vertex, has_edge, is_directed,
+nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
+indegree, outdegree, degree, degree_histogram, density, Δ, δ,
+Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
+common_neighbors,
 
-    # operators
-    complement, reverse, reverse!, union, intersect,
-    difference, symmetric_difference,
-    inducedsubgraph,
+# distance
+eccentricity, diameter, periphery, radius, center,
 
-    # graph visit
-    AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
-    discover_vertex!, open_vertex!, close_vertex!,
-    examine_neighbor!, examine_edge!, visited_vertices,
-    traverse_graph, traverse_graph_withlog,
+# operators
+complement, reverse, reverse!, union, intersect,
+difference, symmetric_difference,
+inducedsubgraph,
 
-    # bfs
-    BreadthFirst, gdistances, gdistances!,
+# graph visit
+AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
+discover_vertex!, open_vertex!, close_vertex!,
+examine_neighbor!, examine_edge!, visited_vertices,
+traverse_graph, traverse_graph_withlog,
 
-    # dfs
-    DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
+# bfs
+BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, traverse_bfs,
 
-    # maximum_adjacency_visit
-    MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
+# dfs
+DepthFirst, has_cycles, is_cyclic, topological_sort_by_dfs, dfs_tree, traverse_dfs,
 
-    # dijkstra
-    dijkstra_shortest_paths,
+# connectivity
+strongly_connected_components, weakly_connected_components, connected_components,
+# maximum_adjacency_visit
+MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
-    # bellman-ford
-    bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
+# dijkstra
+dijkstra_shortest_paths,
 
-    # floyd-warshall
-    floyd_warshall_shortest_paths,
+# bellman-ford
+bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 
-    # smallgraphs
-    CompleteGraph, StarGraph, PathGraph, WheelGraph,
-    CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph,
-    DiamondGraph, BullGraph,
-    ChvatalGraph, CubicalGraph, DesarguesGraph,
-    DodecahedralGraph, FruchtGraph, HeawoodGraph,
-    HouseGraph, HouseXGraph, IcosahedralGraph,
-    KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
-    PappusGraph, PetersenGraph, SedgewickMazeGraph,
-    TetrahedralGraph, TruncatedCubeGraph,
-    TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
+# floyd-warshall
+floyd_warshall_shortest_paths,
 
-    # centrality
-    betweenness_centrality, closeness_centrality, degree_centrality,
-    indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
+# smallgraphs
+CompleteGraph, StarGraph, PathGraph, WheelGraph,
+CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph,
+DiamondGraph, BullGraph,
+ChvatalGraph, CubicalGraph, DesarguesGraph,
+DodecahedralGraph, FruchtGraph, HeawoodGraph,
+HouseGraph, HouseXGraph, IcosahedralGraph,
+KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
+PappusGraph, PetersenGraph, SedgewickMazeGraph,
+TetrahedralGraph, TruncatedCubeGraph,
+TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
 
-    # linalg
-    adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+# centrality
+betweenness_centrality, closeness_centrality, degree_centrality,
+indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
-    # astar
-    a_star,
+# linalg
+adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 
-    # persistence
-    readgraph, read_graphml,
+# astar
+a_star,
 
-    # randgraphs
-    erdos_renyi, watts_strogatz
+# persistence
+readgraph, read_graphml,
 
-    include("core.jl")
-        include("digraph.jl")
-        include("graph.jl")
-            include("astar.jl")
-            include("graphvisit.jl")
-                include("bfs.jl")
-                include("dfs.jl")
-                include("maxadjvisit.jl")
-            include("distance.jl")
-            include("bellman-ford.jl")
-            include("dijkstra.jl")
-            include("floyd-warshall.jl")
-            include("linalg.jl")
-            include("operators.jl")
-            include("persistence.jl")
-            include("randgraphs.jl")
-            include("smallgraphs.jl")
-            include("centrality/betweenness.jl")
-            include("centrality/closeness.jl")
-            include("centrality/degree.jl")
-            include("centrality/katz.jl")
-            include("centrality/pagerank.jl")
+# randgraphs
+erdos_renyi, watts_strogatz
+
+include("core.jl")
+    include("digraph.jl")
+    include("graph.jl")
+        include("astar.jl")
+        include("graphvisit.jl")
+            include("bfs.jl")
+            include("dfs.jl")
+            include("maxadjvisit.jl")
+        include("connectivity.jl")
+        include("distance.jl")
+        include("bellman-ford.jl")
+        include("dijkstra.jl")
+        include("floyd-warshall.jl")
+        include("linalg.jl")
+        include("operators.jl")
+        include("persistence.jl")
+        include("randgraphs.jl")
+        include("smallgraphs.jl")
+        include("centrality/betweenness.jl")
+        include("centrality/closeness.jl")
+        include("centrality/degree.jl")
+        include("centrality/katz.jl")
+        include("centrality/pagerank.jl")
 end # module
