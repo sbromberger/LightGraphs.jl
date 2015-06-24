@@ -39,16 +39,13 @@ function DiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
 end
 
 function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
-    dima, dimb = size(adjmx)
-    if dima != dimb
-        error("Adjacency / distance matrices must be square")
-    else
-        g = DiGraph(dima)
-        for i=1:dima, j=1:dima
-            if adjmx[i,j] != zero(T)
-                add_edge!(g,i,j)
-            end
-        end
+    dima,dimb = size(adjmx)
+    isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
+
+    g = DiGraph(dima)
+    for i in find(adjmx)
+        ind = ind2sub((dima,dimb),i)
+        add_edge!(g,ind...)
     end
     return g
 end
