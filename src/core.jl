@@ -6,7 +6,6 @@ if VERSION < v"0.4.0-dev+818"
         first::T1
         second::T2
     end
-
 end
 
 if VERSION < v"0.4.0-dev+4103"
@@ -29,6 +28,9 @@ type DiGraph<:AbstractGraph
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
+# The two graph types provided by this package, which share the
+# same fields and can share a lot of the same methods
+typealias GraphTypes Union(Graph,DiGraph)
 
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
@@ -41,12 +43,12 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.first) - $(e.second)")
 end
 
-vertices(g::AbstractGraph) = g.vertices
-edges(g::AbstractGraph) = g.edges
-fadj(g::AbstractGraph) = g.fadjlist
-fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
-badj(g::AbstractGraph) = g.badjlist
-badj(g::AbstractGraph, v::Int) = g.badjlist[v]
+vertices(g::GraphTypes) = g.vertices
+edges(g::GraphTypes) = g.edges
+fadj(g::GraphTypes) = g.fadjlist
+fadj(g::GraphTypes, v::Int) = g.fadjlist[v]
+badj(g::GraphTypes) = g.badjlist
+badj(g::GraphTypes, v::Int) = g.badjlist[v]
 
 
 function issubset{T<:AbstractGraph}(g::T, h::T)
@@ -56,7 +58,7 @@ function issubset{T<:AbstractGraph}(g::T, h::T)
     issubset(edges(g), edges(h))
 end
 
-function add_vertex!(g::AbstractGraph)
+function add_vertex!(g::GraphTypes)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
     push!(g.badjlist, Int[])
@@ -73,6 +75,12 @@ function add_vertices!(g::AbstractGraph, n::Integer)
 end
 
 has_edge(g::AbstractGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
+function has_edge(g::AbstractGraph, e::Edge)
+    is_directed(g) ?
+        e in edges(g) :
+        e in edges(g) || reverse(e) in edges(g)
+        
+end
 
 in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
 out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
@@ -86,11 +94,15 @@ add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 rem_edge!(g::AbstractGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-is_directed(g::AbstractGraph) = (typeof(g) == Graph? false : true)
+is_directed(g::GraphTypes) = (typeof(g) == Graph ? false : true)
 
 indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
 outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
-
+function degree(g::AbstractGraph, v::Int)
+    is_directed(g) ?
+        indegree(g,v) + outdegree(g,v) :
+        indegree(g,v)
+end
 
 indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
 outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
@@ -122,3 +134,9 @@ neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
 out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+
+function density(g::AbstractGraph)
+    nvert = nv(g)
+    nedge = ne(g)
+    (is_directed(g) ? 1 : 2) * nedge / (nvert * (nvert-1))
+end

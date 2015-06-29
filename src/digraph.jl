@@ -95,8 +95,4 @@ function rem_edge!(g::DiGraph, e::Edge)
     return e
 end
 
-has_edge(g::DiGraph, e::Edge) = e in edges(g)
-
-degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
 # all_neighbors(g::DiGraph, v::Int) = neighbors(g, v)
-density(g::DiGraph) = ne(g) / (nv(g) * (nv(g)-1))

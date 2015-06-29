@@ -54,8 +54,6 @@ function ==(g::Graph, h::Graph)
     return (gdigraph == hdigraph)
 end
 
-has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
-
 function add_edge!(g::Graph, e::Edge)
     if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
         throw(BoundsError())
@@ -97,10 +95,7 @@ function rem_edge!(g::Graph, e::Edge)
 end
 
 
-
-degree(g::Graph, v::Int) = indegree(g,v)
 # all_neighbors(g::Graph, v::Int) =
 #     filter(x->x!=v,
 #         union(neighbors(g,v), [dst(e) for e in g.binclist[v]])
 #     )
-density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
