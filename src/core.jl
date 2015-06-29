@@ -30,7 +30,7 @@ end
 
 # The two graph types provided by this package, which share the
 # same fields and can share a lot of the same methods
-typealias GraphTypes Union(Graph,DiGraph)
+typealias SimpleGraph Union(Graph,DiGraph)
 
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
@@ -43,12 +43,12 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.first) - $(e.second)")
 end
 
-vertices(g::GraphTypes) = g.vertices
-edges(g::GraphTypes) = g.edges
-fadj(g::GraphTypes) = g.fadjlist
-fadj(g::GraphTypes, v::Int) = g.fadjlist[v]
-badj(g::GraphTypes) = g.badjlist
-badj(g::GraphTypes, v::Int) = g.badjlist[v]
+vertices(g::SimpleGraph) = g.vertices
+edges(g::SimpleGraph) = g.edges
+fadj(g::SimpleGraph) = g.fadjlist
+fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
+badj(g::SimpleGraph) = g.badjlist
+badj(g::SimpleGraph, v::Int) = g.badjlist[v]
 
 
 function issubset{T<:AbstractGraph}(g::T, h::T)
@@ -58,7 +58,7 @@ function issubset{T<:AbstractGraph}(g::T, h::T)
     issubset(edges(g), edges(h))
 end
 
-function add_vertex!(g::GraphTypes)
+function add_vertex!(g::SimpleGraph)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
     push!(g.badjlist, Int[])
@@ -94,7 +94,7 @@ add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 rem_edge!(g::AbstractGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-is_directed(g::GraphTypes) = (typeof(g) == Graph ? false : true)
+is_directed(g::SimpleGraph) = (typeof(g) == Graph ? false : true)
 
 indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
 outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
