@@ -56,7 +56,7 @@ function discover_vertex!(visitor::VertexListVisitor, v::Int)
 end
 
 function visited_vertices(
-    graph::AbstractGraph,
+    graph::AbstractGeneralGraph,
     alg::AbstractGraphVisitAlgorithm,
     sources)
 
@@ -88,10 +88,10 @@ function examine_edge!(vis::LogGraphVisitor, e::Edge, color::Int)
     println(vis.io, "examine edge: $e")
 end
 
-function traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm, sources::Vector{Int}, io::IO)
+function traverse_graph_withlog(g::AbstractGeneralGraph, alg::AbstractGraphVisitAlgorithm, sources::Vector{Int}, io::IO)
     visitor = LogGraphVisitor(io)
     traverse_graph(g, alg, sources, visitor)
 end
 
-traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm,
+traverse_graph_withlog(g::AbstractGeneralGraph, alg::AbstractGraphVisitAlgorithm,
     sources::Vector{Int}) = traverse_graph_withlog(g, alg, sources, STDOUT)

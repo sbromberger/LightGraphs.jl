@@ -14,7 +14,7 @@ type DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function depth_first_visit_impl!(
-    graph::AbstractGraph,      # the graph
+    graph::AbstractGeneralGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::Vector{Int},    # an (initialized) color-map to indicate status of vertices
     edgecolormap::Dict{Edge,Int},      # an (initialized) color-map to indicate status of edges
@@ -61,7 +61,7 @@ function depth_first_visit_impl!(
     end
 end
 
-function _mkedgecolormap(g::AbstractGraph, n::Integer=0)
+function _mkedgecolormap(g::AbstractGeneralGraph, n::Integer=0)
     d = Dict{Edge, Int}()
     for e in edges(g)
         d[e] = n
@@ -70,7 +70,7 @@ function _mkedgecolormap(g::AbstractGraph, n::Integer=0)
 end
 
 function traverse_graph(
-    graph::AbstractGraph,
+    graph::AbstractGeneralGraph,
     alg::DepthFirst,
     s::Int,
     visitor::AbstractGraphVisitor;
@@ -118,7 +118,7 @@ end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-function test_cyclic_by_dfs(graph::AbstractGraph)
+function test_cyclic_by_dfs(graph::AbstractGeneralGraph)
     cmap = zeros(Int, nv(graph))
     visitor = DFSCyclicTestVisitor()
 
@@ -157,7 +157,7 @@ function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
     push!(visitor.vertices, v)
 end
 
-function topological_sort_by_dfs(graph::AbstractGraph)
+function topological_sort_by_dfs(graph::AbstractGeneralGraph)
     nvg = nv(graph)
     cmap = zeros(Int, nvg)
     visitor = TopologicalSortVisitor(nvg)

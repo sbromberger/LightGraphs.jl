@@ -13,7 +13,7 @@ type BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!(
-    graph::AbstractGraph,   # the graph
+    graph::AbstractGeneralGraph,   # the graph
     queue,                  # an (initialized) queue that stores the active vertices
     colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
     visitor::AbstractGraphVisitor)  # the visitor
@@ -44,7 +44,7 @@ end
 
 
 function traverse_graph(
-    graph::AbstractGraph,
+    graph::AbstractGeneralGraph,
     alg::BreadthFirst,
     s::Int,
     visitor::AbstractGraphVisitor;
@@ -63,7 +63,7 @@ end
 
 
 function traverse_graph(
-    graph::AbstractGraph,
+    graph::AbstractGeneralGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
     visitor::AbstractGraphVisitor;
@@ -92,7 +92,7 @@ end
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
 immutable GDistanceVisitor <: AbstractGraphVisitor
-    graph::AbstractGraph
+    graph::AbstractGeneralGraph
     dists::Vector{Int}
 end
 
@@ -104,14 +104,14 @@ function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor:
     end
 end
 
-function gdistances!{DMap}(graph::AbstractGraph, s::Int, dists::DMap)
+function gdistances!{DMap}(graph::AbstractGeneralGraph, s::Int, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     dists[s] = 0
     traverse_graph(graph, BreadthFirst(), s, visitor)
     dists
 end
 
-function gdistances!{DMap}(graph::AbstractGraph, sources::AbstractVector{Int}, dists::DMap)
+function gdistances!{DMap}(graph::AbstractGeneralGraph, sources::AbstractVector{Int}, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     for s in sources
         dists[s] = 0
@@ -120,7 +120,7 @@ function gdistances!{DMap}(graph::AbstractGraph, sources::AbstractVector{Int}, d
     dists
 end
 
-function gdistances(graph::AbstractGraph, sources; defaultdist::Int=-1)
+function gdistances(graph::AbstractGeneralGraph, sources; defaultdist::Int=-1)
     dists = fill(defaultdist, nv(graph))
     gdistances!(graph, sources, dists)
 end
