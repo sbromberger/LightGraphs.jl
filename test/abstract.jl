@@ -37,7 +37,6 @@ function LightGraphs.edges(g::GridGraph)
     end
     return all_edges
 end
-LightGraphs.is_directed(g::GridGraph) = false
 function LightGraphs.fadj(g::GridGraph, v::Int)
     N = g.gridsize
     fadj_verts = Int[]

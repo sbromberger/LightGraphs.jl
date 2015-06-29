@@ -11,7 +11,8 @@ module LightGraphs
     import Base:write, ==, isless, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
 
     # core
-    export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+    export AbstractGeneralGraph, AbstractGraph, AbstractDiGraph,
+    Edge, Graph, DiGraph, vertices, edges, src, dst,
     in_edges, out_edges, has_vertex, has_edge, is_directed,
     nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,

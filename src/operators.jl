@@ -47,7 +47,7 @@ function reverse!(g::DiGraph)
     return g
 end
 
-function blkdiag{T<:AbstractGraph}(g::T, h::T)
+function blkdiag{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -59,7 +59,7 @@ function blkdiag{T<:AbstractGraph}(g::T, h::T)
     return r
 end
 
-function intersect{T<:AbstractGraph}(g::T, h::T)
+function intersect{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -71,7 +71,7 @@ function intersect{T<:AbstractGraph}(g::T, h::T)
 end
 
 # edges in G but not in H
-function difference{T<:AbstractGraph}(g::T, h::T)
+function difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -85,7 +85,7 @@ function difference{T<:AbstractGraph}(g::T, h::T)
 end
 
 # only include edges from G or H that do not exist in the other.
-function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
+function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -104,7 +104,7 @@ function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
 end
 
 # merge G and H by union of all vertices and edges.
-function union{T<:AbstractGraph}(g::T, h::T)
+function union{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -117,7 +117,7 @@ end
 
 #@doc "filter g to include only the vertices present in iter which should not have duplicates
 #returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
-function inducedsubgraph{T<:AbstractGraph}(g::T, iter)
+function inducedsubgraph{T<:SimpleGraph}(g::T, iter)
     n = length(iter)
     h = T(n)
     newvid = Dict{Int, Int}()

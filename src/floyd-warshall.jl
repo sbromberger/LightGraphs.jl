@@ -16,7 +16,7 @@ end
 #     space required for the FloydWarshallState is O(n^2).
 #     """ ->
 function floyd_warshall_shortest_paths{T}(
-    g::AbstractGraph,
+    g::AbstractGeneralGraph,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
 
