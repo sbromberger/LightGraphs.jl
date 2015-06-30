@@ -115,16 +115,12 @@ function union{T<:AbstractGraph}(g::T, h::T)
     return r
 end
 
-isunique(iter::Range) = true
-isunique(iter::Set) = true
-isunique(iter) = (length(unique(iter)) == length(iter))
-
 #@doc "filter g to include only the vertices present in iter which should not have duplicates
 #returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
 function induced_subgraph{T<:AbstractGraph}(g::T, iter)
-    !isunique(iter) && error("Vertices in subgraph list must be unique")
-
-    if length(iter) == nv(g)
+    if length(unique(iter)) == length(iter)
+        error("Vertices in subgraph list must be unique")
+    elseif length(iter) == nv(g)
         return copy(g) # if iter is not a proper subgraph
     end
 
