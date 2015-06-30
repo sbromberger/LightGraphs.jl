@@ -88,11 +88,10 @@ function rem_edge!(g::DiGraph, e::Edge)
     end
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
-    splice!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
-    splice!(g.badjlist[dst(e)], i)
-    pop!(g.edges, e)
-    return e
+    deleteat!(g.badjlist[dst(e)], i)
+    return pop!(g.edges, e)
 end
 
 has_edge(g::DiGraph, e::Edge) = e in edges(g)
