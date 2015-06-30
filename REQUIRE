@@ -1,7 +1,7 @@
 julia 0.3
 Compat 0.4
 GZip 0.2
-Distributions 0.6.6
+StatsBase 0.6.15
 DataStructures 0.3
 LightXML 0.1.10
-Docile 0.5.3 
+Docile 0.5.3
