@@ -4,11 +4,11 @@
 function connected_components(g::Graph)
     nvg = nv(g)
     found = zeros(Bool, nvg)
-    components = Vector{Vector{Int}}()
+    components = @compat Vector{Vector{Int}}()
     for v in 1:nvg
         if !found[v]
             bfstree = bfs_tree(g, v)
-            found_vertices = Vector{Int}()
+            found_vertices = @compat Vector{Int}()
             for e in edges(bfstree)
                 push!(found_vertices, src(e))
                 push!(found_vertices, dst(e))
@@ -34,10 +34,10 @@ type TarjanVisitor <: AbstractGraphVisitor
 end
 
 TarjanVisitor(n::Int) = TarjanVisitor(
-    Vector{Int}(),
-    Vector{Int}(),
+    @compat(Vector{Int}()),
+    @compat(Vector{Int}()),
     zeros(Int, n),
-    Vector{Vector{Int}}()
+    @compat(Vector{Vector{Int}}())
 )
 
 function discover_vertex!(vis::TarjanVisitor, v)
@@ -70,7 +70,7 @@ end
 function strongly_connected_components(g::DiGraph)
     nvg = nv(g)
     cmap = zeros(Int, nvg)
-    components = Vector{Vector{Int}}()
+    components = @compat Vector{Vector{Int}}()
 
     for v in vertices(g)
         if cmap[v] == 0 # 0 means not visited yet

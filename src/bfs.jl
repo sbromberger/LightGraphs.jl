@@ -52,7 +52,7 @@ function traverse_graph(
     visitor::AbstractGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
-    que = Vector{Int}()
+    que = @compat Vector{Int}()
 
     colormap[s] = 1
     if !discover_vertex!(visitor, s)
@@ -172,7 +172,6 @@ end
 BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
 function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if vcolor == 0
         visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1)? 2:1
     else
