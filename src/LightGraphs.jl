@@ -2,7 +2,7 @@ module LightGraphs
     using Compat
     using GZip
     using DataStructures
-    using Distributions
+    using StatsBase
     using Base.Collections
     if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
         using Docile
