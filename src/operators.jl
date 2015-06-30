@@ -118,10 +118,10 @@ end
 #@doc "filter g to include only the vertices present in iter which should not have duplicates
 #returns the subgraph of g. Mappings are in iter. ->
 function inducedsubgraph{T<:AbstractGraph}(g::T, iter)
-    if unique(iter) != iter
+    n = length(iter)
+    if length(unique(iter)) != n
         error("vertices in subgraph must be unique")
     else
-        n = length(iter)
         h = T(n)
         newvid = Dict{Int, Int}()
 
