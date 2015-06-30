@@ -4,11 +4,11 @@
 function connected_components(g::Graph)
     nvg = nv(g)
     found = zeros(Bool, nvg)
-    components = Vector{Vector{Int}}()
+    components = @compat Vector{Vector{Int}}()
     for v in 1:nvg
         if !found[v]
             bfstree = bfs_tree(g, v)
-            found_vertices = Vector{Int}()
+            found_vertices = @compat Vector{Int}()
             for e in edges(bfstree)
                 push!(found_vertices, src(e))
                 push!(found_vertices, dst(e))
@@ -33,7 +33,7 @@ type TarjanVisitor <: AbstractGraphVisitor
     components::Vector{Vector{Int}}
 end
 
-TarjanVisitor(n::Int) = TarjanVisitor(
+@compat TarjanVisitor(n::Int) = TarjanVisitor(
     Vector{Int}(),
     Vector{Int}(),
     zeros(Int, n),
@@ -48,13 +48,8 @@ function discover_vertex!(vis::TarjanVisitor, v)
 end
 
 function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
-<<<<<<< HEAD
-    if w_color == 1 # 1 means added seen, but not explored
-        while vis.index[w] < vis.lowlink[end]
-=======
     if w_color > 0 # 1 means added seen, but not explored; 2 means closed
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
->>>>>>> f39cdb2... bfs / dfs enhancements, connectivity, and modifications to subgraphs
             pop!(vis.lowlink)
         end
     end
@@ -75,7 +70,7 @@ end
 function strongly_connected_components(g::DiGraph)
     nvg = nv(g)
     cmap = zeros(Int, nvg)
-    components = Vector{Vector{Int}}()
+    components = @compat Vector{Vector{Int}}()
 
     for v in vertices(g)
         if cmap[v] == 0 # 0 means not visited yet
@@ -87,4 +82,30 @@ function strongly_connected_components(g::DiGraph)
         end
     end
     return components
+end
+
+has_self_loop(g::AbstractGraph) = any(v->has_edge(g, v, v), vertices(g))
+
+# Computes the (common) period for all nodes in a strongly connected graph
+function period(g::DiGraph)
+    if length(strongly_connected_components(g)) != 1 
+        error("Graph must be strongly connected")
+    end
+
+    # First check if there's a self loop
+    has_self_loop(g) && return 1
+
+    g_bfs_tree  = bfs_tree(g,1)
+    levels      = gdistances(g_bfs_tree,1)
+    tree_diff   = difference(g,g_bfs_tree)
+    edge_values = Vector{Int}()
+
+    divisor = 0
+    for e in edges(tree_diff)
+        @inbounds value = levels[src(e)] - levels[dst(e)] + 1
+        divisor = gcd(divisor,value)
+        isequal(divisor,1) && return 1
+    end
+   
+    return divisor
 end

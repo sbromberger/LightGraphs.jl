@@ -52,7 +52,7 @@ function traverse_graph(
     visitor::AbstractGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
-    que = Vector{Int}()
+    que = @compat Vector{Int}()
 
     colormap[s] = 1
     if !discover_vertex!(visitor, s)

@@ -1,27 +1,19 @@
 g = PathGraph(4)
-<<<<<<< HEAD
-add_vertices!(g, 10)
-add_edge!(g, 5, 6)
-add_edge!(g, 6, 7)
-add_edge!(g, 8, 9)
-add_edge!(g, 10, 9)
-=======
+
 add_vertices!(g,10)
 add_edge!(g,5,6)
 add_edge!(g,6,7)
 add_edge!(g,8,9)
 add_edge!(g,10,9)
->>>>>>> f39cdb2... bfs / dfs enhancements, connectivity, and modifications to subgraphs
-
 
 cc = connected_components(g)
 
 
-<<<<<<< HEAD
-@test length(cc) == 3 && sort(cc[3]) == [8, 9, 10]
-=======
+
 @test length(cc) == 3 && sort(cc[3]) == [8,9,10]
->>>>>>> f39cdb2... bfs / dfs enhancements, connectivity, and modifications to subgraphs
+
+
+@test length(cc) == 3 && sort(cc[3]) == [8,9,10]
 
 
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
@@ -35,10 +27,6 @@ add_edge!(h,8,4); add_edge!(h,8,7)
 scc = strongly_connected_components(h)
 wcc = weakly_connected_components(h)
 
-<<<<<<< HEAD
-@test length(scc) == 3 && sort(scc[3]) == [1, 2, 5]
-@test length(wcc) == 1 && length(wcc[1]) == nv(h)
-=======
 @test length(scc) == 3 && sort(scc[3]) == [1,2,5]
 @test length(wcc) == 1 && length(wcc[1]) == nv(h)
 
@@ -69,4 +57,46 @@ scc = strongly_connected_components(h)
 @test sort(scc[2]) == [3, 6]
 @test sort(scc[3]) == [2, 4, 5]
 @test scc[4] == [1]
->>>>>>> f39cdb2... bfs / dfs enhancements, connectivity, and modifications to subgraphs
+# test examples with self-loops from
+# Graph-Theoretic Analysis of Finite Markov Chains by J.P. Jarvis & D. R. Shier
+
+# generate figure 1 example
+fig1 = spzeros(5,5)
+fig1[[3,4,9,10,11,13,18,19,22,24]] = [.5,.4,.1,1.,1.,.2,.3,.2,1.,.3]
+fig1 = DiGraph(fig1)
+scc_fig1 = Vector[[2,5],[1,3,4]]
+
+# generate figure 3 example
+fig3 = spzeros(8,8)
+fig3[[1,7,9,13,14,15,18,20,23,27,28,31,33,34,37,45,46,49,57,63,64]] = 1
+fig3 = DiGraph(fig3)
+scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
+
+# generate figure 8 example
+fig8 = spzeros(6,6)
+fig8[[2,10,13,21,24,27,35]] = 1
+fig8 = DiGraph(fig8)
+
+scc_fig1 = Vector[[2,5],[1,3,4]]
+@test Set(strongly_connected_components(fig1)) == Set(scc_fig1)
+
+scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
+@test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
+
+# generate a n-number ring graph (period = n)
+
+scc_fig1_true = Vector[[2,5],[1,3,4]]
+@test isequal(scc_fig1_g, scc_fig1_true)
+
+scc_fig3_true = Vector[[3,4],[2,5,6],[8],[1,7]]
+@test isequal(scc_fig3_g, scc_fig3_true)
+
+# construct a n-number edge ring graph (period = n)
+n = 10
+n_ring_m = spdiagm(ones(n-1),1,n,n); n_ring_m[end,1] = 1
+n_ring = DiGraph(n_ring_m)
+
+n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut,Edge(1,4))
+
+@test periods(n_ring) == n
+@test periods(n_ring_shortcut) == 2
