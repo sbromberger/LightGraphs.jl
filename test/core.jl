@@ -72,3 +72,6 @@ add_edge!(g, 1, 2)
 
 @test rem_edge!(h, 1, 2) == e1
 @test_throws ErrorException rem_edge!(h, 1, 2)
+
+@test g == copy(g)
+@test !(g === copy(g))
