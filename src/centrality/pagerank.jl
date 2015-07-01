@@ -15,7 +15,7 @@ function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
 
     for _ in 1:n
         xlast = x
-        x = α * (x * M + sum(x[is_dangling]) * dangling_weights) + (1 - α) * p
+        x = α * (M.' * x + sum(x[is_dangling]) * dangling_weights) + (1 - α) * p
         err = sum(abs(x - xlast))
         if (err < N * ϵ)
             return x
