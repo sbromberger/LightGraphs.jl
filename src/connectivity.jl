@@ -33,11 +33,11 @@ type TarjanVisitor <: AbstractGraphVisitor
     components::Vector{Vector{Int}}
 end
 
-TarjanVisitor(n::Int) = TarjanVisitor(
-    @compat Vector{Int}(),
-    @compat Vector{Int}(),
+@compat TarjanVisitor(n::Int) = TarjanVisitor(
+    Vector{Int}(),
+    Vector{Int}(),
     zeros(Int, n),
-    @compat Vector{Vector{Int}}()
+    Vector{Vector{Int}}()
 )
 
 function discover_vertex!(vis::TarjanVisitor, v)
