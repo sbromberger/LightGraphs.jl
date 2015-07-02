@@ -37,7 +37,7 @@ TarjanVisitor(n::Int) = TarjanVisitor(
     @compat Vector{Int}(),
     @compat Vector{Int}(),
     zeros(Int, n),
-    Vector{Vector{Int}}()
+    @compat Vector{Vector{Int}}()
 )
 
 function discover_vertex!(vis::TarjanVisitor, v)
