@@ -22,8 +22,8 @@ add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
 
-# @test_throws ErrorException add_edge!(g, 1, 2)
-# @test_throws ErrorException add_edge!(h, 1, 2)
+@test_throws ErrorException add_edge!(g, 1, 2)
+@test_throws ErrorException add_edge!(h, 1, 2)
 # @test_throws ErrorException add_edge!(g, 1, 1)
 # @test_throws ErrorException add_edge!(h, 1, 1)
 
