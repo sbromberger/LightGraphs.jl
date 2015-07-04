@@ -71,8 +71,6 @@ function add_edge!(g::DiGraph, e::Edge)
         throw(BoundsError())
     elseif e in edges(g)
         error("Edge $e is already in graph")
-    elseif (src(e) == dst(e))
-        warn("Support for self-loops is experimental")
     else
         push!(g.fadjlist[src(e)], dst(e))
         push!(g.badjlist[dst(e)], src(e))

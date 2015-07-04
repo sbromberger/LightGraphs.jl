@@ -59,8 +59,6 @@ has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
 function add_edge!(g::Graph, e::Edge)
     if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
         throw(BoundsError())
-    elseif (src(e) == dst(e))
-        warn("Support for self-loops is experimental")
     elseif has_edge(g,e)
         error("Edge $e is already in graph")
     else
