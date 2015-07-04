@@ -41,6 +41,9 @@ DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
+is_connected, is_strongly_connected, is_weakly_connected, period, has_self_loop,
+
+condensation, attracting_components,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
