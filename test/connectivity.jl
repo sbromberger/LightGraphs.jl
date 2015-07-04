@@ -1,10 +1,4 @@
 g = PathGraph(4)
-add_vertices!(g,10)
-add_edge!(g,5,6)
-add_edge!(g,6,7)
-add_edge!(g,8,9)
-add_edge!(g,10,9)
-
 
 cc = connected_components(g)
 
