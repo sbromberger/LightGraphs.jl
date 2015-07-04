@@ -83,14 +83,6 @@ scc_fig1 = Vector[[2,5],[1,3,4]]
 scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
 @test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
 
-# generate a n-number ring graph (period = n)
-
-scc_fig1_true = Vector[[2,5],[1,3,4]]
-@test isequal(scc_fig1_g, scc_fig1_true)
-
-scc_fig3_true = Vector[[3,4],[2,5,6],[8],[1,7]]
-@test isequal(scc_fig3_g, scc_fig3_true)
-
 # construct a n-number edge ring graph (period = n)
 n = 10
 n_ring_m = spdiagm(ones(n-1),1,n,n); n_ring_m[end,1] = 1
@@ -98,5 +90,5 @@ n_ring = DiGraph(n_ring_m)
 
 n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut,Edge(1,4))
 
-@test periods(n_ring) == n
-@test periods(n_ring_shortcut) == 2
+@test period(n_ring) == n
+@test period(n_ring_shortcut) == 2
