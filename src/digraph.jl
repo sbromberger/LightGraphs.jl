@@ -71,8 +71,6 @@ function add_edge!(g::DiGraph, e::Edge)
         throw(BoundsError())
     elseif e in edges(g)
         error("Edge $e is already in graph")
-    elseif (src(e) == dst(e))
-        error("LightGraphs does not support self-loops")
     else
         push!(g.fadjlist[src(e)], dst(e))
         push!(g.badjlist[dst(e)], src(e))
@@ -88,11 +86,10 @@ function rem_edge!(g::DiGraph, e::Edge)
     end
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
-    splice!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
-    splice!(g.badjlist[dst(e)], i)
-    pop!(g.edges, e)
-    return e
+    deleteat!(g.badjlist[dst(e)], i)
+    return pop!(g.edges, e)
 end
 
 has_edge(g::DiGraph, e::Edge) = e in edges(g)

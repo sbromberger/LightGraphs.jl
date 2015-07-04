@@ -59,8 +59,6 @@ has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
 function add_edge!(g::Graph, e::Edge)
     if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
         throw(BoundsError())
-    elseif (src(e) == dst(e))
-        error("LightGraphs does not support self-loops")
     elseif has_edge(g,e)
         error("Edge $e is already in graph")
     else
@@ -85,15 +83,14 @@ function rem_edge!(g::Graph, e::Edge)
     end
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
-    splice!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
-    splice!(g.badjlist[dst(e)], i)
+    deleteat!(g.badjlist[dst(e)], i)
     i = findfirst(g.fadjlist[dst(e)], src(e))
-    splice!(g.fadjlist[dst(e)], i)
+    deleteat!(g.fadjlist[dst(e)], i)
     i = findfirst(g.badjlist[src(e)], dst(e))
-    splice!(g.badjlist[src(e)], i)
-    pop!(g.edges, e)
-    return e
+    deleteat!(g.badjlist[src(e)], i)
+    return pop!(g.edges, e)
 end
 
 
