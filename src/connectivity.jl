@@ -23,7 +23,10 @@ function connected_components(g::Graph)
     return components
 end
 
+is_connected(g::Graph) = length(connected_components(g)) == 1
+
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
+is_weakly_connected(g::DiGraph) = length(weakly_connected_components(g)) == 1
 
 # Adapated from Graphs.jl
 type TarjanVisitor <: AbstractGraphVisitor
@@ -83,3 +86,29 @@ function strongly_connected_components(g::DiGraph)
     end
     return components
 end
+
+is_strongly_connected(g::DiGraph) = length(strongly_connected_components(g)) == 1
+
+# Computes the (common) period for all nodes in a strongly connected graph
+function period(g::DiGraph)
+    !is_strongly_connected(g) && error("Graph must be strongly connected")
+
+    # First check if there's a self loop
+    has_self_loop(g) && return 1
+
+    g_bfs_tree  = bfs_tree(g,1)
+    levels      = gdistances(g_bfs_tree,1)
+    tree_diff   = difference(g,g_bfs_tree)
+    edge_values = Vector{Int}()
+
+    divisor = 0
+    for e in edges(tree_diff)
+        @inbounds value = levels[src(e)] - levels[dst(e)] + 1
+        divisor = gcd(divisor,value)
+        isequal(divisor,1) && return 1
+    end
+   
+    return divisor
+end
+
+has_self_loop(g::AbstractGraph) = any(v->has_edge(g, v, v), vertices(g))

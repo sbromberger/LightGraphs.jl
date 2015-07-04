@@ -53,3 +53,39 @@ scc = strongly_connected_components(h)
 @test sort(scc[2]) == [3, 6]
 @test sort(scc[3]) == [2, 4, 5]
 @test scc[4] == [1]
+
+# Test examples with self-loops from
+# Graph-Theoretic Analysis of Finite Markov Chains by J.P. Jarvis & D. R. Shier
+
+# generate figure 1 example
+fig1 = spzeros(5,5)
+fig1[[3,4,9,10,11,13,18,19,22,24]] = [.5,.4,.1,1.,1.,.2,.3,.2,1.,.3]
+fig1 = DiGraph(fig1)
+scc_fig1 = Vector[[2,5],[1,3,4]]
+
+# generate figure 3 example
+fig3 = spzeros(8,8)
+fig3[[1,7,9,13,14,15,18,20,23,27,28,31,33,34,37,45,46,49,57,63,64]] = 1
+fig3 = DiGraph(fig3)
+scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
+
+# generate figure 8 example
+fig8 = spzeros(6,6)
+fig8[[2,10,13,21,24,27,35]] = 1
+fig8 = DiGraph(fig8)
+
+scc_fig1 = Vector[[2,5],[1,3,4]]
+@test Set(strongly_connected_components(fig1)) == Set(scc_fig1)
+
+scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
+@test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
+
+# construct a n-number edge ring graph (period = n)
+n = 10
+n_ring_m = spdiagm(ones(n-1),1,n,n); n_ring_m[end,1] = 1
+n_ring = DiGraph(n_ring_m)
+
+n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut,Edge(1,4))
+
+@test period(n_ring) == n
+@test period(n_ring_shortcut) == 2
