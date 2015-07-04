@@ -40,8 +40,7 @@ BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
 # connectivity
-connected_components, strongly_connected_components, weakly_connected_components, period,
-has_self_loop,
+connected_components, strongly_connected_components, weakly_connected_components,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
