@@ -8,7 +8,7 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
-`bfs_tree(g)`, `dfs_tree(g)`
+`bfs_tree(g)`, `dfs_tree(g)`  
 Provides a breadth-first or depth-first traversal of the graph ``g`` , and returns a directed
 acyclic graph of vertices in the order they were discovered.
 
@@ -16,15 +16,15 @@ acyclic graph of vertices in the order they were discovered.
 ### Connectivity / Bipartiteness
 *Graph connectivity* functions are defined on both undirected and directed graphs:
 
-`connected components(g)`
+`connected components(g)`  
 Will return the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
 of an undirected graph ``g`` as a vector of components, each represented by a vector
 of vectors of vertices belonging to the component.
 
-`strongly_connected_components(g)`, `weakly_connected_components(g)`
+`strongly_connected_components(g)`, `weakly_connected_components(g)`  
 For directed graphs, both strong and weak connectivity are supported.
 
-`is_bipartite(g)`   
+`is_bipartite(g)`  
 Will return ``true`` if graph ``g`` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 
 ###Cycle Detection
