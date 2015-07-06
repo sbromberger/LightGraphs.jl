@@ -24,7 +24,7 @@ of vectors of vertices belonging to the component.
 `strongly_connected_components(g)`, `weakly_connected_components(g)`
 For directed graphs, both strong and weak connectivity are supported.
 
-`is_bipartite(g)`
+`is_bipartite(g)`   
 Will return ``true`` if graph ``g`` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 
 ###Cycle Detection
