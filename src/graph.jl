@@ -85,15 +85,14 @@ function rem_edge!(g::Graph, e::Edge)
     end
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
-    splice!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
-    splice!(g.badjlist[dst(e)], i)
+    deleteat!(g.badjlist[dst(e)], i)
     i = findfirst(g.fadjlist[dst(e)], src(e))
-    splice!(g.fadjlist[dst(e)], i)
+    deleteat!(g.fadjlist[dst(e)], i)
     i = findfirst(g.badjlist[src(e)], dst(e))
-    splice!(g.badjlist[src(e)], i)
-    pop!(g.edges, e)
-    return e
+    deleteat!(g.badjlist[src(e)], i)
+    return pop!(g.edges, e)
 end
 
 
