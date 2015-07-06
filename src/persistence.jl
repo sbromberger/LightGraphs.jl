@@ -34,7 +34,7 @@ function readgraph(fn::AbstractString)
     return g
 end
 
-function write(io::IO, g::AbstractGraph)
+function write(io::IO, g::SimpleGraph)
     # write header line
     dir = is_directed(g)? "d" : "u"
     line = join([nv(g), dir], ",")
@@ -46,10 +46,10 @@ function write(io::IO, g::AbstractGraph)
     return (nv(g), ne(g))
 end
 
-write(g::AbstractGraph) = write(STDOUT, g)
+write(g::SimpleGraph) = write(STDOUT, g)
 
 function write(
-    g::AbstractGraph,
+    g::SimpleGraph,
     fn::AbstractString;
     compress=true)
     if compress
@@ -83,7 +83,7 @@ if _HAS_LIGHTXML
 #
 #Returns:
 #
-#    An array of (name, AbstractGraph) tuple
+#    An array of (name, SimpleGraph) tuple
 #""" ->
 function read_graphml(filename::String)
     xdoc = parse_file(filename)
@@ -91,7 +91,7 @@ function read_graphml(filename::String)
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = @compat Tuple{String, AbstractGraph}[]
+    graphs = @compat Tuple{String, SimpleGraph}[]
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance

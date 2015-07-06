@@ -18,7 +18,7 @@ type BellmanFordState{T<:Number}<:AbstractPathState
 end
 
 function bellman_ford_shortest_paths!(
-    graph::AbstractGraph,
+    graph::SimpleGraph,
     sources::AbstractVector{Int},
     distmx::AbstractArray{Float64, 2},
     state::BellmanFordState
@@ -58,7 +58,7 @@ end
 
 
 function bellman_ford_shortest_paths{T}(
-    graph::AbstractGraph,
+    graph::SimpleGraph,
 
     sources::AbstractVector{Int},
     distmx::AbstractArray{T, 2} = DefaultDistance()
@@ -69,12 +69,12 @@ function bellman_ford_shortest_paths{T}(
 end
 
 bellman_ford_shortest_paths{T}(
-    graph::AbstractGraph,
+    graph::SimpleGraph,
     v::Int,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
-function has_negative_edge_cycle(graph::AbstractGraph)
+function has_negative_edge_cycle(graph::SimpleGraph)
     try
         bellman_ford_shortest_paths(graph, vertices(graph))
     catch e

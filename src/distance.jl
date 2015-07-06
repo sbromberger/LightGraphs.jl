@@ -9,7 +9,7 @@ getindex(::DefaultDistance, s::Int, d::Int) = (s==d)? 0 : 1
 
 
 function eccentricity{T}(
-    g::AbstractGraph,
+    g::SimpleGraph,
     v::Int,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
@@ -22,17 +22,17 @@ function eccentricity{T}(
 end
 
 eccentricity{T}(
-    g::AbstractGraph,
+    g::SimpleGraph,
     vs::AbstractArray{Int, 1}=vertices(g),
     distmx::AbstractArray{T, 2} = DefaultDistance()
 ) =
     [eccentricity(g,v,distmx) for v in vs]
 
-eccentricity{T}(g::AbstractGraph, distmx::AbstractArray{T, 2}) =
+eccentricity{T}(g::SimpleGraph, distmx::AbstractArray{T, 2}) =
     eccentricity(g, vertices(g), distmx)
 
 diameter{T}(all_e::Vector{T}) = maximum(all_e)
-diameter{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+diameter{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     maximum(eccentricity(g, distmx))
 
 function periphery{T}(all_e::Vector{T})
@@ -41,11 +41,11 @@ function periphery{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
 
-periphery{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+periphery{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     periphery(eccentricity(g, distmx))
 
 radius{T}(all_e::Vector{T}) = minimum(all_e)
-radius{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+radius{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     minimum(eccentricity(g, distmx))
 
 function center{T}(all_e::Vector{T})
@@ -53,5 +53,5 @@ function center{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+center{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     center(eccentricity(g, distmx))

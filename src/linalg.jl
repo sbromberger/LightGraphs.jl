@@ -1,5 +1,5 @@
 # this function is optimized for speed.
-function adjacency_matrix(g::AbstractGraph, T::DataType=Int)
+function adjacency_matrix(g::SimpleGraph, T::DataType=Int)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g)? 1 : 2)
     colpt = ones(Int, n_v + 1)
@@ -21,4 +21,4 @@ end
 
 laplacian_spectrum(g::Graph) = eigvals(full(laplacian_matrix(g)))
 
-adjacency_spectrum(g::AbstractGraph) = eigvals(full(adjacency_matrix(g)))
+adjacency_spectrum(g::SimpleGraph) = eigvals(full(adjacency_matrix(g)))
