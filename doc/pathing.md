@@ -1,4 +1,6 @@
-*LightGraphs.jl* provides several traversal and shortest-path algorithms. Where appropriate, edge distances may be passed in (by an `distmx` keyword argument) as a matrix of `Float` values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
+*LightGraphs.jl* provides several traversal and shortest-path algorithms, along with
+various utility functions. Where appropriate, edge distances may be passed in as a
+matrix of real number values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
 
 ### Graph Traversal
 *Graph traversal* refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
@@ -6,11 +8,29 @@
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
+`bfs_tree(g)`, `dfs_tree(g)`  
+Provides a breadth-first or depth-first traversal of the graph ``g`` , and returns a directed
+acyclic graph of vertices in the order they were discovered.
+
+
+### Connectivity / Bipartiteness
+*Graph connectivity* functions are defined on both undirected and directed graphs:
+
+`connected components(g)`  
+Will return the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+of an undirected graph ``g`` as a vector of components, each represented by a vector
+of vectors of vertices belonging to the component.
+
+`strongly_connected_components(g)`, `weakly_connected_components(g)`  
+For directed graphs, both strong and weak connectivity are supported.
+
+`is_bipartite(g)`  
+Will return ``true`` if graph ``g`` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 
 ###Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex ``v`` and ends up at ``v``.
 
-`test_cyclic_by_dfs(g)`  
+`is_cyclic(g)`  
 Tests whether a graph contains a cycle through depth-first search. It returns ``true`` when it finds a cycle, otherwise ``false``.
 
 ###Simple Minimum Cut
@@ -52,6 +72,11 @@ Note that this algorithm may return a large amount of data (it will allocate on 
 
 
 ### Path discovery / enumeration
+
+`gdistances(g, s)`, `gdistances!(g, s, dists)`, `gdistances!(g, s; defaultdist)`
+Returns the geodesic distances of graph ``g``. Sources ``s`` can be an integer representing
+a vertex, or a vector of integers representing vertices, in ``g``.
+
 `enumerate_paths(state[, v])`  
 `enumerate_paths(state,[, vs])`  
 Given a path state *state* of type `AbstractPathState` (see below), returns a vector (indexed by vertex) of the paths between the source vertex used to compute the path state and a destination vertex *v*, a set of destination vertices *vs*, or the entire graph. For multiple destination vertices, each path is represented by a vector of vertices on the path between the source and the destination. Nonexistent paths will be indicated by an empty vector. For single destinations, the path is represented by a single vector of vertices, and will be length 0 if the path does not exist.

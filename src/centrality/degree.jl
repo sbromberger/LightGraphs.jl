@@ -1,4 +1,4 @@
-function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
+function _degree_centrality(g::SimpleGraph, gtype::Integer; normalize=true)
    n_v = nv(g)
    c = zeros(n_v)
    for v in 1:n_v
@@ -15,6 +15,6 @@ function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
    return c
 end
 
-degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
-indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
-outdegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 2; all...)
+degree_centrality(g::SimpleGraph; all...) = _degree_centrality(g, 0; all...)
+indegree_centrality(g::SimpleGraph; all...) = _degree_centrality(g, 1; all...)
+outdegree_centrality(g::SimpleGraph; all...) = _degree_centrality(g, 2; all...)

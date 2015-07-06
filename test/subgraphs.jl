@@ -1,5 +1,5 @@
 using LightGraphs
-import LightGraphs: inducedsubgraph
+import LightGraphs: induced_subgraph
 using Base.Test
 
 g = BullGraph()

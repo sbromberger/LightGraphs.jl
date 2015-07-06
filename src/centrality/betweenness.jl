@@ -10,7 +10,7 @@
 
 ## Parameters
 
-g: AbstractGraph
+g: SimpleGraph
     A Graph, directed or undirected.
 
 weights: AbstractArray{Float64, 2}, optional
@@ -45,7 +45,7 @@ betweenness: Array{Float64}
 [1] Brandes 2001 & Brandes 2008
 """ ->
 function betweenness_centrality(
-    g::AbstractGraph,
+    g::SimpleGraph,
     k::Integer=0;
     normalize=true,
     endpoints=false)
@@ -81,7 +81,7 @@ end
 function _accumulate_basic!(
     betweenness::Vector{Float64},
     state::DijkstraState,
-    g::AbstractGraph,
+    g::SimpleGraph,
     si::Integer
     )
 
@@ -112,7 +112,7 @@ end
 function _accumulate_endpoints!(
     betweenness::Vector{Float64},
     state::DijkstraState,
-    g::AbstractGraph,
+    g::SimpleGraph,
     si::Integer
     )
 

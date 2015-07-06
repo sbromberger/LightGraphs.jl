@@ -1,4 +1,3 @@
-abstract AbstractGraph
 abstract AbstractPathState
 
 if VERSION < v"0.4.0-dev+818"
@@ -15,20 +14,21 @@ end
 
 typealias Edge Pair{Int,Int}
 
-type Graph<:AbstractGraph
+type Graph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-type DiGraph<:AbstractGraph
+type DiGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
+typealias SimpleGraph Union(Graph, DiGraph)
 
 src(e::Edge) = e.first
 dst(e::Edge) = e.second
@@ -41,22 +41,22 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.first) - $(e.second)")
 end
 
-vertices(g::AbstractGraph) = g.vertices
-edges(g::AbstractGraph) = g.edges
-fadj(g::AbstractGraph) = g.fadjlist
-fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
-badj(g::AbstractGraph) = g.badjlist
-badj(g::AbstractGraph, v::Int) = g.badjlist[v]
+vertices(g::SimpleGraph) = g.vertices
+edges(g::SimpleGraph) = g.edges
+fadj(g::SimpleGraph) = g.fadjlist
+fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
+badj(g::SimpleGraph) = g.badjlist
+badj(g::SimpleGraph, v::Int) = g.badjlist[v]
 
 
-function issubset{T<:AbstractGraph}(g::T, h::T)
+function issubset{T<:SimpleGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
     return (hmin <= gmin <= gmax <= hmax) &&
     issubset(edges(g), edges(h))
 end
 
-function add_vertex!(g::AbstractGraph)
+function add_vertex!(g::SimpleGraph)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
     push!(g.badjlist, Int[])
@@ -65,38 +65,38 @@ function add_vertex!(g::AbstractGraph)
     return n
 end
 
-function add_vertices!(g::AbstractGraph, n::Integer)
+function add_vertices!(g::SimpleGraph, n::Integer)
     for i = 1:n
         add_vertex!(g)
     end
     return nv(g)
 end
 
-has_edge(g::AbstractGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
+has_edge(g::SimpleGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
 
-in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
-out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
+in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
+out_edges(g::SimpleGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
 
-has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
+has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 
-nv(g::AbstractGraph) = length(vertices(g))
-ne(g::AbstractGraph) = length(edges(g))
+nv(g::SimpleGraph) = length(vertices(g))
+ne(g::SimpleGraph) = length(edges(g))
 
-add_edge!(g::AbstractGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
-rem_edge!(g::AbstractGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
+rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-is_directed(g::AbstractGraph) = (typeof(g) == Graph? false : true)
+is_directed(g::SimpleGraph) = (typeof(g) == Graph? false : true)
 
-indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
-outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
+indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
+outdegree(g::SimpleGraph, v::Int) = length(fadj(g,v))
 
 
-indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
-outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
-degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
-#Δ(g::AbstractGraph) = maximum(degree(g))
-#δ(g::AbstractGraph) = minimum(degree(g))
+indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
+outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
+degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
+#Δ(g::SimpleGraph) = maximum(degree(g))
+#δ(g::SimpleGraph) = minimum(degree(g))
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
 δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
 δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
@@ -116,13 +116,13 @@ function noallocextreme(f, comparison, initial, g)
     return value
 end
 
-degree_histogram(g::AbstractGraph) = (hist(degree(g), 0:nv(g)-1)[2])
+degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
-neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
-in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
-out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
-common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
+out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
-function copy{T<:AbstractGraph}(g::T)
+function copy{T<:SimpleGraph}(g::T)
     return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end
