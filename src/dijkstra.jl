@@ -18,7 +18,7 @@ end
 
 
 function dijkstra_shortest_paths{T}(
-    g::AbstractGraph,
+    g::SimpleGraph,
     srcs::Vector{Int},
     distmx::AbstractArray{T, 2}=DefaultDistance();
     allpaths=false
@@ -86,5 +86,5 @@ function dijkstra_shortest_paths{T}(
     return DijkstraState{T}(parents, dists, preds, pathcounts)
 end
 
-dijkstra_shortest_paths{T}(g::AbstractGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
+dijkstra_shortest_paths{T}(g::SimpleGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
   dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)

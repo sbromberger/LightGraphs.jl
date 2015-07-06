@@ -15,7 +15,7 @@ using Compat
 export a_star
 
 function a_star_impl!{T<:Number}(
-    graph::AbstractGraph,# the graph
+    graph::SimpleGraph,# the graph
     t::Int, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
@@ -49,7 +49,7 @@ end
 
 
 function a_star{T<:Number}(
-    graph::AbstractGraph,  # the graph
+    graph::SimpleGraph,  # the graph
 
     s::Int,                       # the start vertex
     t::Int,                       # the end vertex
@@ -67,7 +67,7 @@ function a_star{T<:Number}(
 end
 
 # a_star{T<:Number}(
-#     graph::AbstractGraph,
+#     graph::SimpleGraph,
 #     s::Int, t::Int;
 #     distmx::AbstractArray{T, 2} = LightGraphs.DefaultDistance()
 # ) = a_star(graph, s, t, DefaultDistance() heuristic)

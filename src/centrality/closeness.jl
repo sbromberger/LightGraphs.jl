@@ -1,10 +1,10 @@
 # @doc doc"""
-#         closeness_centrality(g::AbstractGraph; normalize=true)
+#         closeness_centrality(g::SimpleGraph; normalize=true)
 #
 #     Computes closeness centrality of a graph, based on all vertices.
 #     """ ->
 function closeness_centrality(
-    g::AbstractGraph;
+    g::SimpleGraph;
     normalize=true)
 
     n_v = nv(g)

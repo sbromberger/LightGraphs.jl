@@ -9,14 +9,14 @@
 #
 #################################################
 
-type BreadthFirst <: AbstractGraphVisitAlgorithm
+type BreadthFirst <: SimpleGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!(
-    graph::AbstractGraph,   # the graph
+    graph::SimpleGraph,   # the graph
     queue::Vector{Int},                  # an (initialized) queue that stores the active vertices
     colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
-    visitor::AbstractGraphVisitor)  # the visitor
+    visitor::SimpleGraphVisitor)  # the visitor
 
     while !isempty(queue)
         u = shift!(queue)
@@ -46,10 +46,10 @@ end
 
 
 function traverse_graph(
-    graph::AbstractGraph,
+    graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
-    visitor::AbstractGraphVisitor;
+    visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
     que = @compat Vector{Int}()
@@ -65,10 +65,10 @@ end
 
 
 function traverse_graph(
-    graph::AbstractGraph,
+    graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
-    visitor::AbstractGraphVisitor;
+    visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
     que = Queue(Int)
@@ -93,8 +93,8 @@ end
 
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
-immutable GDistanceVisitor <: AbstractGraphVisitor
-    graph::AbstractGraph
+immutable GDistanceVisitor <: SimpleGraphVisitor
+    graph::SimpleGraph
     dists::Vector{Int}
 end
 
@@ -107,14 +107,14 @@ function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor:
     return true
 end
 
-function gdistances!{DMap}(graph::AbstractGraph, s::Int, dists::DMap)
+function gdistances!{DMap}(graph::SimpleGraph, s::Int, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     dists[s] = 0
     traverse_graph(graph, BreadthFirst(), s, visitor)
     return dists
 end
 
-function gdistances!{DMap}(graph::AbstractGraph, sources::AbstractVector{Int}, dists::DMap)
+function gdistances!{DMap}(graph::SimpleGraph, sources::AbstractVector{Int}, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     for s in sources
         dists[s] = 0
@@ -123,12 +123,12 @@ function gdistances!{DMap}(graph::AbstractGraph, sources::AbstractVector{Int}, d
     return dists
 end
 
-function gdistances(graph::AbstractGraph, sources; defaultdist::Int=-1)
+function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
     dists = fill(defaultdist, nv(graph))
     gdistances!(graph, sources, dists)
 end
 
-type TreeBFSVisitor <:AbstractGraphVisitor
+type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
@@ -154,7 +154,7 @@ function close_vertex!(visitor::TreeBFSVisitor, e::Edge)
     return true
 end
 
-function bfs_tree(g::AbstractGraph, s::Int)
+function bfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeBFSVisitor(nvg)
     traverse_graph(g, BreadthFirst(), s, visitor)
@@ -164,7 +164,7 @@ end
 
 # Test graph for bipartiteness
 
-type BipartiteVisitor <: AbstractGraphVisitor
+type BipartiteVisitor <: SimpleGraphVisitor
     bipartitemap::Vector{UInt8}
     is_bipartite::Bool
 end
@@ -182,14 +182,14 @@ function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::In
     return visitor.is_bipartite
 end
 
-function is_bipartite(g::AbstractGraph, s::Int)
+function is_bipartite(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
     traverse_graph(g, BreadthFirst(), s, visitor)
     return visitor.is_bipartite
 end
 
-function is_bipartite(g::AbstractGraph)
+function is_bipartite(g::SimpleGraph)
     nvg = nv(g)
     for v in vertices(g)
         if !is_bipartite(g, v)

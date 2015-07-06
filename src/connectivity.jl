@@ -26,7 +26,7 @@ end
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
 
 # Adapated from Graphs.jl
-type TarjanVisitor <: AbstractGraphVisitor
+type TarjanVisitor <: SimpleGraphVisitor
     stack::Vector{Int}
     lowlink::Vector{Int}
     index::Vector{Int}

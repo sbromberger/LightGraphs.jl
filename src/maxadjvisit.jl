@@ -10,13 +10,13 @@
 #
 #################################################
 
-type MaximumAdjacency <: AbstractGraphVisitAlgorithm
+type MaximumAdjacency <: SimpleGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: AbstractGraphVisitor
+abstract AbstractMASVisitor <: SimpleGraphVisitor
 
 function maximum_adjacency_visit_impl!{T}(
-  graph::AbstractGraph,	                      # the graph
+  graph::SimpleGraph,	                      # the graph
   pq::Collections.PriorityQueue{Int, T},               # priority queue
   visitor::AbstractMASVisitor,                      # the visitor
   colormap::Vector{Int})                            # traversal status
@@ -41,7 +41,7 @@ function maximum_adjacency_visit_impl!{T}(
 end
 
 function traverse_graph(
-  graph::AbstractGraph,
+  graph::SimpleGraph,
   T::DataType,
   alg::MaximumAdjacency,
   s::Int,
@@ -84,7 +84,7 @@ end
 #################################################
 
 type MinCutVisitor{T} <: AbstractMASVisitor
-  graph::AbstractGraph
+  graph::SimpleGraph
   parities::AbstractArray{Bool,1}
   colormap::Vector{Int}
   bestweight::T
@@ -94,7 +94,7 @@ type MinCutVisitor{T} <: AbstractMASVisitor
   vertices::Vector{Int}
 end
 
-function MinCutVisitor{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2})
+function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
   n = nv(graph)
   parities = falses(n)
   MinCutVisitor(graph, parities, zeros(Int,n), typemax(T), zero(T), zero(Int), distmx, Int[])
@@ -167,7 +167,7 @@ end
 
 
 function mincut{T}(
-  graph::AbstractGraph,
+  graph::SimpleGraph,
   distmx::AbstractArray{T, 2}
  )
 
@@ -179,16 +179,16 @@ function mincut{T}(
   return( visitor.parities, visitor.bestweight)
 end
 
-mincut(graph::AbstractGraph) = mincut(graph,DefaultDistance())
+mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
 
 
-function maximum_adjacency_visit{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2}, log::Bool, io::IO)
+function maximum_adjacency_visit{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2}, log::Bool, io::IO)
   visitor = MASVisitor(io, Int[],distmx,log)
   traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
   return visitor.vertices
 end
 
-maximum_adjacency_visit(graph::AbstractGraph) = maximum_adjacency_visit(
+maximum_adjacency_visit(graph::SimpleGraph) = maximum_adjacency_visit(
     graph,
     DefaultDistance(),
     false,

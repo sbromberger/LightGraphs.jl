@@ -11,7 +11,7 @@ import Base: write, ==, isless, issubset, complement, union, intersect, reverse,
 import Base: getindex, show, print, copy
 
 # core
-export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
 in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
@@ -27,7 +27,7 @@ difference, symmetric_difference,
 induced_subgraph,
 
 # graph visit
-AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
+SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
 discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, examine_edge!, visited_vertices,
 traverse_graph, traverse_graph_withlog,
