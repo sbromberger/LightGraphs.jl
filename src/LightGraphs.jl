@@ -44,13 +44,9 @@ connected_components, strongly_connected_components, weakly_connected_components
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
-# dijkstra
-dijkstra_shortest_paths,
-
-# bellman-ford
+# a-star, dijkstra, bellman-ford, floyd-warshall
+a_star, dijkstra_shortest_paths,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
-
-# floyd-warshall
 floyd_warshall_shortest_paths,
 
 # smallgraphs

@@ -2,17 +2,6 @@
 # licensing details.
 
 # A* shortest-path algorithm
-module AStar
-
-# The enqueue! and dequeue! methods defined in Base.Collections (needed for
-# PriorityQueues) conflict with those used for queues. Hence we wrap the A*
-# code in its own module.
-
-using LightGraphs
-using Base.Collections
-using Compat
-
-export a_star
 
 function a_star_impl!{T<:Number}(
     graph::SimpleGraph,# the graph
@@ -65,13 +54,3 @@ function a_star{T<:Number}(
     colormap[s] = 1
     a_star_impl!(graph, t, frontier, colormap, distmx, heuristic)
 end
-
-# a_star{T<:Number}(
-#     graph::SimpleGraph,
-#     s::Int, t::Int;
-#     distmx::AbstractArray{T, 2} = LightGraphs.DefaultDistance()
-# ) = a_star(graph, s, t, DefaultDistance() heuristic)
-
-end
-
-using .AStar
