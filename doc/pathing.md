@@ -21,30 +21,29 @@ Will return the [connected components](https://en.wikipedia.org/wiki/Connectivit
 of an undirected graph ``g`` as a vector of components, each represented by a vector
 of vectors of vertices belonging to the component.
 
-`is_connected(g)` 
-Returns `true` if `g` is connected .
-
+`is_connected(g)`
+Returns `true` if `g` is connected.
 
 `strongly_connected_components(g)`, `weakly_connected_components(g)`  
 For directed graphs, both strong and weak connectivity are supported.
 
-`is_strongly_connected(g)`, `is_weakly_connected(g::DiGraph)` 
+`is_strongly_connected(g)`, `is_weakly_connected(g::DiGraph)`  
 Returns `true` if `g` is strongly or respectively weakly connected.
 
-`has_self_loop(g::AbstractGraph)` 
+`has_self_loop(g::AbstractGraph)`  
 Returns `true` if `g` is has any self loops.
 
-`attracting_components(g)` 
+`attracting_components(g)`  
 Returns the `Vector{Vector{Int}}` where each `Vector{Int}` is a list of attracting components in `g`. The attracting components are a subset of the strongly connected components, that in addition to being strongly connected, do not have any leaving edges.
 
 `is_bipartite(g)`  
 Will return ``true`` if graph ``g`` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 
-`condensation(g)` 
+`condensation(g)`  
 Returns the condensation graph associated with `g`. The condensation `h` of a graph `g` is the directed graph where every node in `h` represents a strongly connected component in `g`, and the presence of an edge between between nodes in `h` indicates that there is at least one edge between the associated strongly connected components in `g`. The node numbering in `h` corresponds to the ordering of the components output from `strongly_connected_components`.
 
 
-`period(g::DiGraph)` 
+`period(g::DiGraph)`  
 Computes the period for the strongly connected graph `g`, where the period is defined as the greatest common divisor for all cycles in `g`.
 
 
