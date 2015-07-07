@@ -27,8 +27,8 @@ Returns `true` if `g` is connected.
 `strongly_connected_components(g)`, `weakly_connected_components(g)`  
 For directed graphs, both strong and weak connectivity are supported.
 
-`is_strongly_connected(g)`, `is_weakly_connected(g::DiGraph)`  
-Returns `true` if `g` is strongly or respectively weakly connected.
+`is_strongly_connected(g)`, `is_weakly_connected(g)`  
+(DiGraphs only.) Returns `true` if `g` is strongly or weakly connected.
 
 `has_self_loop(g::AbstractGraph)`  
 Returns `true` if `g` is has any self loops.
