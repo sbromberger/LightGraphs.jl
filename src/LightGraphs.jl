@@ -74,7 +74,7 @@ adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 a_star,
 
 # persistence
-readgraph, read_graphml,
+readgraph, readgraphml,
 
 # randgraphs
 erdos_renyi, watts_strogatz

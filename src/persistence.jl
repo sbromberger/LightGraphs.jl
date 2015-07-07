@@ -85,7 +85,7 @@ if _HAS_LIGHTXML
 #
 #    An array of (name, SimpleGraph) tuple
 #""" ->
-function read_graphml(filename::String)
+function readgraphml(filename::String)
     xdoc = parse_file(filename)
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
@@ -137,7 +137,7 @@ else
 #
 #Requires the LightXML package to be insta.
 #""" ->
-function read_graphml(filename::String)
+function readgraphml(filename::String)
     error("needs LightXML")
 end
 

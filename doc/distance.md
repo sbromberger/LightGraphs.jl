@@ -4,7 +4,7 @@
 
 `eccentricity(g, v[, distmx])`  
 `eccentricity(g[, vs, distmx])`  
-Calculates the eccentricity[ies] of a vertex *v*, vertex vector *vs*, or the entire graph. An optional matrix of edge distances may be supplied.
+Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the entire graph. An optional matrix of edge distances may be supplied.
 
 The eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.
 

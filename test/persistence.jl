@@ -18,7 +18,7 @@ _HAVE_LIGHTXML = try
 if _HAVE_LIGHTXML
 #Try reading in a GraphML file from the Rome Graph collection
 #http://www.graphdrawing.org/data/
-let Gs = read_graphml("testdata/grafo1853.13.graphml")
+let Gs = readgraphml("testdata/grafo1853.13.graphml")
     @test length(Gs) == 1
     @test Gs[1][1] == "G" #Name of graph
     G = Gs[1][2]
