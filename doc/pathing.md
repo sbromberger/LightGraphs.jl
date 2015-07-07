@@ -3,15 +3,15 @@ various utility functions. Where appropriate, edge distances may be passed in as
 matrix of real number values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
 
 ### Graph Traversal
-`Graph traversal` refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
-` `BreadthFirst`,
-` `DepthFirst`, and
-` `MaximumAdjacency`.
+*Graph traversal* refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
+* `BreadthFirst`,
+* `DepthFirst`, and
+* `MaximumAdjacency`.
 
-`bfs_tree(g)`  
-`dfs_tree(g)`  
-Provides a breadth-first or depth-first traversal of the graph `g`, and returns
-a directed acyclic graph of vertices in the order they were discovered.
+`bfs_tree(g, s)`  
+`dfs_tree(g, s)`  
+Provides a breadth-first or depth-first traversal of the graph `g` starting with source vertex `s`, 
+and returns a directed acyclic graph of vertices in the order they were discovered.
 
 
 ### Connectivity / Bipartiteness
@@ -25,7 +25,7 @@ of weak connectivity.
 `is_weakly_connected(g)`  
 DiGraphs only: returns true if `g` is strongly (weakly) connected.
 
-`connected components(g)`  
+`connected_components(g)`  
 Will return the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
 of an undirected graph `g` as a vector of components, each represented by a vector
 of vectors of vertices belonging to the component.
@@ -85,8 +85,8 @@ displayed.
 
 ### Shortest-Path Algorithms
 #### General properties of shortest path algorithms
-`   The distance from a vertex to itself is always `0`.
-`   The distance between two vertices with no connecting edge is always `Inf`.
+*  The distance from a vertex to itself is always `0`.
+* The distance between two vertices with no connecting edge is always `Inf`.
 
 
 `a_star(g, s, t[, heuristic, distmx])`  
