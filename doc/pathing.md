@@ -3,7 +3,7 @@ various utility functions. Where appropriate, edge distances may be passed in as
 matrix of real number values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
 
 ### Graph Traversal
-"Graph traversal" refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
+*Graph traversal* refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
 * `BreadthFirst`,
 * `DepthFirst`, and
 * `MaximumAdjacency`.
