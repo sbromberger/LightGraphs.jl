@@ -3,7 +3,7 @@ The following basic measures have been implemented for `Graph` and `DiGraph` typ
 ### Vertices and Edges
 
 `vertices(g)`  
-Returns an iterable (`UnitRange) representing the vertices in `g`.
+Returns an iterable (`UnitRange`) representing the vertices in `g`.
 
 `edges(g)`  
 Returns the set of edges in `g`.
@@ -14,7 +14,7 @@ Returns true if `vertices(g) == vertices(h)` and `edges(g) == edges(h)`.
 `is_directed(g)`  
 Returns true if `g` is a `DiGraph`.
 
-`nv(g), ne(g)`  
+`nv(g)`, `ne(g)`  
 Returns the number of vertices (order) and edges (size), respectively, in `g`.
 
 `has_edge(g, e)`  
@@ -49,12 +49,12 @@ Returns the degree (indegree, outdegree) of vertex `v` in `g`.
 `δ(g)`  
 Returns the maximum (minimum) degree of `g` across all vertices.
 
-`Δout(g)`
-`δout(g)`
+`Δout(g)`  
+`δout(g)`  
 Returns the maximum (minimum) outdegree of `g` across all vertices.
 
-`δin(g)`
-`Δin(g)`
+`δin(g)`  
+`Δin(g)`  
 Returns the maximum (minimum) indegree of `g` across all vertices.
 
 `degree_histogram(g)`  
