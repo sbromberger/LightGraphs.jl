@@ -52,6 +52,7 @@ tests = [
     "dfs",
     "connectivity",
     "maxadjvisit",
+    "graphvisit",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
