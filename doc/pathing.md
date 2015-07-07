@@ -8,10 +8,10 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
-`bfs_tree(g)`  
-`dfs_tree(g)`  
-Provides a breadth-first or depth-first traversal of the graph `g`, and returns
-a directed acyclic graph of vertices in the order they were discovered.
+`bfs_tree(g, s)`  
+`dfs_tree(g, s)`  
+Provides a breadth-first or depth-first traversal of the graph `g` starting with source vertex `s`, 
+and returns a directed acyclic graph of vertices in the order they were discovered.
 
 
 ### Connectivity / Bipartiteness
