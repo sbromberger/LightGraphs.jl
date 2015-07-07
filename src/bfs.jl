@@ -71,14 +71,14 @@ function traverse_graph(
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
-    que = Queue(Int)
+    que = @compat Vector{Int}()
 
     for s in sources
         colormap[s] = 1
         if !discover_vertex!(visitor, s)
             return
         end
-        DataStructures.enqueue!(que, s)
+        push!(que, s)
     end
 
     breadth_first_visit_impl!(graph, que, colormap, visitor)
