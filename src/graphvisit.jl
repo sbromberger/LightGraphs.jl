@@ -96,10 +96,12 @@ function examine_edge!(vis::LogGraphVisitor, e::Edge, color::Int)
     println(vis.io, "examine edge: $e")
 end
 
-function traverse_graph_withlog(g::SimpleGraph, alg::SimpleGraphVisitAlgorithm, sources::Vector{Int}, io::IO)
+function traverse_graph_withlog(
+    g::SimpleGraph,
+    alg::SimpleGraphVisitAlgorithm,
+    sources,
+    io::IO = STDOUT
+)
     visitor = LogGraphVisitor(io)
     traverse_graph(g, alg, sources, visitor)
 end
-
-traverse_graph_withlog(g::SimpleGraph, alg::SimpleGraphVisitAlgorithm,
-    sources::Vector{Int}) = traverse_graph_withlog(g, alg, sources, STDOUT)
