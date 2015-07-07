@@ -126,3 +126,5 @@ common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), nei
 function copy{T<:SimpleGraph}(g::T)
     return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end
+
+has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
