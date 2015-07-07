@@ -9,7 +9,7 @@
 
 An optimized graphs package.
 
-Simple graphs (not multi- or hypergraphs, and no self loops) are represented in a memory- and time-efficient
+Simple graphs (not multi- or hypergraphs) are represented in a memory- and time-efficient
 manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
@@ -41,7 +41,7 @@ Edge distances for undefined edges are ignored, and edge distances cannot be zer
 ### Basic Usage
 (all examples apply equally to `DiGraph` unless otherwise noted):
 
-```
+```julia
 # create an empty undirected graph
 g = Graph()
 
