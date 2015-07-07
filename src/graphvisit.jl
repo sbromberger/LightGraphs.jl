@@ -52,7 +52,7 @@ end
 
 function discover_vertex!(visitor::VertexListVisitor, v::Int)
     push!(visitor.vertices, v)
-    true
+    return true
 end
 
 function visited_vertices(
@@ -74,14 +74,22 @@ end
 
 function discover_vertex!(vis::LogGraphVisitor, v::Int)
     println(vis.io, "discover vertex: $v")
-    true
+    return true
 end
 
-open_vertex!(vis::LogGraphVisitor, v::Int) = println(vis.io, "open vertex: $v")
-close_vertex!(vis::LogGraphVisitor, v::Int) = println(vis.io, "close vertex: $v")
+function open_vertex!(vis::LogGraphVisitor, v::Int)
+    println(vis.io, "open vertex: $v")
+    return true
+end
+
+function close_vertex!(vis::LogGraphVisitor, v::Int)
+    println(vis.io, "close vertex: $v")
+    return true
+end
 
 function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
     println(vis.io, "examine neighbor: $u -> $v (vertexcolor = $vcolor, edgecolor= $ecolor)")
+    return true
 end
 
 function examine_edge!(vis::LogGraphVisitor, e::Edge, color::Int)
