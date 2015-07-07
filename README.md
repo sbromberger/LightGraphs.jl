@@ -87,7 +87,12 @@ write(g,"mygraph.jgz")
     - radius
     - center
 
-
+- connectivity
+    - strongly- and weakly-connected components
+    - bipartite checks
+    - condensation
+    - attracting components
+    
 - operators
     - complement
     - reverse, reverse!
@@ -119,6 +124,7 @@ write(g,"mygraph.jgz")
     - betweenness
     - closeness
     - degree
+    - pagerank
 
 
 - linear algebra
