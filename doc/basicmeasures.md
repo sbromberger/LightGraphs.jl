@@ -64,11 +64,15 @@ Produces a histogram of degree values across all vertices for the graph `g`. The
 Returns the density of graph `g`. Density is defined as the ratio of the number of actual edges to the number of possible edges (`(|v| |v-1|)` for directed graphs, `(|v| |v-1|) / 2` for undirected graphs).
 
 `neighbors(g, v)`  
-Returns a list of all neighbors of vertex `v` in `g`.
+Returns a list of all neighbors of vertex `v` in `g`. For DiGraphs, this is
+equivalent to `out_neighbors(g, v)`, below.
 
 `in_neighbors(g, v)`  
 `out_neighbors(g, v)`  
 Returns a list of all neighbors connected to vertex `v` by an outgoing (incoming) edge.
+
+`all_neighbors(g, v)`
+(Digraph only): Returns a list of all (unique) inbound and outbound neighbors.
 
 `common_neighbors(g, u, v)`  
 Returns the neighbors common to vertices `u` and `v` in `g`.

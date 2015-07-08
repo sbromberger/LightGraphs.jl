@@ -62,3 +62,5 @@ h = DiGraph(sparse(adjmx1))
 @test (nv(g), ne(g)) == (3, 2)
 @test (nv(h), ne(h)) == (3, 4)
 @test Graph(h) == g
+
+@test sort(all_neighbors(WheelDiGraph(10),2)) == [1, 3, 10]

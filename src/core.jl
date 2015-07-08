@@ -118,9 +118,11 @@ end
 
 degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
-neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+
 in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
 out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+
+neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
 function copy{T<:SimpleGraph}(g::T)
