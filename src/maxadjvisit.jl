@@ -96,8 +96,16 @@ end
 
 function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
   n = nv(graph)
-  parities = falses(n)
-  MinCutVisitor(graph, parities, zeros(Int,n), typemax(T), zero(T), zero(Int), distmx, Int[])
+  MinCutVisitor(
+    graph,
+    falses(n),
+    zeros(Int,n),
+    typemax(T),
+    zero(T),
+    zero(Int),
+    distmx,
+    @compat(Vector{Int}())
+)
 end
 
 function discover_vertex!(vis::MinCutVisitor, v::Int)
