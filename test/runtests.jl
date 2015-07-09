@@ -22,7 +22,7 @@ e0 = Edge(2, 3)
 e1 = Edge(1, 2)
 re1 = Edge(2, 1)
 
-testdir = joinpath(Pkg.dir("LightGraphs"),"test")
+testdir = dirname(@__FILE__)
 
 p1 = readgraph(joinpath(testdir,"testdata","tutte.jgz"))
 p2 = readgraph(joinpath(testdir,"testdata","pathdigraph.jgz"))

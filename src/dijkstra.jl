@@ -5,7 +5,7 @@ immutable DijkstraHeapEntry{T}
     dist::T
 end
 
-< (e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
+<(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
 isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
