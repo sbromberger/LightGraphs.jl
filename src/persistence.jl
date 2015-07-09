@@ -11,7 +11,7 @@ function readgraph(fn::AbstractString)
     directed = true
     f = GZip.open(fn,"r")        # will work even if uncompressed
     line = chomp(readline(f))
-    nstr, dirundir  = split (line,r"\s*,\s*")
+    nstr, dirundir = split(line,r"\s*,\s*")
     n = parse(Int,nstr)
     if dirundir == "u"
         directed = false
