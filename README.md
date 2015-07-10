@@ -10,15 +10,17 @@
 
 An optimized graphs package.
 
-Simple graphs (not multi- or hypergraphs) are represented in a memory- and time-efficient
-manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
+Simple graphs (not multi- or hypergraphs) are represented in a memory- and
+time-efficient manner with adjacency lists and edge sets. Both directed and
+undirected graphs are supported via separate types, and conversion is available
+from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
-analysis libraries such as [NetworkX](http://networkx.github.io) while being simpler
-to use and more efficient than existing Julian graph libraries such as
+analysis libraries such as [NetworkX](http://networkx.github.io) while being
+simpler to use and more efficient than existing Julian graph libraries such as
 [Graphs.jl](https://github.com/JuliaLang/Graphs.jl). It is an explicit design
-decision that any data not required for graph manipulation (attributes and other
-information, for example) is expected to be stored outside of the graph
+decision that any data not required for graph manipulation (attributes and
+other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
 
@@ -33,11 +35,15 @@ Edges must be unique; an attempt to add an edge that already exists in a graph
 will result in an error.
 
 Edge distances for most traversals may be passed in as a sparse or dense matrix
-of `Float64` values, indexed by `[src,dst]` vertices. That is, `distmx[2,4] = 2.5`
-assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
-Note that for undirected graphs, `distmx[4,2]` should also be set.
+of `Float64` values, indexed by `[src,dst]` vertices. That is,
+`distmx[2,4] = 2.5` assigns the distance `2.5` to the (directed) edge
+connecting vertex 2 and vertex 4. Note that for undirected graphs,
+`distmx[4,2]` should also be set.
 
-Edge distances for undefined edges are ignored, and edge distances cannot be zero: any unassigned values (for sparse matrices) or zero values (for sparse or dense matrices) in the edge distance matrix are assumed to be the default distance of 1.0.
+Edge distances for undefined edges are ignored, and edge distances cannot be
+zero: any unassigned values (for sparse matrices) or zero values (for sparse or
+dense matrices) in the edge distance matrix are assumed to be the default
+distance of 1.0.
 
 ### Basic Usage
 (all examples apply equally to `DiGraph` unless otherwise noted):
@@ -93,7 +99,7 @@ write(g,"mygraph.jgz")
     - bipartite checks
     - condensation
     - attracting components
-    
+
 - operators
     - complement
     - reverse, reverse!

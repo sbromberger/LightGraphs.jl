@@ -7,11 +7,11 @@ function show(io::IO, g::DiGraph)
 end
 
 function DiGraph(n::Int)
-    fadjlist = Vector{Int}[]
-    badjlist = Vector{Int}[]
+    fadjlist = @compat(Vector{Vector{Int}}())
+    badjlist = @compat(Vector{Vector{Int}}())
     for i = 1:n
-        push!(badjlist, Int[])
-        push!(fadjlist, Int[])
+        push!(badjlist, @compat(Vector{Int}()))
+        push!(fadjlist, @compat(Vector{Int}()))
     end
     return DiGraph(1:n, Set{Edge}(), badjlist, fadjlist)
 end
@@ -65,6 +65,7 @@ function ==(g::DiGraph, h::DiGraph)
     return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
 end
 
+is_directed(g::DiGraph) = true
 
 function add_edge!(g::DiGraph, e::Edge)
     if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))

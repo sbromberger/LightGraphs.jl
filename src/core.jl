@@ -14,6 +14,18 @@ end
 
 typealias Edge Pair{Int,Int}
 
+src(e::Edge) = e.first
+dst(e::Edge) = e.second
+
+@deprecate rev(e::Edge) reverse(e)
+
+==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
+
+function show(io::IO, e::Edge)
+    print(io, "edge $(e.first) - $(e.second)")
+end
+
+
 type Graph
     vertices::UnitRange{Int}
     edges::Set{Edge}
@@ -30,16 +42,6 @@ end
 
 typealias SimpleGraph Union(Graph, DiGraph)
 
-src(e::Edge) = e.first
-dst(e::Edge) = e.second
-
-@deprecate rev(e::Edge) reverse(e)
-
-==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
-
-function show(io::IO, e::Edge)
-    print(io, "edge $(e.first) - $(e.second)")
-end
 
 vertices(g::SimpleGraph) = g.vertices
 edges(g::SimpleGraph) = g.edges
@@ -52,8 +54,7 @@ badj(g::SimpleGraph, v::Int) = g.badjlist[v]
 function issubset{T<:SimpleGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
-    return (hmin <= gmin <= gmax <= hmax) &&
-    issubset(edges(g), edges(h))
+    return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
 end
 
 function add_vertex!(g::SimpleGraph)
@@ -85,8 +86,6 @@ ne(g::SimpleGraph) = length(edges(g))
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
-
-is_directed(g::SimpleGraph) = (typeof(g) == Graph? false : true)
 
 indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
 outdegree(g::SimpleGraph, v::Int) = length(fadj(g,v))
