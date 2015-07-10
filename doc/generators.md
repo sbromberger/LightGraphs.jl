@@ -3,17 +3,20 @@
 
 `erdos_renyi(n, p[, is_directed=false])`  
 Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
-graph with `n` vertices. Edges are added between pairs of vertices with probability
-`p`. Undirected graphs are created by default; use `is_directed=true` to override.
+graph with `n` vertices. Edges are added between pairs of vertices with
+probability `p`. Undirected graphs are created by default; use
+`is_directed=true` to override.
 
-Note also that Erdős–Rényi graphs may be generated quickly using the `Graph(nv, ne)`
-constructor, which randomly includes `ne` edges from the set of vertices.
+Note also that Erdős–Rényi graphs may be generated quickly using the
+`Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of
+vertices.
 
 
 `watts_strogatz(n, k, β[, is_directed=false])`  
 Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small model random graph with `n` vertices, each with degree `k`. Edges are randomized per the model based on probability `β`. Undirected graphs are created
-by default; use `is_directed=true` to override.
+small model random graph with `n` vertices, each with degree `k`. Edges are
+randomized per the model based on probability `β`. Undirected graphs are
+created by default; use `is_directed=true` to override.
 
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
@@ -21,19 +24,23 @@ by default; use `is_directed=true` to override.
 
 `CompleteGraph(n)`  
 `CompleteDiGraph(n)`  
-Creates a complete graph with `n` vertices. A complete graph has edges connecting each pair of vertices.
+Creates a complete graph with `n` vertices. A complete graph has edges
+connecting each pair of vertices.
 
 `StarGraph(n)`  
 `StarDiGraph(n)`  
-Creates a star graph with `n` vertices. A star graph has a central vertex with edges to each other vertex.
+Creates a star graph with `n` vertices. A star graph has a central vertex with
+edges to each other vertex.
 
 `PathGraph(n)`  
 `PathDiGraph(n)`  
-Creates a path graph with `n` vertices. A path graph connects each successive vertex by a single edge.
+Creates a path graph with `n` vertices. A path graph connects each successive
+vertex by a single edge.
 
 `WheelGraph(n)`  
 `WheelDiGraph(n)`  
-Creates a wheel graph with `n` vertices. A wheel graph is a star graph with the outer vertices connected via a closed path graph.
+Creates a wheel graph with `n` vertices. A wheel graph is a star graph with the
+outer vertices connected via a closed path graph.
 
 The following graphs are undirected only:
 
@@ -86,7 +93,8 @@ A [Pappus  graph](http://en.wikipedia.org/wiki/Pappus_graph).
 A [Petersen  graph](http://en.wikipedia.org/wiki/Petersen_graph).
 
 `SedgewickMazeGraph()`  
-A simple maze graph used in Sedgewick's `Algorithms in C++: Graph Algorithms (3rd ed.)`
+A simple maze graph used in Sedgewick's `Algorithms in C++: Graph Algorithms
+(3rd ed.)`
 
 `TetrahedralGraph()`  
 A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).

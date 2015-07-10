@@ -1,9 +1,12 @@
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
-of `Edge` types containing `(src::Int, dst::Int)` values. Edge
-relationships are stored as forward and backward incidence vectors, indexed by
+of `Edge` types containing `Pair(Int, Int)` values. Edge
+relationships are stored as forward and backward adjacency vectors, indexed by
 vertex.
+
+*LightGraphs.jl* provides two graph types: `Graph` is an undirected graph, and
+`DiGraph` is its directed counterpart.
 
 Graphs are created using `Graph()` or `DiGraph()`; there are several options
 (see below for examples).
@@ -30,7 +33,6 @@ Note that for undirected graphs, `distmx[4,2]` should also be set.
 
 Edge distances for undefined edges are ignored.
 
-*LightGraphs.jl* provides two graph types: `Graph` is an undirected graph, and `DiGraph` is its directed counterpart.
 
 ### Installation
 Installation is straightforward:
@@ -43,9 +45,10 @@ julia> Pkg.install("LightGraphs")
 - [Compat](https://github.com/JuliaLang/Compat.jl)
 - [GZip](https://github.com/JuliaLang/GZip.jl)
 - [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
-- [DataStructures](https://github.com/JuliaLang/DataStructures.jl)
 - [Docile](https://github.com/MichaelHatherly/Docile.jl)
 
+In addition, [LightXML](https://github.com/JuliaLang/LightXML.jl) is
+recommended (required for GraphML support).
 
 ### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):

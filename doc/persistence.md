@@ -7,7 +7,8 @@ Writes a graph `g` in a proprietary format to the IO stream designated by `io`.
 `write(g, fn[, compress=true])`  
 Writes a graph to a file `fn`, with default `GZip` compression.
 
-Both `write` functions will return tuples containing the number of vertices and number of edges written.
+Both `write` functions will return tuples containing the number of vertices and
+number of edges written.
 
 ### Reading a Graph From a File
 Graphs stored using the `write` functions above may be loaded using `readgraph`:
@@ -16,7 +17,8 @@ Graphs stored using the `write` functions above may be loaded using `readgraph`:
 Returns a graph loaded from file `fn`.
 
 `readgraphml(fn)`  
-Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
+Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
+format.
 
 
 ###Examples

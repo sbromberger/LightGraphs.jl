@@ -1,7 +1,7 @@
-*LightGraphs.jl* integration with other Julia packages is designed to be straightforward. Here are a few examples.
+*LightGraphs.jl*'s integration with other Julia packages is designed to be straightforward. Here are a few examples.
 
 ### [Graphs.jl](http://github.com/JuliaLang/Graphs.jl)
-Creating a Graphs.jl `simple_graph` is fairly straightforward:
+Creating a Graphs.jl `simple_graph` is easy:
 ```julia
 julia> s = simple_graph(nv(g), is_directed=LightGraphs.is_directed(g))
 julia> for e in LightGraphs.edges(g)
@@ -10,7 +10,8 @@ julia> for e in LightGraphs.edges(g)
 ```
 
 ###[GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
-This excellent graph visualization package can be used with *LightGraphs.jl* as follows:
+This excellent graph visualization package can be used with *LightGraphs.jl*
+as follows:
 
 ```julia
 julia> g = WheelGraph(10); am = full(adjacency_matrix(g))
