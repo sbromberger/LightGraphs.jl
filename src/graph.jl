@@ -7,15 +7,15 @@ function show(io::IO, g::Graph)
 end
 
 function Graph(n::Int)
-    fadjlist = Vector{Int}[]
-    badjlist = Vector{Int}[]
+    fadjlist = @compat Vector{Vector{Int}}()
+    badjlist = @compat Vector{Vector{Int}}()
     sizehint!(badjlist,n)
     sizehint!(fadjlist,n)
     for i = 1:n
         # sizehint!(i_s, n/4)
         # sizehint!(o_s, n/4)
-        push!(badjlist, Int[])
-        push!(fadjlist, Int[])
+        push!(badjlist, @compat(Vector{Int}()))
+        push!(fadjlist, @compat(Vector{Int}()))
     end
     return Graph(1:n, Set{Edge}(), badjlist, fadjlist)
 end
@@ -54,6 +54,7 @@ function ==(g::Graph, h::Graph)
     return (gdigraph == hdigraph)
 end
 
+is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
 
 function add_edge!(g::Graph, e::Edge)
@@ -96,8 +97,4 @@ end
 
 
 degree(g::Graph, v::Int) = indegree(g,v)
-# all_neighbors(g::Graph, v::Int) =
-#     filter(x->x!=v,
-#         union(neighbors(g,v), [dst(e) for e in g.binclist[v]])
-#     )
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

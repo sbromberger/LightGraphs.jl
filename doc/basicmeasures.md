@@ -1,4 +1,5 @@
-The following basic measures have been implemented for `Graph` and `DiGraph` types:
+The following basic measures have been implemented for `Graph` and `DiGraph`
+types:
 
 ### Vertices and Edges
 
@@ -36,7 +37,8 @@ Returns the source or destination vertex of edge `e`.
 Returns an edge whose source and destination are switched from edge `e`.
 
 `==(e, f)`  
-Will return true if edges `e` and `f` have the same source and destination vertices.
+Will return true if edges `e` and `f` have the same source and destination
+vertices.
 
 ### Neighbors and Degree
 
@@ -58,17 +60,21 @@ Returns the maximum (minimum) outdegree of `g` across all vertices.
 Returns the maximum (minimum) indegree of `g` across all vertices.
 
 `degree_histogram(g)`  
-Produces a histogram of degree values across all vertices for the graph `g`. The number of histogram buckets is based on the number of vertices in `g`.
+Produces a histogram of degree values across all vertices for the graph `g`.
+The number of histogram buckets is based on the number of vertices in `g`.
 
 `density(g)`  
-Returns the density of graph `g`. Density is defined as the ratio of the number of actual edges to the number of possible edges (`(|v| |v-1|)` for directed graphs, `(|v| |v-1|) / 2` for undirected graphs).
+Returns the density of graph `g`. Density is defined as the ratio of the number
+of actual edges to the number of possible edges (`(|v| |v-1|)` for directed
+graphs, `(|v| |v-1|) / 2` for undirected graphs).
 
 `neighbors(g, v)`  
 Returns a list of all neighbors of vertex `v` in `g`.
 
 `in_neighbors(g, v)`  
 `out_neighbors(g, v)`  
-Returns a list of all neighbors connected to vertex `v` by an outgoing (incoming) edge.
+Returns a list of all neighbors connected to vertex `v` by an outgoing
+(incoming) edge.
 
 `common_neighbors(g, u, v)`  
 Returns the neighbors common to vertices `u` and `v` in `g`.
