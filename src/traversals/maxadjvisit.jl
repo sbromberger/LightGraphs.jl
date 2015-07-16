@@ -190,8 +190,13 @@ end
 mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
 
 
-function maximum_adjacency_visit{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2}, log::Bool, io::IO)
-  visitor = MASVisitor(io, Int[],distmx,log)
+function maximum_adjacency_visit{T}(
+    graph::SimpleGraph,
+    distmx::AbstractArray{T, 2},
+    log::Bool,
+    io::IO
+)
+  visitor = MASVisitor(io, @compat(Vector{Int}()), distmx, log)
   traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
   return visitor.vertices
 end
