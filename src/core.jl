@@ -1,11 +1,13 @@
 abstract AbstractPathState
 
 if VERSION < v"0.4.0-dev+818"
+    import Base.hash
     immutable Pair{T1,T2}
         first::T1
         second::T2
     end
-
+    const _pair_seed = UInt === UInt64 ? 0x7f1aced4044ecae9 : 0xecaed7e0
+    Base.hash(p::Pair) = hash(p.first, hash(p.second, _pair_seed))
 end
 
 if VERSION < v"0.4.0-dev+4103"
