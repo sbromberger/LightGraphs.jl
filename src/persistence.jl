@@ -9,7 +9,7 @@
 function readgraph(fn::AbstractString)
     readedges = Set{@compat Tuple{Int,Int}}()
     directed = true
-    f = GZip.open(fn,"r")        # will work even if uncompressed
+    f = GZip.open(fn,"r")        # should work even if uncompressed
     line = chomp(readline(f))
     nstr, dirundir = split(line,r"\s*,\s*")
     n = parse(Int,nstr)
@@ -74,6 +74,31 @@ _HAS_LIGHTXML = try
 
 if _HAS_LIGHTXML
 
+function _process_graphml(e::XMLElement, isdirected::Bool)
+    nodes = Dict{String,Int}()
+    edges = @compat(Vector{Edge}())
+
+    nodeid = 1
+    for f in child_elements(e)
+        if name(f) == "node"
+            nodes[attribute(f, "id")] = nodeid
+            nodeid += 1
+        elseif name(f) == "edge"
+            n1 = attribute(f, "source")
+            n2 = attribute(f, "target")
+            push!(edges, Edge(nodes[n1], nodes[n2]))
+        else
+            error("Unknown node $(name(f))")
+        end
+    end
+    #Put data in graph
+    g = (isdirected ? DiGraph : Graph)(length(nodes))
+    for edge in edges
+        add_edge!(g, edge)
+    end
+    return g
+end
+
 #@doc """
 #Reads in a GraphML file as an array of Graphs or Digraphs
 #
@@ -91,43 +116,23 @@ function readgraphml(filename::String)
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = @compat Tuple{String, SimpleGraph}[]
+    graphs = @compat(Vector{Tuple{String, SimpleGraph}}())
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance
             if name(e) == "graph"
-                nodes = Dict{String,Int}()
-                edges = @compat Tuple{Int, Int}[]
                 graphname = has_attribute(e, "id") ? attribute(e, "id") : nothing
                 edgedefault = attribute(e, "edgedefault")
                 isdirected = edgedefault=="directed" ? true :
                              edgedefault=="undirected" ? false : error("Unknown value of edgedefault: $edgedefault")
+                g = _process_graphml(e, isdirected)
+                push!(graphs, (graphname, g))
             else
-                error("Unknown node $(name(e))")
+                warn("Skipping unknown XML element $(name(e))")
             end
-
-            nodeid = 1
-            for f in child_elements(e)
-                if name(f) == "node"
-                    nodes[attribute(f, "id")] = nodeid
-                    nodeid += 1
-                elseif name(f) == "edge"
-                    n1 = attribute(f, "source")
-                    n2 = attribute(f, "target")
-                    push!(edges, (nodes[n1], nodes[n2]))
-                else
-                    error("Unknown node $(name(f))")
-                end
-            end
-            #Put data in graph
-            g = (isdirected ? DiGraph : Graph)(length(nodes))
-            for (n1, n2) in edges
-                add_edge!(g, n1, n2)
-            end
-            push!(graphs, (graphname, g))
         end
     end
-    graphs
+    return graphs
 end
 
 else
@@ -178,6 +183,6 @@ if _HAS_PARSERCOMBINATOR
 
 else
     function readgml(filename::String)
-        error("needs LightXML")
+        error("needs ParserCombinator")
     end
 end
