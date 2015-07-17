@@ -142,3 +142,42 @@ function readgraphml(filename::String)
 end
 
 end
+
+_HAS_PARSERCOMBINATOR = try
+        using ParserCombinator
+        using ParserCombinator.Parsers.GML
+        true
+    catch
+        false
+    end
+
+if _HAS_PARSERCOMBINATOR
+    function readgml(filename::String)
+        f = open(readall,filename)
+        p = parse_dict(f)
+        g1 = p[:graph][1]
+        dir = Bool(get(g1, :directed, 0))
+
+        nodes = [x[:id] for x in g1[:node]]
+        mapping = Dict{Int,Int}()
+        for (i,n) in enumerate(nodes)
+            mapping[n] = i
+        end
+
+        if dir
+            g = DiGraph(length(nodes))
+        else
+            g = Graph(length(nodes))
+        end
+        sds = [(Int(x[:source]), Int(x[:target])) for x in g1[:edge]]
+        for (s,d) in (sds)
+            add_edge!(g, mapping[s], mapping[d])
+        end
+        return g
+    end
+
+else
+    function readgml(filename::String)
+        error("needs LightXML")
+    end
+end
