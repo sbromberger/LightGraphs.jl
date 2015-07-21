@@ -1,5 +1,5 @@
 function show(io::IO, g::DiGraph)
-    if length(vertices(g)) == 0
+    if nv(g) == 0
         print(io, "empty directed graph")
     else
         print(io, "{$(nv(g)), $(ne(g))} directed graph")
@@ -20,22 +20,20 @@ DiGraph() = DiGraph(0)
 
 function DiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
     dima, dimb = size(adjmx)
-    if dima != dimb
-        error("Adjacency / distance matrices must be square")
-    else
-        g = DiGraph(dima)
-        maxc = length(adjmx.colptr)
-        for c = 1:(maxc-1)
-            for rind = adjmx.colptr[c]:adjmx.colptr[c+1]-1
-                isnz = (adjmx.nzval[rind] != zero(T))
-                if isnz
-                    r = adjmx.rowval[rind]
-                    add_edge!(g,r,c)
-                end
+    isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
+
+    g = DiGraph(dima)
+    maxc = length(adjmx.colptr)
+    for c = 1:(maxc-1)
+        for rind = adjmx.colptr[c]:adjmx.colptr[c+1]-1
+            isnz = (adjmx.nzval[rind] != zero(T))
+            if isnz
+                r = adjmx.rowval[rind]
+                add_edge!(g,r,c)
             end
         end
-        return g
     end
+    return g
 end
 
 function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
@@ -68,23 +66,18 @@ end
 is_directed(g::DiGraph) = true
 
 function add_edge!(g::DiGraph, e::Edge)
-    if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
-        throw(BoundsError())
-    elseif e in edges(g)
-        error("Edge $e is already in graph")
-    else
-        push!(g.fadjlist[src(e)], dst(e))
-        push!(g.badjlist[dst(e)], src(e))
-        push!(g.edges, e)
-    end
+    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
+    has_edge(g,e) && error("Edge $e is already in graph")
+
+    push!(g.fadjlist[src(e)], dst(e))
+    push!(g.badjlist[dst(e)], src(e))
+    push!(g.edges, e)
     return e
 end
 
 function rem_edge!(g::DiGraph, e::Edge)
     reve = reverse(e)
-    if !(has_edge(g,e))
-        error("Edge $e is not in graph")
-    end
+    has_edge(g,e) || error("Edge $e is not in graph")
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
     deleteat!(g.fadjlist[src(e)], i)
