@@ -21,3 +21,6 @@ y = betweenness_centrality(g, endpoints=true, normalize=false)
     round([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
 x = betweenness_centrality(g,3)
 @test length(x) == 50
+
+@test betweenness_centrality(s1) == [0, 1, 0]
+@test betweenness_centrality(s2) == [0, 0.5, 0]

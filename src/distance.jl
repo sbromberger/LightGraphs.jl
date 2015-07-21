@@ -5,7 +5,7 @@
 type DefaultDistance<:AbstractArray{Int, 2}
 end
 
-getindex(::DefaultDistance, s::Int, d::Int) = (s==d)? 0 : 1
+getindex(::DefaultDistance, s::Int, d::Int) = 1
 
 
 function eccentricity{T}(
