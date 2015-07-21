@@ -19,3 +19,19 @@ ws = watts_strogatz(10, 4, 0.2, is_directed=true)
 @test nv(ws) == 10
 @test ne(ws) == 20
 @test is_directed(ws) == true
+
+rr = random_regular_graph(5, 0)
+@test nv(rr) == 5
+@test ne(rr) == 0
+@test is_directed(rr) == false
+rr = random_regular_graph(10, 2)
+@test nv(rr) == 10
+@test ne(rr) == 10
+@test is_directed(rr) == false
+rr = random_regular_graph(1000, 50)
+@test nv(rr) == 1000
+@test ne(rr) == 25000
+@test is_directed(rr) == false
+for v in vertices(rr)
+    @test degree(rr, v) == 50
+end
