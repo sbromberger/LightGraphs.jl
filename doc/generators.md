@@ -21,7 +21,7 @@ created by default; use `is_directed=true` to override.
 `random_regular_graph(n, k[, seed])`  
 Creates a random undirected [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. 
 
-Allocates an array of `nk` `Int`s, and takes approximately `nk^2` time. For `k` > `n/2`, generates a graph of degree `n -k-1` and returns its complement.
+Allocates an array of `nk` `Int`s, and takes approximately `nk^2` time. For `k` > `n/2`, generates a graph of degree `n-k-1` and returns its complement.
 
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
