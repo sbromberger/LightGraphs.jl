@@ -136,6 +136,10 @@ function random_regular_graph(n::Int, k::Int, seed::Int=-1)
         srand(seed)
     end
 
+    if (k > n/2) && iseven(n * (n-k-1))
+        return complement(random_regular_graph(n, n-k-1, seed))
+    end
+
     edges = _try_creation(n,k)
     while isempty(edges)
         edges = _try_creation(n,k)
