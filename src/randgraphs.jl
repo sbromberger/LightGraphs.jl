@@ -84,9 +84,7 @@ end
 
 function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     isempty(potential_edges) && return true
-    ends = collect(keys(potential_edges))
-    for i in 1:length(ends)-1
-        s1, s2 = ends[i:i+1]
+    for (s1, s2) in combinations(collect(keys(potential_edges)), 2)
         if (s1 > s2)
             s1, s2 = s2, s1
         end
