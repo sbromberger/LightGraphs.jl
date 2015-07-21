@@ -8,14 +8,11 @@
 
 function readgraph(fn::AbstractString)
     readedges = Set{@compat Tuple{Int,Int}}()
-    directed = true
     f = GZip.open(fn,"r")        # will work even if uncompressed
     line = chomp(readline(f))
     nstr, dirundir = split(line,r"\s*,\s*")
     n = parse(Int,nstr)
-    if dirundir == "u"
-        directed = false
-    end
+    directed = !(dirundir == "u")
 
     if directed
         g = DiGraph(n)

@@ -14,11 +14,9 @@ function eccentricity{T}(
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
     e = maximum(dijkstra_shortest_paths(g,v,distmx).dists)
-    if e == typemax(T)
-        error("Infinite path length detected")
-    else
-        return e
-    end
+    e == typemax(T) && error("Infinite path length detected")
+
+    return e
 end
 
 eccentricity{T}(
