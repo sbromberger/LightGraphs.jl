@@ -35,3 +35,15 @@ rr = random_regular_graph(1000, 50)
 for v in vertices(rr)
     @test degree(rr, v) == 50
 end
+
+rd = random_regular_digraph(1000, 4)
+@test nv(rd) == 1000
+@test ne(rd) == 4000
+@test is_directed(rd)
+@test std(outdegree(rd)) == 0
+
+rd = random_regular_digraph(1000, 4, :in)
+@test nv(rd) == 1000
+@test ne(rd) == 4000
+@test is_directed(rd)
+@test std(indegree(rd)) == 0

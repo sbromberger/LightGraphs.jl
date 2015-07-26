@@ -19,10 +19,18 @@ randomized per the model based on probability `β`. Undirected graphs are
 created by default; use `is_directed=true` to override.
 
 `random_regular_graph(n, k[, seed])`  
-Creates a random undirected [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. 
+`random_regular_digraph(n, k[, dir, seed])` 
+Creates a random undirected or directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. For directed graphs, the degree (in or
+out) can be specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
 
-Allocates an array of `nk` `Int`s, and takes approximately `nk^2` time. For `k` > `n/2`, generates a graph of degree `n-k-1` and returns its complement.
+For undirected graphs, allocates an array of `nk` `Int`s, and takes
+approximately `nk^2` time. For `k` > `n/2`, generates a graph of degree
+`n-k-1` and returns its complement. For directed graphs, allocates an `n`x`n`
+sparse matrix of boolean as an adjacency matrix and uses that to generate the
+directed graph.
 
+
+Creates a random directed [regular graph]
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 

@@ -152,3 +152,37 @@ function random_regular_graph(n::Int, k::Int, seed::Int=-1)
 
     return g
 end
+
+function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
+    @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
+
+    if k == 0
+        return DiGraph(n)
+    end
+    if seed >= 0
+        srand(seed)
+    end
+    if (k > n/2) && iseven(n * (n-k-1))
+        return complement(random_regular_digraph(n, n-k-1, dir, seed))
+    end
+
+    cs = collect(2:n)
+    i = 1
+    I = Array(Int, n*k)
+    J = Array(Int, n*k)
+    V = fill(true, n*k)
+    for r in 1:n
+        rng = (r-1)*k+1 : r*k
+        I[rng] = r
+        J[rng] = sample(cs, k; replace=false)
+        if r<n
+            cs[r] -= 1
+        end
+    end
+
+    if dir == :out
+        return DiGraph(sparse(I, J, V, n, n))
+    else
+        return DiGraph(sparse(I, J, V, n, n)')
+    end
+end
