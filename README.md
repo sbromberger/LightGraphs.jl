@@ -142,6 +142,7 @@ write(g,"mygraph.jgz")
 - persistence
     - proprietary compressed format
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
+    - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

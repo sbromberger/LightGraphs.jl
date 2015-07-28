@@ -25,3 +25,18 @@ let Gs = readgraphml(joinpath(testdir, "testdata/grafo1853.13.graphml"))
     @test ne(G) == 15
 end
 end # _HAVE_LIGHTXML
+
+_HAVE_PARSERCOMBINATOR = try
+        using ParserCombinator
+        using ParserCombinator.Parsers.GML
+        true
+    catch
+        false
+    end
+
+if _HAVE_PARSERCOMBINATOR
+    let g = readgml(joinpath(testdir,"testdata/graph-10-28.gml"))
+        @test nv(g) == 10
+        @test ne(g) == 28
+    end
+end
