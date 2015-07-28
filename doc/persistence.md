@@ -20,6 +20,10 @@ Returns a graph loaded from file `fn`.
 Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
 format.
 
+`readgml(fn)`  
+Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language)
+format.
+
 
 ###Examples
 ```julia
@@ -27,4 +31,5 @@ julia> write(STDOUT, g)
 julia> write(g, "mygraph.jgz")
 julia> g = readgraph("mygraph.jgz")
 julia> g = readgraphml("mygraph.xml")
+julia> g = readgml("mygraph.gml")
 ```
