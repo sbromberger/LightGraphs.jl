@@ -153,6 +153,9 @@ _HAS_PARSERCOMBINATOR = try
         false
     end
 
+
+# returns the first graph in a GML file. Note: this is not
+# consistent with readgraphml and we should probably standardize.
 if _HAS_PARSERCOMBINATOR
     function readgml(filename::String)
         f = open(readall,filename)
