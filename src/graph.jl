@@ -1,5 +1,5 @@
 function show(io::IO, g::Graph)
-    if length(vertices(g)) == 0
+    if nv(g) == 0
         print(io, "empty undirected graph")
     else
         print(io, "{$(nv(g)), $(ne(g))} undirected graph")
@@ -55,32 +55,27 @@ function ==(g::Graph, h::Graph)
 end
 
 is_directed(g::Graph) = false
-has_edge(g::Graph, e::Edge) = e in edges(g) || reverse(e) in edges(g)
+has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
 function add_edge!(g::Graph, e::Edge)
-    if !(has_vertex(g,src(e)) && has_vertex(g,dst(e)))
-        throw(BoundsError())
-    elseif has_edge(g,e)
-        error("Edge $e is already in graph")
-    else
-        push!(g.fadjlist[src(e)], dst(e))
-        push!(g.badjlist[dst(e)], src(e))
+    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
+    has_edge(g,e) && error("Edge $e is already in graph")
 
-        push!(g.fadjlist[dst(e)], src(e))
-        push!(g.badjlist[src(e)], dst(e))
-        push!(g.edges, e)
-    end
+    push!(g.fadjlist[src(e)], dst(e))
+    push!(g.badjlist[dst(e)], src(e))
+
+    push!(g.fadjlist[dst(e)], src(e))
+    push!(g.badjlist[src(e)], dst(e))
+    push!(g.edges, e)
+
     return e
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    reve = reverse(e)
     if !(e in edges(g))
-        if !(reve in edges(g))
-            error("Edge $e is not in graph")
-        else
-            e, reve = reve, e
-        end
+        reve = reverse(e)
+        (reve in edges(g)) || error("Edge $e is not in graph")
+        e = reve
     end
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
