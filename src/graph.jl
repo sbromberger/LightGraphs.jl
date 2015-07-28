@@ -57,17 +57,12 @@ end
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
-function add_edge!(g::Graph, e::Edge)
-    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
-    has_edge(g,e) && error("Edge $e is already in graph")
-
+function unsafe_add_edge!(g::Graph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))
     push!(g.badjlist[dst(e)], src(e))
-
     push!(g.fadjlist[dst(e)], src(e))
     push!(g.badjlist[src(e)], dst(e))
     push!(g.edges, e)
-
     return e
 end
 

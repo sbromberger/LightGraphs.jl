@@ -83,7 +83,14 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 nv(g::SimpleGraph) = length(vertices(g))
 ne(g::SimpleGraph) = length(edges(g))
 
+function add_edge!(g::SimpleGraph, e::Edge)
+    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
+    has_edge(g,e) && error("Edge $e is already in graph")
+    unsafe_add_edge!(g, e)
+end
+
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+
 
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 

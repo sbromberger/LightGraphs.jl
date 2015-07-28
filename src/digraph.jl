@@ -65,10 +65,7 @@ end
 
 is_directed(g::DiGraph) = true
 
-function add_edge!(g::DiGraph, e::Edge)
-    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
-    has_edge(g,e) && error("Edge $e is already in graph")
-
+function unsafe_add_edge!(g::DiGraph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))
     push!(g.badjlist[dst(e)], src(e))
     push!(g.edges, e)
