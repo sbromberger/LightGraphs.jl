@@ -19,7 +19,17 @@ julia> loc_x, loc_y = layout_spring_adj(am)
 julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
 ```
 producing a graph like this:
-![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/5848475/b31c41f2-a18d-11e4-8a4d-fcd148335bc9.png)
+![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
+
+###[TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
+Another nice graph visulaization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
+required to render/save):
+```julia
+julia> g = WheelGraph(10); t = plot(g)
+julia> save(SVG("wheel10.svg"), t)
+```
+producing a graph like this:
+![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960499/17f703c0-35c5-11e5-935e-044be51bc531.png)
 
 ###[Metis.jl](https://github.com/JuliaSparse/Metis.jl)
 The Metis graph partitioning package can interface with *LightGraphs.jl*:
