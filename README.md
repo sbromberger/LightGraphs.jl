@@ -110,39 +110,47 @@ write(g,"mygraph.jgz")
     - blkdiag
     - induced subgraphs
 
-
 - shortest path
     - Dijkstra / Dijkstra with predecessors
     - Bellman-Ford
     - Floyd-Warshall
     - A*
 
-
 - small graph generators
     - see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
-
 
 - random graph generators
     - Erdős–Rényi
     - Watts-Strogatz
-
+    - Random Regular
 
 - centrality
     - betweenness
     - closeness
     - degree
     - pagerank
+    - Katz
 
+- traversal operations
+    - cycle detection
+    - BFS and DFS DAGs
+    - BFS and DFS traversals with visitors
+    - DFS topological sort
+    - maximum adjacency / minimum cut
 
 - linear algebra
     - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
 
-
 - persistence
     - proprietary compressed format
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
     - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
+
+- visualization: integration with
+    - [GraphLayout](https://github.com/IainNZ/GraphLayout.jl)
+    - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
+
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
