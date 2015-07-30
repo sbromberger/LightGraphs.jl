@@ -189,12 +189,16 @@ function is_bipartite(g::SimpleGraph, s::Int)
     return visitor.is_bipartite
 end
 
-function is_bipartite(g::SimpleGraph)
-    nvg = nv(g)
-    for v in vertices(g)
-        if !is_bipartite(g, v)
-            return false
+# take advantage of short-circuiting all() in 0.4.0-dev+6371 and later
+if VERSION >= v"0.4.0-dev+6371"
+    is_bipartite(g::SimpleGraph) = all(x->is_bipartite(g,x), vertices(g))
+else
+    function is_bipartite(g::SimpleGraph)
+        for v in vertices(g)
+            if !is_bipartite(g, v)
+                return false
+            end
         end
+        return true
     end
-    return true
 end
