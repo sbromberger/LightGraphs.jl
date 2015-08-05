@@ -1,5 +1,4 @@
 module LightGraphs
-PACKAGE_NAME = "LightGraphs"
 
 using Compat
 using GZip
