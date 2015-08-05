@@ -4,6 +4,9 @@ Graphs may be written to I/O streams and files using the `write` function:
 
 ### write
 ```
+write(io::IO, g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, fn::AbstractString)
 ```
 ```rst
 ::
@@ -27,16 +30,19 @@ Graphs stored using the `write` functions above may be loaded using `readgraph`:
 
 ### readgraph
 ```
+readgraph(fn::AbstractString)
 ```
 Returns a graph loaded from file `fn`.
 
 ### readgraphml
 ```
+readgraphml(filename::AbstractString)
 ```
 Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
 
 ### readgml
 ```
+readgml(filename::AbstractString)
 ```
 Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 
