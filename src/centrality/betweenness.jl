@@ -13,7 +13,7 @@ $bc(v) = \frac{1}{\mathcal{N}}
         \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
 
 
-## Parameters
+#### Parameters
 
 g: SimpleGraph
     A Graph, directed or undirected.
@@ -38,14 +38,14 @@ normalize: bool, optional
 endpoints: bool, optional
     If true, endpoints are included in the shortest path count.
 
-## Returns
+#### Returns
 
 betweenness: Array{Float64}
     Betweenness centrality value per node id.
 
-## Examples
+#### Examples
 
-## References
+#### References
 
 [1] Brandes 2001 & Brandes 2008
 """

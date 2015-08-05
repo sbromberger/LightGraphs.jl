@@ -107,6 +107,9 @@ function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor:
     return true
 end
 
+"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
+of source vertices `ss`.
+"""
 function gdistances!{DMap}(graph::SimpleGraph, s::Int, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     dists[s] = 0

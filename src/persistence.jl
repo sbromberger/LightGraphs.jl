@@ -6,7 +6,7 @@
 #       merely used to return the correct type of graph.
 # header followed by a list of (comma-delimited) edges - src,dst.
 
-"Returns a graph loaded from file `fn`."
+"""Returns a graph loaded from file `fn`."""
 function readgraph(fn::AbstractString)
     readedges = Set{@compat Tuple{Int,Int}}()
     f = GZip.open(fn,"r")        # should work even if uncompressed
@@ -108,20 +108,6 @@ function _process_graphml(e::XMLElement, isdirected::Bool)
     return g
 end
 
-#@doc """
-#Reads in a GraphML file as an array of Graphs or Digraphs
-#
-#Input:
-#
-#    filename
-#
-#Returns:
-#
-#    An array of (name, SimpleGraph) tuple
-#""" ->
-doc"""Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
-format.
-"""
 function readgraphml(filename::String)
     xdoc = parse_file(filename)
     xroot = root(xdoc)  # an instance of XMLElement
@@ -196,3 +182,12 @@ else
         error("needs ParserCombinator")
     end
 end
+
+"""Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language)
+format."""
+readgml
+
+"""Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
+format.
+"""
+readgraphml
