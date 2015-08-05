@@ -6,6 +6,7 @@
 #       merely used to return the correct type of graph.
 # header followed by a list of (comma-delimited) edges - src,dst.
 
+"Returns a graph loaded from file `fn`."
 function readgraph(fn::AbstractString)
     readedges = Set{@compat Tuple{Int,Int}}()
     f = GZip.open(fn,"r")        # should work even if uncompressed
@@ -31,6 +32,12 @@ function readgraph(fn::AbstractString)
     return g
 end
 
+"""Writes a graph `g` in a proprietary format to the IO stream designated by
+`io`.
+
+Return tuples containing the number of vertices and
+number of edges written.
+"""
 function write(io::IO, g::SimpleGraph)
     # write header line
     dir = is_directed(g)? "d" : "u"
@@ -45,6 +52,11 @@ end
 
 write(g::SimpleGraph) = write(STDOUT, g)
 
+"""Writes a graph to a file `fn`, with default `GZip` compression.
+
+Return tuples containing the number of vertices and
+number of edges written.
+"""
 function write(
     g::SimpleGraph,
     fn::AbstractString;
@@ -107,6 +119,9 @@ end
 #
 #    An array of (name, SimpleGraph) tuple
 #""" ->
+doc"""Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
+format.
+"""
 function readgraphml(filename::String)
     xdoc = parse_file(filename)
     xroot = root(xdoc)  # an instance of XMLElement
@@ -134,11 +149,6 @@ end
 
 else
 
-#@doc """
-#Reads in a GraphML file as an array of Graphs or Digraphs
-#
-#Requires the LightXML package to be insta.
-#""" ->
 function readgraphml(filename::String)
     error("needs LightXML")
 end

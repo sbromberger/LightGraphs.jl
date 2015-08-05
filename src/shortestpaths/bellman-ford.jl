@@ -56,7 +56,11 @@ function bellman_ford_shortest_paths!(
     state
 end
 
-
+"""Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm)
+to compute shortest paths between a source vertex `s` or a set of source
+vertices `ss`. Returns a `BellmanFordState` with relevant traversal information
+(see below).
+"""
 function bellman_ford_shortest_paths{T}(
     graph::SimpleGraph,
 
@@ -86,6 +90,23 @@ function has_negative_edge_cycle(graph::SimpleGraph)
 end
 
 
+"""Given a path state `state` of type `AbstractPathState` (see below), returns a
+vector (indexed by vertex) of the paths between the source vertex used to
+compute the path state and a destination vertex `v`, a set of destination
+vertices `vs`, or the entire graph. For multiple destination vertices, each
+path is represented by a vector of vertices on the path between the source and
+the destination. Nonexistent paths will be indicated by an empty vector. For
+single destinations, the path is represented by a single vector of vertices,
+and will be length 0 if the path does not exist.
+
+For Floyd-Warshall path states, please note that the output is a bit different,
+since this algorithm calculates all shortest paths for all pairs of vertices:
+`enumerate_paths(state)` will return a vector (indexed by source vertex) of
+vectors (indexed by destination vertex) of paths. `enumerate_paths(state, v)`
+will return a vector (indexed by destination vertex) of paths from source `v`
+to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
+a vector representing the path from vertex `v` to vertex `d`.
+"""
 function enumerate_paths(state::AbstractPathState, dest::Vector{Int})
     parents = state.parents
 

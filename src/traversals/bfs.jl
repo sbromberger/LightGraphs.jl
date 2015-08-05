@@ -123,6 +123,9 @@ function gdistances!{DMap}(graph::SimpleGraph, sources::AbstractVector{Int}, dis
     return dists
 end
 
+"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
+of source vertices `ss`.
+"""
 function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
     dists = fill(defaultdist, nv(graph))
     gdistances!(graph, sources, dists)
@@ -154,6 +157,9 @@ function close_vertex!(visitor::TreeBFSVisitor, e::Edge)
     return true
 end
 
+"""Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
+and returns a directed acyclic graph of vertices in the order they were discovered.
+"""
 function bfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeBFSVisitor(nvg)
@@ -182,6 +188,9 @@ function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::In
     return visitor.is_bipartite
 end
 
+"""Will return `true` if graph `g` is
+[bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+"""
 function is_bipartite(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)

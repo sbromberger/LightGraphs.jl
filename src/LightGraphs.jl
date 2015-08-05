@@ -79,6 +79,7 @@ readgraph, readgraphml, readgml,
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph
 
+
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")

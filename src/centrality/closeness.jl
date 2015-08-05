@@ -1,8 +1,6 @@
-# @doc doc"""
-#         closeness_centrality(g::SimpleGraph; normalize=true)
-#
-#     Computes closeness centrality of a graph, based on all vertices.
-#     """ ->
+"""Calculates the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality)
+of the graph `g`.
+"""
 function closeness_centrality(
     g::SimpleGraph;
     normalize=true)
