@@ -4,34 +4,27 @@
 
 ### erdos_renyi
 ```
-erdos_renyi(n::Integer, p::Real)
 ```
-Creates an Base.Markdown.Link(Any["Erdős–Rényi"],"http://en.wikipedia.org/wiki/Erdős–Rényi_model") random graph with `n` vertices. Edges are added between pairs of vertices with probability `p`. Undirected graphs are created by default; use `is_directed=true` to override.
+Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random graph with `n` vertices. Edges are added between pairs of vertices with probability `p`. Undirected graphs are created by default; use `is_directed=true` to override.
 
 Note also that Erdős–Rényi graphs may be generated quickly using the `Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of vertices.
 
 ### watts_strogatz
 ```
-watts_strogatz(n::Integer, k::Integer, β::Real)
 ```
-Creates a Base.Markdown.Link(Any["Watts-Strogatz"],"https://en.wikipedia.org/wiki/Watts_and_Strogatz_model") small model random graph with `n` vertices, each with degree `k`. Edges are randomized per the model based on probability `β`. Undirected graphs are created by default; use `is_directed=true` to override.
+Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model) small model random graph with `n` vertices, each with degree `k`. Edges are randomized per the model based on probability `β`. Undirected graphs are created by default; use `is_directed=true` to override.
 
 ### random_regular_graph
 ```
-random_regular_graph(n::Int64, k::Int64)
-random_regular_graph(n::Int64, k::Int64, seed::Int64)
 ```
-Creates a random undirected Base.Markdown.Link(Any["regular graph"],"https://en.wikipedia.org/wiki/Regular_graph") with `n` vertices, each with degree `k`.
+Creates a random undirected [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`.
 
 For undirected graphs, allocates an array of `nk` `Int`s, and takes approximately $nk^2$ time. For $k > n/2$, generates a graph of degree `n-k-1` and returns its complement.
 
 ### random_regular_digraph
 ```
-random_regular_digraph(n::Int64, k::Int64)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol, seed::Int64)
 ```
-Creates a random directed Base.Markdown.Link(Any["regular graph"],"https://en.wikipedia.org/wiki/Regular_graph") with `n` vertices, each with degree `k`. The degree (in or out) can be specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
+Creates a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. The degree (in or out) can be specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
 
 For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an adjacency matrix and uses that to generate the directed graph.
 
@@ -42,49 +35,41 @@ For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an ad
 
 ### CompleteGraph
 ```
-CompleteGraph(n::Integer)
 ```
 Creates a complete graph with `n` vertices. A complete graph has edges connecting each pair of vertices.
 
 ### CompleteDiGraph
 ```
-CompleteDiGraph(n::Integer)
 ```
 Creates a complete digraph with `n` vertices. A complete digraph has edges connecting each pair of vertices (both an ingoing and outgoing edge).
 
 ### StarGraph
 ```
-StarGraph(n::Integer)
 ```
 Creates a star graph with `n` vertices. A star graph has a central vertex with edges to each other vertex.
 
 ### StarDiGraph
 ```
-StarDiGraph(n::Integer)
 ```
 Creates a star digraph with `n` vertices. A star digraph has a central vertex with directed edges to every other vertex.
 
 ### PathGraph
 ```
-PathGraph(n::Integer)
 ```
 Creates a path graph with `n` vertices. A path graph connects each successive vertex by a single edge.
 
 ### PathDiGraph
 ```
-PathDiGraph(n::Integer)
 ```
 Creates a path digraph with `n` vertices. A path graph connects each successive vertex by a single directed edge.
 
 ### WheelGraph
 ```
-WheelGraph(n::Integer)
 ```
 Creates a wheel graph with `n` vertices. A wheel graph is a star graph with the outer vertices connected via a closed path graph.
 
 ### WheelDiGraph
 ```
-WheelDiGraph(n::Integer)
 ```
 Creates a wheel digraph with `n` vertices. A wheel graph is a star digraph with the outer vertices connected via a closed path graph.
 
@@ -94,128 +79,107 @@ The following graphs are undirected only:
 
 ### DiamondGraph
 ```
-DiamondGraph()
 ```
-A Base.Markdown.Link(Any["diamond graph"],"http://en.wikipedia.org/wiki/Diamond_graph").
+A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).
 
 ### BullGraph
 ```
-BullGraph()
 ```
-A Base.Markdown.Link(Any["bull graph"],"https://en.wikipedia.org/wiki/Bull_graph").
+A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).
 
 ### ChvatalGraph
 ```
-ChvatalGraph()
 ```
-A Base.Markdown.Link(Any["Chvátal graph"],"https://en.wikipedia.org/wiki/Chvátal_graph").
+A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).
 
 ### CubicalGraph
 ```
-CubicalGraph()
 ```
-A Base.Markdown.Link(Any["Platonic cubical graph"],"https://en.wikipedia.org/wiki/Platonic_graph").
+A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).
 
 ### DesarguesGraph
 ```
-DesarguesGraph()
 ```
-A Base.Markdown.Link(Any["Desargues  graph"],"https://en.wikipedia.org/wiki/Desargues_graph").
+A [Desargues  graph](https://en.wikipedia.org/wiki/Desargues_graph).
 
 ### DodecahedralGraph
 ```
-DodecahedralGraph()
 ```
-A Base.Markdown.Link(Any["Platonic dodecahedral  graph"],"https://en.wikipedia.org/wiki/Platonic_graph").
+A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
 
 ### FruchtGraph
 ```
-FruchtGraph()
 ```
-A Base.Markdown.Link(Any["Frucht  graph"],"https://en.wikipedia.org/wiki/Frucht_graph").
+A [Frucht  graph](https://en.wikipedia.org/wiki/Frucht_graph).
 
 ### HeawoodGraph
 ```
-HeawoodGraph()
 ```
-A Base.Markdown.Link(Any["Heawood  graph"],"https://en.wikipedia.org/wiki/Heawood_graph").
+A [Heawood  graph](https://en.wikipedia.org/wiki/Heawood_graph).
 
 ### HouseGraph
 ```
-HouseGraph()
 ```
 A graph mimicing the classic outline of a house.
 
 ### HouseXGraph
 ```
-HouseXGraph()
 ```
 A house graph, with two edges crossing the bottom square.
 
 ### IcosahedralGraph
 ```
-IcosahedralGraph()
 ```
-A Base.Markdown.Link(Any["Platonic icosahedral  graph"],"https://en.wikipedia.org/wiki/Platonic_graph").
+A [Platonic icosahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
 
 ### KrackhardtKiteGraph
 ```
-KrackhardtKiteGraph()
 ```
-A Base.Markdown.Link(Any["Krackhardt-Kite social network graph"],"http://mathworld.wolfram.com/KrackhardtKite.html").
+A [Krackhardt-Kite social network graph](http://mathworld.wolfram.com/KrackhardtKite.html).
 
 ### MoebiusKantorGraph
 ```
-MoebiusKantorGraph()
 ```
-A Base.Markdown.Link(Any["Möbius-Kantor  graph"],"http://en.wikipedia.org/wiki/Möbius–Kantor_graph").
+A [Möbius-Kantor  graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph).
 
 ### OctahedralGraph
 ```
-OctahedralGraph()
 ```
-A Base.Markdown.Link(Any["Platonic octahedral  graph"],"https://en.wikipedia.org/wiki/Platonic_graph").
+A [Platonic octahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
 
 ### PappusGraph
 ```
-PappusGraph()
 ```
-A Base.Markdown.Link(Any["Pappus  graph"],"http://en.wikipedia.org/wiki/Pappus_graph").
+A [Pappus  graph](http://en.wikipedia.org/wiki/Pappus_graph).
 
 ### PetersenGraph
 ```
-PetersenGraph()
 ```
-A Base.Markdown.Link(Any["Petersen  graph"],"http://en.wikipedia.org/wiki/Petersen_graph").
+A [Petersen  graph](http://en.wikipedia.org/wiki/Petersen_graph).
 
 ### SedgewickMazeGraph
 ```
-SedgewickMazeGraph()
 ```
 A simple maze graph used in Sedgewick's *Algorithms in C++: Graph Algorithms (3rd ed.)*
 
 ### TetrahedralGraph
 ```
-TetrahedralGraph()
 ```
-A Base.Markdown.Link(Any["Platonic tetrahedral  graph"],"https://en.wikipedia.org/wiki/Platonic_graph").
+A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
 
 ### TruncatedCubeGraph
 ```
-TruncatedCubeGraph()
 ```
-A skeleton of the Base.Markdown.Link(Any["truncated cube  graph"],"https://en.wikipedia.org/wiki/Truncated_cube").
+A skeleton of the [truncated cube  graph](https://en.wikipedia.org/wiki/Truncated_cube).
 
 ### TruncatedTetrahedronGraph
 ```
-TruncatedTetrahedronGraph()
 ```
-A skeleton of the Base.Markdown.Link(Any["truncated tetrahedron graph"],"https://en.wikipedia.org/wiki/Truncated_tetrahedron").
+A skeleton of the [truncated tetrahedron graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
 
 ### TutteGraph
 ```
-TutteGraph()
 ```
-A Base.Markdown.Link(Any["Tutte  graph"],"https://en.wikipedia.org/wiki/Tutte_graph").
+A [Tutte  graph](https://en.wikipedia.org/wiki/Tutte_graph).
 
 

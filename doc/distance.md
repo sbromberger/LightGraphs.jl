@@ -3,12 +3,6 @@
 
 ### eccentricity
 ```
-eccentricity(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-eccentricity(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, v::Int64)
-eccentricity{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, v::Int64, distmx::AbstractArray{T,2})
-eccentricity(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, vs::AbstractArray{Int64,1})
-eccentricity{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, vs::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-eccentricity{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, distmx::AbstractArray{T,2})
 ```
 Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the entire graph. An optional matrix of edge distances may be supplied.
 
@@ -22,33 +16,21 @@ Note: the eccentricity vector returned by `eccentricity()` may be used as input 
 
 ### radius
 ```
-radius{T}(all_e::Array{T,1})
-radius(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-radius{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, distmx::AbstractArray{T,2})
 ```
 Returns the minimum eccentricity of the graph.
 
 ### diameter
 ```
-diameter{T}(all_e::Array{T,1})
-diameter(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-diameter{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, distmx::AbstractArray{T,2})
 ```
 Returns the maximum eccentricity of the graph.
 
 ### center
 ```
-center{T}(all_e::Array{T,1})
-center(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-center{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, distmx::AbstractArray{T,2})
 ```
 Returns the set of all vertices whose eccentricity is equal to the graph's radius (that is, the set of vertices with the smallest eccentricity).
 
 ### periphery
 ```
-periphery{T}(all_e::Array{T,1})
-periphery(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-periphery{T}(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, distmx::AbstractArray{T,2})
 ```
 Returns the set of all vertices whose eccentricity is equal to the graph's diameter (that is, the set of vertices with the largest eccentricity).
 

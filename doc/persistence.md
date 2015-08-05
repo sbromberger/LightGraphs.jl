@@ -4,10 +4,14 @@ Graphs may be written to I/O streams and files using the `write` function:
 
 ### write
 ```
-write(io::IO, g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-write(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-write(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, fn::AbstractString)
 ```
+```rst
+::
+           write(stream, x)
+
+Write the canonical binary representation of a value to the given stream.
+```
+
 Writes a graph `g` in a proprietary format to the IO stream designated by `io`.
 
 Return tuples containing the number of vertices and number of edges written.
@@ -23,21 +27,18 @@ Graphs stored using the `write` functions above may be loaded using `readgraph`:
 
 ### readgraph
 ```
-readgraph(fn::AbstractString)
 ```
 Returns a graph loaded from file `fn`.
 
 ### readgraphml
 ```
-readgraphml(filename::AbstractString)
 ```
-Returns a graph from file `fn` stored in Base.Markdown.Link(Any["GraphML"],"http://en.wikipedia.org/wiki/GraphML") format.
+Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
 
 ### readgml
 ```
-readgml(filename::AbstractString)
 ```
-Returns a graph from file `fn` stored in Base.Markdown.Link(Any["GML"],"https://en.wikipedia.org/wiki/Graph_Modelling_Language") format.
+Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 
 
 

@@ -9,21 +9,18 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 
 ### degree_centrality
 ```
-degree_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
 ```
-Calculates the Base.Markdown.Link(Any["degree centrality"],"https://en.wikipedia.org/wiki/Centrality#Degree_centrality") of the graph `g`, with optional (default) normalization.
+Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
 ### indegree_centrality
 ```
-indegree_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
 ```
-Calculates the Base.Markdown.Link(Any["degree centrality"],"https://en.wikipedia.org/wiki/Centrality#Degree_centrality") of the graph `g`, with optional (default) normalization.
+Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
 ### outdegree_centrality
 ```
-outdegree_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
 ```
-Calculates the Base.Markdown.Link(Any["degree centrality"],"https://en.wikipedia.org/wiki/Centrality#Degree_centrality") of the graph `g`, with optional (default) normalization.
+Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
 
 
@@ -31,9 +28,8 @@ Calculates the Base.Markdown.Link(Any["degree centrality"],"https://en.wikipedia
 
 ### closeness_centrality
 ```
-closeness_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
 ```
-Calculates the Base.Markdown.Link(Any["closeness centrality"],"https://en.wikipedia.org/wiki/Centrality#Closeness_centrality") of the graph `g`.
+Calculates the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of the graph `g`.
 
 
 
@@ -41,10 +37,8 @@ Calculates the Base.Markdown.Link(Any["closeness centrality"],"https://en.wikipe
 
 ### betweenness_centrality
 ```
-betweenness_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-betweenness_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, k::Integer)
 ```
-Calculates the Base.Markdown.Link(Any["betweenness centrality"],"https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality") of the graph `g`, or, optionally, of a random subset of `k` vertices. Can optionally include endpoints in the calculations. Normalization is enabled by default.
+Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of the graph `g`, or, optionally, of a random subset of `k` vertices. Can optionally include endpoints in the calculations. Normalization is enabled by default.
 
 Betweeness centrality is defined as:
 
@@ -78,10 +72,8 @@ betweenness: Array{Float64}     Betweenness centrality value per node id.
 
 ### katz_centrality
 ```
-katz_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-katz_centrality(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, α::Real)
 ```
-Calculates the Base.Markdown.Link(Any["Katz centrality"],"https://en.wikipedia.org/wiki/Katz_centrality") of the graph `g`.
+Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality) of the graph `g`.
 
 
 
@@ -89,11 +81,7 @@ Calculates the Base.Markdown.Link(Any["Katz centrality"],"https://en.wikipedia.o
 
 ### pagerank
 ```
-pagerank(g::LightGraphs.DiGraph)
-pagerank(g::LightGraphs.DiGraph, α)
-pagerank(g::LightGraphs.DiGraph, α, n)
-pagerank(g::LightGraphs.DiGraph, α, n, ϵ)
 ```
-Calculates the Base.Markdown.Link(Any["PageRank"],"https://en.wikipedia.org/wiki/PageRank") of the graph `g`. Can optionally specify a different damping factor (`α`), number of iterations (`n`), and convergence threshold (`ϵ`). If convergence is not reached within `n` iterations, an error will be returned.
+Calculates the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the graph `g`. Can optionally specify a different damping factor (`α`), number of iterations (`n`), and convergence threshold (`ϵ`). If convergence is not reached within `n` iterations, an error will be returned.
 
 
