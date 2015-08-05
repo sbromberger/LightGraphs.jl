@@ -16,7 +16,14 @@ type DijkstraState{T}<: AbstractDijkstraState
     pathcounts::Vector{Int}
 end
 
+"""Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+on a graph, computing shortest distances between a source vertex `s` and all
+other nodes. Returns a `DijkstraState` that contains various traversal
+information (see below).
 
+With `allpaths=true`, returns a `DijkstraState` that keeps track of all
+predecessors of a given vertex (see below).
+"""
 function dijkstra_shortest_paths{T}(
     g::SimpleGraph,
     srcs::Vector{Int},

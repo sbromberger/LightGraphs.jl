@@ -31,6 +31,15 @@ function DiGraph(nv::Integer, ne::Integer)
     return g
 end
 
+"""Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
+random graph with `n` vertices. Edges are added between pairs of vertices with
+probability `p`. Undirected graphs are created by default; use
+`is_directed=true` to override.
+
+Note also that Erdős–Rényi graphs may be generated quickly using the
+`Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of
+vertices.
+"""
 function erdos_renyi(n::Integer, p::Real; is_directed=false)
     if is_directed
         g = DiGraph(n)
@@ -49,6 +58,12 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false)
     return g
 end
 
+"""
+Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+small model random graph with `n` vertices, each with degree `k`. Edges are
+randomized per the model based on probability `β`. Undirected graphs are
+created by default; use `is_directed=true` to override.
+"""
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
     @assert k < n/2
     if is_directed
@@ -126,6 +141,14 @@ function _try_creation(n::Int, k::Int)
     return edges
 end
 
+doc"""Creates a random undirected
+[regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
+each with degree `k`.
+
+For undirected graphs, allocates an array of `nk` `Int`s, and takes
+approximately $nk^2$ time. For $k > n/2$, generates a graph of degree
+`n-k-1` and returns its complement.
+"""
 function random_regular_graph(n::Int, k::Int, seed::Int=-1)
     @assert(iseven(n*k), "n * k must be even")
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
@@ -153,6 +176,14 @@ function random_regular_graph(n::Int, k::Int, seed::Int=-1)
     return g
 end
 
+doc"""Creates a random directed
+[regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
+each with degree `k`. The degree (in or out) can be
+specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
+
+For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an
+adjacency matrix and uses that to generate the directed graph.
+"""
 function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
 

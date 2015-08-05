@@ -54,6 +54,7 @@ function ==(g::Graph, h::Graph)
     return (gdigraph == hdigraph)
 end
 
+"Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
@@ -90,6 +91,10 @@ function rem_edge!(g::Graph, e::Edge)
 end
 
 
-
+"""Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
 degree(g::Graph, v::Int) = indegree(g,v)
+doc"""Density is defined as the ratio of the number of actual edges to the
+number of possible edges. This is $|v| |v-1|$ for directed graphs and
+$(|v| |v-1|) / 2$ for undirected graphs.
+"""
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

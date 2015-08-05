@@ -54,7 +54,7 @@ function traverse_graph(
         pq = Collections.PriorityQueue{Int, T}(Base.Order.Reverse)
     end
 
-    # Set number of visited neighbours for all vertices to 0
+    # Set number of visited neighbors for all vertices to 0
     for v in vertices(graph)
         pq[v] = zero(T)
     end
@@ -180,6 +180,11 @@ end
 #################################################
 
 
+"""Returns a tuple `(parity, bestcut)`, where `parity` is a vector of boolean
+values that determines the partition in `g` and `bestcut` is the weight of the
+cut that makes this partition. An optional `distmx` matrix may be specified; if
+omitted, edge distances are assumed to be 1.
+"""
 function mincut{T}(
     graph::SimpleGraph,
     distmx::AbstractArray{T, 2}
@@ -192,6 +197,12 @@ end
 
 mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
 
+"""Returns the vertices in `g` traversed by maximum adjacency search. An optional
+`distmx` matrix may be specified; if omitted, edge distances are assumed to
+be 1. If `log` (default `false`) is `true`, visitor events will be printed to
+`io`, which defaults to `STDOUT`; otherwise, no event information will be
+displayed.
+"""
 function maximum_adjacency_visit{T}(
     graph::SimpleGraph,
     distmx::AbstractArray{T, 2},

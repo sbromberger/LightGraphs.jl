@@ -2,13 +2,18 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-@doc """ Betweenness centrality
+doc"""Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
+the graph `g`, or, optionally, of a random subset of `k` vertices. Can
+optionally include endpoints in the calculations. Normalization is enabled by
+default.
 
-\$bc(v) = \frac{1}{\mathcal{N}}
-        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}\$
+Betweeness centrality is defined as:
+
+$bc(v) = \frac{1}{\mathcal{N}}
+        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
 
 
-## Parameters
+#### Parameters
 
 g: SimpleGraph
     A Graph, directed or undirected.
@@ -33,17 +38,17 @@ normalize: bool, optional
 endpoints: bool, optional
     If true, endpoints are included in the shortest path count.
 
-## Returns
+#### Returns
 
 betweenness: Array{Float64}
     Betweenness centrality value per node id.
 
-## Examples
+#### Examples
 
-## References
+#### References
 
 [1] Brandes 2001 & Brandes 2008
-""" ->
+"""
 function betweenness_centrality(
     g::SimpleGraph,
     k::Integer=0;

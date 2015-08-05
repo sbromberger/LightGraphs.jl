@@ -89,5 +89,6 @@ end
 has_edge(g::DiGraph, e::Edge) = e in edges(g)
 
 degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
+"Returns all the vertices which share an edge with `v`."
 all_neighbors(g::DiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
 density(g::DiGraph) = ne(g) / (nv(g) * (nv(g)-1))

@@ -118,6 +118,9 @@ end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
+"""Tests whether a graph contains a cycle through depth-first search. It
+returns `true` when it finds a cycle, otherwise `false`.
+"""
 function is_cyclic(graph::SimpleGraph)
     cmap = zeros(Int, nv(graph))
     visitor = DFSCyclicTestVisitor()
@@ -186,6 +189,9 @@ function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
+"""Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
+and returns a directed acyclic graph of vertices in the order they were discovered.
+"""
 function dfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)

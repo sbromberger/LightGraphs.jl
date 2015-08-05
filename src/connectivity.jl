@@ -1,5 +1,11 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
+
+"""
+Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+of an undirected graph `g` as a vector of components, each represented by a
+vector of vectors of vertices belonging to the component.
+"""
 function connected_components(g::Graph)
     nvg = nv(g)
     found = zeros(Bool, nvg)
@@ -22,9 +28,14 @@ function connected_components(g::Graph)
     return components
 end
 
+"""Returns `true` if `g` is connected.
+For DiGraphs, this is equivalent to a test of weak connectivity."""
 is_connected(g::Graph) = length(connected_components(g)) == 1
 
+"""Returns connected components of the undirected graph of `g`."""
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
+
+"""Returns `true` if the undirected graph of `g` is connected."""
 is_weakly_connected(g::DiGraph) = length(weakly_connected_components(g)) == 1
 
 # Adapated from Graphs.jl
@@ -68,7 +79,7 @@ function close_vertex!(vis::TarjanVisitor, v)
     return true
 end
 
-# Computes the strongly connected components of a directed graph.
+"""Computes the (strongly) connected components of a directed graph."""
 function strongly_connected_components(g::DiGraph)
     nvg = nv(g)
     cmap = zeros(Int, nvg)
@@ -86,9 +97,10 @@ function strongly_connected_components(g::DiGraph)
     return components
 end
 
+"""Returns `true` if `g` is (strongly) connected."""
 is_strongly_connected(g::DiGraph) = length(strongly_connected_components(g)) == 1
 
-# Computes the (common) period for all nodes in a strongly connected graph
+"""Computes the (common) period for all nodes in a strongly connected graph."""
 function period(g::DiGraph)
     !is_strongly_connected(g) && error("Graph must be strongly connected")
 
@@ -110,7 +122,7 @@ function period(g::DiGraph)
     return divisor
 end
 
-# Computes the condensation graph of the strongly connected components
+"""Computes the condensation graph of the strongly connected components."""
 function condensation(g::DiGraph, scc::Vector{Vector{Int}})
     h = DiGraph(length(scc))
 
@@ -129,8 +141,17 @@ function condensation(g::DiGraph, scc::Vector{Vector{Int}})
     return h
 end
 
+"""Returns the condensation graph associated with `g`. The condensation `h` of
+a graph `g` is the directed graph where every node in `h` represents a strongly
+connected component in `g`, and the presence of an edge between between nodes
+in `h` indicates that there is at least one edge between the associated
+strongly connected components in `g`. The node numbering in `h` corresponds to
+the ordering of the components output from `strongly_connected_components`."""
 condensation(g::DiGraph) = condensation(g,strongly_connected_components(g))
 
+"""Returns a vector of vectors of integers representing lists of attracting
+components in `g`. The attracting components are a subset of the strongly
+connected components in which the components do not have any leaving edges."""
 function attracting_components(g::DiGraph)
     scc  = strongly_connected_components(g)
     cond = condensation(g,scc)

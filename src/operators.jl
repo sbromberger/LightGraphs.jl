@@ -1,3 +1,5 @@
+"""Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
+of a graph."""
 function complement(g::Graph)
     gnv = nv(g)
     h = Graph(gnv)
@@ -26,6 +28,8 @@ function complement(g::DiGraph)
     return h
 end
 
+"""(`DiGraph` only) Produces a graph where all edges are reversed from the
+original."""
 function reverse(g::DiGraph)
     gnv = nv(g)
     gne = ne(g)
@@ -36,6 +40,7 @@ function reverse(g::DiGraph)
     return h
 end
 
+"""(`DiGraph` only) In-place reverse (modifies the original graph)."""
 function reverse!(g::DiGraph)
     gne = ne(g)
     reve = Set{Edge}()
@@ -47,6 +52,11 @@ function reverse!(g::DiGraph)
     return g
 end
 
+doc"""Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$
+edges.
+
+Put simply, the vertices and edges from graph `h` are appended to graph `g`.
+"""
 function blkdiag{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
@@ -59,6 +69,10 @@ function blkdiag{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
+"""Produces a graph with edges that are only in both graph `g` and graph `h`.
+
+Note that this function may produce a graph with 0-degree vertices.
+"""
 function intersect{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -70,7 +84,10 @@ function intersect{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-# edges in G but not in H
+"""Produces a graph with edges in graph `g` that are not in graph `h`.
+
+Note that this function may produce a graph with 0-degree vertices.
+"""
 function difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -84,7 +101,11 @@ function difference{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-# only include edges from G or H that do not exist in the other.
+"""Produces a graph with edges from graph `g` that do not exist in graph `h`,
+and vice versa.
+
+Note that this function may produce a graph with 0-degree vertices.
+"""
 function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -103,7 +124,8 @@ function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-# merge G and H by union of all vertices and edges.
+"""Merges graphs `g` and `h` by taking the set union of all vertices and edges.
+"""
 function union{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
@@ -115,8 +137,9 @@ function union{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-#@doc "filter g to include only the vertices present in iter which should not have duplicates
-#returns the subgraph of g induced by set(iter) along with the mapping from the old vertex names to the new vertex names" ->
+"""Filters graph `g` to include only the vertices present in the iterable
+argument `vs`. Returns the subgraph of `g` induced by `vs`.
+"""
 function induced_subgraph{T<:SimpleGraph}(g::T, iter)
     n = length(iter)
     isequal(n, length(unique(iter))) || error("Vertices in subgraph list must be unique")

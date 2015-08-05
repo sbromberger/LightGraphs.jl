@@ -7,14 +7,15 @@ type FloydWarshallState{T}<:AbstractPathState
     parents::Matrix{Int}
 end
 
-# @doc doc"""
-#     Returns a FloydWarshallState, which includes distances and parents.
-#     Each is a (vertex-indexed) vector of vectors containing the metric
-#     for each other vertex in the graph.
-#
-#     Note that it is possible to consume large amounts of memory as the
-#     space required for the FloydWarshallState is O(n^2).
-#     """ ->
+doc"""Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
+to compute shortest paths between all pairs of vertices in graph `g`. Returns a
+`FloydWarshallState` with relevant traversal information, each is a
+vertex-indexed vector of vectors containing the metric for each vertex in the
+graph.
+
+Note that this algorithm may return a large amount of data (it will allocate
+on the order of $\mathcal{O}(nv^2)$).
+"""
 function floyd_warshall_shortest_paths{T}(
     g::SimpleGraph,
     distmx::AbstractArray{T, 2} = DefaultDistance()
