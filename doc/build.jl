@@ -52,7 +52,7 @@ end
 function md_method(io, m)
     # We only print methods with are defined in the parent (project) directory
     if !(startswith(string(m.func.code.file),
-                    splitdir(dirname(@__FILE__))[1]))
+                    splitdir(dirname(realpath(@__FILE__)))[1]))
         return
     end
     print(io, m.func.code.name)
