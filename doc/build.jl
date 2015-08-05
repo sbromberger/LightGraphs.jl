@@ -51,8 +51,12 @@ function md_methodtable(io, f)
 end
 function md_method(io, m)
     # We only print methods with are defined in the parent (project) directory
-    if !(startswith(string(m.func.code.file),
-                    splitdir(dirname(realpath(@__FILE__)))[1]))
+    try
+        if !(startswith(realpath(string(m.func.code.file)),
+                        splitdir(dirname(realpath(@__FILE__)))[1]))
+            return
+        end
+    catch # base functions are not fully qualified, e.g. tuple.jl
         return
     end
     print(io, m.func.code.name)
