@@ -1,4 +1,6 @@
 module LightGraphs
+PACKAGE_NAME = "LightGraphs"
+
 using Compat
 using GZip
 using StatsBase
@@ -9,6 +11,7 @@ end
 
 import Base: write, ==, <, isless, issubset, complement, union, intersect, reverse, reverse!, blkdiag
 import Base: getindex, show, print, copy
+
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
