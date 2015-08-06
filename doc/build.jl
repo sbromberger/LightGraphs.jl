@@ -51,7 +51,7 @@ function md_methodtable(io, f)
 end
 function md_method(io, m)
     # We only print methods with are defined in the parent (project) directory
-    pd = joinpath(Pkg.dir(), LightGraphs.PACKAGE_NAME)
+    pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
     if !(startswith(string(m.func.code.file), pd))
         return
     end
