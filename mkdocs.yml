@@ -17,3 +17,6 @@ pages:
 - ['integration.md', 'Integration with other Packages']
 
 docs_dir: 'doc'
+markdown_extensions: ['extra', 'mathjax']
+extra_css: ['LightGraphs.css']
+extra_javascript: ['https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML','js/mathjaxhelper.js']
