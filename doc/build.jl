@@ -116,7 +116,7 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 """
 
 @file "generators.md" """
-### Random Graphs
+## Random Graphs
 *LightGraphs.jl* implements three common random graph generators:
 
 {{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph}}
