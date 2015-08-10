@@ -3,20 +3,24 @@ site_author: Seth Bromberger
 repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
 theme: readthedocs
 pages:
-- ['index.md', 'Home']
-- ['about.md', 'About']
-- ['gettingstarted.md', 'Getting Started']
-- ['basicmeasures.md', 'Basic Functions & Measurements']
-- ['operators.md', 'Operators']
-- ['pathing.md', 'Pathing and Traversal']
-- ['distance.md', 'Distance Measures']
-- ['centrality.md', 'Centrality Measures']
-- ['linalg.md', 'Linear Algebra']
-- ['generators.md', 'Graph Generators']
-- ['persistence.md', 'Reading / Writing Graphs']
-- ['integration.md', 'Integration with other Packages']
-
+  - 'Home': 'index.md'
+  - 'About': 'about.md'
+  - 'Getting Started': 'about.md'
+  - 'Operators': 'operators.md'
+  - 'Path and Traversal': 'pathing.md'
+  - 'Distance': 'distance.md'
+  - 'Centrality measures': 'centrality.md'
+  - 'Linear Algebra': 'linalg.md'
+  - 'Graph Generators': 'generators.md'
+  - 'Reading / Writing Graphs': 'persistence.md'
+  - 'Integration with other packages': 'integration.md'
 docs_dir: 'doc'
-markdown_extensions: ['extra', 'mathjax']
-extra_css: ['LightGraphs.css']
-extra_javascript: ['https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML','js/mathjaxhelper.js']
+markdown_extensions:
+  - extra
+  - tables
+  - fenced_code
+extra_css:
+  - LightGraphs.css
+extra_javascript:
+  - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
+  - mathjaxhelper.js
