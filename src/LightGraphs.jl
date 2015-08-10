@@ -5,6 +5,8 @@ using Compat
 using GZip
 using StatsBase
 using Base.Collections
+using LightXML
+using ParserCombinator.Parsers.GML
 if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
     using Docile
 end
