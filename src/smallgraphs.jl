@@ -1,6 +1,9 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
+"""Creates a complete graph with `n` vertices. A complete graph has edges
+connecting each pair of vertices.
+"""
 function CompleteGraph(n::Integer)
     g = Graph(n)
     for i = 1:n, j=1:n
@@ -11,6 +14,9 @@ function CompleteGraph(n::Integer)
     return g
 end
 
+"""Creates a complete digraph with `n` vertices. A complete digraph has edges
+connecting each pair of vertices (both an ingoing and outgoing edge).
+"""
 function CompleteDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 1:n, j=1:n
@@ -21,7 +27,9 @@ function CompleteDiGraph(n::Integer)
     return g
 end
 
-
+"""Creates a star graph with `n` vertices. A star graph has a central vertex
+with edges to each other vertex.
+"""
 function StarGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
@@ -30,6 +38,9 @@ function StarGraph(n::Integer)
     return g
 end
 
+"""Creates a star digraph with `n` vertices. A star digraph has a central
+vertex with directed edges to every other vertex.
+"""
 function StarDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
@@ -38,7 +49,8 @@ function StarDiGraph(n::Integer)
     return g
 end
 
-
+"""Creates a path graph with `n` vertices. A path graph connects each
+successive vertex by a single edge."""
 function PathGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
@@ -47,7 +59,8 @@ function PathGraph(n::Integer)
     return g
 end
 
-
+"""Creates a path digraph with `n` vertices. A path graph connects each
+successive vertex by a single directed edge."""
 function PathDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
@@ -56,7 +69,9 @@ function PathDiGraph(n::Integer)
     return g
 end
 
-
+"""Creates a wheel graph with `n` vertices. A wheel graph is a star graph with
+the outer vertices connected via a closed path graph.
+"""
 function WheelGraph(n::Integer)
     g = StarGraph(n)
     for i = 3:n
@@ -68,6 +83,9 @@ function WheelGraph(n::Integer)
     return g
 end
 
+"""Creates a wheel digraph with `n` vertices. A wheel graph is a star digraph
+with the outer vertices connected via a closed path graph.
+"""
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
     for i = 3:n
@@ -96,12 +114,15 @@ function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{@compat(
     return g
 end
 
+"""A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph)."""
 DiamondGraph() =
     _make_simple_undirected_graph(4, [(1,2), (1,3), (2,3), (2,4), (3,4)])
 
+"""A [bull graph](https://en.wikipedia.org/wiki/Bull_graph)."""
 BullGraph() =
     _make_simple_undirected_graph(5, [(1,2), (1,3), (2,3), (2,4), (3,5)])
 
+"""A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph)."""
 function ChvatalGraph()
     e = [
         (1, 2), (1, 5), (1, 7), (1, 10),
@@ -118,6 +139,7 @@ function ChvatalGraph()
     return _make_simple_undirected_graph(12,e)
 end
 
+"""A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph)."""
 function CubicalGraph()
     e = [
         (1, 2), (1, 4), (1, 5),
@@ -130,6 +152,7 @@ function CubicalGraph()
     return _make_simple_undirected_graph(8,e)
 end
 
+"""A [Desargues  graph](https://en.wikipedia.org/wiki/Desargues_graph)."""
 function DesarguesGraph()
     e = [
         (1, 2), (1, 6), (1, 20),
@@ -155,6 +178,7 @@ function DesarguesGraph()
     return _make_simple_undirected_graph(20,e)
 end
 
+"""A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph)."""
 function DodecahedralGraph()
     e = [
         (1, 2), (1, 11), (1, 20),
@@ -180,6 +204,7 @@ function DodecahedralGraph()
     return _make_simple_undirected_graph(20,e)
 end
 
+"""A [Frucht  graph](https://en.wikipedia.org/wiki/Frucht_graph)."""
 function FruchtGraph()
     e = [
         (1, 2), (1, 7), (1, 8),
@@ -196,6 +221,7 @@ function FruchtGraph()
     return _make_simple_undirected_graph(20,e)
 end
 
+"""A [Heawood  graph](https://en.wikipedia.org/wiki/Heawood_graph)."""
 function HeawoodGraph()
     e = [
     (1, 2), (1, 6), (1, 14),
@@ -215,11 +241,13 @@ function HeawoodGraph()
     return _make_simple_undirected_graph(14,e)
 end
 
+"""A graph mimicing the classic outline of a house."""
 function HouseGraph()
     e = [ (1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5) ]
     return _make_simple_undirected_graph(5,e)
 end
 
+"""A house graph, with two edges crossing the bottom square."""
 function HouseXGraph()
     g = HouseGraph()
     add_edge!(g, 1, 4)
@@ -227,6 +255,7 @@ function HouseXGraph()
     return g
 end
 
+"""A [Platonic icosahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph)."""
 function IcosahedralGraph()
     e = [
         (1, 2), (1, 6), (1, 8), (1, 9), (1, 12),
@@ -242,6 +271,7 @@ function IcosahedralGraph()
     return _make_simple_undirected_graph(12, e)
 end
 
+"""A [Krackhardt-Kite social network graph](http://mathworld.wolfram.com/KrackhardtKite.html)."""
 function KrackhardtKiteGraph()
     e = [
         (1, 2), (1, 3), (1, 4), (1, 6),
@@ -257,6 +287,7 @@ function KrackhardtKiteGraph()
     return _make_simple_undirected_graph(10,e)
 end
 
+"""A [Möbius-Kantor  graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph)."""
 function MoebiusKantorGraph()
     e = [
         (1, 2), (1, 6), (1, 16),
@@ -278,6 +309,7 @@ function MoebiusKantorGraph()
     return _make_simple_undirected_graph(16,e)
 end
 
+"""A [Platonic octahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph)."""
 function OctahedralGraph()
     e = [
         (1, 2), (1, 3), (1, 4), (1, 5),
@@ -289,6 +321,7 @@ function OctahedralGraph()
     return _make_simple_undirected_graph(6,e)
 end
 
+"""A [Pappus  graph](http://en.wikipedia.org/wiki/Pappus_graph)."""
 function PappusGraph()
     e = [
         (1, 2), (1, 6), (1, 18),
@@ -312,6 +345,7 @@ function PappusGraph()
     return _make_simple_undirected_graph(18,e)
 end
 
+"""A [Petersen  graph](http://en.wikipedia.org/wiki/Petersen_graph)."""
 function PetersenGraph()
     e = [
         (1, 2), (1, 5), (1, 6),
@@ -326,6 +360,8 @@ function PetersenGraph()
     return _make_simple_undirected_graph(10,e)
 end
 
+"""A simple maze graph used in Sedgewick's *Algorithms in C++: Graph Algorithms
+(3rd ed.)*"""
 function SedgewickMazeGraph()
     e = [
         (1, 3),
@@ -338,9 +374,11 @@ function SedgewickMazeGraph()
     return _make_simple_undirected_graph(8,e)
 end
 
+"""A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph)."""
 TetrahedralGraph() =
     _make_simple_undirected_graph(4, [(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)])
 
+"""A skeleton of the [truncated cube  graph](https://en.wikipedia.org/wiki/Truncated_cube)."""
 function TruncatedCubeGraph()
     e = [
         (1, 2), (1, 3), (1, 5),
@@ -369,6 +407,7 @@ function TruncatedCubeGraph()
     return _make_simple_undirected_graph(24,e)
 end
 
+"""A skeleton of the [truncated tetrahedron graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron)."""
 function TruncatedTetrahedronGraph()
     e = [
         (1, 2),(1, 3),(1, 10),
@@ -386,6 +425,7 @@ function TruncatedTetrahedronGraph()
     return _make_simple_undirected_graph(12,e)
 end
 
+"""A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron)."""
 function TruncatedTetrahedronDiGraph()
     e = [
         (1, 2),(1, 3),(1, 10),
@@ -402,6 +442,8 @@ function TruncatedTetrahedronDiGraph()
     ]
     return _make_simple_directed_graph(12,e)
 end
+
+"""A [Tutte  graph](https://en.wikipedia.org/wiki/Tutte_graph)."""
 function TutteGraph()
     e = [
     (1, 2),(1, 3),(1, 4),

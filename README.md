@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/JuliaGraphs/LightGraphs.jl/badge.svg?branch=master)](https://coveralls.io/r/JuliaGraphs/LightGraphs.jl?branch=master)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_release.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=release)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=nightly)
-[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](https://readthedocs.org/projects/lightgraphsjl/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 
 
@@ -110,39 +110,47 @@ write(g,"mygraph.jgz")
     - blkdiag
     - induced subgraphs
 
-
 - shortest path
     - Dijkstra / Dijkstra with predecessors
     - Bellman-Ford
     - Floyd-Warshall
     - A*
 
-
 - small graph generators
     - see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
-
 
 - random graph generators
     - Erdős–Rényi
     - Watts-Strogatz
-
+    - Random Regular
 
 - centrality
     - betweenness
     - closeness
     - degree
     - pagerank
+    - Katz
 
+- traversal operations
+    - cycle detection
+    - BFS and DFS DAGs
+    - BFS and DFS traversals with visitors
+    - DFS topological sort
+    - maximum adjacency / minimum cut
 
 - linear algebra
     - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
 
-
 - persistence
     - proprietary compressed format
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
     - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
+
+- visualization: integration with
+    - [GraphLayout](https://github.com/IainNZ/GraphLayout.jl)
+    - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
+
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

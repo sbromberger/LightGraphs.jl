@@ -1,6 +1,11 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
+"""Calculates the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the graph
+`g`. Can optionally specify a different damping factor (`α`), number of
+iterations (`n`), and convergence threshold (`ϵ`). If convergence is not
+reached within `n` iterations, an error will be returned.
+"""
 function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
     M = adjacency_matrix(g)
     S = vec(sum(M,1))

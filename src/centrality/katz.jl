@@ -21,6 +21,9 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
+of the graph `g`.
+"""
 function katz_centrality(g::SimpleGraph, α::Real = 0.3)
     nvg = nv(g)
     v = ones(Float64, nvg)

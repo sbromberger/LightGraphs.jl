@@ -36,7 +36,10 @@ function a_star_impl!{T<:Number}(
     nothing
 end
 
-
+"""Computes the shortest path between vertices `s` and `t` using the
+[A\* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm). An
+optional heuristic function and edge distance matrix may be supplied.
+"""
 function a_star{T<:Number}(
     graph::SimpleGraph,  # the graph
 
