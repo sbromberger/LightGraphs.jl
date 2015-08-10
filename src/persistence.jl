@@ -72,17 +72,6 @@ function write(
     return res
 end
 
-
-
-_HAS_LIGHTXML = try
-        using LightXML
-        true
-    catch
-        false
-    end
-
-if _HAS_LIGHTXML
-
 function _process_graphml(e::XMLElement, isdirected::Bool)
     nodes = Dict{String,Int}()
     edges = @compat(Vector{Edge}())
@@ -108,6 +97,9 @@ function _process_graphml(e::XMLElement, isdirected::Bool)
     return g
 end
 
+"""Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
+format.
+"""
 function readgraphml(filename::String)
     xdoc = parse_file(filename)
     xroot = root(xdoc)  # an instance of XMLElement
@@ -133,61 +125,31 @@ function readgraphml(filename::String)
     return graphs
 end
 
-else
-
-function readgraphml(filename::String)
-    error("needs LightXML")
-end
-
-end
-
-_HAS_PARSERCOMBINATOR = try
-        using ParserCombinator
-        using ParserCombinator.Parsers.GML
-        true
-    catch
-        false
-    end
-
 
 # returns the first graph in a GML file. Note: this is not
 # consistent with readgraphml and we should probably standardize.
-if _HAS_PARSERCOMBINATOR
-    function readgml(filename::String)
-        f = open(readall,filename)
-        p = parse_dict(f)
-        g1 = p[:graph][1]
-        dir = Bool(get(g1, :directed, 0))
-
-        nodes = [x[:id] for x in g1[:node]]
-        mapping = Dict{Int,Int}()
-        for (i,n) in enumerate(nodes)
-            mapping[n] = i
-        end
-
-        if dir
-            g = DiGraph(length(nodes))
-        else
-            g = Graph(length(nodes))
-        end
-        sds = [(Int(x[:source]), Int(x[:target])) for x in g1[:edge]]
-        for (s,d) in (sds)
-            add_edge!(g, mapping[s], mapping[d])
-        end
-        return g
-    end
-
-else
-    function readgml(filename::String)
-        error("needs ParserCombinator")
-    end
-end
-
 """Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language)
 format."""
-readgml
+function readgml(filename::String)
+    f = open(readall,filename)
+    p = parse_dict(f)
+    g1 = p[:graph][1]
+    dir = @compat(Bool(get(g1, :directed, 0)))
 
-"""Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML)
-format.
-"""
-readgraphml
+    nodes = [x[:id] for x in g1[:node]]
+    mapping = Dict{Int,Int}()
+    for (i,n) in enumerate(nodes)
+        mapping[n] = i
+    end
+
+    if dir
+        g = DiGraph(length(nodes))
+    else
+        g = Graph(length(nodes))
+    end
+    sds = @compat([(Int(x[:source]), Int(x[:target])) for x in g1[:edge]])
+    for (s,d) in (sds)
+        add_edge!(g, mapping[s], mapping[d])
+    end
+    return g
+end
