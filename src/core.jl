@@ -131,6 +131,12 @@ ne(g::SimpleGraph) = length(edges(g))
 Note: An exception will be raised if the edge is already in the graph
 or if the vertex is not contained in the graph.
 """
+function add_edge!(g::SimpleGraph, e::Edge)
+    has_edge(g,e) && error("Edge $e already in graph")
+    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
+    unsafe_add_edge!(g,e)
+end
+
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 """Remove the edge from `src` to `dst`.
