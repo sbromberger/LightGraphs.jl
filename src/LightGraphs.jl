@@ -1,3 +1,4 @@
+VERSION >= v"0.4.0-dev+6521" && __precompile__()
 module LightGraphs
 
 using Compat
@@ -8,9 +9,8 @@ if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
     using Docile
 end
 
-import Base: write, ==, <, isless, issubset, complement, union, intersect, reverse, reverse!, blkdiag
-import Base: getindex, show, print, copy
-
+import Base: write, ==, <, isless, issubset, complement, union, intersect,
+            reverse, reverse!, blkdiag, getindex, show, print, copy
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
