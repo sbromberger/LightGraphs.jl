@@ -166,3 +166,25 @@ end
 # dispatch for g[[1,2,3]], g[1:3], g[Set([1,2,3])]
 # these are the only allowed dispatches, everything else is slow
 getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)
+
+"""Provides multiplication of a graph `g` by a vector `v` such that spectral
+graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
+"""
+function *{T<:Real}(g::Graph, v::Vector{T})
+    length(v) == nv(g) || error("Vector size must equal number of vertices")
+    y = zeros(T, nv(g))
+    for (i,j) in edges(g)
+        y[i] += v[j]
+        y[j] += v[i]
+    end
+    return y
+end
+
+function *{T<:Real}(g::DiGraph, v::Vector{T})
+    length(v) == nv(g) || error("Vector size must equal number of vertices")
+    y = zeros(T, nv(g))
+    for (i,j) in edges(g)
+        y[i] += v[j]
+    end
+    return y
+end

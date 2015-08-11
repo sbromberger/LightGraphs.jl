@@ -11,7 +11,7 @@ if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
     using Docile
 end
 
-import Base: write, ==, <, isless, issubset, complement, union, intersect,
+import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy
 
 # core
