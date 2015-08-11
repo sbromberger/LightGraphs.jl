@@ -45,7 +45,7 @@ In-place version of :func:`reverse`.
 
 ### blkdiag
 ```
-blkdiag{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, h::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph})
+blkdiag{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 ```rst
 ::
@@ -60,7 +60,7 @@ Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 
 ### intersect
 ```
-intersect{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, h::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph})
+intersect{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 ```rst
 ::
@@ -76,7 +76,7 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### difference
 ```
-difference{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, h::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph})
+difference{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Produces a graph with edges in graph `g` that are not in graph `h`.
 
@@ -84,7 +84,7 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### symmetric_difference
 ```
-symmetric_difference{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, h::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph})
+symmetric_difference{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Produces a graph with edges from graph `g` that do not exist in graph `h`, and vice versa.
 
@@ -92,7 +92,7 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### union
 ```
-union{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, h::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph})
+union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 ```rst
 ::
@@ -106,7 +106,7 @@ Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 
 ### induced_subgraph
 ```
-induced_subgraph{T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}}(g::T<:Union{LightGraphs.Graph,LightGraphs.DiGraph}, iter)
+induced_subgraph{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, iter)
 ```
 Filters graph `g` to include only the vertices present in the iterable argument `vs`. Returns the subgraph of `g` induced by `vs`.
 
