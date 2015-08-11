@@ -21,11 +21,13 @@ write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, gname::AbstractString, fn
 Write the canonical binary representation of a value to the given stream.
 ```
 
-Writes a graph `g` in a proprietary format to the IO stream designated by `io`.
+Writes a graph `g` with name `graphname` in a proprietary format to the IO stream designated by `io`.
 
 Returns 1 (number of graphs written).
 
-Writes a graph to a file `fn`, with default `GZip` compression.
+Writes a dictionary of (name=>graph) to a file `fn`, with default `GZip` compression.
+
+Returns number of graphs written.
 
 
 
@@ -44,14 +46,14 @@ Returns a dictionary of (name=>graph) loaded from file `fn`.
 readgraphml(filename::AbstractString)
 readgraphml(filename::AbstractString, gname::AbstractString)
 ```
-Returns a dictionary (name=>graph) from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
+Returns a dictionary (name=>graph) from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format. Can optionally restrict to a single graph by specifying a name in gname.
 
 ### readgml
 ```
 readgml(filename::AbstractString)
 readgml(filename::AbstractString, gname::AbstractString)
 ```
-Returns a dictionary (name=>graph) from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
+Returns a dictionary (name=>graph) from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format. Can optionally restrict to a single graph by specifying a name in gname.
 
 
 
