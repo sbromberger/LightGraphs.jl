@@ -4,9 +4,15 @@ Graphs may be written to I/O streams and files using the `write` function:
 
 ### write
 ```
-write(io::IO, g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-write(g::Union{LightGraphs.Graph,LightGraphs.DiGraph})
-write(g::Union{LightGraphs.Graph,LightGraphs.DiGraph}, fn::AbstractString)
+write(io::IO, graphname::AbstractString, g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+write(io::IO, g::LightGraphs.Graph)
+write(io::IO, g::LightGraphs.DiGraph)
+write(g::LightGraphs.Graph)
+write(g::LightGraphs.DiGraph)
+write{S<:AbstractString,G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(graphs::Dict{S<:AbstractString,G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}, fn::AbstractString)
+write(g::LightGraphs.Graph, fn::AbstractString)
+write(g::LightGraphs.DiGraph, fn::AbstractString)
+write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, gname::AbstractString, fn::AbstractString)
 ```
 ```rst
 ::
@@ -17,11 +23,9 @@ Write the canonical binary representation of a value to the given stream.
 
 Writes a graph `g` in a proprietary format to the IO stream designated by `io`.
 
-Return tuples containing the number of vertices and number of edges written.
+Returns 1 (number of graphs written).
 
 Writes a graph to a file `fn`, with default `GZip` compression.
-
-Return tuples containing the number of vertices and number of edges written.
 
 
 
@@ -31,20 +35,23 @@ Graphs stored using the `write` functions above may be loaded using `readgraph`:
 ### readgraph
 ```
 readgraph(fn::AbstractString)
+readgraph(fn::AbstractString, gname::AbstractString)
 ```
-Returns a graph loaded from file `fn`.
+Returns a dictionary of (name=>graph) loaded from file `fn`.
 
 ### readgraphml
 ```
 readgraphml(filename::AbstractString)
+readgraphml(filename::AbstractString, gname::AbstractString)
 ```
-Returns a graph from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
+Returns a dictionary (name=>graph) from file `fn` stored in [GraphML](http://en.wikipedia.org/wiki/GraphML) format.
 
 ### readgml
 ```
 readgml(filename::AbstractString)
+readgml(filename::AbstractString, gname::AbstractString)
 ```
-Returns a graph from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
+Returns a dictionary (name=>graph) from file `fn` stored in [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 
 
 

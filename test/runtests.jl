@@ -29,8 +29,10 @@ re1 = Edge(2, 1)
 
 testdir = dirname(@__FILE__)
 
-p1 = readgraph(joinpath(testdir,"testdata","tutte.jgz"))
-p2 = readgraph(joinpath(testdir,"testdata","pathdigraph.jgz"))
+pdict = readgraph(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
+p1 = pdict["Tutte"]
+p2 = pdict["pathdigraph"]
+
 
 adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
 adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
