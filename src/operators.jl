@@ -167,7 +167,6 @@ end
 # these are the only allowed dispatches, everything else is slow
 getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)
 
-
 # The following operators allow one to use a LightGraphs.Graph as a matrix in eigensolvers for spectral ranking and partitioning.
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
