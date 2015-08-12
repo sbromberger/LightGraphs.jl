@@ -37,3 +37,7 @@ e = Edge(5, 6)
 z = union(g3, h)
 @test has_edge(z, e)
 @test z == PathGraph(6)
+
+p = PathGraph(10)
+x = p*ones(10)
+@test  x[1]==1.0 && all(x[2:end-1].==2.0) && x[end]==1.0 || @show x
