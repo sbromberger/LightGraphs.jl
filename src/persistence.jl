@@ -41,17 +41,19 @@ function readgraph(fn::AbstractString, gname::AbstractString="")
 
     while !eof(f)
         line = chomp(readline(f))
-        nvstr, nestr, dirundir, graphname = @compat(split(line, r"s*,s*", limit=4))
-        n_v = parse(Int, nvstr)
-        n_e = parse(Int, nestr)
-        dirundir = strip(dirundir)
-        graphname = strip(graphname)
-        directed = !(dirundir == "u")
-        if (gname == "" || gname == graphname)
-            g = _read_one_graph(f, n_v, n_e, directed)
-            graphs[graphname] = g
-        else
-            _skip_one_graph(f, n_e)
+        if line != ""
+            nvstr, nestr, dirundir, graphname = @compat(split(line, r"s*,s*", limit=4))
+            n_v = parse(Int, nvstr)
+            n_e = parse(Int, nestr)
+            dirundir = strip(dirundir)
+            graphname = strip(graphname)
+            directed = !(dirundir == "u")
+            if (gname == "" || gname == graphname)
+                g = _read_one_graph(f, n_v, n_e, directed)
+                graphs[graphname] = g
+            else
+                _skip_one_graph(f, n_e)
+            end
         end
     end
     return graphs
