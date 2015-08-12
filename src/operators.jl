@@ -188,3 +188,28 @@ function *{T<:Real}(g::DiGraph, v::Vector{T})
     end
     return y
 end
+
+import Base.sum
+"""sum(g,i) provides 1:indegree or 2:outdegree vectors"""
+function sum(g::Graph, dim::Int)
+    if dim == 1
+        return indegree(g, vertices(g))
+    elseif dim == 2
+        return outdegree(g, vertices(g))
+    else
+        return Error("Graphs are only two dimensional")
+    end
+end
+
+"""sum(g,i) provides the number of edges in the graph"""
+function sum(g::Graph)
+    return ne(g)
+end
+
+"""sparse(g) is the adjacency_matrix of g"""
+import Base.sparse
+function sparse(g::Graph)
+    return adjacency_matrix(g)
+end
+import Base.size
+size(g) = (nv(g), nv(g))
