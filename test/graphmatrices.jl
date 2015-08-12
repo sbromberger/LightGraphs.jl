@@ -21,6 +21,7 @@ function symmetrize(g::DiGraph, s::Symbol)
 end
 
 import GraphMatrices.CombinatorialAdjacency
+import GraphMatrices.SparseMatrix
 
 function CombinatorialAdjacency(A)
     D = float(indegree(A, vertices(A)))
