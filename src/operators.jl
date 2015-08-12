@@ -209,20 +209,10 @@ end
 
 size(g::Graph) = (nv(g), nv(g))
 """size(g,i) provides 1:nv or 2:nv else 1 """
-function size(g::Graph, dim::Int)
-    if dim == 1
-        return nv(g)
-    elseif dim == 2
-        return nv(g)
-    else
-        return 1
-    end
-end
+size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
 
-"""sum(g,i) provides the number of edges in the graph"""
-function sum(g::Graph)
-    return ne(g)
-end
+"""sum(g) provides the number of edges in the graph"""
+sum(g::Graph) = ne(g)
 
 """sparse(g) is the adjacency_matrix of g"""
 function sparse(g::Graph)
