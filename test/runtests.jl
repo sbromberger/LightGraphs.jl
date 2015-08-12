@@ -44,6 +44,7 @@ a2 = DiGraph(adjmx2)
 
 tests = [
     "graphdigraph",
+    "persistence",
     "core",
     "smallgraphs",
     "shortestpaths/astar",
@@ -65,7 +66,6 @@ tests = [
     "centrality/katz",
     "centrality/pagerank",
     "graphmatrices",
-    "persistence",
     "subgraphs"
     ]
 
