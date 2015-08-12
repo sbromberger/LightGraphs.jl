@@ -64,6 +64,7 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
+    "graphmatrices",
     "persistence",
     "subgraphs"
     ]
