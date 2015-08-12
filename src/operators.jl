@@ -167,13 +167,15 @@ end
 # these are the only allowed dispatches, everything else is slow
 getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)
 
-"""Provides multiplication of a graph `g` by a vector `v` such that spectral
-graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
-"""
+# """Provides multiplication of a graph `g` by a vector `v` such that spectral
+# graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
+# """
 function *{T<:Real}(g::Graph, v::Vector{T})
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
-    for (i,j) in edges(g)
+    for p in edges(g)
+        i = p.first
+        j = p.second
         y[i] += v[j]
         y[j] += v[i]
     end
@@ -183,7 +185,9 @@ end
 function *{T<:Real}(g::DiGraph, v::Vector{T})
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
-    for (i,j) in edges(g)
+    for p in edges(g)
+        i = p.first
+        j = p.second
         y[i] += v[j]
     end
     return y
@@ -200,6 +204,18 @@ function sum(g::Graph, dim::Int)
         return Error("Graphs are only two dimensional")
     end
 end
+import Base.size
+size(g::Graph) = (nv(g), nv(g))
+"""size(g,i) provides 1:nv or 2:nv else 1 """
+function size(g::Graph, dim::Int)
+    if dim == 1
+        return nv(g)
+    elseif dim == 2
+        return nv(g)
+    else
+        return 1
+    end
+end
 
 """sum(g,i) provides the number of edges in the graph"""
 function sum(g::Graph)
@@ -211,5 +227,13 @@ import Base.sparse
 function sparse(g::Graph)
     return adjacency_matrix(g)
 end
-import Base.size
-size(g) = (nv(g), nv(g))
+#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
+import Base.eltype
+import Base.length
+import Base.ndims
+import Base.issym
+eltype(g::Graph)=Float64
+length(g::Graph)=nv(g)*nv(g)
+ndims(g::Graph)=2
+issym(g::Graph)=true
+issym(g::DiGraph)=false
