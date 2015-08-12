@@ -167,13 +167,17 @@ end
 # these are the only allowed dispatches, everything else is slow
 getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)
 
-"""Provides multiplication of a graph `g` by a vector `v` such that spectral
-graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
-"""
+
+# The following operators allow one to use a LightGraphs.Graph as a matrix in eigensolvers for spectral ranking and partitioning.
+# """Provides multiplication of a graph `g` by a vector `v` such that spectral
+# graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
+# """
 function *{T<:Real}(g::Graph, v::Vector{T})
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
-    for (i,j) in edges(g)
+    for e in edges(g)
+        i = src(e)
+        j = dst(e)
         y[i] += v[j]
         y[j] += v[i]
     end
@@ -183,8 +187,40 @@ end
 function *{T<:Real}(g::DiGraph, v::Vector{T})
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
-    for (i,j) in edges(g)
+    for e in edges(g)
+        i = src(e)
+        j = dst(e)
         y[i] += v[j]
     end
     return y
 end
+
+"""sum(g,i) provides 1:indegree or 2:outdegree vectors"""
+function sum(g::Graph, dim::Int)
+    if dim == 1
+        return indegree(g, vertices(g))
+    elseif dim == 2
+        return outdegree(g, vertices(g))
+    else
+        return Error("Graphs are only two dimensional")
+    end
+end
+
+
+size(g::Graph) = (nv(g), nv(g))
+"""size(g,i) provides 1:nv or 2:nv else 1 """
+size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
+
+"""sum(g) provides the number of edges in the graph"""
+sum(g::Graph) = ne(g)
+
+"""sparse(g) is the adjacency_matrix of g"""
+function sparse(g::Graph)
+    return adjacency_matrix(g)
+end
+#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
+eltype(g::Graph)=Float64
+length(g::Graph)=nv(g)*nv(g)
+ndims(g::Graph)=2
+issym(g::Graph)=true
+issym(g::DiGraph)=false

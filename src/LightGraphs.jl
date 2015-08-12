@@ -12,7 +12,8 @@ if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy
+            reverse, reverse!, blkdiag, getindex, show, print, copy,
+            sum, size, sparse, eltype, length, ndims, issym
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
