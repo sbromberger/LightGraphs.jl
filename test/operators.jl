@@ -40,4 +40,4 @@ z = union(g3, h)
 
 p = PathGraph(10)
 x = p*ones(10)
-@test  x[1]==1 && all(x[2:end-1]==2) && x[end]==1
+@test  x[1]==1.0 && all(x[2:end-1]==2.0) && x[end]==1.0 || @show x
