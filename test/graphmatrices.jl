@@ -27,15 +27,6 @@ function CombinatorialAdjacency(A)
     return CombinatorialAdjacency{Float64, typeof(A), typeof(D)}(A,D)
 end
 
-function subtypepredicate(T)
-	pred(x) = issubtype(typeof(x), T)
-	return pred
-end
-
-function isnot(f::Function)
-	return g(x) = !f(x)
-end
-
 function constructors(mat)
     adjmat = CombinatorialAdjacency(mat)
     stochmat = StochasticAdjacency(adjmat)
@@ -119,10 +110,10 @@ function test_arithmetic(mat, n)
 	@test sum(abs(adjmat*onevec)) != 0
     @test_approx_eq_eps sum(abs(stochmat*onevec/sum(onevec))) 1 T_EPS_VAL
 	@test sum(abs(lapl*onevec)) == 0
-	g(a) = sum(abs(sum(sparse(a),1)))
-	@test g(lapl) == 0
-	@test abs(g(NormalizedLaplacian(adjhat))) >= T_EPS_VAL
-	@test abs(g(StochasticLaplacian(stochmat))) >= T_EPS_VAL
+	sass(a) = sum(abs(sum(sparse(a),1)))
+	@test sass(lapl) == 0
+	@test abs(sass(NormalizedLaplacian(adjhat))) >= T_EPS_VAL
+	@test abs(sass(StochasticLaplacian(stochmat))) >= T_EPS_VAL
 
 	@test eigs(adjmat, which=:LR)[1][1] > 1
 	@test_approx_eq_eps eigs(stochmat, which=:LR)[1][1] 1.0 T_EPS_VAL
