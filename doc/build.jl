@@ -235,7 +235,7 @@ write(g,"mygraph.jgz")
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and time-efficient
-manner with incidence lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
+manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
 """
 
 @file "integration.md" """
@@ -281,6 +281,11 @@ julia> g = Graph(100,1000)
 
 julia> partGraphKway(g, 6)  # 6 partitions
 ```
+
+###[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
+*LightGraphs.jl* can interface directly with this spectral graph analysis
+package.
+
 """
 
 @file "linalg.md" """
