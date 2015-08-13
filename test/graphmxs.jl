@@ -103,7 +103,7 @@ if _HAVE_GRAPHMX
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
     	lapl = CombinatorialLaplacian(adjmat)
     	onevec = ones(Float64, n)
-    	v = @show adjmat*ones(Float64, n)
+    	# v = @show adjmat*ones(Float64, n)
     	@test sum(abs(adjmat*onevec)) != 0
         @test_approx_eq_eps sum(abs(stochmat*onevec/sum(onevec))) 1 T_EPS_VAL
     	@test sum(abs(lapl*onevec)) == 0
