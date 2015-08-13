@@ -52,7 +52,7 @@ tests = [
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
     "distance",
-    "linalg",
+    "spectral",
     "operators",
     "randgraphs",
     "traversals/bfs",

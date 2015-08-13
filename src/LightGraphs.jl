@@ -81,7 +81,7 @@ TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
-# linalg
+# spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 CombinatorialAdjacency,
 
@@ -122,7 +122,7 @@ include("core.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
         include("shortestpaths/floyd-warshall.jl")
-        include("linalg.jl")
+        include("spectral.jl")
         include("operators.jl")
         include("persistence.jl")
         include("randgraphs.jl")

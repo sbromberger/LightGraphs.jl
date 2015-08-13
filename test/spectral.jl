@@ -4,6 +4,18 @@
 @test laplacian_matrix(g3)[1,3] == 0
 @test laplacian_spectrum(g3)[5] == 3.6180339887498945
 @test adjacency_spectrum(g3)[1] == -1.732050807568878
+@test laplacian_spectrum(g5)[3] == laplacian_spectrum(g5,:both)[3] == 3.0
+@test laplacian_spectrum(g5,:in)[3] == 1.0
+@test laplacian_spectrum(g5,:out)[3] == 1.0
+
+@test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
+
+@test adjacency_matrix(g3) ==
+    adjacency_matrix(g3, :out) ==
+    adjacency_matrix(g3, :in) ==
+    adjacency_matrix(g3, :both)
+
+@test_throws ErrorException adjacency_matrix(g3, :purple)
 
 #that call signature works
 inmat   = adjacency_matrix(g5, :in, Int)
@@ -27,6 +39,7 @@ for dir in [:in, :out, :both]
 end
 
 
+
 # GraphMatrices integration tests
 if LightGraphs._HAVE_GRAPHMX
     println("*** Running GraphMatrices tests")
@@ -38,6 +51,9 @@ if LightGraphs._HAVE_GRAPHMX
     @test eltype(adjmat) == Float64
     @test zero(eltype(adjmat)) == 0.0
     @test sum(abs(adjmat*onevec)) != 0
+    lapl = GraphMatrices.CombinatorialLaplacian(adjmat)
+    @test_approx_eq_eps(eigs(lapl, which=:LR)[1][1], 3.902, 0.001)
+    println("*** Finished GraphMatrices tests")
 else
     println("*** GraphMatrices not found - skipping tests")
 end

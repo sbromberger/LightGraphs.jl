@@ -79,5 +79,5 @@ if _HAVE_GRAPHMX
         return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
     end
 else
-    CombinatorialAdjacency = error("GraphMatrices.jl is required")
+    CombinatorialAdjacency(g::Graph) = error("GraphMatrices.jl is required")
 end
