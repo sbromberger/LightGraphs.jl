@@ -41,3 +41,8 @@ julia> g = Graph(100,1000)
 
 julia> partGraphKway(g, 6)  # 6 partitions
 ```
+
+###[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
+*LightGraphs.jl* can interface directly with this spectral graph analysis
+package.
+

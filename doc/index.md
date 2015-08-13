@@ -12,4 +12,4 @@
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and time-efficient
-manner with incidence lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
+manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
