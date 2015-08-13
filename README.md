@@ -28,8 +28,8 @@ better-optimized mechanisms.
 A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
 of `Edge` types containing `(src::Int, dst::Int)` values. Edge
-relationships are stored as forward and backward incidence vectors, indexed by
-vertex.
+relationships are stored as forward and backward adjacency vectors,
+indexed by vertex.
 
 Edges must be unique; an attempt to add an edge that already exists in a graph
 will result in an error.
@@ -141,6 +141,7 @@ write(g,"mygraph.jgz")
 - linear algebra
     - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
+    - integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
 - persistence
     - proprietary compressed format
