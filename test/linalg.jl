@@ -25,3 +25,19 @@ for dir in [:in, :out, :both]
     @test all(evals .>= -1e-15) # positive semidefinite
     @test_approx_eq_eps minimum(evals) 0 1e-13
 end
+
+
+# GraphMatrices integration tests
+if LightGraphs._HAVE_GRAPHMX
+    println("*** Running GraphMatrices tests")
+    mat = PathGraph(10)
+    onevec = ones(Float64, 10)
+    adjmat = CombinatorialAdjacency(mat)
+    @test eltype(mat) == Float64
+    @test zero(eltype(mat)) == 0.0
+    @test eltype(adjmat) == Float64
+    @test zero(eltype(adjmat)) == 0.0
+    @test sum(abs(adjmat*onevec)) != 0
+else
+    println("*** GraphMatrices not found - skipping tests")
+end
