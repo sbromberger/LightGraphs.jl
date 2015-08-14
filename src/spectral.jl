@@ -68,3 +68,16 @@ eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
 """
 adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
 adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
+
+
+
+# GraphMatrices integration
+
+if _HAVE_GRAPHMX
+    function CombinatorialAdjacency(g::Graph)
+        d = float(indegree(g))
+        return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
+    end
+else
+    CombinatorialAdjacency(g::Graph) = error("GraphMatrices.jl is required")
+end

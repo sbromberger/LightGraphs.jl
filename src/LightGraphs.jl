@@ -11,6 +11,15 @@ if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
     using Docile
 end
 
+_HAVE_GRAPHMX =
+try
+    using GraphMatrices
+    import GraphMatrices.CombinatorialAdjacency
+    true
+catch
+    false
+end
+
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
             sum, size, sparse, eltype, length, ndims, issym
@@ -72,8 +81,9 @@ TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
-# linalg
+# spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+CombinatorialAdjacency,
 
 # astar
 a_star,
@@ -112,7 +122,7 @@ include("core.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
         include("shortestpaths/floyd-warshall.jl")
-        include("linalg.jl")
+        include("spectral.jl")
         include("operators.jl")
         include("persistence.jl")
         include("randgraphs.jl")

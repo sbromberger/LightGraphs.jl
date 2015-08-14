@@ -196,7 +196,7 @@ function *{T<:Real}(g::DiGraph, v::Vector{T})
 end
 
 """sum(g,i) provides 1:indegree or 2:outdegree vectors"""
-function sum(g::Graph, dim::Int)
+function sum(g::SimpleGraph, dim::Int)
     if dim == 1
         return indegree(g, vertices(g))
     elseif dim == 2
@@ -207,20 +207,18 @@ function sum(g::Graph, dim::Int)
 end
 
 
-size(g::Graph) = (nv(g), nv(g))
+size(g::SimpleGraph) = (nv(g), nv(g))
 """size(g,i) provides 1:nv or 2:nv else 1 """
 size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
 
 """sum(g) provides the number of edges in the graph"""
-sum(g::Graph) = ne(g)
+sum(g::SimpleGraph) = ne(g)
 
 """sparse(g) is the adjacency_matrix of g"""
-function sparse(g::Graph)
-    return adjacency_matrix(g)
-end
+sparse(g::SimpleGraph) = adjacency_matrix(g)
+
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
-eltype(g::Graph)=Float64
-length(g::Graph)=nv(g)*nv(g)
-ndims(g::Graph)=2
-issym(g::Graph)=true
-issym(g::DiGraph)=false
+eltype(g::SimpleGraph) = Float64
+length(g::SimpleGraph) = nv(g)*nv(g)
+ndims(g::SimpleGraph) = 2
+issym(g::SimpleGraph) = !is_directed(g)

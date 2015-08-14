@@ -52,7 +52,7 @@ tests = [
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
     "distance",
-    "linalg",
+    "spectral",
     "operators",
     "randgraphs",
     "traversals/bfs",
@@ -65,7 +65,6 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "graphmxs",
     "subgraphs"
     ]
 
