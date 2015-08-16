@@ -24,6 +24,12 @@ rr = random_regular_graph(5, 0)
 @test nv(rr) == 5
 @test ne(rr) == 0
 @test is_directed(rr) == false
+
+rd = random_regular_digraph(10,0)
+@test nv(rd) == 10
+@test ne(rd) == 0
+@test is_directed(rd)
+
 rr = random_regular_graph(10, 2)
 @test nv(rr) == 10
 @test ne(rr) == 10
@@ -47,3 +53,16 @@ rd = random_regular_digraph(1000, 4, :in)
 @test ne(rd) == 4000
 @test is_directed(rd)
 @test std(indegree(rd)) == 0
+
+rr = random_regular_graph(10, 8, 4)
+@test nv(rr) == 10
+@test ne(rr) == 40
+@test is_directed(rr) == false
+for v in vertices(rr)
+    @test degree(rr, v) == 8
+end
+
+rd = random_regular_digraph(10, 8, :out, 4)
+@test nv(rd) == 10
+@test ne(rd) == 80
+@test is_directed(rd)
