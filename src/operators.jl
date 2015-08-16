@@ -202,7 +202,7 @@ function sum(g::SimpleGraph, dim::Int)
     elseif dim == 2
         return outdegree(g, vertices(g))
     else
-        return Error("Graphs are only two dimensional")
+        error("Graphs are only two dimensional")
     end
 end
 
