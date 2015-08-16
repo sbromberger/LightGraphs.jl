@@ -2,7 +2,6 @@
 *LightGraphs.jl* implements the following graph operators. In general,
 functions with two graph arguments will require them to be of the same type
 (either both `Graph` or both `DiGraph`).
-
 ### complement
 ```
 complement(g::LightGraphs.Graph)
@@ -109,5 +108,4 @@ Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 induced_subgraph{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, iter)
 ```
 Filters graph `g` to include only the vertices present in the iterable argument `vs`. Returns the subgraph of `g` induced by `vs`.
-
 

@@ -6,7 +6,6 @@ importance of a vertex to the rest of the graph using some set of criteria.
 Centrality measures implemented in *LightGraphs.jl* include the following:
 
 ## Degree Centrality
-
 ### degree_centrality
 ```
 degree_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -25,20 +24,14 @@ outdegree_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
-
-
 ### Closeness Centrality
-
 ### closeness_centrality
 ```
 closeness_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of the graph `g`.
 
-
-
 ## Betweenness Centrality
-
 ### betweenness_centrality
 ```
 betweenness_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -72,10 +65,7 @@ betweenness: Array{Float64}     Betweenness centrality value per node id.
 
 [1] Brandes 2001 & Brandes 2008
 
-
-
 ## Katz Centrality
-
 ### katz_centrality
 ```
 katz_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -83,10 +73,7 @@ katz_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, α::Real)
 ```
 Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality) of the graph `g`.
 
-
-
 ## PageRank
-
 ### pagerank
 ```
 pagerank(g::LightGraphs.DiGraph)
@@ -95,5 +82,4 @@ pagerank(g::LightGraphs.DiGraph, α, n)
 pagerank(g::LightGraphs.DiGraph, α, n, ϵ)
 ```
 Calculates the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the graph `g`. Can optionally specify a different damping factor (`α`), number of iterations (`n`), and convergence threshold (`ϵ`). If convergence is not reached within `n` iterations, an error will be returned.
-
 

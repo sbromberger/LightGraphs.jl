@@ -48,6 +48,7 @@ x = p*ones(10)
 @test sum(g5, 2) ==  [2, 1, 1, 0]
 @test sum(g5) == 4
 @test sum(p,1) == sum(p,2)
+@test_throws ErrorException sum(p,3)
 
 @test sparse(p) == adjacency_matrix(p)
 @test eltype(p) == Float64

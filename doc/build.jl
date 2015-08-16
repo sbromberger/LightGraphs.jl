@@ -23,7 +23,7 @@ end
 buildwriter(ex::Expr) = :(print(file, $(esc(ex))))
 
 buildwriter(t::AbstractString) = Expr(:block,
-    [buildwriter(p, iseven(n)) for (n, p) in enumerate(split(t, r"{{|}}"))]...
+    [buildwriter(p, iseven(n)) for (n, p) in enumerate(split(t, r"^{{|\n{{|}}\s*(\n|$)"))]...
 )
 
 buildwriter(part, isdef) = isdef ?
