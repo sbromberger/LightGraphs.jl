@@ -7,8 +7,14 @@ using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
-if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
-    using Docile
+
+if VERSION < v"0.4.0-dev"
+    try
+        import Docile: @doc_str, @doc_mstr
+    catch
+        macro doc_str(x) x end
+        macro doc_mstr(x) x end
+    end
 end
 
 _HAVE_GRAPHMX =

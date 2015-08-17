@@ -9,7 +9,6 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 * `BreadthFirst`,
 * `DepthFirst`, and
 * `MaximumAdjacency`.
-
 ### bfs_tree
 ```
 bfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
@@ -22,11 +21,8 @@ dfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
 
-
-
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
-
 ### is_connected
 ```
 is_connected(g::LightGraphs.Graph)
@@ -97,23 +93,17 @@ period(g::LightGraphs.DiGraph)
 ```
 Computes the (common) period for all nodes in a strongly connected graph.
 
-
-
 ## Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
-
 ### is_cyclic
 ```
 is_cyclic(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Tests whether a graph contains a cycle through depth-first search. It returns `true` when it finds a cycle, otherwise `false`.
 
-
-
 ##Simple Minimum Cut
 Stoer's simple minimum cut gets the minimum cut of an undirected graph.
-
 ### mincut
 ```
 mincut(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -128,13 +118,10 @@ maximum_adjacency_visit{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, 
 ```
 Returns the vertices in `g` traversed by maximum adjacency search. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1. If `log` (default `false`) is `true`, visitor events will be printed to `io`, which defaults to `STDOUT`; otherwise, no event information will be displayed.
 
-
-
 ## Shortest-Path Algorithms
 ### General properties of shortest path algorithms
 *  The distance from a vertex to itself is always `0`.
 * The distance between two vertices with no connecting edge is always `Inf`.
-
 ### a_star
 ```
 a_star(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, t::Int64)
@@ -181,10 +168,7 @@ Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshal
 
 Note that this algorithm may return a large amount of data (it will allocate on the order of $\mathcal{O}(nv^2)$).
 
-
-
 ## Path discovery / enumeration
-
 ### gdistances
 ```
 gdistances(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources)
@@ -210,8 +194,6 @@ enumerate_paths(state::LightGraphs.AbstractPathState, dest)
 Given a path state `state` of type `AbstractPathState` (see below), returns a vector (indexed by vertex) of the paths between the source vertex used to compute the path state and a destination vertex `v`, a set of destination vertices `vs`, or the entire graph. For multiple destination vertices, each path is represented by a vector of vertices on the path between the source and the destination. Nonexistent paths will be indicated by an empty vector. For single destinations, the path is represented by a single vector of vertices, and will be length 0 if the path does not exist.
 
 For Floyd-Warshall path states, please note that the output is a bit different, since this algorithm calculates all shortest paths for all pairs of vertices: `enumerate_paths(state)` will return a vector (indexed by source vertex) of vectors (indexed by destination vertex) of paths. `enumerate_paths(state, v)` will return a vector (indexed by destination vertex) of paths from source `v` to all other vertices. In addition, `enumerate_paths(state, v, d)` will return a vector representing the path from vertex `v` to vertex `d`.
-
-
 
 For Floyd-Warshall path states, please note that the output is a bit different,
 since this algorithm calculates all shortest paths for all pairs of vertices: `enumerate_paths(state)` will return a vector (indexed by source vertex) of

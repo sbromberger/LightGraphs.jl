@@ -3,7 +3,6 @@
 undirected graphs:
 
 ## Adjacency
-
 ### adjacency_matrix
 ```
 adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -25,10 +24,7 @@ adjacency_spectrum(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
 ```
 Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use `eigs(adjacency_matrix(g);kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as `adjacency_matrix`.
 
-
-
 ## Laplacian
-
 ### laplacian_matrix
 ```
 laplacian_matrix(g::LightGraphs.Graph)
@@ -50,5 +46,4 @@ laplacian_spectrum(g::LightGraphs.DiGraph, dir::Symbol)
 laplacian_spectrum(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
 ```
 Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as `laplacian_matrix`.
-
 

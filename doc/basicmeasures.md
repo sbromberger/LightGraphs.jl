@@ -3,7 +3,6 @@ The following basic measures have been implemented for `Graph` and `DiGraph`
 types:
 
 ## Vertices and Edges
-
 ### vertices
 ```
 vertices(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
@@ -86,10 +85,7 @@ Return a copy of ``v`` reversed from start to stop.
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 
-
-
 ## Neighbors and Degree
-
 ### degree
 ```
 degree(g::LightGraphs.DiGraph, v::Int64)
@@ -189,5 +185,4 @@ Returns all the vertices which share an edge with `v`.
 common_neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, u::Int64, v::Int64)
 ```
 Returns the neighbors common to vertices `u` and `v` in `g`.
-
 

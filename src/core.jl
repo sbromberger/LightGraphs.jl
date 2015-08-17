@@ -12,14 +12,6 @@ if VERSION < v"0.4.0-dev+4103"
     reverse(p::Pair) = Pair(p.second, p.first)
 end
 
-if VERSION < v"0.4.0-dev"
-    try
-        import Docile: @doc_str
-    catch
-        macro doc_str(x) x end
-    end
-end
-
 typealias Edge Pair{Int,Int}
 
 """Return source of an edge."""
