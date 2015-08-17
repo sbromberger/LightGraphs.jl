@@ -1,4 +1,4 @@
-using Compat
+using Compat		# for readcentrality() in test/centrality/betweenness.jl
 using LightGraphs
 using Base.Test
 
