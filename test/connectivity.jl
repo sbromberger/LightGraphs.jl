@@ -6,6 +6,9 @@ add_edge!(g,8,9)
 add_edge!(g,10,9)
 
 
+@test !is_connected(g)
+@test is_connected(HouseGraph())
+
 cc = connected_components(g)
 
 
@@ -19,6 +22,8 @@ add_edge!(h,2,6); add_edge!(h,3,4); add_edge!(h,3,7);
 add_edge!(h,4,3); add_edge!(h,4,8); add_edge!(h,5,1);
 add_edge!(h,5,6); add_edge!(h,6,7); add_edge!(h,7,6);
 add_edge!(h,8,4); add_edge!(h,8,7)
+
+@test is_connected(h)
 
 scc = strongly_connected_components(h)
 wcc = weakly_connected_components(h)
@@ -73,7 +78,7 @@ fig3 = spzeros(8,8)
 fig3[[1,7,9,13,14,15,18,20,23,27,28,31,33,34,37,45,46,49,57,63,64]] = 1
 fig3 = DiGraph(fig3)
 scc_fig3 = Vector[[3,4],[2,5,6],[8],[1,7]]
-fig3_cond = DiGraph(4); 
+fig3_cond = DiGraph(4);
 add_edge!(fig3_cond,4,3); add_edge!(fig3_cond,2,1)
 add_edge!(fig3_cond,4,1); add_edge!(fig3_cond,4,2)
 

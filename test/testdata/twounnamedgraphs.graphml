@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was written by the internal XML-Handler of Y-Files.-->
+<!DOCTYPE graphml SYSTEM "http://www.graphdrawing.org/dtds/graphml.dtd">
+<graphml>
+<graph edgedefault="undirected">
+<node id="n0"/>
+<node id="n1"/>
+<node id="n2"/>
+<node id="n3"/>
+<node id="n4"/>
+<node id="n5"/>
+<node id="n6"/>
+<node id="n7"/>
+<node id="n8"/>
+<node id="n9"/>
+<node id="n10"/>
+<node id="n11"/>
+<node id="n12"/>
+<edge id="e0" source="n0" target="n1"/>
+<edge id="e1" source="n0" target="n3"/>
+<edge id="e2" source="n4" target="n5"/>
+<edge id="e3" source="n6" target="n1"/>
+<edge id="e4" source="n4" target="n1"/>
+<edge id="e5" source="n4" target="n3"/>
+<edge id="e6" source="n7" target="n1"/>
+<edge id="e7" source="n2" target="n7"/>
+<edge id="e8" source="n2" target="n8"/>
+<edge id="e9" source="n9" target="n6"/>
+<edge id="e10" source="n8" target="n10"/>
+<edge id="e11" source="n5" target="n11"/>
+<edge id="e12" source="n11" target="n2"/>
+<edge id="e13" source="n12" target="n11"/>
+<edge id="e14" source="n12" target="n7"/>
+</graph>
+<graph edgedefault="directed">
+<node id="n0"/>
+<node id="n1"/>
+<node id="n2"/>
+<node id="n3"/>
+<node id="n4"/>
+<node id="n5"/>
+<node id="n6"/>
+<node id="n7"/>
+<node id="n8"/>
+<node id="n9"/>
+<node id="n10"/>
+<node id="n11"/>
+<node id="n12"/>
+<edge id="e0" source="n0" target="n1"/>
+<edge id="e1" source="n0" target="n3"/>
+<edge id="e2" source="n4" target="n5"/>
+<edge id="e3" source="n6" target="n1"/>
+<edge id="e4" source="n4" target="n1"/>
+<edge id="e5" source="n4" target="n3"/>
+<edge id="e6" source="n7" target="n1"/>
+<edge id="e7" source="n2" target="n7"/>
+<edge id="e8" source="n2" target="n8"/>
+<edge id="e9" source="n9" target="n6"/>
+<edge id="e10" source="n8" target="n10"/>
+<edge id="e11" source="n5" target="n11"/>
+<edge id="e12" source="n11" target="n2"/>
+<edge id="e13" source="n12" target="n11"/>
+<edge id="e14" source="n12" target="n7"/>
+</graph>
+</graphml>

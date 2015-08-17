@@ -31,6 +31,7 @@ end
 """Returns `true` if `g` is connected.
 For DiGraphs, this is equivalent to a test of weak connectivity."""
 is_connected(g::Graph) = length(connected_components(g)) == 1
+is_connected(g::DiGraph) = is_weakly_connected(g)
 
 """Returns connected components of the undirected graph of `g`."""
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
@@ -118,7 +119,7 @@ function period(g::DiGraph)
         divisor = gcd(divisor,value)
         isequal(divisor,1) && return 1
     end
-   
+
     return divisor
 end
 
@@ -131,7 +132,7 @@ function condensation(g::DiGraph, scc::Vector{Vector{Int}})
     for (i,s) in enumerate(scc)
         @inbounds component[s] = i
     end
-    
+
     @inbounds for e in edges(g)
         s, d = component[src(e)], component[dst(e)]
         if (s != d) && !has_edge(h,s,d)
@@ -164,4 +165,4 @@ function attracting_components(g::DiGraph)
         end
     end
     return scc[attracting]
-end 
+end
