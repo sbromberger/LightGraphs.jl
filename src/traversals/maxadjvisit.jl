@@ -25,13 +25,10 @@ function maximum_adjacency_visit_impl!{T}(
         u = Collections.dequeue!(pq)
         discover_vertex!(visitor, u)
         for v in fadj(graph, u)
-            examine_edge!(visitor, Edge(u,v), 0)
+            examine_neighbor!(visitor, u, v, 0, 0)
 
             if haskey(pq,v)
                 ed = visitor.distmx[u, v]
-                if ed == zero(T)
-                    ed = 1.0
-                end
                 pq[v] += ed
             end
         end
@@ -116,14 +113,13 @@ function discover_vertex!(vis::MinCutVisitor, v::Int)
     return true
 end
 
-function examine_edge!(vis::MinCutVisitor, e::Edge, color::Int)
-    vi = dst(e)
-    ew = vis.distmx[src(e), dst(e)]
+function examine_neighbor!(vis::MinCutVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    ew = vis.distmx[u, v]
 
     # if the target of e is already marked then decrease cutweight
     # otherwise, increase it
 
-    if vis.colormap[vi] != color # here color is 0
+    if vis.colormap[v] != vcolor # here vcolor is 0
         vis.cutweight -= ew
     else
         vis.cutweight += ew
@@ -163,8 +159,8 @@ function discover_vertex!{T}(visitor::MASVisitor{T}, v::Int)
     return true
 end
 
-function examine_edge!(visitor::MASVisitor, e::Edge, color::Int)
-    visitor.log ? println(visitor.io, " -- examine edge: $e") : nothing
+function examine_neighbor!(visitor::MASVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    visitor.log ? println(visitor.io, " -- examine neighbor from $u to $v") : nothing
     return true
 end
 

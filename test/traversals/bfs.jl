@@ -3,6 +3,7 @@ z = bfs_tree(g5, 1)
 
 g = HouseGraph()
 @test gdistances(g, 2) == [1, 0, 2, 1, 2]
+@test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
 @test !is_bipartite(g)
 
 g = Graph(5)

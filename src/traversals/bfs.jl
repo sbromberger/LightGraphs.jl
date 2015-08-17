@@ -31,9 +31,7 @@ function breadth_first_visit_impl!(
 
             if v_color == 0
                 colormap[v] = 1
-                if !discover_vertex!(visitor, v)
-                    return
-                end
+                discover_vertex!(visitor, v) || return
                 push!(queue, v)
             end
         end
@@ -55,9 +53,7 @@ function traverse_graph(
     que = @compat Vector{Int}()
 
     colormap[s] = 1
-    if !discover_vertex!(visitor, s)
-        return
-    end
+    discover_vertex!(visitor, s) || return
     push!(que, s)
 
     breadth_first_visit_impl!(graph, que, colormap, visitor)
@@ -75,9 +71,7 @@ function traverse_graph(
 
     for s in sources
         colormap[s] = 1
-        if !discover_vertex!(visitor, s)
-            return
-        end
+        discover_vertex!(visitor, s) || return
         push!(que, s)
     end
 
@@ -150,16 +144,6 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
-function close_vertex!(visitor::TreeBFSVisitor, e::Edge)
-    u = src(e)
-    v = dst(e)
-    # println("visiting $u -> $v")
-    if visitor.bipartitemap[v] == visitor.bipartitemap[u]
-        visitor.is_bipartite = false
-    end
-    return true
-end
-
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
@@ -202,11 +186,8 @@ function is_bipartite(g::SimpleGraph, s::Int)
 end
 
 function is_bipartite(g::SimpleGraph)
-    nvg = nv(g)
     for v in vertices(g)
-        if !is_bipartite(g, v)
-            return false
-        end
+        !is_bipartite(g, v) && return false
     end
     return true
 end

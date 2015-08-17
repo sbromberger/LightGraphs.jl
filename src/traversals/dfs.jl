@@ -29,11 +29,8 @@ function depth_first_visit_impl!(
             v, tstate = next(udsts, tstate)
             v_color = vertexcolormap[v]
             v_edge = Edge(u,v)
-            if haskey(edgecolormap, v_edge)
-                e_color = edgecolormap[v_edge]
-            else
-                e_color = edgecolormap[reverse(v_edge)]
-            end
+            e_color = haskey(edgecolormap, v_edge)?
+                edgecolormap[v_edge] : edgecolormap[reverse(v_edge)]
             examine_neighbor!(visitor, u, v, v_color, e_color)
 
             if e_color == 0
@@ -43,9 +40,7 @@ function depth_first_visit_impl!(
             if v_color == 0
                 found_new_vertex = true
                 vertexcolormap[v] = 1
-                if !discover_vertex!(visitor, v)
-                    return
-                end
+                discover_vertex!(visitor, v) || return
                 push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
@@ -78,9 +73,7 @@ function traverse_graph(
     edgecolormap = _mkedgecolormap(graph))
 
     vertexcolormap[s] = 1
-    if !discover_vertex!(visitor, s)
-        return
-    end
+    discover_vertex!(visitor, s) || return
 
     sdsts = fadj(graph, s)
     sstate = start(sdsts)
@@ -129,10 +122,7 @@ function is_cyclic(graph::SimpleGraph)
         if cmap[s] == 0
             traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
-
-        if visitor.found_cycle
-            return true
-        end
+        visitor.found_cycle && return true
     end
     return false
 end
@@ -151,9 +141,7 @@ end
 
 
 function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    if vcolor == 1 && ecolor == 0
-        throw(ArgumentError("The input graph contains at least one loop."))
-    end
+    (vcolor == 1 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
 function close_vertex!(visitor::TopologicalSortVisitor, v::Int)

@@ -49,8 +49,7 @@ induced_subgraph,
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
 discover_vertex!, open_vertex!, close_vertex!,
-examine_neighbor!, examine_edge!, visited_vertices,
-traverse_graph, traverse_graph_withlog,
+examine_neighbor!, visited_vertices, traverse_graph, traverse_graph_withlog,
 
 # bfs
 BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,

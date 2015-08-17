@@ -15,10 +15,7 @@ discover_vertex!(vis::SimpleGraphVisitor, v) = true
 open_vertex!(vis::SimpleGraphVisitor, v) = true
 
 # invoked when a neighbor is discovered & examined
-examine_neighbor!(vis::SimpleGraphVisitor, u, v, color::Int, ecolor::Int) = true
-
-# invoked when an edge is discovered & examined
-examine_edge!(vis::SimpleGraphVisitor, e, color::Int) = true
+examine_neighbor!(vis::SimpleGraphVisitor, u, v, vcolor::Int, ecolor::Int) = true
 
 # invoked when all of v's neighbors have been examined
 close_vertex!(vis::SimpleGraphVisitor, v) = true
@@ -90,10 +87,6 @@ end
 function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
     println(vis.io, "examine neighbor: $u -> $v (vertexcolor = $vcolor, edgecolor= $ecolor)")
     return true
-end
-
-function examine_edge!(vis::LogGraphVisitor, e::Edge, color::Int)
-    println(vis.io, "examine edge: $e")
 end
 
 function traverse_graph_withlog(
