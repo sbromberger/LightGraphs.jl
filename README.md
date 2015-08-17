@@ -155,3 +155,4 @@ write(g,"mygraph.jgz")
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
+Documentation for methods is also available via the Julia REPL help system.
