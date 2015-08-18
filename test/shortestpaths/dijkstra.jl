@@ -15,3 +15,11 @@ z = dijkstra_shortest_paths(g4, 2, d2; allpaths=true)
 @test enumerate_paths(z)[4] ==
     enumerate_paths(z,4) ==
     enumerate_paths(y,4) == [2,3,4]
+
+g = PathGraph(5)
+add_edge!(g,2,4)
+d = ones(Int, 5,5)
+d[2,3] = 100
+z = dijkstra_shortest_paths(g,1,d)
+@test z.dists == [0, 1, 3, 2, 3]
+@test z.parents == [0, 1, 4, 2, 4]

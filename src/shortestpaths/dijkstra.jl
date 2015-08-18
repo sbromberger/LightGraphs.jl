@@ -5,8 +5,6 @@ immutable DijkstraHeapEntry{T}
     dist::T
 end
 
-<(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
-
 isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
 type DijkstraState{T}<: AbstractDijkstraState
@@ -51,11 +49,8 @@ function dijkstra_shortest_paths{T}(
         # info("Popped H - got $(hentry.vertex)")
         u = hentry.vertex
         for v in out_neighbors(g,u)
-            if dists[u] == typemax(T)
-                alt = typemax(T)
-            else
-                alt = dists[u] + distmx[u,v]
-            end
+            alt = (dists[u] == typemax(T))? typemax(T) : dists[u] + distmx[u,v]
+
             if !visited[v]
                 dists[v] = alt
                 parents[v] = u
@@ -71,7 +66,6 @@ function dijkstra_shortest_paths{T}(
                     dists[v] = alt
                     parents[v] = u
                     heappush!(H, DijkstraHeapEntry{T}(v, alt))
-                    # info("visited: pushed $v")
                 end
                 if alt == dists[v]
                     pathcounts[v] += pathcounts[u]
