@@ -6,6 +6,7 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 ## Graph Traversal
 
 *Graph traversal* refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes:
+
 * `BreadthFirst`,
 * `DepthFirst`, and
 * `MaximumAdjacency`.
