@@ -26,6 +26,7 @@ Provides a depth-first traversal of the graph `g` starting with source vertex `s
 ### is_connected
 ```
 is_connected(g::LightGraphs.Graph)
+is_connected(g::LightGraphs.DiGraph)
 ```
 Returns `true` if `g` is connected. For DiGraphs, this is equivalent to a test of weak connectivity.
 
