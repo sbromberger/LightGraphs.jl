@@ -32,6 +32,7 @@ gs = readgraph(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"), "pathdigrap
 @test gs == p2
 
 # test the writes
+# redirecting stdout per https://thenewphalls.wordpress.com/2014/03/21/capturing-output-in-julia/
 origSTDOUT = STDOUT
 (outread, outwrite) = redirect_stdout()
 @test write(g3) == 1
