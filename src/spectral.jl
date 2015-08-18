@@ -73,11 +73,9 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 
 # GraphMatrices integration
 
-if _HAVE_GRAPHMX
-    function CombinatorialAdjacency(g::Graph)
-        d = float(indegree(g))
-        return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
-    end
-else
-    CombinatorialAdjacency(g::Graph) = error("GraphMatrices.jl is required")
+
+function CombinatorialAdjacency(g::Graph)
+    isdefined(:GraphMatrices) || error("GraphMatrices.jl is required for this function")
+    d = float(indegree(g))
+    return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
 end
