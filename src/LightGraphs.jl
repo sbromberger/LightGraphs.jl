@@ -17,7 +17,6 @@ if VERSION < v"0.4.0-dev"
     end
 end
 
-_HAVE_GRAPHMX =
 try
     using GraphMatrices
     import GraphMatrices.CombinatorialAdjacency

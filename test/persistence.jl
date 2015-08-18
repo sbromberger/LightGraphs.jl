@@ -10,17 +10,18 @@ rm(f)
 
 #Try reading in a GraphML file from the Rome Graph collection
 #http://www.graphdrawing.org/data/
-gs = readgraphml(joinpath(testdir, "testdata/grafo1853.13.graphml"))
+gs = readgraphml(joinpath(testdir, "testdata", "grafo1853.13.graphml"))
 @test length(gs) == 1
 @test haskey(gs, "G") #Name of graph
-g = gs["G"]
-@test nv(g) == 13
-@test ne(g) == 15
+graphml_g = gs["G"]
+@test nv(graphml_g) == 13
+@test ne(graphml_g) == 15
 
-gs = readgraphml(joinpath(testdir, "testdata/twounnamedgraphs.graphml"))
+gs = readgraphml(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"))
 @test gs["Unnamed Graph"] == Graph(gs["Unnamed DiGraph"])
 
-gs = readgml(joinpath(testdir,"testdata/twographs-10-28.gml"))
+
+gs = readgml(joinpath(testdir,"testdata", "twographs-10-28.gml"))
 gml1 = gs["gml1"]
 gml2 = gs["Unnamed DiGraph"]
 
@@ -28,7 +29,9 @@ gml2 = gs["Unnamed DiGraph"]
 @test ne(gml1) == ne(gml2) == 28
 
 
-gs = readgraph(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"), "pathdigraph")["pathdigraph"]
+@test_throws ErrorException badgraph = readgraphml(joinpath(testdir, "testdata", "badgraph.graphml"))
+
+gs = readgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")["pathdigraph"]
 @test gs == p2
 
 # test the writes
@@ -42,3 +45,14 @@ flush(outwrite)
 close(outread)
 close(outwrite)
 redirect_stdout(origSTDOUT)
+
+# test a graphml load that results in a warning
+origSTDERR = STDERR
+(outread, outwrite) = redirect_stderr()
+gs = readgraphml(joinpath(testdir,"testdata","warngraph.graphml"))
+flush(outread)
+flush(outwrite)
+close(outread)
+close(outwrite)
+redirect_stderr(origSTDERR)
+@test gs["G"] == graphml_g

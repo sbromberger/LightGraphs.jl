@@ -41,7 +41,7 @@ end
 
 
 # GraphMatrices integration tests
-if LightGraphs._HAVE_GRAPHMX
+if isdefined(:GraphMatrices)
     println("*** Running GraphMatrices tests")
     mat = PathGraph(10)
     onevec = ones(Float64, 10)
