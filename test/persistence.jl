@@ -28,6 +28,13 @@ gml2 = gs["Unnamed DiGraph"]
 @test nv(gml1) == nv(gml2) == 10
 @test ne(gml1) == ne(gml2) == 28
 
+gs = readgml(joinpath(testdir,"testdata", "twounnamedgraphs.gml"))
+gml1 = gs["Unnamed Graph"]
+gml2 = gs["Unnamed DiGraph"]
+@test nv(gml1) == 4
+@test ne(gml1) == 6
+@test nv(gml2) == 4
+@test ne(gml2) == 9
 
 @test_throws ErrorException badgraph = readgraphml(joinpath(testdir, "testdata", "badgraph.graphml"))
 

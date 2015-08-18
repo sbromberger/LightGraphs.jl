@@ -183,8 +183,6 @@ function readgraphml(filename::AbstractString, gname::AbstractString="")
 end
 
 
-# returns the first graph in a GML file. Note: this is not
-# consistent with readgraphml and we should probably standardize.
 """Returns a dictionary (name=>graph) from file `fn` stored in
 [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 Can optionally restrict to a single graph by specifying a name in gname."""
