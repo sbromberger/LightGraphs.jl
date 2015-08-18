@@ -20,9 +20,8 @@ end
 try
     using GraphMatrices
     import GraphMatrices.CombinatorialAdjacency
-    true
+    nothing
 catch
-    false
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
