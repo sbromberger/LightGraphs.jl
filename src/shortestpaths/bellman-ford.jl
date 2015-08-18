@@ -50,10 +50,8 @@ function bellman_ford_shortest_paths!(
         end
         active = new_active
     end
-    if !no_changes
-        throw(NegativeCycleError())
-    end
-    state
+    no_changes || throw(NegativeCycleError())
+    return state
 end
 
 """Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm)
@@ -82,9 +80,7 @@ function has_negative_edge_cycle(graph::SimpleGraph)
     try
         bellman_ford_shortest_paths(graph, vertices(graph))
     catch e
-        if isa(e, NegativeCycleError)
-            return true
-        end
+        isa(e, NegativeCycleError) && return true
     end
     return false
 end
@@ -130,4 +126,3 @@ to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
 a vector representing the path from vertex `v` to vertex `d`.
 """
 enumerate_paths
-
