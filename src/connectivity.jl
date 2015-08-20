@@ -1,8 +1,7 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
-"""
-Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+"""Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
 of an undirected graph `g` as a vector of components, each represented by a
 vector of vectors of vertices belonging to the component.
 """

@@ -58,8 +58,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false)
     return g
 end
 
-"""
-Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+"""Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
 small model random graph with `n` vertices, each with degree `k`. Edges are
 randomized per the model based on probability `β`. Undirected graphs are
 created by default; use `is_directed=true` to override.

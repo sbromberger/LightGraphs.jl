@@ -12,6 +12,7 @@ if VERSION < v"0.4.0-dev+4103"
     reverse(p::Pair) = Pair(p.second, p.first)
 end
 
+"""A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
 
 """Return source of an edge."""
@@ -27,7 +28,7 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.first) - $(e.second)")
 end
 
-
+"""A type representing an undirected graph."""
 type Graph
     vertices::UnitRange{Int}
     edges::Set{Edge}
@@ -35,6 +36,7 @@ type Graph
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
+"""A type representing a directed graph."""
 type DiGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
@@ -133,7 +135,7 @@ add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 """Remove the edge from `src` to `dst`.
 
-Note: An exception will be raised if the edge was not in the `g`.
+Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
