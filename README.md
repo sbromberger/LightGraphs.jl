@@ -38,10 +38,11 @@ of `Float64` values, indexed by `[src,dst]` vertices. That is,
 connecting vertex 2 and vertex 4. Note that for undirected graphs,
 `distmx[4,2]` should also be set.
 
-Edge distances for undefined edges are ignored, and edge distances cannot be
-zero: any unassigned values (for sparse matrices) or zero values (for sparse or
-dense matrices) in the edge distance matrix are assumed to be the default
-distance of 1.0.
+Any graph traversal (in shortest-path/etc) will traverse an edge only if it is present in the graph. When a distance matrix is passed in,
+
+1. distance values for undefined edges will be ignored, and
+2. any unassigned values (in sparse distance matrices), for edges that are present in the graph, will be assumed to take the default value of 1.0.
+3. any zero values (in sparse/dense distance matrices), for edges that are present in the graph, will instead have an implicit edge cost of 1.0.
 
 ### Basic Usage
 (all examples apply equally to `DiGraph` unless otherwise noted):
