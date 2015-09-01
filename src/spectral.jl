@@ -75,7 +75,7 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 
 
 function CombinatorialAdjacency(g::Graph)
-    isdefined(:GraphMatrices) || error("GraphMatrices.jl is required for this function")
+    isdefined(:GraphMatrices) || error("GraphMatrices.jl is required for this function.\nYou must recompile LightGraphs after installing GraphMatrices.")
     d = float(indegree(g))
     return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
 end
