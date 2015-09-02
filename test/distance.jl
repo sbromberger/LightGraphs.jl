@@ -12,3 +12,5 @@ z = eccentricity(a2, distmx2)
 @test periphery(z) == periphery(a2, distmx2) == [1]
 @test radius(z) == radius(a2, distmx2) == 4.2
 @test center(z) == center(a2, distmx2) == [2]
+
+@test size(LightGraphs.DefaultDistance()) == (typemax(Int), typemax(Int))

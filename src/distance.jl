@@ -6,6 +6,7 @@ type DefaultDistance<:AbstractArray{Int, 2}
 end
 
 getindex(::DefaultDistance, s::Int, d::Int) = 1
+size(::DefaultDistance) = (typemax(Int), typemax(Int))
 
 """
 Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the
