@@ -1,5 +1,9 @@
 abstract AbstractPathState
 
+abstract SimpleGraph
+abstract SimpleAdjGraph<:SimpleGraph
+abstract SimpleSparseGraph<:SimpleGraph
+
 if VERSION < v"0.4.0-dev+818"
     immutable Pair{T1,T2}
         first::T1
@@ -29,7 +33,7 @@ function show(io::IO, e::Edge)
 end
 
 """A type representing an undirected graph."""
-type Graph
+type Graph<:SimpleAdjGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
@@ -37,21 +41,47 @@ type Graph
 end
 
 """A type representing a directed graph."""
-type DiGraph
+type DiGraph<:SimpleAdjGraph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-typealias SimpleGraph Union(Graph, DiGraph)
+type SparseGraph{T<:Real}<:SimpleSparseGraph
+    edges::Set{Edge}
+    m::SparseMatrixCSC{T, Int}
+end
+
+SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n))
+
+function SparseGraph{T}(g::Graph, weights::AbstractArray{T,2} = DefaultDistance())
+    m = adjacency_matrix(g) .* weights[1:nv(g), 1:nv(g)]
+    return SparseGraph(g.edges, m)
+end
+
+type SparseDiGraph{T<:Real}<:SimpleSparseGraph
+    edges::Set{Edge}
+    m::SparseMatrixCSC{T, Int}
+end
+
+SparseDiGraph(n) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n))
+
+function SparseDiGraph{T}(g::DiGraph, weights::AbstractArray{T,2} = DefaultDistance())
+    m = adjacency_matrix(g) .* weights[1:nv(g), 1:nv(g)]
+    return SparseGraph(g.edges, m)
+end
+
+# typealias SimpleGraph Union(Graph, DiGraph)
 
 
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
+vertices(g::SimpleSparseGraph) = 1:size(g.m, 1)
 
 """Return the edges of a graph."""
 edges(g::SimpleGraph) = g.edges
+
 
 """Returns the forward adjacency list of a graph.
 
@@ -73,10 +103,18 @@ The optional second argument take the `v`th vertex adjacency list, that is:
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
+_column(a::SparseMatrixCSC, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
+
+fadj(g::SimpleSparseGraph, v::Int) = _column(g.m,v)
+fadj(g::SimpleSparseGraph) = @inbounds [fadj(g,i) for i in 1:nv(g)]
+
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex."""
 badj(g::SimpleGraph) = g.badjlist
 badj(g::SimpleGraph, v::Int) = g.badjlist[v]
+
+badj(g::SimpleSparseGraph, v::Int) = g.m[v,:]'.rowval
+badj(g::SimpleSparseGraph) = @inbounds [badj(g,i) for i in 1:nv(g)]
 
 
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
@@ -117,6 +155,8 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 
 """The number of vertices in `g`."""
 nv(g::SimpleGraph) = length(vertices(g))
+nv(g::SimpleSparseGraph) = size(g.m,1)
+
 """The number of edges in `g`."""
 ne(g::SimpleGraph) = length(edges(g))
 
@@ -129,6 +169,12 @@ function add_edge!(g::SimpleGraph, e::Edge)
     has_edge(g,e) && error("Edge $e already in graph")
     (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
     unsafe_add_edge!(g,e)
+end
+
+function add_edge!{T}(g::SparseGraph{T}, e::Edge, weight::T=one(T))
+    g.m[src(e),dst(e)] = weight
+    g.m[dst(e),src(e)] = weight
+    push!(g.edges, e)
 end
 
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))

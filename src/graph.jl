@@ -57,6 +57,7 @@ end
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
+has_edge(g::SparseGraph, e::Edge) = g.m[src(e),dst(e)] != 0
 
 function unsafe_add_edge!(g::Graph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))
