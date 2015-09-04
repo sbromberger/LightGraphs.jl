@@ -48,28 +48,30 @@ type DiGraph<:SimpleAdjGraph
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-type SparseGraph{T<:Real}<:SimpleSparseGraph
+type SparseGraph<:SimpleSparseGraph
     edges::Set{Edge}
-    m::SparseMatrixCSC{T, Int}
+    fm::SparseMatrixCSC{Bool, Int}
+    bm::SparseMatrixCSC{Bool, Int}
 end
 
-SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n))
+SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
-function SparseGraph{T}(g::Graph, weights::AbstractArray{T,2} = DefaultDistance())
-    m = adjacency_matrix(g) .* weights[1:nv(g), 1:nv(g)]
-    return SparseGraph(g.edges, m)
+function SparseGraph(g::Graph)
+    fm = adjacency_matrix(g,:out, Bool)
+    return SparseGraph(g.edges, fm, fm')
 end
 
-type SparseDiGraph{T<:Real}<:SimpleSparseGraph
+type SparseDiGraph<:SimpleSparseGraph
     edges::Set{Edge}
-    m::SparseMatrixCSC{T, Int}
+    fm::SparseMatrixCSC{Bool, Int}
+    bm::SparseMatrixCSC{Bool, Int}
 end
 
-SparseDiGraph(n) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n))
+SparseDiGraph(n::Int) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
-function SparseDiGraph{T}(g::DiGraph, weights::AbstractArray{T,2} = DefaultDistance())
-    m = adjacency_matrix(g) .* weights[1:nv(g), 1:nv(g)]
-    return SparseGraph(g.edges, m)
+function SparseDiGraph(g::DiGraph)
+    fm = adjacency_matrix(g,:out, Bool)
+    return SparseDiGraph(g.edges, fm, fm')
 end
 
 # typealias SimpleGraph Union(Graph, DiGraph)
@@ -77,7 +79,7 @@ end
 
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
-vertices(g::SimpleSparseGraph) = 1:size(g.m, 1)
+vertices(g::SimpleSparseGraph) = 1:size(g.fm, 1)
 
 """Return the edges of a graph."""
 edges(g::SimpleGraph) = g.edges
@@ -105,16 +107,16 @@ fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
 _column(a::SparseMatrixCSC, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
 
-fadj(g::SimpleSparseGraph, v::Int) = _column(g.m,v)
-fadj(g::SimpleSparseGraph) = @inbounds [fadj(g,i) for i in 1:nv(g)]
+fadj(g::SimpleSparseGraph, v::Int) = _column(g.fm, v)
+fadj(g::SimpleSparseGraph) = [fadj(g,i) for i in 1:nv(g)]
 
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex."""
 badj(g::SimpleGraph) = g.badjlist
 badj(g::SimpleGraph, v::Int) = g.badjlist[v]
 
-badj(g::SimpleSparseGraph, v::Int) = g.m[v,:]'.rowval
-badj(g::SimpleSparseGraph) = @inbounds [badj(g,i) for i in 1:nv(g)]
+badj(g::SimpleSparseGraph, v::Int) = _column(g.bm, v)
+badj(g::SimpleSparseGraph) = [badj(g,i) for i in vertices(g)]
 
 
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
@@ -155,7 +157,7 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 
 """The number of vertices in `g`."""
 nv(g::SimpleGraph) = length(vertices(g))
-nv(g::SimpleSparseGraph) = size(g.m,1)
+nv(g::SimpleSparseGraph) = size(g.fm,1)
 
 """The number of edges in `g`."""
 ne(g::SimpleGraph) = length(edges(g))
@@ -171,11 +173,20 @@ function add_edge!(g::SimpleGraph, e::Edge)
     unsafe_add_edge!(g,e)
 end
 
-function add_edge!{T}(g::SparseGraph{T}, e::Edge, weight::T=one(T))
-    g.m[src(e),dst(e)] = weight
-    g.m[dst(e),src(e)] = weight
+function add_edge!(g::SparseDiGraph, e::Edge)
+    g.fm[src(e),dst(e)] = true
+    g.bm[dst(e),src(e)] = true
     push!(g.edges, e)
 end
+
+function add_edge!(g::SparseGraph, e::Edge)
+    g.fm[src(e),dst(e)] = true
+    g.fm[dst(e),src(e)] = true
+    g.bm[src(e),dst(e)] = true
+    g.bm[dst(e),src(e)] = true
+    push!(g.edges, e)
+end
+
 
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
@@ -190,6 +201,12 @@ indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
 """Return the number of edges which end at vertex `v`."""
 outdegree(g::SimpleGraph, v::Int) = length(fadj(g,v))
 
+indegree(g::SimpleSparseGraph, v::Int) = g.bm.colptr[v+1]-g.fm.colptr[v]
+indegree(g::SimpleSparseGraph, v::AbstractVector{Int}) = [indegree(g,x) for x in v]
+indegree(g::SimpleSparseGraph) = diff(g.bm.colptr)
+outdegree(g::SimpleSparseGraph, v::Int) = g.fm.colptr[v+1]-g.bm.colptr[v]
+outdegree(g::SimpleSparseGraph, v::AbstractVector{Int}) = [outdegree(g,x) for x in v]
+outdegree(g::SimpleSparseGraph) = diff(g.fm.colptr)
 
 indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
 outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]

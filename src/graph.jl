@@ -89,8 +89,15 @@ end
 
 """Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
 degree(g::Graph, v::Int) = indegree(g,v)
+
+degree(g::SparseGraph, v::Int) = indegree(g, v)
+degree(g::SparseGraph, v::AbstractVector{Int}) = indegree(g, v)
+degree(g::SparseGraph) = indegree(g)
+
+
 doc"""Density is defined as the ratio of the number of actual edges to the
 number of possible edges. This is $|v| |v-1|$ for directed graphs and
 $(|v| |v-1|) / 2$ for undirected graphs.
 """
 density(g::Graph) = (2*ne(g)) / (nv(g) * (nv(g)-1))
+density(g::SparseGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

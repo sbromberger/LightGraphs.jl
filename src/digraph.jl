@@ -86,6 +86,13 @@ end
 has_edge(g::DiGraph, e::Edge) = e in edges(g)
 
 degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
+
+degree(g::SparseDiGraph, v::Int) = indegree(g, v) + outdegree(g, v)
+degree(g::SparseDiGraph, v::AbstractVector{Int}) = indegree(g, v)
+degree(g::SparseDiGraph) = indegree(g)
+
 "Returns all the vertices which share an edge with `v`."
 all_neighbors(g::DiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
+all_neighbors(g::SparseDiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
 density(g::DiGraph) = ne(g) / (nv(g) * (nv(g)-1))
+density(g::SparseDiGraph) = ne(g) / (nv(g) * (nv(g)-1))
