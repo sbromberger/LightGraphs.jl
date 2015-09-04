@@ -89,7 +89,7 @@ degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
 
 degree(g::SparseDiGraph, v::Int) = indegree(g, v) + outdegree(g, v)
 degree(g::SparseDiGraph, v::AbstractVector{Int}) = indegree(g, v)
-degree(g::SparseDiGraph) = indegree(g)
+degree(g::SparseDiGraph) = indegree(g) + outdegree(g)
 
 "Returns all the vertices which share an edge with `v`."
 all_neighbors(g::DiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))

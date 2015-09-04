@@ -212,6 +212,14 @@ indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x)
 outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
 degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 
+Δout(g::SimpleSparseGraph) = maximum(outdegree(g))
+δout(g::SimpleSparseGraph) = minimum(outdegree(g))
+Δin(g::SimpleSparseGraph) = maximum(indegree(g))
+δin(g::SimpleSparseGraph) = minimum(indegree(g))
+Δ(g::SimpleSparseGraph) = maximum(degree(g))
+δ(g::SimpleSparseGraph) = minimum(degree(g))
+
+
 "Return the maxium `outdegree` of vertices in `g`."
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
 "Return the minimum `outdegree` of vertices in `g`."
