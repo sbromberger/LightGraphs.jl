@@ -54,9 +54,6 @@ type SparseGraph<:SimpleSparseGraph
     bm::SparseMatrixCSC{Bool, Int}
 end
 
-SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
-
-
 function SparseGraph(g::Graph)
     fm = adjacency_matrix(g, :bycol, Bool)
     return SparseGraph(g.edges, fm, fm')
@@ -66,13 +63,6 @@ type SparseDiGraph<:SimpleSparseGraph
     edges::Set{Edge}
     fm::SparseMatrixCSC{Bool, Int}
     bm::SparseMatrixCSC{Bool, Int}
-end
-
-SparseDiGraph(n::Int) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
-
-function SparseDiGraph(g::DiGraph)
-    fm = adjacency_matrix(g, :bycol, Bool)
-    return SparseDiGraph(g.edges, fm', fm)
 end
 
 # typealias SimpleGraph Union(Graph, DiGraph)
@@ -176,23 +166,6 @@ function add_edge!(g::SimpleGraph, e::Edge)
     unsafe_add_edge!(g,e)
 end
 
-# fm and bm are CSCSparseMatrices, so it is more performance to make
-# things column-major. That's why this looks backwards.
-function add_edge!(g::SparseDiGraph, e::Edge)
-    g.fm[dst(e),src(e)] = true
-    g.bm[src(e),dst(e)] = true
-    push!(g.edges, e)
-end
-
-function add_edge!(g::SparseGraph, e::Edge)
-    g.fm[dst(e),src(e)] = true
-    g.fm[src(e),dst(e)] = true
-
-    g.bm[src(e),dst(e)] = true
-    g.bm[dst(e),src(e)] = true
-    push!(g.edges, e)
-end
-
 
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
@@ -218,26 +191,28 @@ indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x)
 outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
 degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 
-Δout(g::SimpleSparseGraph) = maximum(outdegree(g))
-δout(g::SimpleSparseGraph) = minimum(outdegree(g))
-Δin(g::SimpleSparseGraph) = maximum(indegree(g))
-δin(g::SimpleSparseGraph) = minimum(indegree(g))
-Δ(g::SimpleSparseGraph) = maximum(degree(g))
-δ(g::SimpleSparseGraph) = minimum(degree(g))
-
 
 "Return the maxium `outdegree` of vertices in `g`."
-Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
+Δout(g::SimpleGraph) = noallocextreme(outdegree,(>), typemin(Int), g)
 "Return the minimum `outdegree` of vertices in `g`."
-δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
+δout(g::SimpleGraph) = noallocextreme(outdegree,(<), typemax(Int), g)
 "Return the maximum `indegree` of vertices in `g`."
-δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
+δin(g::SimpleGraph)  = noallocextreme(indegree,(<), typemax(Int), g)
 "Return the minimum `indegree` of vertices in `g`."
-Δin(g)  = noallocextreme(indegree,(>), typemin(Int), g)
+Δin(g::SimpleGraph)  = noallocextreme(indegree,(>), typemin(Int), g)
 "Return the minimum `degree` of vertices in `g`."
-δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
+δ(g::SimpleGraph)    = noallocextreme(degree,(<), typemax(Int), g)
 "Return the maximum `degree` of vertices in `g`."
-Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
+Δ(g::SimpleGraph)    = noallocextreme(degree,(>), typemin(Int), g)
+
+Δout(g::SimpleSparseGraph)  = maximum(outdegree(g))
+δout(g::SimpleSparseGraph)  = minimum(outdegree(g))
+Δin(g::SimpleSparseGraph)   = maximum(indegree(g))
+δin(g::SimpleSparseGraph)   = minimum(indegree(g))
+Δ(g::SimpleSparseGraph)     = maximum(degree(g))
+δ(g::SimpleSparseGraph)     = minimum(degree(g))
+
+
 
 "computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
 function noallocextreme(f, comparison, initial, g)
@@ -270,9 +245,14 @@ neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
-function copy{T<:SimpleGraph}(g::T)
-    return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
-end
+copy{T<:SimpleAdjGraph}(g::T) =
+    T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+
+copy{T<:SimpleSparseGraph}(g::T) =
+    T(g.vertices, copy(g.edges), copy(g.fm), copy(g.bm))
+
 
 "Returns true if `g` is has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
+
+# has_self_loop(g::SimpleSparseGraph) = any(diag(g.fm))
