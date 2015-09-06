@@ -1,37 +1,51 @@
-@test adjacency_matrix(g3)[3,2] == 1
-@test adjacency_matrix(g3)[2,4] == 0
-@test laplacian_matrix(g3)[3,2] == -1
-@test laplacian_matrix(g3)[1,3] == 0
-@test laplacian_spectrum(g3)[5] == 3.6180339887498945
-@test adjacency_spectrum(g3)[1] == -1.732050807568878
+@test adjacency_matrix(g3)[3,2] == adjacency_matrix(sg3)[3,2] == 1
+@test adjacency_matrix(g3)[2,4] == adjacency_matrix(sg3)[2,4] == 0
+@test laplacian_matrix(g3)[3,2] == laplacian_matrix(sg3)[3,2] == -1
+@test laplacian_matrix(g3)[1,3] == laplacian_matrix(sg3)[1,3] == 0
+@test laplacian_spectrum(g3)[5] == laplacian_spectrum(sg3)[5] == 3.6180339887498945
+@test adjacency_spectrum(g3)[1] == adjacency_spectrum(sg3)[1] ==-1.732050807568878
 
-@test laplacian_spectrum(g5,:byrow)[3] == 1.0
-@test laplacian_spectrum(g5,:bycol)[3] == 1.0
+@test laplacian_spectrum(g5,:byrow)[3] == laplacian_spectrum(sg5, :byrow)[3] == 1.0
+@test laplacian_spectrum(g5,:bycol)[3] == laplacian_spectrum(sg5, :bycol)[3] == 1.0
 
-@test_approx_eq_eps(adjacency_spectrum(g5, :byrow)[3],0.311, 0.001)
+@test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
+@test_approx_eq_eps(adjacency_spectrum(sg5)[3],0.311, 0.001)
 
 @test adjacency_matrix(g3) ==
     adjacency_matrix(g3, :byrow) ==
-    adjacency_matrix(g3, :bycol)
+    adjacency_matrix(g3, :bycol) ==
+    adjacency_matrix(sg3, :byrow) ==
+    adjacency_matrix(sg3, :bycol)
 
 @test_throws ErrorException adjacency_matrix(g3, :purple)
 
 #that call signature works
-colmat   = adjacency_matrix(g5, :bycol, Int)
+colmat  = adjacency_matrix(g5, :bycol, Int)
 rowmat  = adjacency_matrix(g5, :byrow, Int)
+scolmat = adjacency_matrix(sg5, :bycol, Int)
+srowmat = adjacency_matrix(sg5, :byrow, Int)
+
 
 #relations that should be true
 @test colmat' == rowmat
+@test scolmat' == srowmat
 
 #check properties of the undirected laplacian carry over.
 for major in [:byrow, :bycol]
     amat = adjacency_matrix(g5, major, Float64)
+    samat = adjacency_matrix(sg5, major, Float64)
     lmat = laplacian_matrix(g5, major, Float64)
+    slmat = laplacian_matrix(sg5, major, Float64)
     @test isa(amat, SparseMatrixCSC{Float64, Int64})
     @test isa(lmat, SparseMatrixCSC{Float64, Int64})
+    @test isa(samat, SparseMatrixCSC{Float64, Int64})
+    @test isa(slmat, SparseMatrixCSC{Float64, Int64})
     evals = eigvals(full(lmat))
+    sevals = eigvals(full(lmat))
     @test all(evals .>= -1e-15) # positive semidefinite
+    @test all(sevals .>= -1e-15) # positive semidefinite
     @test_approx_eq_eps minimum(evals) 0 1e-13
+    @test_approx_eq_eps minimum(sevals) 0 1e-13
 end
 
 

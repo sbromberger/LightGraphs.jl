@@ -9,6 +9,10 @@ g4 = PathDiGraph(5)
 g5 = DiGraph(4)
 add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
 
+sg1 = SparseGraph(g1)
+sg3 = SparseGraph(g3)
+sg5 = SparseDiGraph(g5)
+
 h1 = Graph(5)
 h2 = Graph(3)
 h3 = Graph()

@@ -7,7 +7,7 @@ using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
-using ParallelSparseMatMul
+# using ParallelSparseMatMul
 
 if VERSION < v"0.4.0-dev"
     try
@@ -30,8 +30,8 @@ import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-in_edges, out_edges, has_vertex, has_edge, is_directed,
+export SimpleGraph, SimpleSparseGraph, Edge, Graph, DiGraph, SparseGraph, SparseDiGraph,
+vertices, edges, src, dst, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
@@ -115,6 +115,7 @@ more traditional and better-optimized mechanisms.
 """
 LightGraphs
 
+include("sharedsparse.jl")
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")

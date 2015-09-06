@@ -27,8 +27,8 @@ function adjacency_matrix(g::SimpleGraph, major::Symbol=:byrow, T::DataType=Int)
 end
 
 function adjacency_matrix(g::SimpleSparseGraph, major::Symbol=:byrow, T::DataType=Int)
-    major == :byrow && return g.bm
-    major == :bycol  && return g.fm
+    major == :byrow && return g.bm * one(T)
+    major == :bycol  && return g.fm * one(T)
 
     error("Not implemented")
 end
@@ -37,20 +37,20 @@ end
 for a graph `g`, indexed by `[src, dst]` vertices. For both directed and undirected
 graphs, `major` defaults to `:byrow` and `T` defaults to `Int`.
 """
-function laplacian_matrix(g::Graph, major::Symbol=:byrow, T::DataType=Int)
+function laplacian_matrix(g::UndirectedGraph, major::Symbol=:byrow, T::DataType=Int)
     A = adjacency_matrix(g, major, T)
     D = spdiagm(sum(A,2)[:])
     return D - A
 end
 
-function laplacian_matrix(g::DiGraph, major::Symbol=:byrow, T::DataType=Int)
+function laplacian_matrix(g::DirectedGraph, major::Symbol=:byrow, T::DataType=Int)
     A = adjacency_matrix(g, major, T)
     D = spdiagm(sum(A,2)[:])
     return D - A
 end
 
 doc"""Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed
-by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
+by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Uses
 `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors. Default values for `major` and `T` are the same as
 `laplacian_matrix`.
@@ -58,20 +58,16 @@ eigenvalues/eigenvectors. Default values for `major` and `T` are the same as
 laplacian_spectrum(g::SimpleGraph, major::Symbol=:byrow, T::DataType=Int) = eigvals(full(laplacian_matrix(g, major, T)))
 
 doc"""Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed
-by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
+by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Uses
 `eigs(adjacency_matrix(g);kwargs...)` to compute some of the
-eigenvalues/eigenvectors. Default values for `major` and `T` are the same as
-`adjacency_matrix`.
+eigenvalues/eigenvectors. Default values for `T` are the same as `adjacency_matrix`.
 """
-adjacency_spectrum(g::SimpleGraph, major::Symbol=:byrow, T::DataType=Int) = eigvals(full(adjacency_matrix(g, major, T)))
-function adjacency_spectrum(g::DiGraph, major::Symbol=:byrow, T::DataType=Int)
-    A = adjacency_matrix(g, major, T)
-    return eigvals(full(A + A'))
-end
+adjacency_spectrum(g::UndirectedGraph, T::DataType=Int) = eigvals(full(adjacency_matrix(g, :byrow, T)))
 
-function adjacency_spectrum(g::SparseDiGraph, major::Symbol=:byrow, T::DataType=Int)
-    A = adjacency_matrix(g, major, T)
-    return eigvals(full(A + A'))
+function adjacency_spectrum(g::DirectedGraph, T::DataType=Int)
+    A = adjacency_matrix(g, :byrow, T)
+    B = adjacency_matrix(g, :bycol, T)
+    return eigvals(full(A + B))
 end
 
 # GraphMatrices integration

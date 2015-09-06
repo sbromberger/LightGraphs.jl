@@ -56,8 +56,9 @@ end
 
 SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
+
 function SparseGraph(g::Graph)
-    fm = adjacency_matrix(g,:bycol, Bool)
+    fm = adjacency_matrix(g, :bycol, Bool)
     return SparseGraph(g.edges, fm, fm')
 end
 
@@ -70,11 +71,13 @@ end
 SparseDiGraph(n::Int) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
 function SparseDiGraph(g::DiGraph)
-    fm = adjacency_matrix(g, :byrow, Bool)
-    return SparseDiGraph(g.edges, fm, fm')
+    fm = adjacency_matrix(g, :bycol, Bool)
+    return SparseDiGraph(g.edges, fm', fm)
 end
 
 # typealias SimpleGraph Union(Graph, DiGraph)
+typealias UndirectedGraph Union(Graph, SparseGraph)
+typealias DirectedGraph Union(DiGraph, SparseDiGraph)
 
 
 """Return the vertices of a graph."""

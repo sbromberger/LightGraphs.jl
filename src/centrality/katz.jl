@@ -22,9 +22,17 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
-of the graph `g`.
+of the graph `g`. The mode can be specified as `:receive` (default) or `:broadcast`
+per [http://dx.doi.org/10.1103/PhysRevE.83.046120](http://centaur.reading.ac.uk/19357/1/Coomunicability_accepted.pdf).
 """
-function katz_centrality(g::SimpleGraph, α::Real = 0.3, major=:byrow)
+function katz_centrality(g::SimpleGraph, α::Real = 0.3, mode=:receive)
+    if mode == :receive
+        major = :byrow
+    elseif mode == :broadcast
+        major = :bycol
+    else
+        error("Mode must be :receive or :broadcast")
+    end
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = speye(Float64, nvg)
