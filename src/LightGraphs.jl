@@ -7,6 +7,7 @@ using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
+using ParallelSparseMatMul
 
 if VERSION < v"0.4.0-dev"
     try
@@ -26,7 +27,7 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym
+            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
