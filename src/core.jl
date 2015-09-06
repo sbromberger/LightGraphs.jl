@@ -57,7 +57,7 @@ end
 SparseGraph(n) = SparseGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
 function SparseGraph(g::Graph)
-    fm = adjacency_matrix(g,:out, Bool)
+    fm = adjacency_matrix(g,:bycol, Bool)
     return SparseGraph(g.edges, fm, fm')
 end
 
@@ -70,7 +70,7 @@ end
 SparseDiGraph(n::Int) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Float64,n,n))
 
 function SparseDiGraph(g::DiGraph)
-    fm = adjacency_matrix(g,:out, Bool)
+    fm = adjacency_matrix(g, :byrow, Bool)
     return SparseDiGraph(g.edges, fm, fm')
 end
 
@@ -105,7 +105,7 @@ The optional second argument take the `v`th vertex adjacency list, that is:
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
-_column(a::SparseMatrixCSC, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
+_column(a::AbstractSparseArray, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
 
 fadj(g::SimpleSparseGraph, v::Int) = _column(g.fm, v)
 fadj(g::SimpleSparseGraph) = [fadj(g,i) for i in 1:nv(g)]
@@ -173,15 +173,18 @@ function add_edge!(g::SimpleGraph, e::Edge)
     unsafe_add_edge!(g,e)
 end
 
+# fm and bm are CSCSparseMatrices, so it is more performance to make
+# things column-major. That's why this looks backwards.
 function add_edge!(g::SparseDiGraph, e::Edge)
-    g.fm[src(e),dst(e)] = true
-    g.bm[dst(e),src(e)] = true
+    g.fm[dst(e),src(e)] = true
+    g.bm[src(e),dst(e)] = true
     push!(g.edges, e)
 end
 
 function add_edge!(g::SparseGraph, e::Edge)
-    g.fm[src(e),dst(e)] = true
     g.fm[dst(e),src(e)] = true
+    g.fm[src(e),dst(e)] = true
+
     g.bm[src(e),dst(e)] = true
     g.bm[dst(e),src(e)] = true
     push!(g.edges, e)

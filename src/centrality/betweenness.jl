@@ -82,6 +82,69 @@ function betweenness_centrality(
     return betweenness
 end
 
+function parallel_betweenness_centrality{T}(
+    g::SimpleSparseGraph,
+    k::Integer=0,
+    distmx::AbstractArray{T,2} = DefaultDistance();
+    normalize=true,
+    endpoints=false)
+
+    n_v = nv(g)
+
+    info("starting")
+    spmx = share(g.fm)
+    info("spmx set")
+    if typeof(distmx) != LightGraphs.DefaultDistance
+        distmx = share(distmx)
+    else
+        distmx = distmx[1:n_v, 1:n_v]
+    end
+    info("distmx set")
+    is_directed = (typeof(g) == DiGraph)
+    betweenness = SharedArray(Float64, n_v, init=s->s[localindexes(s)] = 0.0)
+    info("betweenness set")
+    if k == 0
+        nodes = 1:n_v
+    else
+        nodes = sample(1:n_v, k, replace=false)   #112
+    end
+
+    nprox = nworkers() 
+    ls = length(nodes)
+    (ls_perproc, r) = divrem(ls,nprox)
+    if ls_perproc == 0
+        splits = [i:i for i in 1:ls]
+    else
+        startsplits = collect(1:ls_perproc:ls)
+        if r > 0
+            startsplits = startsplits[1:end-1]
+        end
+        endsplits = startsplits + (ls_perproc -1)
+        endsplits[end] = ls
+        splits = [x:y for (x,y) in zip(startsplits, endsplits)]
+    end
+    info("splits = $splits")
+    @sync @parallel for i in splits
+        info("processing $i")
+        for s in i
+            state = dijkstra_shortest_paths_sparse(spmx, s, distmx, true)
+            if endpoints
+                _parallel_accumulate_endpoints!(betweenness, state, s)
+            else
+                _parallel_accumulate_basic!(betweenness, state, s)
+            end
+        end
+        info("ending $i")
+    end
+    info("all workers done")
+    _rescale!(betweenness,
+              n_v,
+              normalize,
+              is_directed,
+              k)
+    info("rescaled")
+    return betweenness
+end
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
@@ -142,7 +205,65 @@ function _accumulate_endpoints!(
     end
 end
 
-function _rescale!(betweenness::Vector{Float64}, n::Int, normalize::Bool, directed::Bool, k::Int)
+function _parallel_accumulate_basic!(
+    betweenness::SharedArray{Float64,1},
+    state::DijkstraState,
+    si::Integer
+    )
+
+    n_v = length(state.parents) # this is the ttl number of vertices
+    δ = zeros(n_v)
+    σ = state.pathcounts
+    P = state.predecessors
+
+    # make sure the source index has no parents.
+    P[si] = []
+    # we need to order the source nodes by decreasing distance for this to work.
+    S = sortperm(state.dists, rev=true)
+    for w in S
+        coeff = (1.0 + δ[w]) / σ[w]
+        for v in P[w]
+            if v > 0
+                δ[v] += (σ[v] * coeff)
+            end
+        end
+        if w != si
+            betweenness[w] += δ[w]
+        end
+    end
+end
+
+
+
+function _parallel_accumulate_endpoints!(
+    betweenness::SharedArray{Float64,1},
+    state::DijkstraState,
+    si::Integer
+    )
+
+    n_v = length(state.parents) # this is the ttl number of vertices
+    δ = zeros(n_v)
+    σ = state.pathcounts
+    P = state.predecessors
+    v1 = [1:n_v;]
+    v2 = state.dists
+    S = sortperm(state.dists, rev=true)
+
+    betweenness[si] += length(S) - 1    # 289
+
+    for w in S
+        coeff = (1.0 + δ[w]) / σ[w]
+        for v in P[w]
+            δ[v] += σ[v] * coeff
+        end
+        if w != si
+            betweenness[w] += (δ[w] + 1)
+        end
+    end
+end
+
+
+function _rescale!{T<:AbstractArray{Float64,1}}(betweenness::T, n::Int, normalize::Bool, directed::Bool, k::Int)
     if normalize
         if n <= 2
             do_scale = false

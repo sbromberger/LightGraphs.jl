@@ -64,6 +64,7 @@ function ==(g::DiGraph, h::DiGraph)
 end
 
 is_directed(g::DiGraph) = true
+is_directed(g::SparseDiGraph) = true
 
 function unsafe_add_edge!(g::DiGraph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))

@@ -56,6 +56,7 @@ end
 
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
+is_directed(g::SparseGraph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 has_edge(g::SparseGraph, e::Edge) = g.m[src(e),dst(e)] != 0
 

@@ -24,12 +24,12 @@
 """Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
 of the graph `g`.
 """
-function katz_centrality(g::SimpleGraph, α::Real = 0.3)
+function katz_centrality(g::SimpleGraph, α::Real = 0.3, major=:byrow)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = speye(Float64, nvg)
-    A = adjacency_matrix(g, :out, Bool)
-    v = (spI - α*A)\v
+    Aα = α * adjacency_matrix(g, major, Real)
+    v = (spI - Aα)\v
     v /=  norm(v)
     return v
 end
