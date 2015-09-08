@@ -14,9 +14,4 @@ script:
   - julia --check-bounds=yes -e 'Pkg.clone("https://github.com/jpfairbanks/GraphMatrices.jl.git")'
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
 after_success:
-<<<<<<< HEAD
   - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
-=======
-    - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
-
->>>>>>> origin/master
