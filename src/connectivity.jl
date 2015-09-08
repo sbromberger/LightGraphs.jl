@@ -8,11 +8,11 @@ vector of vectors of vertices belonging to the component.
 function connected_components(g::Graph)
     nvg = nv(g)
     found = zeros(Bool, nvg)
-    components = @compat Vector{Vector{Int}}()
+    components = Vector{Vector{Int}}()
     for v in 1:nvg
         if !found[v]
             bfstree = bfs_tree(g, v)
-            found_vertices = @compat Vector{Int}()
+            found_vertices = Vector{Int}()
             for e in edges(bfstree)
                 push!(found_vertices, src(e))
                 push!(found_vertices, dst(e))
@@ -47,10 +47,10 @@ type TarjanVisitor <: SimpleGraphVisitor
 end
 
 TarjanVisitor(n::Int) = TarjanVisitor(
-    @compat(Vector{Int}()),
-    @compat(Vector{Int}()),
+    Vector{Int}(),
+    Vector{Int}(),
     zeros(Int, n),
-    @compat(Vector{Vector{Int}}())
+    Vector{Vector{Int}}()
 )
 
 function discover_vertex!(vis::TarjanVisitor, v)
@@ -83,7 +83,7 @@ end
 function strongly_connected_components(g::DiGraph)
     nvg = nv(g)
     cmap = zeros(Int, nvg)
-    components = @compat Vector{Vector{Int}}()
+    components = Vector{Vector{Int}}()
 
     for v in vertices(g)
         if cmap[v] == 0 # 0 means not visited yet
@@ -110,7 +110,7 @@ function period(g::DiGraph)
     g_bfs_tree  = bfs_tree(g,1)
     levels      = gdistances(g_bfs_tree,1)
     tree_diff   = difference(g,g_bfs_tree)
-    edge_values = @compat Vector{Int}()
+    edge_values = Vector{Int}()
 
     divisor = 0
     for e in edges(tree_diff)
@@ -126,7 +126,7 @@ end
 function condensation(g::DiGraph, scc::Vector{Vector{Int}})
     h = DiGraph(length(scc))
 
-    component = @compat Vector{Int}(nv(g))
+    component = Vector{Int}(nv(g))
 
     for (i,s) in enumerate(scc)
         @inbounds component[s] = i
@@ -156,7 +156,7 @@ function attracting_components(g::DiGraph)
     scc  = strongly_connected_components(g)
     cond = condensation(g,scc)
 
-    attracting = @compat Vector{Int}()
+    attracting = Vector{Int}()
 
     for v in vertices(cond)
         if outdegree(cond,v) == 0

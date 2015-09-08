@@ -102,7 +102,7 @@ function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
         zero(T),
         zero(Int),
         distmx,
-        @compat(Vector{Int}())
+        Vector{Int}()
     )
 end
 
@@ -205,7 +205,7 @@ function maximum_adjacency_visit{T}(
     log::Bool,
     io::IO
 )
-    visitor = MASVisitor(io, @compat(Vector{Int}()), distmx, log)
+    visitor = MASVisitor(io, Vector{Int}(), distmx, log)
     traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
     return visitor.vertices
 end

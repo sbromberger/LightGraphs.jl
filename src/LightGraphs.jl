@@ -1,7 +1,7 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+# VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 module LightGraphs
 
-using Compat
 using GZip
 using StatsBase
 using Base.Collections
@@ -9,14 +9,14 @@ using LightXML
 using ParserCombinator.Parsers.GML
 # using ParallelSparseMatMul
 
-if VERSION < v"0.4.0-dev"
-    try
-        import Docile: @doc_str, @doc_mstr
-    catch
-        macro doc_str(x) x end
-        macro doc_mstr(x) x end
-    end
-end
+# if VERSION < v"0.4.0-dev"
+#     try
+#         import Docile: @doc_str, @doc_mstr
+#     catch
+#         macro doc_str(x) x end
+#         macro doc_mstr(x) x end
+#     end
+# end
 
 try
     using GraphMatrices

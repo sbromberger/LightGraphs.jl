@@ -130,7 +130,7 @@ function _try_creation(n::Int, k::Int)
             return Set{Edge}()
         end
 
-        stubs = @compat(Vector{Int}())
+        stubs = Vector{Int}()
         for (e, ct) in potential_edges
             append!(stubs, fill(e, ct))
         end

@@ -98,7 +98,7 @@ function WheelDiGraph(n::Integer)
 end
 
 
-function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
+function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = Graph(n)
     for (s,d) in edgelist
         add_edge!(g,s,d)
@@ -106,7 +106,7 @@ function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compa
     return g
 end
 
-function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
+function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = DiGraph(n)
     for (s,d) in edgelist
         add_edge!(g,s,d)
