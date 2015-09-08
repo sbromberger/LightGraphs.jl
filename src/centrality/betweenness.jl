@@ -83,7 +83,7 @@ function betweenness_centrality(
 end
 
 function parallel_betweenness_centrality{T}(
-    g::SimpleSparseGraph,
+    g::AbstractSparseGraph,
     k::Integer=0,
     distmx::AbstractArray{T,2} = DefaultDistance();
     normalize=true,
@@ -109,7 +109,7 @@ function parallel_betweenness_centrality{T}(
         nodes = sample(1:n_v, k, replace=false)   #112
     end
 
-    nprox = nworkers() 
+    nprox = nworkers()
     ls = length(nodes)
     (ls_perproc, r) = divrem(ls,nprox)
     if ls_perproc == 0
@@ -191,8 +191,7 @@ function _accumulate_endpoints!(
     v1 = [1:n_v;]
     v2 = state.dists
     S = sortperm(state.dists, rev=true)
-    s = g.vertices[si]
-    betweenness[s] += length(S) - 1    # 289
+    betweenness[si] += length(S) - 1    # 289
 
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]

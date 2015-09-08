@@ -6,7 +6,7 @@
 iterations (`n`), and convergence threshold (`ϵ`). If convergence is not
 reached within `n` iterations, an error will be returned.
 """
-function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6, major=:bycol)
+function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6, major=:byrow)
     M = adjacency_matrix(g, major)
     S = vec(sum(M,2))
     S = 1./S

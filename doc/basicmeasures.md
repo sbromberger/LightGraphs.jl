@@ -5,58 +5,56 @@ types:
 ## Vertices and Edges
 ### vertices
 ```
-vertices(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+vertices(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the vertices of a graph.
 
 ### edges
 ```
-edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+edges(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the edges of a graph.
 
 ### is_directed
 ```
-is_directed(g::LightGraphs.DiGraph)
-is_directed(g::LightGraphs.Graph)
+is_directed(g::LightGraphs.SparseDiGraph)
+is_directed(g::LightGraphs.SparseGraph)
 ```
-Returns `true` if `g` is a `DiGraph`.
-
+nothing
 ### nv
 ```
-nv(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+nv(g::LightGraphs.AbstractSparseGraph)
 ```
 The number of vertices in `g`.
 
 ### ne
 ```
-ne(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+ne(g::LightGraphs.SimpleGraph)
 ```
 The number of edges in `g`.
 
 ### has_edge
 ```
-has_edge(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, src::Int64, dst::Int64)
-has_edge(g::LightGraphs.DiGraph, e::Pair{Int64,Int64})
-has_edge(g::LightGraphs.Graph, e::Pair{Int64,Int64})
+has_edge(g::LightGraphs.SimpleGraph, e::Pair{Int64,Int64})
+has_edge(g::LightGraphs.SimpleGraph, s::Int64, d::Int64)
 ```
 Return true if the graph `g` has an edge from `src` to `dst`.
 
 ### has_vertex
 ```
-has_vertex(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+has_vertex(g::LightGraphs.SimpleGraph, v::Int64)
 ```
 Return true if `v` is a vertex of `g`.
 
 ### in_edges
 ```
-in_edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+in_edges(g::LightGraphs.SimpleGraph, v::Int64)
 ```
 Return an Array of the edges in `g` that arrive at vertex `v`.
 
 ### out_edges
 ```
-out_edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+out_edges(g::LightGraphs.SimpleGraph, v::Int64)
 ```
 Return an Array of the edges in `g` that emanate from vertex `v`.
 
@@ -74,95 +72,103 @@ Return destination of an edge.
 
 ### reverse
 ```
-reverse(g::LightGraphs.DiGraph)
+reverse(g::LightGraphs.SparseDiGraph)
 ```
-```rst
-::
-           reverse(v [, start=1 [, stop=length(v) ]] )
+```
+reverse(v [, start=1 [, stop=length(v) ]] )
+```
 
-Return a copy of ``v`` reversed from start to stop.
-```
+Return a copy of `v` reversed from start to stop.
+
+Reverses a UTF-8 encoded string
+
+### Returns:
+
+  *   `UTF8String`
+
+### Throws:
+
+  *   `UnicodeError`
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 
 ## Neighbors and Degree
 ### degree
 ```
-degree(g::LightGraphs.DiGraph, v::Int64)
-degree(g::LightGraphs.Graph, v::Int64)
-degree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-degree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::AbstractArray{Int64,1})
+degree(g::LightGraphs.SparseGraph, x...)
+degree(g::LightGraphs.SparseDiGraph, x...)
 ```
 Return the number of edges (both ingoing and outgoing) from the vertex `v`.
 
 ### indegree
 ```
-indegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-indegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-indegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::AbstractArray{Int64,1})
+indegree(g::LightGraphs.SparseDiGraph)
+indegree(g::LightGraphs.SparseDiGraph, v::Int64)
+indegree(g::LightGraphs.SparseDiGraph, v::AbstractArray{Int64,1})
+indegree(g::LightGraphs.SparseGraph, x...)
 ```
 Return the number of edges which start at vertex `v`.
 
 ### outdegree
 ```
-outdegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-outdegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-outdegree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::AbstractArray{Int64,1})
+outdegree(g::LightGraphs.AbstractSparseGraph)
+outdegree(g::LightGraphs.AbstractSparseGraph, v::Int64)
+outdegree(g::LightGraphs.AbstractSparseGraph, v::AbstractArray{Int64,1})
 ```
 Return the number of edges which end at vertex `v`.
 
 ### Δ
 ```
-Δ(g)
+Δ(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the maximum `degree` of vertices in `g`.
 
 ### δ
 ```
-δ(g)
+δ(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the minimum `degree` of vertices in `g`.
 
 ### Δout
 ```
-Δout(g)
+Δout(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the maxium `outdegree` of vertices in `g`.
 
 ### δout
 ```
-δout(g)
+δout(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the minimum `outdegree` of vertices in `g`.
 
 ### δin
 ```
-δin(g)
-```
-Return the maximum `indegree` of vertices in `g`.
-
-### Δin
-```
-Δin(g)
+δin(g::LightGraphs.AbstractSparseGraph)
 ```
 Return the minimum `indegree` of vertices in `g`.
 
+### Δin
+```
+Δin(g::LightGraphs.AbstractSparseGraph)
+```
+Return the maximum `indegree` of vertices in `g`.
+
 ### degree_histogram
 ```
-degree_histogram(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+degree_histogram(g::LightGraphs.SimpleGraph)
 ```
 Produces a histogram of degree values across all vertices for the graph `g`. The number of histogram buckets is based on the number of vertices in `g`.
 
 ### density
 ```
-density(g::LightGraphs.DiGraph)
-density(g::LightGraphs.Graph)
+density(g::LightGraphs.SparseGraph)
+density(g::LightGraphs.SparseDiGraph)
 ```
 Density is defined as the ratio of the number of actual edges to the number of possible edges. This is $|v| |v-1|$ for directed graphs and $(|v| |v-1|) / 2$ for undirected graphs.
 
 ### neighbors
 ```
-neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+neighbors(g::LightGraphs.SimpleGraph, v::Int64)
 ```
 Returns a list of all neighbors of vertex `v` in `g`.
 
@@ -170,19 +176,19 @@ For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
 
 ### in_neighbors
 ```
-in_neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+in_neighbors(g::LightGraphs.SimpleGraph, v::Int64)
 ```
 Returns a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### all_neighbors
 ```
-all_neighbors(g::LightGraphs.DiGraph, v::Int64)
+all_neighbors(g::LightGraphs.SparseDiGraph, v::Int64)
 ```
 Returns all the vertices which share an edge with `v`.
 
 ### common_neighbors
 ```
-common_neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, u::Int64, v::Int64)
+common_neighbors(g::LightGraphs.SimpleGraph, u::Int64, v::Int64)
 ```
 Returns the neighbors common to vertices `u` and `v` in `g`.
 

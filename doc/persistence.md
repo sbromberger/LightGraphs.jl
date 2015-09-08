@@ -3,22 +3,21 @@
 Graphs may be written to I/O streams and files using the `write` function:
 ### write
 ```
-write(io::IO, graphname::AbstractString, g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-write(io::IO, g::LightGraphs.Graph)
-write(io::IO, g::LightGraphs.DiGraph)
-write(g::LightGraphs.Graph)
-write(g::LightGraphs.DiGraph)
-write{S<:AbstractString,G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(graphs::Dict{S<:AbstractString,G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}, fn::AbstractString)
-write(g::LightGraphs.Graph, fn::AbstractString)
-write(g::LightGraphs.DiGraph, fn::AbstractString)
-write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, gname::AbstractString, fn::AbstractString)
+write(io::IO, graphname::AbstractString, g::LightGraphs.SimpleGraph)
+write(io::IO, g::LightGraphs.SparseGraph)
+write(io::IO, g::LightGraphs.SparseDiGraph)
+write(g::LightGraphs.SparseGraph)
+write(g::LightGraphs.SparseDiGraph)
+write{S<:AbstractString,G<:LightGraphs.SimpleGraph}(graphs::Dict{S<:AbstractString,G<:LightGraphs.SimpleGraph}, fn::AbstractString)
+write(g::LightGraphs.SparseGraph, fn::AbstractString)
+write(g::LightGraphs.SparseDiGraph, fn::AbstractString)
+write(g::LightGraphs.SimpleGraph, gname::AbstractString, fn::AbstractString)
 ```
-```rst
-::
-           write(stream, x)
+```
+write(stream, x)
+```
 
 Write the canonical binary representation of a value to the given stream.
-```
 
 Writes a graph `g` with name `graphname` in a proprietary format to the IO stream designated by `io`.
 

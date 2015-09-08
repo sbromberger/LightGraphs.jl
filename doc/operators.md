@@ -4,37 +4,50 @@ functions with two graph arguments will require them to be of the same type
 (either both `Graph` or both `DiGraph`).
 ### complement
 ```
-complement(g::LightGraphs.Graph)
-complement(g::LightGraphs.DiGraph)
+complement(g::LightGraphs.SparseGraph)
+complement(g::LightGraphs.SparseGraph, self_loops)
+complement(g::LightGraphs.SparseDiGraph)
+complement(g::LightGraphs.SparseDiGraph, self_loops)
 ```
 ```rst
 ::
+
            complement(s)
 
 Returns the set-complement of :obj:`IntSet` ``s``.
 ```
 
-Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph) of a graph.
+Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph) of a graph. Set self_loops to `true` to include self-loops.
 
 ### reverse
 ```
-reverse(g::LightGraphs.DiGraph)
+reverse(g::LightGraphs.SparseDiGraph)
 ```
-```rst
-::
-           reverse(v [, start=1 [, stop=length(v) ]] )
+```
+reverse(v [, start=1 [, stop=length(v) ]] )
+```
 
-Return a copy of ``v`` reversed from start to stop.
-```
+Return a copy of `v` reversed from start to stop.
+
+Reverses a UTF-8 encoded string
+
+### Returns:
+
+  *   `UTF8String`
+
+### Throws:
+
+  *   `UnicodeError`
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 
 ### reverse!
 ```
-reverse!(g::LightGraphs.DiGraph)
+reverse!(g::LightGraphs.SparseDiGraph)
 ```
 ```rst
 ::
+
            reverse!(v [, start=1 [, stop=length(v) ]]) -> v
 
 In-place version of :func:`reverse`.
@@ -44,14 +57,13 @@ In-place version of :func:`reverse`.
 
 ### blkdiag
 ```
-blkdiag{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+blkdiag{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, h::T<:LightGraphs.SimpleGraph)
 ```
-```rst
-::
-           blkdiag(A...)
+```
+blkdiag(A...)
+```
 
 Concatenate matrices block-diagonally. Currently only implemented for sparse matrices.
-```
 
 Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$ edges.
 
@@ -59,15 +71,14 @@ Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 
 ### intersect
 ```
-intersect{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+intersect{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, h::T<:LightGraphs.SimpleGraph)
 ```
-```rst
-::
-           intersect(s1,s2...)
-           ∩(s1,s2)
+```
+intersect(s1,s2...)
+∩(s1,s2)
+```
 
 Construct the intersection of two or more sets. Maintains order and multiplicity of the first argument for arrays and ranges.
-```
 
 Produces a graph with edges that are only in both graph `g` and graph `h`.
 
@@ -75,7 +86,7 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### difference
 ```
-difference{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+difference{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, h::T<:LightGraphs.SimpleGraph)
 ```
 Produces a graph with edges in graph `g` that are not in graph `h`.
 
@@ -83,7 +94,7 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### symmetric_difference
 ```
-symmetric_difference{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+symmetric_difference{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, h::T<:LightGraphs.SimpleGraph)
 ```
 Produces a graph with edges from graph `g` that do not exist in graph `h`, and vice versa.
 
@@ -91,21 +102,20 @@ Note that this function may produce a graph with 0-degree vertices.
 
 ### union
 ```
-union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+union{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, h::T<:LightGraphs.SimpleGraph)
 ```
-```rst
-::
-           union(s1,s2...)
-           ∪(s1,s2)
+```
+union(s1,s2...)
+∪(s1,s2)
+```
 
 Construct the union of two or more sets. Maintains order with arrays.
-```
 
 Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 
 ### induced_subgraph
 ```
-induced_subgraph{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, iter)
+induced_subgraph{T<:LightGraphs.SimpleGraph}(g::T<:LightGraphs.SimpleGraph, iter)
 ```
 Filters graph `g` to include only the vertices present in the iterable argument `vs`. Returns the subgraph of `g` induced by `vs`.
 

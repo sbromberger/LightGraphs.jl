@@ -168,7 +168,7 @@ function dijkstra_shortest_paths_sparse_range{T}(
 end
 
 
-function parallel_dsp{T}(g::SimpleSparseGraph, srcs::Vector{Int}, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false)
+function parallel_dsp{T}(g::AbstractSparseGraph, srcs::Vector{Int}, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false)
 
     states = Vector{DijkstraState}(length(srcs))
     sharedmx = share(g.fm .* distmx[1:nv(g), 1:nv(g)])

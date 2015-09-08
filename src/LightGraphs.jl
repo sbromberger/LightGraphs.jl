@@ -26,11 +26,11 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
+            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy,
             sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
 
 # core
-export SimpleGraph, SimpleSparseGraph, Edge, Graph, DiGraph, SparseGraph, SparseDiGraph,
+export SimpleGraph, AbstractSparseGraph, Edge, Graph, DiGraph, SparseGraph, SparseDiGraph,
 vertices, edges, src, dst, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
@@ -117,28 +117,25 @@ LightGraphs
 
 include("sharedsparse.jl")
 include("core.jl")
-    include("digraph.jl")
-    include("sparsedigraph.jl")
-    include("graph.jl")
-    include("sparsegraph.jl")
-        include("traversals/graphvisit.jl")
-            include("traversals/bfs.jl")
-            include("traversals/dfs.jl")
-            include("traversals/maxadjvisit.jl")
-        include("connectivity.jl")
-        include("distance.jl")
-        include("shortestpaths/astar.jl")
-        include("shortestpaths/bellman-ford.jl")
-        include("shortestpaths/dijkstra.jl")
-        include("shortestpaths/floyd-warshall.jl")
-        include("spectral.jl")
-        include("operators.jl")
-        include("persistence.jl")
-        include("randgraphs.jl")
-        include("smallgraphs.jl")
-        include("centrality/betweenness.jl")
-        include("centrality/closeness.jl")
-        include("centrality/degree.jl")
-        include("centrality/katz.jl")
-        include("centrality/pagerank.jl")
+    include("degree.jl")
+    include("traversals/graphvisit.jl")
+        include("traversals/bfs.jl")
+        include("traversals/dfs.jl")
+        include("traversals/maxadjvisit.jl")
+    include("connectivity.jl")
+    include("distance.jl")
+    include("shortestpaths/astar.jl")
+    include("shortestpaths/bellman-ford.jl")
+    include("shortestpaths/dijkstra.jl")
+    include("shortestpaths/floyd-warshall.jl")
+    include("spectral.jl")
+    include("operators.jl")
+    include("persistence.jl")
+    include("randgraphs.jl")
+    include("smallgraphs.jl")
+    include("centrality/betweenness.jl")
+    include("centrality/closeness.jl")
+    include("centrality/degree.jl")
+    include("centrality/katz.jl")
+    include("centrality/pagerank.jl")
 end # module
