@@ -7,7 +7,7 @@ using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
-# using ParallelSparseMatMul
+using ParallelSparseMatMul
 
 # if VERSION < v"0.4.0-dev"
 #     try
@@ -115,7 +115,7 @@ more traditional and better-optimized mechanisms.
 """
 LightGraphs
 
-include("sharedsparse.jl")
+# include("sharedsparse.jl")
 include("core.jl")
     include("degree.jl")
     include("traversals/graphvisit.jl")

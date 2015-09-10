@@ -167,33 +167,143 @@ function dijkstra_shortest_paths_sparse_range{T}(
     return statesdict
 end
 
+# function parallel_dijkstra_shortest_paths!{T}(
+#     fm::AbstractArray,
+#     si::Int,
+#     src::Int,
+#     distmx::AbstractArray,
+#     allpaths::Bool,
+#     parents::SharedArray{Int, Int},
+#     dists::SharedArray{T, Int},
+#     pathcounts::SharedArray{Int, Int},
+#     # preds::SharedSparseMatrixCSC{Bool, Int}
+#     )
+#     info("starting p_d_s_p!: si = $si, src = $src, dists.n = $(dists.n), [3,1] = $(dists[3,1]), T = $T")
+#     nvg = fm.m
+#     info("past 181")
+#     visited = zeros(Bool, nvg)
+#     H = DijkstraHeapEntry{T}[]  # this should be Vector{T}() in 0.4, I think.
+#     info("past 184")
+#     sizehint!(H, nvg)
+#     info("past 186 - dists[src,si] = $(dists[src,si])")
+#     dists[src, si] = 0
+#     info("past 188")
+#     pathcounts[src, si] = 1
+#     info("past 190")
+#     heappush!(H, DijkstraHeapEntry{T}(src, dists[src, si]))
+#
+#     while !isempty(H)
+#         hentry = heappop!(H)
+#         info("Popped H - got $(hentry.vertex)")
+#         u = hentry.vertex
+#         for v in _column(fm, u)  # out neighbors of vector u
+#             alt = (dists[u, si] == typemax(T))? typemax(T) : dists[u, si] + distmx[v,u]
+#
+#             if !visited[v]
+#                 dists[v, si] = alt
+#                 parents[v, si] = u
+#                 pathcounts[v, si] += pathcounts[u, si]
+#                 visited[v] = true
+#                 # if allpaths
+#                 #     preds[v,u, si] = true
+#                 # end
+#                 heappush!(H, DijkstraHeapEntry{T}(v, alt))
+#                 info("Pushed $v, $alt")
+#             else
+#                 if alt < dists[v, si]
+#                     dists[v, si] = alt
+#                     parents[v, si] = u
+#                     heappush!(H, DijkstraHeapEntry{T}(v, alt))
+#                 end
+#                 if alt == dists[v, src]
+#                     pathcounts[v, src] += pathcounts[u, si]
+#                     # if allpaths
+#                     #     preds[v,u, src] = true
+#                     # end
+#                 end
+#             end
+#         end
+#     end
+#
+#     dists[src, si] = zero(T)
+#     pathcounts[src, si] = 1
+#     parents[src, si] = 0
+#     # preds[src, :, src] = fill(false, nvg)
+#
+#     return true
+# end
+#
+#
+# function parallel_dsp{T}(g::AbstractSparseGraph, srcs::Vector{Int}, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false)
+#     n_v = nv(g)
+#     ls = length(srcs)
+#     shparents = share(spzeros(Int, n_v, ls))
+#     shdists = share(spzeros(T, n_v, ls))
+#     shpathcounts = share(spzeros(Int, n_v, ls))
+#     # shpreds = SharedArray(Bool, (n_v,n_v,ls),init=s->s[localindexes(s)] = false)
+#     states = Vector{DijkstraState}(ls)
+#     # sharedmx = share(g.fm .* distmx[1:nv(g), 1:nv(g)])
+#
+#     # nprox = nworkers()
+#     #
+#     # (ls_perproc, r) = divrem(ls,nprox)
+#     # startsplits = collect(1:ls_perproc:ls)
+#     # if r > 0
+#     #     startsplits = startsplits[1:end-1]
+#     # end
+#     # endsplits = startsplits + (ls_perproc -1)
+#     # endsplits[end] = ls
+#     # splits = [x:y for (x,y) in zip(startsplits, endsplits)]
+#     # info("splits = $splits")
+#     @sync @parallel for i in 1:ls
+#         info("processing $i")
+#         parallel_dijkstra_shortest_paths!(
+#             fmat(g),
+#             i,
+#             srcs[i],
+#             distmx,
+#             allpaths,
+#             shparents,
+#             shdists,
+#             shpathcounts,
+#             # shpreds
+#         )
+#         info("ending $i")
+#         nothing
+#     end
+#
+#     # for i in 1:ls
+#     #     predecessors = Vector{Vector{Int}}()
+#     #     preds = sparse(shpreds[:,:,i])
+#     #     for c in 1:preds.m
+#     #         push!(predecessors, _column(preds, c))
+#     #     end
+#     predecessors = Vector{Vector{Int}}()
+#     for i in 1:ls
+#         push!(predecessors,Vector{Int}())
+#     end
+#
+#     for i in 1:ls
+#         states[i] = DijkstraState(shparents[:,i], shdists[:,i], predecessors, shpathcounts[:,i])
+#     end
+#     return states
+# end
+#
+#
+# function ptest!(x::AbstractArray, i::Int)
+#     info("x.m = $(x.m), vx = $i")
+# end
+# function ptest(g::AbstractSparseGraph)
+#     @sync @parallel for i = 1:nv(g)
+#         ptest!(g.fm, i)
+#     end
+# end
 
-function parallel_dsp{T}(g::AbstractSparseGraph, srcs::Vector{Int}, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false)
-
-    states = Vector{DijkstraState}(length(srcs))
-    sharedmx = share(g.fm .* distmx[1:nv(g), 1:nv(g)])
-    nprox = nworkers()
+function pdsp{T}(g::AbstractSparseGraph, srcs::Vector{Int}, distmx::AbstractArray{T,2}=DefaultDistance(nv(g)); allpaths=false)
     ls = length(srcs)
-    (ls_perproc, r) = divrem(ls,nprox)
-    startsplits = collect(1:ls_perproc:ls)
-    if r > 0
-        startsplits = startsplits[1:end-1]
+    fm = share(g.fm)
+    states = @sync @parallel vcat for i = 1:ls
+        dijkstra_shortest_paths_sparse(fm, i, distmx, allpaths)
     end
-    endsplits = startsplits + (ls_perproc -1)
-    endsplits[end] = ls
-    splits = [x:y for (x,y) in zip(startsplits, endsplits)]
-    info("splits = $splits")
-    i_states = @parallel (merge) for i in splits
-        info("processing $i")
-        z = dijkstra_shortest_paths_sparse_range(sharedmx, [i;], start(i)-1, allpaths)
-        info("ending $i")
-        z
-    end
-    @sync begin
-        for (ind, state) in i_states
-            states[ind] = state
-        end
-    end
-
     return states
 end

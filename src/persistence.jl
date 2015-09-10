@@ -11,19 +11,30 @@
 
 function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     readedges = Set{Tuple{Int,Int}}()
-    if directed
-        g = DiGraph(n_v)
-    else
-        g = Graph(n_v)
-    end
+    I = Vector{Int}()
+    J = Vector{Int}()
+    V = fill(true, n_e)
+    edges = Set{Edge}()
+    sizehint!(I, n_e)
+    sizehint!(J, n_e)
+    sizehint!(edges, n_e)
     for i = 1:n_e
         line = chomp(readline(f))
         if length(line) > 0
             src_s, dst_s = split(line,r"\s*,\s*")
             src = parse(Int, src_s)
             dst = parse(Int, dst_s)
-            add_edge!(g, src, dst)
+            push!(I, src)
+            push!(J, dst)
+            push!(edges, Edge(src,dst))
         end
+    end
+    fmx = sparse(J, I, V, n_v, n_v)
+    if directed
+        bmx = sparse(I, J, V, n_v, n_v)
+        g = SparseDiGraph(edges, fmx, bmx)
+    else
+        g = SparseGraph(edges, fmx)
     end
     return g
 end

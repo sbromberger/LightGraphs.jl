@@ -15,6 +15,38 @@ if VERSION < v"0.4.0-dev+4103"
     reverse(p::Pair) = Pair(p.second, p.first)
 end
 
+_column(a::AbstractSparseArray, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
+
+# material nonimplication - test
+⊅(p::Bool, q::Bool) = p & !q
+
+function ⊅{Ti, Tv}(a::SparseMatrixCSC{Ti, Tv}, b::SparseMatrixCSC)
+    (m,n) = size(a)
+    wipcolptr = Vector{Tv}()
+    sizehint!(wipcolptr, n+1)
+    push!(wipcolptr, one(Tv))
+    wipnzval = Vector{Ti}()
+    wiprowval = Vector{Tv}()
+    runninglenr = 1
+
+    @inbounds @simd for c = 1:n
+        wipr = Vector{Tv}()
+        for r in _column(a,c)
+            # info("row $r, col $c")
+            if !b[r,c]
+                push!(wipr, r)
+            end
+        end
+        lenr = length(wipr)
+        runninglenr += lenr
+        push!(wipcolptr, runninglenr)
+        append!(wiprowval, wipr)
+        append!(wipnzval, fill(true, lenr))
+    end
+
+    return SparseMatrixCSC(a.m, a.n, wipcolptr, wiprowval, wipnzval)
+end
+
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
 
@@ -120,7 +152,7 @@ The optional second argument take the `v`th vertex adjacency list, that is:
 
     fadj(g, v::Int) == fadj(g)[v]
 """
-_column(a::AbstractSparseArray, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
+
 
 fadj(g::AbstractSparseGraph, v::Int) = _column(g.fm, v)
 fadj(g::AbstractSparseGraph) = [fadj(g,i) for i in 1:nv(g)]
@@ -230,8 +262,8 @@ function add_edge!(g::SparseDiGraph, e::Edge)
     return e
 end
 
-"""Add multiple edges (from a vector of Edges) to `g`."""
-function add_edges!(g::SparseGraph, es::Vector{Edge})
+"""Add multiple edges (from a set of Edges) to `g`."""
+function add_edges!(g::SparseGraph, es::Set{Edge})
     nes = length(es)
     i = [dst(e) for e in es]
     j = [src(e) for e in es]
@@ -240,7 +272,7 @@ function add_edges!(g::SparseGraph, es::Vector{Edge})
     newedgemx = sparse(i,j,v,nv(g),nv(g))
     g.fm |= newedgemx
     g.fm |= newedgemx'
-    union!(g.edges, es)
+    g.edges = es
 end
 
 function add_edges!(g::SparseDiGraph, es::Vector{Edge})

@@ -4,3 +4,4 @@ StatsBase 0.6.15
 LightXML 0.2.0
 ParserCombinator 1.6.3
 Docile 0.5.3
+ParallelSparseMatMul
