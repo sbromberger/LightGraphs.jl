@@ -56,7 +56,7 @@ function betweenness_centrality(
     endpoints=false)
 
     n_v = nv(g)
-    is_directed = (typeof(g) == DiGraph)
+    isdir = is_directed(g)
 
     betweenness = zeros(n_v)
     if k == 0
@@ -76,7 +76,7 @@ function betweenness_centrality(
     _rescale!(betweenness,
               n_v,
               normalize,
-              is_directed,
+              isdir,
               k)
 
     return betweenness
@@ -90,7 +90,7 @@ function parallel_betweenness_centrality{T}(
     endpoints=false)
 
     n_v = nv(g)
-
+    isdir = is_directed(g)
     info("starting")
     spmx = share(g.fm)
     info("spmx set")
@@ -100,7 +100,7 @@ function parallel_betweenness_centrality{T}(
         distmx = distmx[1:n_v, 1:n_v]
     end
     info("distmx set")
-    is_directed = (typeof(g) == DiGraph)
+    isdir = is_directed(g)
     betweenness = SharedArray(Float64, n_v, init=s->s[localindexes(s)] = 0.0)
     info("betweenness set")
     if k == 0
@@ -140,11 +140,47 @@ function parallel_betweenness_centrality{T}(
     _rescale!(betweenness,
               n_v,
               normalize,
-              is_directed,
+              isdir,
               k)
     info("rescaled")
     return betweenness
 end
+
+function pbc{T}(
+    g::AbstractSparseGraph,
+    k::Integer=0,
+    distmx::AbstractArray{T,2} = DefaultDistance();
+    normalize=true,
+    endpoints=false
+)
+
+    n_v = nv(g)
+    isdir = is_directed(g)
+
+    betweenness = zeros(n_v)
+    if k == 0
+        nodes = 1:n_v
+    else
+        nodes = sample(1:n_v, k, replace=false)   #112
+    end
+    states = parallel_dijkstra_shortest_paths(g,[nodes;]; allpaths=true)
+    for i in nodes
+        if endpoints
+            _accumulate_endpoints!(betweenness, states[i], g, s)
+        else
+            _accumulate_basic!(betweenness, states[i], g, s)
+        end
+    end
+
+    _rescale!(betweenness,
+              n_v,
+              normalize,
+              isdir,
+              k)
+
+    return betweenness
+end
+
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},

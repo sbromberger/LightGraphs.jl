@@ -78,8 +78,9 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
-            if rand() > β && !has_edge(g,s,target)
-                push!(edges,Edge(s, target))
+            e = Edge(s, target)
+            if rand() > β && !(e in edges)
+                push!(edges,e)
             else
                 while true
                     d = target
@@ -89,8 +90,9 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
                             d += 1
                         end
                     end
-                    if s != d
-                        push!(edges, Edge(s, d))
+                    e = Edge(s,d)
+                    if !(e in edges) && s != d
+                        push!(edges, e)
 
                         break
                     end
@@ -190,15 +192,10 @@ adjacency matrix and uses that to generate the directed graph.
 function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
 
-    if k == 0
-        return DiGraph(n)
-    end
-    if seed >= 0
-        srand(seed)
-    end
-    if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_digraph(n, n-k-1, dir, seed))
-    end
+    k == 0 && return DiGraph(n)
+    seed >= 0 && srand(seed)
+
+    (k > n/2) && iseven(n * (n-k-1)) && return complement(random_regular_digraph(n, n-k-1, dir, seed))
 
     cs = collect(2:n)
     i = 1
@@ -217,6 +214,6 @@ function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
     if dir == :out
         return DiGraph(sparse(I, J, V, n, n))
     else
-        return DiGraph(sparse(I, J, V, n, n)')
+        return DiGraph(sparse(J, I, V, n, n))
     end
 end

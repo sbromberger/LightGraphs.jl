@@ -97,6 +97,28 @@ function SparseGraph{T}(a::AbstractArray{T,2})
 end
 SparseGraph(g::SparseDiGraph) = SparseGraph(g.fm|g.bm)
 
+function SparseGraph{T}(a::SparseMatrixCSC{T, Int})
+    isequal(size(a)...) || error("Matrix must be square")
+    issym(a) || error("Matrix must be symmetric")
+    I, J, _ = findnz(a)
+    li = length(I)
+    V = fill(true, li)
+    g = SparseGraph()
+    sizehint!(g.edges, li)
+    for (s,d) in zip(I,J)
+        if s > d
+            s,d = d,s
+        end
+        push!(g.edges, Edge(s,d))
+    end
+    fm = sparse(I,J,V,a.m, a.m)
+    g.fm = fm | fm'
+    return g
+end
+
+
+
+
 SparseDiGraph(n::Int) = SparseDiGraph(Set{Edge}(), spzeros(Float64,n,n), spzeros(Bool,n,n))
 SparseDiGraph() = SparseDiGraph(0)
 
@@ -123,10 +145,25 @@ function SparseDiGraph{T}(a::AbstractArray{T,2}, major::Symbol=:byrow)
     end
     return g
 end
-SparseDiGraph(g::SparseGraph) = SparseDiGraph(g.fm)
 
-is_directed(g::SparseDiGraph) = true
-is_directed(g::SparseGraph) = false
+function SparseDiGraph{T}(a::SparseMatrixCSC{T, Int})
+    isequal(size(a)...) || error("Matrix must be square")
+    I, J, _ = findnz(a)
+    li = length(I)
+    V = fill(true, li)
+    g = SparseDiGraph()
+    sizehint!(g.edges, li)
+    for (s,d) in zip(I,J)
+        push!(g.edges, Edge(s,d))
+    end
+    fm = sparse(J,I,V,a.m, a.m)
+    bm = sparse(I,J,V,a.m, a.m)
+    g.fm = fm
+    g.bm = fm'
+    return g
+end
+
+SparseDiGraph(g::SparseGraph) = SparseDiGraph(g.fm)
 
 """Return the vertices of a graph."""
 vertices(g::AbstractSparseGraph) = 1:size(g.fm, 1)
@@ -272,10 +309,10 @@ function add_edges!(g::SparseGraph, es::Set{Edge})
     newedgemx = sparse(i,j,v,nv(g),nv(g))
     g.fm |= newedgemx
     g.fm |= newedgemx'
-    g.edges = es
+    union!(g.edges, es)
 end
 
-function add_edges!(g::SparseDiGraph, es::Vector{Edge})
+function add_edges!(g::SparseDiGraph, es::Set{Edge})
     nes = length(es)
     i = [dst(e) for e in es]
     j = [src(e) for e in es]
@@ -287,7 +324,8 @@ function add_edges!(g::SparseDiGraph, es::Vector{Edge})
     union!(g.edges, es)
 end
 
-add_edges!(g::SimpleGraph, es::Set{Edge}) = add_edges!(g, collect(es))
+add_edges!(g::AbstractSparseGraph, es::Vector{Edge}) = add_edges!(g, Set{Edge}(es))
+
 
 """Remove the edge from `src` to `dst`."""
 rem_edge!(g::SimpleGraph, s::Int, d::Int) = rem_edge!(g, Edge(s,d))
@@ -415,3 +453,6 @@ end
 
 typealias Graph SparseGraph
 typealias DiGraph SparseDiGraph
+
+is_directed(g::DiGraph) = true
+is_directed(g::Graph) = false
