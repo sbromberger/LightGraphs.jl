@@ -17,8 +17,22 @@ end
 
 _column(a::AbstractSparseArray, i::Integer) = sub(a.rowval, a.colptr[i]:a.colptr[i+1]-1)
 
+_parallel = false    # start off without parallelism
+
+"""Configure LightGraphs to use versions of functions that support multiple
+concurrent execution, where available. Enabling parallelism on single threaded
+systems will result in poor performance.
+"""
+function parallelize(p::Bool=true)
+    nprocs() == 1 && p && warn("Enabling parallelism on single-threaded Julia kernels will result in poor performance.")
+    global _parallel = p
+end
+
+
 # material nonimplication - test
 ⊅(p::Bool, q::Bool) = p & !q
+
+
 
 function ⊅{Ti, Tv}(a::SparseMatrixCSC{Ti, Tv}, b::SparseMatrixCSC)
     (m,n) = size(a)
@@ -46,6 +60,11 @@ function ⊅{Ti, Tv}(a::SparseMatrixCSC{Ti, Tv}, b::SparseMatrixCSC)
 
     return SparseMatrixCSC(a.m, a.n, wipcolptr, wiprowval, wipnzval)
 end
+
+
+""" Returns ranges that can split vector `a` into `i` equally-sized chunks """
+rangechunks(n,k) = filter(x->length(x)> 0, map(i -> div(i*n,k)+1:div((i+1)*n,k), 0:k-1))
+
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}

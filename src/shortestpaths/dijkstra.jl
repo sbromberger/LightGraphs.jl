@@ -14,15 +14,7 @@ type DijkstraState{T}<: AbstractDijkstraState
     pathcounts::Vector{Int}
 end
 
-"""Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between a source vertex `s` and all
-other nodes. Returns a `DijkstraState` that contains various traversal
-information (see below).
-
-With `allpaths=true`, returns a `DijkstraState` that keeps track of all
-predecessors of a given vertex (see below).
-"""
-function dijkstra_shortest_paths{T}(
+function singlethread_dijkstra_shortest_paths{T}(
     g::SimpleGraph,
     srcs::Vector{Int},
     distmx::AbstractArray{T, 2}=DefaultDistance();
@@ -87,8 +79,8 @@ function dijkstra_shortest_paths{T}(
     return DijkstraState{T}(parents, dists, preds, pathcounts)
 end
 
-dijkstra_shortest_paths{T}(g::SimpleGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
-  dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)
+singlethread_dijkstra_shortest_paths{T}(g::SimpleGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
+  singlethread_dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)
 
 function dijkstra_shortest_paths_sparse{T<:Real}(
     sparsemx::SharedSparseMatrixCSC{Bool, Int},
@@ -160,4 +152,21 @@ function parallel_dijkstra_shortest_paths{T}(g::AbstractSparseGraph, srcs::Vecto
         dijkstra_shortest_paths_sparse(fm, i, distmx, allpaths)
     end
     return states
+end
+
+
+"""Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+on a graph, computing shortest distances between a source vertex `s` and all
+other nodes. Returns a `DijkstraState` that contains various traversal
+information (see below).
+
+With `allpaths=true`, returns a `DijkstraState` that keeps track of all
+predecessors of a given vertex (see below).
+"""
+function dijkstra_shortest_paths(x...; y...)
+    if _parallel
+        parallel_dijkstra_shortest_paths(x...; y...)
+    else
+        singlethread_dijkstra_shortest_paths(x...; y...)
+    end
 end

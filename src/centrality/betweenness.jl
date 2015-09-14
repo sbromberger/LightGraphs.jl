@@ -2,54 +2,8 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-doc"""Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
-the graph `g`, or, optionally, of a random subset of `k` vertices. Can
-optionally include endpoints in the calculations. Normalization is enabled by
-default.
 
-Betweeness centrality is defined as:
-
-$bc(v) = \frac{1}{\mathcal{N}}
-        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
-
-
-#### Parameters
-
-g: SimpleGraph
-    A Graph, directed or undirected.
-
-weights: AbstractArray{Float64, 2}, optional
-    Matrix containing the weight associated with each edge (i,j)
-    `ω[i, j]` is the weight between vertices `i` and `j`.
-    If no weights are specified, shortest paths are computed using equal
-    weights. If values are missing, they are assumed equal to `1`.
-    *Advice* Use sparse matrices for better performances.
-
-k: Integer, optional
-    Use `k` nodes sample to estimate the betweenness centrality. If none,
-    betweenness centrality is computed using the `n` nodes in the graph.
-
-normalize: bool, optional
-    If true, the betweenness values are normalized by the total number
-    of possible distinct paths between all pairs in the graphs. For an undirected graph,
-    this number if `((n-1)*(n-2))/2` and for a directed graph, `(n-1)*(n-2)`
-    where `n` is the number of nodes in the graph.
-
-endpoints: bool, optional
-    If true, endpoints are included in the shortest path count.
-
-#### Returns
-
-betweenness: Array{Float64}
-    Betweenness centrality value per node id.
-
-#### Examples
-
-#### References
-
-[1] Brandes 2001 & Brandes 2008
-"""
-function betweenness_centrality(
+function singlethread_betweenness_centrality(
     g::SimpleGraph,
     k::Integer=0;
     normalize=true,
@@ -65,7 +19,7 @@ function betweenness_centrality(
         nodes = sample(1:n_v, k, replace=false)   #112
     end
     for s in nodes
-        state = dijkstra_shortest_paths(g, s; allpaths=true)
+        state = singlethread_dijkstra_shortest_paths(g, s; allpaths=true)
         if endpoints
             _accumulate_endpoints!(betweenness, state, g, s)
         else
@@ -99,33 +53,15 @@ function parallel_betweenness_centrality{T}(
     else
         distmx = distmx[1:n_v, 1:n_v]
     end
-    info("distmx set")
     isdir = is_directed(g)
     betweenness = SharedArray(Float64, n_v, init=s->s[localindexes(s)] = 0.0)
-    info("betweenness set")
     if k == 0
         nodes = 1:n_v
     else
         nodes = sample(1:n_v, k, replace=false)   #112
     end
 
-    nprox = nworkers()
-    ls = length(nodes)
-    (ls_perproc, r) = divrem(ls,nprox)
-    if ls_perproc == 0
-        splits = [i:i for i in 1:ls]
-    else
-        startsplits = collect(1:ls_perproc:ls)
-        if r > 0
-            startsplits = startsplits[1:end-1]
-        end
-        endsplits = startsplits + (ls_perproc -1)
-        endsplits[end] = ls
-        splits = [x:y for (x,y) in zip(startsplits, endsplits)]
-    end
-    info("splits = $splits")
-    @sync @parallel for i in splits
-        info("processing $i")
+    @sync @parallel for i in rangechunks(length(nodes), nworkers())
         for s in i
             state = dijkstra_shortest_paths_sparse(spmx, s, distmx, true)
             if endpoints
@@ -134,53 +70,14 @@ function parallel_betweenness_centrality{T}(
                 _parallel_accumulate_basic!(betweenness, state, s)
             end
         end
-        info("ending $i")
     end
-    info("all workers done")
     _rescale!(betweenness,
               n_v,
               normalize,
               isdir,
               k)
-    info("rescaled")
     return betweenness
 end
-
-function pbc{T}(
-    g::AbstractSparseGraph,
-    k::Integer=0,
-    distmx::AbstractArray{T,2} = DefaultDistance();
-    normalize=true,
-    endpoints=false
-)
-
-    n_v = nv(g)
-    isdir = is_directed(g)
-
-    betweenness = zeros(n_v)
-    if k == 0
-        nodes = 1:n_v
-    else
-        nodes = sample(1:n_v, k, replace=false)   #112
-    end
-    states = parallel_dijkstra_shortest_paths(g,[nodes;]; allpaths=true)
-    for i in nodes
-        if endpoints
-            _accumulate_endpoints!(betweenness, states[i], g, s)
-        else
-            _accumulate_basic!(betweenness, states[i], g, s)
-        end
-    end
-
-    _rescale!(betweenness,
-              n_v,
-              normalize,
-              isdir,
-              k)
-
-    return betweenness
-end
-
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
@@ -321,5 +218,60 @@ function _rescale!{T<:AbstractArray{Float64,1}}(betweenness::T, n::Int, normaliz
         for v = 1:length(betweenness)
             betweenness[v] *= scale
         end
+    end
+end
+
+doc"""Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
+the graph `g`, or, optionally, of a random subset of `k` vertices. Can
+optionally include endpoints in the calculations. Normalization is enabled by
+default.
+
+Betweeness centrality is defined as:
+
+$bc(v) = \frac{1}{\mathcal{N}}
+        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
+
+
+#### Parameters
+
+g: SimpleGraph
+    A Graph, directed or undirected.
+
+weights: AbstractArray{Float64, 2}, optional
+    Matrix containing the weight associated with each edge (i,j)
+    `ω[i, j]` is the weight between vertices `i` and `j`.
+    If no weights are specified, shortest paths are computed using equal
+    weights. If values are missing, they are assumed equal to `1`.
+    *Advice* Use sparse matrices for better performances.
+
+k: Integer, optional
+    Use `k` nodes sample to estimate the betweenness centrality. If none,
+    betweenness centrality is computed using the `n` nodes in the graph.
+
+normalize: bool, optional
+    If true, the betweenness values are normalized by the total number
+    of possible distinct paths between all pairs in the graphs. For an undirected graph,
+    this number if `((n-1)*(n-2))/2` and for a directed graph, `(n-1)*(n-2)`
+    where `n` is the number of nodes in the graph.
+
+endpoints: bool, optional
+    If true, endpoints are included in the shortest path count.
+
+#### Returns
+
+betweenness: Array{Float64}
+    Betweenness centrality value per node id.
+
+#### Examples
+
+#### References
+
+[1] Brandes 2001 & Brandes 2008
+"""
+function betweenness_centrality(x...;y...)
+    if _parallel
+        parallel_betweenness_centrality(x...; y...)
+    else
+        singlethread_betweenness_centrality(x...; y...)
     end
 end
