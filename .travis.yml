@@ -1,9 +1,10 @@
 language: julia
+sudo: false
 os:
   - linux
   - osx
 julia:
-  - release
+#  - release
   - nightly
 notifications:
   email: false
@@ -13,5 +14,4 @@ script:
   - julia --check-bounds=yes -e 'Pkg.clone("https://github.com/jpfairbanks/GraphMatrices.jl.git")'
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
 after_success:
-    - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
-
+  - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'

@@ -10,20 +10,31 @@
 # Multiple graphs may be present in one file.
 
 function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
-    readedges = Set{@compat Tuple{Int,Int}}()
-    if directed
-        g = DiGraph(n_v)
-    else
-        g = Graph(n_v)
-    end
+    readedges = Set{Tuple{Int,Int}}()
+    I = Vector{Int}()
+    J = Vector{Int}()
+    V = fill(true, n_e)
+    edges = Set{Edge}()
+    sizehint!(I, n_e)
+    sizehint!(J, n_e)
+    sizehint!(edges, n_e)
     for i = 1:n_e
         line = chomp(readline(f))
         if length(line) > 0
-            src_s, dst_s = @compat(split(line,r"\s*,\s*"))
+            src_s, dst_s = split(line,r"\s*,\s*")
             src = parse(Int, src_s)
             dst = parse(Int, dst_s)
-            add_edge!(g, src, dst)
+            push!(I, src)
+            push!(J, dst)
+            push!(edges, Edge(src,dst))
         end
+    end
+    fmx = sparse(J, I, V, n_v, n_v)
+    if directed
+        bmx = sparse(I, J, V, n_v, n_v)
+        g = SparseDiGraph(edges, fmx, bmx)
+    else
+        g = SparseGraph(edges, fmx)
     end
     return g
 end
@@ -36,7 +47,7 @@ end
 
 """Returns a dictionary of (name=>graph) loaded from file `fn`."""
 function readgraph(fn::AbstractString, gname::AbstractString="")
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     f = GZip.open(fn,"r")        # should work even if uncompressed
 
     while !eof(f)
@@ -44,7 +55,7 @@ function readgraph(fn::AbstractString, gname::AbstractString="")
         if startswith(line,"#") || line == ""
             next
         else
-            nvstr, nestr, dirundir, graphname = @compat(split(line, r"s*,s*", limit=4))
+            nvstr, nestr, dirundir, graphname = split(line, r"s*,s*", limit=4)
             n_v = parse(Int, nvstr)
             n_e = parse(Int, nestr)
             dirundir = strip(dirundir)
@@ -91,7 +102,7 @@ with default `GZip` compression.
 Returns number of graphs written.
 """
 function write{S<:AbstractString, G<:SimpleGraph}(
-    graphs::@compat(Dict{S, G}),
+    graphs::Dict{S, G},
     fn::AbstractString;
     compress::Bool=true
 )
@@ -113,14 +124,14 @@ write(
     gname::AbstractString,
     fn::AbstractString;
     compress::Bool=true
-) = write(@compat(Dict(gname=>g)), fn; compress=compress)
+) = write(Dict(gname=>g), fn; compress=compress)
 
 write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed Graph", fn; compress=compress)
 write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed DiGraph", fn; compress=compress)
 
 function _process_graphml(e::XMLElement, isdirected::Bool)
-    nodes = @compat(Dict{AbstractString,Int}())
-    edges = @compat(Vector{Edge}())
+    nodes = Dict{AbstractString,Int}()
+    edges = Vector{Edge}()
 
     nodeid = 1
     for f in child_elements(e)
@@ -153,7 +164,7 @@ function readgraphml(filename::AbstractString, gname::AbstractString="")
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance
@@ -189,12 +200,12 @@ Can optionally restrict to a single graph by specifying a name in gname."""
 function readgml(filename::AbstractString, gname::AbstractString="")
     f = open(readall,filename)
     p = parse_dict(f)
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     for gs in p[:graph]
 
-        dir = @compat(Bool(get(gs, :directed, 0)))
+        dir = Bool(get(gs, :directed, 0))
         nodes = [x[:id] for x in gs[:node]]
-        mapping = @compat(Dict{Int,Int}())
+        mapping = Dict{Int,Int}()
         for (i,n) in enumerate(nodes)
             mapping[n] = i
         end
@@ -207,7 +218,7 @@ function readgml(filename::AbstractString, gname::AbstractString="")
             graphname = get(gs, :name, "Unnamed Graph")
         end
         if (gname == "" || gname == graphname)
-            sds = @compat([(Int(x[:source]), Int(x[:target])) for x in gs[:edge]])
+            sds = [(Int(x[:source]), Int(x[:target])) for x in gs[:edge]]
             for (s,d) in (sds)
                 add_edge!(g, mapping[s], mapping[d])
             end

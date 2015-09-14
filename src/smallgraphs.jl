@@ -1,52 +1,40 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
+
 """Creates a complete graph with `n` vertices. A complete graph has edges
 connecting each pair of vertices.
 """
-function CompleteGraph(n::Integer)
-    g = Graph(n)
-    for i = 1:n, j=1:n
-        if i < j
-            add_edge!(g,i,j)
-        end
-    end
-    return g
-end
+CompleteGraph(n::Integer) = Graph(sparse(fill(true,(n,n))) - speye(Bool,n,n))
+
 
 """Creates a complete digraph with `n` vertices. A complete digraph has edges
 connecting each pair of vertices (both an ingoing and outgoing edge).
 """
-function CompleteDiGraph(n::Integer)
-    g = DiGraph(n)
-    for i = 1:n, j=1:n
-        if i != j
-            add_edge!(g,i,j)
-        end
-    end
-    return g
-end
+CompleteDiGraph(n::Integer) = DiGraph(sparse(fill(true,(n,n))) - speye(Bool,n,n))
+
 
 """Creates a star graph with `n` vertices. A star graph has a central vertex
 with edges to each other vertex.
 """
 function StarGraph(n::Integer)
-    g = Graph(n)
-    for i = 2:n
-        add_edge!(g,1,i)
-    end
-    return g
+    i1 = [2:n;]
+    i2 = fill(1, n-1)
+
+    i = vcat(i1, i2)
+    j = vcat(i2, i1)
+    v = fill(true, length(i))
+    return Graph(sparse(i,j,v,n,n))
 end
 
 """Creates a star digraph with `n` vertices. A star digraph has a central
 vertex with directed edges to every other vertex.
 """
 function StarDiGraph(n::Integer)
-    g = DiGraph(n)
-    for i = 2:n
-        add_edge!(g,1,i)
-    end
-    return g
+    i = [2:n;]
+    j = fill(1, n-1)
+    v = fill(true, length(i))
+    return DiGraph(sparse(i,j,v,n,n))
 end
 
 """Creates a path graph with `n` vertices. A path graph connects each
@@ -98,7 +86,7 @@ function WheelDiGraph(n::Integer)
 end
 
 
-function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
+function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = Graph(n)
     for (s,d) in edgelist
         add_edge!(g,s,d)
@@ -106,7 +94,7 @@ function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compa
     return g
 end
 
-function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
+function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = DiGraph(n)
     for (s,d) in edgelist
         add_edge!(g,s,d)

@@ -2,12 +2,12 @@
 *LightGraphs.jl* includes the following distance measurements:
 ### eccentricity
 ```
-eccentricity(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-eccentricity(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-eccentricity{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64, distmx::AbstractArray{T,2})
-eccentricity(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, vs::AbstractArray{Int64,1})
-eccentricity{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, vs::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-eccentricity{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+eccentricity(g::LightGraphs.SimpleGraph)
+eccentricity(g::LightGraphs.SimpleGraph, v::Int64)
+eccentricity{T}(g::LightGraphs.SimpleGraph, v::Int64, distmx::AbstractArray{T,2})
+eccentricity(g::LightGraphs.SimpleGraph, vs::AbstractArray{Int64,1})
+eccentricity{T}(g::LightGraphs.SimpleGraph, vs::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
+eccentricity{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the entire graph. An optional matrix of edge distances may be supplied.
 
@@ -22,32 +22,32 @@ Note: the eccentricity vector returned by `eccentricity()` may be used as input 
 ### radius
 ```
 radius{T}(all_e::Array{T,1})
-radius(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-radius{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+radius(g::LightGraphs.SimpleGraph)
+radius{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Returns the minimum eccentricity of the graph.
 
 ### diameter
 ```
 diameter{T}(all_e::Array{T,1})
-diameter(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-diameter{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+diameter(g::LightGraphs.SimpleGraph)
+diameter{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Returns the maximum eccentricity of the graph.
 
 ### center
 ```
 center{T}(all_e::Array{T,1})
-center(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-center{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+center(g::LightGraphs.SimpleGraph)
+center{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Returns the set of all vertices whose eccentricity is equal to the graph's radius (that is, the set of vertices with the smallest eccentricity).
 
 ### periphery
 ```
 periphery{T}(all_e::Array{T,1})
-periphery(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-periphery{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+periphery(g::LightGraphs.SimpleGraph)
+periphery{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Returns the set of all vertices whose eccentricity is equal to the graph's diameter (that is, the set of vertices with the largest eccentricity).
 

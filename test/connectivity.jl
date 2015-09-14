@@ -96,8 +96,8 @@ fig8 = spzeros(6,6)
 fig8[[2,10,13,21,24,27,35]] = 1
 fig8 = DiGraph(fig8)
 
-@test strongly_connected_components(fig1) == scc_fig1
-@test strongly_connected_components(fig3) == scc_fig3
+@test Set(strongly_connected_components(fig1)) == Set(scc_fig1)
+@test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
 
 @test period(n_ring) == n
 @test period(n_ring_shortcut) == 2

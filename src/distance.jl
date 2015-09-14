@@ -3,11 +3,15 @@
 #     issparse(distmx)? (nnz(distmx) > 0) : !isempty(distmx)
 
 type DefaultDistance<:AbstractArray{Int, 2}
+    nv::Int
+    DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end
 
 getindex(::DefaultDistance, s::Int, d::Int) = 1
-size(::DefaultDistance) = (typemax(Int), typemax(Int))
-
+getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
+size(d::DefaultDistance) = (d.nv, d.nv)
+transpose(d::DefaultDistance) = d
+ctranspose(d::DefaultDistance) = d
 """
 Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the
 entire graph. An optional matrix of edge distances may be supplied.

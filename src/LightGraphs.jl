@@ -1,21 +1,22 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+# VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 module LightGraphs
 
-using Compat
 using GZip
 using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
+using ParallelSparseMatMul
 
-if VERSION < v"0.4.0-dev"
-    try
-        import Docile: @doc_str, @doc_mstr
-    catch
-        macro doc_str(x) x end
-        macro doc_mstr(x) x end
-    end
-end
+# if VERSION < v"0.4.0-dev"
+#     try
+#         import Docile: @doc_str, @doc_mstr
+#     catch
+#         macro doc_str(x) x end
+#         macro doc_mstr(x) x end
+#     end
+# end
 
 try
     using GraphMatrices
@@ -25,12 +26,12 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym
+            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy,
+            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-in_edges, out_edges, has_vertex, has_edge, is_directed,
+export SimpleGraph, AbstractSparseGraph, Edge, Graph, DiGraph, SparseGraph, SparseDiGraph,
+vertices, edges, src, dst, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
@@ -114,27 +115,27 @@ more traditional and better-optimized mechanisms.
 """
 LightGraphs
 
+# include("sharedsparse.jl")
 include("core.jl")
-    include("digraph.jl")
-    include("graph.jl")
-        include("traversals/graphvisit.jl")
-            include("traversals/bfs.jl")
-            include("traversals/dfs.jl")
-            include("traversals/maxadjvisit.jl")
-        include("connectivity.jl")
-        include("distance.jl")
-        include("shortestpaths/astar.jl")
-        include("shortestpaths/bellman-ford.jl")
-        include("shortestpaths/dijkstra.jl")
-        include("shortestpaths/floyd-warshall.jl")
-        include("spectral.jl")
-        include("operators.jl")
-        include("persistence.jl")
-        include("randgraphs.jl")
-        include("smallgraphs.jl")
-        include("centrality/betweenness.jl")
-        include("centrality/closeness.jl")
-        include("centrality/degree.jl")
-        include("centrality/katz.jl")
-        include("centrality/pagerank.jl")
+    include("degree.jl")
+    include("traversals/graphvisit.jl")
+        include("traversals/bfs.jl")
+        include("traversals/dfs.jl")
+        include("traversals/maxadjvisit.jl")
+    include("connectivity.jl")
+    include("distance.jl")
+    include("shortestpaths/astar.jl")
+    include("shortestpaths/bellman-ford.jl")
+    include("shortestpaths/dijkstra.jl")
+    include("shortestpaths/floyd-warshall.jl")
+    include("spectral.jl")
+    include("operators.jl")
+    include("persistence.jl")
+    include("randgraphs.jl")
+    include("smallgraphs.jl")
+    include("centrality/betweenness.jl")
+    include("centrality/closeness.jl")
+    include("centrality/degree.jl")
+    include("centrality/katz.jl")
+    include("centrality/pagerank.jl")
 end # module

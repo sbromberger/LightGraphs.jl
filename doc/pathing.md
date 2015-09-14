@@ -12,13 +12,13 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 * `MaximumAdjacency`.
 ### bfs_tree
 ```
-bfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+bfs_tree(g::LightGraphs.SimpleGraph, s::Int64)
 ```
 Provides a breadth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
 
 ### dfs_tree
 ```
-dfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+dfs_tree(g::LightGraphs.SimpleGraph, s::Int64)
 ```
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
 
@@ -26,64 +26,64 @@ Provides a depth-first traversal of the graph `g` starting with source vertex `s
 `Graph connectivity` functions are defined on both undirected and directed graphs:
 ### is_connected
 ```
-is_connected(g::LightGraphs.Graph)
-is_connected(g::LightGraphs.DiGraph)
+is_connected(g::LightGraphs.SparseGraph)
+is_connected(g::LightGraphs.SparseDiGraph)
 ```
 Returns `true` if `g` is connected. For DiGraphs, this is equivalent to a test of weak connectivity.
 
 ### is_strongly_connected
 ```
-is_strongly_connected(g::LightGraphs.DiGraph)
+is_strongly_connected(g::LightGraphs.SparseDiGraph)
 ```
 Returns `true` if `g` is (strongly) connected.
 
 ### is_weakly_connected
 ```
-is_weakly_connected(g::LightGraphs.DiGraph)
+is_weakly_connected(g::LightGraphs.SparseDiGraph)
 ```
 Returns `true` if the undirected graph of `g` is connected.
 
 ### connected_components
 ```
-connected_components(g::LightGraphs.Graph)
+connected_components(g::LightGraphs.SparseGraph)
 ```
 Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)) of an undirected graph `g` as a vector of components, each represented by a vector of vectors of vertices belonging to the component.
 
 ### strongly_connected_components
 ```
-strongly_connected_components(g::LightGraphs.DiGraph)
+strongly_connected_components(g::LightGraphs.SparseDiGraph)
 ```
 Computes the (strongly) connected components of a directed graph.
 
 ### weakly_connected_components
 ```
-weakly_connected_components(g::LightGraphs.DiGraph)
+weakly_connected_components(g::LightGraphs.SparseDiGraph)
 ```
 Returns connected components of the undirected graph of `g`.
 
 ### has_self_loop
 ```
-has_self_loop(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+has_self_loop(g::LightGraphs.AbstractSparseGraph)
 ```
 Returns true if `g` is has any self loops.
 
 ### attracting_components
 ```
-attracting_components(g::LightGraphs.DiGraph)
+attracting_components(g::LightGraphs.SparseDiGraph)
 ```
 Returns a vector of vectors of integers representing lists of attracting components in `g`. The attracting components are a subset of the strongly connected components in which the components do not have any leaving edges.
 
 ### is_bipartite
 ```
-is_bipartite(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-is_bipartite(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+is_bipartite(g::LightGraphs.SimpleGraph)
+is_bipartite(g::LightGraphs.SimpleGraph, s::Int64)
 ```
 Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 
 ### condensation
 ```
-condensation(g::LightGraphs.DiGraph)
-condensation(g::LightGraphs.DiGraph, scc::Array{Array{Int64,1},1})
+condensation(g::LightGraphs.SparseDiGraph)
+condensation(g::LightGraphs.SparseDiGraph, scc::Array{Array{Int64,1},1})
 ```
 Computes the condensation graph of the strongly connected components.
 
@@ -91,7 +91,7 @@ Returns the condensation graph associated with `g`. The condensation `h` of a gr
 
 ### period
 ```
-period(g::LightGraphs.DiGraph)
+period(g::LightGraphs.SparseDiGraph)
 ```
 Computes the (common) period for all nodes in a strongly connected graph.
 
@@ -100,7 +100,7 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
 ### is_cyclic
 ```
-is_cyclic(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+is_cyclic(graph::LightGraphs.SimpleGraph)
 ```
 Tests whether a graph contains a cycle through depth-first search. It returns `true` when it finds a cycle, otherwise `false`.
 
@@ -108,15 +108,15 @@ Tests whether a graph contains a cycle through depth-first search. It returns `t
 Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 ### mincut
 ```
-mincut(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-mincut{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+mincut(graph::LightGraphs.SimpleGraph)
+mincut{T}(graph::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Returns a tuple `(parity, bestcut)`, where `parity` is a vector of boolean values that determines the partition in `g` and `bestcut` is the weight of the cut that makes this partition. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1.
 
 ### maximum_adjacency_visit
 ```
-maximum_adjacency_visit(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-maximum_adjacency_visit{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2}, log::Bool, io::IO)
+maximum_adjacency_visit(graph::LightGraphs.SimpleGraph)
+maximum_adjacency_visit{T}(graph::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2}, log::Bool, io::IO)
 ```
 Returns the vertices in `g` traversed by maximum adjacency search. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1. If `log` (default `false`) is `true`, visitor events will be printed to `io`, which defaults to `STDOUT`; otherwise, no event information will be displayed.
 
@@ -126,18 +126,18 @@ Returns the vertices in `g` traversed by maximum adjacency search. An optional `
 * The distance between two vertices with no connecting edge is always `Inf`.
 ### a_star
 ```
-a_star(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, t::Int64)
-a_star{T<:Number}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, t::Int64, distmx::AbstractArray{T<:Number,2})
-a_star{T<:Number}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, t::Int64, distmx::AbstractArray{T<:Number,2}, heuristic::Function)
+a_star(graph::LightGraphs.SimpleGraph, s::Int64, t::Int64)
+a_star{T<:Number}(graph::LightGraphs.SimpleGraph, s::Int64, t::Int64, distmx::AbstractArray{T<:Number,2})
+a_star{T<:Number}(graph::LightGraphs.SimpleGraph, s::Int64, t::Int64, distmx::AbstractArray{T<:Number,2}, heuristic::Function)
 ```
 Computes the shortest path between vertices `s` and `t` using the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm). An optional heuristic function and edge distance matrix may be supplied.
 
 ### dijkstra_shortest_paths
 ```
-dijkstra_shortest_paths(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, srcs::Array{Int64,1})
-dijkstra_shortest_paths{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, srcs::Array{Int64,1}, distmx::AbstractArray{T,2})
-dijkstra_shortest_paths(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, src::Int64)
-dijkstra_shortest_paths{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, src::Int64, distmx::AbstractArray{T,2})
+dijkstra_shortest_paths(g::LightGraphs.SimpleGraph, srcs::Array{Int64,1})
+dijkstra_shortest_paths{T}(g::LightGraphs.SimpleGraph, srcs::Array{Int64,1}, distmx::AbstractArray{T,2})
+dijkstra_shortest_paths(g::LightGraphs.SimpleGraph, src::Int64)
+dijkstra_shortest_paths{T}(g::LightGraphs.SimpleGraph, src::Int64, distmx::AbstractArray{T,2})
 ```
 Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) on a graph, computing shortest distances between a source vertex `s` and all other nodes. Returns a `DijkstraState` that contains various traversal information (see below).
 
@@ -145,26 +145,26 @@ With `allpaths=true`, returns a `DijkstraState` that keeps track of all predeces
 
 ### bellman_ford_shortest_paths
 ```
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1})
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64, distmx::AbstractArray{T,2})
+bellman_ford_shortest_paths(graph::LightGraphs.SimpleGraph, sources::AbstractArray{Int64,1})
+bellman_ford_shortest_paths{T}(graph::LightGraphs.SimpleGraph, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
+bellman_ford_shortest_paths(graph::LightGraphs.SimpleGraph, v::Int64)
+bellman_ford_shortest_paths{T}(graph::LightGraphs.SimpleGraph, v::Int64, distmx::AbstractArray{T,2})
 ```
 Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex `s` or a set of source vertices `ss`. Returns a `BellmanFordState` with relevant traversal information (see below).
 
 ### bellman_ford_shortest_paths
 ```
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1})
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64, distmx::AbstractArray{T,2})
+bellman_ford_shortest_paths(graph::LightGraphs.SimpleGraph, sources::AbstractArray{Int64,1})
+bellman_ford_shortest_paths{T}(graph::LightGraphs.SimpleGraph, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
+bellman_ford_shortest_paths(graph::LightGraphs.SimpleGraph, v::Int64)
+bellman_ford_shortest_paths{T}(graph::LightGraphs.SimpleGraph, v::Int64, distmx::AbstractArray{T,2})
 ```
 Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex `s` or a set of source vertices `ss`. Returns a `BellmanFordState` with relevant traversal information (see below).
 
 ### floyd_warshall_shortest_paths
 ```
-floyd_warshall_shortest_paths(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-floyd_warshall_shortest_paths{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
+floyd_warshall_shortest_paths(g::LightGraphs.SimpleGraph)
+floyd_warshall_shortest_paths{T}(g::LightGraphs.SimpleGraph, distmx::AbstractArray{T,2})
 ```
 Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm) to compute shortest paths between all pairs of vertices in graph `g`. Returns a `FloydWarshallState` with relevant traversal information, each is a vertex-indexed vector of vectors containing the metric for each vertex in the graph.
 
@@ -173,14 +173,14 @@ Note that this algorithm may return a large amount of data (it will allocate on 
 ## Path discovery / enumeration
 ### gdistances
 ```
-gdistances(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources)
+gdistances(graph::LightGraphs.SimpleGraph, sources)
 ```
 Returns the geodesic distances of graph `g` from source vertex `s` or a set of source vertices `ss`.
 
 ### gdistances!
 ```
-gdistances!{DMap}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, dists::DMap)
-gdistances!{DMap}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, dists::DMap)
+gdistances!{DMap}(graph::LightGraphs.SimpleGraph, s::Int64, dists::DMap)
+gdistances!{DMap}(graph::LightGraphs.SimpleGraph, sources::AbstractArray{Int64,1}, dists::DMap)
 ```
 Returns the geodesic distances of graph `g` from source vertex `s` or a set of source vertices `ss`.
 

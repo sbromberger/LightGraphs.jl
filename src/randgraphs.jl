@@ -1,33 +1,35 @@
 # These are test functions only, used for consistent centrality comparisons.
 function Graph(nv::Integer, ne::Integer)
-    g = Graph(nv)
 
-    i = 1
-    while i <= ne
-        source = rand(1:nv)
-        dest = rand(1:nv)
-        e = (source, dest)
-        if (source != dest) && !(has_edge(g,source,dest))
-            i+= 1
-            add_edge!(g,source,dest)
+    es = Set{Edge}()
+    g = Graph(nv)
+    while length(es) < ne
+        s = rand(1:nv)
+        d = rand(1:nv)
+        if s > d
+            s, d = d, s
+        end
+        if s != d
+            e = Edge(s,d)
+            push!(es, e)
         end
     end
+    add_edges!(g,es)
     return g
 end
 
 function DiGraph(nv::Integer, ne::Integer)
+    es = Set{Edge}()
     g = DiGraph(nv)
-
-    i = 1
-    while i <= ne
-        source = rand(1:nv)
-        dest = rand(1:nv)
-        e = (source, dest)
-        if (source != dest) && !(has_edge(g,source,dest))
-            i+= 1
-            add_edge!(g,source,dest)
+    while length(es) < ne
+        s = rand(1:nv)
+        d = rand(1:nv)
+        if (s != d)
+            e = Edge(s,d)
+            push!(es, e)
         end
     end
+    add_edges!(g,es)
     return g
 end
 
@@ -41,6 +43,7 @@ Note also that Erdős–Rényi graphs may be generated quickly using the
 vertices.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false)
+    edges = Set{Edge}()
     if is_directed
         g = DiGraph(n)
     else
@@ -51,10 +54,11 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false)
         jstart = is_directed? 1 : i
         for j = jstart : n
             if i != j && rand() <= p
-                add_edge!(g, i, j)
+                push!(edges, Edge(i, j))
             end
         end
     end
+    add_edges!(g, edges)
     return g
 end
 
@@ -70,11 +74,13 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
     else
         g = Graph(n)
     end
+    edges = Set{Edge}()
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
-            if rand() > β && !has_edge(g,s,target)
-                add_edge!(g, s, target)
+            e = Edge(s, target)
+            if rand() > β && !(e in edges)
+                push!(edges,e)
             else
                 while true
                     d = target
@@ -84,8 +90,9 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
                             d += 1
                         end
                     end
-                    if !has_edge(g, s, d) && s != d
-                        add_edge!(g, s, d)
+                    e = Edge(s,d)
+                    if !(e in edges) && s != d
+                        push!(edges, e)
 
                         break
                     end
@@ -93,6 +100,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false)
             end
         end
     end
+    add_edges!(g,edges)
     return g
 end
 
@@ -132,7 +140,7 @@ function _try_creation(n::Int, k::Int)
             return Set{Edge}()
         end
 
-        stubs = @compat(Vector{Int}())
+        stubs = Vector{Int}()
         for (e, ct) in potential_edges
             append!(stubs, fill(e, ct))
         end
@@ -168,9 +176,7 @@ function random_regular_graph(n::Int, k::Int, seed::Int=-1)
     end
 
     g = Graph(n)
-    for edge in edges
-        add_edge!(g, edge)
-    end
+    add_edges!(g, edges)
 
     return g
 end
@@ -186,15 +192,10 @@ adjacency matrix and uses that to generate the directed graph.
 function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
 
-    if k == 0
-        return DiGraph(n)
-    end
-    if seed >= 0
-        srand(seed)
-    end
-    if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_digraph(n, n-k-1, dir, seed))
-    end
+    k == 0 && return DiGraph(n)
+    seed >= 0 && srand(seed)
+
+    (k > n/2) && iseven(n * (n-k-1)) && return complement(random_regular_digraph(n, n-k-1, dir, seed))
 
     cs = collect(2:n)
     i = 1
@@ -213,6 +214,6 @@ function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
     if dir == :out
         return DiGraph(sparse(I, J, V, n, n))
     else
-        return DiGraph(sparse(I, J, V, n, n)')
+        return DiGraph(sparse(J, I, V, n, n))
     end
 end

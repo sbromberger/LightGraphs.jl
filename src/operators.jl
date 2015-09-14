@@ -1,10 +1,10 @@
 """Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
-of a graph."""
-function complement(g::Graph)
+of a graph. Set self_loops to `true` to include self-loops."""
+function complement(g::Graph, self_loops=false)
     gnv = nv(g)
     h = Graph(gnv)
-    for i=1:gnv
-        for j=i+1:gnv
+    @inbounds for i=1:gnv
+        for j=i+Int(!self_loops):gnv
             if !(has_edge(g,i,j))
                 add_edge!(h,i,j)
             end
@@ -13,12 +13,12 @@ function complement(g::Graph)
     return h
 end
 
-function complement(g::DiGraph)
+function complement(g::DiGraph, self_loops=false)
     gnv = nv(g)
     h = DiGraph(gnv)
     for i=1:gnv
         for j=1:gnv
-            if i != j
+            if i!=j || self_loops
                 if !(has_edge(g,i,j))
                     add_edge!(h,i,j)
                 end
@@ -48,7 +48,7 @@ function reverse!(g::DiGraph)
         push!(reve, reverse(e))
     end
     g.edges = reve
-    g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
+    g.fm, g.bm = g.bm, g.fm
     return g
 end
 
@@ -59,10 +59,8 @@ Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 """
 function blkdiag{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
-    r = T(gnv + nv(h))
-    for e in edges(g)
-        add_edge!(r,e)
-    end
+    r = copy(g)
+    add_vertices!(r, nv(h))
     for e in edges(h)
         add_edge!(r, gnv+src(e), gnv+dst(e))
     end
@@ -78,9 +76,7 @@ function intersect{T<:SimpleGraph}(g::T, h::T)
     hnv = nv(h)
 
     r = T(min(gnv, hnv))
-    for e in intersect(edges(g),edges(h))
-        add_edge!(r,e)
-    end
+    add_edges!(r, intersect(edges(g),edges(h)))
     return r
 end
 
@@ -129,11 +125,8 @@ end
 function union{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
-
     r = T(max(gnv, hnv))
-    for e in union(edges(g), edges(h))
-        add_edge!(r, e)
-    end
+    add_edges!(r, union(edges(g), edges(h)))
     return r
 end
 
@@ -197,13 +190,10 @@ end
 
 """sum(g,i) provides 1:indegree or 2:outdegree vectors"""
 function sum(g::SimpleGraph, dim::Int)
-    if dim == 1
-        return indegree(g, vertices(g))
-    elseif dim == 2
-        return outdegree(g, vertices(g))
-    else
-        error("Graphs are only two dimensional")
-    end
+    dim == 1 && return indegree(g)
+    dim == 2 && return outdegree(g)
+
+    error("Graphs are only two dimensional")
 end
 
 
@@ -215,7 +205,7 @@ size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
 sum(g::SimpleGraph) = ne(g)
 
 """sparse(g) is the adjacency_matrix of g"""
-sparse(g::SimpleGraph) = adjacency_matrix(g)
+sparse(g::SimpleGraph, x...) = adjacency_matrix(g, x...)
 
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
 eltype(g::SimpleGraph) = Float64

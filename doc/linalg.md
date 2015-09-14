@@ -5,45 +5,40 @@ undirected graphs:
 ## Adjacency
 ### adjacency_matrix
 ```
-adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, dir::Symbol)
-adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, dir::Symbol, T::DataType)
+adjacency_matrix(g::LightGraphs.AbstractSparseGraph)
+adjacency_matrix(g::LightGraphs.AbstractSparseGraph, major::Symbol)
+adjacency_matrix(g::LightGraphs.AbstractSparseGraph, major::Symbol, T::DataType)
 ```
-Returns a sparse boolean adjacency matrix for a graph, indexed by `[src, dst]` vertices. `true` values indicate an edge between `src` and `dst`. Users may specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out` is default for both directed and undirected graphs) and a data type for the matrix (defaults to `Int`).
+Returns a sparse boolean adjacency matrix for a graph, indexed by `[src, dst]` vertices. `true` values indicate an edge between `src` and `dst`. Users may specify a row-major (`:byrow`, default) or column-major(`:bycol`) representation via `major`. Users may also specify a data type for the matrix (defaults to `Int`).
 
 Note: This function is optimized for speed.
 
 ### adjacency_spectrum
 ```
-adjacency_spectrum(g::LightGraphs.Graph)
-adjacency_spectrum(g::LightGraphs.Graph, dir::Symbol)
-adjacency_spectrum(g::LightGraphs.Graph, dir::Symbol, T::DataType)
-adjacency_spectrum(g::LightGraphs.DiGraph)
-adjacency_spectrum(g::LightGraphs.DiGraph, dir::Symbol)
-adjacency_spectrum(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
+adjacency_spectrum(g::LightGraphs.SparseGraph)
+adjacency_spectrum(g::LightGraphs.SparseGraph, T::DataType)
+adjacency_spectrum(g::LightGraphs.SparseDiGraph)
+adjacency_spectrum(g::LightGraphs.SparseDiGraph, T::DataType)
 ```
-Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use `eigs(adjacency_matrix(g);kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as `adjacency_matrix`.
+Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Uses `eigs(adjacency_matrix(g);kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `T` are the same as `adjacency_matrix`.
 
 ## Laplacian
 ### laplacian_matrix
 ```
-laplacian_matrix(g::LightGraphs.Graph)
-laplacian_matrix(g::LightGraphs.Graph, dir::Symbol)
-laplacian_matrix(g::LightGraphs.Graph, dir::Symbol, T::DataType)
-laplacian_matrix(g::LightGraphs.DiGraph)
-laplacian_matrix(g::LightGraphs.DiGraph, dir::Symbol)
-laplacian_matrix(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
+laplacian_matrix(g::LightGraphs.SparseGraph)
+laplacian_matrix(g::LightGraphs.SparseGraph, major::Symbol)
+laplacian_matrix(g::LightGraphs.SparseGraph, major::Symbol, T::DataType)
+laplacian_matrix(g::LightGraphs.SparseDiGraph)
+laplacian_matrix(g::LightGraphs.SparseDiGraph, major::Symbol)
+laplacian_matrix(g::LightGraphs.SparseDiGraph, major::Symbol, T::DataType)
 ```
-Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix) for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir` defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T` defaults to `Int` for both graph types.
+Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix) for a graph `g`, indexed by `[src, dst]` vertices. For both directed and undirected graphs, `major` defaults to `:byrow` and `T` defaults to `Int`.
 
 ### laplacian_spectrum
 ```
-laplacian_spectrum(g::LightGraphs.Graph)
-laplacian_spectrum(g::LightGraphs.Graph, dir::Symbol)
-laplacian_spectrum(g::LightGraphs.Graph, dir::Symbol, T::DataType)
-laplacian_spectrum(g::LightGraphs.DiGraph)
-laplacian_spectrum(g::LightGraphs.DiGraph, dir::Symbol)
-laplacian_spectrum(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
+laplacian_spectrum(g::LightGraphs.SimpleGraph)
+laplacian_spectrum(g::LightGraphs.SimpleGraph, major::Symbol)
+laplacian_spectrum(g::LightGraphs.SimpleGraph, major::Symbol, T::DataType)
 ```
-Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as `laplacian_matrix`.
+Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Uses `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the eigenvalues/eigenvectors. Default values for `major` and `T` are the same as `laplacian_matrix`.
 
