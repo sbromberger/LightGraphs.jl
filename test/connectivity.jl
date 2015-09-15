@@ -16,6 +16,19 @@ label = LightGraphs.connected_components!(label, g)
 ccfast = LightGraphs.connected_components!(visitor, g)
 @test label[1:10] == [1,1,1,1,5,5,5,8,8,8]
 @test ccfast[1:3] == map(sort, cc)
+function components(labels::Vector{Int})
+    d = Dict{Int,Vector{Int}}()
+    for (v,l) in enumerate(labels)
+        vec = get(d, l, @compat Vector{Int}())
+        push!(vec, v)
+        d[l] = vec
+    end
+    return d
+end
+cclab = components(label)
+@test cclab[1] == [1,2,3,4]
+@test cclab[5] == [5,6,7]
+@test cclab[8] == [8,9,10]
 
 
 @test length(cc) == 3 && sort(cc[3]) == [8,9,10]
