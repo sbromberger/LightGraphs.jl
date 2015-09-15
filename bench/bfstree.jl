@@ -57,9 +57,6 @@ for matname in names
     # woah bfs_tree allocates a lot of memory
     @time tdg = LightGraphs.bfs_tree(g, seed)
     println(tdg)
-    println("bfs_tree_dict")
-    # using a dict is much faster but still a non constant amount of allocation.
-    @time tdict = LightGraphs.bfs_tree_dict(g, seed)
     # preallocating the output tree reduces the number of allocations.
     # much faster
     println("bfs_tree!(vector)")
