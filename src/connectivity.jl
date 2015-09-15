@@ -33,7 +33,8 @@ function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
     components = @compat Vector{Vector{Int}}()
     for v in 1:nvg
         if !found[v]
-            visitor.tree[:] = 0
+            fill!(visitor.tree, 0)
+            visitor.tree[v] = v
             parents = bfs_tree!(visitor, g, v)
             found_vertices = @compat Vector{Int}()
             for i in 1:nvg
@@ -59,6 +60,7 @@ function connected_components!(label::Vector{Int}, g::Graph)
     for v in 1:nvg
         if label[v] == 0
             fill!(visitor.tree, 0)
+            visitor.tree[v] = v
             parents = bfs_tree!(visitor, g, v; colormap=colormap, que=que)
             for i in 1:nvg
                 if parents[i] > 0
