@@ -6,18 +6,41 @@ of an undirected graph `g` as a vector of components, each represented by a
 vector of vectors of vertices belonging to the component.
 """
 function connected_components(g::Graph)
+     nvg = nv(g)
+     found = zeros(Bool, nvg)
+     components = @compat Vector{Vector{Int}}()
+     for v in 1:nvg
+         if !found[v]
+             bfstree = bfs_tree(g, v)
+             found_vertices = @compat Vector{Int}()
+             for e in edges(bfstree)
+                 push!(found_vertices, src(e))
+                 push!(found_vertices, dst(e))
+             end
+             found_vertices = unique(found_vertices)
+             found[found_vertices] = true
+             if length(found_vertices) > 0
+                 push!(components, found_vertices)
+            end
+        end
+    end
+    return components
+end
+
+function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
     nvg = nv(g)
     found = zeros(Bool, nvg)
     components = @compat Vector{Vector{Int}}()
     for v in 1:nvg
         if !found[v]
-            bfstree = bfs_tree(g, v)
+            visitor.tree[:] = 0
+            parents = bfs_tree!(visitor, g, v)
             found_vertices = @compat Vector{Int}()
-            for e in edges(bfstree)
-                push!(found_vertices, src(e))
-                push!(found_vertices, dst(e))
+            for i in 1:nvg
+                if parents[i] > 0
+                    push!(found_vertices, i)
+                end
             end
-            found_vertices = unique(found_vertices)
             found[found_vertices] = true
             if length(found_vertices) > 0
                 push!(components, found_vertices)
@@ -25,6 +48,23 @@ function connected_components(g::Graph)
         end
     end
     return components
+end
+
+function connected_components!(label::Vector{Int}, g::Graph)
+    nvg = nv(g)
+    visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
+    for v in 1:nvg
+        if label[v] == 0
+            visitor.tree[:] = 0
+            parents = bfs_tree!(visitor, g, v)
+            for i in 1:nvg
+                if parents[i] > 0
+                    label[i] = v
+                end
+            end
+        end
+    end
+    return label
 end
 
 """Returns `true` if `g` is connected.

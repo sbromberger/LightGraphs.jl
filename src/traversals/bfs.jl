@@ -132,6 +132,17 @@ type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
+type TreeBFSVisitorVector <: SimpleGraphVisitor
+    tree::Vector{Int}
+end
+
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.tree[v] = u
+    end
+    return true
+end
 # Return the DAG representing the traversal of a graph.
 
 TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
@@ -154,6 +165,17 @@ function bfs_tree(g::SimpleGraph, s::Int)
     return visitor.tree
 end
 
+function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
+    nvg = nv(g)
+    visitor = TreeBFSVisitorVector(zeros(Int,nvg))
+    visitor.tree[s] = s
+    return bfs_tree!(visitor, g, s)
+end
+
+function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
+    traverse_graph(g, BreadthFirst(), s, visitor)
+    return visitor.tree
+end
 
 # Test graph for bipartiteness
 
