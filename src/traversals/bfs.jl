@@ -132,10 +132,22 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
     tree::Vector{Int}
 end
 
+type ComponentVisitorVector <: SimpleGraphVisitor
+    labels::Vector{Int}
+    seed::Int
+end
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor == 0
         visitor.tree[v] = u
+    end
+    return true
+end
+
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.labels[v] = visitor.seed
     end
     return true
 end
