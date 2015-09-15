@@ -55,7 +55,7 @@ function connected_components!(label::Vector{Int}, g::Graph)
     visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
     for v in 1:nvg
         if label[v] == 0
-            visitor.tree[:] = 0
+            fill!(visitor.tree, 0)
             parents = bfs_tree!(visitor, g, v)
             for i in 1:nvg
                 if parents[i] > 0
