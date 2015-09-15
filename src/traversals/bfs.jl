@@ -42,15 +42,13 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -59,15 +57,13 @@ function traverse_graph(
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -172,8 +168,12 @@ function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
     return bfs_tree!(visitor, g, s)
 end
 
-function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
-    traverse_graph(g, BreadthFirst(), s, visitor)
+function bfs_tree!(visitor::TreeBFSVisitorVector,
+        g::SimpleGraph,
+        s::Int;
+        colormap=zeros(Int, nv(g)),
+        que=Vector{Int}())
+    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
     return visitor.tree
 end
 

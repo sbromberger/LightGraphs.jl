@@ -53,10 +53,13 @@ end
 function connected_components!(label::Vector{Int}, g::Graph)
     nvg = nv(g)
     visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
+    colormap = zeros(Int,nvg)
+    que = @compat Vector{Int}()
+    sizehint!(que, nvg)
     for v in 1:nvg
         if label[v] == 0
             fill!(visitor.tree, 0)
-            parents = bfs_tree!(visitor, g, v)
+            parents = bfs_tree!(visitor, g, v; colormap=colormap, que=que)
             for i in 1:nvg
                 if parents[i] > 0
                     label[i] = v
