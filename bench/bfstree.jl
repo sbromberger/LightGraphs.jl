@@ -20,6 +20,9 @@ end
 function loadmat(matname)
     println("Reading MTX for $matname")
     tic()
+    try
+        info = matrixdepot(matname, :get)
+    end
     A = matrixdepot(matname, :read)
     A = symetrize(A)
     g = Graph(A)
@@ -28,19 +31,42 @@ function loadmat(matname)
     return g
 end
 
+function vec2tree(v::Vector{Int})
+    nv = length(v)
+    I = Vector{Int}()
+    J = Vector{Int}()
+    for i in 1:nv
+        if v[i] > 0
+            push!(I, i)
+            push!(J, v[i])
+        end
+    end
+    #= @assert length(I) == length(J) =#
+    ncolumns = max(maximum(J), maximum(I))
+    nentries = length(J)
+    n = ncolumns
+    return sparse(I,J, fill(1, nentries), n,n)
+end
+
 
 names = ["Newman/football" , "Newman/cond-mat-2003", "SNAP/amazon0302", "SNAP/roadNet-CA"]
 for matname in names
     g = loadmat(matname)
     seed = 1
-    println("bfs_tree")
+    println("bfs_tree original")
     # woah bfs_tree allocates a lot of memory
-    @time t = LightGraphs.bfs_tree(g, seed)
-    println(t)
+    @time tdg = LightGraphs.bfs_tree(g, seed)
+    println(tdg)
+    println("bfs_tree_dict")
     # using a dict is much faster but still a non constant amount of allocation.
-    @time t = LightGraphs.bfs_tree_dict(g, seed)
+    @time tdict = LightGraphs.bfs_tree_dict(g, seed)
     # preallocating the output tree reduces the number of allocations.
     # much faster
+    println("bfs_tree!(vector)")
     visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
-    @time t = LightGraphs.bfs_tree!(visitor, g, seed)
+    @time tvec = LightGraphs.bfs_tree!(visitor, g, seed)
+    println("converting to Sparse")
+    @time m = vec2tree(visitor.tree)
+    println("converting to DiGraph")
+    @time h = DiGraph(m)
 end
