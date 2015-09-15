@@ -175,14 +175,15 @@ function bfs_tree(g::SimpleGraph, s::Int)
 end
 function bfs_tree_dict(g::SimpleGraph, s::Int)
     nvg = nv(g)
-    visitor[s] = s
     visitor = TreeBFSVisitorDict(Dict{Int, Int}())
+    visitor.tree[s] = s
     traverse_graph(g, BreadthFirst(), s, visitor)
     return visitor.tree
 end
 function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeBFSVisitorVector(zeros(Int,nvg))
+    visitor.tree[s] = s
     return bfs_tree!(visitor, g, s)
 end
 function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
