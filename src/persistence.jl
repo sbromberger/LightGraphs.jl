@@ -216,3 +216,42 @@ function readgml(filename::AbstractString, gname::AbstractString="")
     end
     return graphs
 end
+
+
+"""
+Writes a graph `g` with name `gname`
+to a file `fname` in the
+[GraphML](http://en.wikipedia.org/wiki/GraphML) format.
+
+Returns 1 (number of graphs written).
+"""
+function writegraphml(fname::AbstractString, g::SimpleGraph; gname::AbstractString = "Unnamed Graph")
+    xdoc = XMLDocument()
+    xroot = create_root(xdoc, "graphml")
+    set_attribute(xroot,"xmlns","http://graphml.graphdrawing.org/xmlns")
+    set_attribute(xroot,"xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
+    set_attribute(xroot,"xsi:schemaLocation","http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd")
+
+
+    xg = new_child(xroot, "graph")
+    set_attribute(xg,"id",gname)
+    strdir = is_directed(g) ? "directed" : "undirected"
+    set_attribute(xg,"edgedefault",strdir)
+
+    for i=1:nv(g)
+        xv = new_child(xg, "node")
+        set_attribute(xv,"id","n$(i-1)")
+    end
+
+    m=0
+    for e in edges(g)
+        xe = new_child(xg, "edge")
+        set_attribute(xe,"id","e$m")
+        set_attribute(xe,"source","n$(e[1]-1)")
+        set_attribute(xe,"target","n$(e[2]-1)")
+        m+=1
+    end
+
+    save_file(xdoc, fname)
+    return 1
+end

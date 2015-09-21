@@ -53,6 +53,11 @@ close(outread)
 close(outwrite)
 redirect_stdout(origSTDOUT)
 
+@test writegraphml("test1.graphml", "g3", g3) == 1
+@test writegraphml("test1.graphml", "g4", g4) == 1
+rm("test1.graphml")
+rm("test2.graphml")
+
 # test a graphml load that results in a warning
 origSTDERR = STDERR
 (outread, outwrite) = redirect_stderr()
