@@ -247,8 +247,8 @@ function writegraphml(f::IO, g::SimpleGraph; gname::AbstractString = "Unnamed Gr
     for e in edges(g)
         xe = new_child(xg, "edge")
         set_attribute(xe,"id","e$m")
-        set_attribute(xe,"source","n$(source(e)-1)")
-        set_attribute(xe,"target","n$(target(e)-1)")
+        set_attribute(xe,"source","n$(src(e)-1)")
+        set_attribute(xe,"target","n$(dst(e)-1)")
         m += 1
     end
 
@@ -296,8 +296,8 @@ function writegexf(f::IO, g::SimpleGraph)
     for e in edges(g)
         xe = new_child(xedges, "edge")
         set_attribute(xe,"id","$m")
-        set_attribute(xe,"source","$(source(e)-1)")
-        set_attribute(xe,"target","$(target(e)-1)")
+        set_attribute(xe,"source","$(src(e)-1)")
+        set_attribute(xe,"target","$(dst(e)-1)")
         m+=1
     end
 
