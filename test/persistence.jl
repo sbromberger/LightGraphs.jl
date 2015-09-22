@@ -47,16 +47,15 @@ origSTDOUT = STDOUT
 (outread, outwrite) = redirect_stdout()
 @test write(g3) == 1
 @test write(g4) == 1
+@test writegraphml(STDOUT, g3) == 1
+@test writegraphml(STDOUT, g4) == 1
+@test writegexf(STDOUT, g3) == 1
+@test writegexf(STDOUT, g4) == 1
 flush(outread)
 flush(outwrite)
 close(outread)
 close(outwrite)
 redirect_stdout(origSTDOUT)
-
-@test writegraphml("test1.graphml", "g3", g3) == 1
-@test writegraphml("test1.graphml", "g4", g4) == 1
-rm("test1.graphml")
-rm("test2.graphml")
 
 # test a graphml load that results in a warning
 origSTDERR = STDERR
