@@ -286,14 +286,14 @@ function writegexf(f::IO, g::SimpleGraph)
 
     xnodes = new_child(xg, "nodes")
     for i=1:nv(g)
-        xv = new_child(xnode, "node")
+        xv = new_child(xnodes, "node")
         set_attribute(xv,"id","$(i-1)")
     end
 
-    xnodes = new_child(xg, "nodes")
+    xedges = new_child(xg, "edges")
     m=0
     for e in edges(g)
-        xe = new_child(xg, "edge")
+        xe = new_child(xedges, "edge")
         set_attribute(xe,"id","$m")
         set_attribute(xe,"source","$(e[1]-1)")
         set_attribute(xe,"target","$(e[2]-1)")
