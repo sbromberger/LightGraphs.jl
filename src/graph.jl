@@ -61,8 +61,10 @@ has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 function unsafe_add_edge!(g::Graph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))
     push!(g.badjlist[dst(e)], src(e))
-    push!(g.fadjlist[dst(e)], src(e))
-    push!(g.badjlist[src(e)], dst(e))
+    if src(e) != dst(e)
+        push!(g.fadjlist[dst(e)], src(e))
+        push!(g.badjlist[src(e)], dst(e))
+    end
     push!(g.edges, e)
     return e
 end
