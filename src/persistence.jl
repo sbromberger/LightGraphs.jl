@@ -243,19 +243,20 @@ function writegraphml(f::IO, g::SimpleGraph; gname::AbstractString = "Unnamed Gr
         set_attribute(xv,"id","n$(i-1)")
     end
 
-    m=0
+    m = 0
     for e in edges(g)
         xe = new_child(xg, "edge")
         set_attribute(xe,"id","e$m")
-        set_attribute(xe,"source","n$(e[1]-1)")
-        set_attribute(xe,"target","n$(e[2]-1)")
-        m+=1
+        set_attribute(xe,"source","n$(source(e)-1)")
+        set_attribute(xe,"target","n$(target(e)-1)")
+        m += 1
     end
 
     show(f, xdoc)
     return 1
 end
 
+writegraphml(g::SimpleGraph; gname::AbstractString = "Unnamed Graph") = writegraphml(STDOUT, g; gname=gname)
 
 function writegraphml(fname::AbstractString, g::SimpleGraph; gname::AbstractString = "Unnamed Graph")
     f = open(fname, "w")
@@ -295,14 +296,16 @@ function writegexf(f::IO, g::SimpleGraph)
     for e in edges(g)
         xe = new_child(xedges, "edge")
         set_attribute(xe,"id","$m")
-        set_attribute(xe,"source","$(e[1]-1)")
-        set_attribute(xe,"target","$(e[2]-1)")
+        set_attribute(xe,"source","$(source(e)-1)")
+        set_attribute(xe,"target","$(target(e)-1)")
         m+=1
     end
 
     show(f, xdoc)
     return 1
 end
+
+writegexf(g::SimpleGraph) = writegexf(STDOUT, g)
 
 function writegexf(fname::AbstractString, g::SimpleGraph)
     f = open(fname, "w")
