@@ -47,6 +47,10 @@ origSTDOUT = STDOUT
 (outread, outwrite) = redirect_stdout()
 @test write(g3) == 1
 @test write(g4) == 1
+@test writegraphml(STDOUT, g3) == 1
+@test writegraphml(STDOUT, g4) == 1
+@test writegexf(STDOUT, g3) == 1
+@test writegexf(STDOUT, g4) == 1
 flush(outread)
 flush(outwrite)
 close(outread)

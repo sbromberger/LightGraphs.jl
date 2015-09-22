@@ -92,7 +92,7 @@ CombinatorialAdjacency,
 a_star,
 
 # persistence
-readgraph, readgraphml, readgml,
+readgraph, readgraphml, readgml, writegraphml, writegexf,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph
