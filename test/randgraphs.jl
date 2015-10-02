@@ -42,6 +42,24 @@ for v in vertices(rr)
     @test degree(rr, v) == 50
 end
 
+rr = random_configuration_model(10, repmat([2,4] ,5))
+@test nv(rr) == 10
+@test ne(rr) == 15
+@test is_directed(rr) == false
+num2 = 0; num4 = 0
+for v in vertices(rr)
+    d = degree(rr, v)
+    @test  d == 2 || d == 4
+    d == 2 ? num2 += 1 : num4 += 1
+end
+@test num4 == 5
+@test num2 == 5
+
+rr = random_configuration_model(1000, zeros(Int,1000))
+@test nv(rr) == 1000
+@test ne(rr) == 0
+@test is_directed(rr) == false
+
 rd = random_regular_digraph(1000, 4)
 @test nv(rd) == 1000
 @test ne(rd) == 4000
