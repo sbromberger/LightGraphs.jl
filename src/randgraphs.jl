@@ -107,25 +107,19 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     return false
 end
 
-function _try_creation(n::Int,@compat k::Union{Int,Array{Int}})
+_try_creation(n::Int, k::Int) = _try_creation(n, fill(k,n))
+
+function _try_creation(n::Int, k::Vector{Int})
     edges = Set{Edge}()
-    if typeof(k) == Int
-        stubs = zeros(Int, n*k)
-        for i=1:length(stubs)
-            stubs[i] = 1 + i % n
+    m = 0
+    stubs = zeros(Int, sum(k))
+    for i=1:n
+        for j = 1:k[i]
+            m += 1
+            stubs[m] = i
         end
-        # stubs = repmat([1:n;], k)
-    else
-        m = 0
-        stubs = zeros(Int, sum(k))
-        for i=1:n
-            for j = 1:k[i]
-                m += 1
-                stubs[m] = i
-            end
-        end
-        # stubs = vcat([fill(i, k[i]) for i=1:n]...)
     end
+    # stubs = vcat([fill(i, k[i]) for i=1:n]...) # slower
 
     while !isempty(stubs)
         potential_edges =  Dict{Int,Int}()
