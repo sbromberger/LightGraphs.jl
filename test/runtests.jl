@@ -43,6 +43,7 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "randgraphs",
     "graphdigraph",
     "persistence",
     "core",
@@ -54,7 +55,6 @@ tests = [
     "distance",
     "spectral",
     "operators",
-    "randgraphs",
     "traversals/bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",

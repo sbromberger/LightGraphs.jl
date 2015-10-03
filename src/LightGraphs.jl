@@ -95,7 +95,7 @@ a_star,
 readgraph, readgraphml, readgml, writegraphml, writegexf,
 
 # randgraphs
-erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph
+erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model
 
 """An optimized graphs package.
 

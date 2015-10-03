@@ -123,7 +123,8 @@ write(g,"mygraph.jgz")
 - random graph generators
     - Erdős–Rényi
     - Watts-Strogatz
-    - Random Regular
+    - random regular
+    - arbitrary degree sequence
 
 - centrality
     - betweenness

@@ -107,9 +107,19 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     return false
 end
 
-function _try_creation(n::Int, k::Int)
+_try_creation(n::Int, k::Int) = _try_creation(n, fill(k,n))
+
+function _try_creation(n::Int, k::Vector{Int})
     edges = Set{Edge}()
-    stubs = repmat([1:n;], k)
+    m = 0
+    stubs = zeros(Int, sum(k))
+    for i=1:n
+        for j = 1:k[i]
+            m += 1
+            stubs[m] = i
+        end
+    end
+    # stubs = vcat([fill(i, k[i]) for i=1:n]...) # slower
 
     while !isempty(stubs)
         potential_edges =  Dict{Int,Int}()
@@ -164,6 +174,38 @@ function random_regular_graph(n::Int, k::Int, seed::Int=-1)
 
     edges = _try_creation(n,k)
     while isempty(edges)
+        edges = _try_creation(n,k)
+    end
+
+    g = Graph(n)
+    for edge in edges
+        add_edge!(g, edge)
+    end
+
+    return g
+end
+
+
+doc"""Creates a random undirected graph according to the [configuraton model]
+(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
+It contains `n` vertices, the vertex `ì` having degree `k[i]`.
+
+Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes
+approximately $nc^2$ time.
+"""
+function random_configuration_model(n::Int, k::Array{Int}, seed::Int=-1)
+    @assert(n == length(k), "a degree sequence of length n has to be provided")
+    m = sum(k)
+    @assert(iseven(m), "sum(k) must be even")
+    @assert(all(0 .<= k .< n), "the 0 <= k[i] < n inequality must be satisfied")
+
+    if seed >= 0
+        srand(seed)
+    end
+
+
+    edges = _try_creation(n,k)
+    while m > 0 && isempty(edges)
         edges = _try_creation(n,k)
     end
 
