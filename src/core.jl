@@ -197,5 +197,5 @@ function copy{T<:SimpleGraph}(g::T)
     return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end
 
-"Returns true if `g` is has any self loops."
+"Returns true if `g` has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
