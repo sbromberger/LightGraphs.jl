@@ -13,20 +13,19 @@ write(g::LightGraphs.Graph, fn::AbstractString)
 write(g::LightGraphs.DiGraph, fn::AbstractString)
 write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, gname::AbstractString, fn::AbstractString)
 ```
-```rst
-::
-           write(stream, x)
-
-Write the canonical binary representation of a value to the given stream.
+```
+write(stream, x)
 ```
 
-Writes a graph `g` with name `graphname` in a proprietary format to the IO stream designated by `io`.
-
-Returns 1 (number of graphs written).
+Write the canonical binary representation of a value to the given stream.
 
 Writes a dictionary of (name=>graph) to a file `fn`, with default `GZip` compression.
 
 Returns number of graphs written.
+
+Writes a graph `g` with name `graphname` in a proprietary format to the IO stream designated by `io`.
+
+Returns 1 (number of graphs written).
 
 ## Reading a Graph From a File
 Graphs stored using the `write` functions above may be loaded using `readgraph`:

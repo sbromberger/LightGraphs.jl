@@ -76,12 +76,17 @@ Return destination of an edge.
 ```
 reverse(g::LightGraphs.DiGraph)
 ```
-```rst
-::
-           reverse(v [, start=1 [, stop=length(v) ]] )
-
-Return a copy of ``v`` reversed from start to stop.
 ```
+reverse(s::AbstractString) -> AbstractString
+```
+
+Reverses a string
+
+```
+reverse(v [, start=1 [, stop=length(v) ]] )
+```
+
+Return a copy of `v` reversed from start to stop.
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 
