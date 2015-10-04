@@ -5,7 +5,7 @@
 @test (ne(p2), nv(p2)) == (9, 10)
 @test length(sprint(write, p1)) == 478
 @test length(sprint(write, p2)) == 69
-
+@test writegraphml(f, p1) == 1
 rm(f)
 
 #Try reading in a GraphML file from the Rome Graph collection
@@ -49,6 +49,8 @@ origSTDOUT = STDOUT
 @test write(g4) == 1
 @test writegraphml(STDOUT, g3) == 1
 @test writegraphml(STDOUT, g4) == 1
+@test writegexf(g3) == 1
+@test writegexf(g4) == 1
 @test writegexf(STDOUT, g3) == 1
 @test writegexf(STDOUT, g4) == 1
 flush(outread)
