@@ -13,6 +13,7 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 ### bfs_tree
 ```
 bfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+bfs_tree(visitor::LightGraphs.TreeBFSVisitorVector, g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a breadth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
 

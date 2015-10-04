@@ -8,8 +8,7 @@ complement(g::LightGraphs.Graph)
 complement(g::LightGraphs.DiGraph)
 ```
 ```rst
-::
-           complement(s)
+..  complement(s)
 
 Returns the set-complement of :obj:`IntSet` ``s``.
 ```
@@ -20,12 +19,17 @@ Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph) 
 ```
 reverse(g::LightGraphs.DiGraph)
 ```
-```rst
-::
-           reverse(v [, start=1 [, stop=length(v) ]] )
-
-Return a copy of ``v`` reversed from start to stop.
 ```
+reverse(s::AbstractString) -> AbstractString
+```
+
+Reverses a string
+
+```
+reverse(v [, start=1 [, stop=length(v) ]] )
+```
+
+Return a copy of `v` reversed from start to stop.
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 
@@ -34,8 +38,7 @@ Return a copy of ``v`` reversed from start to stop.
 reverse!(g::LightGraphs.DiGraph)
 ```
 ```rst
-::
-           reverse!(v [, start=1 [, stop=length(v) ]]) -> v
+..  reverse!(v [, start=1 [, stop=length(v) ]]) -> v
 
 In-place version of :func:`reverse`.
 ```
@@ -46,12 +49,11 @@ In-place version of :func:`reverse`.
 ```
 blkdiag{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-```rst
-::
-           blkdiag(A...)
+```
+blkdiag(A...)
+```
 
 Concatenate matrices block-diagonally. Currently only implemented for sparse matrices.
-```
 
 Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$ edges.
 
@@ -61,13 +63,12 @@ Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 ```
 intersect{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-```rst
-::
-           intersect(s1,s2...)
-           ∩(s1,s2)
+```
+intersect(s1,s2...)
+∩(s1,s2)
+```
 
 Construct the intersection of two or more sets. Maintains order and multiplicity of the first argument for arrays and ranges.
-```
 
 Produces a graph with edges that are only in both graph `g` and graph `h`.
 
@@ -93,13 +94,12 @@ Note that this function may produce a graph with 0-degree vertices.
 ```
 union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-```rst
-::
-           union(s1,s2...)
-           ∪(s1,s2)
+```
+union(s1,s2...)
+∪(s1,s2...)
+```
 
 Construct the union of two or more sets. Maintains order with arrays.
-```
 
 Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 
