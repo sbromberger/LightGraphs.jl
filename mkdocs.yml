@@ -5,7 +5,7 @@ theme: readthedocs
 pages:
   - 'Home': 'index.md'
   - 'About': 'about.md'
-  - 'Getting Started': 'about.md'
+  - 'Getting Started': 'gettingstarted.md'
   - 'Operators': 'operators.md'
   - 'Path and Traversal': 'pathing.md'
   - 'Distance': 'distance.md'
