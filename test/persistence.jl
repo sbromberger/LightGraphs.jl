@@ -6,6 +6,7 @@
 @test length(sprint(write, p1)) == 478
 @test length(sprint(write, p2)) == 69
 @test writegraphml(f, p1) == 1
+@test writegexf(f, p1) == 1
 rm(f)
 
 #Try reading in a GraphML file from the Rome Graph collection
