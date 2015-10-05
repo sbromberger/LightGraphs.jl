@@ -44,10 +44,6 @@ end
 function reverse!(g::DiGraph)
     gne = ne(g)
     reve = Set{Edge}()
-    for e in edges(g)
-        push!(reve, reverse(e))
-    end
-    g.edges = reve
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end

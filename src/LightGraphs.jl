@@ -34,7 +34,7 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loop,
+common_neighbors, all_neighbors, has_self_loop, ordered,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -95,7 +95,10 @@ a_star,
 readgraph, readgraphml, readgml, writegraphml, writegexf,
 
 # randgraphs
-erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model
+erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
+
+# edgeit - TODO EdgeItState could probably not be exported
+edge_it, in_edge_it, out_edge_it, EdgeIt, EdgeItState
 
 """An optimized graphs package.
 
@@ -117,6 +120,7 @@ LightGraphs
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")
+        include("edgeit.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")

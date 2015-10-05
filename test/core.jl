@@ -22,7 +22,14 @@ add_edge!(h, 3, 5)
 
 @test sprint(show, e1) == "edge 1 - 2"
 @test vertices(g) == 1:5
+i = 0
+for e in edges(g)
+    i+=1
+end
+@test i == 5
+@test has_edge(g,3,5)
 @test edges(g) == Set([e1, e2, e3, e4, e5])
+@test Set{Edge}(edges(g)) == Set([e1, e2, e3, e4, e5])
 
 @test degree(g) == [3, 2, 2, 1, 2]
 @test indegree(g) == [3, 2, 2, 1, 2]
@@ -65,9 +72,29 @@ add_edge!(h, 3, 5)
 @test common_neighbors(g, 2, 3) == [1, 5]
 @test common_neighbors(h, 2, 3) == [5]
 
+@test ne(g) == 5
 @test rem_edge!(g, 1, 2) == e1
+@test ne(g) == 4
+eit = edges(g)
+@test eit.m == 4
+state = start(eit)
+@test state.it == 1
+@test state.v == 1
+@test state.k == 1
+# @test edges(g) == EdgeIt(4, g.fadjlist, EdgeItState(1,1,1),  false)
+
 @test_throws ErrorException rem_edge!(g, 2, 1)
 add_edge!(g, 1, 2)
+@test ne(g) == 5
+eit = edges(g)
+@test eit.m == 5
+state = start(eit)
+@test state.it == 1
+@test state.v == 1
+@test state.k == 1
+
+@test Edge(2, 1) in edges(g)
+@test Edge(1, 2) in edges(g)
 @test rem_edge!(g, 2, 1) == e1
 
 @test rem_edge!(h, 1, 2) == e1
