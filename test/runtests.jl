@@ -65,7 +65,8 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "subgraphs"
+    "subgraphs",
+    "flow/max-flow-min-cut"
     ]
 
 
