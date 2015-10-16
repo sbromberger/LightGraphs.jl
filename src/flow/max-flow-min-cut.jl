@@ -1,5 +1,5 @@
 """Computes the maximum flow between the source and target vertexes in a flow
-graph using [Edmong Karp's](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
+graph using [Edmond Karp's](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
 algorithm. Returns the value of the maximum flow as well as the final flow matrix.
 
 Use a default capacity of 1 when the capacity matrix isn't specified
@@ -12,17 +12,18 @@ function maximum_flow{T<:Number}(
     capacity_matrix::AbstractArray{T,2}=   # edge flow capacities
         DefaultDistance()
     )
-    n = size(flow_graph)[1]                # number of vertexes
+    n = nv(flow_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
 
     while true
         v, P, S = fetch_path(flow_graph, source, target, flow_matrix, capacity_matrix)
 
-        if P == None                       # no more valid paths
+        if P == nothing                       # no more valid paths
             break
         else
             path = [v]                     # initialize path
+            sizehint!(path, n)
 
             u = v
             while u!=source                # trace path from v to source
@@ -80,28 +81,28 @@ function fetch_path{T<:Number}(
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
-    n = size(flow_graph)[1]
+    n = nv(flow_graph)
 
-    P = Dict{Int, Int}()                   # parent table of path
-    P[source] = -1
+    P = [-1 for i in 1:n]                  # parent table of path
+    P[source] = -2
 
-    S = Dict{Int, Int}()                   # successor table of path
-    S[target] = -1
+    S = [-1 for i in 1:n]                  # successor table of path
+    S[target] = -2
 
-    Q_f = Array(Int, 0)                    # forward queue
-    unshift!(Q_f, source)
+    Q_f = [source]                         # forward queue
+    sizehint!(Q_f, n)
 
-    Q_r = Array(Int, 0)                    # reverse queue
-    unshift!(Q_r, target)
+    Q_r = [target]                         # reverse queue
+    sizehint!(Q_r, n)
 
     while true
 
         if length(Q_f) <= length(Q_r)
             u = pop!(Q_f)
             for v in fadj(flow_graph, u)
-                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && !haskey(P, v)
+                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && P[v] == -1
                     P[v] = u
-                    if !haskey(S, v)
+                    if S[v] == -1
                         unshift!(Q_f, v)
                     else
                         return v, P, S
@@ -110,14 +111,14 @@ function fetch_path{T<:Number}(
             end
 
             if length(Q_f) == 0
-                return None, None, None    # No paths to target
+                return 0, nothing, nothing # No paths to target
             end
         else
             v = pop!(Q_r)
             for u in badj(flow_graph, v)
-                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && !haskey(S, u)
+                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
                     S[u] = v
-                    if !haskey(P, u)
+                    if P[u] == -1
                         unshift!(Q_r, u)
                     else
                         return u, P, S
@@ -127,7 +128,7 @@ function fetch_path{T<:Number}(
             end
 
             if length(Q_r) == 0
-                return None, None, None    # No paths to source
+                return 0, nothing, nothing # No paths to source
             end
         end
     end
