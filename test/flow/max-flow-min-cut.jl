@@ -19,7 +19,7 @@ add_edge!(flow_graph,7,3);
 add_edge!(flow_graph,7,8);
 
 # Test with default distances
-@time @test maximum_flow(flow_graph,1,8)[1] == 3
+@test maximum_flow(flow_graph,1,8)[1] == 3
 
 # Construct capacity matrix 
 capacity_matrix = zeros(Int,8,8);
@@ -42,5 +42,35 @@ capacity_matrix[7,8] = 10;
 
 
 # Run maximum flow Test
-@time @test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
+@test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
 
+function test_find_path_types(flow_graph, s, t, flow_matrix, capacity_matrix)
+    v, P, S, flag = LightGraphs.fetch_path(flow_graph, s, t, flow_matrix, capacity_matrix)
+    @test typeof(P) == Vector{Int}
+    @test typeof(S) == Vector{Int}
+    @test typeof(flag) == Int
+    @test typeof(v) == Int
+end
+
+function test_find_path_disconnected(flow_graph, s, t, flow_matrix, capacity_matrix)
+    h = copy(flow_graph)
+    for dst in collect(neighbors(flow_graph, s))
+        rem_edge!(flow_graph, s, dst) 
+    end
+    v, P, S, flag = LightGraphs.fetch_path(flow_graph, s, t, flow_matrix, capacity_matrix)
+    @test flag == 1
+    for dst in collect(neighbors(h, t))
+        rem_edge!(h, t, dst) 
+    end
+    v, P, S, flag = LightGraphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
+    @test flag == 0 
+    for i in collect(in_neighbors(h, t))
+        rem_edge!(h, i, t) 
+    end
+    v, P, S, flag = LightGraphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
+    @test flag == 2 
+end
+
+flow_matrix = zeros(Int, nv(flow_graph), nv(flow_graph))
+test_find_path_types(flow_graph, 1,8, flow_matrix, capacity_matrix)
+test_find_path_disconnected(flow_graph, 1, 8, flow_matrix, capacity_matrix)
