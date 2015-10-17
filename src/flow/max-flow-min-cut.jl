@@ -21,9 +21,9 @@ function maximum_flow{T<:Number}(
     while true
         fill!(P, -1)
         fill!(S, -1)
-        v, P, S = fetch_path!(flow_graph, source, target, flow_matrix, capacity_matrix, P,S)
+        v, P, S, flag = fetch_path!(flow_graph, source, target, flow_matrix, capacity_matrix, P,S)
 
-        if P == nothing                       # no more valid paths
+        if flag != 0                       # no more valid paths
             break
         else
             path = [v]                     # initialize path
@@ -75,9 +75,14 @@ function augment_path!{T<:Number}(
 end
 
 """Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
-the two BFS searches intersect, the Parent table of the path as well as the
-Successor table of the path found."""
+the two BFS searches intersect, the Parent table of the path, the
+Successor table of the path found, and a flag indicating success
 
+Flag Values:
+0 => success
+1 => No Path to target
+2 => No Path to source
+"""
 function fetch_path{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
@@ -97,13 +102,33 @@ function fetch_path{T<:Number}(
                        S)
 end
 
+"""fetch_path!
+A preallocated version of fetch_paths. The parent and successor tables are pre-allocated.
+Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
+the two BFS searches intersect, the Parent table of the path, the
+Successor table of the path found, and a flag indicating success
+
+Flag Values:
+0 => success
+1 => No Path to target
+2 => No Path to source
+
+Requires arguments:
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    flow_matrix::AbstractArray{T,2},       # the current flow matrix
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    P::Vector{Int},                        # parent table of path init to -1s
+    S::Vector{Int}                         # successor table of path init to -1s
+"""
 function fetch_path!{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    P::Vector{Int},                         # parent table of path init to -1s
+    P::Vector{Int},                        # parent table of path init to -1s
     S::Vector{Int}                         # successor table of path init to -1s
     )
     n = nv(flow_graph)
@@ -127,13 +152,13 @@ function fetch_path!{T<:Number}(
                     if S[v] == -1
                         unshift!(Q_f, v)
                     else
-                        return v, P, S
+                        return v, P, S, 0 # 0 indicates success
                     end
                 end
             end
 
             if length(Q_f) == 0
-                return 0, nothing, nothing # No paths to target
+                return 0, P, S, 1 # No paths to target
             end
         else
             v = pop!(Q_r)
@@ -143,14 +168,14 @@ function fetch_path!{T<:Number}(
                     if P[u] == -1
                         unshift!(Q_r, u)
                     else
-                        return u, P, S
+                        return u, P, S, 0 # 0 indicates success
                     end
                 end
 
             end
 
             if length(Q_r) == 0
-                return 0, nothing, nothing # No paths to source
+                return 0, P, S, 2 # No paths to source
             end
         end
     end

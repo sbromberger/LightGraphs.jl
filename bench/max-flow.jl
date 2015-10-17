@@ -1,3 +1,4 @@
+using LightGraphs
 function bench_maxflow(n)
     p = 8.0/n
     A = sprand(n,n,p)
@@ -6,6 +7,6 @@ function bench_maxflow(n)
     @time maximum_flow(g, 1, n, cap)
 end
 
-for n in 3:13
+for n in 3:14
     bench_maxflow(2^n)
 end
