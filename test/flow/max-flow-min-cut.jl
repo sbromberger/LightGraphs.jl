@@ -19,7 +19,7 @@ add_edge!(flow_graph,7,3);
 add_edge!(flow_graph,7,8);
 
 # Test with default distances
-@test maximum_flow(flow_graph,1,8)[1] == 3
+@time @test maximum_flow(flow_graph,1,8)[1] == 3
 
 # Construct capacity matrix 
 capacity_matrix = zeros(Int,8,8);
@@ -42,4 +42,5 @@ capacity_matrix[7,8] = 10;
 
 
 # Run maximum flow Test
-@test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
+@time @test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
+

@@ -16,8 +16,12 @@ function maximum_flow{T<:Number}(
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
 
+    P = zeros(Int, n)
+    S = zeros(Int, n)
     while true
-        v, P, S = fetch_path(flow_graph, source, target, flow_matrix, capacity_matrix)
+        fill!(P, -1)
+        fill!(S, -1)
+        v, P, S = fetch_path!(flow_graph, source, target, flow_matrix, capacity_matrix, P,S)
 
         if P == nothing                       # no more valid paths
             break
@@ -82,11 +86,29 @@ function fetch_path{T<:Number}(
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
     n = nv(flow_graph)
+    P = -1 * ones(Int, n)
+    S = -1 * ones(Int, n)
+    return fetch_path!(flow_graph,
+                       source,
+                       target,
+                       flow_matrix,
+                       capacity_matrix,
+                       P,
+                       S)
+end
 
-    P = [-1 for i in 1:n]                  # parent table of path
+function fetch_path!{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    flow_matrix::AbstractArray{T,2},       # the current flow matrix
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    P::Vector{Int},                         # parent table of path init to -1s
+    S::Vector{Int}                         # successor table of path init to -1s
+    )
+    n = nv(flow_graph)
+
     P[source] = -2
-
-    S = [-1 for i in 1:n]                  # successor table of path
     S[target] = -2
 
     Q_f = [source]                         # forward queue
