@@ -26,12 +26,41 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
         error("Not implemented")
     end
     rowval = sizehint!(Vector{Int}(), nz)
+    selfloops = Vector{Int}()
     for j in 1:n_v
+        if has_edge(g,j,j)
+            push!(selfloops, j)
+        end
         dsts = neighborfn(g, j)
         colpt[j+1] = colpt[j] + length(dsts)
         append!(rowval, sort!(dsts))
     end
-    return SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
+    spmx = SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
+
+    # this is inefficient. There should be a better way of doing this.
+    # the issue is that adjacency matrix entries for self-loops are 2,
+    # not one(T).
+    for i in selfloops
+        if !(T <: Bool)
+            spmx[i,i] += one(T)
+        end
+    end
+    return spmx
+end
+
+function am3(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
+    I = zeros(Int, ne(g))
+    J = zeros(Int, ne(g))
+    V = ones(T, ne(g))
+    for (i,p) in enumerate(edges(g))
+        s,t = src(p), dst(p)
+        I[i] = s
+        J[i] = t
+        if s == t
+             V[i] += one(T)
+        end
+    end
+    return sparse(I,J,V)
 end
 
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)

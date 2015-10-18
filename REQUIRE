@@ -1,5 +1,5 @@
 julia 0.4
-GZip 0.2.16
-StatsBase 0.6.15
-LightXML 0.2.0
-ParserCombinator 1.6.3
+GZip 0.2.18
+StatsBase 0.7.4
+LightXML 0.2.1
+ParserCombinator 1.7.0
