@@ -50,8 +50,8 @@ function a_star{T<:Number}(
     )
             # heuristic (under)estimating distance to target
     frontier = VERSION < v"0.4-" ?
-        PriorityQueue{@compat(Tuple{T,Array{Edge,1},Int}),T}() :
-        PriorityQueue(@compat(Tuple{T,Array{Edge,1},Int}),T)
+        PriorityQueue{Tuple{T,Array{Edge,1},Int},T}() :
+        PriorityQueue(Tuple{T,Array{Edge,1},Int},T)
     frontier[(zero(T), Edge[], s)] = zero(T)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1

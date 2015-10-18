@@ -197,13 +197,9 @@ end
 
 """sum(g,i) provides 1:indegree or 2:outdegree vectors"""
 function sum(g::SimpleGraph, dim::Int)
-    if dim == 1
-        return indegree(g, vertices(g))
-    elseif dim == 2
-        return outdegree(g, vertices(g))
-    else
-        error("Graphs are only two dimensional")
-    end
+    dim == 1 && return indegree(g, vertices(g))
+    dim == 2 && return outdegree(g, vertices(g))
+    error("Graphs are only two dimensional")
 end
 
 

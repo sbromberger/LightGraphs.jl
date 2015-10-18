@@ -50,7 +50,7 @@ function traverse_graph(
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
-    que = @compat Vector{Int}()
+    que = Vector{Int}()
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -67,7 +67,7 @@ function traverse_graph(
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)))
 
-    que = @compat Vector{Int}()
+    que = Vector{Int}()
 
     for s in sources
         colormap[s] = 1

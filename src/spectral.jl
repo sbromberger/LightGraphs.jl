@@ -25,7 +25,7 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     else
         error("Not implemented")
     end
-    rowval = sizehint!(@compat(Vector{Int}()), nz)
+    rowval = sizehint!(Vector{Int}(), nz)
     for j in 1:n_v
         dsts = neighborfn(g, j)
         colpt[j+1] = colpt[j] + length(dsts)

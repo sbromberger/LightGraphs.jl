@@ -44,7 +44,7 @@ type DiGraph
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-typealias SimpleGraph @compat(Union{Graph, DiGraph})
+typealias SimpleGraph Union{Graph, DiGraph}
 
 
 """Return the vertices of a graph."""
