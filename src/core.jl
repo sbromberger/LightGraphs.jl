@@ -20,6 +20,8 @@ src(e::Edge) = e.first
 """Return destination of an edge."""
 dst(e::Edge) = e.second
 
+ordered(e::Edge) = src(e) <= dst(e)
+
 @deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
@@ -30,16 +32,18 @@ end
 
 """A type representing an undirected graph."""
 type Graph
+    ne # number of edges
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    # edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
 """A type representing a directed graph."""
 type DiGraph
+    ne # number of edges
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    # edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
@@ -50,8 +54,8 @@ typealias SimpleGraph @compat(Union{Graph, DiGraph})
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
 
-"""Return the edges of a graph."""
-edges(g::SimpleGraph) = g.edges
+"""Return an iterator to the edges of a graph."""
+edges(g::SimpleGraph) = edge_it(g)
 
 """Returns the forward adjacency list of a graph.
 
@@ -118,7 +122,7 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 """The number of vertices in `g`."""
 nv(g::SimpleGraph) = length(vertices(g))
 """The number of edges in `g`."""
-ne(g::SimpleGraph) = length(edges(g))
+ne(g::SimpleGraph) = g.ne
 
 """Add a new edge to `g` from `src` to `dst`.
 
@@ -194,8 +198,8 @@ neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
 function copy{T<:SimpleGraph}(g::T)
-    return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+    return T(g.ne, g.vertices,deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end
 
-"Returns true if `g` is has any self loops."
+"Returns true if `g` has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))

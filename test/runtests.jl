@@ -43,10 +43,9 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "core",
     "randgraphs",
     "graphdigraph",
-    "persistence",
-    "core",
     "smallgraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
@@ -65,7 +64,8 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "subgraphs"
+    "subgraphs",
+    "persistence"
     ]
 
 

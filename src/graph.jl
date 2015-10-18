@@ -17,7 +17,7 @@ function Graph(n::Int)
         push!(badjlist, @compat(Vector{Int}()))
         push!(fadjlist, @compat(Vector{Int}()))
     end
-    return Graph(1:n, Set{Edge}(), badjlist, fadjlist)
+    return Graph(0, 1:n, badjlist, fadjlist)
 end
 
 Graph() = Graph(0)
@@ -48,6 +48,7 @@ function Graph(g::DiGraph)
     return h
 end
 
+#warning: could be slow
 function ==(g::Graph, h::Graph)
     gdigraph = DiGraph(g)
     hdigraph = DiGraph(h)
@@ -65,16 +66,12 @@ function unsafe_add_edge!(g::Graph, e::Edge)
         push!(g.fadjlist[dst(e)], src(e))
         push!(g.badjlist[src(e)], dst(e))
     end
-    push!(g.edges, e)
+    g.ne += 1
     return e
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    if !(e in edges(g))
-        reve = reverse(e)
-        (reve in edges(g)) || error("Edge $e is not in graph")
-        e = reve
-    end
+    (e in edges(g)) || error("Edge $e is not in graph")
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
     deleteat!(g.fadjlist[src(e)], i)
@@ -84,7 +81,8 @@ function rem_edge!(g::Graph, e::Edge)
     deleteat!(g.fadjlist[dst(e)], i)
     i = findfirst(g.badjlist[src(e)], dst(e))
     deleteat!(g.badjlist[src(e)], i)
-    return pop!(g.edges, e)
+    g.ne -= 1
+    return ordered(e) ? e : reverse(e)
 end
 
 
