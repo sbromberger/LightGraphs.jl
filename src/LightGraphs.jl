@@ -85,8 +85,12 @@ a_star,
 # persistence
 readgraph, readgraphml, readgml, writegraphml, writegexf,
 
+# flow
+maximum_flow,
+
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model
+
 
 """An optimized graphs package.
 
@@ -128,4 +132,5 @@ include("core.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
+        include("flow/max-flow-min-cut.jl")
 end # module
