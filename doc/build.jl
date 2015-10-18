@@ -272,6 +272,15 @@ julia> save(SVG("wheel10.svg"), t)
 producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960499/17f703c0-35c5-11e5-935e-044be51bc531.png)
 
+###[GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
+Another graph visualization package that is very simple to use.
+[Compose.jl](https://github.com/dcjones/Compose.jl) is required for most rendering functionality:
+```julia
+julia> using GraphPlot, Compose
+julia> g = WheelGraph(10)
+julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
+```
+
 ###[Metis.jl](https://github.com/JuliaSparse/Metis.jl)
 The Metis graph partitioning package can interface with *LightGraphs.jl*:
 
