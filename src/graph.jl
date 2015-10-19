@@ -80,12 +80,15 @@ function rem_edge!(g::Graph, e::Edge)
     deleteat!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
     deleteat!(g.badjlist[dst(e)], i)
-    i = findfirst(g.fadjlist[dst(e)], src(e))
-    deleteat!(g.fadjlist[dst(e)], i)
-    i = findfirst(g.badjlist[src(e)], dst(e))
-    deleteat!(g.badjlist[src(e)], i)
+    if src(e) != dst(e)     # not a self loop
+        i = findfirst(g.fadjlist[dst(e)], src(e))
+        deleteat!(g.fadjlist[dst(e)], i)
+        i = findfirst(g.badjlist[src(e)], dst(e))
+        deleteat!(g.badjlist[src(e)], i)
+    end
     return pop!(g.edges, e)
 end
+
 
 
 """Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
