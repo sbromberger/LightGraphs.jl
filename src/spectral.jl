@@ -48,21 +48,6 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     return spmx
 end
 
-function am3(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
-    I = zeros(Int, ne(g))
-    J = zeros(Int, ne(g))
-    V = ones(T, ne(g))
-    for (i,p) in enumerate(edges(g))
-        s,t = src(p), dst(p)
-        I[i] = s
-        J[i] = t
-        if s == t
-             V[i] += one(T)
-        end
-    end
-    return sparse(I,J,V)
-end
-
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
