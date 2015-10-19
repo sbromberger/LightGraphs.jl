@@ -2,10 +2,11 @@
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.3)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
+
+*NOTE: LightGraphs v0.3.4 is the last version guaranteed to work with Julia 0.3.x. Please upgrade to Julia 0.4 for the latest features.*
 
 
 An optimized graphs package.
@@ -162,6 +163,6 @@ write(g,"mygraph.jgz")
     - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
 
-###Documentation
+### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
 Documentation for methods is also available via the Julia REPL help system.
