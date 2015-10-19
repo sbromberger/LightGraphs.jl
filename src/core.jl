@@ -1,16 +1,5 @@
 abstract AbstractPathState
 
-if VERSION < v"0.4.0-dev+818"
-    immutable Pair{T1,T2}
-        first::T1
-        second::T2
-    end
-
-end
-
-if VERSION < v"0.4.0-dev+4103"
-    reverse(p::Pair) = Pair(p.second, p.first)
-end
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}

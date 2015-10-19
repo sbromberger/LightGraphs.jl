@@ -221,7 +221,7 @@ end
 """
 Writes a graph `g` with name `gname`
 to a file `f` in the
-[Gexf](http://en.wikipedia.org/wiki/GraphML) format.
+[GraphML](http://en.wikipedia.org/wiki/GraphML) format.
 
 Returns 1 (number of graphs written).
 """

@@ -45,11 +45,8 @@ function traverse_graph(
     visitor::AbstractMASVisitor,
     colormap::Vector{Int})
 
-    if VERSION > v"0.4.0-"
-        pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
-    else
-        pq = Collections.PriorityQueue{Int, T}(Base.Order.Reverse)
-    end
+
+    pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(graph)
