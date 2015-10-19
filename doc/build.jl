@@ -270,7 +270,7 @@ producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
 
 ###[TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
-Another nice graph visulaization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
+Another nice graph visualization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
 required to render/save):
 ```julia
 julia> g = WheelGraph(10); t = plot(g)

@@ -207,9 +207,4 @@ function is_bipartite(g::SimpleGraph, s::Int)
     return visitor.is_bipartite
 end
 
-function is_bipartite(g::SimpleGraph)
-    for v in vertices(g)
-        !is_bipartite(g, v) && return false
-    end
-    return true
-end
+is_bipartite(g::SimpleGraph) = all(x->is_bipartite(g,x), vertices(g))
