@@ -115,6 +115,13 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 {{eccentricity, radius, diameter, center, periphery}}
 """
 
+@file "cliques.md" """
+## Cliques
+*LightGraphs.jl* implements maximal clique discovery using
+
+{{maximal_cliques}}
+"""
+
 @file "generators.md" """
 ## Random Graphs
 *LightGraphs.jl* implements three common random graph generators:
