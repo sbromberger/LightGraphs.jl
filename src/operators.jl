@@ -152,11 +152,15 @@ function induced_subgraph{T<:SimpleGraph}(g::T, iter)
         newvid[v] = i
     end
 
+    iterset = Set(iter)
     for s in iter
-        for d in intersect(iter, out_neighbors(g, s))
-            newe = Edge(newvid[s], newvid[d])
-            if !has_edge(h, newe)
-                add_edge!(h, newe)
+        for d in out_neighbors(g, s)
+            # println("s = $s, d = $d")
+            if d in iterset && has_edge(g, s, d)
+                newe = Edge(newvid[s], newvid[d])
+                if !has_edge(h, newe)
+                    add_edge!(h, newe)
+                end
             end
         end
     end
