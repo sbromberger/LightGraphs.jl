@@ -60,6 +60,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "connectivity",
+    "cliques",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",

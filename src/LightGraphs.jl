@@ -60,6 +60,9 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components,
 
+# cliques
+maximal_cliques,
+
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
@@ -126,6 +129,7 @@ include("core.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
         include("connectivity.jl")
+        include("cliques.jl")
         include("distance.jl")
         include("shortestpaths/astar.jl")
         include("shortestpaths/bellman-ford.jl")
