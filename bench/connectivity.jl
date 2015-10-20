@@ -29,7 +29,7 @@ function loadmat(matname)
     return g
 end
 
-names = ["Newman/football" , "Newman/cond-mat-2003", "SNAP/amazon0302"]#, "SNAP/roadNet-CA"]
+names = ["Newman/football" , "Newman/cond-mat-2003", "SNAP/amazon0302","SNAP/roadNet-CA"]
 sucesses = []
 failures = []
 for matname in names
@@ -40,7 +40,11 @@ for matname in names
     label = zeros(Int, nv(g))
     @time label = LightGraphs.connected_components!(label, g)
     @time components = LightGraphs.connected_components!(visitor, g)
+    fill!(visitor.tree, 0)
+    @time LightGraphs.bfs_tree!(visitor, g, 1)
     @show length(components)
+    #= 
     @time components_slow = LightGraphs.connected_components(g)
     @assert length(components) == length(components_slow)
+    =#
 end
