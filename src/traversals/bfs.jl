@@ -136,6 +136,10 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
     tree::Vector{Int}
 end
 
+function TreeBFSVisitorVector(n::Int)
+    return TreeBFSVisitorVector(zeros(Int, n))
+end
+
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor == 0
@@ -155,6 +159,28 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
+function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
+    n = length(tvv.tree)
+    visitor = TreeBFSVisitor(n)
+    parents = tvv.tree
+    Tree!(visitor, parents)
+    return visitor
+end
+
+function Tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
+    if length(visitor.tree) < length(parents)
+        error("visitor is not big enoug to hold parents")
+    end
+    n = length(parents)
+    for i in 1:n
+        parent = parents[i]
+        if parent > 0
+            add_edge!(visitor.tree, i, parent)
+        end
+    end
+    return visitor.tree
+end
+
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
@@ -167,12 +193,13 @@ end
 
 function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
     nvg = nv(g)
-    visitor = TreeBFSVisitorVector(zeros(Int,nvg))
     visitor.tree[s] = s
     return bfs_tree!(visitor, g, s)
 end
 
 function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
+    nvg = nv(g)
+    length(visitor.tree) <= nvg || error("visitor.tree too small for graph")
     traverse_graph(g, BreadthFirst(), s, visitor)
     return visitor.tree
 end
