@@ -43,6 +43,9 @@ x = p*ones(10)
 @test  x[1]==1.0 && all(x[2:end-1].==2.0) && x[end]==1.0
 
 @test size(p) == (10,10)
+@test size(p, 1) == size(p, 2) == 10
+@test size(p, 3) == 1
+
 @test g5 * ones(nv(g5)) == [2.0, 1.0, 1.0, 0.0]
 @test sum(g5, 1) ==  [0, 1, 2, 1]
 @test sum(g5, 2) ==  [2, 1, 1, 0]

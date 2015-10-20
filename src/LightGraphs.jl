@@ -1,7 +1,6 @@
 __precompile__(true)
 module LightGraphs
 
-using Compat
 using GZip
 using StatsBase
 using Base.Collections

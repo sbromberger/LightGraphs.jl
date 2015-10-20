@@ -48,6 +48,7 @@ origSTDOUT = STDOUT
 (outread, outwrite) = redirect_stdout()
 @test write(g3) == 1
 @test write(g4) == 1
+@test writegraphml(g3) == 1
 @test writegraphml(STDOUT, g3) == 1
 @test writegraphml(STDOUT, g4) == 1
 @test writegexf(g3) == 1
@@ -59,7 +60,6 @@ flush(outwrite)
 close(outread)
 close(outwrite)
 redirect_stdout(origSTDOUT)
-
 # test a graphml load that results in a warning
 origSTDERR = STDERR
 (outread, outwrite) = redirect_stderr()
