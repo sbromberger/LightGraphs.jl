@@ -42,15 +42,13 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -59,15 +57,13 @@ function traverse_graph(
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -136,10 +132,22 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
     tree::Vector{Int}
 end
 
+type ComponentVisitorVector <: SimpleGraphVisitor
+    labels::Vector{Int}
+    seed::Int
+end
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor == 0
         visitor.tree[v] = u
+    end
+    return true
+end
+
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.labels[v] = visitor.seed
     end
     return true
 end
@@ -172,8 +180,12 @@ function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
     return bfs_tree!(visitor, g, s)
 end
 
-function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
-    traverse_graph(g, BreadthFirst(), s, visitor)
+function bfs_tree!(visitor::TreeBFSVisitorVector,
+        g::SimpleGraph,
+        s::Int;
+        colormap=zeros(Int, nv(g)),
+        que=Vector{Int}())
+    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
     return visitor.tree
 end
 
