@@ -17,6 +17,7 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, Tree!, TreeBFSVisitor
 g = HouseGraph()
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
+@test length(visitor.tree) == n
 parents = visitor.tree
 bfs_tree!(visitor, g, 1)
 maxdepth = n
@@ -38,8 +39,11 @@ function istree(parents::Vector{Int})
 end
 @test istree(parents) == true
 tvis = TreeBFSVisitor(visitor)
+@test nv(tvis.tree) == nv(g)
 @test typeof(tvis.tree) <: DiGraph
 tvis = TreeBFSVisitor(n)
 tree = Tree!(tvis, parents)
 @test tree == tvis.tree
 @test ne(tree) <= nv(tree)
+pfail = zeros(Int, 10n-2)
+@test_throws ErrorException Tree!(tvis, pfail)

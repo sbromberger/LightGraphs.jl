@@ -159,6 +159,7 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
+"""TreeBFSVisitor converts a parents array into a DiGraph"""
 function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
     n = length(tvv.tree)
     visitor = TreeBFSVisitor(n)
@@ -167,8 +168,9 @@ function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
     return visitor
 end
 
+"""Tree! converts a parents array into a DiGraph"""
 function Tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
-    if length(visitor.tree) < length(parents)
+    if nv(visitor.tree) < length(parents)
         error("visitor is not big enoug to hold parents")
     end
     n = length(parents)
