@@ -17,7 +17,14 @@ write(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, gname::AbstractString, fn
 write(stream, x)
 ```
 
-Write the canonical binary representation of a value to the given stream.
+Write the canonical binary representation of a value to the given stream. Returns the number of bytes written into the stream.
+
+You can write multiple values with the same :func:`write` call. i.e. the following are equivalent:
+
+```
+write(stream, x, y...)
+write(stream, x) + write(stream, y...)
+```
 
 Writes a dictionary of (name=>graph) to a file `fn`, with default `GZip` compression.
 

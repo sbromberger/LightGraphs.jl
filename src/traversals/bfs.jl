@@ -42,15 +42,13 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -59,15 +57,13 @@ function traverse_graph(
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -128,35 +124,22 @@ function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
     gdistances!(graph, sources, dists)
 end
 
+# TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph
 type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
+TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
+
+"""TreeBFSVisitorVector is a type for representing a BFS traversal
+of the graph as a parents array. This type allows for a more performant implementation.
+"""
 type TreeBFSVisitorVector <: SimpleGraphVisitor
     tree::Vector{Int}
 end
 
 function TreeBFSVisitorVector(n::Int)
     return TreeBFSVisitorVector(zeros(Int, n))
-end
-
-function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
-        visitor.tree[v] = u
-    end
-    return true
-end
-# Return the DAG representing the traversal of a graph.
-
-TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
-
-function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
-        add_edge!(visitor.tree, u, v)
-    end
-    return true
 end
 
 """TreeBFSVisitor converts a parents array into a DiGraph"""
@@ -183,6 +166,23 @@ function Tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
     return visitor.tree
 end
 
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.tree[v] = u
+    end
+    return true
+end
+
+# Return the DAG representing the traversal of a graph.
+function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        add_edge!(visitor.tree, u, v)
+    end
+    return true
+end
+
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
@@ -199,15 +199,32 @@ function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
     return bfs_tree!(visitor, g, s)
 end
 
-function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
+function bfs_tree!(visitor::TreeBFSVisitorVector,
+        g::SimpleGraph,
+        s::Int;
+        colormap=zeros(Int, nv(g)),
+        que=Vector{Int}())
     nvg = nv(g)
     length(visitor.tree) <= nvg || error("visitor.tree too small for graph")
-    traverse_graph(g, BreadthFirst(), s, visitor)
+    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
     return visitor.tree
 end
 
-# Test graph for bipartiteness
+"""Performing connected components with BFS starting from seed"""
+type ComponentVisitorVector <: SimpleGraphVisitor
+    labels::Vector{Int}
+    seed::Int
+end
 
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.labels[v] = visitor.seed
+    end
+    return true
+end
+
+# Test graph for bipartiteness
 type BipartiteVisitor <: SimpleGraphVisitor
     bipartitemap::Vector{UInt8}
     is_bipartite::Bool
