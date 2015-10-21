@@ -124,12 +124,19 @@ function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
     gdistances!(graph, sources, dists)
 end
 
-# TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph
+###########################################
+# Constructing BFS trees                  #
+###########################################
+
+# this type has been deprecated in favor of TreeBFSVisitorVector and the tree function.
+"""TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph"""
 type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
 TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
+
+@deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
 
 """TreeBFSVisitorVector is a type for representing a BFS traversal
 of the graph as a parents array. This type allows for a more performant implementation.
@@ -147,23 +154,37 @@ function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
     n = length(tvv.tree)
     visitor = TreeBFSVisitor(n)
     parents = tvv.tree
-    Tree!(visitor, parents)
+    tree!(visitor, parents)
     return visitor
 end
 
-"""Tree! converts a parents array into a DiGraph"""
-function Tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
-    if nv(visitor.tree) < length(parents)
-        error("visitor is not big enoug to hold parents")
+"""tree! converts a parents array into a DiGraph"""
+function tree!(tree::DiGraph, parents::AbstractVector)
+    if nv(tree) < length(parents)
+        error("visitor is not big enough to hold parents")
     end
     n = length(parents)
     for i in 1:n
         parent = parents[i]
         if parent > 0  && parent != i
-            add_edge!(visitor.tree, parent, i)
+            add_edge!(tree, parent, i)
         end
     end
-    return visitor.tree
+    return tree
+end
+
+function tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
+    return tree!(visitor.tree, parents)
+end
+
+"""tree(parents) convert a parents array into a DiGraph"""
+function tree(parents::AbstractVector)
+    g = DiGraph(length(parents))
+    return tree!(g, parents)
+end
+
+function tree(parents::TreeBFSVisitorVector)
+    return tree(parents.tree)
 end
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
@@ -174,6 +195,7 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor
     return true
 end
 
+
 # Return the DAG representing the traversal of a graph.
 function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
@@ -183,6 +205,7 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
+
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
@@ -190,7 +213,7 @@ function bfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeBFSVisitorVector(nvg)
     bfs_tree!(visitor, g, s)
-    return TreeBFSVisitor(visitor).tree
+    return tree(visitor)
 end
 
 function bfs_tree!(visitor::TreeBFSVisitorVector,
