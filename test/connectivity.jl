@@ -25,7 +25,6 @@ cclab = components_dict(label)
 
 @test length(cc) >= 3 && sort(cc[3]) == [8,9,10]
 
-
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
 h = DiGraph(8)
 add_edge!(h,1,2); add_edge!(h,2,3); add_edge!(h,2,5);

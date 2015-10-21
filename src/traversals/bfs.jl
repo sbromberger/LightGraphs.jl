@@ -159,8 +159,8 @@ function Tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
     n = length(parents)
     for i in 1:n
         parent = parents[i]
-        if parent > 0
-            add_edge!(visitor.tree, i, parent)
+        if parent > 0  && parent != i
+            add_edge!(visitor.tree, parent, i)
         end
     end
     return visitor.tree
@@ -188,15 +188,9 @@ and returns a directed acyclic graph of vertices in the order they were discover
 """
 function bfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
-    visitor = TreeBFSVisitor(nvg)
-    traverse_graph(g, BreadthFirst(), s, visitor)
-    return visitor.tree
-end
-
-function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
-    nvg = nv(g)
-    visitor.tree[s] = s
-    return bfs_tree!(visitor, g, s)
+    visitor = TreeBFSVisitorVector(nvg)
+    bfs_tree!(visitor, g, s)
+    return TreeBFSVisitor(visitor).tree
 end
 
 function bfs_tree!(visitor::TreeBFSVisitorVector,
@@ -206,10 +200,14 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
         que=Vector{Int}())
     nvg = nv(g)
     length(visitor.tree) <= nvg || error("visitor.tree too small for graph")
+    visitor.tree[s] = s
     traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
     return visitor.tree
 end
 
+############################################
+# Connected Components with BFS            #
+############################################
 """Performing connected components with BFS starting from seed"""
 type ComponentVisitorVector <: SimpleGraphVisitor
     labels::Vector{Int}
@@ -224,7 +222,9 @@ function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcol
     return true
 end
 
-# Test graph for bipartiteness
+############################################
+# Test graph for bipartiteness             #
+############################################
 type BipartiteVisitor <: SimpleGraphVisitor
     bipartitemap::Vector{UInt8}
     is_bipartite::Bool
