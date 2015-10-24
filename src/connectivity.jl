@@ -28,6 +28,11 @@ vector of vectors of vertices belonging to the component.
 #= end =#
 
 function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
+    # this version of connected components uses repeated BFS traversals.
+    # it is slower than the version that uses a custom Visitor type
+    # it is an example of how to reuse the BFS solution already implemented
+    # the version of BFS that is called reuses the memory in order to 
+    # improve performance
     nvg = nv(g)
     found = zeros(Bool, nvg)
     components = @compat Vector{Vector{Int}}()
@@ -35,7 +40,8 @@ function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
         if !found[v]
             fill!(visitor.tree, 0)
             visitor.tree[v] = v
-            parents = bfs_tree!(visitor, g, v)
+            bfs_tree!(visitor, g, v)
+            parents = visitor.tree
             found_vertices = @compat Vector{Int}()
             for i in 1:nvg
                 if parents[i] > 0
@@ -61,6 +67,13 @@ Output:
     c is the smallest vertex id in the component.
 """
 function connected_components!(label::Vector{Int}, g::Graph)
+    # this version of connected components uses Breadth First Traversal
+    # with custom visitor type in order to improve performance.
+    # one BFS is performed for each component.
+    # This algorithm is linear in the number of edges of the graph
+    # each edge is touched once. memory performance is a single allocation.
+    # the return type is a vector of labels which can be used directly or
+    # passed to components(a)
     nvg = nv(g)
     visitor = LightGraphs.ComponentVisitorVector(label, 0)
     colormap = zeros(Int,nvg)

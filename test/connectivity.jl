@@ -9,13 +9,13 @@ add_edge!(g,10,9)
 @test !is_connected(g)
 @test is_connected(HouseGraph())
 
-cc = connected_components(g)
 visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
-label = zeros(Int, nv(g))
-label = LightGraphs.connected_components!(label, g)
 ccfast = LightGraphs.connected_components!(visitor, g)
-@test label[1:10] == [1,1,1,1,5,5,5,8,8,8]
+cc = connected_components(g)
 @test ccfast[1:3] == map(sort, cc)[1:3]
+label = zeros(Int, nv(g))
+LightGraphs.connected_components!(label, g)
+@test label[1:10] == [1,1,1,1,5,5,5,8,8,8]
 import LightGraphs: components, components_dict
 cclab = components_dict(label)
 @test cclab[1] == [1,2,3,4]
