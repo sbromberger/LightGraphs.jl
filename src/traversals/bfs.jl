@@ -222,10 +222,9 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
         colormap=zeros(Int, nv(g)),
         que=Vector{Int}())
     nvg = nv(g)
-    length(visitor.tree) <= nvg || error("visitor.tree too small for graph")
+    length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
     visitor.tree[s] = s
     traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
-    return visitor.tree
 end
 
 ############################################

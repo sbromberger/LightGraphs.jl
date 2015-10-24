@@ -1,6 +1,7 @@
 z = bfs_tree(g5, 1)
 visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int,nv(g5)))
-t = LightGraphs.bfs_tree!(visitor, g5, 1)
+LightGraphs.bfs_tree!(visitor, g5, 1)
+t = visitor.tree
 @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
 
