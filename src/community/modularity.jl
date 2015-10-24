@@ -13,5 +13,6 @@ function modularity(g::Graph, c)
             Q += a - degree(g, u)*degree(g, v) / m
         end
     end
+    Q = abs(Q) < 1e-10 ? 0  : Q
     return Q / m
 end
