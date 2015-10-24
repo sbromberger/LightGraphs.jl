@@ -105,7 +105,7 @@ erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, rando
 
 
 #community
-modularity
+modularity, community_detection_nback
 
 """An optimized graphs package.
 
@@ -150,4 +150,5 @@ include("core.jl")
         include("centrality/pagerank.jl")
         include("flow/max-flow-min-cut.jl")
         include("community/modularity.jl")
+        include("community/detection.jl")
 end # module
