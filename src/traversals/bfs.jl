@@ -170,9 +170,7 @@ function tree(parents::AbstractVector)
     return t
 end
 
-function tree(parents::TreeBFSVisitorVector)
-    return tree(parents.tree)
-end
+tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
