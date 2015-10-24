@@ -44,7 +44,6 @@ B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
 returns a matrix B, and an edgemap storing the oriented edges' positions in B
 """
 function non_backtracking_matrix(g::SimpleGraph)
-    n = nv(g)
     # idedgemap = Dict{Int, Edge}()
     edgeidmap = Dict{Edge, Int}()
     m = 0
