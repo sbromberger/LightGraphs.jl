@@ -1,38 +1,6 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
-"""connected_components! produces a label array of components
-
-Arguments:
-    visitor: an instance of TreeBFSVisitorVector
-    g: the graph
-Output:
-    components: a Vector of Vectors of components
-    c is the smallest vertex id in the component.
-"""
-function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
-    nvg = nv(g)
-    found = zeros(Bool, nvg)
-    components = Vector{Vector{Int}}()
-    for v in 1:nvg
-        if !found[v]
-            fill!(visitor.tree, 0)
-            visitor.tree[v] = v
-            parents = bfs_tree!(visitor, g, v)
-            found_vertices = Vector{Int}()
-            for i in 1:nvg
-                if parents[i] > 0
-                    push!(found_vertices, i)
-                end
-            end
-            found[found_vertices] = true
-            if length(found_vertices) > 0
-                push!(components, found_vertices)
-            end
-        end
-    end
-    return components
-end
 
 """connected_components! produces a label array of components
 
@@ -44,6 +12,13 @@ Output:
     c is the smallest vertex id in the component.
 """
 function connected_components!(label::Vector{Int}, g::Graph)
+    # this version of connected components uses Breadth First Traversal
+    # with custom visitor type in order to improve performance.
+    # one BFS is performed for each component.
+    # This algorithm is linear in the number of edges of the graph
+    # each edge is touched once. memory performance is a single allocation.
+    # the return type is a vector of labels which can be used directly or
+    # passed to components(a)
     nvg = nv(g)
     visitor = LightGraphs.ComponentVisitorVector(label, 0)
     colormap = zeros(Int,nvg)
