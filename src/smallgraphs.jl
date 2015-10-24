@@ -8,7 +8,7 @@ function CompleteGraph(n::Integer)
     g = Graph(n)
     for i = 1:n, j=1:n
         if i < j
-            add_edge!(g,i,j)
+            unsafe_add_edge!(g, Edge(i,j))
         end
     end
     return g
@@ -21,7 +21,7 @@ function CompleteDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 1:n, j=1:n
         if i != j
-            add_edge!(g,i,j)
+            unsafe_add_edge!(g, Edge(i,j))
         end
     end
     return g
@@ -33,7 +33,7 @@ with edges to each other vertex.
 function StarGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        add_edge!(g,1,i)
+        unsafe_add_edge!(g, Edge(1,i))
     end
     return g
 end
@@ -44,7 +44,7 @@ vertex with directed edges to every other vertex.
 function StarDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        add_edge!(g,1,i)
+        unsafe_add_edge!(g, Edge(1,i))
     end
     return g
 end
@@ -54,7 +54,7 @@ successive vertex by a single edge."""
 function PathGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        add_edge!(g, i-1, i)
+        unsafe_add_edge!(g, Edge(i-1, i))
     end
     return g
 end
@@ -64,7 +64,7 @@ successive vertex by a single directed edge."""
 function PathDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        add_edge!(g, i-1, i)
+        unsafe_add_edge!(g, Edge(i-1, i))
     end
     return g
 end
@@ -75,10 +75,10 @@ the outer vertices connected via a closed path graph.
 function WheelGraph(n::Integer)
     g = StarGraph(n)
     for i = 3:n
-        add_edge!(g, i-1, i)
+        unsafe_add_edge!(g, Edge(i-1, i))
     end
     if n != 2
-        add_edge!(g, n,2)
+        unsafe_add_edge!(g, Edge(n, 2))
     end
     return g
 end
@@ -89,10 +89,10 @@ with the outer vertices connected via a closed path graph.
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
     for i = 3:n
-        add_edge!(g, i-1, i)
+        unsafe_add_edge!(g, Edge(i-1, i))
     end
     if n != 2
-        add_edge!(g, n,2)
+        unsafe_add_edge!(g, Edge(n, 2))
     end
     return g
 end
@@ -101,7 +101,7 @@ end
 function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
     g = Graph(n)
     for (s,d) in edgelist
-        add_edge!(g,s,d)
+        unsafe_add_edge!(g, Edge(s,d))
     end
     return g
 end
@@ -109,7 +109,7 @@ end
 function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{@compat(Tuple{T,T})})
     g = DiGraph(n)
     for (s,d) in edgelist
-        add_edge!(g,s,d)
+        unsafe_add_edge!(g, Edge(s,d))
     end
     return g
 end
@@ -250,8 +250,8 @@ end
 """A house graph, with two edges crossing the bottom square."""
 function HouseXGraph()
     g = HouseGraph()
-    add_edge!(g, 1, 4)
-    add_edge!(g, 2, 3)
+    unsafe_add_edge!(g, Edge(1, 4))
+    unsafe_add_edge!(g, Edge(2, 3))
     return g
 end
 
