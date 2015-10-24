@@ -152,35 +152,22 @@ end
 """TreeBFSVisitor converts a parents array into a DiGraph"""
 function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
     n = length(tvv.tree)
-    visitor = TreeBFSVisitor(n)
     parents = tvv.tree
-    tree!(visitor, parents)
-    return visitor
+    g = tree(parents)
+    return TreeBFSVisitor(g)
 end
 
-"""tree! converts a parents array into a DiGraph"""
-function tree!(tree::DiGraph, parents::AbstractVector)
-    if nv(tree) < length(parents)
-        error("visitor is not big enough to hold parents")
-    end
+"""tree converts a parents array into a DiGraph"""
+function tree(parents::AbstractVector)
     n = length(parents)
+    t = DiGraph(n)
     for i in 1:n
         parent = parents[i]
         if parent > 0  && parent != i
-            add_edge!(tree, parent, i)
+            add_edge!(t, parent, i)
         end
     end
-    return tree
-end
-
-function tree!(visitor::TreeBFSVisitor, parents::AbstractVector)
-    return tree!(visitor.tree, parents)
-end
-
-"""tree(parents) convert a parents array into a DiGraph"""
-function tree(parents::AbstractVector)
-    g = DiGraph(length(parents))
-    return tree!(g, parents)
+    return t
 end
 
 function tree(parents::TreeBFSVisitorVector)
@@ -206,25 +193,35 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
 end
 
 
-"""Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
-and returns a directed acyclic graph of vertices in the order they were discovered.
-"""
-function bfs_tree(g::SimpleGraph, s::Int)
-    nvg = nv(g)
-    visitor = TreeBFSVisitorVector(nvg)
-    bfs_tree!(visitor, g, s)
-    return tree(visitor)
-end
 
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
         s::Int;
         colormap=zeros(Int, nv(g)),
         que=Vector{Int}())
+    # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
+    # the output is stored in the visitor.tree array whose entries are the vertex id of the
+    # parent of the index. This function checks if the scratch space is too small for the graph.
+    # and throws an error if it is too small.
+    # the source is represented in the output by a fixed point v[root] == root.
+    # this function is considered a performant version of bfs_tree for useful when the parent
+    # array is more helpful than a DiGraph struct, or when performance is critical.
     nvg = nv(g)
     length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
     visitor.tree[s] = s
     traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
+end
+
+"""Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
+and returns a directed acyclic graph of vertices in the order they were discovered.
+
+This function is a high level wrapper around bfs_tree!, use that function for more performance.
+"""
+function bfs_tree(g::SimpleGraph, s::Int)
+    nvg = nv(g)
+    visitor = TreeBFSVisitorVector(nvg)
+    bfs_tree!(visitor, g, s)
+    return tree(visitor)
 end
 
 ############################################

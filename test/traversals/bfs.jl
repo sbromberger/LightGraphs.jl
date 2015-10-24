@@ -17,7 +17,7 @@ add_edge!(g,3,4)
 @test is_bipartite(g)
 
 
-import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree!, TreeBFSVisitor
+import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
 g = HouseGraph()
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
@@ -46,9 +46,8 @@ end
 tvis = TreeBFSVisitor(visitor)
 @test nv(tvis.tree) == nv(g)
 @test typeof(tvis.tree) <: DiGraph
-tvis = TreeBFSVisitor(n)
-tree = tree!(tvis, parents)
-@test tree == tvis.tree
-@test ne(tree) <= nv(tree)
-pfail = zeros(Int, 10n-2)
-@test_throws ErrorException tree!(tvis, pfail)
+t = tree(parents)
+@test typeof(t) <: DiGraph
+@test typeof(tvis.tree) <: DiGraph
+@test t == tvis.tree
+@test ne(t) < nv(t)
