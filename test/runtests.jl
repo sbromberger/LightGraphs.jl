@@ -43,6 +43,7 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "community/detection",
     "community/modularity",
     "randgraphs",
     "graphdigraph",
