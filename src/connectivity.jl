@@ -1,61 +1,6 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
-"""Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
-of an undirected graph `g` as a vector of components, each represented by a
-vector of vectors of vertices belonging to the component.
-"""
-#= function connected_components(g::Graph) =#
-#=      nvg = nv(g) =#
-#=      found = zeros(Bool, nvg) =#
-#=      components = @compat Vector{Vector{Int}}() =#
-#=      for v in 1:nvg =#
-#=          if !found[v] =#
-#=              bfstree = bfs_tree(g, v) =#
-#=              found_vertices = @compat Vector{Int}() =#
-#=              for e in edges(bfstree) =#
-#=                  push!(found_vertices, src(e)) =#
-#=                  push!(found_vertices, dst(e)) =#
-#=              end =#
-#=              found_vertices = unique(found_vertices) =#
-#=              found[found_vertices] = true =#
-#=              if length(found_vertices) > 0 =#
-#=                  push!(components, found_vertices) =#
-#=             end =#
-#=         end =#
-#=     end =#
-#=     return components =#
-#= end =#
-
-function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
-    # this version of connected components uses repeated BFS traversals.
-    # it is slower than the version that uses a custom Visitor type
-    # it is an example of how to reuse the BFS solution already implemented
-    # the version of BFS that is called reuses the memory in order to 
-    # improve performance
-    nvg = nv(g)
-    found = zeros(Bool, nvg)
-    components = @compat Vector{Vector{Int}}()
-    for v in 1:nvg
-        if !found[v]
-            fill!(visitor.tree, 0)
-            visitor.tree[v] = v
-            bfs_tree!(visitor, g, v)
-            parents = visitor.tree
-            found_vertices = @compat Vector{Int}()
-            for i in 1:nvg
-                if parents[i] > 0
-                    push!(found_vertices, i)
-                end
-            end
-            found[found_vertices] = true
-            if length(found_vertices) > 0
-                push!(components, found_vertices)
-            end
-        end
-    end
-    return components
-end
 
 """connected_components! produces a label array of components
 
@@ -133,6 +78,10 @@ function components(labels::Vector{Int})
     return c, d
 end
 
+"""Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+of an undirected graph `g` as a vector of components, each represented by a
+vector of vectors of vertices belonging to the component.
+"""
 function connected_components(g)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
