@@ -34,6 +34,47 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     return SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
 end
 
+
+"""
+Given two oriented edges i->j and k->l in g, the
+non-backtraking matrix B is defined as
+
+B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+
+returns a matrix B, and an edgemap storing the oriented edges' positions in B
+"""
+function non_backtracking_matrix(g::SimpleGraph)
+    n = nv(g)
+    # idedgemap = Dict{Int, Edge}()
+    edgeidmap = Dict{Edge, Int}()
+    m = 0
+    for e in edges(g)
+        m += 1
+        edgeidmap[e] = m
+    end
+
+    if !is_directed(g)
+        for e in edges(g)
+            m += 1
+            edgeidmap[reverse(e)] = m
+        end
+    end
+
+    B = zeros(Int, m, m)
+
+    for (e,u) in edgeidmap
+        i, j = src(e), dst(e)
+        for k in in_neighbors(g,i)
+            k == j && continue
+            v = edgeidmap[Edge(k, i)]
+            B[v, u] = 1
+        end
+    end
+
+    return B, edgeidmap
+end
+
+
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`

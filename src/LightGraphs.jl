@@ -88,8 +88,8 @@ betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
 # spectral
-adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-CombinatorialAdjacency,
+adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+CombinatorialAdjacency, non_backtracking_matrix,
 
 # astar
 a_star,
