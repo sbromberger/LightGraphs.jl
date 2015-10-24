@@ -82,6 +82,7 @@ KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
 PappusGraph, PetersenGraph, SedgewickMazeGraph,
 TetrahedralGraph, TruncatedCubeGraph,
 TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
+ZacharyKarateClub,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,

@@ -489,3 +489,7 @@ function TutteGraph()
     ]
     return _make_simple_undirected_graph(46,e)
 end
+
+
+"""[Zachary's karate club](https://en.wikipedia.org/wiki/Zachary%27s_karate_club) graph."""
+ZacharyKarateClub() = readgml(joinpath(Pkg.dir("LightGraphs"),"datasets","zachary-karate-club.gml"))["Unnamed Graph"]

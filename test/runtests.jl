@@ -43,11 +43,11 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "smallgraphs",
     "randgraphs",
     "graphdigraph",
     "persistence",
     "core",
-    "smallgraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",

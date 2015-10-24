@@ -86,3 +86,6 @@ g = TruncatedTetrahedronDiGraph()
 
 g = TutteGraph()
 @test nv(g) == 46 && ne(g) == 69
+
+g = ZacharyKarateClub()
+@test nv(g) == 34 && ne(g) == 78
