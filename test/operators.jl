@@ -40,7 +40,7 @@ z = union(g3, h)
 
 g10 = CompleteGraph(2)
 h10 = CompleteGraph(2)
-z = join(g10, h10)
+z = blkdiag(g10, h10)
 @test nv(z) == nv(g10) + nv(h10)
 @test ne(z) == ne(g10) + ne(h10)
 @test has_edge(z, 1, 2)

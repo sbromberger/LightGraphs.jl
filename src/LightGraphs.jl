@@ -27,7 +27,7 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, join
+            sum, size, sparse, eltype, length, ndims, issym
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,

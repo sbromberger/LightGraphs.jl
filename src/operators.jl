@@ -137,23 +137,6 @@ function union{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-
-"""Merges graphs `g` and `h`. The resulting graph has `nv(g)+nv(h)``
-    and ne(g)+ne(h) edges. Vertex indexes in `h` are shifted by `nv(g)``.
-"""
-function join{T<:SimpleGraph}(g::T, h::T)
-    gnv = nv(g)
-    hnv = nv(h)
-    r = T(gnv + hnv)
-    for e in edges(g)
-        add_edge!(r, e)
-    end
-    for e in edges(h)
-        add_edge!(r, src(e) + gnv, dst(e)+ gnv)
-    end
-    return r
-end
-
 """Filters graph `g` to include only the vertices present in the iterable
 argument `vs`. Returns the subgraph of `g` induced by `vs`.
 """
