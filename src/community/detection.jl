@@ -13,7 +13,7 @@ function community_detection_nback(g::Graph, k::Int)
     B, edgeid = non_backtracking_matrix(g)
     λ, eigv = eig(B)
     idx = sortperm(λ, lt=(x,y)-> abs(x) > abs(y))[2:k] #the second eigenvector is the relevant one
-    ϕ = zeros(k-1, nv(g))
+    ϕ = zeros(Float64, k-1, nv(g))
     for n=1:k-1
         v= eigv[:,idx[n]]
         for i=1:nv(g)
