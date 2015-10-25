@@ -42,6 +42,12 @@ gml2 = gs["Unnamed DiGraph"]
 gs = readgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")["pathdigraph"]
 @test gs == p2
 
+gs = readdot(joinpath(testdir, "testdata", "twographs.dot"))
+@test length(gs) == 2
+@test gs["g1"] == CompleteGraph(6)
+@test nv(gs["g2"]) == 4 && ne(gs["g2"]) == 6 && is_directed(gs["g2"])
+@test_throws KeyError readdot(joinpath(testdir, "testdata", "twographs.dot"))["badname"]
+
 # test the writes
 # redirecting stdout per https://thenewphalls.wordpress.com/2014/03/21/capturing-output-in-julia/
 origSTDOUT = STDOUT

@@ -1,4 +1,4 @@
-graph {
+graph g1 {
         a -- b;
         b -- c;
         c -- d;
@@ -16,7 +16,7 @@ graph {
         d -- f;
     }
 
-digraph {
+digraph g2 {
         a -> b;
         a -> c;
         c -> b;

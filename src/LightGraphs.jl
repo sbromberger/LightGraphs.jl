@@ -95,7 +95,7 @@ CombinatorialAdjacency,
 a_star,
 
 # persistence
-readgraph, readgraphml, readgml, writegraphml, writegexf,
+readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 
 # flow
 maximum_flow,
