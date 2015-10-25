@@ -1,70 +1,92 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
+
+"""connected_components! produces a label array of components
+
+Arguments:
+    label: a place to store the output
+    g: the graph
+Output:
+    c = labels[i] => vertex i belongs to component c. 
+    c is the smallest vertex id in the component.
+"""
+function connected_components!(label::Vector{Int}, g::Graph)
+    # this version of connected components uses Breadth First Traversal
+    # with custom visitor type in order to improve performance.
+    # one BFS is performed for each component.
+    # This algorithm is linear in the number of edges of the graph
+    # each edge is touched once. memory performance is a single allocation.
+    # the return type is a vector of labels which can be used directly or
+    # passed to components(a)
+    nvg = nv(g)
+    visitor = LightGraphs.ComponentVisitorVector(label, 0)
+    colormap = zeros(Int,nvg)
+    que = @compat Vector{Int}()
+    sizehint!(que, nvg)
+    for v in 1:nvg
+        if label[v] == 0
+            visitor.labels[v] = v
+            visitor.seed = v
+            traverse_graph(g, BreadthFirst(), v, visitor; colormap=colormap, que=que)
+        end
+    end
+    return label
+end
+
+"""components_dict(labels) converts an array of labels to a Dict{Int,Vector{Int}} of components
+
+Arguments:
+    c = labels[i] => vertex i belongs to component c.
+Output:
+    vs = d[c] => vertices in vs belong to component c.
+"""
+function components_dict(labels::Vector{Int})
+    d = Dict{Int,Vector{Int}}()
+    for (v,l) in enumerate(labels)
+        vec = get(d, l, @compat Vector{Int}())
+        push!(vec, v)
+        d[l] = vec
+    end
+    return d
+end
+
+"""components(labels) converts an array of labels to a Vector{Vector{Int} of components
+
+Arguments:
+    c = labels[i] => vertex i belongs to component c.
+Output:
+    vs = c[i] => vertices in vs belong to component i.
+    a = d[i] => if label[v[j]]==i then j in c[a] end
+"""
+function components(labels::Vector{Int})
+    d = Dict{Int, Int}()
+    c = Vector{Vector{Int}}()
+    i = 1
+    for (v,l) in enumerate(labels)
+        index = get(d, l, i)
+        d[l] = index
+        if length(c) >= index
+            vec = c[index]
+            push!(vec, v)
+            c[index] = vec
+        else
+            push!(c, [v])
+            i += 1
+        end
+    end
+    return c, d
+end
+
 """Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
 of an undirected graph `g` as a vector of components, each represented by a
 vector of vectors of vertices belonging to the component.
 """
-function connected_components(g::Graph)
-     nvg = nv(g)
-     found = zeros(Bool, nvg)
-     components = @compat Vector{Vector{Int}}()
-     for v in 1:nvg
-         if !found[v]
-             bfstree = bfs_tree(g, v)
-             found_vertices = @compat Vector{Int}()
-             for e in edges(bfstree)
-                 push!(found_vertices, src(e))
-                 push!(found_vertices, dst(e))
-             end
-             found_vertices = unique(found_vertices)
-             found[found_vertices] = true
-             if length(found_vertices) > 0
-                 push!(components, found_vertices)
-            end
-        end
-    end
-    return components
-end
-
-function connected_components!(visitor::TreeBFSVisitorVector, g::Graph)
-    nvg = nv(g)
-    found = zeros(Bool, nvg)
-    components = @compat Vector{Vector{Int}}()
-    for v in 1:nvg
-        if !found[v]
-            visitor.tree[:] = 0
-            parents = bfs_tree!(visitor, g, v)
-            found_vertices = @compat Vector{Int}()
-            for i in 1:nvg
-                if parents[i] > 0
-                    push!(found_vertices, i)
-                end
-            end
-            found[found_vertices] = true
-            if length(found_vertices) > 0
-                push!(components, found_vertices)
-            end
-        end
-    end
-    return components
-end
-
-function connected_components!(label::Vector{Int}, g::Graph)
-    nvg = nv(g)
-    visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int, nv(g)))
-    for v in 1:nvg
-        if label[v] == 0
-            visitor.tree[:] = 0
-            parents = bfs_tree!(visitor, g, v)
-            for i in 1:nvg
-                if parents[i] > 0
-                    label[i] = v
-                end
-            end
-        end
-    end
-    return label
+function connected_components(g)
+    label = zeros(Int, nv(g))
+    connected_components!(label, g)
+    c, d = components(label) 
+    return c
 end
 
 """Returns `true` if `g` is connected.

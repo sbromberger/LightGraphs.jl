@@ -10,10 +10,17 @@ add_edge!(g,10,9)
 @test is_connected(HouseGraph())
 
 cc = connected_components(g)
+label = zeros(Int, nv(g))
+LightGraphs.connected_components!(label, g)
+@test label[1:10] == [1,1,1,1,5,5,5,8,8,8]
+import LightGraphs: components, components_dict
+cclab = components_dict(label)
+@test cclab[1] == [1,2,3,4]
+@test cclab[5] == [5,6,7]
+@test cclab[8] == [8,9,10]
 
 
-@test length(cc) == 3 && sort(cc[3]) == [8,9,10]
-
+@test length(cc) >= 3 && sort(cc[3]) == [8,9,10]
 
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
 h = DiGraph(8)

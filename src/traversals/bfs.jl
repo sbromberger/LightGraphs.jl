@@ -42,15 +42,13 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -59,15 +57,13 @@ function traverse_graph(
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
 
-
 function traverse_graph(
     graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)))
-
-    que = @compat Vector{Int}()
+    colormap = zeros(Int, nv(graph)),
+    que = @compat Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -128,13 +124,53 @@ function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
     gdistances!(graph, sources, dists)
 end
 
+###########################################
+# Constructing BFS trees                  #
+###########################################
+
+# this type has been deprecated in favor of TreeBFSVisitorVector and the tree function.
+"""TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph"""
 type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
+TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
+
+@deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
+
+"""TreeBFSVisitorVector is a type for representing a BFS traversal
+of the graph as a parents array. This type allows for a more performant implementation.
+"""
 type TreeBFSVisitorVector <: SimpleGraphVisitor
     tree::Vector{Int}
 end
+
+function TreeBFSVisitorVector(n::Int)
+    return TreeBFSVisitorVector(zeros(Int, n))
+end
+
+"""TreeBFSVisitor converts a parents array into a DiGraph"""
+function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
+    n = length(tvv.tree)
+    parents = tvv.tree
+    g = tree(parents)
+    return TreeBFSVisitor(g)
+end
+
+"""tree converts a parents array into a DiGraph"""
+function tree(parents::AbstractVector)
+    n = length(parents)
+    t = DiGraph(n)
+    for i in 1:n
+        parent = parents[i]
+        if parent > 0  && parent != i
+            add_edge!(t, parent, i)
+        end
+    end
+    return t
+end
+
+tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
@@ -143,10 +179,9 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor
     end
     return true
 end
+
+
 # Return the DAG representing the traversal of a graph.
-
-TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
-
 function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor == 0
@@ -155,30 +190,58 @@ function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
+
+
+function bfs_tree!(visitor::TreeBFSVisitorVector,
+        g::SimpleGraph,
+        s::Int;
+        colormap=zeros(Int, nv(g)),
+        que=Vector{Int}())
+    # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
+    # the output is stored in the visitor.tree array whose entries are the vertex id of the
+    # parent of the index. This function checks if the scratch space is too small for the graph.
+    # and throws an error if it is too small.
+    # the source is represented in the output by a fixed point v[root] == root.
+    # this function is considered a performant version of bfs_tree for useful when the parent
+    # array is more helpful than a DiGraph struct, or when performance is critical.
+    nvg = nv(g)
+    length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
+    visitor.tree[s] = s
+    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
+end
+
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
+
+This function is a high level wrapper around bfs_tree!, use that function for more performance.
 """
 function bfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
-    visitor = TreeBFSVisitor(nvg)
-    traverse_graph(g, BreadthFirst(), s, visitor)
-    return visitor.tree
+    visitor = TreeBFSVisitorVector(nvg)
+    bfs_tree!(visitor, g, s)
+    return tree(visitor)
 end
 
-function bfs_tree(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
-    nvg = nv(g)
-    visitor = TreeBFSVisitorVector(zeros(Int,nvg))
-    visitor.tree[s] = s
-    return bfs_tree!(visitor, g, s)
+############################################
+# Connected Components with BFS            #
+############################################
+"""Performing connected components with BFS starting from seed"""
+type ComponentVisitorVector <: SimpleGraphVisitor
+    labels::Vector{Int}
+    seed::Int
 end
 
-function bfs_tree!(visitor::TreeBFSVisitorVector, g::SimpleGraph, s::Int)
-    traverse_graph(g, BreadthFirst(), s, visitor)
-    return visitor.tree
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+    if u != v && vcolor == 0
+        visitor.labels[v] = visitor.seed
+    end
+    return true
 end
 
-# Test graph for bipartiteness
-
+############################################
+# Test graph for bipartiteness             #
+############################################
 type BipartiteVisitor <: SimpleGraphVisitor
     bipartitemap::Vector{UInt8}
     is_bipartite::Bool
