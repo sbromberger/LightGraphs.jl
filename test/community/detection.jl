@@ -2,7 +2,7 @@ n=10
 g10 = CompleteGraph(n)
 z = copy(g10)
 for k=2:5
-    z = join(z, g10)
+    z = blkdiag(z, g10)
     add_edge!(z, (k-1)*n, k*n)
     c = community_detection_nback(z, k)
     a = collect(n:n:k*n)
