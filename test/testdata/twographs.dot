@@ -1,0 +1,26 @@
+graph g1 {
+        a -- b;
+        b -- c;
+        c -- d;
+        d -- e;
+        e -- f;
+        a -- f;
+        a -- c;
+        a -- d;
+        a -- e;
+        b -- d;
+        b -- e;
+        b -- f;
+        c -- e;
+        c -- f;
+        d -- f;
+    }
+
+digraph g2 {
+        a -> b;
+        a -> c;
+        c -> b;
+        c -> e;
+        e -> e;
+        e -> b;
+    }
