@@ -7,6 +7,7 @@ using StatsBase
 using Base.Collections
 using LightXML
 using ParserCombinator.Parsers.GML
+using Clustering
 
 if VERSION < v"0.4.0-dev"
     try
