@@ -105,6 +105,7 @@ write(g,"mygraph.jgz")
     - complement
     - reverse, reverse!
     - union
+    - join
     - intersect
     - difference
     - symmetric difference
