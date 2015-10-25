@@ -9,8 +9,6 @@
 # header followed by a list of (comma-delimited) edges - src,dst.
 # Multiple graphs may be present in one file.
 
-using ParserCombinator
-using ParserCombinator.Parsers
 
 function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     readedges = Set{@compat Tuple{Int,Int}}()
@@ -191,7 +189,7 @@ end
 Can optionally restrict to a single graph by specifying a name in gname."""
 function readgml(filename::AbstractString, gname::AbstractString="")
     f = open(readall,filename)
-    p = parse_dict(f)
+    p = Parsers.GML.parse_dict(f)
     graphs = @compat(Dict{AbstractString, SimpleGraph}())
     for gs in p[:graph]
 
