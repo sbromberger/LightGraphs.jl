@@ -270,4 +270,7 @@ function is_bipartite(g::SimpleGraph, s::Int)
     return visitor.is_bipartite
 end
 
-is_bipartite(g::SimpleGraph) = all(x->is_bipartite(g,x), vertices(g))
+function is_bipartite(g::SimpleGraph)
+    cc = filter(x->length(x)>2, connected_components(g))
+    return all(x->is_bipartite(g,x[1]), cc)
+end
