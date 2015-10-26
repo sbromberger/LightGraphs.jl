@@ -59,7 +59,7 @@ function non_backtracking_matrix(g::SimpleGraph)
         end
     end
 
-    B = zeros(Int, m, m)
+    B = zeros(Float64, m, m)
 
     for (e,u) in edgeidmap
         i, j = src(e), dst(e)
