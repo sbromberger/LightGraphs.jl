@@ -44,6 +44,7 @@ a2 = DiGraph(adjmx2)
 
 tests = [
     "operators",
+    "community/core-periphery",
     "community/detection",
     "community/modularity",
     "randgraphs",

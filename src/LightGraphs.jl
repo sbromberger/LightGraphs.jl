@@ -107,7 +107,7 @@ erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, rando
 stochastic_block_model,
 
 #community
-modularity, community_detection_nback
+modularity, community_detection_nback, core_periphery_deg
 
 """An optimized graphs package.
 
@@ -157,4 +157,6 @@ include("core.jl")
         include("flow/max-flow-min-cut.jl")
         include("community/modularity.jl")
         include("community/detection.jl")
+        include("community/core-periphery.jl")
+
 end # module
