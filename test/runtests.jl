@@ -47,6 +47,7 @@ tests = [
     "community/core-periphery",
     "community/detection",
     "community/modularity",
+    "community/clustering",
     "randgraphs",
     "graphdigraph",
     "persistence",
