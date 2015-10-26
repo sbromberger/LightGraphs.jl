@@ -57,6 +57,7 @@ tests = [
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
+    "traversals/randomwalks",
     "connectivity",
     "cliques",
     "randgraphs",
