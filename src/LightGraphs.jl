@@ -109,6 +109,9 @@ stochastic_block_model,
 #community
 modularity, community_detection_nback
 
+#community
+modularity, community_detection_nback
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
