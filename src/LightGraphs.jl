@@ -104,6 +104,7 @@ stochastic_block_model,
 modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient
 
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
