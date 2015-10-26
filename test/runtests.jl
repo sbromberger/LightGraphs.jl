@@ -67,7 +67,6 @@ tests = [
     "community/detection",
     "community/modularity",
     "community/clustering",
-    "community/core-periphery",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",

@@ -172,10 +172,6 @@ write(g,"mygraph.jgz")
     - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
     - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
-- community
-    - modularity
-    - community detection
-    - core-periphery
 
 
 ### Documentation
