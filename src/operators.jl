@@ -138,7 +138,7 @@ function union{T<:SimpleGraph}(g::T, h::T)
 end
 
 
-"""Merges graphs `g` and `h` using `blkdiag` and theN adds all the edges between
+"""Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
  the vertices in `g` and those in `h`.
 """
 function join(g::Graph, h::Graph)
