@@ -125,6 +125,7 @@ write(g,"mygraph.jgz")
     - Watts-Strogatz
     - random regular
     - arbitrary degree sequence
+    - stochastic block model
 
 - centrality
     - betweenness

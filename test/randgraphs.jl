@@ -84,3 +84,23 @@ rd = random_regular_digraph(10, 8, :out, 4)
 @test nv(rd) == 10
 @test ne(rd) == 80
 @test is_directed(rd)
+
+g10 = stochastic_block_model(4, 2, 1, 0)
+@test nv(g10) == 4
+@test ne(g10) == 2
+@test has_edge(g10, 1, 2)
+@test has_edge(g10, 3, 4)
+@test !has_edge(g10, 1, 4)
+@test !has_edge(g10, 1, 3)
+@test !has_edge(g10, 2, 4)
+@test !has_edge(g10, 2, 3)
+
+g10 = stochastic_block_model(4, 2, 0, 1)
+@test nv(g10) == 4
+@test ne(g10) == 4
+@test !has_edge(g10, 1, 2)
+@test !has_edge(g10, 3, 4)
+@test has_edge(g10, 1, 4)
+@test has_edge(g10, 1, 3)
+@test has_edge(g10, 2, 4)
+@test has_edge(g10, 2, 3)
