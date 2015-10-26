@@ -258,3 +258,29 @@ function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
         return DiGraph(sparse(I, J, V, n, n)')
     end
 end
+
+
+"""Samples a random graph with `n` vertices
+according to the [Stochastic Block Model](https://en.wikipedia.org/wiki/Stochastic_block_model).
+Nodes are dived in blocks of `r` elements.
+ Edges between pairs of vertices in the same block are added
+probability `pint`. Edges between pairs of vertices in different blocks are added
+probability `pext`.
+"""
+function stochastic_block_model(n::Integer, r::Integer, pint::Real, pext::Real, seed::Int=-1)
+    n % r != 0 && error("n should be divisible by r.")
+    if seed >= 0
+        srand(seed)
+    end
+    g = Graph(n)
+    for i = 1:n
+        for j = i+1 : n
+            if div(i-1, r) == div(j-1, r)
+                rand() < pint && add_edge!(g, i, j)
+            else
+                rand() < pext && add_edge!(g, i, j)
+            end
+        end
+    end
+    return g
+end

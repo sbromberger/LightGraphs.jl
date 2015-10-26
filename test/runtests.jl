@@ -43,6 +43,9 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "operators",
+    "community/detection",
+    "community/modularity",
     "randgraphs",
     "graphdigraph",
     "persistence",
@@ -54,7 +57,6 @@ tests = [
     "shortestpaths/floyd-warshall",
     "distance",
     "spectral",
-    "operators",
     "traversals/bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",

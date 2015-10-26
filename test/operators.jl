@@ -38,6 +38,18 @@ z = union(g3, h)
 @test has_edge(z, e)
 @test z == PathGraph(6)
 
+g10 = CompleteGraph(2)
+h10 = CompleteGraph(2)
+z = blkdiag(g10, h10)
+@test nv(z) == nv(g10) + nv(h10)
+@test ne(z) == ne(g10) + ne(h10)
+@test has_edge(z, 1, 2)
+@test has_edge(z, 3, 4)
+@test !has_edge(z, 1, 3)
+@test !has_edge(z, 1, 4)
+@test !has_edge(z, 2, 3)
+@test !has_edge(z, 2, 4)
+
 p = PathGraph(10)
 x = p*ones(10)
 @test  x[1]==1.0 && all(x[2:end-1].==2.0) && x[end]==1.0
