@@ -114,10 +114,6 @@ write(g,"mygraph.jgz")
 
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
-- community
-    - modularity
-    - community detection
-    - core-periphery
 
 
 ### Documentation
