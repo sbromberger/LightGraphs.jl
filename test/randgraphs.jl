@@ -95,7 +95,7 @@ g10 = stochastic_block_model(4, 2, 1, 0)
 @test !has_edge(g10, 2, 4)
 @test !has_edge(g10, 2, 3)
 
-g10 = stochastic_block_model(4, 2, 0, 1)
+g10 = stochastic_block_model(4, 2, 0, 1, 17)
 @test nv(g10) == 4
 @test ne(g10) == 4
 @test !has_edge(g10, 1, 2)
