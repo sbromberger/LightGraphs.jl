@@ -8,7 +8,7 @@ using Base.Collections
 using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
-
+using Clustering
 
 if VERSION < v"0.4.0-dev"
     try
