@@ -47,6 +47,9 @@ BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
+# random
+randomwalk, saw,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
@@ -120,6 +123,7 @@ include("core.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
+            include("traversals/randomwalks.jl")
         include("connectivity.jl")
         include("cliques.jl")
         include("distance.jl")
