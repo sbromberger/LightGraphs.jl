@@ -154,6 +154,12 @@ write(g,"mygraph.jgz")
     - non-backtracking matrix
     - integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
+- community
+    - modularity
+    - community detection
+    - core-periphery
+    - clustering coefficients
+
 - persistence
     - proprietary compressed format
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
@@ -165,10 +171,6 @@ write(g,"mygraph.jgz")
     - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
     - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
-- community
-    - modularity
-    - community detection
-    - core-periphery
 
 ### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

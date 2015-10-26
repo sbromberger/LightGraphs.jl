@@ -1,6 +1,5 @@
 g10 = StarGraph(10)
 c = core_periphery_deg(g10)
-println(c)
 @test degree(g10,1) == 9
 @test c[1] == 1
 for i=2:10
