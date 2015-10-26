@@ -168,6 +168,7 @@ write(g,"mygraph.jgz")
 - community
     - modularity
     - community detection
+    - core-periphery
 
 ### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
