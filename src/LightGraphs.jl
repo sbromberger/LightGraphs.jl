@@ -1,7 +1,6 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 module LightGraphs
 
-using Compat
 using GZip
 using StatsBase
 using Base.Collections
@@ -9,15 +8,6 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-
-if VERSION < v"0.4.0-dev"
-    try
-        import Docile: @doc_str, @doc_mstr
-    catch
-        macro doc_str(x) x end
-        macro doc_mstr(x) x end
-    end
-end
 
 try
     using GraphMatrices
@@ -28,7 +18,7 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym
+            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -56,6 +46,9 @@ BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
 
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
+
+# random
+randomwalk, saw,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -133,6 +126,7 @@ include("core.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
+            include("traversals/randomwalks.jl")
         include("connectivity.jl")
         include("cliques.jl")
         include("distance.jl")

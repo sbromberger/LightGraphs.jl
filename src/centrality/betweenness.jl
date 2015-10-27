@@ -56,7 +56,7 @@ function betweenness_centrality(
     endpoints=false)
 
     n_v = nv(g)
-    is_directed = (typeof(g) == DiGraph)
+    isdir = is_directed(g)
 
     betweenness = zeros(n_v)
     if k == 0
@@ -76,7 +76,7 @@ function betweenness_centrality(
     _rescale!(betweenness,
               n_v,
               normalize,
-              is_directed,
+              isdir,
               k)
 
     return betweenness

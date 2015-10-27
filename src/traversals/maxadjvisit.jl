@@ -45,11 +45,8 @@ function traverse_graph(
     visitor::AbstractMASVisitor,
     colormap::Vector{Int})
 
-    if VERSION > v"0.4.0-"
-        pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
-    else
-        pq = Collections.PriorityQueue{Int, T}(Base.Order.Reverse)
-    end
+
+    pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(graph)
@@ -102,7 +99,7 @@ function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
         zero(T),
         zero(Int),
         distmx,
-        @compat(Vector{Int}())
+        Vector{Int}()
     )
 end
 
@@ -205,7 +202,7 @@ function maximum_adjacency_visit{T}(
     log::Bool,
     io::IO
 )
-    visitor = MASVisitor(io, @compat(Vector{Int}()), distmx, log)
+    visitor = MASVisitor(io, Vector{Int}(), distmx, log)
     traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
     return visitor.vertices
 end

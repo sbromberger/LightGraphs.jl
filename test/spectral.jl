@@ -8,6 +8,11 @@
 @test laplacian_spectrum(g5,:in)[3] == 1.0
 @test laplacian_spectrum(g5,:out)[3] == 1.0
 
+# check adjacency matrices with self loops
+g = copy(g3)
+add_edge!(g,1,1)
+@test adjacency_matrix(g)[1,1] == 2
+
 g10 = CompleteGraph(10)
 B, em = non_backtracking_matrix(g10)
 @test length(em) == 2*ne(g10)
@@ -46,8 +51,6 @@ for dir in [:in, :out, :both]
     @test all(evals .>= -1e-15) # positive semidefinite
     @test_approx_eq_eps minimum(evals) 0 1e-13
 end
-
-
 
 # GraphMatrices integration tests
 if isdefined(:GraphMatrices)

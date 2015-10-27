@@ -48,7 +48,7 @@ function traverse_graph(
     s::Int,
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)),
-    que = @compat Vector{Int}())
+    que = Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -63,7 +63,7 @@ function traverse_graph(
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)),
-    que = @compat Vector{Int}())
+    que = Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -271,8 +271,6 @@ function is_bipartite(g::SimpleGraph, s::Int)
 end
 
 function is_bipartite(g::SimpleGraph)
-    for v in vertices(g)
-        !is_bipartite(g, v) && return false
-    end
-    return true
+    cc = filter(x->length(x)>2, connected_components(g))
+    return all(x->is_bipartite(g,x[1]), cc)
 end

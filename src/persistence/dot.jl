@@ -25,7 +25,7 @@ function readdot(filename::AbstractString, gname::AbstractString="")
     f = open(readall,filename)
     p = Parsers.DOT.parse_dot(f)
 
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
 
     for pg in p
         isdir = pg.directed

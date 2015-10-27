@@ -7,15 +7,15 @@ function show(io::IO, g::Graph)
 end
 
 function Graph(n::Int)
-    fadjlist = @compat Vector{Vector{Int}}()
-    badjlist = @compat Vector{Vector{Int}}()
+    fadjlist = Vector{Vector{Int}}()
+    badjlist = Vector{Vector{Int}}()
     sizehint!(badjlist,n)
     sizehint!(fadjlist,n)
     for i = 1:n
         # sizehint!(i_s, n/4)
         # sizehint!(o_s, n/4)
-        push!(badjlist, @compat(Vector{Int}()))
-        push!(fadjlist, @compat(Vector{Int}()))
+        push!(badjlist, Vector{Int}())
+        push!(fadjlist, Vector{Int}())
     end
     return Graph(1:n, Set{Edge}(), badjlist, fadjlist)
 end

@@ -1,4 +1,3 @@
-using Compat		# for readcentrality() in test/centrality/betweenness.jl
 using LightGraphs
 using Base.Test
 
@@ -43,14 +42,12 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
-    "operators",
-    "community/detection",
-    "community/modularity",
-    "randgraphs",
     "graphdigraph",
     "persistence",
     "core",
     "smallgraphs",
+    "operators",
+    "randgraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
@@ -61,14 +58,19 @@ tests = [
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
+    "traversals/randomwalks",
     "connectivity",
     "cliques",
+    "community/detection",
+    "community/modularity",
+    "randgraphs",
+    "subgraphs",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "subgraphs",
+
     "flow/max-flow-min-cut"
     ]
 

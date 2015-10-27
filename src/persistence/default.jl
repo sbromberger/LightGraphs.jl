@@ -11,7 +11,7 @@
 
 
 function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
-    readedges = Set{@compat Tuple{Int,Int}}()
+    readedges = Set{Tuple{Int,Int}}()
     if directed
         g = DiGraph(n_v)
     else
@@ -20,7 +20,7 @@ function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     for i = 1:n_e
         line = chomp(readline(f))
         if length(line) > 0
-            src_s, dst_s = @compat(split(line,r"\s*,\s*"))
+            src_s, dst_s = split(line,r"\s*,\s*")
             src = parse(Int, src_s)
             dst = parse(Int, dst_s)
             add_edge!(g, src, dst)
@@ -37,7 +37,7 @@ end
 
 """Returns a dictionary of (name=>graph) loaded from file `fn`."""
 function readgraph(fn::AbstractString, gname::AbstractString="")
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     f = GZip.open(fn,"r")        # should work even if uncompressed
 
     while !eof(f)
@@ -45,7 +45,7 @@ function readgraph(fn::AbstractString, gname::AbstractString="")
         if startswith(line,"#") || line == ""
             next
         else
-            nvstr, nestr, dirundir, graphname = @compat(split(line, r"s*,s*", limit=4))
+            nvstr, nestr, dirundir, graphname = split(line, r"s*,s*", limit=4)
             n_v = parse(Int, nvstr)
             n_e = parse(Int, nestr)
             dirundir = strip(dirundir)
@@ -93,7 +93,7 @@ with default `GZip` compression.
 Returns number of graphs written.
 """
 function write{S<:AbstractString, G<:SimpleGraph}(
-    graphs::@compat(Dict{S, G}),
+    graphs::Dict{S, G},
     fn::AbstractString;
     compress::Bool=true
 )
@@ -115,7 +115,7 @@ write(
     gname::AbstractString,
     fn::AbstractString;
     compress::Bool=true
-) = write(@compat(Dict(gname=>g)), fn; compress=compress)
+) = write(Dict(gname=>g), fn; compress=compress)
 
 write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed Graph", fn; compress=compress)
 write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed DiGraph", fn; compress=compress)

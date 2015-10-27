@@ -42,7 +42,7 @@ for v in vertices(rr)
     @test degree(rr, v) == 50
 end
 
-rr = random_configuration_model(10, repmat([2,4] ,5))
+rr = random_configuration_model(10, repmat([2,4] ,5), 3)
 @test nv(rr) == 10
 @test ne(rr) == 15
 @test is_directed(rr) == false

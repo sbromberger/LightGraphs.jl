@@ -7,11 +7,11 @@ function show(io::IO, g::DiGraph)
 end
 
 function DiGraph(n::Int)
-    fadjlist = @compat(Vector{Vector{Int}}())
-    badjlist = @compat(Vector{Vector{Int}}())
+    fadjlist = Vector{Vector{Int}}()
+    badjlist = Vector{Vector{Int}}()
     for i = 1:n
-        push!(badjlist, @compat(Vector{Int}()))
-        push!(fadjlist, @compat(Vector{Int}()))
+        push!(badjlist, Vector{Int}())
+        push!(fadjlist, Vector{Int}())
     end
     return DiGraph(1:n, Set{Edge}(), badjlist, fadjlist)
 end

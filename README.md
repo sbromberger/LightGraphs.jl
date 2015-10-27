@@ -2,10 +2,11 @@
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.3)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
+
+*NOTE: LightGraphs v0.3.5 is the last version guaranteed to work with Julia 0.3. Please upgrade to Julia 0.4 for the latest features.*
 
 
 An optimized graphs package.
@@ -87,7 +88,6 @@ write(g,"mygraph.jgz")
     - degree (in/out/histogram)
     - neighbors (in/out/all/common)
 
-
 - distance
     - eccentricity
     - diameter
@@ -142,6 +142,12 @@ write(g,"mygraph.jgz")
     - DFS topological sort
     - maximum adjacency / minimum cut
 
+- flow operations
+    - maximum flow
+
+- clique enumeration
+    - maximal cliques
+
 - linear algebra
     - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
@@ -152,15 +158,17 @@ write(g,"mygraph.jgz")
     - proprietary compressed format
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
     - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
+    - [Gexf](http://gexf.net/format) format
 
 - visualization: integration with
     - [GraphLayout](https://github.com/IainNZ/GraphLayout.jl)
     - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
+    - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
 - community
     - modularity
     - community detection
 
-###Documentation
+### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
 Documentation for methods is also available via the Julia REPL help system.

@@ -1,8 +1,8 @@
 # TODO: implement writing a dict of graphs
 
 function _process_graphml(e::XMLElement, isdirected::Bool)
-    nodes = @compat(Dict{AbstractString,Int}())
-    edges = @compat(Vector{Edge}())
+    nodes = Dict{AbstractString,Int}()
+    edges = Vector{Edge}()
 
     nodeid = 1
     for f in child_elements(e)
@@ -35,7 +35,7 @@ function readgraphml(filename::AbstractString, gname::AbstractString="")
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance

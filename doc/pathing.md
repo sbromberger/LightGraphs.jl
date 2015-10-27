@@ -13,15 +13,30 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 ### bfs_tree
 ```
 bfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
-bfs_tree(visitor::LightGraphs.TreeBFSVisitorVector, g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a breadth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
+
+This function is a high level wrapper around bfs_tree!, use that function for more performance.
 
 ### dfs_tree
 ```
 dfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
+
+## Random walks
+*LightGraphs* includes uniform random walks and self avoiding walks:
+### randomwalk
+```
+randomwalk(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Integer, niter::Integer)
+```
+Performs a random walk on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps. Returns a vector of vertices visited in order.
+
+### saw
+```
+saw(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Integer, niter::Integer)
+```
+Performs a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk) on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps. Returns a vector of vertices visited in order.
 
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
@@ -46,7 +61,7 @@ Returns `true` if the undirected graph of `g` is connected.
 
 ### connected_components
 ```
-connected_components(g::LightGraphs.Graph)
+connected_components(g)
 ```
 Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)) of an undirected graph `g` as a vector of components, each represented by a vector of vectors of vertices belonging to the component.
 

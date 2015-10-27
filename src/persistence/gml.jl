@@ -6,12 +6,12 @@ Can optionally restrict to a single graph by specifying a name in gname."""
 function readgml(filename::AbstractString, gname::AbstractString="")
     f = open(readall,filename)
     p = Parsers.GML.parse_dict(f)
-    graphs = @compat(Dict{AbstractString, SimpleGraph}())
+    graphs = Dict{AbstractString, SimpleGraph}()
     for gs in p[:graph]
 
-        dir = @compat(Bool(get(gs, :directed, 0)))
+        dir = Bool(get(gs, :directed, 0))
         nodes = [x[:id] for x in gs[:node]]
-        mapping = @compat(Dict{Int,Int}())
+        mapping = Dict{Int,Int}()
         for (i,n) in enumerate(nodes)
             mapping[n] = i
         end
@@ -24,7 +24,7 @@ function readgml(filename::AbstractString, gname::AbstractString="")
             graphname = get(gs, :name, "Unnamed Graph")
         end
         if (gname == "" || gname == graphname)
-            sds = @compat([(Int(x[:source]), Int(x[:target])) for x in gs[:edge]])
+            sds = [(Int(x[:source]), Int(x[:target])) for x in gs[:edge]]
             for (s,d) in (sds)
                 add_edge!(g, mapping[s], mapping[d])
             end
