@@ -14,6 +14,18 @@ function CompleteGraph(n::Integer)
     return g
 end
 
+
+"""Creates a complete bipartite graph with `n1+n2` vertices. It has edges
+connecting each pair of vertices in the two sets.
+"""
+function CompleteBipartiteGraph(n1::Integer, n2::Integer)
+    g = Graph(n1+n2)
+    for i = 1:n1, j=n1+1:n1+n2
+        unsafe_add_edge!(g, Edge(i,j))
+    end
+    return g
+end
+
 """Creates a complete digraph with `n` vertices. A complete digraph has edges
 connecting each pair of vertices (both an ingoing and outgoing edge).
 """
