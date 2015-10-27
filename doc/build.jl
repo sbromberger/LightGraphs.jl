@@ -347,6 +347,12 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 
 {{bfs_tree, dfs_tree}}
 
+## Random walks
+*LightGraphs* includes uniform random walks and self avoiding walks:
+
+{{randomwalk, saw}}
+
+
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
 

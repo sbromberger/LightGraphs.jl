@@ -43,13 +43,12 @@ julia> Pkg.install("LightGraphs")
 
 *LightGraphs.jl* requires the following packages:
 
-- [Compat](https://github.com/JuliaLang/Compat.jl)
 - [GZip](https://github.com/JuliaLang/GZip.jl)
 - [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
 - [Docile](https://github.com/MichaelHatherly/Docile.jl)
+- [LightXML](https://github.com/JuliaLang/LightXML.jl)
+- [ParserCombinator](https://github.com/andrewcooke/ParserCombinator.jl)
 
-In addition, [LightXML](https://github.com/JuliaLang/LightXML.jl) is
-recommended (required for GraphML support).
 
 ### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
