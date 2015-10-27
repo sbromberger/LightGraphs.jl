@@ -105,6 +105,7 @@ write(g,"mygraph.jgz")
     - complement
     - reverse, reverse!
     - union
+    - join
     - intersect
     - difference
     - symmetric difference
@@ -125,6 +126,7 @@ write(g,"mygraph.jgz")
     - Watts-Strogatz
     - random regular
     - arbitrary degree sequence
+    - stochastic block model
 
 - centrality
     - betweenness
@@ -149,6 +151,7 @@ write(g,"mygraph.jgz")
 - linear algebra
     - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
     - Laplacian matrix
+    - non-backtracking matrix
     - integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
 - persistence
@@ -162,6 +165,9 @@ write(g,"mygraph.jgz")
     - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
     - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
+- community
+    - modularity
+    - community detection
 
 ### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

@@ -7,7 +7,7 @@ using Base.Collections
 using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
-
+using Clustering
 
 try
     using GraphMatrices
@@ -83,8 +83,8 @@ betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
 # spectral
-adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-CombinatorialAdjacency,
+adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+CombinatorialAdjacency, non_backtracking_matrix,
 
 # astar
 a_star,
@@ -96,8 +96,11 @@ readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 maximum_flow,
 
 # randgraphs
-erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model
+erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
+stochastic_block_model,
 
+#community
+modularity, community_detection_nback
 
 """An optimized graphs package.
 
@@ -146,4 +149,6 @@ include("core.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
         include("flow/max-flow-min-cut.jl")
+        include("community/modularity.jl")
+        include("community/detection.jl")
 end # module

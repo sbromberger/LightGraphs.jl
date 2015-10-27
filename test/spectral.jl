@@ -13,6 +13,15 @@ g = copy(g3)
 add_edge!(g,1,1)
 @test adjacency_matrix(g)[1,1] == 2
 
+g10 = CompleteGraph(10)
+B, em = non_backtracking_matrix(g10)
+@test length(em) == 2*ne(g10)
+@test size(B) == (2*ne(g10),2*ne(g10))
+for i=1:10
+    @test sum(B[:,i]) == 8
+    @test sum(B[i,:]) == 8
+end
+
 @test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
 
 @test adjacency_matrix(g3) ==
