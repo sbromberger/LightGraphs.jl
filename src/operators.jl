@@ -137,6 +137,20 @@ function union{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
+
+"""Merges graphs `g` and `h` using `blkdiag` and theN adds all the edges between
+ the vertices in `g` and those in `h`.
+"""
+function join(g::Graph, h::Graph)
+    r = blkdiag(g, h)
+    for i=1:nv(g)
+        for j=nv(g)+1:nv(g)+nv(h)
+            add_edge!(r, i, j)
+        end
+    end
+    return r
+end
+
 """Filters graph `g` to include only the vertices present in the iterable
 argument `vs`. Returns the subgraph of `g` induced by `vs`.
 """

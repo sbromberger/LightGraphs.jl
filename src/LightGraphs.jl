@@ -18,7 +18,8 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
+            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
+
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -34,7 +35,7 @@ eccentricity, diameter, periphery, radius, center,
 # operators
 complement, reverse, reverse!, union, intersect,
 difference, symmetric_difference,
-induced_subgraph,
+induced_subgraph, join,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
