@@ -11,6 +11,10 @@ g = PathGraph(10)
 @test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
 @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
 
+g = DiGraph(PathGraph(10))
+@test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
+@test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
+
 g = PathDiGraph(10)
 @test non_backtracking_randomwalk(g, 10, 20) == [10]
 
