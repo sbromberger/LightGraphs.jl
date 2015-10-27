@@ -8,6 +8,7 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
+using JuMP
 
 try
     using GraphMatrices
@@ -68,7 +69,7 @@ bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
 # smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph, CompleteBipartiteGraph,
 CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
 DiamondGraph, BullGraph,
 ChvatalGraph, CubicalGraph, DesarguesGraph,
@@ -95,6 +96,9 @@ readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
+
+#matching
+maximum_weigth_maximal_matching,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
@@ -159,5 +163,6 @@ include("core.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
             include("flow/push_relabel.jl")
+        include("matching/linear-programming.jl")
 
 end # module
