@@ -67,8 +67,8 @@ bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
 # smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CircleGraph,
-CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CircleDiGraph,
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
 DiamondGraph, BullGraph,
 ChvatalGraph, CubicalGraph, DesarguesGraph,
 DodecahedralGraph, FruchtGraph, HeawoodGraph,

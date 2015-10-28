@@ -21,9 +21,9 @@ g = PathDiGraph(10)
 g = PathDiGraph(10)
 @test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
 
-g = CircleGraph(10)
+g = CycleGraph(10)
 visited = non_backtracking_randomwalk(g, 1, 20)
 @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
 
-g = CircleDiGraph(10)
+g = CycleDiGraph(10)
 @test non_backtracking_randomwalk(g, 1, 20) == [1:10; 1:10;]

@@ -69,9 +69,9 @@ function PathDiGraph(n::Integer)
     return g
 end
 
-"""Creates a circle graph with `n` vertices. A circle graph is a closed path graph.
+"""Creates a cycle graph with `n` vertices. A cycle graph is a closed path graph.
 """
-function CircleGraph(n::Integer)
+function CycleGraph(n::Integer)
     g = Graph(n)
     for i = 1:n-1
         unsafe_add_edge!(g, Edge(i, i+1))
@@ -80,9 +80,9 @@ function CircleGraph(n::Integer)
     return g
 end
 
-"""Creates a circle digraph with `n` vertices. A circle digraph is a closed path digraph.
+"""Creates a cycle digraph with `n` vertices. A cycle digraph is a closed path digraph.
 """
-function CircleDiGraph(n::Integer)
+function CycleDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 1:n-1
         unsafe_add_edge!(g, Edge(i, i+1))
