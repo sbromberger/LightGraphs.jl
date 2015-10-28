@@ -51,3 +51,13 @@ t = tree(parents)
 @test typeof(tvis.tree) <: DiGraph
 @test t == tvis.tree
 @test ne(t) < nv(t)
+
+
+g10 = CompleteGraph(10)
+@test bipartite_map(g10) == Int[]
+
+g10 = CompleteBipartiteGraph(10,10)
+@test bipartite_map(g10) == Int[ones(10); 2*ones(10)]
+
+h10 = blkdiag(g10,g10)
+@test bipartite_map(h10) == Int[ones(10); 2*ones(10); ones(10); 2*ones(10)]

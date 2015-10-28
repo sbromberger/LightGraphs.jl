@@ -249,14 +249,32 @@ end
 """Will return `true` if graph `g` is
 [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 """
-function is_bipartite(g::SimpleGraph, s::Int)
-    nvg = nv(g)
-    visitor = BipartiteVisitor(nvg)
-    traverse_graph(g, BreadthFirst(), s, visitor)
-    return visitor.is_bipartite
-end
+is_bipartite(g::SimpleGraph, s::Int) = bipartite_internal(g, s).is_bipartite
 
 function is_bipartite(g::SimpleGraph)
     cc = filter(x->length(x)>2, connected_components(g))
     return all(x->is_bipartite(g,x[1]), cc)
+end
+
+function bipartite_internal(g::SimpleGraph, s::Int)
+    nvg = nv(g)
+    visitor = BipartiteVisitor(nvg)
+    traverse_graph(g, BreadthFirst(), s, visitor)
+    return visitor
+end
+
+"""
+If the graph is bipartite returns a vector `c`  of size `nv(g)` containing
+the assignment of each vertex to one of the two sets (`c[i] == 1` or `c[i]==2`).
+If `g` is not bipartite returns an empty vector.
+"""
+function bipartite_map(g::SimpleGraph)
+    cc = connected_components(g)
+    visitors = [bipartite_internal(g, x[1]) for x in cc]
+    !all([v.is_bipartite for v in visitors]) && return zeros(Int, 0)
+    m = zeros(Int, nv(g))
+    for i=1:nv(g)
+        m[i] = any(v->v.bipartitemap[i] == 1, visitors) ? 2 : 1
+    end
+    m
 end
