@@ -1,7 +1,3 @@
-using JuMP
-using LightGraphs
-
-
 function maximum_weigth_maximal_matching(g::Graph, w, n1, n2)
     # bpmap = bipartite_map(g)
     # length(bpmap) != nv(g) && error("Graph is not bipartite")
