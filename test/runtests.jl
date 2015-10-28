@@ -44,6 +44,7 @@ a2 = DiGraph(adjmx2)
 tests = [
     "matching/linear-programming",
     "operators",
+    "randgraphs",
     "graphdigraph",
     "persistence",
     "core",
@@ -54,31 +55,16 @@ tests = [
     "subgraphs",
     "connectivity",
     "randgraphs",
-<<<<<<< HEAD
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
-=======
-    "subgraphs",
-    "distance",
-    "spectral",
-    "connectivity",
-    "cliques",
->>>>>>> add funciton bipartite_map
     "traversals/bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "traversals/randomwalks",
-<<<<<<< HEAD
     "community/core-periphery",
-=======
-    "shortestpaths/astar",
-    "shortestpaths/bellman-ford",
-    "shortestpaths/dijkstra",
-    "shortestpaths/floyd-warshall",
->>>>>>> add funciton bipartite_map
     "community/detection",
     "community/modularity",
     "community/clustering",
