@@ -102,7 +102,7 @@ stochastic_block_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,
-local_clustering, global_clustering
+local_clustering,local_clustering_coefficient, global_clustering_coefficient
 
 """An optimized graphs package.
 
