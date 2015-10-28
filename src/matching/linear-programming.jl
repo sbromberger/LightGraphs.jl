@@ -1,11 +1,47 @@
-function maximum_weigth_maximal_matching(g::Graph, w, n1, n2)
-    # bpmap = bipartite_map(g)
-    # length(bpmap) != nv(g) && error("Graph is not bipartite")
-    # v1 = findin(bpmap, 1)
-    # v2 = findin(bpmap, 2)
-    v1 = [1:n1;]
-    v2 = [n1+1:n1+n2;]
-    assert(length(v1) + length(v2) == nv(g))
+"""
+An optimal matching.
+
+weight: total weight of the matching
+
+inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
+
+π:       `π[i]=j` if vertex `i` is matched to vertex `j`.
+         `π[i]=-1` for unmatched vertices.
+"""
+type MatchingResult
+    weight::Float64
+    inmatch::Dict{Edge,Bool}
+    π::Vector{Int}
+end
+
+"""
+As `maximum_weigth_maximal_matching`, with the difference that the edges `e` with
+`w[e] < cutoff` will not be considered for the matching.
+"""
+function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
+    wnew = Dict{Edge,T}()
+    for (e,x) in w
+        if x >= cutoff
+            wnew[e] = x
+        end
+    end
+
+    return maximum_weigth_maximal_matching(g, wnew)
+end
+
+"""
+Given a bipartite graph `g` and an edgemap `w` containing weights associated to edges,
+returns a matching with the maximum total weight among the ones containing the
+greatest number of edges.
+Edges in `g` not present in `w` will not be considered for the matching.
+"""
+function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
+# TODO support for graphs with zero degree nodes
+# TODO apply separately on each connected component
+    bpmap = bipartite_map(g)
+    length(bpmap) != nv(g) && error("Graph is not bipartite")
+    v1 = findin(bpmap, 1)
+    v2 = findin(bpmap, 2)
     if length(v1) > length(v2)
         v1, v2 = v2, v1
     end
@@ -20,9 +56,6 @@ function maximum_weigth_maximal_matching(g::Graph, w, n1, n2)
         for j in neighbors(g, i)
             if haskey(w, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
-            else
-                println(i," ", j)
-                assert(false)
             end
         end
         @addConstraint(m, sum{x[id], id=idx} == 1)
@@ -33,10 +66,7 @@ function maximum_weigth_maximal_matching(g::Graph, w, n1, n2)
         for i in neighbors(g, j)
             if haskey(w, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
-            else
-                assert(false)
             end
-
         end
 
         @addConstraint(m, sum{x[id], id=idx} <= 1)
@@ -50,12 +80,22 @@ function maximum_weigth_maximal_matching(g::Graph, w, n1, n2)
 
     #check solution
     all(Bool[s == 1 || s == 0 for s in sol])
-    # return m
-    matchmap = Dict([e => convert(Bool,sol[edgemap[e]]) for e in keys(w)])
-    return getObjectiveValue(m), matchmap
+
+    cost = getObjectiveValue(m)
+
+    inmatch = Dict{Edge,Bool}()
+    π = fill(-1, nv(g))
+    for e in edges(g)
+        if haskey(w, e)
+            inmatch[e] = convert(Bool, sol[edgemap[e]])
+            if inmatch[e]
+                π[src(e)] = dst(e)
+                π[dst(e)] = src(e)
+            end
+        else
+            inmatch[e] = false
+        end
+    end
+
+    return MatchingResult(cost, inmatch, π)
 end
-
-
-# m = bipartite_matching(g, w)
-#
-# getObjectiveValue(m)
