@@ -2,10 +2,16 @@
 graph using [Edmond Karp's](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
 algorithm. Returns the value of the maximum flow as well as the final flow matrix.
 
-Use a default capacity of 1 when the capacity matrix isn't specified
+Use a default capacity of 1 when the capacity matrix isn't specified.
+
+Requires arguments:
+flow_graph::LightGraphs.DiGraph        # the input graph
+source::Int                            # the source vertex
+target::Int                            # the target vertex
+capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
-function maximum_flow{T<:Number}(
+function edmund_karp_impl{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
@@ -50,7 +56,13 @@ function maximum_flow{T<:Number}(
 end
 
 """Calculates the amount by which flow can be augmented in the given path.
-Augments the flow and returns the augment value."""
+Augments the flow and returns the augment value.
+
+Requires arguments:
+path::Vector{Int}                      # input path
+flow_matrix::AbstractArray{T,2}        # the current flow matrix
+capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+"""
 
 function augment_path!{T<:Number}(
     path::Vector{Int},                     # input path
@@ -114,12 +126,12 @@ Flag Values:
 2 => No Path to source
 
 Requires arguments:
-    flow_graph::LightGraphs.DiGraph,       # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    P::Vector{Int},                        # parent table of path init to -1s
+    flow_graph::LightGraphs.DiGraph        # the input graph
+    source::Int                            # the source vertex
+    target::Int                            # the target vertex
+    flow_matrix::AbstractArray{T,2}        # the current flow matrix
+    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    P::Vector{Int}                         # parent table of path init to -1s
     S::Vector{Int}                         # successor table of path init to -1s
 """
 function fetch_path!{T<:Number}(
