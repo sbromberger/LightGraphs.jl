@@ -42,35 +42,35 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "operators",
     "graphdigraph",
     "persistence",
     "core",
     "smallgraphs",
-    "operators",
+    "distance",
+    "spectral",
+    "cliques",
+    "subgraphs",
+    "connectivity",
     "randgraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
-    "distance",
-    "spectral",
     "traversals/bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "traversals/randomwalks",
-    "connectivity",
-    "cliques",
+    "community/core-periphery",
     "community/detection",
     "community/modularity",
-    "randgraphs",
-    "subgraphs",
+    "community/clustering",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-
     "flow/max-flow-min-cut"
     ]
 

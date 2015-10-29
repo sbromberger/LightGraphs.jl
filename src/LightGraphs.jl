@@ -18,7 +18,8 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose
+            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
+
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -34,7 +35,7 @@ eccentricity, diameter, periphery, radius, center,
 # operators
 complement, reverse, reverse!, union, intersect,
 difference, symmetric_difference,
-induced_subgraph,
+induced_subgraph, join,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -100,7 +101,8 @@ erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, rando
 stochastic_block_model,
 
 #community
-modularity, community_detection_nback
+modularity, community_detection_nback, core_periphery_deg,
+local_clustering,local_clustering_coefficient, global_clustering_coefficient
 
 """An optimized graphs package.
 
@@ -151,4 +153,8 @@ include("core.jl")
         include("flow/max-flow-min-cut.jl")
         include("community/modularity.jl")
         include("community/detection.jl")
+        include("community/core-periphery.jl")
+        include("community/clustering.jl")
+
+
 end # module
