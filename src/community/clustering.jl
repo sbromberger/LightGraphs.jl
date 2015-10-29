@@ -1,7 +1,7 @@
 """
 Computes the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient) for node `v`.
 """
-function local_clustering_coefficient(g::SimpleGraph, v::Int)
+function local_clustering_coefficient(g::SimpleGraph, v::Integer)
     ntriang, alltriang = local_clustering(g, v)
 
     return alltriang == 0 ? 0. : ntriang / alltriang
@@ -28,11 +28,6 @@ function local_clustering(g::SimpleGraph, v::Integer)
     return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
 end
 
-function local_clustering_coefficient(g::SimpleGraph, v::Int)
-    ntriang, alltriang = local_clustering(g, v)
-
-    return alltriang == 0 ? 0. : ntriang / alltriang
-end
 
 """
 Returns a vector containing  the [local clustering coefficients](https://en.wikipedia.org/wiki/Clustering_coefficient) for vertices `vlist`.
