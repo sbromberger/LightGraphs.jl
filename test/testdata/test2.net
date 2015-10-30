@@ -1,0 +1,7 @@
+*Vertices 3
+1 "Doc1" 0.0 0.0 0.0 ic Green bc Brown
+2 "Doc2" 0.0 0.0 0.0 ic Green bc Brown
+3 "Doc3" 0.0 0.0 0.0 ic Green bc Brown
+*Arcs
+1 2 3 c Green
+2 3 5 c Black

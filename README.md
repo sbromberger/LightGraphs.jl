@@ -166,6 +166,8 @@ write(g,"mygraph.jgz")
     - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
     - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
     - [Gexf](http://gexf.net/format) format
+    - [GraphViz DOT](http://gephi.github.io/users/supported-graph-formats/graphviz-dot-format/)
+    - [Pajek NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/)
 
 - visualization: integration with
     - [GraphLayout](https://github.com/IainNZ/GraphLayout.jl)

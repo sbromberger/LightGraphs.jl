@@ -27,8 +27,7 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loop,
-
+common_neighbors, all_neighbors, has_self_loop, digraph!,
 # distance
 eccentricity, diameter, periphery, radius, center,
 
@@ -92,6 +91,7 @@ a_star,
 
 # persistence
 readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
+writenet, readnet,
 
 # flow
 maximum_flow,
@@ -143,6 +143,7 @@ include("core.jl")
         include("persistence/gexf.jl")
         include("persistence/gml.jl")
         include("persistence/graphml.jl")
+        include("persistence/net.jl")
         include("randgraphs.jl")
         include("smallgraphs.jl")
         include("centrality/betweenness.jl")

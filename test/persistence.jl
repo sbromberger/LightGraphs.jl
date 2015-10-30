@@ -76,3 +76,23 @@ close(outread)
 close(outwrite)
 redirect_stderr(origSTDERR)
 @test gs["G"] == graphml_g
+
+
+g10 = readnet(joinpath(testdir,"testdata", "test1.net"))
+h10 =DiGraph(3)
+add_edge!(h10,1,2)
+add_edge!(h10,2,3)
+add_edge!(h10,1,3)
+add_edge!(h10,3,1)
+@test g10 == h10
+
+g10 = readnet(joinpath(testdir,"testdata", "test2.net"))
+h10 =DiGraph(3)
+add_edge!(h10,1,2)
+add_edge!(h10,2,3)
+@test g10 == h10
+
+g10 = readnet(joinpath(testdir,"testdata", "test3.net"))
+h10 =Graph(3)
+add_edge!(h10,1,3)
+@test g10 == h10
