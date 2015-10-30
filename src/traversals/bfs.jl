@@ -196,7 +196,7 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
         s::Int;
         colormap=zeros(Int, nv(g)),
-        que=Vector{Int}())
+        que=@compat(Vector{Int}()))
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
     # parent of the index. This function checks if the scratch space is too small for the graph.
