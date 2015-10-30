@@ -141,6 +141,7 @@ write(g,"mygraph.jgz")
     - BFS and DFS traversals with visitors
     - DFS topological sort
     - maximum adjacency / minimum cut
+    - random walks
 
 - flow operations
     - maximum flow

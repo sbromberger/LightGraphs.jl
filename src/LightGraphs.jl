@@ -48,7 +48,7 @@ BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
 # random
-randomwalk, saw,
+randomwalk, saw, non_backtracking_randomwalk,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -67,8 +67,8 @@ bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
 # smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph,
-CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph,
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
 DiamondGraph, BullGraph,
 ChvatalGraph, CubicalGraph, DesarguesGraph,
 DodecahedralGraph, FruchtGraph, HeawoodGraph,
