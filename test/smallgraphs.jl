@@ -15,6 +15,11 @@ g = PathDiGraph(5)
 g = PathGraph(5)
 @test nv(g) == 5 && ne(g) == 4
 
+g = CycleDiGraph(5)
+@test nv(g) == 5 && ne(g) == 5
+g = CycleGraph(5)
+@test nv(g) == 5 && ne(g) == 5
+
 g = WheelDiGraph(5)
 @test nv(g) == 5 && ne(g) == 8
 g = WheelGraph(5)
