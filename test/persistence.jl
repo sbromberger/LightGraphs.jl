@@ -64,8 +64,9 @@ origSTDOUT = STDOUT
 h5 = CompleteDiGraph(5)
 @test writenet(g3) == 1
 @test writenet(h5) == 1
-@test writenet(STDOUT, g3) == 1
-@test writenet(STDOUT, h5) == 1
+path = joinpath(testdir,"testdata","test4.net")
+@test writenet(path, g3) == 1
+@test writenet(path, h5) == 1
 flush(outread)
 flush(outwrite)
 close(outread)
