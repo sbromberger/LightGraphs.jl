@@ -84,93 +84,35 @@ write(g,"mygraph.jgz")
 ```
 
 ### Current functionality
-- core functions
-    - degree (in/out/histogram)
-    - neighbors (in/out/all/common)
+- **core functions:** degree (in/out/histogram), neighbors (in/out/all/common)
 
-- distance
-    - eccentricity
-    - diameter
-    - periphery
-    - radius
-    - center
+- **distance:** eccentricity, diameter, periphery, radius, center
 
-- connectivity
-    - strongly- and weakly-connected components
-    - bipartite checks
-    - condensation
-    - attracting components
+- **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components
 
-- operators
-    - complement
-    - reverse, reverse!
-    - union
-    - join
-    - intersect
-    - difference
-    - symmetric difference
-    - blkdiag
-    - induced subgraphs
+- **operators:** complement, reverse, reverse!, union, join, intersect, difference, symmetric difference, blkdiag, induced subgraphs
 
-- shortest path
-    - Dijkstra / Dijkstra with predecessors
-    - Bellman-Ford
-    - Floyd-Warshall
-    - A*
+- **shortest paths:** Dijkstra, Dijkstra with predecessors, Bellman-Ford, Floyd-Warshall, A*
 
-- small graph generators
-    - see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
+- **small graph generators:** see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
 
-- random graph generators
-    - Erdős–Rényi
-    - Watts-Strogatz
-    - random regular
-    - arbitrary degree sequence
-    - stochastic block model
+- **random graph generators:** Erdős–Rényi, Watts-Strogatz, random regular, arbitrary degree sequence, stochastic block model
 
-- centrality
-    - betweenness
-    - closeness
-    - degree
-    - pagerank
-    - Katz
+- **centrality:** betweenness, closeness, degree, pagerank, Katz
 
-- traversal operations
-    - cycle detection
-    - BFS and DFS DAGs
-    - BFS and DFS traversals with visitors
-    - DFS topological sort
-    - maximum adjacency / minimum cut
-    - random walks
+- **traversal operations:** cycle detection, BFS and DFS DAGs, BFS and DFS traversals with visitors, DFS topological sort, maximum adjacency / minimum cut, multiple random walks
 
-- flow operations
-    - maximum flow
+- **flow operations:** maximum flow
 
-- clique enumeration
-    - maximal cliques
+- **clique enumeration:** maximal cliques
 
-- linear algebra
-    - adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl))
-    - Laplacian matrix
-    - non-backtracking matrix
-    - integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
+- **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
-- community
-    - modularity
-    - community detection
-    - core-periphery
-    - clustering coefficients
+- **community:** modularity, community detection, core-periphery, clustering coefficients
 
-- persistence
-    - proprietary compressed format
-    - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
-    - [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format
-    - [Gexf](http://gexf.net/format) format
+- **persistence:** proprietary compressed format, [GraphML](http://en.wikipedia.org/wiki/GraphML) format, [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format, [Gexf](http://gexf.net/format) format
 
-- visualization: integration with
-    - [GraphLayout](https://github.com/IainNZ/GraphLayout.jl)
-    - [TikzGraphs](https://github.com/sisl/TikzGraphs.jl)
-    - [GraphPlot](https://github.com/afternone/GraphPlot.jl)
+- **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
 
 ### Documentation
