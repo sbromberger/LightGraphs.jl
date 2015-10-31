@@ -374,7 +374,7 @@ Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 *  The distance from a vertex to itself is always `0`.
 * The distance between two vertices with no connecting edge is always `Inf`.
 
-{{a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths}}
+{{a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths}}
 
 ## Path discovery / enumeration
 
