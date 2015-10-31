@@ -168,15 +168,6 @@ bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Grap
 ```
 Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex `s` or a set of source vertices `ss`. Returns a `BellmanFordState` with relevant traversal information (see below).
 
-### bellman_ford_shortest_paths
-```
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1})
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64, distmx::AbstractArray{T,2})
-```
-Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex `s` or a set of source vertices `ss`. Returns a `BellmanFordState` with relevant traversal information (see below).
-
 ### floyd_warshall_shortest_paths
 ```
 floyd_warshall_shortest_paths(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
