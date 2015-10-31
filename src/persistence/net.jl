@@ -5,15 +5,15 @@ NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) for
 Returns 1 (number of graphs written).
 """
 function writenet(f::IO, g::SimpleGraph)
-    writeln(f, "*Vertices $(nv(g))")
+    println(f, "*Vertices $(nv(g))")
     # write edges
     if is_directed(g)
-        writeln(f, "*Arcs")
+        println(f, "*Arcs")
     else
-        writeln(f, "*Edges")
+        println(f, "*Edges")
     end
     for e in edges(g)
-        writeln(io, "$(src(e)) $(dst(e))")
+        println(f, "$(src(e)) $(dst(e))")
     end
     return 1
 end

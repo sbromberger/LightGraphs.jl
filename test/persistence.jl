@@ -61,6 +61,11 @@ origSTDOUT = STDOUT
 @test writegexf(g4) == 1
 @test writegexf(STDOUT, g3) == 1
 @test writegexf(STDOUT, g4) == 1
+h5 = CompleteDiGraph(5)
+@test writenet(g3) == 1
+@test writenet(h5) == 1
+@test writenet(STDOUT, g3) == 1
+@test writenet(STDOUT, h5) == 1
 flush(outread)
 flush(outwrite)
 close(outread)
