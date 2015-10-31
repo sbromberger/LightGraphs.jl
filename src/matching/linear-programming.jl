@@ -34,6 +34,9 @@ Given a bipartite graph `g` and an edgemap `w` containing weights associated to 
 returns a matching with the maximum total weight among the ones containing the
 greatest number of edges.
 Edges in `g` not present in `w` will not be considered for the matching.
+The algorithm relies on a linear relaxation on of the matching problem, which is
+guaranteed to have integer solution on bipartite graps.
+The pakage JuMP.jl and one of its supported solvers is required.
 """
 function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 # TODO support for graphs with zero degree nodes
@@ -84,18 +87,18 @@ function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     cost = getObjectiveValue(m)
 
     inmatch = Dict{Edge,Bool}()
-    π = fill(-1, nv(g))
+    pi = fill(-1, nv(g))
     for e in edges(g)
         if haskey(w, e)
             inmatch[e] = convert(Bool, sol[edgemap[e]])
             if inmatch[e]
-                π[src(e)] = dst(e)
-                π[dst(e)] = src(e)
+                pi[src(e)] = dst(e)
+                pi[dst(e)] = src(e)
             end
         else
             inmatch[e] = false
         end
     end
 
-    return MatchingResult(cost, inmatch, π)
+    return MatchingResult(cost, inmatch, pi)
 end
