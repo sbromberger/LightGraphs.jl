@@ -39,7 +39,8 @@ typealias SimpleGraph Union{Graph, DiGraph}
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
 
-"""Return the edges of a graph."""
+"""Return the edges of a graph.
+NOTE: returns a reference, not a copy. Do not modify result."""
 edges(g::SimpleGraph) = g.edges
 
 """Returns the forward adjacency list of a graph.
@@ -58,12 +59,17 @@ For most graphs types this is pre-calculated.
 The optional second argument take the `v`th vertex adjacency list, that is:
 
     fadj(g, v::Int) == fadj(g)[v]
+
+NOTE: returns a reference, not a copy. Do not modify result.
 """
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
 """Returns the backwards adjacency list of a graph.
-For each vertex the Array of `dst` for each edge eminating from that vertex."""
+For each vertex the Array of `dst` for each edge eminating from that vertex.
+
+NOTE: returns a reference, not a copy. Do not modify result.
+"""
 badj(g::SimpleGraph) = g.badjlist
 badj(g::SimpleGraph, v::Int) = g.badjlist[v]
 
@@ -169,16 +175,25 @@ The number of histogram buckets is based on the number of vertices in `g`.
 degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
 
-"Returns a list of all neighbors connected to vertex `v` by an incoming edge."
+"""Returns a list of all neighbors connected to vertex `v` by an incoming edge.
+
+NOTE: returns a reference, not a copy. Do not modify result.
+"""
 in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
-"Returns a list of all neighbors connected to vertex `v` by an outgoing edge."
+"""Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
+
+NOTE: returns a reference, not a copy. Do not modify result.
+"""
 out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
 
 """Returns a list of all neighbors of vertex `v` in `g`.
 
 For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
+
+NOTE: returns a reference, not a copy. Do not modify result.
 """
 neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
+
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
