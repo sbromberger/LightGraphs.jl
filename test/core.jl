@@ -93,3 +93,8 @@ end
 
 @test g == copy(g)
 @test !(g === copy(g))
+
+g10 = CompleteGraph(10)
+z10 = CompleteDiGraph(10)
+h10 = digraph!(g10)
+@test h10 == z10

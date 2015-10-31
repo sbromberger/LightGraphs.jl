@@ -59,6 +59,21 @@ function DiGraph(g::Graph)
     return h
 end
 
+"""
+Returns a digraph contatining all the edges in `g` in both directions.
+It uses the payload of `g`, therefore `g` should not be used anymore.
+"""
+function digraph!(g::Graph)
+    h = DiGraph(nv(g))
+    h.fadjlist = fadj(g)
+    h.badjlist = badj(g)
+    h.edges = g.edges
+    for e in edges(g)
+        push!(h.edges,reverse(e))
+    end
+    return h
+end
+
 function ==(g::DiGraph, h::DiGraph)
     return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
 end
