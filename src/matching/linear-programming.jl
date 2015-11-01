@@ -15,10 +15,10 @@ type MatchingResult
 end
 
 """
-As `maximum_weigth_maximal_matching`, with the difference that the edges `e` with
+As `maximum_weight_maximal_matching`, with the difference that the edges `e` with
 `w[e] < cutoff` will not be considered for the matching.
 """
-function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
+function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
     wnew = Dict{Edge,T}()
     for (e,x) in w
         if x >= cutoff
@@ -26,7 +26,7 @@ function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, c
         end
     end
 
-    return maximum_weigth_maximal_matching(g, wnew)
+    return maximum_weight_maximal_matching(g, wnew)
 end
 
 """
@@ -38,7 +38,7 @@ The algorithm relies on a linear relaxation on of the matching problem, which is
 guaranteed to have integer solution on bipartite graps.
 The pakage JuMP.jl and one of its supported solvers is required.
 """
-function maximum_weigth_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
+function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 # TODO support for graphs with zero degree nodes
 # TODO apply separately on each connected component
     bpmap = bipartite_map(g)

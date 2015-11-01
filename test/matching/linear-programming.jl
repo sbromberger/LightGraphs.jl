@@ -4,7 +4,7 @@ w[Edge(1,3)] = 10.
 w[Edge(1,4)] = 1.
 w[Edge(2,3)] = 2.
 w[Edge(2,4)] = 11.
-match = maximum_weigth_maximal_matching(g,w)
+match = maximum_weight_maximal_matching(g,w)
 @test match.weight == 21
 @test match.inmatch[Edge(1,3)] == true
 @test match.inmatch[Edge(1,4)] == false
@@ -21,7 +21,7 @@ w[Edge(1,3)] = 10
 w[Edge(1,4)] = 0.5
 w[Edge(2,3)] = 11
 w[Edge(2,4)] = 1
-match = maximum_weigth_maximal_matching(g,w)
+match = maximum_weight_maximal_matching(g,w)
 @test match.weight == 11.5
 @test match.inmatch[Edge(1,3)] == false
 @test match.inmatch[Edge(1,4)] == true
@@ -44,7 +44,7 @@ w[Edge(2,3)] = 11
 w[Edge(2,4)] = 1
 w[Edge(2,5)] = -1
 w[Edge(2,6)] = -1
-match = maximum_weigth_maximal_matching(g,w,0)
+match = maximum_weight_maximal_matching(g,w,0)
 @test match.weight == 11.5
 @test match.inmatch[Edge(1,3)] == false
 @test match.inmatch[Edge(1,4)] == true
