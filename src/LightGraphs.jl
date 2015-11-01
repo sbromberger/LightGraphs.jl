@@ -98,7 +98,7 @@ readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
 
 #matching
-maximum_weigth_maximal_matching,
+maximum_weight_maximal_matching,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
