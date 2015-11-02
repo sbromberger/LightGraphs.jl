@@ -29,13 +29,13 @@ d = LightGraphs.DefaultCapacity(flow_graph)
 @test maximum_flow(flow_graph,1,8)[1] == 3
 @test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
 
-# Test Edmund Karp's algorithm
-@test maximum_flow(flow_graph,1,8,algorithm=EdmundKarpAlgorithm())[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmundKarpAlgorithm())[1] == 28
+# Test Edmonds Karp's algorithm
+@test maximum_flow(flow_graph,1,8,algorithm=EdmondsKarpAlgorithm())[1] == 3
+@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorithm())[1] == 28
 
-# Test Dinitz's algorithm
-@test maximum_flow(flow_graph,1,8,algorithm=DinitzAlgorithm())[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinitzAlgorithm())[1] == 28
+# Test Dinic's algorithm
+@test maximum_flow(flow_graph,1,8,algorithm=DinicAlgorithm())[1] == 3
+@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())[1] == 28
 
 # Test Push-Relabel algorithm
 @test maximum_flow(flow_graph,1,8,algorithm=PushRelabelAlgorithm())[1] == 3

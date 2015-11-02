@@ -19,10 +19,10 @@ end
 residual_graph = LightGraphs.residual(flow_graph)
 
 # Test with default distances
-@test LightGraphs.edmund_karp_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
+@test LightGraphs.edmonds_karp_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
 
 # Test with capacity matrix
-@test LightGraphs.edmund_karp_impl(residual_graph,1,8,capacity_matrix)[1] == 28
+@test LightGraphs.edmonds_karp_impl(residual_graph,1,8,capacity_matrix)[1] == 28
 
 # Test the types of the values returned by fetch_path
 function test_find_path_types(residual_graph, s, t, flow_matrix, capacity_matrix)

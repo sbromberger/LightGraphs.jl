@@ -1,27 +1,27 @@
-"""AbstractFlowAlgorithm
+"""
 Abstract type that allows users to pass in their preferred Algorithm
 """
 abstract AbstractFlowAlgorithm
 
-"""EdmundKarpAlgorithm
-Forces the maximum_flow function to use Edmund Karp's maximum flow algorithm.
 """
-type EdmundKarpAlgorithm <: AbstractFlowAlgorithm
+Forces the maximum_flow function to use Edmonds Karp\'s maximum flow algorithm.
+"""
+type EdmondsKarpAlgorithm <: AbstractFlowAlgorithm
 end
 
-"""DinitzAlgorithm
-Forces the maximum_flow function to use Dinitz's maximum flow algorithm.
 """
-type DinitzAlgorithm <: AbstractFlowAlgorithm
+Forces the maximum_flow function to use Dinic\'s maximum flow algorithm.
+"""
+type DinicAlgorithm <: AbstractFlowAlgorithm
 end
 
-"""PushRelabelAlgorithm
+"""
 Forces the maximum_flow function to use the Push-Relabel maximum flow algorithm.
 """
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
 end
 
-"""DefaultCapacity
+"""
 Type that returns 1 if a forward edge exists, and 0 otherwise
 """
 
@@ -36,7 +36,7 @@ size(d::DefaultCapacity) = (d.nv, d.nv)
 transpose(d::DefaultDistance) = d
 ctranspose(d::DefaultDistance) = d
 
-"""residual
+"""
 Constructs a residual graph for the input flow graph. Creates a new graph instead
 of modifying the input flow graph.
 
@@ -69,22 +69,7 @@ function residual(
 end
 
 """
-Generic maximum_flow function that can use one of the three flow algorithms:
-1. Endmond Karp's algorithm: O(VE^2).
-2. Dinic's blocking-flow algorithm: O(V^2E)
-3. Push-Relabel algorithm: O(V^3).
-
-Requires arguments:
-flow_graph::LightGraphs.DiGraph       # the input graph
-source::Int                           # the source vertex
-target::Int                           # the target vertex
-capacity_matrix::AbstractArray{T,2}   # edge flow capacities
-;
-algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
-"""
-
-"""maximum_flow
-Method for Edmund Karp's Algorithm
+Method for Edmonds Karp\'s Algorithm
 """
 
 function maximum_flow{T<:Number}(
@@ -92,13 +77,13 @@ function maximum_flow{T<:Number}(
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    algorithm::EdmundKarpAlgorithm         # keyword argument for algorithm
+    algorithm::EdmondsKarpAlgorithm         # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
-    return edmund_karp_impl(residual_graph, source, target, capacity_matrix)
+    return edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
 end
 
-"""maximum_flow
+"""
 Method for Push-Relabel Algorithm
 """
 
@@ -113,8 +98,8 @@ function maximum_flow{T<:Number}(
     return push_relabel(residual_graph, source, target, capacity_matrix)
 end
 
-"""maximum_flow
-Method for Dinitz's algorithm
+"""
+Method for Dinic\'s algorithm
 """
 
 function maximum_flow{T<:Number}(
@@ -122,14 +107,25 @@ function maximum_flow{T<:Number}(
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    algorithm::DinitzAlgorithm             # keyword argument for algorithm
+    algorithm::DinicAlgorithm             # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
-    return dinitz_impl(residual_graph, source, target, capacity_matrix)
+    return dinic_impl(residual_graph, source, target, capacity_matrix)
 end
 
-"""maximum_flow
-Generic Keyword argument method for maximum_flow
+"""
+Generic maximum_flow function that can use one of the three flow algorithms:
+1. Endmond-Karp\'s algorithm: O(VE^2).
+2. Dinic\'s blocking-flow algorithm: O(V^2E)
+3. Push-Relabel algorithm: O(V^3).
+
+Requires arguments:
+flow_graph::LightGraphs.DiGraph       # the input graph
+source::Int                           # the source vertex
+target::Int                           # the target vertex
+capacity_matrix::AbstractArray{T,2}   # edge flow capacities
+;
+algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 """
 
 function maximum_flow{T<:Number}(

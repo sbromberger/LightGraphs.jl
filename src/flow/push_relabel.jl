@@ -1,4 +1,4 @@
-"""push_relabel
+"""
 Implementation of the FIFO push relabel algorithm with gap heuristic. Takes
 approximately O(V^3) time.
 
@@ -58,7 +58,7 @@ function push_relabel{T<:Number}(
     return sum([flow_matrix[v,target] for v in badj(residual_graph, target) ]), flow_matrix
 end
 
-"""enqueue_vertex!
+"""
 Pushes inactive nodes into the queue and activates them.
 
 Requires arguments:
@@ -81,7 +81,7 @@ function enqueue_vertex!{T<:Number}(
     return nothing
 end
 
-"""push_flow!
+"""
 Pushes as much flow as possible through the given edge.
 
 Requires arguements:
@@ -122,7 +122,7 @@ function push_flow!{T<:Number}(
     nothing
 end
 
-  """gap!
+  """
   Implements the gap heuristic. Relabels all vertices above a cutoff height.
   Reduces the number of relabels required.
 
@@ -156,7 +156,7 @@ function gap!{T<:Number}(
     nothing
 end
 
-"""relabel!
+"""
 Relabels a vertex with respect to its neighbors, to produce an admissable
 edge.
 
@@ -197,8 +197,8 @@ function relabel!{T<:Number}(
 end
 
 
-"""discharge!
-Drains the excess flow out of a vertex. Run's the gap heuristic or relabels the
+"""
+Drains the excess flow out of a vertex. Runs the gap heuristic or relabels the
 vertex if the excess remains non-zero.
 
 Requires arguments:

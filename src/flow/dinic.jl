@@ -1,9 +1,9 @@
-"""dinitz_impl
+"""
 Computes the maximum flow between the source and target vertexes in a flow
-graph using [Dinitz's Algorithm](https://en.wikipedia.org/wiki/Dinic%27s_algorithm)
+graph using [Dinic\'s Algorithm](https://en.wikipedia.org/wiki/Dinic%27s_algorithm)
 Returns the value of the maximum flow as well as the final flow matrix.
 
-Use a default capacity of 1 when the capacity matrix isn't specified.
+Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
 residual_graph::LightGraphs.DiGraph        # the input graph
@@ -12,7 +12,7 @@ target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
-function dinitz_impl{T<:Number}(
+function dinic_impl{T<:Number}(
     residual_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
@@ -33,7 +33,7 @@ function dinitz_impl{T<:Number}(
     return flow, flow_matrix
 end
 
-"""blocking_flow!
+"""
 Uses BFS to identify a blocking flow in
 the input graph and then backtracks from the targetto the source, aumenting flow
 along all possible paths.

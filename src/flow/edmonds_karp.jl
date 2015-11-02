@@ -1,9 +1,9 @@
-"""edmund_karp_impl
+"""
 Computes the maximum flow between the source and target vertexes in a flow
-graph using [Edmond Karp's](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
+graph using [Edmonds Karp\'s](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm)
 algorithm. Returns the value of the maximum flow as well as the final flow matrix.
 
-Use a default capacity of 1 when the capacity matrix isn't specified.
+Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
 residual_graph::LightGraphs.DiGraph        # the input graph
@@ -12,7 +12,7 @@ target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
-function edmund_karp_impl{T<:Number}(
+function edmonds_karp_impl{T<:Number}(
     residual_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
@@ -55,7 +55,7 @@ function edmund_karp_impl{T<:Number}(
     return flow, flow_matrix
 end
 
-"""augment_path!
+"""
 Calculates the amount by which flow can be augmented in the given path.
 Augments the flow and returns the augment value.
 
@@ -87,7 +87,7 @@ function augment_path!{T<:Number}(
     return augment
 end
 
-"""fetch_path
+"""
 Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
 the two BFS searches intersect, the Parent table of the path, the
 Successor table of the path found, and a flag indicating success
@@ -116,7 +116,7 @@ function fetch_path{T<:Number}(
                        S)
 end
 
-"""fetch_path!
+"""
 A preallocated version of fetch_paths. The parent and successor tables are pre-allocated.
 Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
 the two BFS searches intersect, the Parent table of the path, the

@@ -20,10 +20,10 @@ end
 residual_graph = LightGraphs.residual(flow_graph)
 
 # Test with default distances
-@test LightGraphs.dinitz_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
+@test LightGraphs.dinic_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
 
 # Test with capacity matrix
-@test LightGraphs.dinitz_impl(residual_graph, 1, 8, capacity_matrix)[1] == 28
+@test LightGraphs.dinic_impl(residual_graph, 1, 8, capacity_matrix)[1] == 28
 
 # Test on disconnected graphs
 function test_blocking_flow(residual_graph, source, target, capacity_matrix, flow_matrix)

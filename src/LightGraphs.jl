@@ -94,7 +94,7 @@ a_star,
 readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 
 # flow
-maximum_flow, EdmundKarpAlgorithm, DinitzAlgorithm, PushRelabelAlgorithm,
+maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
@@ -155,8 +155,8 @@ include("core.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
         include("flow/maximum_flow.jl")
-            include("flow/edmund_karp.jl")
-            include("flow/dinitz.jl")
+            include("flow/edmonds_karp.jl")
+            include("flow/dinic.jl")
             include("flow/push_relabel.jl")
 
 end # module
