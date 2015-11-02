@@ -16,16 +16,17 @@ for e in flow_edges
     capacity_matrix[u,v] = f
 end
 
+residual_graph = LightGraphs.residual(flow_graph)
 
 # Test with default distances
-@test LightGraphs.edmund_karp_impl(flow_graph,1,8)[1] == 3
+@test LightGraphs.edmund_karp_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
 
 # Test with capacity matrix
-@test LightGraphs.edmund_karp_impl(flow_graph,1,8,capacity_matrix)[1] == 28
+@test LightGraphs.edmund_karp_impl(residual_graph,1,8,capacity_matrix)[1] == 28
 
 # Test the types of the values returned by fetch_path
-function test_find_path_types(flow_graph, s, t, flow_matrix, capacity_matrix)
-    v, P, S, flag = LightGraphs.fetch_path(flow_graph, s, t, flow_matrix, capacity_matrix)
+function test_find_path_types(residual_graph, s, t, flow_matrix, capacity_matrix)
+    v, P, S, flag = LightGraphs.fetch_path(residual_graph, s, t, flow_matrix, capacity_matrix)
     @test typeof(P) == Vector{Int}
     @test typeof(S) == Vector{Int}
     @test typeof(flag) == Int
@@ -33,12 +34,12 @@ function test_find_path_types(flow_graph, s, t, flow_matrix, capacity_matrix)
 end
 
 # Test the value of the flags returned.
-function test_find_path_disconnected(flow_graph, s, t, flow_matrix, capacity_matrix)
-    h = copy(flow_graph)
-    for dst in collect(neighbors(flow_graph, s))
-        rem_edge!(flow_graph, s, dst)
+function test_find_path_disconnected(residual_graph, s, t, flow_matrix, capacity_matrix)
+    h = copy(residual_graph)
+    for dst in collect(neighbors(residual_graph, s))
+        rem_edge!(residual_graph, s, dst)
     end
-    v, P, S, flag = LightGraphs.fetch_path(flow_graph, s, t, flow_matrix, capacity_matrix)
+    v, P, S, flag = LightGraphs.fetch_path(residual_graph, s, t, flow_matrix, capacity_matrix)
     @test flag == 1
     for dst in collect(neighbors(h, t))
         rem_edge!(h, t, dst)
@@ -52,6 +53,6 @@ function test_find_path_disconnected(flow_graph, s, t, flow_matrix, capacity_mat
     @test flag == 2
 end
 
-flow_matrix = zeros(Int, nv(flow_graph), nv(flow_graph))
-test_find_path_types(flow_graph, 1,8, flow_matrix, capacity_matrix)
-test_find_path_disconnected(flow_graph, 1, 8, flow_matrix, capacity_matrix)
+flow_matrix = zeros(Int, nv(residual_graph), nv(residual_graph))
+test_find_path_types(residual_graph, 1,8, flow_matrix, capacity_matrix)
+test_find_path_disconnected(residual_graph, 1, 8, flow_matrix, capacity_matrix)

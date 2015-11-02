@@ -6,28 +6,27 @@ Returns the value of the maximum flow as well as the final flow matrix.
 Use a default capacity of 1 when the capacity matrix isn't specified.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph        # the input graph
+residual_graph::LightGraphs.DiGraph        # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function dinitz_impl{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2}=   # edge flow capacities
-        DefaultDistance()
+    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
-    n = nv(flow_graph)                     # number of vertexes
-    
+    n = nv(residual_graph)                     # number of vertexes
+
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
     P = zeros(Int, n)                      # Sharable parent vector
 
     flow = 0
 
     while true
-        augment = blocking_flow!(flow_graph, source, target, capacity_matrix, flow_matrix, P)
+        augment = blocking_flow!(residual_graph, source, target, capacity_matrix, flow_matrix, P)
         augment == 0 && break
         flow += augment
     end
@@ -40,21 +39,21 @@ the input graph and then backtracks from the targetto the source, aumenting flow
 along all possible paths.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph        # the input graph
+residual_graph::LightGraphs.DiGraph        # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 flow_matrix::AbstractArray{T,2}        # the current flow matrix
 """
 function blocking_flow!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     )
-    P = zeros(T, nv(flow_graph))
-    return blocking_flow!(flow_graph,
+    P = zeros(T, nv(residual_graph))
+    return blocking_flow!(residual_graph,
                           source,
                           target,
                           capacity_matrix,
@@ -68,7 +67,7 @@ the input graph and then backtracks from the target to the source, aumenting flo
 along all possible paths.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph        # the input graph
+residual_graph::LightGraphs.DiGraph        # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -77,14 +76,14 @@ P::AbstractArray{Int, 1}               # Parent vector to store Level Graph
 """
 
 function blocking_flow!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     P::AbstractArray{Int, 1}               # Parent vector to store Level Graph
     )
-    n = nv(flow_graph)                     # number of vertexes
+    n = nv(residual_graph)                     # number of vertexes
 
     fill!(P, -1)
     P[source] = -2
@@ -94,7 +93,7 @@ function blocking_flow!{T<:Number}(
 
     while length(Q) > 0                   # Construct the Level Graph using BFS
         u = pop!(Q)
-        for v in fadj(flow_graph, u)
+        for v in fadj(residual_graph, u)
             if P[v] == -1 && capacity_matrix[u,v] > flow_matrix[u,v]
                 P[v] = u
                 unshift!(Q, v)
@@ -108,7 +107,7 @@ function blocking_flow!{T<:Number}(
 
     total_flow = 0
 
-    for bv in badj(flow_graph, target)    # Trace all possible routes to source
+    for bv in badj(residual_graph, target)    # Trace all possible routes to source
         flow = typemax(T)
         v = target
         u = bv

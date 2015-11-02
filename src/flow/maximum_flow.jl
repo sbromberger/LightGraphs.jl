@@ -21,6 +21,21 @@ Forces the maximum_flow function to use the Push-Relabel maximum flow algorithm.
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
 end
 
+"""DefaultCapacity
+Type that returns 1 if a forward edge exists, and 0 otherwise
+"""
+
+type DefaultCapacity <: AbstractArray{Int, 2}
+    flow_graph::LightGraphs.DiGraph
+    nv::Int
+    DefaultCapacity(flow_graph::LightGraphs.DiGraph) = new(flow_graph, nv(flow_graph))
+end
+
+getindex(d::DefaultCapacity, s::Int, t::Int) = if has_edge(d.flow_graph, s , t) 1 else 0 end
+size(d::DefaultCapacity) = (d.nv, d.nv)
+transpose(d::DefaultDistance) = d
+ctranspose(d::DefaultDistance) = d
+
 """residual
 Constructs a residual graph for the input flow graph. Creates a new graph instead
 of modifying the input flow graph.
@@ -38,34 +53,23 @@ flow_graph::LightGraphs.DiGraph,        # the input graph
 capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
 
-function residual{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,        # the input graph
-    capacity_matrix::AbstractArray{T,2}     # input capacity matrix
+function residual(
+    flow_graph::LightGraphs.DiGraph         # the input graph
     )
+
     n = nv(flow_graph)
-
     residual_graph = copy(flow_graph)       # make a copy of the input graph
-
-    if typeof(capacity_matrix) == DefaultDistance
-        capacity_matrix = zeros(T, n, n)    # create a new capacity matrix
-        for (u,v) in edges(flow_graph)
-            capacity_matrix[u,v] = 1
-            if !has_edge(flow_graph, v, u)  # create reverse edge
-                add_edge!(residual_graph, v, u)
-            end
-        end
-    else
-        for (u,v) in edges(flow_graph)
-            if !has_edge(flow_graph, v, u) # create reverse edge
-                add_edge!(residual_graph, v, u)
-            end
+    for (u,v) in edges(flow_graph)
+        if !has_edge(flow_graph, v, u)      # create reverse edge
+            add_edge!(residual_graph, v, u)
         end
     end
 
-    return residual_graph, capacity_matrix
+    return residual_graph
 end
 
-"""Generic maximum_flow function that can use one of the three flow algorithms:
+"""
+Generic maximum_flow function that can use one of the three flow algorithms:
 1. Endmond Karp's algorithm: O(VE^2).
 2. Dinic's blocking-flow algorithm: O(V^2E)
 3. Push-Relabel algorithm: O(V^3).
@@ -79,24 +83,63 @@ capacity_matrix::AbstractArray{T,2}   # edge flow capacities
 algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 """
 
+"""maximum_flow
+Method for Edmund Karp's Algorithm
+"""
+
 function maximum_flow{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2}=   # edge flow capacities
-        DefaultDistance();
-    algorithm::AbstractFlowAlgorithm =     # keyword argument for algorithm
-        EdmundKarpAlgorithm()
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::EdmundKarpAlgorithm         # keyword argument for algorithm
     )
-    residual_graph, capacity_matrix = residual(flow_graph, capacity_matrix)
+    residual_graph = residual(flow_graph)
+    return edmund_karp_impl(residual_graph, source, target, capacity_matrix)
+end
 
-    if typeof(algorithm) == EdmundKarpAlgorithm
-        return edmund_karp_impl(residual_graph, source, target, capacity_matrix)
-    elseif typeof(algorithm) == DinitzAlgorithm
-        return dinitz_impl(residual_graph, source, target, capacity_matrix)
-    elseif typeof(algorithm) == PushRelabelAlgorithm
-        return push_relabel(residual_graph, source, target, capacity_matrix)
-    end
+"""maximum_flow
+Method for Push-Relabel Algorithm
+"""
 
+function maximum_flow{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::PushRelabelAlgorithm        # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
     return push_relabel(residual_graph, source, target, capacity_matrix)
+end
+
+"""maximum_flow
+Method for Dinitz's algorithm
+"""
+
+function maximum_flow{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::DinitzAlgorithm             # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
+    return dinitz_impl(residual_graph, source, target, capacity_matrix)
+end
+
+"""maximum_flow
+Generic Keyword argument method for maximum_flow
+"""
+
+function maximum_flow{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2} =  # edge flow capacities
+        DefaultCapacity(flow_graph);
+    algorithm::AbstractFlowAlgorithm  =     # keyword argument for algorithm
+        PushRelabelAlgorithm()
+    )
+    return maximum_flow(flow_graph, source, target, capacity_matrix, algorithm)
 end

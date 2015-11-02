@@ -17,10 +17,10 @@ for e in flow_edges
 end
 
 # Construct the residual graph
-residual_graph, capacity_matrix = LightGraphs.residual(flow_graph, capacity_matrix)
+residual_graph = LightGraphs.residual(flow_graph)
 
 # Test with default distances
-@test LightGraphs.dinitz_impl(residual_graph, 1, 8)[1] == 3
+@test LightGraphs.dinitz_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
 
 # Test with capacity matrix
 @test LightGraphs.dinitz_impl(residual_graph, 1, 8, capacity_matrix)[1] == 28
@@ -36,7 +36,7 @@ function test_blocking_flow(residual_graph, source, target, capacity_matrix, flo
 
     h = copy(residual_graph)
 
-    for dst in flow_graph.badjlist[target]
+    for dst in collect(in_neighbors(residual_graph, target))
         rem_edge!(h, dst, target)
     end
 

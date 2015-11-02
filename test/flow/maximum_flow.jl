@@ -1,5 +1,6 @@
 using LightGraphs
 using Base.Test
+
 # Construct DiGraph
 flow_graph = DiGraph(8)
 
@@ -18,6 +19,11 @@ for e in flow_edges
     capacity_matrix[u,v] = f
 end
 
+# Test DefaultCapacity
+d = LightGraphs.DefaultCapacity(flow_graph)
+@test typeof(d) <: AbstractArray{Int, 2}
+@test d[1,8] == 0
+@test d[1,2] == 1
 
 # Test with default algorithm
 @test maximum_flow(flow_graph,1,8)[1] == 3

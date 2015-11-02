@@ -10,21 +10,20 @@ active -> Stores the status of all vertices. (e(v)>0 => active[v] = true)
 Q      -> The FIFO queue that stores active vertices waiting to be discharged.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph        # the input graph
+residual_graph::LightGraphs.DiGraph        # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function push_relabel{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::LightGraphs.DiGraph,   # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2}=   # edge flow capacities
-        DefaultDistance()
+    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
 
-    n = nv(flow_graph)
+    n = nv(residual_graph)
 
     flow_matrix = zeros(T, n, n)
 
@@ -46,17 +45,17 @@ function push_relabel{T<:Number}(
     sizehint!(Q, n)
 
 
-    for v in fadj(flow_graph, source)
-        push_flow!(flow_graph, source, v, capacity_matrix, flow_matrix, excess, height, active, Q)
+    for v in fadj(residual_graph, source)
+        push_flow!(residual_graph, source, v, capacity_matrix, flow_matrix, excess, height, active, Q)
     end
 
     while length(Q) > 0
         v = pop!(Q)
         active[v] = false
-        discharge!(flow_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
+        discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
     end
 
-    return sum([flow_matrix[v,target] for v in badj(flow_graph, target) ]), flow_matrix
+    return sum([flow_matrix[v,target] for v in badj(residual_graph, target) ]), flow_matrix
 end
 
 """enqueue_vertex!
@@ -79,14 +78,14 @@ function enqueue_vertex!{T<:Number}(
         active[v] = true
         unshift!(Q, v)
     end
-    nothing
+    return nothing
 end
 
 """push_flow!
 Pushes as much flow as possible through the given edge.
 
 Requires arguements:
-flow_graph::LightGraphs.DiGraph      # the input graph
+residual_graph::LightGraphs.DiGraph      # the input graph
 u::Int                               # input from-vertex
 v::Int                               # input to-vetex
 capacity_matrix::AbstractArray{T,2}
@@ -98,7 +97,7 @@ Q::AbstractArray{Int,1}
 """
 
 function push_flow!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,     # the input graph
+    residual_graph::LightGraphs.DiGraph,     # the input graph
     u::Int,                              # input from-vertex
     v::Int,                              # input to-vetex
     capacity_matrix::AbstractArray{T,2},
@@ -128,7 +127,7 @@ end
   Reduces the number of relabels required.
 
   Requires arguments:
-  flow_graph::LightGraphs.DiGraph        # the input graph
+  residual_graph::LightGraphs.DiGraph        # the input graph
   h::Int                                 # cutoff height
   excess::AbstractArray{T,1}
   height::AbstractArray{Int,1}
@@ -138,7 +137,7 @@ end
   """
 
 function gap!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::LightGraphs.DiGraph,       # the input graph
     h::Int,                                # cutoff height
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
@@ -146,14 +145,15 @@ function gap!{T<:Number}(
     count::AbstractArray{Int,1},
     Q::AbstractArray{Int,1}                # FIFO queue
     )
-    n = nv(flow_graph)
-    for v in vertices(flow_graph)
+    n = nv(residual_graph)
+    for v in vertices(residual_graph)
         height[v] < h && continue
         count[height[v]+1] -= 1
         height[v] = max(height[v], n + 1)
         count[height[v]+1] += 1
         enqueue_vertex!(Q, v, active, excess)
     end
+    nothing
 end
 
 """relabel!
@@ -161,7 +161,7 @@ Relabels a vertex with respect to its neighbors, to produce an admissable
 edge.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph         # the input graph
+residual_graph::LightGraphs.DiGraph         # the input graph
 v::Int                                  # input vertex to be relabeled
 capacity_matrix::AbstractArray{T,2}
 flow_matrix::AbstractArray{T,2}
@@ -173,7 +173,7 @@ Q::AbstractArray{Int,1}
 """
 
 function relabel!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::LightGraphs.DiGraph,        # the input graph
     v::Int,                                 # input vertex to be relabeled
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
@@ -183,10 +183,10 @@ function relabel!{T<:Number}(
     count::AbstractArray{Int,1},
     Q::AbstractArray{Int,1}
     )
-    n = nv(flow_graph)
+    n = nv(residual_graph)
     count[height[v]+1] -= 1
     height[v] = 2*n
-    for to in fadj(flow_graph, v)
+    for to in fadj(residual_graph, v)
         if capacity_matrix[v,to] > flow_matrix[v,to]
             height[v] = min(height[v], height[to]+1)
         end
@@ -202,7 +202,7 @@ Drains the excess flow out of a vertex. Run's the gap heuristic or relabels the
 vertex if the excess remains non-zero.
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph         # the input graph
+residual_graph::LightGraphs.DiGraph         # the input graph
 v::Int                                  # vertex to be discharged
 capacity_matrix::AbstractArray{T,2}
 flow_matrix::AbstractArray{T,2}
@@ -213,7 +213,7 @@ count::AbstractArray{Int,1}
 Q::AbstractArray{Int,1}                 # FIFO queue
 """
 function discharge!{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::LightGraphs.DiGraph,        # the input graph
     v::Int,                                 # vertex to be discharged
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
@@ -223,16 +223,16 @@ function discharge!{T<:Number}(
     count::AbstractArray{Int,1},
     Q::AbstractArray{Int,1}                 # FIFO queue
     )
-    for to in fadj(flow_graph, v)
+    for to in fadj(residual_graph, v)
         excess[v] == 0 && break
-        push_flow!(flow_graph, v, to, capacity_matrix, flow_matrix, excess, height, active, Q)
+        push_flow!(residual_graph, v, to, capacity_matrix, flow_matrix, excess, height, active, Q)
     end
 
     if excess[v] > 0
         if count[height[v]+1] == 1
-            gap!(flow_graph, height[v], excess, height, active, count, Q)
+            gap!(residual_graph, height[v], excess, height, active, count, Q)
         else
-            relabel!(flow_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
+            relabel!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
         end
     end
     nothing
