@@ -1,7 +1,7 @@
 """
 Computes the maximum flow between the source and target vertexes in a flow
-graph using [Edmonds Karp\'s](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm)
-algorithm. Returns the value of the maximum flow as well as the final flow matrix.
+graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm). 
+Returns the value of the maximum flow as well as the final flow matrix.
 
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
