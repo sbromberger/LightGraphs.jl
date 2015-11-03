@@ -33,8 +33,8 @@ end
 
 getindex(d::DefaultCapacity, s::Int, t::Int) = if has_edge(d.flow_graph, s , t) 1 else 0 end
 size(d::DefaultCapacity) = (d.nv, d.nv)
-transpose(d::DefaultDistance) = d
-ctranspose(d::DefaultDistance) = d
+transpose(d::DefaultCapacity) = d
+ctranspose(d::DefaultCapacity) = d
 
 """
 Constructs a residual graph for the input flow graph. Creates a new graph instead

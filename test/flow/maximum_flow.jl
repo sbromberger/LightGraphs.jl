@@ -25,6 +25,8 @@ d = LightGraphs.DefaultCapacity(flow_graph)
 @test d[1,8] == 0
 @test d[1,2] == 1
 @test size(d) == (8,8)
+@test transpose(d) == d
+@test ctranspose(d) == d
 
 # Test with default algorithm
 @test maximum_flow(flow_graph,1,8)[1] == 3
