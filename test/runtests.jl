@@ -42,7 +42,6 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
-    "matching/linear-programming",
     "operators",
     "randgraphs",
     "graphdigraph",
@@ -76,7 +75,8 @@ tests = [
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/push_relabel",
-    "flow/maximum_flow"
+    "flow/maximum_flow",
+    "matching/linear-programming"
     ]
 
 

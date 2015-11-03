@@ -41,6 +41,7 @@ The pakage JuMP.jl and one of its supported solvers is required.
 function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 # TODO support for graphs with zero degree nodes
 # TODO apply separately on each connected component
+    isdefined(:JuMP) || error("JuMP not defined")
     bpmap = bipartite_map(g)
     length(bpmap) != nv(g) && error("Graph is not bipartite")
     v1 = findin(bpmap, 1)
@@ -50,6 +51,9 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     end
     nedg = 0
     edgemap = Dict{Edge,Int}([e => nedg+=1 for (e,w) in w])
+    for (e,idx) in edgemap
+        edgemap[reverse(e)] = idx
+    end
 
     m = Model()
     @defVar(m, x[1:length(w)] >= 0)
@@ -57,22 +61,26 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     for i in v1
         idx = Int64[]
         for j in neighbors(g, i)
-            if haskey(w, Edge(i,j))
+            if haskey(edgemap, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
             end
         end
-        @addConstraint(m, sum{x[id], id=idx} == 1)
+        if length(idx) > 0
+            @addConstraint(m, sum{x[id], id=idx} == 1)
+        end
     end
 
     for j in v2
         idx = Int64[]
         for i in neighbors(g, j)
-            if haskey(w, Edge(i,j))
+            if haskey(edgemap, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
             end
         end
 
-        @addConstraint(m, sum{x[id], id=idx} <= 1)
+        if length(idx) > 0
+            @addConstraint(m, sum{x[id], id=idx} <= 1)
+        end
     end
 
     @setObjective(m, Max, sum{c * x[edgemap[e]], (e,c)=w})
@@ -81,7 +89,6 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     status != :Optimal && error("Failure")
     sol = getValue(x)
 
-    #check solution
     all(Bool[s == 1 || s == 0 for s in sol])
 
     cost = getObjectiveValue(m)

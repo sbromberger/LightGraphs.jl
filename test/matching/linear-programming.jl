@@ -36,7 +36,7 @@ match = maximum_weight_maximal_matching(g,w)
 @test match.π[2] == 3
 @test match.π[3] == 2
 
-g =CompleteBipartiteGraph(2,4)
+g =CompleteBipartiteGraph(2,6)
 w =Dict{Edge,Float64}()
 w[Edge(1,3)] = 10
 w[Edge(1,4)] = 0.5
@@ -58,3 +58,27 @@ match = maximum_weight_maximal_matching(g,w,0)
 @test match.π[4] == 1
 @test match.π[2] == 3
 @test match.π[3] == 2
+
+g =CompleteBipartiteGraph(4,2)
+w =Dict{Edge,Float64}()
+w[Edge(3,5)] = 10
+w[Edge(3,6)] = 0.5
+w[Edge(2,5)] = 11
+w[Edge(1,6)] = 1
+w[Edge(1,5)] = -1
+
+match = maximum_weight_maximal_matching(g,w,0)
+@test match.weight == 12
+@test match.inmatch[Edge(3,5)] == false
+@test match.inmatch[Edge(3,6)] == false
+@test match.inmatch[Edge(2,5)] == true
+@test match.inmatch[Edge(1,5)] == false
+@test match.inmatch[Edge(4,5)] == false
+@test match.inmatch[Edge(4,6)] == false
+@test match.inmatch[Edge(1,6)] == true
+@test match.π[1] == 6
+@test match.π[2] == 5
+@test match.π[3] == -1
+@test match.π[4] == -1
+@test match.π[5] == 2
+@test match.π[6] == 1
