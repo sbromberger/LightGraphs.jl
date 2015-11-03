@@ -1,7 +1,7 @@
 """
 Computes the maximum flow between the source and target vertexes in a flow
-graph using [Edmonds Karp\'s](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm)
-algorithm. Returns the value of the maximum flow as well as the final flow matrix.
+graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm). 
+Returns the value of the maximum flow as well as the final flow matrix.
 
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
@@ -171,26 +171,20 @@ function fetch_path!{T<:Number}(
                 end
             end
 
-            if length(Q_f) == 0
-                return 0, P, S, 1 # No paths to target
-            end
+            length(Q_f) == 0 && return 0, P, S, 1 # No paths to target
         else
             v = pop!(Q_r)
             for u in badj(residual_graph, v)
                 if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
                     S[u] = v
-                    if P[u] == -1
-                        unshift!(Q_r, u)
-                    else
-                        return u, P, S, 0 # 0 indicates success
-                    end
+                    P[u] != -1 && return  u, P, S, 0 # 0 indicates success
+                    
+                    unshift!(Q_r, u)
                 end
 
             end
 
-            if length(Q_r) == 0
-                return 0, P, S, 2 # No paths to source
-            end
+            length(Q_r) == 0 && return 0, P, S, 2 # No paths to source
         end
     end
 end
