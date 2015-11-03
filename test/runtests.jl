@@ -71,7 +71,10 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "flow/max-flow-min-cut"
+    "flow/edmonds_karp",
+    "flow/dinic",
+    "flow/push_relabel",
+    "flow/maximum_flow"
     ]
 
 
