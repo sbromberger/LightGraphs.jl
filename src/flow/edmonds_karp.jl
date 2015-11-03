@@ -171,26 +171,20 @@ function fetch_path!{T<:Number}(
                 end
             end
 
-            if length(Q_f) == 0
-                return 0, P, S, 1 # No paths to target
-            end
+            length(Q_f) == 0 && return 0, P, S, 1 # No paths to target
         else
             v = pop!(Q_r)
             for u in badj(residual_graph, v)
                 if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
                     S[u] = v
-                    if P[u] == -1
-                        unshift!(Q_r, u)
-                    else
-                        return u, P, S, 0 # 0 indicates success
-                    end
+                    P[u] != -1 && return  u, P, S, 0 # 0 indicates success
+                    
+                    unshift!(Q_r, u)
                 end
 
             end
 
-            if length(Q_r) == 0
-                return 0, P, S, 2 # No paths to source
-            end
+            length(Q_r) == 0 && return 0, P, S, 2 # No paths to source
         end
     end
 end
