@@ -101,9 +101,7 @@ function blocking_flow!{T<:Number}(
         end
     end
 
-    if P[target] == -1                    # BFS couldn't reach the target
-        return 0
-    end
+    P[target] == -1 && return 0                    # BFS couldn't reach the target
 
     total_flow = 0
 
@@ -122,19 +120,17 @@ function blocking_flow!{T<:Number}(
             end
         end
 
-        if flow == 0                      # Flow cannot be augmented along path
-            continue
-        else
-            v = target
-            u = bv
-            while v != source             # Augment flow along path
-                flow_matrix[u,v] += flow
-                flow_matrix[v,u] -= flow
-                v = u
-                u = P[u]
-            end
+        flow == 0 && continue                      # Flow cannot be augmented along path
+            
+        v = target
+        u = bv
+        while v != source             # Augment flow along path
+            flow_matrix[u,v] += flow
+            flow_matrix[v,u] -= flow
+            v = u
+            u = P[u]
         end
-
+    
         total_flow += flow
     end
     return total_flow
