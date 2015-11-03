@@ -42,7 +42,6 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
-    "matching/linear-programming",
     "operators",
     "randgraphs",
     "graphdigraph",
@@ -73,7 +72,8 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "flow/max-flow-min-cut"
+    "flow/max-flow-min-cut",
+    "matching/linear-programming"
     ]
 
 
