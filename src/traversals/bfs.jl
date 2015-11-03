@@ -134,8 +134,6 @@ type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
-TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
-
 @deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
 
 """TreeBFSVisitorVector is a type for representing a BFS traversal
@@ -179,18 +177,6 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor
     end
     return true
 end
-
-
-# Return the DAG representing the traversal of a graph.
-function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
-        add_edge!(visitor.tree, u, v)
-    end
-    return true
-end
-
-
 
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
