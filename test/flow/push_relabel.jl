@@ -11,7 +11,7 @@ flow_edges = [
     (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
 ]
 
-capacity_matrix = zeros(Int,8,8);
+capacity_matrix = zeros(Int,8,8)
 
 for e in flow_edges
     u,v,f = e

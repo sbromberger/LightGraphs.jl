@@ -1,3 +1,6 @@
+using LightGraphs
+using Base.Test
+
 # Construct DiGraph
 flow_graph = DiGraph(8)
 
@@ -8,7 +11,7 @@ flow_edges = [
     (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
 ]
 
-capacity_matrix = zeros(Int ,nv(flow_graph) ,nv(flow_graph));
+capacity_matrix = zeros(Int ,nv(flow_graph) ,nv(flow_graph))
 
 for e in flow_edges
     u,v,f = e
@@ -27,21 +30,30 @@ residual_graph = LightGraphs.residual(flow_graph)
 
 # Test on disconnected graphs
 function test_blocking_flow(residual_graph, source, target, capacity_matrix, flow_matrix)
+    #disconnect source
     h = copy(residual_graph)
     for dst in collect(neighbors(residual_graph, source))
         rem_edge!(h, source, dst)
     end
-
     @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix) == 0
 
+    #disconnect target and add unreachable vertex
     h = copy(residual_graph)
-
-    for dst in collect(in_neighbors(residual_graph, target))
-        rem_edge!(h, dst, target)
+    for src in collect(in_neighbors(residual_graph, target))
+        rem_edge!(h, src, target)
     end
-
     @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix) == 0
 
+    # unreachable vertex (covers the case where a vertex isn't reachable from the source)
+    h = copy(residual_graph)
+    add_vertex!(h)
+    add_edge!(h, nv(residual_graph)+1, target)
+    capacity_matrix_ = vcat(hcat(capacity_matrix, zeros(Int, nv(residual_graph))), zeros(Int, 1, nv(residual_graph)+1))
+    flow_graph_  = vcat(hcat(flow_matrix, zeros(Int, nv(residual_graph))), zeros(Int, 1, nv(residual_graph)+1))
+
+    @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix_, flow_graph_ ) > 0
+
+    #test with connected graph
     @test LightGraphs.blocking_flow!(residual_graph, source, target, capacity_matrix, flow_matrix) > 0
 end
 

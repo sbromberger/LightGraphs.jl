@@ -11,7 +11,7 @@ flow_edges = [
     (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
 ]
 
-capacity_matrix = zeros(Int,8,8);
+capacity_matrix = zeros(Int,8,8)
 
 for e in flow_edges
     u,v,f = e
@@ -24,6 +24,7 @@ d = LightGraphs.DefaultCapacity(flow_graph)
 @test typeof(d) <: AbstractArray{Int, 2}
 @test d[1,8] == 0
 @test d[1,2] == 1
+@test size(d) == (8,8)
 
 # Test with default algorithm
 @test maximum_flow(flow_graph,1,8)[1] == 3
