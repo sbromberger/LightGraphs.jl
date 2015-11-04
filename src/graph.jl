@@ -75,7 +75,10 @@ function rem_edge!(g::Graph, e::Edge)
         (reve in edges(g)) || error("Edge $e is not in graph")
         e = reve
     end
+    return unsafe_rem_edge!(g, e)
+end
 
+function unsafe_rem_edge!(g::Graph, e::Edge)
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
