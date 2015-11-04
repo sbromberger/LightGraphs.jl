@@ -116,20 +116,11 @@ Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 """Remove the vertex `v` from graph `g`.
-=======
-"""Remove the vertex `v` from the graph `g`.
->>>>>>> change rem_edge
-=======
-"""Remove the vertex `v` from graph `g`.
->>>>>>> finish work on vertex removal
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
 After removal the vertices in the ` g` will be indexed by 1:n-1.
-<<<<<<< HEAD
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Note: An exception will be raised if the vertex `v`  is not in the `g`.
 """
@@ -142,29 +133,6 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         unsafe_rem_edge!(g, e)
     end
     neigs = copy(in_neighbors(g, n))
-=======
-This is an O(k) operation, where `k` is the max of the degree of vertices `v` and `n`.
-Note: An exception will be raised if the vertex `v`  is not in the `g`.
-"""
-function rem_vertex!(g::SimpleGraph, v::Int)
-    v in vertices(g) || throw(BoundsError())
-    n = nv(g)
-
-    edgs = in_edges(g, v)
-    for e in edgs
-        unsafe_rem_edge!(g, e)
-    end
-<<<<<<< HEAD
-<<<<<<< HEAD
-    n = nv(g)
-    neigs = copy(neighbors(g, n))
->>>>>>> change rem_edge
-=======
-    neigs = copy(out_neighbors(g, n))
->>>>>>> more work on vertex/edge removal
-=======
-    neigs = copy(in_neighbors(g, n))
->>>>>>> finish work on vertex removal
     for i in neigs
         unsafe_rem_edge!(g, Edge(i, n))
     end
@@ -172,52 +140,24 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         for i in neigs
             unsafe_add_edge!(g, Edge(i, v))
         end
-<<<<<<< HEAD
     end
 
     if is_directed(g)
-<<<<<<< HEAD
-<<<<<<< HEAD
         edgs = out_edges(g, v)
         for e in edgs
             unsafe_rem_edge!(g, e)
         end
         neigs = copy(out_neighbors(g, n))
-=======
-        edgs = in_edges(g, v)
-        for e in edgs
-            unsafe_rem_edge!(g, e)
-        end
-        neigs = copy(in_neighbors(g, n))
->>>>>>> more work on vertex/edge removal
-=======
-        edgs = out_edges(g, v)
-        for e in edgs
-            unsafe_rem_edge!(g, e)
-        end
-        neigs = copy(out_neighbors(g, n))
->>>>>>> finish work on vertex removal
         for i in neigs
             unsafe_rem_edge!(g, Edge(n, i))
         end
         if v != n
             for i in neigs
                 unsafe_add_edge!(g, Edge(v, i))
-<<<<<<< HEAD
-<<<<<<< HEAD
             end
         end
-=======
->>>>>>> change rem_edge
-=======
-        end
-            end
->>>>>>> more work on vertex/edge removal
-=======
-            end
-        end
->>>>>>> finish work on vertex removal
     end
+
     g.vertices = 1:n-1
     pop!(g.fadjlist)
     if is_directed(g)
