@@ -218,7 +218,6 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         end
 >>>>>>> finish work on vertex removal
     end
-
     g.vertices = 1:n-1
     pop!(g.fadjlist)
     if is_directed(g)
