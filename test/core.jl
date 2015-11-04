@@ -92,7 +92,6 @@ end
 
 @test g == copy(g)
 @test !(g === copy(g))
-
 g10 = CompleteGraph(5)
 rem_vertex!(g10, 1)
 @test g10 == CompleteGraph(4)

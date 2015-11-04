@@ -93,7 +93,6 @@ end
 
 function rem_edge!(g::Graph, e::Edge)
     has_edge(g, e) || error("Edge $e is not in graph")
-
     return unsafe_rem_edge!(g, e)
 end
 
