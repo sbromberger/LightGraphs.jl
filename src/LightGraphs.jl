@@ -8,11 +8,16 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-using JuMP
 
 try
     using GraphMatrices
     import GraphMatrices.CombinatorialAdjacency
+    nothing
+catch
+end
+
+try
+    using JuMP
     nothing
 catch
 end
