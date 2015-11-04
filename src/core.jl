@@ -157,7 +157,6 @@ function rem_vertex!(g::SimpleGraph, v::Int)
             end
         end
     end
-
     g.vertices = 1:n-1
     g.fadjlist = g.fadjlist[1:n-1]
     g.badjlist = g.badjlist[1:n-1]
