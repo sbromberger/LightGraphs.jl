@@ -93,3 +93,10 @@ end
 
 @test g == copy(g)
 @test !(g === copy(g))
+
+g10 = CompleteGraph(10)
+rem_vertex!(g10, 1)
+@test g10 == CompleteGraph(9)
+rem_vertex!(g10, 9)
+@test g10 == CompleteGraph(8)
+@test_throws BoundsError rem_vertex!(g10, 9)
