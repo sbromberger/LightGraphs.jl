@@ -76,9 +76,13 @@ end
 
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
-has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
+has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
+isordered(e::Edge) = src(e) <= dst(e)
 
 function unsafe_add_edge!(g::Graph, e::Edge)
+    if src(e) > dst(e)
+        e = Edge(dst(e), src(e))
+    end
     push!(g.fadjlist[src(e)], dst(e))
     if src(e) != dst(e)
         push!(g.fadjlist[dst(e)], src(e))
@@ -88,15 +92,14 @@ function unsafe_add_edge!(g::Graph, e::Edge)
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    if !(e in edges(g))
-        reve = reverse(e)
-        (reve in edges(g)) || error("Edge $e is not in graph")
-        e = reve
-    end
+    has_edge(g, e) || error("Edge $e is not in graph")
     return unsafe_rem_edge!(g, e)
 end
 
 function unsafe_rem_edge!(g::Graph, e::Edge)
+    if src(e) > dst(e)
+        e = Edge(dst(e), src(e))
+    end
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
