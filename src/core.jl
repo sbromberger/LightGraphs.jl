@@ -116,6 +116,7 @@ Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
+<<<<<<< HEAD
 """Remove the vertex `v` from graph `g`.
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
@@ -158,6 +159,19 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         end
     end
 
+=======
+function rem_vertex!(g::Graph, v::Int)
+    edgs = edges(g, v)
+    for e in edgs
+        rem_edge!(g, e)
+    end
+    n = nv(g)
+    neigs = neighbors(g, n)
+    for i in neigs
+        rem_edge!(g, i, n)
+        add_edge!(g, i, v)
+    end
+>>>>>>> rem_vertex!
     g.vertices = 1:n-1
     g.fadjlist = g.fadjlist[1:n-1]
     g.badjlist = g.badjlist[1:n-1]
