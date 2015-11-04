@@ -134,6 +134,23 @@ Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
+function rem_vertex!(g::Graph, v::Int)
+    edgs = edges(g, v)
+    for e in edgs
+        rem_edge!(g, e)
+    end
+    n = nv(g)
+    neigs = neighbors(g, n)
+    for i in neigs
+        rem_edge!(g, i, n)
+        add_edge!(g, i, v)
+    end
+    g.vertices = 1:n-1
+    g.fadjlist = g.fadjlist[1:n-1]
+    g.badjlist = g.badjlist[1:n-1]
+    g
+end
+
 """Return the number of edges which start at vertex `v`."""
 indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
 """Return the number of edges which end at vertex `v`."""
