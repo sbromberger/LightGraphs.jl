@@ -89,10 +89,10 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     @setObjective(m, Max, sum{c * x[edgemap[e]], (e,c)=w})
 
     status = solve(m)
-    status != :Optimal && error("Failure")
+    status != :Optimal && error("JuMP solver failed to find optimal solution.")
     sol = getValue(x)
 
-    all(Bool[s == 1 || s == 0 for s in sol]) || error("Found non-integer solution!")
+    all(Bool[s == 1 || s == 0 for s in sol]) || error("Found non-integer solution.")
 
     cost = getObjectiveValue(m)
 
