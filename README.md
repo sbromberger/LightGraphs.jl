@@ -104,6 +104,8 @@ write(g,"mygraph.jgz")
 
 - **flow operations:** maximum flow
 
+- **matching:** bipartite maximum matching
+
 - **clique enumeration:** maximal cliques
 
 - **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
@@ -113,7 +115,6 @@ write(g,"mygraph.jgz")
 - **persistence:** proprietary compressed format, [GraphML](http://en.wikipedia.org/wiki/GraphML) format, [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format, [Gexf](http://gexf.net/format) format
 
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl)
-
 
 
 ### Documentation
