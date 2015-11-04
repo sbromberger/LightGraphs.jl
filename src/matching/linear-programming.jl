@@ -49,10 +49,13 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     if length(v1) > length(v2)
         v1, v2 = v2, v1
     end
+
     nedg = 0
-    edgemap = Dict{Edge,Int}([e => nedg+=1 for (e,w) in w])
-    for (e,idx) in edgemap
-        edgemap[reverse(e)] = idx
+    edgemap = Dict{Edge,Int}()
+    for (e,_) in w
+        nedg += 1
+        edgemap[e] = nedg
+        edgemap[reverse(e)] = nedg
     end
 
     m = Model()
@@ -89,7 +92,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     status != :Optimal && error("Failure")
     sol = getValue(x)
 
-    all(Bool[s == 1 || s == 0 for s in sol])
+    all(Bool[s == 1 || s == 0 for s in sol]) || error("Found non-integer solution!")
 
     cost = getObjectiveValue(m)
 
