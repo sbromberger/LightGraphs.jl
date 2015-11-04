@@ -92,14 +92,25 @@ function unsafe_add_edge!(g::Graph, e::Edge)
 end
 
 function rem_edge!(g::Graph, e::Edge)
+<<<<<<< HEAD
     has_edge(g, e) || error("Edge $e is not in graph")
+=======
+    if !(e in edges(g))
+        reve = reverse(e)
+        (reve in edges(g)) || error("Edge $e is not in graph")
+        e = reve
+    end
+>>>>>>> unsafe_rem_edge!
     return unsafe_rem_edge!(g, e)
 end
 
 function unsafe_rem_edge!(g::Graph, e::Edge)
+<<<<<<< HEAD
     if !isordered(e)
         e = reverse(e)
     end
+=======
+>>>>>>> unsafe_rem_edge!
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop

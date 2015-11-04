@@ -59,10 +59,8 @@ function DiGraph(g::Graph)
     return h
 end
 
-<<<<<<< HEAD
-
 badj(g::DiGraph) = g.badjlist
-badj(g::DiGraph, v::Int) = g.badjlist[v]
+badj(g::DiGraph, v::Int) = badj(g, v)
 
 
 function ==(g::DiGraph, h::DiGraph)
@@ -74,9 +72,6 @@ function copy(g::DiGraph)
     return DiGraph(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end
 
-
-=======
->>>>>>> change == and other minor fixes
 is_directed(g::DiGraph) = true
 
 function unsafe_add_edge!(g::DiGraph, e::Edge)
