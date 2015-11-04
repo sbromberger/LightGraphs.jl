@@ -126,7 +126,7 @@ function add_edge!(g::SimpleGraph, e::Edge)
     unsafe_add_edge!(g,e)
 end
 
-add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src, dst))
 
 """Remove the edge from `src` to `dst`.
 
@@ -134,16 +134,29 @@ Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
+"""Remove the vertex `v` from the graph `g`.
+This operation has to be performed carefully if one keeps external data structures indexed by
+edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
+and removing the vertex `n` from the graph.
+After removal the vertices in the ` g` will be indexed by 1:n-1.
+This is an O(k) operation, where `k` is the max of the degree of vertices `v` and `n`.
+Note: An exception will be raised if the vertex `v`  is not in the `g`.
+"""
 function rem_vertex!(g::Graph, v::Int)
+    v in vertices(g) || throw(BoundsError())
     edgs = edges(g, v)
     for e in edgs
-        rem_edge!(g, e)
+        unsafe_rem_edge!(g, e)
     end
     n = nv(g)
-    neigs = neighbors(g, n)
+    neigs = copy(neighbors(g, n))
     for i in neigs
-        rem_edge!(g, i, n)
-        add_edge!(g, i, v)
+        unsafe_rem_edge!(g, Edge(i, n))
+    end
+    if v != n
+        for i in neigs
+            unsafe_add_edge!(g, Edge(i, v))
+        end
     end
     g.vertices = 1:n-1
     g.fadjlist = g.fadjlist[1:n-1]
