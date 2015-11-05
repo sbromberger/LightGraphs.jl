@@ -93,17 +93,39 @@ end
 @test g == copy(g)
 @test !(g === copy(g))
 
-g10 = CompleteGraph(10)
+g10 = CompleteGraph(5)
 rem_vertex!(g10, 1)
-@test g10 == CompleteGraph(9)
-rem_vertex!(g10, 9)
-@test g10 == CompleteGraph(8)
+@test g10 == CompleteGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == CompleteGraph(3)
 @test_throws BoundsError rem_vertex!(g10, 9)
 
-
-g10 = CompleteDiGraph(10)
+g10 = CompleteDiGraph(5)
 rem_vertex!(g10, 1)
-@test g10 == CompleteDiGraph(9)
-rem_vertex!(g10, 9)
-@test g10 == CompleteDiGraph(8)
+@test g10 == CompleteDiGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == CompleteDiGraph(3)
 @test_throws BoundsError rem_vertex!(g10, 9)
+
+g10 = PathGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == PathGraph(3)
+
+g10 = PathDiGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathDiGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == PathDiGraph(3)
+
+g10 = PathDiGraph(5)
+rem_vertex!(g10, 1)
+h10 = PathDiGraph(6)
+rem_vertex!(h10, 1)
+rem_vertex!(h10, 1)
+@test g10 == h10
+
+g10 = CycleGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathGraph(4)
