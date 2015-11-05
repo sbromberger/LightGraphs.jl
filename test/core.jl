@@ -99,3 +99,11 @@ rem_vertex!(g10, 1)
 rem_vertex!(g10, 9)
 @test g10 == CompleteGraph(8)
 @test_throws BoundsError rem_vertex!(g10, 9)
+
+
+g10 = CompleteDiGraph(10)
+rem_vertex!(g10, 1)
+@test g10 == CompleteDiGraph(9)
+rem_vertex!(g10, 9)
+@test g10 == CompleteDiGraph(8)
+@test_throws BoundsError rem_vertex!(g10, 9)

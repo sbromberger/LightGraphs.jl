@@ -85,9 +85,11 @@ end
 
 
 function rem_edge!(g::DiGraph, e::Edge)
-    reve = reverse(e)
     has_edge(g,e) || error("Edge $e is not in graph")
+    return unsafe_rem_edge!(g, e)
+end
 
+function unsafe_rem_edge!(g::DiGraph, e::Edge)
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
