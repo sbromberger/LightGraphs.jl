@@ -91,7 +91,7 @@ function enumerate_paths(state::AbstractPathState, dest::Vector{Int})
     num_dest = length(dest)
     all_paths = Array(Vector{Int},num_dest)
     for i=1:num_dest
-        all_paths[i] = Int[]
+        all_paths[i] = Vector{Int}()
         index = dest[i]
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0

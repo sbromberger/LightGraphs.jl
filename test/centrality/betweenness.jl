@@ -1,6 +1,6 @@
 function readcentrality(f::AbstractString)
     f = open(f,"r")
-    c = Float64[]
+    c = Vector{Float64}()
     while !eof(f)
         line = chomp(readline(f))
         push!(c, float(line))

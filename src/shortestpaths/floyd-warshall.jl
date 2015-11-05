@@ -70,9 +70,9 @@ function enumerate_paths(s::FloydWarshallState, v::Integer)
     paths = Vector{Int}[]
     for i in 1:length(pathinfo)
         if i == v
-            push!(paths, Int[])
+            push!(paths, Vector{Int}())
         else
-            path = Int[]
+            path = Vector{Int}()
             currpathindex = i
             while currpathindex != 0
                 push!(path,currpathindex)

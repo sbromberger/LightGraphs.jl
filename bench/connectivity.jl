@@ -2,10 +2,10 @@ using LightGraphs
 using MatrixDepot
 using Base.Profile
 @doc "Find the largest connected component of graph and return it as a vector of indices." ->
-function symetrize(A)
+function symmetrize(A)
     println("Symmetrizing ")
     tic()
-    if !issym(A) 
+    if !issym(A)
         println(STDERR, "the matrix is not symmetric using A+A'")
         A = A + A'
     end
@@ -23,7 +23,7 @@ function loadmat(matname)
     println("Reading MTX of $matname")
     tic()
     A = matrixdepot(matname, :read)
-    A = symetrize(A)
+    A = symmetrize(A)
     tic()
     g = Graph(A)
     return g
@@ -43,7 +43,7 @@ for matname in names
     fill!(visitor.tree, 0)
     @time LightGraphs.bfs_tree!(visitor, g, 1)
     @show length(components)
-    #= 
+    #=
     @time components_slow = LightGraphs.connected_components(g)
     @assert length(components) == length(components_slow)
     =#

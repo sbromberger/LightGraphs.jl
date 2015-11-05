@@ -31,10 +31,10 @@ function dijkstra_shortest_paths{T}(
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(Int, nvg)
-    preds = fill(Int[],nvg)
+    preds = fill(Vector{Int}(),nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = DijkstraHeapEntry{T}[]  # this should be Vector{T}() in 0.4, I think.
+    H = Vector{DijkstraHeapEntry{T}}()  # this should be Vector{T}() in 0.4, I think.
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
 
