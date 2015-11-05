@@ -117,10 +117,14 @@ Note: An exception will be raised if the edge is not in the graph.
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 """Remove the vertex `v` from graph `g`.
 =======
 """Remove the vertex `v` from the graph `g`.
 >>>>>>> change rem_edge
+=======
+"""Remove the vertex `v` from graph `g`.
+>>>>>>> finish work on vertex removal
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
@@ -146,10 +150,11 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     v in vertices(g) || throw(BoundsError())
     n = nv(g)
 
-    edgs = out_edges(g, v)
+    edgs = in_edges(g, v)
     for e in edgs
         unsafe_rem_edge!(g, e)
     end
+<<<<<<< HEAD
 <<<<<<< HEAD
     n = nv(g)
     neigs = copy(neighbors(g, n))
@@ -157,6 +162,9 @@ function rem_vertex!(g::SimpleGraph, v::Int)
 =======
     neigs = copy(out_neighbors(g, n))
 >>>>>>> more work on vertex/edge removal
+=======
+    neigs = copy(in_neighbors(g, n))
+>>>>>>> finish work on vertex removal
     for i in neigs
         unsafe_rem_edge!(g, Edge(i, n))
     end
@@ -168,6 +176,7 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     end
 
     if is_directed(g)
+<<<<<<< HEAD
 <<<<<<< HEAD
         edgs = out_edges(g, v)
         for e in edgs
@@ -181,12 +190,20 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         end
         neigs = copy(in_neighbors(g, n))
 >>>>>>> more work on vertex/edge removal
+=======
+        edgs = out_edges(g, v)
+        for e in edgs
+            unsafe_rem_edge!(g, e)
+        end
+        neigs = copy(out_neighbors(g, n))
+>>>>>>> finish work on vertex removal
         for i in neigs
             unsafe_rem_edge!(g, Edge(n, i))
         end
         if v != n
             for i in neigs
                 unsafe_add_edge!(g, Edge(v, i))
+<<<<<<< HEAD
 <<<<<<< HEAD
             end
         end
@@ -196,6 +213,10 @@ function rem_vertex!(g::SimpleGraph, v::Int)
         end
             end
 >>>>>>> more work on vertex/edge removal
+=======
+            end
+        end
+>>>>>>> finish work on vertex removal
     end
 
     g.vertices = 1:n-1
