@@ -48,7 +48,7 @@ edges(g::SimpleGraph) = g.edges
 The Array, where each vertex the Array of destinations for each of the edges eminating from that vertex.
 This is equivalent to:
 
-    fadj = [Int[] for _ in vertices(g)]
+    fadj = [Vector{Int}() for _ in vertices(g)]
     for e in edges(g)
         push!(fadj[src(e)], dst(e))
     end
@@ -85,8 +85,8 @@ end
 function add_vertex!(g::SimpleGraph)
     n = length(vertices(g)) + 1
     g.vertices = 1:n
-    push!(g.badjlist, Int[])
-    push!(g.fadjlist, Int[])
+    push!(g.badjlist, Vector{Int}())
+    push!(g.fadjlist, Vector{Int}())
 
     return n
 end

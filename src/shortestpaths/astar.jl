@@ -50,7 +50,7 @@ function a_star{T<:Number}(
     )
             # heuristic (under)estimating distance to target
     frontier = PriorityQueue(Tuple{T,Array{Edge,1},Int},T)
-    frontier[(zero(T), Edge[], s)] = zero(T)
+    frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1
     a_star_impl!(graph, t, frontier, colormap, distmx, heuristic)
