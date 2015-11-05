@@ -124,14 +124,15 @@ After removal the vertices in the ` g` will be indexed by 1:n-1.
 This is an O(k) operation, where `k` is the max of the degree of vertices `v` and `n`.
 Note: An exception will be raised if the vertex `v`  is not in the `g`.
 """
-function rem_vertex!(g::Graph, v::Int)
+function rem_vertex!(g::SimpleGraph, v::Int)
     v in vertices(g) || throw(BoundsError())
-    edgs = edges(g, v)
+    n = nv(g)
+
+    edgs = out_edges(g, v)
     for e in edgs
         unsafe_rem_edge!(g, e)
     end
-    n = nv(g)
-    neigs = copy(neighbors(g, n))
+    neigs = copy(out_neighbors(g, n))
     for i in neigs
         unsafe_rem_edge!(g, Edge(i, n))
     end
@@ -140,6 +141,23 @@ function rem_vertex!(g::Graph, v::Int)
             unsafe_add_edge!(g, Edge(i, v))
         end
     end
+
+    if is_directed(g)
+        edgs = in_edges(g, v)
+        for e in edgs
+            unsafe_rem_edge!(g, e)
+        end
+        neigs = copy(in_neighbors(g, n))
+        for i in neigs
+            unsafe_rem_edge!(g, Edge(n, i))
+        end
+        if v != n
+            for i in neigs
+                unsafe_add_edge!(g, Edge(v, i))
+        end
+            end
+    end
+
     g.vertices = 1:n-1
     g.fadjlist = g.fadjlist[1:n-1]
     g.badjlist = g.badjlist[1:n-1]
