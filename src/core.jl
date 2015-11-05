@@ -142,15 +142,21 @@ function rem_vertex!(g::SimpleGraph, v::Int)
 This is an O(k) operation, where `k` is the max of the degree of vertices `v` and `n`.
 Note: An exception will be raised if the vertex `v`  is not in the `g`.
 """
-function rem_vertex!(g::Graph, v::Int)
+function rem_vertex!(g::SimpleGraph, v::Int)
     v in vertices(g) || throw(BoundsError())
-    edgs = edges(g, v)
+    n = nv(g)
+
+    edgs = out_edges(g, v)
     for e in edgs
         unsafe_rem_edge!(g, e)
     end
+<<<<<<< HEAD
     n = nv(g)
     neigs = copy(neighbors(g, n))
 >>>>>>> change rem_edge
+=======
+    neigs = copy(out_neighbors(g, n))
+>>>>>>> more work on vertex/edge removal
     for i in neigs
         unsafe_rem_edge!(g, Edge(i, n))
     end
@@ -162,21 +168,34 @@ function rem_vertex!(g::Graph, v::Int)
     end
 
     if is_directed(g)
+<<<<<<< HEAD
         edgs = out_edges(g, v)
         for e in edgs
             unsafe_rem_edge!(g, e)
         end
         neigs = copy(out_neighbors(g, n))
+=======
+        edgs = in_edges(g, v)
+        for e in edgs
+            unsafe_rem_edge!(g, e)
+        end
+        neigs = copy(in_neighbors(g, n))
+>>>>>>> more work on vertex/edge removal
         for i in neigs
             unsafe_rem_edge!(g, Edge(n, i))
         end
         if v != n
             for i in neigs
                 unsafe_add_edge!(g, Edge(v, i))
+<<<<<<< HEAD
             end
         end
 =======
 >>>>>>> change rem_edge
+=======
+        end
+            end
+>>>>>>> more work on vertex/edge removal
     end
 
     g.vertices = 1:n-1
