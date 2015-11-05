@@ -57,7 +57,7 @@ g10 = CompleteGraph(10)
 @test bipartite_map(g10) == Vector{Int}()
 
 g10 = CompleteBipartiteGraph(10,10)
-@test bipartite_map(g10) == Int[ones(10); 2*ones(10)]
+@test bipartite_map(g10) == Vector{Int}([ones(10); 2*ones(10)])
 
 h10 = blkdiag(g10,g10)
-@test bipartite_map(h10) == Int[ones(10); 2*ones(10); ones(10); 2*ones(10)]
+@test bipartite_map(h10) == Vector{Int}([ones(10); 2*ones(10); ones(10); 2*ones(10)])

@@ -62,7 +62,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     @defVar(model, x[1:length(w)] >= 0)
 
     for i in v1
-        idx = Int64[]
+        idx = Vector{Int}()
         for j in neighbors(g, i)
             if haskey(edgemap, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
@@ -74,7 +74,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     end
 
     for j in v2
-        idx = Int64[]
+        idx = Vector{Int}()
         for i in neighbors(g, j)
             if haskey(edgemap, Edge(i,j))
                 push!(idx, edgemap[Edge(i,j)])
