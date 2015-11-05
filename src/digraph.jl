@@ -72,14 +72,15 @@ function unsafe_add_edge!(g::DiGraph, e::Edge)
     return e
 end
 
+
 function rem_edge!(g::DiGraph, e::Edge)
     reve = reverse(e)
     has_edge(g,e) || error("Edge $e is not in graph")
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
-    deleteat!(g.fadjlist[src(e)], i)
+    _swapnpop!(g.fadjlist[src(e)], i)
     i = findfirst(g.badjlist[dst(e)], src(e))
-    deleteat!(g.badjlist[dst(e)], i)
+    _swapnpop!(g.badjlist[dst(e)], i)
     return pop!(g.edges, e)
 end
 
