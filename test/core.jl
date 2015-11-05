@@ -105,7 +105,6 @@ rem_vertex!(g10, 1)
 rem_vertex!(g10, 4)
 @test g10 == CompleteDiGraph(3)
 @test_throws BoundsError rem_vertex!(g10, 9)
-
 g10 = PathGraph(5)
 rem_vertex!(g10, 5)
 @test g10 == PathGraph(4)
