@@ -5,13 +5,13 @@ weight: total weight of the matching
 
 inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
 
-π:       `π[i]=j` if vertex `i` is matched to vertex `j`.
-         `π[i]=-1` for unmatched vertices.
+m:       `m[i]=j` if vertex `i` is matched to vertex `j`.
+         `m[i]=-1` for unmatched vertices.
 """
 type MatchingResult
     weight::Float64
     inmatch::Dict{Edge,Bool}
-    π::Vector{Int}
+    m::Vector{Int}
 end
 
 """
@@ -58,8 +58,8 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
         edgemap[reverse(e)] = nedg
     end
 
-    m = Model()
-    @defVar(m, x[1:length(w)] >= 0)
+    model = Model()
+    @defVar(model, x[1:length(w)] >= 0)
 
     for i in v1
         idx = Int64[]
@@ -69,7 +69,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
             end
         end
         if length(idx) > 0
-            @addConstraint(m, sum{x[id], id=idx} == 1)
+            @addConstraint(model, sum{x[id], id=idx} == 1)
         end
     end
 
@@ -82,33 +82,33 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
         end
 
         if length(idx) > 0
-            @addConstraint(m, sum{x[id], id=idx} <= 1)
+            @addConstraint(model, sum{x[id], id=idx} <= 1)
         end
     end
 
-    @setObjective(m, Max, sum{c * x[edgemap[e]], (e,c)=w})
+    @setObjective(model, Max, sum{c * x[edgemap[e]], (e,c)=w})
 
-    status = solve(m)
+    status = solve(model)
     status != :Optimal && error("JuMP solver failed to find optimal solution.")
     sol = getValue(x)
 
     all(Bool[s == 1 || s == 0 for s in sol]) || error("Found non-integer solution.")
 
-    cost = getObjectiveValue(m)
+    cost = getObjectiveValue(model)
 
     inmatch = Dict{Edge,Bool}()
-    pi = fill(-1, nv(g))
+    m = fill(-1, nv(g))
     for e in edges(g)
         if haskey(w, e)
             inmatch[e] = convert(Bool, sol[edgemap[e]])
             if inmatch[e]
-                pi[src(e)] = dst(e)
-                pi[dst(e)] = src(e)
+                m[src(e)] = dst(e)
+                m[dst(e)] = src(e)
             end
         else
             inmatch[e] = false
         end
     end
 
-    return MatchingResult(cost, inmatch, pi)
+    return MatchingResult(cost, inmatch, m)
 end
