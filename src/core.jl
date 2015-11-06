@@ -22,7 +22,6 @@ type Graph
     vertices::UnitRange{Int}
     edges::Set{Edge}
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
 """A type representing a directed graph."""
@@ -65,14 +64,6 @@ NOTE: returns a reference, not a copy. Do not modify result.
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
-"""Returns the backwards adjacency list of a graph.
-For each vertex the Array of `dst` for each edge eminating from that vertex.
-
-NOTE: returns a reference, not a copy. Do not modify result.
-"""
-badj(g::SimpleGraph) = g.badjlist
-badj(g::SimpleGraph, v::Int) = g.badjlist[v]
-
 
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
 function issubset{T<:SimpleGraph}(g::T, h::T)
@@ -81,15 +72,6 @@ function issubset{T<:SimpleGraph}(g::T, h::T)
     return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
 end
 
-"""Add a new vertex to the graph `g`."""
-function add_vertex!(g::SimpleGraph)
-    n = length(vertices(g)) + 1
-    g.vertices = 1:n
-    push!(g.badjlist, Vector{Int}())
-    push!(g.fadjlist, Vector{Int}())
-
-    return n
-end
 
 """Add `n` new vertices to the graph `g`."""
 function add_vertices!(g::SimpleGraph, n::Integer)
@@ -196,10 +178,6 @@ neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
-
-function copy{T<:SimpleGraph}(g::T)
-    return T(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
-end
 
 "Returns true if `g` is has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))

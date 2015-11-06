@@ -1,5 +1,7 @@
 @test e1.first == src(e1) == 1
 @test e1.second == dst(e1) == 2
+@test reverse(e1) == re1
+@test sprint(show, e1) == "edge 1 - 2"
 
 g = Graph(5)
 add_edge!(g, 1, 2)
@@ -16,13 +18,10 @@ add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
 
-@test LightGraphs.fadj(g)[1] == [2,3,4]
-
-@test reverse(e1) == re1
-
-@test sprint(show, e1) == "edge 1 - 2"
 @test vertices(g) == 1:5
 @test edges(g) == Set([e1, e2, e3, e4, e5])
+
+# fadj, badj, and adj tested in graphdigraph.jl
 
 @test degree(g) == [3, 2, 2, 1, 2]
 @test indegree(g) == [3, 2, 2, 1, 2]

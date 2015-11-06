@@ -59,9 +59,20 @@ function DiGraph(g::Graph)
     return h
 end
 
+
+badj(g::DiGraph) = g.badjlist
+badj(g::DiGraph, v::Int) = g.badjlist[v]
+
+
 function ==(g::DiGraph, h::DiGraph)
     return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
 end
+
+
+function copy(g::DiGraph)
+    return DiGraph(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+end
+
 
 is_directed(g::DiGraph) = true
 
@@ -83,6 +94,16 @@ function rem_edge!(g::DiGraph, e::Edge)
     _swapnpop!(g.badjlist[dst(e)], i)
     return pop!(g.edges, e)
 end
+
+
+function add_vertex!(g::DiGraph)
+    g.vertices = 1:nv(g)+1
+    push!(g.badjlist, Vector{Int}())
+    push!(g.fadjlist, Vector{Int}())
+
+    return nv(g)
+end
+
 
 has_edge(g::DiGraph, e::Edge) = e in edges(g)
 
