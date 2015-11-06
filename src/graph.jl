@@ -48,12 +48,6 @@ function Graph(g::DiGraph)
     return h
 end
 
-function ==(g::Graph, h::Graph)
-    gdigraph = DiGraph(g)
-    hdigraph = DiGraph(h)
-    return (gdigraph == hdigraph)
-end
-
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
@@ -62,7 +56,7 @@ isordered(e::Edge) = src(e) <= dst(e)
 
 function unsafe_add_edge!(g::Graph, e::Edge)
     if !isordered(e)
-        e = Edge(dst(e), src(e))
+        e = reverse(e)
     end
     push!(g.fadjlist[src(e)], dst(e))
     push!(g.badjlist[dst(e)], src(e))
@@ -81,7 +75,7 @@ end
 
 function unsafe_rem_edge!(g::Graph, e::Edge)
     if !isordered(e)
-        e = Edge(dst(e), src(e))
+        e = reverse(e)
     end
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)

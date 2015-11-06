@@ -59,10 +59,6 @@ function DiGraph(g::Graph)
     return h
 end
 
-function ==(g::DiGraph, h::DiGraph)
-    return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
-end
-
 is_directed(g::DiGraph) = true
 
 function unsafe_add_edge!(g::DiGraph, e::Edge)

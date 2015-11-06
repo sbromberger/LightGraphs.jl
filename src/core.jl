@@ -205,6 +205,8 @@ degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for
 "Return the maximum `degree` of vertices in `g`."
 Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
 
+=={G<:SimpleGraph}(g::G, h::G) = (vertices(g) == vertices(h)) && (edges(g) == edges(h))
+
 "computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
 function noallocextreme(f, comparison, initial, g)
     value = initial
