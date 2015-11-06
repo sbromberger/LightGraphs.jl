@@ -3,6 +3,9 @@ g = CompleteDiGraph(5)
 g = CompleteGraph(5)
 @test nv(g) == 5 && ne(g) == 10
 
+g = CompleteBipartiteGraph(5, 8)
+@test nv(g) == 13 && ne(g) == 40
+
 g = StarDiGraph(5)
 @test nv(g) == 5 && ne(g) == 4
 g = StarGraph(5)

@@ -16,6 +16,12 @@ try
 catch
 end
 
+try
+    using JuMP
+    nothing
+catch
+end
+
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, show, print, copy,
             sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
@@ -43,7 +49,7 @@ discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph, traverse_graph_withlog,
 
 # bfs
-BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
+BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
 
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
@@ -68,7 +74,7 @@ bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
 # smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph, CompleteBipartiteGraph,
 CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
 DiamondGraph, BullGraph,
 ChvatalGraph, CubicalGraph, DesarguesGraph,
@@ -96,6 +102,9 @@ readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
 
+#matching
+maximum_weight_maximal_matching,
+
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 stochastic_block_model,
@@ -103,6 +112,7 @@ stochastic_block_model,
 #community
 modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient
+
 
 """An optimized graphs package.
 
@@ -158,5 +168,6 @@ include("core.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
             include("flow/push_relabel.jl")
+        include("matching/linear-programming.jl")
 
 end # module

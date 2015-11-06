@@ -49,7 +49,6 @@ function local_clustering(g::SimpleGraph, vlist = vertices(g))
     return ntriang, nalltriang
 end
 
-
 """
 Computes the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient).
 """
