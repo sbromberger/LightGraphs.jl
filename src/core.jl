@@ -121,7 +121,7 @@ This operation has to be performed carefully if one keeps external data structur
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
 After removal the vertices in the ` g` will be indexed by 1:n-1.
-This is an O(k) operation, where `k` is the max of the degree of vertices `v` and `n`.
+This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Note: An exception will be raised if the vertex `v`  is not in the `g`.
 """
 function rem_vertex!(g::SimpleGraph, v::Int)
@@ -159,8 +159,8 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     end
 
     g.vertices = 1:n-1
-    g.fadjlist = g.fadjlist[1:n-1]
-    g.badjlist = g.badjlist[1:n-1]
+    pop!(g.fadjlist)
+    pop!(g.badjlist)
     g
 end
 
