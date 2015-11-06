@@ -57,10 +57,11 @@ end
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
+
 isordered(e::Edge) = src(e) <= dst(e)
 
 function unsafe_add_edge!(g::Graph, e::Edge)
-    if src(e) > dst(e)
+    if !isordered(e)
         e = Edge(dst(e), src(e))
     end
     push!(g.fadjlist[src(e)], dst(e))
@@ -79,7 +80,7 @@ function rem_edge!(g::Graph, e::Edge)
 end
 
 function unsafe_rem_edge!(g::Graph, e::Edge)
-    if src(e) > dst(e)
+    if !isordered(e)
         e = Edge(dst(e), src(e))
     end
     i = findfirst(g.fadjlist[src(e)], dst(e))
