@@ -59,6 +59,7 @@ function DiGraph(g::Graph)
     return h
 end
 
+<<<<<<< HEAD
 
 badj(g::DiGraph) = g.badjlist
 badj(g::DiGraph, v::Int) = g.badjlist[v]
@@ -74,6 +75,8 @@ function copy(g::DiGraph)
 end
 
 
+=======
+>>>>>>> change == and other minor fixes
 is_directed(g::DiGraph) = true
 
 function unsafe_add_edge!(g::DiGraph, e::Edge)
