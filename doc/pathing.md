@@ -127,7 +127,7 @@ Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 mincut(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 mincut{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
 ```
-Returns a tuple `(parity, bestcut)`, where `parity` is a vector of boolean values that determines the partition in `g` and `bestcut` is the weight of the cut that makes this partition. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1.
+Returns a tuple `(parity, bestcut)`, where `parity` is a vector of integer values that determines the partition in `g` (1 or 2) and `bestcut` is the weight of the cut that makes this partition. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1.
 
 ### maximum_adjacency_visit
 ```

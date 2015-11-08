@@ -173,10 +173,10 @@ end
 #################################################
 
 
-"""Returns a tuple `(parity, bestcut)`, where `parity` is a vector of boolean
-values that determines the partition in `g` and `bestcut` is the weight of the
-cut that makes this partition. An optional `distmx` matrix may be specified; if
-omitted, edge distances are assumed to be 1.
+"""Returns a tuple `(parity, bestcut)`, where `parity` is a vector of integer
+values that determines the partition in `g` (1 or 2) and `bestcut` is the
+weight of the cut that makes this partition. An optional `distmx` matrix may
+be specified; if omitted, edge distances are assumed to be 1.
 """
 function mincut{T}(
     graph::SimpleGraph,
@@ -185,7 +185,7 @@ function mincut{T}(
     visitor = MinCutVisitor(graph, distmx)
     colormap = zeros(Int, nv(graph))
     traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, colormap)
-    return( visitor.parities, visitor.bestweight)
+    return(visitor.parities + 1, visitor.bestweight)
 end
 
 mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
