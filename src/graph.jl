@@ -8,16 +8,13 @@ end
 
 function Graph(n::Int)
     fadjlist = Vector{Vector{Int}}()
-    badjlist = Vector{Vector{Int}}()
-    sizehint!(badjlist,n)
     sizehint!(fadjlist,n)
     for i = 1:n
         # sizehint!(i_s, n/4)
         # sizehint!(o_s, n/4)
-        push!(badjlist, Vector{Int}())
         push!(fadjlist, Vector{Int}())
     end
-    return Graph(1:n, Set{Edge}(), badjlist, fadjlist)
+    return Graph(1:n, Set{Edge}(), fadjlist)
 end
 
 Graph() = Graph(0)
@@ -48,11 +45,34 @@ function Graph(g::DiGraph)
     return h
 end
 
+"""Returns the backwards adjacency list of a graph.
+For each vertex the Array of `dst` for each edge eminating from that vertex.
+
+NOTE: returns a reference, not a copy. Do not modify result.
+"""
+badj(g::Graph) = fadj(g)
+badj(g::Graph, v::Int) = fadj(g, v)
+
+
+"""Returns the adjacency list of a graph.
+For each vertex the Array of `dst` for each edge eminating from that vertex.
+
+NOTE: returns a reference, not a copy. Do not modify result.
+"""
+adj(g::Graph) = fadj(g)
+adj(g::Graph, v::Int) = fadj(g, v)
+
 function ==(g::Graph, h::Graph)
     gdigraph = DiGraph(g)
     hdigraph = DiGraph(h)
     return (gdigraph == hdigraph)
 end
+
+
+function copy(g::Graph)
+    return Graph(g.vertices,copy(g.edges),deepcopy(g.fadjlist))
+end
+
 
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
@@ -60,10 +80,8 @@ has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
 function unsafe_add_edge!(g::Graph, e::Edge)
     push!(g.fadjlist[src(e)], dst(e))
-    push!(g.badjlist[dst(e)], src(e))
     if src(e) != dst(e)
         push!(g.fadjlist[dst(e)], src(e))
-        push!(g.badjlist[src(e)], dst(e))
     end
     push!(g.edges, e)
     return e
@@ -78,17 +96,21 @@ function rem_edge!(g::Graph, e::Edge)
 
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
-    i = findfirst(g.badjlist[dst(e)], src(e))
-    _swapnpop!(g.badjlist[dst(e)], i)
     if src(e) != dst(e)     # not a self loop
         i = findfirst(g.fadjlist[dst(e)], src(e))
         _swapnpop!(g.fadjlist[dst(e)], i)
-        i = findfirst(g.badjlist[src(e)], dst(e))
-        _swapnpop!(g.badjlist[src(e)], i)
     end
     return pop!(g.edges, e)
 end
 
+
+"""Add a new vertex to the graph `g`."""
+function add_vertex!(g::Graph)
+    g.vertices = 1:nv(g)+1
+    push!(g.fadjlist, Vector{Int}())
+
+    return nv(g)
+end
 
 
 """Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
