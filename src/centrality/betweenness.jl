@@ -118,7 +118,7 @@ function _accumulate_endpoints!(
     betweenness::Vector{Float64},
     state::DijkstraState,
     g::SimpleGraph,
-    si::Integer
+    s::Integer
     )
 
     n_v = nv(g) # this is the ttl number of vertices
@@ -128,7 +128,6 @@ function _accumulate_endpoints!(
     v1 = [1:n_v;]
     v2 = state.dists
     S = sortperm(state.dists, rev=true)
-    s = g.vertices[si]
     betweenness[s] += length(S) - 1    # 289
 
     for w in S
@@ -136,7 +135,7 @@ function _accumulate_endpoints!(
         for v in P[w]
             δ[v] += σ[v] * coeff
         end
-        if w != si
+        if w != s
             betweenness[w] += (δ[w] + 1)
         end
     end

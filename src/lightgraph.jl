@@ -86,7 +86,7 @@ function rem_edge!(g::Graph, e::Edge)
 end
 
 function copy(g::LightGraph)
-    return LightGraph(g.n,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+    return LightGraph(g.n,copy(g.edges),deepcopy(g.fadjlist))
 end
 
 fadj(g::LightGraph) = g.fadjlist
