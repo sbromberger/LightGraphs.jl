@@ -28,7 +28,8 @@ import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
 
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export SimpleGraph, Edge, Graph, DiGraph, LightGraph, LightDiGraph,
+vertices, edges, src, dst,
 in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
@@ -132,8 +133,8 @@ more traditional and better-optimized mechanisms.
 LightGraphs
 
 include("core.jl")
-    include("digraph.jl")
-    include("graph.jl")
+    include("lightdigraph.jl")
+    include("lightgraph.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
@@ -155,6 +156,7 @@ include("core.jl")
         include("persistence/graphml.jl")
         include("randgraphs.jl")
         include("smallgraphs.jl")
+        include("utils.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
