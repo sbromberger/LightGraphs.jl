@@ -140,6 +140,6 @@ h10 =Graph(3)
 add_edge!(h10,1,2)
 @test g10 == h10
 
-g10 = PathGraph(5)
+g10 = CompleteGraph(5)
 rem_vertex!(g10, 3)
 @test g10 == CompleteGraph(4)
