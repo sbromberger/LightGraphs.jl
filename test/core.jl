@@ -127,3 +127,13 @@ rem_vertex!(h10, 1)
 g10 = CycleGraph(5)
 rem_vertex!(g10, 5)
 @test g10 == PathGraph(4)
+
+g10 = PathGraph(3)
+rem_vertex!(g10, 2)
+@test g10 == Graph(2)
+
+g10 = PathGraph(4)
+rem_vertex!(g10, 3)
+h10 =Graph(3)
+add_edge!(h10,1,2)
+@test g10 == h10
