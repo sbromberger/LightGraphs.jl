@@ -6,10 +6,16 @@ depends only on the block labels of vertex i and vertex j.
 
 The assignement is stored in nodemap and the block affinities a k by k
 matrix is stored in affinities.
+
+affinities[k,l] is the probability of an edge between any vertex in
+block k and any vertex in block k.
+
+We are generating the graphs by taking random `i,j in vertices(g)` and
+flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
 type StochasticBlockModel{T<:Integer,P<:Real}
     n::T
-    nodemap::Dict{T,T}
+    nodemap::Array{T}
     affinities::Matrix{P}
 end
 
@@ -20,18 +26,19 @@ vertices will be in the same blocks, except for the block boundaries.
 function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P})
     csum = cumsum(sizes)
     j = 1
-    nodemap = Dict{T,T}()
-    for i in 1:csum[end]+1
-        if i > csum[j]+1
+    nodemap = zeros(Int, csum[end])
+    for i in 1:csum[end]
+        if i > csum[j]
             j+=1
         end               
         nodemap[i] = j
     end
-    return StochasticBlockModel(csum[end]+1, nodemap, affinities)
+    return StochasticBlockModel(csum[end], nodemap, affinities)
 end
 
 """produce the sbm affinity matrix where the internal and external probabilities are
-the same"""
+the same
+"""
 function sbmaffinity(internalp::Float64, externalp::Float64, size::Int, numblocks::Int)
     B = eye(numblocks)*(internalp) + externalp*(ones(numblocks,numblocks)-I)
     return B
@@ -66,15 +73,19 @@ biclique = ones(2,2) - eye(2)
 
 """construct the affinity matrix for a near bipartite SBM.
 between is the affinity between the two parts of each bipartite community
-intra is the probability of an edge within the parts of the partitions
+intra is the probability of an edge within the parts of the partitions.
+
+This is a specific type of SBM with k/2 blocks each with two halves.
+Each half is connected as a random bipartite graph with probability `intra`
+The blocks are connected with probability `between`.
 """
 function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, intra::Float64)
     numblocks = round(Int, length(sizes)/2)
     return kron(between*eye(numblocks), biclique) + eye(2numblocks)*intra
 end
 
+"""Return a generator for edges from a stochastic block model near bipartite graph."""
 function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, inter::Float64, noise)
-    """Return a generator for edges from a stochastic block model near bipartite graph."""
     B = nearbipartiteaffinity(sizes, between, inter) + noise
     info("Affinities are:\n$B")#, file=stderr)
     return B
@@ -120,6 +131,9 @@ or pass to graph(edgestream, numedges).
 function sample(sbm::StochasticBlockModel)
     pairs = @task random_pair(sbm.n)
     for (i,j) in pairs
+    	if i == j
+	    continue
+	end
         p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
         if rand() < p
             produce(i, j)
@@ -129,16 +143,16 @@ end
 
 """convert a stream of edges produced by sample into a graph"""
 function graph(edgestream, sizes, numedges::Int)
-    g = Graph(sum(sizes)+1)
+    g = Graph(sum(sizes))
     println(g)
     count = 1
     for (i,j) in edgestream
         #print("$count, $i,$j\n")
         count += 1
         if !has_edge(g,i,j)
-            add_edge!(g,i,j)
+            unsafe_add_edge!(g,Edge(i,j))
         end
-        if count > numedges
+        if count >= numedges
             break
         end
     end
