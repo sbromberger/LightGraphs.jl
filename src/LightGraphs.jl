@@ -8,6 +8,7 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
+using Combinatorics # 0.5 requirement
 
 try
     using GraphMatrices
