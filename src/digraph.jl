@@ -59,7 +59,6 @@ function DiGraph(g::Graph)
     return h
 end
 
-
 badj(g::DiGraph) = g.badjlist
 badj(g::DiGraph, v::Int) = g.badjlist[v]
 

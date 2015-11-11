@@ -44,7 +44,6 @@ function Graph(g::DiGraph)
     end
     return h
 end
-
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.
 
@@ -82,7 +81,7 @@ isordered(e::Edge) = src(e) <= dst(e)
 
 function unsafe_add_edge!(g::Graph, e::Edge)
     if !isordered(e)
-        e = Edge(dst(e), src(e))
+        e = reverse(e)
     end
     push!(g.fadjlist[src(e)], dst(e))
     if src(e) != dst(e)
@@ -99,7 +98,7 @@ end
 
 function unsafe_rem_edge!(g::Graph, e::Edge)
     if !isordered(e)
-        e = Edge(dst(e), src(e))
+        e = reverse(e)
     end
     i = findfirst(g.fadjlist[src(e)], dst(e))
     _swapnpop!(g.fadjlist[src(e)], i)
