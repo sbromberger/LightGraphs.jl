@@ -159,7 +159,9 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     end
     g.vertices = 1:n-1
     pop!(g.fadjlist)
-    pop!(g.badjlist)
+    if is_directed(g)
+        pop!(g.badjlist)
+    end
     g
 end
 
