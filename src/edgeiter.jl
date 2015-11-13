@@ -55,7 +55,7 @@ function in(e::Edge, eit::EdgeIter)
 end
 
 function getindex(eit::EdgeIter, n::Int)
-    n <= eit.m || throw(BoundsError())
+    1 <= n <= eit.m || throw(BoundsError())
     offsetsum = 0
     i = 1
     while offsetsum < n
@@ -68,6 +68,8 @@ function getindex(eit::EdgeIter, n::Int)
     d = eit.adj[i][n - offsetsum]
     return Edge(i, d)
 end
+
+getindex(eit::EdgeIter, n::UnitRange{Int64}) = [getindex(eit, x) for x in n]
 
 #TODO implement using a loop and ∈, so that no memory is allocated
 ==(e1::EdgeIter, e2::Set{Edge}) = Set{Edge}(e1) == e2
