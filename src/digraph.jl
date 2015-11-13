@@ -88,13 +88,11 @@ end
 
 
 function rem_edge!(g::DiGraph, e::Edge)
-    reve = reverse(e)
     has_edge(g,e) || error("Edge $e is not in graph")
-
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
-    _swapnpop!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     i = searchsorted(g.badjlist[dst(e)], src(e))[1]
-    _swapnpop!(g.badjlist[dst(e)], i)
+    deleteat!(g.badjlist[dst(e)], i)
     return pop!(g.edges, e)
 end
 

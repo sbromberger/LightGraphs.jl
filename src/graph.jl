@@ -98,10 +98,10 @@ function rem_edge!(g::Graph, e::Edge)
     end
 
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
-    _swapnpop!(g.fadjlist[src(e)], i)
+    deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
         i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
-        _swapnpop!(g.fadjlist[dst(e)], i)
+        deleteat!(g.fadjlist[dst(e)], i)
     end
     return pop!(g.edges, e)
 end
