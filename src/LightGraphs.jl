@@ -1,12 +1,6 @@
 __precompile__(true)
 module LightGraphs
 
-macro cond(test, block)
-    if eval(test)
-        block
-    end
-end
-
 using Requires
 using GZip
 using StatsBase
@@ -15,10 +9,9 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-
+import Combinatorics: combinations  # 0.5
 try
-    using GraphMatrices
-    import GraphMatrices.CombinatorialAdjacency
+    import GraphMatrices: CombinatorialAdjacency
     nothing
 catch
 end

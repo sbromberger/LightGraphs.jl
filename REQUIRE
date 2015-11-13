@@ -3,6 +3,7 @@ Requires
 GZip 0.2.18
 StatsBase 0.7.4
 LightXML 0.2.1
-ParserCombinator 1.7.1
+ParserCombinator 1.7.3
 Docile 0.5.3
 Clustering 0.4
+Combinatorics

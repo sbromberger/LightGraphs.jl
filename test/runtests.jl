@@ -1,4 +1,5 @@
 using LightGraphs
+using Requires
 using Base.Test
 
 g1 = PetersenGraph()
