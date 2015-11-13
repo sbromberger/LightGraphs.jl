@@ -77,8 +77,8 @@ end
 is_directed(g::DiGraph) = true
 
 function unsafe_add_edge!(g::DiGraph, e::Edge)
-    push!(g.fadjlist[src(e)], dst(e))
-    push!(g.badjlist[dst(e)], src(e))
+    _insert_and_dedup!(g.fadjlist[src(e)], dst(e))
+    _insert_and_dedup!(g.badjlist[dst(e)], src(e))
     push!(g.edges, e)
     return e
 end
@@ -88,9 +88,9 @@ function rem_edge!(g::DiGraph, e::Edge)
     reve = reverse(e)
     has_edge(g,e) || error("Edge $e is not in graph")
 
-    i = findfirst(g.fadjlist[src(e)], dst(e))
+    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     _swapnpop!(g.fadjlist[src(e)], i)
-    i = findfirst(g.badjlist[dst(e)], src(e))
+    i = searchsorted(g.badjlist[dst(e)], src(e))[1]
     _swapnpop!(g.badjlist[dst(e)], i)
     return pop!(g.edges, e)
 end

@@ -1,5 +1,8 @@
 abstract AbstractPathState
 
+# taken from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
+_insert_and_dedup!(v::Vector{Int}, x::Int) =
+    (splice!(v, searchsorted(v,x), [x]); v)
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}

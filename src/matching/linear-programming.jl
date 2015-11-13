@@ -38,10 +38,12 @@ The algorithm relies on a linear relaxation on of the matching problem, which is
 guaranteed to have integer solution on bipartite graps.
 The pakage JuMP.jl and one of its supported solvers is required.
 """
-function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
+maximum_weight_maximal_matching(a...) =
+    error("JuMP.jl is required for this function.\nYou must recompile LightGraphs after installing JuMP.")
+
+@require JuMP function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 # TODO support for graphs with zero degree nodes
 # TODO apply separately on each connected component
-    isdefined(:JuMP) || error("JuMP.jl is required for this function.\nYou must recompile LightGraphs after installing JuMP.")
     bpmap = bipartite_map(g)
     length(bpmap) != nv(g) && error("Graph is not bipartite")
     v1 = findin(bpmap, 1)
