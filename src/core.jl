@@ -1,8 +1,12 @@
 abstract AbstractPathState
 
 # taken from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
-_insert_and_dedup!(v::Vector{Int}, x::Int) =
-    (splice!(v, searchsorted(v,x), [x]); v)
+# returns true if an insert was performed.
+function _insert_and_dedup!(v::Vector{Int}, x::Int)
+    oldv = length(v)
+    splice!(v, searchsorted(v,x), [x])
+    return (length(v) == oldv+1)
+end
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
@@ -12,6 +16,7 @@ src(e::Edge) = e.first
 """Return destination of an edge."""
 dst(e::Edge) = e.second
 
+ordered(e::Edge) = src(e) <= dst(e)
 @deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
@@ -20,17 +25,18 @@ function show(io::IO, e::Edge)
     print(io, "edge $(e.first) - $(e.second)")
 end
 
+
 """A type representing an undirected graph."""
 type Graph
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
 end
 
 """A type representing a directed graph."""
 type DiGraph
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
@@ -41,9 +47,8 @@ typealias SimpleGraph Union{Graph, DiGraph}
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
 
-"""Return the edges of a graph.
-NOTE: returns a reference, not a copy. Do not modify result."""
-edges(g::SimpleGraph) = g.edges
+"""Return an iterator to the edges of a graph."""
+edges(g::SimpleGraph) = edgeiter(g)
 
 """Returns the forward adjacency list of a graph.
 
@@ -98,7 +103,7 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 """The number of vertices in `g`."""
 nv(g::SimpleGraph) = length(vertices(g))
 """The number of edges in `g`."""
-ne(g::SimpleGraph) = length(edges(g))
+ne(g::SimpleGraph) = g.ne
 
 """Add a new edge to `g` from `src` to `dst`."""
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
@@ -172,5 +177,5 @@ neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
-"Returns true if `g` is has any self loops."
+"Returns true if `g` has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
