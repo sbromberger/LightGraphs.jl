@@ -1,6 +1,13 @@
 __precompile__(true)
 module LightGraphs
 
+macro cond(test, block)
+    if eval(test)
+        block
+    end
+end
+
+using Requires
 using GZip
 using StatsBase
 using Base.Collections

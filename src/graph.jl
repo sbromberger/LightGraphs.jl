@@ -79,9 +79,9 @@ is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
 function unsafe_add_edge!(g::Graph, e::Edge)
-    push!(g.fadjlist[src(e)], dst(e))
+    _insert_and_dedup!(g.fadjlist[src(e)], dst(e))
     if src(e) != dst(e)
-        push!(g.fadjlist[dst(e)], src(e))
+        _insert_and_dedup!(g.fadjlist[dst(e)], src(e))
     end
     push!(g.edges, e)
     return e
@@ -94,10 +94,10 @@ function rem_edge!(g::Graph, e::Edge)
         e = reve
     end
 
-    i = findfirst(g.fadjlist[src(e)], dst(e))
+    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     _swapnpop!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
-        i = findfirst(g.fadjlist[dst(e)], src(e))
+        i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
         _swapnpop!(g.fadjlist[dst(e)], i)
     end
     return pop!(g.edges, e)
