@@ -3,6 +3,9 @@
 @test nv(r2) == 5
 @test ne(r2) == 10
 
+@test Graph(10,20,3) == Graph(10,20,3)
+@test DiGraph(10,20,3) == DiGraph(10,20,3)
+
 er = erdos_renyi(10, 0.5)
 @test nv(er) == 10
 @test is_directed(er) == false

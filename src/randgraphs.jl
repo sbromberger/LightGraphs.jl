@@ -1,6 +1,9 @@
 # These are test functions only, used for consistent centrality comparisons.
-function Graph(nv::Integer, ne::Integer)
+function Graph(nv::Integer, ne::Integer, seed::Int = -1)
     g = Graph(nv)
+    if seed >= 0
+        srand(seed)
+    end
 
     i = 1
     while i <= ne
@@ -15,9 +18,12 @@ function Graph(nv::Integer, ne::Integer)
     return g
 end
 
-function DiGraph(nv::Integer, ne::Integer)
+function DiGraph(nv::Integer, ne::Integer, seed::Int = -1)
     g = DiGraph(nv)
 
+    if seed >= 0
+        srand(seed)
+    end
     i = 1
     while i <= ne
         source = rand(1:nv)
