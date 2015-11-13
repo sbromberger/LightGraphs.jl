@@ -1,3 +1,4 @@
+@require JuMP begin
 """
 An optimal matching.
 
@@ -14,9 +15,16 @@ type MatchingResult
     m::Vector{Int}
 end
 
+
+
 """
-As `maximum_weight_maximal_matching`, with the difference that the edges `e` with
-`w[e] < cutoff` will not be considered for the matching.
+Given a bipartite graph `g` and an edgemap `w` containing weights associated to edges,
+returns a matching with the maximum total weight among the ones containing the
+greatest number of edges.
+Edges in `g` not present in `w` will not be considered for the matching.
+The algorithm relies on a linear relaxation on of the matching problem, which is
+guaranteed to have integer solution on bipartite graps.
+The pakage JuMP.jl and one of its supported solvers is required.
 """
 function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
     wnew = Dict{Edge,T}()
@@ -29,19 +37,10 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, c
     return maximum_weight_maximal_matching(g, wnew)
 end
 
-"""
-Given a bipartite graph `g` and an edgemap `w` containing weights associated to edges,
-returns a matching with the maximum total weight among the ones containing the
-greatest number of edges.
-Edges in `g` not present in `w` will not be considered for the matching.
-The algorithm relies on a linear relaxation on of the matching problem, which is
-guaranteed to have integer solution on bipartite graps.
-The pakage JuMP.jl and one of its supported solvers is required.
-"""
+
 function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 # TODO support for graphs with zero degree nodes
 # TODO apply separately on each connected component
-    isdefined(:JuMP) || error("JuMP.jl is required for this function.\nYou must recompile LightGraphs after installing JuMP.")
     bpmap = bipartite_map(g)
     length(bpmap) != nv(g) && error("Graph is not bipartite")
     v1 = findin(bpmap, 1)
@@ -112,3 +111,4 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 
     return MatchingResult(cost, inmatch, m)
 end
+end # @require

@@ -1,6 +1,7 @@
 __precompile__(true)
 module LightGraphs
 
+using Requires
 using GZip
 using StatsBase
 using Base.Collections
@@ -8,10 +9,9 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-
+import Combinatorics: combinations  # 0.5
 try
-    using GraphMatrices
-    import GraphMatrices.CombinatorialAdjacency
+    import GraphMatrices: CombinatorialAdjacency
     nothing
 catch
 end
