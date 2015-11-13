@@ -13,7 +13,7 @@ function DiGraph(n::Int)
         push!(badjlist, Vector{Int}())
         push!(fadjlist, Vector{Int}())
     end
-    return DiGraph(1:n, Set{Edge}(), badjlist, fadjlist)
+    return DiGraph(1:n, 0, badjlist, fadjlist)
 end
 
 DiGraph() = DiGraph(0)
@@ -50,10 +50,7 @@ end
 
 function DiGraph(g::Graph)
     h = DiGraph(nv(g))
-    for e in edges(g)
-        push!(h.edges,e)
-        push!(h.edges,reverse(e))
-    end
+    h.ne = div(ne(g), 2)
     h.fadjlist = copy(fadj(g))
     h.badjlist = copy(badj(g))
     return h
@@ -65,34 +62,39 @@ badj(g::DiGraph, v::Int) = g.badjlist[v]
 
 
 function ==(g::DiGraph, h::DiGraph)
-    return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
+    return (vertices(g) == vertices(h)) &&
+        ne(g) == ne(h) &&
+        (collect(edges(g)) == collect(edges(h)))
 end
 
 
 function copy(g::DiGraph)
-    return DiGraph(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+    return DiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 end
 
 
 is_directed(g::DiGraph) = true
 
-function unsafe_add_edge!(g::DiGraph, e::Edge)
-    push!(g.fadjlist[src(e)], dst(e))
-    push!(g.badjlist[dst(e)], src(e))
-    push!(g.edges, e)
+function add_edge!(g::DiGraph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Vertex $s not in graph")
+    d in vertices(g) || error("Vertex $d not in graph")
+    if _insert_and_dedup!(g.fadjlist[s], d)
+        g.ne += 1
+    end
+    _insert_and_dedup!(g.badjlist[d], s)
     return e
 end
 
 
 function rem_edge!(g::DiGraph, e::Edge)
-    reve = reverse(e)
     has_edge(g,e) || error("Edge $e is not in graph")
-
-    i = findfirst(g.fadjlist[src(e)], dst(e))
-    _swapnpop!(g.fadjlist[src(e)], i)
-    i = findfirst(g.badjlist[dst(e)], src(e))
-    _swapnpop!(g.badjlist[dst(e)], i)
-    return pop!(g.edges, e)
+    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
+    deleteat!(g.fadjlist[src(e)], i)
+    i = searchsorted(g.badjlist[dst(e)], src(e))[1]
+    deleteat!(g.badjlist[dst(e)], i)
+    g.ne -= 1
+    return e
 end
 
 

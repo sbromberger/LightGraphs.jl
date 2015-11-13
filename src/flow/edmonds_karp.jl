@@ -1,6 +1,6 @@
 """
 Computes the maximum flow between the source and target vertexes in a flow
-graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm). 
+graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm).
 Returns the value of the maximum flow as well as the final flow matrix.
 
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
@@ -13,7 +13,7 @@ capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function edmonds_karp_impl{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -178,7 +178,7 @@ function fetch_path!{T<:Number}(
                 if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
                     S[u] = v
                     P[u] != -1 && return  u, P, S, 0 # 0 indicates success
-                    
+
                     unshift!(Q_r, u)
                 end
 

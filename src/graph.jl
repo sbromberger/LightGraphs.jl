@@ -14,7 +14,7 @@ function Graph(n::Int)
         # sizehint!(o_s, n/4)
         push!(fadjlist, Vector{Int}())
     end
-    return Graph(1:n, Set{Edge}(), fadjlist)
+    return Graph(1:n, 0, fadjlist)
 end
 
 Graph() = Graph(0)
@@ -62,15 +62,14 @@ NOTE: returns a reference, not a copy. Do not modify result.
 adj(g::Graph) = fadj(g)
 adj(g::Graph, v::Int) = fadj(g, v)
 
+# warning - could be slow
 function ==(g::Graph, h::Graph)
-    gdigraph = DiGraph(g)
-    hdigraph = DiGraph(h)
-    return (gdigraph == hdigraph)
+    return nv(g) == nv(h) && edges(g) == edges(h)
 end
 
 
 function copy(g::Graph)
-    return Graph(g.vertices,copy(g.edges),deepcopy(g.fadjlist))
+    return Graph(g.vertices, g.ne, deepcopy(g.fadjlist))
 end
 
 
@@ -78,29 +77,30 @@ end
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
-function unsafe_add_edge!(g::Graph, e::Edge)
-    push!(g.fadjlist[src(e)], dst(e))
-    if src(e) != dst(e)
-        push!(g.fadjlist[dst(e)], src(e))
+function add_edge!(g::Graph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Source vertex $s not in graph")
+    d in vertices(g) || error("Destination vertex $d not in graph")
+    if _insert_and_dedup!(g.fadjlist[s], d)
+        g.ne += 1
     end
-    push!(g.edges, e)
+    if s != d
+        _insert_and_dedup!(g.fadjlist[d], s)
+    end
     return e
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    if !(e in edges(g))
-        reve = reverse(e)
-        (reve in edges(g)) || error("Edge $e is not in graph")
-        e = reve
-    end
+    (e in edges(g)) || error("Edge $e is not in graph")
 
-    i = findfirst(g.fadjlist[src(e)], dst(e))
-    _swapnpop!(g.fadjlist[src(e)], i)
+    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
+    deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
-        i = findfirst(g.fadjlist[dst(e)], src(e))
-        _swapnpop!(g.fadjlist[dst(e)], i)
+        i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
+        deleteat!(g.fadjlist[dst(e)], i)
     end
-    return pop!(g.edges, e)
+    g.ne -= 1
+    return ordered(e) ? e : reverse(e)
 end
 
 
