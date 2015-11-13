@@ -76,9 +76,12 @@ end
 
 is_directed(g::DiGraph) = true
 
-function unsafe_add_edge!(g::DiGraph, e::Edge)
-    _insert_and_dedup!(g.fadjlist[src(e)], dst(e))
-    _insert_and_dedup!(g.badjlist[dst(e)], src(e))
+function add_edge!(g::DiGraph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Vertex $s not in graph")
+    d in vertices(g) || error("Vertex $d not in graph")
+    _insert_and_dedup!(g.fadjlist[s], d)
+    _insert_and_dedup!(g.badjlist[d], s)
     push!(g.edges, e)
     return e
 end
