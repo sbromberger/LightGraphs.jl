@@ -78,10 +78,13 @@ end
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
 
-function unsafe_add_edge!(g::Graph, e::Edge)
-    _insert_and_dedup!(g.fadjlist[src(e)], dst(e))
-    if src(e) != dst(e)
-        _insert_and_dedup!(g.fadjlist[dst(e)], src(e))
+function add_edge!(g::Graph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Source vertex $s not in graph")
+    d in vertices(g) || error("Destination vertex $d not in graph")
+    _insert_and_dedup!(g.fadjlist[s], d)
+    if s != d
+        _insert_and_dedup!(g.fadjlist[d], s)
     end
     push!(g.edges, e)
     return e
