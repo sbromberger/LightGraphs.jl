@@ -110,7 +110,7 @@ write(g,"mygraph.jgz")
 
 - **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
-- **community:** modularity, community detection, core-periphery, clustering coefficients
+- **community:** modularity, mutual_information, community detection, core-periphery, clustering coefficients, label_propagation
 
 - **persistence formats:** proprietary compressed, [GraphML](http://en.wikipedia.org/wiki/GraphML), [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language), [Gexf](http://gexf.net/format), [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language))
 
