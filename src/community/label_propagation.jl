@@ -21,7 +21,8 @@ function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
             end
         end
     end
-    label
+    permute_labels!(label)
+	label
 end
 
 function label_count(g::SimpleGraph, membership::Vector{Int}, u::Int)
@@ -58,4 +59,27 @@ function update_label!(g::SimpleGraph, membership::Vector{Int}, u::Int)
         running = true
     end
     running
+end
+
+function permute_labels!(membership::Vector{Int})
+    N = length(membership)
+    if maximum(membership) > N || minimum(membership) < 1
+        error("Label must between 1 and |V|")
+    end
+    label_counters = zeros(Int, N)
+    j = 1
+    for i=1:length(membership)
+        k = membership[i]
+        if k >= 1
+            if label_counters[k] == 0
+                # We have seen this label for the first time
+                label_counters[k] = j
+                k = j
+                j += 1
+            else
+                k = label_counters[k]
+            end
+        end
+        membership[i] = k
+    end
 end
