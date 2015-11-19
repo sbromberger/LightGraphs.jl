@@ -11,7 +11,7 @@ function entropy(membership::Vector{Int})
     h = 0.0
     for grp in groups
         n_c = length(grp)
-        h += -plogp(n_c/n)
+        h += -(n_c/n)log(n_c/n)
     end
     h
 end
