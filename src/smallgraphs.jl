@@ -524,3 +524,38 @@ function TutteGraph()
     ]
     return _make_simple_undirected_graph(46,e)
 end
+
+"""create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
+function BinaryTree(levels)
+    g = Graph(2^levels-1)
+    for i in 0:levels-2
+        for j in 2^i:2^(i+1)-1
+            j; add_edge!(g, j, 2j)
+            add_edge!(g, j, 2j+1)
+        end
+    end
+    return g
+end
+
+"""create a double complete binary tree with k-levels 
+used as an example for spectral clustering by Guattery and Miller 1998."""
+function doubletree(levels)
+    gl = BinaryTree(levels)
+    gr = BinaryTree(levels)
+    g = blkdiag(gl, gr)
+    add_edge!(g,1, nv(gl)+1)
+    return g
+end
+
+
+"""The Roach Graph from Guattery and Miller 1998"""
+function RoachGraph(k::Int)
+    dipole = CompleteGraph(2)
+    nopole = Graph(2)
+    antannae = crosspath(k, nopole)
+    body = crosspath(k,dipole)
+    roach = blkdiag(antannae, body)
+    add_edge!(roach, nv(antannae)-1, nv(antannae)+1)
+    add_edge!(roach, nv(antannae), nv(antannae)+2)
+    return roach
+end
