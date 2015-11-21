@@ -62,12 +62,6 @@ end
 badj(g::DiGraph) = g.badjlist
 badj(g::DiGraph, v::Int) = badj(g)[v]
 
-
-function ==(g::DiGraph, h::DiGraph)
-    return (vertices(g) == vertices(h)) && (edges(g) == edges(h))
-end
-
-
 function copy(g::DiGraph)
     return DiGraph(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
 end

@@ -61,13 +61,6 @@ NOTE: returns a reference, not a copy. Do not modify result.
 adj(g::Graph) = fadj(g)
 adj(g::Graph, v::Int) = fadj(g, v)
 
-function ==(g::Graph, h::Graph)
-    gdigraph = DiGraph(g)
-    hdigraph = DiGraph(h)
-    return (gdigraph == hdigraph)
-end
-
-
 function copy(g::Graph)
     return Graph(g.vertices,copy(g.edges),deepcopy(g.fadjlist))
 end
