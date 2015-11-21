@@ -57,7 +57,10 @@ add_edge!(h, 3, 5)
 @test δ(h) == 1
 @test δin(h) == 0
 @test δout(h) == 0
-
+@test CompleteGraph(4) == CompleteGraph(4)
+@test CompleteGraph(4) != PathGraph(4)
+@test CompleteDiGraph(4) != PathDiGraph(4)
+@test CompleteDiGraph(4) == CompleteDiGraph(4)
 
 @test degree_histogram(g)[1:4] == [1, 3, 1, 0]
 @test neighbors(g, 1) == [2, 3, 4]
