@@ -60,7 +60,7 @@ function DiGraph(g::Graph)
 end
 
 badj(g::DiGraph) = g.badjlist
-badj(g::DiGraph, v::Int) = badj(g, v)
+badj(g::DiGraph, v::Int) = badj(g)[v]
 
 
 function ==(g::DiGraph, h::DiGraph)
