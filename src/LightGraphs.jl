@@ -41,7 +41,7 @@ eccentricity, diameter, periphery, radius, center,
 # operators
 complement, reverse, reverse!, union, intersect,
 difference, symmetric_difference,
-induced_subgraph, join,
+induced_subgraph, join, tensor_product, cartesian_product,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
