@@ -11,7 +11,7 @@ Output:
     c = labels[i] => vertex i belongs to component c.
     c is the smallest vertex id in the component.
 """
-function connected_components!(label::Vector{Int}, g::Graph)
+function connected_components!(label::Vector{Int}, g::SimpleGraph)
     # this version of connected components uses Breadth First Traversal
     # with custom visitor type in order to improve performance.
     # one BFS is performed for each component.
