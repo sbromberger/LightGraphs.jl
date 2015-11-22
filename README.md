@@ -90,7 +90,8 @@ write(g,"mygraph.jgz")
 
 - **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components
 
-- **operators:** complement, reverse, reverse!, union, join, intersect, difference, symmetric difference, blkdiag, induced subgraphs
+- **operators:** complement, reverse, reverse!, union, join, intersect, difference,
+symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **shortest paths:** Dijkstra, Dijkstra with predecessors, Bellman-Ford, Floyd-Warshall, A*
 

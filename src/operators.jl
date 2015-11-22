@@ -236,3 +236,43 @@ eltype(g::SimpleGraph) = Float64
 length(g::SimpleGraph) = nv(g)*nv(g)
 ndims(g::SimpleGraph) = 2
 issym(g::SimpleGraph) = !is_directed(g)
+
+"""
+Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+"""
+function cartesian_product{G<:SimpleGraph}(g::G, h::G)
+    z = G(nv(g)*nv(h))
+    id(i, j) = (i-1)*nv(h) + j
+    for e in edges(g)
+        i1, i2 = src(e), dst(e)
+        for j=1:nv(h)
+            add_edge!(z, id(i1,j), id(i2,j))
+        end
+    end
+
+    for e in edges(h)
+        j1, j2 = src(e), dst(e)
+        for i=1:nv(g)
+            add_edge!(z, id(i,j1), id(i,j2))
+        end
+    end
+
+    z
+end
+
+"""
+Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+"""
+function tensor_product{G<:SimpleGraph}(g::G, h::G)
+    z = G(nv(g)*nv(h))
+    id(i, j) = (i-1)*nv(h) + j
+    for eg in edges(g)
+        i1, i2 = src(eg), dst(eg)
+        for eh in edges(h)
+            j1, j2 = src(eh), dst(eh)
+            add_edge!(z, id(i1,j1), id(i2,j2))
+        end
+    end
+
+    z
+end
