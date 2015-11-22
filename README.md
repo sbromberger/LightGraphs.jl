@@ -84,7 +84,7 @@ write(g,"mygraph.jgz")
 ```
 
 ### Current functionality
-- **core functions:** degree (in/out/histogram), neighbors (in/out/all/common)
+- **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
 - **distance:** eccentricity, diameter, periphery, radius, center
 
