@@ -83,3 +83,13 @@ x = p*ones(10)
 @test ndims(p) == 2
 @test issym(p)
 @test !issym(g5)
+
+g22 = CompleteGraph(2)
+h = cartesian_product(g22, g22)
+@test nv(h) == 4
+@test ne(h)== 4
+
+g22 = CompleteGraph(2)
+h = tensor_product(g22, g22)
+@test nv(h) == 4
+@test ne(h) == 1

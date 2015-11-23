@@ -57,7 +57,10 @@ add_edge!(h, 3, 5)
 @test δ(h) == 1
 @test δin(h) == 0
 @test δout(h) == 0
-
+@test CompleteGraph(4) == CompleteGraph(4)
+@test CompleteGraph(4) != PathGraph(4)
+@test CompleteDiGraph(4) != PathDiGraph(4)
+@test CompleteDiGraph(4) == CompleteDiGraph(4)
 
 @test degree_histogram(g)[1:4] == [1, 3, 1, 0]
 @test neighbors(g, 1) == [2, 3, 4]
@@ -92,3 +95,52 @@ end
 
 @test g == copy(g)
 @test !(g === copy(g))
+g10 = CompleteGraph(5)
+rem_vertex!(g10, 1)
+@test g10 == CompleteGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == CompleteGraph(3)
+@test_throws BoundsError rem_vertex!(g10, 9)
+
+g10 = CompleteDiGraph(5)
+rem_vertex!(g10, 1)
+@test g10 == CompleteDiGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == CompleteDiGraph(3)
+@test_throws BoundsError rem_vertex!(g10, 9)
+g10 = PathGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == PathGraph(3)
+
+g10 = PathDiGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathDiGraph(4)
+rem_vertex!(g10, 4)
+@test g10 == PathDiGraph(3)
+
+g10 = PathDiGraph(5)
+rem_vertex!(g10, 1)
+h10 = PathDiGraph(6)
+rem_vertex!(h10, 1)
+rem_vertex!(h10, 1)
+@test g10 == h10
+
+g10 = CycleGraph(5)
+rem_vertex!(g10, 5)
+@test g10 == PathGraph(4)
+
+g10 = PathGraph(3)
+rem_vertex!(g10, 2)
+@test g10 == Graph(2)
+
+g10 = PathGraph(4)
+rem_vertex!(g10, 3)
+h10 =Graph(3)
+add_edge!(h10,1,2)
+@test g10 == h10
+
+g10 = CompleteGraph(5)
+rem_vertex!(g10, 3)
+@test g10 == CompleteGraph(4)

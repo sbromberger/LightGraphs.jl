@@ -84,13 +84,14 @@ write(g,"mygraph.jgz")
 ```
 
 ### Current functionality
-- **core functions:** degree (in/out/histogram), neighbors (in/out/all/common)
+- **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
 - **distance:** eccentricity, diameter, periphery, radius, center
 
 - **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components
 
-- **operators:** complement, reverse, reverse!, union, join, intersect, difference, symmetric difference, blkdiag, induced subgraphs
+- **operators:** complement, reverse, reverse!, union, join, intersect, difference,
+symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **shortest paths:** Dijkstra, Dijkstra with predecessors, Bellman-Ford, Floyd-Warshall, A*
 
