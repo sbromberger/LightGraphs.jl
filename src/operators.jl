@@ -151,18 +151,6 @@ function join(g::Graph, h::Graph)
     return r
 end
 
-#= """Replicate h len times and connect each vertex with its copies in a tree""" =# 
-#= function crosstree(len, h) =#
-#=     g = h =#
-#=     for i in 1:len =#
-#=         k = nv(g) =#
-#=         g = blkdiag(g,g) =#
-#=         for v in 1:k =#
-#=             add_edge!(g, v, v+k) =#
-#=         end =#
-#=     end =#
-#=     return g =#
-#= end =#
 
 """Replicate h len times and connect each vertex with its copies in a path""" 
 function crosspath(len, h)
