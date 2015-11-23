@@ -526,11 +526,11 @@ function TutteGraph()
 end
 
 """create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
-function BinaryTree(levels)
+function BinaryTree(levels::Int)
     g = Graph(2^levels-1)
     for i in 0:levels-2
         for j in 2^i:2^(i+1)-1
-            j; add_edge!(g, j, 2j)
+            add_edge!(g, j, 2j)
             add_edge!(g, j, 2j+1)
         end
     end
@@ -539,7 +539,7 @@ end
 
 """create a double complete binary tree with k-levels 
 used as an example for spectral clustering by Guattery and Miller 1998."""
-function doubletree(levels)
+function DoubleBinaryTree(levels::Int)
     gl = BinaryTree(levels)
     gr = BinaryTree(levels)
     g = blkdiag(gl, gr)

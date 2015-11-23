@@ -85,7 +85,7 @@ KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
 PappusGraph, PetersenGraph, SedgewickMazeGraph,
 TetrahedralGraph, TruncatedCubeGraph,
 TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
-BinaryTree, RoachGraph,
+BinaryTree, DoubleBinaryTree, RoachGraph,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
