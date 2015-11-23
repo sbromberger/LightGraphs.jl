@@ -110,7 +110,7 @@ erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, rando
 stochastic_block_model,
 
 #community
-modularity, mutual_information, variation_of_information, community_detection_nback, core_periphery_deg,
+modularity, nmi, nvoi, nminvoi, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient,
 label_propagation
 
@@ -166,7 +166,7 @@ include("core.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
 		include("community/label_propagation.jl")
-		include("community/mutual_information.jl")
+		include("community/nmi.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
