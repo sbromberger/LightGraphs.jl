@@ -1,71 +1,85 @@
 """
 Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
 `g`: imput Graph
-`ϵ`: proportion of unsatisfied nodes
-return : array containing vertex assignments
+`maxiter`: optional, maximum iterations
+return : array containing vertex assignments, the range of the output as 1:countdistinct(membership)
 """
-function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
+function label_propagation(g::SimpleGraph; maxiter=1000)
     n = nv(g)
-    label = collect(1:n)
-    runing_nodes = Set(vertices(g))
-
-    while length(runing_nodes) > n*ϵ
-        order = shuffle(collect(runing_nodes))
-        for u in order
-            if update_label!(g, label, u)
+    membership = collect(1:n)
+    active_nodes = Set(vertices(g))
+    nc = NeighComm(collect(1:n), fill(-1,n), 1)
+    i = 0
+    while !isempty(active_nodes) && i < maxiter
+    	i += 1
+        random_order = shuffle(collect(active_nodes))
+        for u in random_order
+          old_comm = membership[u]
+          membership[u] = vote!(g, membership, nc, u)
+            if old_comm != membership[u]
                 for v in out_neighbors(g, u)
-                    push!(runing_nodes, v)
+                    push!(active_nodes, v)
                 end
             else
-                delete!(runing_nodes, u)
+                delete!(active_nodes, u)
             end
         end
     end
-    permute_labels!(label)
-	label
+    renumber_labels!(membership)
+    membership
 end
 
-function label_count(g::SimpleGraph, membership::Vector{Int}, u::Int)
-    label_cnt = Dict{Int, Int}()
-    for v in out_neighbors(g,u)
-        v_lbl = membership[v]
-        if haskey(label_cnt, v_lbl)
-            label_cnt[v_lbl] += 1
-        else
-            label_cnt[v_lbl] = 1
+"""Fast shuffle Array `a` in UnitRange `r` inplace."""
+function range_shuffle!(r::UnitRange, a::AbstractVector)
+	for i=length(r):-1:2
+		j = rand(1:i)
+		ii = i + r.start - 1
+		jj = j + r.start - 1
+		a[ii],a[jj] = a[jj],a[ii]
+	end
+end
+
+"""Type to record neighbor labels and their counts."""
+type NeighComm
+	neigh_pos::Vector{Int}
+	neigh_cnt::Vector{Int}
+	neigh_last::Int
+end
+
+"""Return the most frequency label."""
+function vote!(g::SimpleGraph, membership::Vector{Int}, nc::NeighComm, u::Int)
+    for i=1:nc.neigh_last-1
+        nc.neigh_cnt[nc.neigh_pos[i]] = -1
+    end
+    nc.neigh_last = 1
+    nc.neigh_pos[1] = membership[u]
+    nc.neigh_cnt[nc.neigh_pos[1]] = 0
+    nc.neigh_last = 2
+    max_cnt = 0
+    for neigh in out_neighbors(g,u)
+        neigh_comm = membership[neigh]
+        if nc.neigh_cnt[neigh_comm] < 0
+            nc.neigh_cnt[neigh_comm] = 0
+            nc.neigh_pos[nc.neigh_last] = neigh_comm
+            nc.neigh_last += 1
+        end
+        nc.neigh_cnt[neigh_comm] += 1
+        if nc.neigh_cnt[neigh_comm] > max_cnt
+          max_cnt = nc.neigh_cnt[neigh_comm]
         end
     end
-    label_cnt
+    # ties breaking randomly
+    range_shuffle!(1:nc.neigh_last-1, nc.neigh_pos)
+    for lbl in nc.neigh_pos
+      if nc.neigh_cnt[lbl] == max_cnt
+        return lbl
+      end
+    end
 end
 
-function update_label!(g::SimpleGraph, membership::Vector{Int}, u::Int)
-    old_lbl = membership[u]
-    label_cnt = label_count(g, membership, u)
-    neigh_lbls = collect(keys(label_cnt))
-    neigh_lbls_cnt = collect(values(label_cnt))
-    order = collect(1:length(label_cnt))
-    shuffle!(order)
-    max_cnt = neigh_lbls_cnt[order[1]]
-    max_lbl = neigh_lbls[order[1]]
-    running = false
-    for i=2:length(order)
-        if neigh_lbls_cnt[order[i]] > max_cnt
-            max_cnt = neigh_lbls_cnt[order[i]]
-            max_lbl = neigh_lbls[order[i]]
-        end
-    end
-    if max_lbl != old_lbl
-        membership[u] = max_lbl
-        running = true
-    end
-    running
-end
-
-function permute_labels!(membership::Vector{Int})
+function renumber_labels!(membership::Vector{Int})
     N = length(membership)
-    if maximum(membership) > N || minimum(membership) < 1
-        error("Label must between 1 and |V|")
-    end
+    (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     label_counters = zeros(Int, N)
     j = 1
     for i=1:length(membership)
