@@ -69,16 +69,18 @@ end
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
 has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
-
 isordered(e::Edge) = src(e) <= dst(e)
 
-function unsafe_add_edge!(g::Graph, e::Edge)
+function add_edge!(g::Graph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Source vertex $s not in graph")
+    d in vertices(g) || error("Destination vertex $d not in graph")
+    _insert_and_dedup!(g.fadjlist[s], d)
+    if s != d
+        _insert_and_dedup!(g.fadjlist[d], s)
+    end
     if !isordered(e)
         e = reverse(e)
-    end
-    push!(g.fadjlist[src(e)], dst(e))
-    if src(e) != dst(e)
-        push!(g.fadjlist[dst(e)], src(e))
     end
     push!(g.edges, e)
     return e
@@ -86,18 +88,14 @@ end
 
 function rem_edge!(g::Graph, e::Edge)
     has_edge(g, e) || error("Edge $e is not in graph")
-    return unsafe_rem_edge!(g, e)
-end
-
-function unsafe_rem_edge!(g::Graph, e::Edge)
     if !isordered(e)
         e = reverse(e)
     end
-    i = findfirst(g.fadjlist[src(e)], dst(e))
-    _swapnpop!(g.fadjlist[src(e)], i)
+    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
+    deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
-        i = findfirst(g.fadjlist[dst(e)], src(e))
-        _swapnpop!(g.fadjlist[dst(e)], i)
+        i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
+        deleteat!(g.fadjlist[dst(e)], i)
     end
     return pop!(g.edges, e)
 end

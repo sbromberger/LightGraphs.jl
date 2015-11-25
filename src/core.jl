@@ -1,5 +1,7 @@
 abstract AbstractPathState
 
+# modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
+_insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
@@ -97,18 +99,8 @@ nv(g::SimpleGraph) = length(vertices(g))
 """The number of edges in `g`."""
 ne(g::SimpleGraph) = length(edges(g))
 
-"""Add a new edge to `g` from `src` to `dst`.
-
-Note: An exception will be raised if the edge is already in the graph
-or if the vertex is not contained in the graph.
-"""
-function add_edge!(g::SimpleGraph, e::Edge)
-    has_edge(g,e) && error("Edge $e already in graph")
-    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
-    unsafe_add_edge!(g,e)
-end
-
-add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src, dst))
+"""Add a new edge to `g` from `src` to `dst`."""
+add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 """Remove the edge from `src` to `dst`.
 
@@ -130,34 +122,34 @@ function rem_vertex!(g::SimpleGraph, v::Int)
 
     edgs = in_edges(g, v)
     for e in edgs
-        unsafe_rem_edge!(g, e)
+        rem_edge!(g, e)
     end
     neigs = copy(in_neighbors(g, n))
     for i in neigs
-        unsafe_rem_edge!(g, Edge(i, n))
+        rem_edge!(g, Edge(i, n))
     end
     if v != n
         for i in neigs
-            unsafe_add_edge!(g, Edge(i, v))
+            add_edge!(g, Edge(i, v))
         end
     end
 
     if is_directed(g)
         edgs = out_edges(g, v)
         for e in edgs
-            unsafe_rem_edge!(g, e)
+            rem_edge!(g, e)
         end
         neigs = copy(out_neighbors(g, n))
         for i in neigs
-            unsafe_rem_edge!(g, Edge(n, i))
+            rem_edge!(g, Edge(n, i))
         end
         if v != n
             for i in neigs
-                unsafe_add_edge!(g, Edge(v, i))
+                add_edge!(g, Edge(v, i))
             end
         end
     end
-    
+
     g.vertices = 1:n-1
     pop!(g.fadjlist)
     if is_directed(g)
@@ -233,12 +225,3 @@ common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), nei
 
 "Returns true if `g` is has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
-
-# internal function that copies the end element to position n within an array
-# and then pops the end element, effectively removing element n from the
-# array.
-function _swapnpop!(a::AbstractArray, n::Int)
-    n > length(a) && throw(BoundsError())
-    a[n] = a[end]
-    pop!(a)
-end
