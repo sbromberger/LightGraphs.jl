@@ -44,7 +44,6 @@ function Graph(g::DiGraph)
     end
     return h
 end
-
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.
 
@@ -62,13 +61,6 @@ NOTE: returns a reference, not a copy. Do not modify result.
 adj(g::Graph) = fadj(g)
 adj(g::Graph, v::Int) = fadj(g, v)
 
-function ==(g::Graph, h::Graph)
-    gdigraph = DiGraph(g)
-    hdigraph = DiGraph(h)
-    return (gdigraph == hdigraph)
-end
-
-
 function copy(g::Graph)
     return Graph(g.vertices,copy(g.edges),deepcopy(g.fadjlist))
 end
@@ -76,7 +68,8 @@ end
 
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
-has_edge(g::Graph, e::Edge) = (e in edges(g)) || (reverse(e) in edges(g))
+has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
+isordered(e::Edge) = src(e) <= dst(e)
 
 function add_edge!(g::Graph, e::Edge)
     s, d = e
@@ -86,17 +79,18 @@ function add_edge!(g::Graph, e::Edge)
     if s != d
         _insert_and_dedup!(g.fadjlist[d], s)
     end
+    if !isordered(e)
+        e = reverse(e)
+    end
     push!(g.edges, e)
     return e
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    if !(e in edges(g))
-        reve = reverse(e)
-        (reve in edges(g)) || error("Edge $e is not in graph")
-        e = reve
+    has_edge(g, e) || error("Edge $e is not in graph")
+    if !isordered(e)
+        e = reverse(e)
     end
-
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
