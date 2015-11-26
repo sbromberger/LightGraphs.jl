@@ -3,8 +3,11 @@
 @test nv(r2) == 5
 @test ne(r2) == 10
 
-@test Graph(10,20,3) == Graph(10,20,3)
-@test DiGraph(10,20,3) == DiGraph(10,20,3)
+@test Graph(10,20,seed=3) == Graph(10,20,seed=3)
+@test DiGraph(10,20,seed=3) == DiGraph(10,20,seed=3)
+@test Graph(10,20,seed=3) == erdos_renyi(10,20,seed=3)
+@test ne(Graph(10,40,seed=3)) == 40
+@test ne(DiGraph(10,80,seed=3)) == 80
 
 er = erdos_renyi(10, 0.5)
 @test nv(er) == 10
@@ -12,6 +15,11 @@ er = erdos_renyi(10, 0.5)
 er = erdos_renyi(10, 0.5, is_directed=true)
 @test nv(er) == 10
 @test is_directed(er) == true
+
+er = erdos_renyi(10, 0.5, seed=17)
+@test nv(er) == 10
+@test is_directed(er) == false
+
 
 ws = watts_strogatz(10,4,0.2)
 @test nv(ws) == 10

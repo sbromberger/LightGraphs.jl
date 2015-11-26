@@ -1,19 +1,17 @@
-# These are test functions only, used for consistent centrality comparisons.
-function Graph(nv::Integer, ne::Integer, seed::Int = -1)
-    maxe = nv * (nv-1) * 2
+function Graph(nv::Integer, ne::Integer; seed::Int = -1)
+    maxe = div(nv * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-
-    g = Graph(nv)
-    if seed >= 0
-        srand(seed)
+    if ne > 2/3 * maxe
+        return complement(Graph(nv, maxe-ne))
     end
-
+    g = Graph(nv)
+    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
     i = 1
     while i <= ne
-        source = rand(1:nv)
-        dest = rand(1:nv)
+        source = rand(rng, 1:nv)
+        dest = rand(rng, 1:nv)
         e = (source, dest)
-        if (source != dest) && !(has_edge(g,source,dest))
+        if (source != dest) && !has_edge(g,source,dest)
             i+= 1
             add_edge!(g,source,dest)
         end
@@ -21,18 +19,19 @@ function Graph(nv::Integer, ne::Integer, seed::Int = -1)
     return g
 end
 
-function DiGraph(nv::Integer, ne::Integer, seed::Int = -1)
+function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     maxe = nv * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    g = DiGraph(nv)
-
-    if seed >= 0
-        srand(seed)
+    if ne > 2/3 * maxe
+        return complement(DiGraph(nv, maxe-ne))
     end
+
+    g = DiGraph(nv)
+    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
     i = 1
     while i <= ne
-        source = rand(1:nv)
-        dest = rand(1:nv)
+        source = rand(rng, 1:nv)
+        dest = rand(rng, 1:nv)
         e = (source, dest)
         if (source != dest) && !(has_edge(g,source,dest))
             i+= 1
@@ -47,27 +46,23 @@ random graph with `n` vertices. Edges are added between pairs of vertices with
 probability `p`. Undirected graphs are created by default; use
 `is_directed=true` to override.
 
-Note also that Erdős–Rényi graphs may be generated quickly using the
-`Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of
-vertices.
+Note also that Erdős–Rényi graphs may be generated quickly using `erdos_renyi(n, ne)`
+or the  `Graph(nv, ne)` constructor, which randomly select `ne` edges among all the potential
+edges.
 """
-function erdos_renyi(n::Integer, p::Real; is_directed=false)
-    if is_directed
-        g = DiGraph(n)
-    else
-        g = Graph(n)
+function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
+    m = is_directed ? n*(n-1) : div(n*(n-1),2)
+    if seed >= 0
+        srand(seed)
     end
-
-    for i = 1:n
-        jstart = is_directed? 1 : i
-        for j = jstart : n
-            if i != j && rand() <= p
-                add_edge!(g, i, j)
-            end
-        end
-    end
-    return g
+    ne = StatsBase.rand_binom(m, p) # sadly Distributions.jl doesn't support non-global RNG
+    return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
+
+function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-1)
+    return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
+end
+
 
 """Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
 small model random graph with `n` vertices, each with degree `k`. Edges are

@@ -5,7 +5,7 @@ function complement(g::Graph)
     h = Graph(gnv)
     for i=1:gnv
         for j=i+1:gnv
-            if !(has_edge(g,i,j))
+            if !has_edge(g,i,j)
                 add_edge!(h,i,j)
             end
         end
@@ -19,7 +19,7 @@ function complement(g::DiGraph)
     for i=1:gnv
         for j=1:gnv
             if i != j
-                if !(has_edge(g,i,j))
+                if !has_edge(g,i,j)
                     add_edge!(h,i,j)
                 end
             end
