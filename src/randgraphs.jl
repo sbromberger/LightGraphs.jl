@@ -1,5 +1,8 @@
 # These are test functions only, used for consistent centrality comparisons.
 function Graph(nv::Integer, ne::Integer, seed::Int = -1)
+    maxe = nv * (nv-1) * 2
+    @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
+
     g = Graph(nv)
     if seed >= 0
         srand(seed)
@@ -19,6 +22,8 @@ function Graph(nv::Integer, ne::Integer, seed::Int = -1)
 end
 
 function DiGraph(nv::Integer, ne::Integer, seed::Int = -1)
+    maxe = nv * (nv-1)
+    @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     g = DiGraph(nv)
 
     if seed >= 0
