@@ -13,7 +13,7 @@ function DiGraph(n::Int)
         push!(badjlist, Vector{Int}())
         push!(fadjlist, Vector{Int}())
     end
-    return DiGraph(1:n, Set{Edge}(), badjlist, fadjlist)
+    return DiGraph(1:n, 0, badjlist, fadjlist)
 end
 
 DiGraph() = DiGraph(0)
@@ -50,21 +50,25 @@ end
 
 function DiGraph(g::Graph)
     h = DiGraph(nv(g))
-    for e in edges(g)
-        push!(h.edges,e)
-        push!(h.edges,reverse(e))
-    end
-    h.fadjlist = copy(fadj(g))
-    h.badjlist = copy(badj(g))
+    h.ne = ne(g) * 2
+    h.fadjlist = deepcopy(fadj(g))
+    h.badjlist = deepcopy(badj(g))
     return h
 end
 
 badj(g::DiGraph) = g.badjlist
 badj(g::DiGraph, v::Int) = badj(g)[v]
 
+
 function copy(g::DiGraph)
-    return DiGraph(g.vertices,copy(g.edges),deepcopy(g.fadjlist),deepcopy(g.badjlist))
+    return DiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 end
+
+==(g::DiGraph, h::DiGraph) =
+    vertices(g) == vertices(h) &&
+    ne(g) == ne(h) &&
+    fadj(g) == fadj(h) &&
+    badj(g) == badj(h)
 
 is_directed(g::DiGraph) = true
 
@@ -72,20 +76,22 @@ function add_edge!(g::DiGraph, e::Edge)
     s, d = e
     s in vertices(g) || error("Vertex $s not in graph")
     d in vertices(g) || error("Vertex $d not in graph")
-    _insert_and_dedup!(g.fadjlist[s], d)
+    if _insert_and_dedup!(g.fadjlist[s], d)
+        g.ne += 1
+    end
     _insert_and_dedup!(g.badjlist[d], s)
-    push!(g.edges, e)
     return e
 end
 
 
 function rem_edge!(g::DiGraph, e::Edge)
-    has_edge(g,e) || error("Edge $e is not in graph")
+    has_edge(g,e) || error("$e is not in graph")
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     deleteat!(g.fadjlist[src(e)], i)
     i = searchsorted(g.badjlist[dst(e)], src(e))[1]
     deleteat!(g.badjlist[dst(e)], i)
-    return pop!(g.edges, e)
+    g.ne -= 1
+    return e
 end
 
 
@@ -98,7 +104,15 @@ function add_vertex!(g::DiGraph)
 end
 
 
-has_edge(g::DiGraph, e::Edge) = e in edges(g)
+function has_edge(g::DiGraph, e::Edge)
+    u, v = e
+    u > nv(g) || v > nv(g) && return false
+    if degree(g,u) < degree(g,v)
+        return length(searchsorted(fadj(g,u), v)) > 0
+    else
+        return length(searchsorted(badj(g,v), u)) > 0
+    end
+end
 
 degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
 "Returns all the vertices which share an edge with `v`."
