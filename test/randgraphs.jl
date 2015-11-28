@@ -41,10 +41,11 @@ rd = random_regular_digraph(10,0)
 @test ne(rd) == 0
 @test is_directed(rd)
 
-rr = random_regular_graph(10, 2)
-@test nv(rr) == 10
-@test ne(rr) == 10
+rr = random_regular_graph(6, 3, 1)
+@test nv(rr) == 6
+@test ne(rr) == 9
 @test is_directed(rr) == false
+
 rr = random_regular_graph(1000, 50)
 @test nv(rr) == 1000
 @test ne(rr) == 25000
