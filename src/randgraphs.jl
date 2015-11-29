@@ -2,7 +2,7 @@ function Graph(nv::Integer, ne::Integer; seed::Int = -1)
     maxe = div(nv * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     if ne > 2/3 * maxe
-        return complement(Graph(nv, maxe-ne))
+        return complement(Graph(nv, maxe-ne, seed=seed))
     end
     g = Graph(nv)
     rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
@@ -23,7 +23,7 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     maxe = nv * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     if ne > 2/3 * maxe
-        return complement(DiGraph(nv, maxe-ne))
+        return complement(DiGraph(nv, maxe-ne, seed=seed))
     end
 
     g = DiGraph(nv)
@@ -172,7 +172,7 @@ function random_regular_graph(n::Int, k::Int; seed::Int=-1)
         return Graph(n)
     end
     if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_graph(n, n-k-1, seed))
+        return complement(random_regular_graph(n, n-k-1, seed=seed))
     end
 
     rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
@@ -236,7 +236,7 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
         return DiGraph(n)
     end
     if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_digraph(n, n-k-1, dir, seed))
+        return complement(random_regular_digraph(n, n-k-1, dir=dir, seed=seed))
     end
     # rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
 
