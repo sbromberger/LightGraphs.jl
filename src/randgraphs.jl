@@ -165,7 +165,7 @@ For undirected graphs, allocates an array of `nk` `Int`s, and takes
 approximately $nk^2$ time. For $k > n/2$, generates a graph of degree
 `n-k-1` and returns its complement.
 """
-function random_regular_graph(n::Int, k::Int, seed::Int=-1)
+function random_regular_graph(n::Int, k::Int; seed::Int=-1)
     @assert(iseven(n*k), "n * k must be even")
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
     if k == 0
@@ -198,7 +198,7 @@ It contains `n` vertices, the vertex `ì` having degree `k[i]`.
 Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes
 approximately $nc^2$ time.
 """
-function random_configuration_model(n::Int, k::Array{Int}, seed::Int=-1)
+function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
     @assert(n == length(k), "a degree sequence of length n has to be provided")
     m = sum(k)
     @assert(iseven(m), "sum(k) must be even")
@@ -227,7 +227,7 @@ specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
 For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an
 adjacency matrix and uses that to generate the directed graph.
 """
-function random_regular_digraph(n::Int, k::Int, dir::Symbol=:out, seed::Int=-1)
+function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     #TODO remove the function sample from StatsBase for one allowing the use
     # of a local rng
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
@@ -269,7 +269,7 @@ Nodes are dived in blocks of `r` elements.
 probability `pint`. Edges between pairs of vertices in different blocks are added
 probability `pext`.
 """
-function stochastic_block_model(n::Integer, r::Integer, pint::Real, pext::Real, seed::Int=-1)
+function stochastic_block_model(n::Integer, r::Integer, pint::Real, pext::Real; seed::Int=-1)
     n % r != 0 && error("n should be divisible by r.")
     rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
     g = Graph(n)
