@@ -101,7 +101,7 @@ end
 function ==(e1::EdgeIter, e2::EdgeIter)
     length(e1.adj) == length(e2.adj) || return false
     e1.directed == e2.directed || return false
-    for i in length(e1.adj)
+    for i in 1:length(e1.adj)
         e1.adj[i] == e2.adj[i] || return false
     end
     return true
