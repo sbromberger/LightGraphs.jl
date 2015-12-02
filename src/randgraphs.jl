@@ -1,20 +1,14 @@
 function Graph(nv::Integer, ne::Integer; seed::Int = -1)
     maxe = div(nv * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    if ne > 2/3 * maxe
-        return complement(Graph(nv, maxe-ne, seed=seed))
-    end
-    g = Graph(nv)
+    ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
+
     rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
-    i = 1
-    while i <= ne
+    g = Graph(nv)
+    while g.ne < ne
         source = rand(rng, 1:nv)
         dest = rand(rng, 1:nv)
-        e = (source, dest)
-        if (source != dest) && !has_edge(g,source,dest)
-            i+= 1
-            add_edge!(g,source,dest)
-        end
+        source != dest && add_edge!(g,source,dest)
     end
     return g
 end
@@ -22,21 +16,14 @@ end
 function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     maxe = nv * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    if ne > 2/3 * maxe
-        return complement(DiGraph(nv, maxe-ne, seed=seed))
-    end
+    ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
 
-    g = DiGraph(nv)
     rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
-    i = 1
-    while i <= ne
+    g = DiGraph(nv)
+    while g.ne < ne
         source = rand(rng, 1:nv)
         dest = rand(rng, 1:nv)
-        e = (source, dest)
-        if (source != dest) && !(has_edge(g,source,dest))
-            i+= 1
-            add_edge!(g,source,dest)
-        end
+        source != dest && add_edge!(g,source,dest)
     end
     return g
 end
