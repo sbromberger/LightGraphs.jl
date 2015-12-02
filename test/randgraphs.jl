@@ -41,10 +41,11 @@ rd = random_regular_digraph(10,0)
 @test ne(rd) == 0
 @test is_directed(rd)
 
-rr = random_regular_graph(10, 2)
-@test nv(rr) == 10
-@test ne(rr) == 10
+rr = random_regular_graph(6, 3, seed=1)
+@test nv(rr) == 6
+@test ne(rr) == 9
 @test is_directed(rr) == false
+
 rr = random_regular_graph(1000, 50)
 @test nv(rr) == 1000
 @test ne(rr) == 25000
@@ -53,7 +54,7 @@ for v in vertices(rr)
     @test degree(rr, v) == 50
 end
 
-rr = random_configuration_model(10, repmat([2,4] ,5), 3)
+rr = random_configuration_model(10, repmat([2,4] ,5), seed=3)
 @test nv(rr) == 10
 @test ne(rr) == 15
 @test is_directed(rr) == false
@@ -77,13 +78,13 @@ rd = random_regular_digraph(1000, 4)
 @test is_directed(rd)
 @test std(outdegree(rd)) == 0
 
-rd = random_regular_digraph(1000, 4, :in)
+rd = random_regular_digraph(1000, 4, dir=:in)
 @test nv(rd) == 1000
 @test ne(rd) == 4000
 @test is_directed(rd)
 @test std(indegree(rd)) == 0
 
-rr = random_regular_graph(10, 8, 4)
+rr = random_regular_graph(10, 8, seed=4)
 @test nv(rr) == 10
 @test ne(rr) == 40
 @test is_directed(rr) == false
@@ -91,7 +92,7 @@ for v in vertices(rr)
     @test degree(rr, v) == 8
 end
 
-rd = random_regular_digraph(10, 8, :out, 4)
+rd = random_regular_digraph(10, 8, dir=:out, seed=4)
 @test nv(rd) == 10
 @test ne(rd) == 80
 @test is_directed(rd)
@@ -106,7 +107,7 @@ g10 = stochastic_block_model(4, 2, 1, 0)
 @test !has_edge(g10, 2, 4)
 @test !has_edge(g10, 2, 3)
 
-g10 = stochastic_block_model(4, 2, 0, 1, 17)
+g10 = stochastic_block_model(4, 2, 0, 1, seed=17)
 @test nv(g10) == 4
 @test ne(g10) == 4
 @test !has_edge(g10, 1, 2)
