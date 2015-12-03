@@ -111,7 +111,7 @@ erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, rando
 stochastic_block_model,
 
 #community
-modularity, nmi, nvoi, nminvoi, community_detection_nback, core_periphery_deg,
+modularity, nmi, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient,
 label_propagation
 
