@@ -69,6 +69,8 @@ tests = [
     "community/detection",
     "community/modularity",
     "community/clustering",
+    "community/label_propagation",
+    "community/nmi",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
