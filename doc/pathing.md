@@ -81,7 +81,7 @@ Returns connected components of the undirected graph of `g`.
 ```
 has_self_loop(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Returns true if `g` is has any self loops.
+Returns true if `g` has any self loops.
 
 ### attracting_components
 ```

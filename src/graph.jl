@@ -14,7 +14,7 @@ function Graph(n::Int)
         # sizehint!(o_s, n/4)
         push!(fadjlist, Vector{Int}())
     end
-    return Graph(1:n, Set{Edge}(), fadjlist)
+    return Graph(1:n, 0, fadjlist)
 end
 
 Graph() = Graph(0)
@@ -35,15 +35,21 @@ end
 function Graph(g::DiGraph)
     gnv = nv(g)
 
-    h = Graph(gnv)
-
-    for e in edges(g)
-        if !has_edge(h, e)
-            add_edge!(h, e)
+    edgect = 0
+    newfadj = deepcopy(g.fadjlist)
+    for i in 1:gnv
+        for j in badj(g,i)
+            if (_insert_and_dedup!(newfadj[i], j))
+                edgect += 2     # this is a new edge only in badjlist
+            else
+                edgect += 1     # this is an existing edge - we already have it
+            end
         end
     end
-    return h
+
+    return Graph(vertices(g), edgect ÷ 2, newfadj)
 end
+
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.
 
@@ -62,44 +68,51 @@ adj(g::Graph) = fadj(g)
 adj(g::Graph, v::Int) = fadj(g, v)
 
 function copy(g::Graph)
-    return Graph(g.vertices,copy(g.edges),deepcopy(g.fadjlist))
+    return Graph(g.vertices, g.ne, deepcopy(g.fadjlist))
 end
+
+==(g::Graph, h::Graph) =
+    vertices(g) == vertices(h) &&
+    ne(g) == ne(h) &&
+    fadj(g) == fadj(h)
 
 
 "Returns `true` if `g` is a `DiGraph`."
 is_directed(g::Graph) = false
-has_edge(g::Graph, e::Edge) = isordered(e) ? e in edges(g) : reverse(e) in edges(g)
 
-isordered(e::Edge) = src(e) <= dst(e)
+function has_edge(g::Graph, e::Edge)
+    u, v = e
+    u > nv(g) || v > nv(g) && return false
+    if degree(g,u) > degree(g,v)
+        u, v = v, u
+    end
+    return length(searchsorted(fadj(g,u), v)) > 0
+end
 
-function unsafe_add_edge!(g::Graph, e::Edge)
-    if !isordered(e)
-        e = reverse(e)
+function add_edge!(g::Graph, e::Edge)
+    s, d = e
+    s in vertices(g) || error("Source vertex $s not in graph")
+    d in vertices(g) || error("Destination vertex $d not in graph")
+    if _insert_and_dedup!(g.fadjlist[s], d)
+        g.ne += 1
     end
-    push!(g.fadjlist[src(e)], dst(e))
-    if src(e) != dst(e)
-        push!(g.fadjlist[dst(e)], src(e))
+    if s != d
+        _insert_and_dedup!(g.fadjlist[d], s)
     end
-    push!(g.edges, e)
     return e
 end
 
 function rem_edge!(g::Graph, e::Edge)
-    has_edge(g, e) || error("Edge $e is not in graph")
-    return unsafe_rem_edge!(g, e)
-end
-
-function unsafe_rem_edge!(g::Graph, e::Edge)
-    if !isordered(e)
-        e = reverse(e)
-    end
-    i = findfirst(g.fadjlist[src(e)], dst(e))
-    _swapnpop!(g.fadjlist[src(e)], i)
+    i = searchsorted(g.fadjlist[src(e)], dst(e))
+    length(i) > 0 || error("$e not in graph")
+    i = i[1]
+    deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
-        i = findfirst(g.fadjlist[dst(e)], src(e))
-        _swapnpop!(g.fadjlist[dst(e)], i)
+        i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
+        deleteat!(g.fadjlist[dst(e)], i)
     end
-    return pop!(g.edges, e)
+    g.ne -= 1
+    return is_ordered(e) ? e : reverse(e)
 end
 
 
@@ -114,6 +127,7 @@ end
 
 """Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
 degree(g::Graph, v::Int) = indegree(g,v)
+
 doc"""Density is defined as the ratio of the number of actual edges to the
 number of possible edges. This is $|v| |v-1|$ for directed graphs and
 $(|v| |v-1|) / 2$ for undirected graphs.
