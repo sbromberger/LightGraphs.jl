@@ -21,9 +21,13 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
+@test LightGraphs.fadj(g)[1] == LightGraphs.fadj(g,1) ==
+    LightGraphs.badj(g)[1] == LightGraphs.badj(g,1) ==
+    LightGraphs.adj(g)[1] == LightGraphs.adj(g,1) ==
+    [2,3,4]
 
-@test_throws ErrorException add_edge!(g, 1, 2)
-@test_throws ErrorException add_edge!(h, 1, 2)
+# @test_throws ErrorException add_edge!(g, 1, 2)
+# @test_throws ErrorException add_edge!(h, 1, 2)
 # @test_throws ErrorException add_edge!(g, 1, 1)
 # @test_throws ErrorException add_edge!(h, 1, 1)
 
@@ -51,8 +55,8 @@ badadjmx = [ 0 1 0; 1 0 1]
 @test_throws ErrorException Graph([1 0; 1 1])
 
 
-@test_throws BoundsError add_edge!(g, 100, 100)
-@test_throws BoundsError add_edge!(h, 100, 100)
+@test_throws ErrorException add_edge!(g, 100, 100)
+@test_throws ErrorException add_edge!(h, 100, 100)
 
 @test_throws ErrorException Graph(sparse(adjmx2))
 

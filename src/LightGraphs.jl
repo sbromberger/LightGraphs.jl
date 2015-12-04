@@ -1,6 +1,7 @@
 __precompile__(true)
 module LightGraphs
 
+using Requires
 using GZip
 using StatsBase
 using Base.Collections
@@ -8,17 +9,23 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
+import Combinatorics: combinations  # 0.5
+try
+    import GraphMatrices: CombinatorialAdjacency
+    nothing
+catch
+end
 
 try
-    using GraphMatrices
-    import GraphMatrices.CombinatorialAdjacency
+    using JuMP
     nothing
 catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
+            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            ctranspose, join, start, next, done, eltype
 
 
 # core
@@ -27,7 +34,7 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loop,
+common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -35,7 +42,8 @@ eccentricity, diameter, periphery, radius, center,
 # operators
 complement, reverse, reverse!, union, intersect,
 difference, symmetric_difference,
-induced_subgraph, join,
+induced_subgraph, join, tensor_product, cartesian_product,
+crosspath,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -43,7 +51,7 @@ discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph, traverse_graph_withlog,
 
 # bfs
-BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
+BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
 
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
@@ -68,7 +76,7 @@ bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
 # smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph, CompleteBipartiteGraph,
 CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
 DiamondGraph, BullGraph,
 ChvatalGraph, CubicalGraph, DesarguesGraph,
@@ -78,6 +86,7 @@ KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
 PappusGraph, PetersenGraph, SedgewickMazeGraph,
 TetrahedralGraph, TruncatedCubeGraph,
 TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
+BinaryTree, DoubleBinaryTree, RoachGraph,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -96,6 +105,9 @@ readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
 
+#matching
+maximum_weight_maximal_matching,
+
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 stochastic_block_model,
@@ -103,6 +115,7 @@ stochastic_block_model,
 #community
 modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient
+
 
 """An optimized graphs package.
 
@@ -124,6 +137,7 @@ LightGraphs
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")
+        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
@@ -159,5 +173,6 @@ include("core.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
             include("flow/push_relabel.jl")
+        include("matching/linear-programming.jl")
 
 end # module

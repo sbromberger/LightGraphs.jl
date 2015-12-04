@@ -8,8 +8,20 @@ function CompleteGraph(n::Integer)
     g = Graph(n)
     for i = 1:n, j=1:n
         if i < j
-            unsafe_add_edge!(g, Edge(i,j))
+            add_edge!(g, Edge(i,j))
         end
+    end
+    return g
+end
+
+
+"""Creates a complete bipartite graph with `n1+n2` vertices. It has edges
+connecting each pair of vertices in the two sets.
+"""
+function CompleteBipartiteGraph(n1::Integer, n2::Integer)
+    g = Graph(n1+n2)
+    for i = 1:n1, j=n1+1:n1+n2
+        add_edge!(g, Edge(i,j))
     end
     return g
 end
@@ -21,7 +33,7 @@ function CompleteDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 1:n, j=1:n
         if i != j
-            unsafe_add_edge!(g, Edge(i,j))
+            add_edge!(g, Edge(i,j))
         end
     end
     return g
@@ -33,7 +45,7 @@ with edges to each other vertex.
 function StarGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        unsafe_add_edge!(g, Edge(1,i))
+        add_edge!(g, Edge(1,i))
     end
     return g
 end
@@ -44,7 +56,7 @@ vertex with directed edges to every other vertex.
 function StarDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        unsafe_add_edge!(g, Edge(1,i))
+        add_edge!(g, Edge(1,i))
     end
     return g
 end
@@ -54,7 +66,7 @@ successive vertex by a single edge."""
 function PathGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        unsafe_add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i-1, i))
     end
     return g
 end
@@ -64,7 +76,7 @@ successive vertex by a single directed edge."""
 function PathDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        unsafe_add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i-1, i))
     end
     return g
 end
@@ -74,9 +86,9 @@ end
 function CycleGraph(n::Integer)
     g = Graph(n)
     for i = 1:n-1
-        unsafe_add_edge!(g, Edge(i, i+1))
+        add_edge!(g, Edge(i, i+1))
     end
-    unsafe_add_edge!(g, Edge(n, 1))
+    add_edge!(g, Edge(n, 1))
     return g
 end
 
@@ -85,9 +97,9 @@ end
 function CycleDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 1:n-1
-        unsafe_add_edge!(g, Edge(i, i+1))
+        add_edge!(g, Edge(i, i+1))
     end
-    unsafe_add_edge!(g, Edge(n, 1))
+    add_edge!(g, Edge(n, 1))
     return g
 end
 
@@ -98,10 +110,10 @@ the outer vertices connected via a closed path graph.
 function WheelGraph(n::Integer)
     g = StarGraph(n)
     for i = 3:n
-        unsafe_add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i-1, i))
     end
     if n != 2
-        unsafe_add_edge!(g, Edge(n, 2))
+        add_edge!(g, Edge(n, 2))
     end
     return g
 end
@@ -112,10 +124,10 @@ with the outer vertices connected via a closed path graph.
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
     for i = 3:n
-        unsafe_add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i-1, i))
     end
     if n != 2
-        unsafe_add_edge!(g, Edge(n, 2))
+        add_edge!(g, Edge(n, 2))
     end
     return g
 end
@@ -124,7 +136,7 @@ end
 function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = Graph(n)
     for (s,d) in edgelist
-        unsafe_add_edge!(g, Edge(s,d))
+        add_edge!(g, Edge(s,d))
     end
     return g
 end
@@ -132,7 +144,7 @@ end
 function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
     g = DiGraph(n)
     for (s,d) in edgelist
-        unsafe_add_edge!(g, Edge(s,d))
+        add_edge!(g, Edge(s,d))
     end
     return g
 end
@@ -273,8 +285,8 @@ end
 """A house graph, with two edges crossing the bottom square."""
 function HouseXGraph()
     g = HouseGraph()
-    unsafe_add_edge!(g, Edge(1, 4))
-    unsafe_add_edge!(g, Edge(2, 3))
+    add_edge!(g, Edge(1, 4))
+    add_edge!(g, Edge(2, 3))
     return g
 end
 
@@ -511,4 +523,39 @@ function TutteGraph()
     (44, 45)
     ]
     return _make_simple_undirected_graph(46,e)
+end
+
+"""create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
+function BinaryTree(levels::Int)
+    g = Graph(2^levels-1)
+    for i in 0:levels-2
+        for j in 2^i:2^(i+1)-1
+            add_edge!(g, j, 2j)
+            add_edge!(g, j, 2j+1)
+        end
+    end
+    return g
+end
+
+"""create a double complete binary tree with k-levels 
+used as an example for spectral clustering by Guattery and Miller 1998."""
+function DoubleBinaryTree(levels::Int)
+    gl = BinaryTree(levels)
+    gr = BinaryTree(levels)
+    g = blkdiag(gl, gr)
+    add_edge!(g,1, nv(gl)+1)
+    return g
+end
+
+
+"""The Roach Graph from Guattery and Miller 1998"""
+function RoachGraph(k::Int)
+    dipole = CompleteGraph(2)
+    nopole = Graph(2)
+    antannae = crosspath(k, nopole)
+    body = crosspath(k,dipole)
+    roach = blkdiag(antannae, body)
+    add_edge!(roach, nv(antannae)-1, nv(antannae)+1)
+    add_edge!(roach, nv(antannae), nv(antannae)+2)
+    return roach
 end

@@ -53,7 +53,7 @@ for dir in [:in, :out, :both]
 end
 
 # GraphMatrices integration tests
-if isdefined(:GraphMatrices)
+@require GraphMatrices begin
     println("*** Running GraphMatrices tests")
     mat = PathGraph(10)
     onevec = ones(Float64, 10)
@@ -66,6 +66,4 @@ if isdefined(:GraphMatrices)
     lapl = GraphMatrices.CombinatorialLaplacian(adjmat)
     @test_approx_eq_eps(eigs(lapl, which=:LR)[1][1], 3.902, 0.001)
     println("*** Finished GraphMatrices tests")
-else
-    println("*** GraphMatrices not found - skipping tests")
 end

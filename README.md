@@ -12,7 +12,7 @@
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
-time-efficient manner with adjacency lists and edge sets. Both directed and
+time-efficient manner with adjacency lists and edge iterators. Both directed and
 undirected graphs are supported via separate types, and conversion is available
 from directed to undirected.
 
@@ -27,13 +27,9 @@ better-optimized mechanisms.
 
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
-*G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
-of `Edge` types containing `(src::Int, dst::Int)` values. Edge
-relationships are stored as forward and backward adjacency vectors,
-indexed by vertex.
+*G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward (and, for DiGraphs, backward) adjacency lists indexed by vertex. Edges may also be accessed via an iterator that yields `Edge` types containing `(src::Int, dst::Int)` values.
 
-Edges must be unique; an attempt to add an edge that already exists in a graph
-will result in an error.
+Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will result in a silent failure.
 
 Edge distances for most traversals may be passed in as a sparse or dense matrix
 of `Float64` values, indexed by `[src,dst]` vertices. That is,
@@ -84,13 +80,14 @@ write(g,"mygraph.jgz")
 ```
 
 ### Current functionality
-- **core functions:** degree (in/out/histogram), neighbors (in/out/all/common)
+- **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
 - **distance:** eccentricity, diameter, periphery, radius, center
 
 - **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components
 
-- **operators:** complement, reverse, reverse!, union, join, intersect, difference, symmetric difference, blkdiag, induced subgraphs
+- **operators:** complement, reverse, reverse!, union, join, intersect, difference,
+symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **shortest paths:** Dijkstra, Dijkstra with predecessors, Bellman-Ford, Floyd-Warshall, A*
 
@@ -104,13 +101,15 @@ write(g,"mygraph.jgz")
 
 - **flow operations:** maximum flow
 
+- **matching:** bipartite maximum matching
+
 - **clique enumeration:** maximal cliques
 
 - **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
 
 - **community:** modularity, community detection, core-periphery, clustering coefficients
 
-- **persistence:** proprietary compressed format, [GraphML](http://en.wikipedia.org/wiki/GraphML) format, [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format, [Gexf](http://gexf.net/format) format
+- **persistence formats:** proprietary compressed, [GraphML](http://en.wikipedia.org/wiki/GraphML), [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language), [Gexf](http://gexf.net/format), [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language))
 
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 

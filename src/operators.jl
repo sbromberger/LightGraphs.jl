@@ -5,7 +5,7 @@ function complement(g::Graph)
     h = Graph(gnv)
     for i=1:gnv
         for j=i+1:gnv
-            if !(has_edge(g,i,j))
+            if !has_edge(g, i, j)
                 add_edge!(h,i,j)
             end
         end
@@ -18,10 +18,8 @@ function complement(g::DiGraph)
     h = DiGraph(gnv)
     for i=1:gnv
         for j=1:gnv
-            if i != j
-                if !(has_edge(g,i,j))
-                    add_edge!(h,i,j)
-                end
+            if i != j && !has_edge(g,i,j)
+                add_edge!(h,i,j)
             end
         end
     end
@@ -34,20 +32,16 @@ function reverse(g::DiGraph)
     gnv = nv(g)
     gne = ne(g)
     h = DiGraph(gnv)
-    for e in edges(g)
-        add_edge!(h, reverse(e))
-    end
+    h.fadjlist = deepcopy(g.badjlist)
+    h.badjlist = deepcopy(g.fadjlist)
+    h.ne = gne
+    h.vertices = g.vertices
+
     return h
 end
 
 """(`DiGraph` only) In-place reverse (modifies the original graph)."""
 function reverse!(g::DiGraph)
-    gne = ne(g)
-    reve = Set{Edge}()
-    for e in edges(g)
-        push!(reve, reverse(e))
-    end
-    g.edges = reve
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
@@ -94,9 +88,7 @@ function difference{T<:SimpleGraph}(g::T, h::T)
 
     r = T(gnv)
     for e in edges(g)
-        if !has_edge(h, e)
-            add_edge!(r,e)
-        end
+        !has_edge(h, e) && add_edge!(r,e)
     end
     return r
 end
@@ -112,14 +104,10 @@ function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
 
     r = T(max(gnv, hnv))
     for e in edges(g)
-        if !has_edge(h, e)
-            add_edge!(r, e)
-        end
+        !has_edge(h, e) && add_edge!(r, e)
     end
     for e in edges(h)
-        if !has_edge(g, e) && !has_edge(r, e)
-            add_edge!(r, e)
-        end
+        !has_edge(g, e) && add_edge!(r, e)
     end
     return r
 end
@@ -131,7 +119,14 @@ function union{T<:SimpleGraph}(g::T, h::T)
     hnv = nv(h)
 
     r = T(max(gnv, hnv))
-    for e in union(edges(g), edges(h))
+    r.ne = ne(g)
+    for i = 1:gnv
+        r.fadjlist[i] = deepcopy(g.fadjlist[i])
+        if is_directed(g)
+            r.badjlist[i] = deepcopy(g.badjlist[i])
+        end
+    end
+    for e in edges(h)
         add_edge!(r, e)
     end
     return r
@@ -149,6 +144,21 @@ function join(g::Graph, h::Graph)
         end
     end
     return r
+end
+
+
+"""Replicate h len times and connect each vertex with its copies in a path""" 
+function crosspath(len, h)
+    g = h
+    m = nv(h)
+    for i in 1:len-1
+        k = nv(g)
+        g = blkdiag(g,h)
+        for v in 1:m
+            add_edge!(g, v+(k-m), v+k)
+        end
+    end
+    return g
 end
 
 """Filters graph `g` to include only the vertices present in the iterable
@@ -172,9 +182,7 @@ function induced_subgraph{T<:SimpleGraph}(g::T, iter)
             # println("s = $s, d = $d")
             if d in iterset && has_edge(g, s, d)
                 newe = Edge(newvid[s], newvid[d])
-                if !has_edge(h, newe)
-                    add_edge!(h, newe)
-                end
+                add_edge!(h, newe)
             end
         end
     end
@@ -236,3 +244,38 @@ eltype(g::SimpleGraph) = Float64
 length(g::SimpleGraph) = nv(g)*nv(g)
 ndims(g::SimpleGraph) = 2
 issym(g::SimpleGraph) = !is_directed(g)
+
+"""
+Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+"""
+function cartesian_product{G<:SimpleGraph}(g::G, h::G)
+    z = G(nv(g)*nv(h))
+    id(i, j) = (i-1)*nv(h) + j
+    for (i1, i2) in edges(g)
+        for j=1:nv(h)
+            add_edge!(z, id(i1,j), id(i2,j))
+        end
+    end
+
+    for e in edges(h)
+        j1, j2 = src(e), dst(e)
+        for i=1:nv(g)
+            add_edge!(z, id(i,j1), id(i,j2))
+        end
+    end
+    return z
+end
+
+"""
+Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+"""
+function tensor_product{G<:SimpleGraph}(g::G, h::G)
+    z = G(nv(g)*nv(h))
+    id(i, j) = (i-1)*nv(h) + j
+    for (i1, i2) in edges(g)
+        for (j1, j2) in edges(h)
+            add_edge!(z, id(i1,j1), id(i2,j2))
+        end
+    end
+    return z
+end

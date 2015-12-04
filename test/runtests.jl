@@ -1,4 +1,5 @@
 using LightGraphs
+using Requires
 using Base.Test
 
 g1 = PetersenGraph()
@@ -42,10 +43,12 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "core",
+    "edgeiter",
     "operators",
+    "randgraphs",
     "graphdigraph",
     "persistence",
-    "core",
     "smallgraphs",
     "distance",
     "spectral",
@@ -74,7 +77,8 @@ tests = [
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/push_relabel",
-    "flow/maximum_flow"
+    "flow/maximum_flow",
+    "matching/linear-programming"
     ]
 
 

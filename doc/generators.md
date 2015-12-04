@@ -3,11 +3,12 @@
 *LightGraphs.jl* implements three common random graph generators:
 ### erdos_renyi
 ```
+erdos_renyi(n::Integer, ne::Integer)
 erdos_renyi(n::Integer, p::Real)
 ```
 Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random graph with `n` vertices. Edges are added between pairs of vertices with probability `p`. Undirected graphs are created by default; use `is_directed=true` to override.
 
-Note also that Erdős–Rényi graphs may be generated quickly using the `Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of vertices.
+Note also that Erdős–Rényi graphs may be generated quickly using `erdos_renyi(n, ne)` or the  `Graph(nv, ne)` constructor, which randomly select `ne` edges among all the potential edges.
 
 ### watts_strogatz
 ```
@@ -18,7 +19,6 @@ Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_mode
 ### random_regular_graph
 ```
 random_regular_graph(n::Int64, k::Int64)
-random_regular_graph(n::Int64, k::Int64, seed::Int64)
 ```
 Creates a random undirected [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`.
 
@@ -27,8 +27,6 @@ For undirected graphs, allocates an array of `nk` `Int`s, and takes approximatel
 ### random_regular_digraph
 ```
 random_regular_digraph(n::Int64, k::Int64)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol, seed::Int64)
 ```
 Creates a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. The degree (in or out) can be specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
 
