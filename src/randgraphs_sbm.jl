@@ -1,4 +1,5 @@
 using LightGraphs
+import StatsBase: sample
 """StochasticBlockModel(n,nodemap,affinities)
 A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge (i,j)
