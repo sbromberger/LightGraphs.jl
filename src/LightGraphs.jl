@@ -40,7 +40,7 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 eccentricity, diameter, periphery, radius, center,
 
 # operators
-complement, reverse, reverse!, union, intersect,
+complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
 induced_subgraph, join, tensor_product, cartesian_product,
 crosspath,
@@ -75,19 +75,6 @@ a_star, dijkstra_shortest_paths,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
-# smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph, CompleteBipartiteGraph,
-CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
-DiamondGraph, BullGraph,
-ChvatalGraph, CubicalGraph, DesarguesGraph,
-DodecahedralGraph, FruchtGraph, HeawoodGraph,
-HouseGraph, HouseXGraph, IcosahedralGraph,
-KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
-PappusGraph, PetersenGraph, SedgewickMazeGraph,
-TetrahedralGraph, TruncatedCubeGraph,
-TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
-BinaryTree, DoubleBinaryTree, RoachGraph,
-
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
@@ -114,7 +101,15 @@ stochastic_block_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,
-local_clustering,local_clustering_coefficient, global_clustering_coefficient
+local_clustering,local_clustering_coefficient, global_clustering_coefficient,
+
+#generators
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph,
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+
+#Datasets
+Datasets
 
 
 """An optimized graphs package.
@@ -158,7 +153,7 @@ include("core.jl")
         include("persistence/gml.jl")
         include("persistence/graphml.jl")
         include("randgraphs.jl")
-        include("smallgraphs.jl")
+        include("generators.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
@@ -173,5 +168,6 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/push_relabel.jl")
         include("matching/linear-programming.jl")
+        include("datasets/Datasets.jl")
 
 end # module

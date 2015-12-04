@@ -45,19 +45,18 @@ In-place version of :func:`reverse`.
 
 (`DiGraph` only) In-place reverse (modifies the original graph).
 
-### blkdiag
+### union
 ```
-blkdiag{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 ```
-blkdiag(A...)
+union(s1,s2...)
+∪(s1,s2...)
 ```
 
-Concatenate matrices block-diagonally. Currently only implemented for sparse matrices.
+Construct the union of two or more sets. Maintains order with arrays.
 
-Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$ edges.
-
-Put simply, the vertices and edges from graph `h` are appended to graph `g`.
+Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 
 ### intersect
 ```
@@ -90,22 +89,41 @@ Produces a graph with edges from graph `g` that do not exist in graph `h`, and v
 
 Note that this function may produce a graph with 0-degree vertices.
 
-### union
-```
-union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
-```
-```
-union(s1,s2...)
-∪(s1,s2...)
-```
-
-Construct the union of two or more sets. Maintains order with arrays.
-
-Merges graphs `g` and `h` by taking the set union of all vertices and edges.
-
 ### induced_subgraph
 ```
 induced_subgraph{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, iter)
 ```
 Filters graph `g` to include only the vertices present in the iterable argument `vs`. Returns the subgraph of `g` induced by `vs`.
+
+### join
+```
+join(g::LightGraphs.Graph, h::LightGraphs.Graph)
+```
+```
+join(strings, delim, [last])
+```
+
+Join an array of `strings` into a single string, inserting the given delimiter between adjacent strings. If `last` is given, it will be used instead of `delim` between the last two strings. For example, `join(["apples", "bananas", "pineapples"], ", ", " and ") == "apples, bananas and pineapples"`.
+
+`strings` can be any iterable over elements `x` which are convertible to strings via `print(io::IOBuffer, x)`.
+
+Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between  the vertices in `g` and those in `h`.
+
+### tensor_product
+```
+tensor_product{G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::G<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+```
+Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+
+### cartesian_product
+```
+cartesian_product{G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::G<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::G<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+```
+Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+
+### crosspath
+```
+crosspath(len, h)
+```
+Replicate h len times and connect each vertex with its copies in a path
 

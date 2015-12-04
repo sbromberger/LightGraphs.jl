@@ -5,7 +5,7 @@ t = visitor.tree
 @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
 
-g = HouseGraph()
+g = smallgraph(:house)
 @test gdistances(g, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
 @test !is_bipartite(g)
@@ -18,7 +18,7 @@ add_edge!(g,3,4)
 
 
 import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
-g = HouseGraph()
+g = smallgraph(:house)
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
