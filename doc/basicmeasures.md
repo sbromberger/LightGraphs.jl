@@ -13,7 +13,7 @@ Return the vertices of a graph.
 ```
 edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Return the edges of a graph. NOTE: returns a reference, not a copy. Do not modify result.
+Return an iterator to the edges of a graph.
 
 ### is_directed
 ```

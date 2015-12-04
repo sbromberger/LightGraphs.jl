@@ -1,5 +1,8 @@
 abstract AbstractPathState
 
+# modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
+# returns true if insert succeeded, false if it was a duplicate
+_insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
@@ -9,6 +12,7 @@ src(e::Edge) = e.first
 """Return destination of an edge."""
 dst(e::Edge) = e.second
 
+ is_ordered(e::Edge) = src(e) <= dst(e)
 @deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
@@ -20,14 +24,14 @@ end
 """A type representing an undirected graph."""
 type Graph
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
 end
 
 """A type representing a directed graph."""
 type DiGraph
     vertices::UnitRange{Int}
-    edges::Set{Edge}
+    ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
@@ -38,9 +42,8 @@ typealias SimpleGraph Union{Graph, DiGraph}
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
 
-"""Return the edges of a graph.
-NOTE: returns a reference, not a copy. Do not modify result."""
-edges(g::SimpleGraph) = g.edges
+"""Return an iterator to the edges of a graph."""
+edges(g::SimpleGraph) = EdgeIter(g)
 
 """Returns the forward adjacency list of a graph.
 
@@ -63,7 +66,6 @@ NOTE: returns a reference, not a copy. Do not modify result.
 """
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
-
 
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
 function issubset{T<:SimpleGraph}(g::T, h::T)
@@ -95,19 +97,9 @@ has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 """The number of vertices in `g`."""
 nv(g::SimpleGraph) = length(vertices(g))
 """The number of edges in `g`."""
-ne(g::SimpleGraph) = length(edges(g))
+ne(g::SimpleGraph) = g.ne
 
-"""Add a new edge to `g` from `src` to `dst`.
-
-Note: An exception will be raised if the edge is already in the graph
-or if the vertex is not contained in the graph.
-"""
-function add_edge!(g::SimpleGraph, e::Edge)
-    has_edge(g,e) && error("Edge $e already in graph")
-    (has_vertex(g,src(e)) && has_vertex(g,dst(e))) || throw(BoundsError())
-    unsafe_add_edge!(g,e)
-end
-
+"""Add a new edge to `g` from `src` to `dst`."""
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
 """Remove the edge from `src` to `dst`.
@@ -115,6 +107,56 @@ add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
+
+"""Remove the vertex `v` from graph `g`.
+This operation has to be performed carefully if one keeps external data structures indexed by
+edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
+and removing the vertex `n` from the graph.
+After removal the vertices in the ` g` will be indexed by 1:n-1.
+This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
+Note: An exception will be raised if the vertex `v`  is not in the `g`.
+"""
+function rem_vertex!(g::SimpleGraph, v::Int)
+    v in vertices(g) || throw(BoundsError())
+    n = nv(g)
+
+    edgs = in_edges(g, v)
+    for e in edgs
+        rem_edge!(g, e)
+    end
+    neigs = copy(in_neighbors(g, n))
+    for i in neigs
+        rem_edge!(g, Edge(i, n))
+    end
+    if v != n
+        for i in neigs
+            add_edge!(g, Edge(i, v))
+        end
+    end
+
+    if is_directed(g)
+        edgs = out_edges(g, v)
+        for e in edgs
+            rem_edge!(g, e)
+        end
+        neigs = copy(out_neighbors(g, n))
+        for i in neigs
+            rem_edge!(g, Edge(n, i))
+        end
+        if v != n
+            for i in neigs
+                add_edge!(g, Edge(v, i))
+            end
+        end
+    end
+
+    g.vertices = 1:n-1
+    pop!(g.fadjlist)
+    if is_directed(g)
+        pop!(g.badjlist)
+    end
+    g
+end
 
 """Return the number of edges which start at vertex `v`."""
 indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
@@ -179,14 +221,5 @@ neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
-"Returns true if `g` is has any self loops."
+"Returns true if `g` has any self loops."
 has_self_loop(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
-
-# internal function that copies the end element to position n within an array
-# and then pops the end element, effectively removing element n from the
-# array.
-function _swapnpop!(a::AbstractArray, n::Int)
-    n > length(a) && throw(BoundsError())
-    a[n] = a[end]
-    pop!(a)
-end

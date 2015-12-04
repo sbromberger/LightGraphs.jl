@@ -23,8 +23,9 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
+            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            ctranspose, join, start, next, done, eltype
 
 
 # core
@@ -33,7 +34,7 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loop,
+common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -41,7 +42,7 @@ eccentricity, diameter, periphery, radius, center,
 # operators
 complement, reverse, reverse!, union, intersect,
 difference, symmetric_difference,
-induced_subgraph, join,
+induced_subgraph, join, tensor_product, cartesian_product,
 crosspath,
 
 # graph visit
@@ -136,6 +137,7 @@ LightGraphs
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")
+        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
