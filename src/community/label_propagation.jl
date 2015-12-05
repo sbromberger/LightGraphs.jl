@@ -4,12 +4,14 @@ Community detection using the label propagation algorithm (see [Raghavan et al.]
 `ϵ`: proportion of unsatisfied nodes
 return : array containing vertex assignments, the range of the output as 1:countdistinct(membership)
 """
-function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
+function label_propagation(g::SimpleGraph; ϵ=1.0e-8, maxiter=1000)
     n = nv(g)
     label = collect(1:n)
     runing_nodes = Set(vertices(g))
 
-    while length(runing_nodes) > n*ϵ
+    i = 0
+    while length(runing_nodes) > n*ϵ && i < maxiter
+    	i += 1
         order = shuffle(collect(runing_nodes))
         for u in order
             if update_label!(g, label, u)
