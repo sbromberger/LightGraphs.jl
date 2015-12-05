@@ -2,7 +2,7 @@
 Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
 `g`: imput Graph
 `ϵ`: proportion of unsatisfied nodes
-return : array containing vertex assignments
+return : array containing vertex assignments, the range of the output as 1:countdistinct(membership)
 """
 function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
     n = nv(g)
@@ -21,7 +21,7 @@ function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
             end
         end
     end
-    permute_labels!(label)
+    renumber_labels!(label)
     label
 end
 
@@ -59,7 +59,7 @@ function update_label!(g::SimpleGraph, membership::Vector{Int}, u::Int)
     running
 end
 
-function permute_labels!(membership::Vector{Int})
+function renumber_labels!(membership::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     label_counters = zeros(Int, N)

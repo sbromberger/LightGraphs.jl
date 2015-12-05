@@ -1,5 +1,5 @@
 "normalised mutual information"
-function nmi(pa::Vector{Int}, pb::Vector{Int})
+function mutual_information(pa::Vector{Int}, pb::Vector{Int}; normalized=false)
     length(pa) == length(pb) || error("Two partitions have different number of nodes !")
     n = length(pa)
     qa = maximum(pa) # group number of partition a
@@ -52,5 +52,5 @@ function nmi(pa::Vector{Int}, pb::Vector{Int})
             Iab += prob*log(prob/(ga[q]/n*gb[t]/n))
         end
     end
-    -2.0*Iab/(Ha+Hb)
+    normalized ? -2.0*Iab/(Ha+Hb) : Iab
 end
