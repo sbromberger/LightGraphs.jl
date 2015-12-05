@@ -23,8 +23,9 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym, transpose, ctranspose, join
+            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            ctranspose, join, start, next, done, eltype
 
 
 # core
@@ -135,6 +136,7 @@ LightGraphs
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")
+        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
@@ -165,8 +167,8 @@ include("core.jl")
         include("community/detection.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
-		include("community/label_propagation.jl")
-		include("community/nmi.jl")
+        include("community/label_propagation.jl")
+        include("community/nmi.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")

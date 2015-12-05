@@ -38,6 +38,13 @@ z = union(g3, h)
 @test has_edge(z, e)
 @test z == PathGraph(6)
 
+h = DiGraph(6)
+add_edge!(h, 5, 6)
+e = Edge(5, 6)
+z = union(g4, h)
+@test has_edge(z, e)
+@test z == PathDiGraph(6)
+
 g10 = CompleteGraph(2)
 h10 = CompleteGraph(2)
 z = blkdiag(g10, h10)

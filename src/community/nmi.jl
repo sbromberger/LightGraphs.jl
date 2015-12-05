@@ -4,9 +4,7 @@ function nmi(pa::Vector{Int}, pb::Vector{Int})
     n = length(pa)
     qa = maximum(pa) # group number of partition a
     qb = maximum(pb) # group number of partition b
-    if qa==1 && qb==1
-        return 0.0
-    end
+    (qa==1 && qb==1) && return 0.0
     ga = zeros(Int, qa)
     gb = zeros(Int, qb)
     A = Array(Vector{Int}, qa)
@@ -36,17 +34,13 @@ function nmi(pa::Vector{Int}, pb::Vector{Int})
     end
     Ha = 0.0
     for q=1:qa
-        if ga[q] == 0
-            continue
-        end
+    	ga[q] == 0 && continue
         prob = ga[q]/n
         Ha += prob*log(prob)
     end
     Hb = 0.0
     for q=1:qb
-        if gb[q] == 0
-            continue
-        end
+        gb[q] == 0 && continue
         prob = gb[q]/n
         Hb += prob*log(prob)
     end

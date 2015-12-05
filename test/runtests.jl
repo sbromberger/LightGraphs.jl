@@ -44,6 +44,7 @@ a2 = DiGraph(adjmx2)
 
 tests = [
     "core",
+    "edgeiter",
     "operators",
     "randgraphs",
     "graphdigraph",
@@ -68,6 +69,8 @@ tests = [
     "community/detection",
     "community/modularity",
     "community/clustering",
+    "community/label_propagation",
+    "community/nmi",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",

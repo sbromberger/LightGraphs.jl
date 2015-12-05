@@ -22,7 +22,7 @@ function label_propagation(g::SimpleGraph, ϵ=1.0e-8)
         end
     end
     permute_labels!(label)
-	label
+    label
 end
 
 function label_count(g::SimpleGraph, membership::Vector{Int}, u::Int)
@@ -61,9 +61,7 @@ end
 
 function permute_labels!(membership::Vector{Int})
     N = length(membership)
-    if maximum(membership) > N || minimum(membership) < 1
-        error("Label must between 1 and |V|")
-    end
+    (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     label_counters = zeros(Int, N)
     j = 1
     for i=1:length(membership)
