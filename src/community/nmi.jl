@@ -12,8 +12,8 @@ function nmi(pa::Vector{Int}, pb::Vector{Int})
     A = Array(Vector{Int}, qa)
     B = Array(Vector{Int}, qa)
     for i=1:qa
-        A[i] = Int[]
-        B[i] = Int[]
+        A[i] = Vector{Int}()
+        B[i] = Vector{Int}()
     end
     for i=1:n
         q = pa[i]
