@@ -8,7 +8,7 @@ Arguments:
     label: a place to store the output
     g: the graph
 Output:
-    c = labels[i] => vertex i belongs to component c. 
+    c = labels[i] => vertex i belongs to component c.
     c is the smallest vertex id in the component.
 """
 function connected_components!(label::Vector{Int}, g::Graph)
@@ -61,7 +61,7 @@ Output:
 """
 function components(labels::Vector{Int})
     d = Dict{Int, Int}()
-    c = Vector{Vector{Int}}()
+    c = @compat(Vector{Vector{Int}}())
     i = 1
     for (v,l) in enumerate(labels)
         index = get(d, l, i)
@@ -85,7 +85,7 @@ vector of vectors of vertices belonging to the component.
 function connected_components(g)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
-    c, d = components(label) 
+    c, d = components(label)
     return c
 end
 
