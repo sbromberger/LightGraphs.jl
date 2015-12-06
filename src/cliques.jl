@@ -24,7 +24,7 @@ function maximal_cliques(g::Graph)
 
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
-    nnbrs = Vector{Set{Int}}()
+    nnbrs = @compat(Vector{Set{Int}}())
     for n in vertices(g)
         push!(nnbrs, Set{Int}())
     end
@@ -50,9 +50,9 @@ function maximal_cliques(g::Graph)
     # union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
     done = Set{Int}()
-    stack = Vector{Tuple{Set{Int}, Set{Int}, Set{Int}}}()
-    clique_so_far = Vector{Int}()
-    cliques = Vector{Array{Int}}()
+    stack = @compat(Vector{Tuple{Set{Int}, Set{Int}, Set{Int}}}())
+    clique_so_far = @compat(Vector{Int}())
+    cliques = @compat(Vector{Array{Int}}())
 
     # Start main loop
     while !isempty(smallcand) || !isempty(stack)
