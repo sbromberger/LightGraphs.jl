@@ -100,8 +100,8 @@ CombinatorialAdjacency, non_backtracking_matrix,
 a_star,
 
 # persistence
-readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-
+# readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
+load, save,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
 
@@ -152,11 +152,12 @@ include("core.jl")
         include("shortestpaths/floyd-warshall.jl")
         include("spectral.jl")
         include("operators.jl")
-        include("persistence/default.jl")
-        include("persistence/dot.jl")
-        include("persistence/gexf.jl")
-        include("persistence/gml.jl")
-        include("persistence/graphml.jl")
+        include("persistence/common.jl")
+            include("persistence/lg.jl")
+            include("persistence/dot.jl")
+            include("persistence/gexf.jl")
+            include("persistence/gml.jl")
+            include("persistence/graphml.jl")
         include("randgraphs.jl")
         include("smallgraphs.jl")
         include("centrality/betweenness.jl")
