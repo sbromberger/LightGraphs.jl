@@ -56,6 +56,7 @@ tests = [
     "subgraphs",
     "connectivity",
     "randgraphs",
+    "sbm",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
