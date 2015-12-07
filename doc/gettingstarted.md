@@ -82,6 +82,6 @@ distmx[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, distmx=distmx).dists
 
 # graph I/O
-g = readgraph("mygraph.jgz")
-write(g,"mygraph.jgz")
+g = load("mygraph.jgz", "mygraph")
+save("mygraph.jgz", g, "mygraph")
 ```

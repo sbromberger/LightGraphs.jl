@@ -222,8 +222,8 @@ distmx[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, distmx=distmx).dists
 
 # graph I/O
-g = readgraph("mygraph.jgz")
-write(g,"mygraph.jgz")
+g = load("mygraph.jgz", "mygraph")
+save("mygraph.jgz", g, "mygraph")
 ```
 """
 
@@ -417,21 +417,21 @@ output above.
 
 @file "persistence.md" """
 ## Writing a Graph
-Graphs may be written to I/O streams and files using the `write` function:
+Graphs may be written to I/O streams and files using the `save` function:
 
-{{write}}
+{{save}}
 
 ## Reading a Graph From a File
-Graphs stored using the `write` functions above may be loaded using `readgraph`:
+Graphs stored using the `save` functions above may be loaded using `load`:
 
-{{readgraph, readgraphml, readgml}}
+{{load}}
 
 ## Examples
 ```julia
-julia> write(STDOUT, g)
-julia> write(g, "mygraph.jgz")
-julia> g = readgraph("mygraph.jgz")
-julia> g = readgraphml("mygraph.xml")
-julia> g = readgml("mygraph.gml")
+julia> save(STDOUT, g)
+julia> save("mygraph.jgz", g, "mygraph"; compress=true)
+julia> g = load("multiplegraphs.jgz")
+julia> g = load("multiplegraphs.xml", :graphml)
+julia> g = load("mygraph.gml", "mygraph", :gml)
 ```
 """
