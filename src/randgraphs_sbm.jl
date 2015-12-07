@@ -151,7 +151,7 @@ function graph(edgestream, sizes, numedges::Int)
         #print("$count, $i,$j\n")
         count += 1
         if !has_edge(g,i,j)
-            unsafe_add_edge!(g,Edge(i,j))
+            add_edge!(g,Edge(i,j))
         end
         if count >= numedges
             break
