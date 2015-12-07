@@ -1,5 +1,5 @@
 using LightGraphs
-import LightGraphs: nearbipartiteSBM, sample, StochasticBlockModel, graph, blockfractions
+import LightGraphs: nearbipartiteSBM, sample, StochasticBlockModel, graph, blockfractions, blockcounts
 #using ArgParse
 using PyPlot
 
@@ -36,13 +36,16 @@ end
 filename = ARGS[2]
 NUMEDGES = parse(Int, ARGS[3])
 sizes = [ parse(Int, i) for i in ARGS[4:end] ]
+
+
 n = sum(sizes)
 sbm, g = main(filename, NUMEDGES, sizes)
+bc = blockcounts(sbm, g)
 bp = blockfractions(sbm, g) ./ (sizes * sizes')
 ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 @show norm(ratios)
-#println("Block counts:\n $bc")
-println("Block ratios:\n $ratios")
+println("Block counts:\n $bc")
+#= println("Block ratios:\n $ratios") =#
 spy(adjacency_matrix(g), markersize=1)
 title("Near Bipartite")
 show()
@@ -55,10 +58,14 @@ sbm = StochasticBlockModel(internalp, externalp, sizes)
 edgestream = @task sample(sbm)
 println(edgestream)
 g = graph(edgestream, sizes, NUMEDGES)
+bc = blockcounts(sbm, g)
 bp = blockfractions(sbm, g) ./ (sizes * sizes')
 ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 @show norm(ratios)
-println("Block counts:\n $ratios")
+println("Block counts:\n $bc")
+@show diag(bc)
+@show sum(bc-diagm(diag(bc)), 1)
+@assert all(sum(bc-diagm(diag(bc)), 1) .<= diag(bc))
 @show degree(g)
 spy(adjacency_matrix(g), markersize=1)
 title("SBM: \$$internaldeg\$,\$$externalp\$")
