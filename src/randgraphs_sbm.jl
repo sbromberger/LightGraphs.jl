@@ -88,7 +88,7 @@ end
 """Return a generator for edges from a stochastic block model near bipartite graph."""
 function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, inter::Float64, noise)
     B = nearbipartiteaffinity(sizes, between, inter) + noise
-    info("Affinities are:\n$B")#, file=stderr)
+    #= info("Affinities are:\n$B")#, file=stderr) =#
     return B
 end
 
@@ -145,7 +145,7 @@ end
 """convert a stream of edges produced by sample into a graph"""
 function graph(edgestream, sizes, numedges::Int)
     g = Graph(sum(sizes))
-    println(g)
+    #= println(g) =#
     count = 1
     for (i,j) in edgestream
         #print("$count, $i,$j\n")
@@ -157,13 +157,13 @@ function graph(edgestream, sizes, numedges::Int)
             break
         end
     end
-    println(g)
+    #= println(g) =#
     return g
 end
 
 """counts the number of edges that go between each block"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
-    info("making Q")
+    #= info("making Q") =#
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
