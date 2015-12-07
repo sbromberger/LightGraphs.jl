@@ -14,7 +14,7 @@ function _graphml_read_one_graph(e::XMLElement, isdirected::Bool)
             n2 = attribute(f, "target")
             push!(edges, Edge(nodes[n1], nodes[n2]))
         else
-            error("Unknown node $(name(f))")
+            warn("Skipping unknown node '$(name(f))'")
         end
     end
     #Put data in graph
@@ -49,7 +49,7 @@ function loadgraphml(io::IO, gname::AbstractString)
                 end
                 gname == graphname && return _graphml_read_one_graph(e, isdirected)
             else
-                warn("Skipping unknown XML element $(name(e))")
+                warn("Skipping unknown XML element '$(name(e))'")
             end
         end
     end
@@ -81,7 +81,7 @@ function loadgraphml_mult(io::IO)
                 end
                 graphs[graphname] =  _graphml_read_one_graph(e, isdirected)
             else
-                warn("Skipping unknown XML element $(name(e))")
+                warn("Skipping unknown XML element '$(name(e))'")
             end
         end
     end

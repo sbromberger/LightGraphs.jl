@@ -31,13 +31,14 @@ origSTDERR = STDERR
 (outread, outwrite) = redirect_stderr()
 gs = load(joinpath(testdir,"testdata","warngraph.graphml"), :graphml)
 gsg = load(joinpath(testdir,"testdata","warngraph.graphml"), "G", :graphml)
+@test_throws KeyError badgraph = load(joinpath(testdir, "testdata", "badgraph.graphml"), :graphml)
 flush(outread)
 flush(outwrite)
 close(outread)
 close(outwrite)
 redirect_stderr(origSTDERR)
 @test gs["G"] == graphml_g == gsg
-@test_throws ErrorException badgraph = load(joinpath(testdir, "testdata", "badgraph.graphml"), :graphml)
+
 
 
 # test :gml
