@@ -45,6 +45,20 @@ In-place version of :func:`reverse`.
 
 (`DiGraph` only) In-place reverse (modifies the original graph).
 
+### blkdiag
+```
+blkdiag{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
+```
+```
+blkdiag(A...)
+```
+
+Concatenate matrices block-diagonally. Currently only implemented for sparse matrices.
+
+Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$ edges.
+
+Put simply, the vertices and edges from graph `h` are appended to graph `g`.
+
 ### union
 ```
 union{T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}}(g::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph}, h::T<:Union{LightGraphs.DiGraph,LightGraphs.Graph})
