@@ -13,6 +13,7 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia --check-bounds=yes -e 'Pkg.clone("https://github.com/jpfairbanks/GraphMatrices.jl.git")'
   - julia --check-bounds=yes -e 'Pkg.add("JuMP")'
+  - julia --check-bounds=yes -e 'Pkg.add("MatrixDepot")'
   - julia --check-bounds=yes -e 'Pkg.add("Clp")'
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
 after_success:

@@ -1,9 +1,10 @@
 using LightGraphs
+using LightGraphs.Datasets
 using Requires
 using Base.Test
 
-g1 = PetersenGraph()
-g2 = TutteGraph()
+g1 = smallgraph("PetersenGraph")
+g2 = smallgraph(:tutte)
 g3 = PathGraph(5)
 g4 = PathDiGraph(5)
 g5 = DiGraph(4)
@@ -46,16 +47,15 @@ tests = [
     "core",
     "edgeiter",
     "operators",
-    "randgraphs",
     "graphdigraph",
     "persistence",
-    "smallgraphs",
     "distance",
     "spectral",
     "cliques",
     "subgraphs",
     "connectivity",
     "randgraphs",
+    "generators",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
@@ -78,8 +78,9 @@ tests = [
     "flow/dinic",
     "flow/push_relabel",
     "flow/maximum_flow",
-    "matching/linear-programming"
-    ]
+    "matching/linear-programming",
+    "datasets/runtests"
+]
 
 
 for t in tests
