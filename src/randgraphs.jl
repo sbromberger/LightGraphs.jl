@@ -248,26 +248,157 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     end
 end
 
+"""StochasticBlockModel(n,nodemap,affinities)
+A type capturing the parameters of the SBM.
+Each vertex is assigned to a block and the probability of edge (i,j)
+depends only on the block labels of vertex i and vertex j.
 
-"""Samples a random graph with `n` vertices
-according to the [Stochastic Block Model](https://en.wikipedia.org/wiki/Stochastic_block_model).
-Nodes are dived in blocks of `r` elements.
- Edges between pairs of vertices in the same block are added
-probability `pint`. Edges between pairs of vertices in different blocks are added
-probability `pext`.
+The assignement is stored in nodemap and the block affinities a k by k
+matrix is stored in affinities.
+
+affinities[k,l] is the probability of an edge between any vertex in
+block k and any vertex in block k.
+
+We are generating the graphs by taking random `i,j in vertices(g)` and
+flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
-function stochastic_block_model(n::Integer, r::Integer, pint::Real, pext::Real; seed::Int=-1)
-    n % r != 0 && error("n should be divisible by r.")
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
-    g = Graph(n)
-    for i = 1:n
-        for j = i+1 : n
-            if div(i-1, r) == div(j-1, r)
-                rand(rng) < pint && add_edge!(g, i, j)
-            else
-                rand(rng) < pext && add_edge!(g, i, j)
-            end
+type StochasticBlockModel{T<:Integer,P<:Real}
+    n::T
+    nodemap::Array{T}
+    affinities::Matrix{P}
+end
+
+==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
+    (sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
+
+"""A constructor for StochasticBlockModel that uses the sizes of the blocks
+and the affinity matrix. This construction implies that consecutive
+vertices will be in the same blocks, except for the block boundaries.
+"""
+function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P})
+    csum = cumsum(sizes)
+    j = 1
+    nodemap = zeros(Int, csum[end])
+    for i in 1:csum[end]
+        if i > csum[j]
+            j+=1
+        end
+        nodemap[i] = j
+    end
+    return StochasticBlockModel(csum[end], nodemap, affinities)
+end
+
+
+"""Produce the sbm affinity matrix where the external probabilities are the same
+the internal probabilities and sizes differ by blocks.
+"""
+function sbmaffinity(internalp::Vector{Float64}, externalp::Float64, sizes::Vector{Int})
+    numblocks = length(sizes)
+    numblocks == length(internalp) || error("Inconsistent input dimensions: internalp, sizes")
+    B = diagm(internalp) + externalp*(ones(numblocks, numblocks)-I)
+    return B
+end
+
+function StochasticBlockModel(internalp::Float64,
+                              externalp::Float64,
+                              size::Int,
+                              numblocks::Int)
+    sizes = fill(size, numblocks)
+    B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
+    StochasticBlockModel(sizes, B)
+end
+
+function StochasticBlockModel(internalp::Vector{Float64}, externalp::Float64, sizes::Vector{Int})
+    B = sbmaffinity(internalp, externalp, sizes)
+    return StochasticBlockModel(sizes, B)
+end
+
+
+const biclique = ones(2,2) - eye(2)
+
+"""Construct the affinity matrix for a near bipartite SBM.
+between is the affinity between the two parts of each bipartite community
+intra is the probability of an edge within the parts of the partitions.
+
+This is a specific type of SBM with k/2 blocks each with two halves.
+Each half is connected as a random bipartite graph with probability `intra`
+The blocks are connected with probability `between`.
+"""
+function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, intra::Float64)
+    numblocks = div(length(sizes), 2)
+    return kron(between*eye(numblocks), biclique) + eye(2numblocks)*intra
+end
+
+"""Return a generator for edges from a stochastic block model near-bipartite graph."""
+function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, inter::Float64, noise::Real)
+    B = nearbipartiteaffinity(sizes, between, inter) + noise
+    # info("Affinities are:\n$B")#, file=stderr)
+    return B
+end
+
+function nearbipartiteSBM(sizes, between, inter, noise)
+    return StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise))
+end
+
+
+"""Generates a stream of random pairs in 1:n"""
+function random_pair(n::Int)
+    while true
+        produce( rand(1:n), rand(1:n) )
+    end
+end
+
+
+"""Take an infinite sample from the sbm.
+Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
+"""
+function make_edgestream(sbm::StochasticBlockModel)
+    pairs = @task random_pair(sbm.n)
+    for (i,j) in pairs
+    	if i == j
+            continue
+        end
+        p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
+        if rand() < p
+            produce(i, j)
         end
     end
+end
+
+function Graph(nvg::Int, neg::Int, edgestream)
+    g = Graph(nvg)
+    # println(g)
+    for (i,j) in edgestream
+        # print("$count, $i,$j\n")
+        add_edge!(g,Edge(i,j))
+        ne(g) >= neg && break
+    end
+    # println(g)
     return g
+end
+
+Graph(nvg::Int, neg::Int, sbm::StochasticBlockModel) =
+    Graph(nvg, neg, @task make_edgestream(sbm))
+
+"""counts the number of edges that go between each block"""
+function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
+    # info("making Q")
+    I = collect(1:sbm.n)
+    J =  [sbm.nodemap[i] for i in 1:sbm.n]
+    V =  ones(sbm.n)
+    Q = sparse(I,J,V)
+    # Q = Q / Q'Q
+    # @show Q'Q# < 1e-6
+    return (Q'A)*(Q)
+end
+
+
+function blockcounts(sbm::StochasticBlockModel, g::SimpleGraph)
+    return blockcounts(sbm, adjacency_matrix(g))
+end
+
+function blockfractions(sbm::StochasticBlockModel, g::Union{SimpleGraph, AbstractMatrix})
+    bc = blockcounts(sbm, g)
+    bp = bc ./ sum(bc)
+    return bp
 end

@@ -128,6 +128,13 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 
 {{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph}}
 
+In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
+graphs are available using the following constructs:
+
+{{StochasticBlockModel, make_edgestream}}
+
+`StochasticBlockModel` instances may be used to create Graph objects.
+
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
