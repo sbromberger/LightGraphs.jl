@@ -32,6 +32,24 @@ Creates a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_
 
 For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an adjacency matrix and uses that to generate the directed graph.
 
+In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
+graphs are available using the following constructs:
+StochasticBlockModel(n,nodemap,affinities) A type capturing the parameters of the SBM. Each vertex is assigned to a block and the probability of edge (i,j) depends only on the block labels of vertex i and vertex j.
+
+The assignement is stored in nodemap and the block affinities a k by k matrix is stored in affinities.
+
+affinities[k,l] is the probability of an edge between any vertex in block k and any vertex in block k.
+
+We are generating the graphs by taking random `i,j in vertices(g)` and flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
+
+### make_edgestream
+```
+make_edgestream(sbm::LightGraphs.StochasticBlockModel{T<:Integer,P<:Real})
+```
+Take an infinite sample from the sbm. Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
+
+`StochasticBlockModel` instances may be used to create Graph objects.
+
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 ### CompleteGraph
