@@ -54,3 +54,5 @@ ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
 sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
 @test sbm == sbm2
+sbm.affinities[1,1] = 0
+@test sbm != sbm2
