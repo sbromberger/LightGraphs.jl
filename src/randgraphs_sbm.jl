@@ -20,6 +20,15 @@ type StochasticBlockModel{T<:Integer,P<:Real}
     affinities::Matrix{P}
 end
 
+import Base: ==
+function ==(sbm::StochasticBlockModel, other::StochasticBlockModel)
+    if (sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
+       return true
+    else
+        return false
+    end
+end
+
 """ a constructor for StochasticBlockModel that uses the sizes of the blocks
 and the affinity matrix. This construction implies that consecutive
 vertices will be in the same blocks, except for the block boundaries.
@@ -37,13 +46,6 @@ function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P})
     return StochasticBlockModel(csum[end], nodemap, affinities)
 end
 
-"""produce the sbm affinity matrix where the internal and external probabilities are
-the same
-"""
-function sbmaffinity(internalp::Float64, externalp::Float64, size::Int, numblocks::Int)
-    B = eye(numblocks)*(internalp) + externalp*(ones(numblocks,numblocks)-I)
-    return B
-end
 
 """produce the sbm affinity matrix where the external probabilities are the same
 the internal probabilities and sizes differ by blocks.
@@ -104,37 +106,16 @@ function random_pair(n::Int)
     end
 end
 
-"""take the first n elements produced by t"""
-function take(n::Int, t::Task) 
-    for i in 1:n
-        produce(consume(t))
-    end
-end
 
-""" Draw an edgestream
-Affinity::(Node, Node) -> Probability
-pairs::generator of (Node, Node)
-"""
-function sample(affinity, pairs)
-    for (i, j) in pairs
-        aff = affinity(i,j)
-        # print(STDERR, "affinity $i,$j = $aff\n")
-        if rand() < aff
-            produce((i,j))
-        # else try again
-        end        
-    end
-end
-
-"""Take an infinite sample from the sbm. Use take() to take only the first n edges
-or pass to graph(edgestream, numedges).
+"""Take an infinite sample from the sbm.
+Pass to graph(edgestream, numedges) to get a Graph object.
 """
 function sample(sbm::StochasticBlockModel)
     pairs = @task random_pair(sbm.n)
     for (i,j) in pairs
     	if i == j
-	    continue
-	end
+            continue
+        end
         p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
         if rand() < p
             produce(i, j)
@@ -149,9 +130,9 @@ function graph(edgestream, sizes, numedges::Int)
     count = 1
     for (i,j) in edgestream
         # print("$count, $i,$j\n")
-        count += 1
         if !has_edge(g,i,j)
             add_edge!(g,Edge(i,j))
+            count += 1
         end
         if count >= numedges
             break

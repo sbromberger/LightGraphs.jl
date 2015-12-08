@@ -16,7 +16,7 @@ end
 
 
 numedges = 100
-sizes = [ 10,10,10,10]
+sizes = [10, 10, 10, 10]
 
 n = sum(sizes)
 sbm, g = generate_nbp_sbm(numedges, sizes)
@@ -26,7 +26,7 @@ ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 @test norm(ratios) < 0.25
 # println("Block counts:\n $bc")
 
-sizes = [200,200, 100]
+sizes = [200, 200, 100]
 internaldeg = 15
 externaldeg = 6
 internalp = Float64[internaldeg/i for i in sizes]
@@ -49,3 +49,8 @@ ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 # check that the internal degrees are higher than the external degrees
 # 5//4 is cushion for random process.
 @test all(sum(bc-diagm(diag(bc)), 1) .<= 5//4 .* diag(bc))
+
+
+sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
+sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
+@test sbm == sbm2
