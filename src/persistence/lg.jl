@@ -12,7 +12,6 @@
 
 
 function _lg_read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
-    readedges = Set{Tuple{Int,Int}}()
     if directed
         g = DiGraph(n_v)
     else
