@@ -69,4 +69,16 @@ gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
 @test save(f, p1, :gexf) == 1
 @test_throws ErrorException load(STDIN, :gexf)
 
+#test :net
+g10 = CompleteGraph(10)
+@test save("testg10.net", g10, :net) == 1
+@test load("testg10.net",:net) == g10
+rm("testg10.net")
+
+g10 = PathDiGraph(10)
+@test save("testg10.net", g10, :net) == 1
+@test load("testg10.net",:net) == g10
+rm("testg10.net")
+
+
 rm(f)
