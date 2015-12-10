@@ -4,7 +4,7 @@ Writes a graph `g` to a file `f` in the [Pajek
 NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
 Returns 1 (number of graphs written).
 """
-function savenet(f::IO, g::SimpleGraph, gname::AbstractString = "Unnamed Graph")
+function savenet(f::IO, g::SimpleGraph, gname::AbstractString = "g")
     println(f, "*Vertices $(nv(g))")
     # write edges
     if is_directed(g)
@@ -23,9 +23,13 @@ end
  NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
  Returns 1 (number of graphs written).
 """
-function loadnet(f::IO, gname::AbstractString = "Unnamed Graph")
+function loadnet(f::IO, gname::AbstractString = "g")
     line =readline(f)
-    n = parse(Int,split(line," ")[2])
+    # skip comments
+    while startswith(line, "%")
+        line =readline(f)
+    end
+    n = parse(Int, matchall(r"\d+",line)[1])
     for fline in eachline(f)
         line = fline
         (ismatch(r"^\*Arcs",line) || ismatch(r"^\*Edges",line)) && break
@@ -35,13 +39,16 @@ function loadnet(f::IO, gname::AbstractString = "Unnamed Graph")
     else
         g = Graph(n)
     end
-    for fline in eachline(f)
-        line = fline
-        m = matchall(r"\d+",line)
-        length(m) < 2 && break
-        add_edge!(g, parse(Int, m[1]), parse(Int, m[2]))
+    while ismatch(r"^\*Arcs",line)
+        for fline in eachline(f)
+            line = fline
+            orin
+            m = matchall(r"\d+",line)
+            length(m) < 2 && break
+            add_edge!(g, parse(Int, m[1]), parse(Int, m[2]))
+        end
     end
-    if ismatch(r"^\*Edges",line) # add edges to a DiGraph
+    while ismatch(r"^\*Edges",line) # add edges in both directions
         for fline in eachline(f)
             line = fline
             m = matchall(r"\d+",line)
@@ -54,4 +61,6 @@ function loadnet(f::IO, gname::AbstractString = "Unnamed Graph")
     return g
 end
 
-filemap[:net] = (loadnet, loadnet, savenet, NI)
+loadnet_mult(io::IO) = Dict("g" => loadnet(io))
+
+filemap[:net] = (loadnet, loadnet_mult, savenet, NI)

@@ -71,14 +71,17 @@ gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
 
 #test :net
 g10 = CompleteGraph(10)
-@test save("testg10.net", g10, :net) == 1
-@test load("testg10.net",:net) == g10
-rm("testg10.net")
+fname,fio = mktemp()
+close(fio)
+@test save(fname, g10, :net) == 1
+@test load(fname,:net)["g"] == g10
+rm(fname)
 
 g10 = PathDiGraph(10)
-@test save("testg10.net", g10, :net) == 1
-@test load("testg10.net",:net) == g10
-rm("testg10.net")
+@test save(fname, g10, :net) == 1
+@test load(fname,:net)["g"] == g10
+rm(fname)
 
-
-rm(f)
+g10 = load(joinpath(testdir, "testdata", "kinship.net"), :net)["g"]
+@test nv(g10) == 6
+@test ne(g10) == 8
