@@ -69,4 +69,19 @@ gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
 @test save(f, p1, :gexf) == 1
 @test_throws ErrorException load(STDIN, :gexf)
 
-rm(f)
+#test :net
+g10 = CompleteGraph(10)
+fname,fio = mktemp()
+close(fio)
+@test save(fname, g10, :net) == 1
+@test load(fname,:net)["g"] == g10
+rm(fname)
+
+g10 = PathDiGraph(10)
+@test save(fname, g10, :net) == 1
+@test load(fname,:net)["g"] == g10
+rm(fname)
+
+g10 = load(joinpath(testdir, "testdata", "kinship.net"), :net)["g"]
+@test nv(g10) == 6
+@test ne(g10) == 8
