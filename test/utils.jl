@@ -7,7 +7,7 @@ end
 s = LightGraphs.sample!([1:10;], 6, exclude=[1,2])
 @test length(s) == 6
 for  e in s
-    @test 2 <= e <= 10
+    @test 3 <= e <= 10
 end
 
 @test start(nothing) == nothing
