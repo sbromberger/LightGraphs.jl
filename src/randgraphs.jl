@@ -3,7 +3,7 @@ function Graph(nv::Integer, ne::Integer; seed::Int = -1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
 
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
     g = Graph(nv)
     while g.ne < ne
         source = rand(rng, 1:nv)
@@ -18,7 +18,7 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
 
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
     g = DiGraph(nv)
     while g.ne < ne
         source = rand(rng, 1:nv)
@@ -64,7 +64,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     else
         g = Graph(n)
     end
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
@@ -162,7 +162,7 @@ function random_regular_graph(n::Int, k::Int; seed::Int=-1)
         return complement(random_regular_graph(n, n-k-1, seed=seed))
     end
 
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
 
     edges = _try_creation(n, k, rng)
     while isempty(edges)
@@ -191,7 +191,7 @@ function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
     @assert(iseven(m), "sum(k) must be even")
     @assert(all(0 .<= k .< n), "the 0 <= k[i] < n inequality must be satisfied")
 
-    rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
 
     edges = _try_creation(n, k, rng)
     while m > 0 && isempty(edges)
@@ -225,8 +225,7 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     if (k > n/2) && iseven(n * (n-k-1))
         return complement(random_regular_digraph(n, n-k-1, dir=dir, seed=seed))
     end
-    # rng = seed >= 0 ? MersenneTwister(seed) : MersenneTwister()
-
+    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
     cs = collect(2:n)
     i = 1
     I = Array(Int, n*k)
@@ -235,10 +234,7 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     for r in 1:n
         l = (r-1)*k+1 : r*k
         I[l] = r
-        J[l] = sample(cs, k; replace=false)
-        if r<n
-            cs[r] -= 1
-        end
+        J[l] = sample!(rng, cs, k, exclude = r)
     end
 
     if dir == :out
