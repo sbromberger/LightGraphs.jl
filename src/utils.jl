@@ -8,6 +8,7 @@ Sample `k` element from array `a` without repetition and excluding elements in `
 Pay attention, it changes the order of the elements in `a`.
 
 sample!(rng, a, k; exclude = nothing)
+sample!(a, k; exclude = nothing)
 """
 function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = nothing)
     length(a) < k + length(exclude) && error("Array too short.")
@@ -26,4 +27,6 @@ function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = nothi
     res
 end
 
-getRNG(seed::Integer) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+sample!(a::AbstractArray, k::Integer; exclude = nothing) = sample!(getRNG(), a, k; exclude = exclude)
+
+getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
