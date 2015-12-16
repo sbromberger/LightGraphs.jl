@@ -3,7 +3,7 @@ function Graph(nv::Integer, ne::Integer; seed::Int = -1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
 
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
     g = Graph(nv)
     while g.ne < ne
         source = rand(rng, 1:nv)
@@ -18,7 +18,7 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
 
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
     g = DiGraph(nv)
     while g.ne < ne
         source = rand(rng, 1:nv)
@@ -64,7 +64,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     else
         g = Graph(n)
     end
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
@@ -162,7 +162,7 @@ function random_regular_graph(n::Int, k::Int; seed::Int=-1)
         return complement(random_regular_graph(n, n-k-1, seed=seed))
     end
 
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
 
     edges = _try_creation(n, k, rng)
     while isempty(edges)
@@ -191,7 +191,7 @@ function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
     @assert(iseven(m), "sum(k) must be even")
     @assert(all(0 .<= k .< n), "the 0 <= k[i] < n inequality must be satisfied")
 
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
 
     edges = _try_creation(n, k, rng)
     while m > 0 && isempty(edges)
@@ -225,7 +225,7 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     if (k > n/2) && iseven(n * (n-k-1))
         return complement(random_regular_digraph(n, n-k-1, dir=dir, seed=seed))
     end
-    rng = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+    rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
     I = Array(Int, n*k)
@@ -262,6 +262,7 @@ type StochasticBlockModel{T<:Integer,P<:Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
+    rng::MersenneTwister
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
@@ -271,7 +272,7 @@ end
 and the affinity matrix. This construction implies that consecutive
 vertices will be in the same blocks, except for the block boundaries.
 """
-function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P})
+function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P}; seed::Int = -1)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
@@ -281,7 +282,7 @@ function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P})
         end
         nodemap[i] = j
     end
-    return StochasticBlockModel(csum[end], nodemap, affinities)
+    return StochasticBlockModel(csum[end], nodemap, affinities, getRNG(seed))
 end
 
 
@@ -298,15 +299,17 @@ end
 function StochasticBlockModel(internalp::Float64,
                               externalp::Float64,
                               size::Int,
-                              numblocks::Int)
+                              numblocks::Int;
+                              seed::Int = -1)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
-    StochasticBlockModel(sizes, B)
+    StochasticBlockModel(sizes, B, seed=seed)
 end
 
-function StochasticBlockModel(internalp::Vector{Float64}, externalp::Float64, sizes::Vector{Int})
+function StochasticBlockModel(internalp::Vector{Float64}, externalp::Float64
+        , sizes::Vector{Int}; seed::Int = -1)
     B = sbmaffinity(internalp, externalp, sizes)
-    return StochasticBlockModel(sizes, B)
+    return StochasticBlockModel(sizes, B, seed=seed)
 end
 
 
@@ -332,15 +335,15 @@ function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, inter::Floa
     return B
 end
 
-function nearbipartiteSBM(sizes, between, inter, noise)
-    return StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise))
+function nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1)
+    return StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
 end
 
 
 """Generates a stream of random pairs in 1:n"""
-function random_pair(n::Int)
+function random_pair(rng::AbstractRNG, n::Int)
     while true
-        produce( rand(1:n), rand(1:n) )
+        produce( rand(rng, 1:n), rand(rng, 1:n) )
     end
 end
 
@@ -349,13 +352,13 @@ end
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = @task random_pair(sbm.n)
+    pairs = @task random_pair(sbm.rng, sbm.n)
     for (i,j) in pairs
     	if i == j
             continue
         end
         p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-        if rand() < p
+        if rand(sbm.rng) < p
             produce(i, j)
         end
     end
