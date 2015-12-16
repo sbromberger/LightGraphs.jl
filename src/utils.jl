@@ -1,16 +1,11 @@
-Base.start(it::Void) = nothing
-Base.done(it::Void, state::Void) = true
-Base.next(it::Void, state::Void) = (nothing, nothing)
-Base.length(v::Void) = 0
-
 """
-Sample `k` element from array `a` without repetition and excluding elements in `exclude`.
+Sample `k` element from array `a` without repetition and eventually excluding elements in `exclude`.
 Pay attention, it changes the order of the elements in `a`.
 
 sample!(rng, a, k; exclude = nothing)
-sample!(a, k; exclude = nothing)
+sample!(a, k; exclude = ()))
 """
-function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = nothing)
+function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = ())
     length(a) < k + length(exclude) && error("Array too short.")
     res = Vector{eltype(a)}()
     sizehint!(res, k)
@@ -27,6 +22,6 @@ function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = nothi
     res
 end
 
-sample!(a::AbstractArray, k::Integer; exclude = nothing) = sample!(getRNG(), a, k; exclude = exclude)
+sample!(a::AbstractArray, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
 
 getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG

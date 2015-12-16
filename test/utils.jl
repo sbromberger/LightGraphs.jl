@@ -9,8 +9,3 @@ s = LightGraphs.sample!([1:10;], 6, exclude=[1,2])
 for  e in s
     @test 3 <= e <= 10
 end
-
-@test start(nothing) == nothing
-@test done(nothing, nothing) == true
-@test next(nothing, nothing) == (nothing, nothing)
-@test length(nothing) == 0
