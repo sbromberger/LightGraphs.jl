@@ -81,6 +81,7 @@ tests = [
     "matching/linear-programming",
     "datasets/runtests",
     "utils"
+    "mst"
 ]
 
 
