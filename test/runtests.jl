@@ -50,6 +50,7 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
+    "mst",
     "spectral",
     "cliques",
     "subgraphs",
