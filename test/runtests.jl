@@ -79,7 +79,8 @@ tests = [
     "flow/push_relabel",
     "flow/maximum_flow",
     "matching/linear-programming",
-    "datasets/runtests"
+    "datasets/runtests",
+    "utils"
 ]
 
 

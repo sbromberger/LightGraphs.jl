@@ -171,5 +171,6 @@ include("core.jl")
             include("flow/push_relabel.jl")
         include("matching/linear-programming.jl")
         include("datasets/Datasets.jl")
+        include("utils.jl")
 
 end # module
