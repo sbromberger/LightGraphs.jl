@@ -29,6 +29,11 @@ k: Integer, optional
     Use `k` nodes sample to estimate the betweenness centrality. If none,
     betweenness centrality is computed using the `n` nodes in the graph.
 
+
+seed: Integer, optional
+    Seed of the RNG, used in the sampling for `k > 0`. For negative integers
+    the `GLOBAL_RNG` is used.
+
 normalize: bool, optional
     If true, the betweenness values are normalized by the total number
     of possible distinct paths between all pairs in the graphs. For an undirected graph,
@@ -53,7 +58,8 @@ function betweenness_centrality(
     g::SimpleGraph,
     k::Integer=0;
     normalize=true,
-    endpoints=false)
+    endpoints=false,
+    seed::Integer = -1)
 
     n_v = nv(g)
     isdir = is_directed(g)
@@ -62,7 +68,8 @@ function betweenness_centrality(
     if k == 0
         nodes = 1:n_v
     else
-        nodes = sample(1:n_v, k, replace=false)   #112
+        rng = getRNG(seed)
+        nodes = sample!(rng, [1:n_v;], k)   #112
     end
     for s in nodes
         state = dijkstra_shortest_paths(g, s; allpaths=true)
