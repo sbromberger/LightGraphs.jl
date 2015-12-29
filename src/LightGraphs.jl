@@ -112,7 +112,7 @@ WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
 Datasets,
 
 #Minimum Spanning Tree
-minimum_spanning_tree,
+minimum_spanning_tree
 
 
 """An optimized graphs package.
