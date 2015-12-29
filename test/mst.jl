@@ -1,4 +1,5 @@
 using LightGraphs
+import LightGraphs: minimum_spanning_tree
 using Base.Test
 
 # Creating custom adjacency matrix
