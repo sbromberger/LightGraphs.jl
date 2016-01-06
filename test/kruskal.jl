@@ -20,7 +20,7 @@ distmx[4,2] = 10
 distmx[4,3] = 3
 
 # Testing Kruskal's algorithm
-mst = kruskal_minimum_spanning_tree(distmx,4)
+mst = kruskal_minimum_spanning_tree(distmx)
 
 # Generating theoretical result
 resGraph = Graph(4)
