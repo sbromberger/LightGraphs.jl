@@ -64,4 +64,5 @@ function kruskal_minimum_spanning_tree{T<:Real}(distmx::Matrix{T})
 
 end
 
-
+# Alternate method for default distances
+kruskal_minimum_spanning_tree(g::Graph) =  kruskal_minimum_spanning_tree(full(adjacency_matrix(g)))
