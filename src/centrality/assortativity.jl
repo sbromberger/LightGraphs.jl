@@ -1,22 +1,30 @@
 
-# (degree) assortativity - undirected: 
-# see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002), 
-# http://arxiv.org/abs/cond-mat/0205405/
+"""
+(degree) assortativity - undirected: 
+
+see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002), 
+http://arxiv.org/abs/cond-mat/0205405/
+"""
 function assortativity_coefficient(g::Graph, sj, sk, sjs, sks, nue)
     return res = (sjk/nue - ((sj + sk)/(2*nue))^2)/((sjs + sks)/(2*nue) - ((sj + sk)/(2*nue))^2)
 end
 
-# (degree) assortativity - directed: 
-# see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
-# http://arxiv.org/abs/cond-mat/0209450
+"""
+(degree) assortativity - directed: 
+
+see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
+http://arxiv.org/abs/cond-mat/0209450
+"""
 function assortativity_coefficient(g::DiGraph, sj, sk, sjs, sks, nue)
     return res = (sjk - sj*sk/nue)/sqrt((sjs - sj^2/nue)*(sks - sk^2/nue))
 end
 
-### graph degree assortativity
-# nominal degree assortativity: 
-# see equation (2) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
-# http://arxiv.org/abs/cond-mat/0209450
+"""
+graph degree assortativity:
+
+see equation (2) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
+http://arxiv.org/abs/cond-mat/0209450
+"""
 function assortativity_degree(g)
     nue  = ne(g)
     sjk = 0
@@ -41,11 +49,13 @@ function assortativity_degree(g)
 end
 
 
-####local degree assortativity
-# local degree assortativity: 
-# see Piraveenan, M., M. Prokopenko, and A. Y. Zomaya. 
-# Local assortativeness in scale-free networks. 
-# EPL (Europhysics Letters) 84.2, 28002 (2008).
+"""
+local degree assortativity: 
+
+see Piraveenan, M., M. Prokopenko, and A. Y. Zomaya. 
+Local assortativeness in scale-free networks. 
+EPL (Europhysics Letters) 84.2, 28002 (2008).
+"""
 function local_assortativity_degree(g::Graph)
     M = ne(g)
 
@@ -114,7 +124,8 @@ function assortativity(g, cat)
     return assortativity(g, cat1, cat1)
 end
 
-###graph assortativity with two mappings
+""" categorical assortativity:
+"""
 function assortativity(g, cat1, cat2)
     nue  = ne(g)
     sjk = 0
@@ -147,7 +158,9 @@ function nominal_assortativity_coefficient(g::Graph, sumaibi, sumeii)
 
     return (sumeii - sumaibi) / (1.0 - sumaibi)
 end
-### nominal assortativity
+
+""" nominal assortativity:
+"""
 function assortativity_nominal(g,cat)
     uc  = unique(values(cat))
     nue = ne(g)
