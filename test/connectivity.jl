@@ -7,7 +7,7 @@ add_edge!(g,10,9)
 
 
 @test !is_connected(g)
-@test is_connected(HouseGraph())
+@test is_connected(smallgraph(:house))
 
 cc = connected_components(g)
 label = zeros(Int, nv(g))
@@ -18,9 +18,28 @@ cclab = components_dict(label)
 @test cclab[1] == [1,2,3,4]
 @test cclab[5] == [5,6,7]
 @test cclab[8] == [8,9,10]
-
-
 @test length(cc) >= 3 && sort(cc[3]) == [8,9,10]
+
+g10 =DiGraph(4)
+add_edge!(g10,1,3)
+add_edge!(g10,2,4)
+@test is_bipartite(g10) == true
+add_edge!(g10,1,4)
+@test is_bipartite(g10) == true
+
+g10 = DiGraph(20)
+for m=1:50
+    i = rand(1:10)
+    j = rand(11:20)
+    if rand() < 0.5
+        i, j = j, i
+    end
+    if !has_edge(g10, i, j)
+        add_edge!(g10, i, j)
+        @test is_bipartite(g10) == true
+    end
+end
+
 
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
 h = DiGraph(8)
@@ -103,8 +122,8 @@ fig8 = spzeros(6,6)
 fig8[[2,10,13,21,24,27,35]] = 1
 fig8 = DiGraph(fig8)
 
-@test strongly_connected_components(fig1) == scc_fig1
-@test strongly_connected_components(fig3) == scc_fig3
+@test Set(strongly_connected_components(fig1)) == Set(scc_fig1)
+@test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
 
 @test period(n_ring) == n
 @test period(n_ring_shortcut) == 2

@@ -25,13 +25,27 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     else
         error("Not implemented")
     end
-    rowval = sizehint!(@compat(Vector{Int}()), nz)
+    rowval = sizehint!(Vector{Int}(), nz)
+    selfloops = Vector{Int}()
     for j in 1:n_v
+        if has_edge(g,j,j)
+            push!(selfloops, j)
+        end
         dsts = neighborfn(g, j)
         colpt[j+1] = colpt[j] + length(dsts)
         append!(rowval, sort!(dsts))
     end
-    return SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
+    spmx = SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
+
+    # this is inefficient. There should be a better way of doing this.
+    # the issue is that adjacency matrix entries for self-loops are 2,
+    # not one(T).
+    for i in selfloops
+        if !(T <: Bool)
+            spmx[i,i] += one(T)
+        end
+    end
+    return spmx
 end
 
 
@@ -112,10 +126,10 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 
 
 # GraphMatrices integration
-
+@require GraphMatrices begin
 
 function CombinatorialAdjacency(g::Graph)
-    isdefined(:GraphMatrices) || error("GraphMatrices.jl is required for this function.\nYou must recompile LightGraphs after installing GraphMatrices.")
     d = float(indegree(g))
     return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
 end
+end # @require

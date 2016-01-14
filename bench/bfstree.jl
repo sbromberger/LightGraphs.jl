@@ -1,6 +1,6 @@
 using LightGraphs
 using MatrixDepot
-function symetrize(A)
+function symmetrize(A)
     println("Symmetrizing ")
     tic()
     if !issym(A) 
@@ -24,7 +24,7 @@ function loadmat(matname)
         info = matrixdepot(matname, :get)
     end
     A = matrixdepot(matname, :read)
-    A = symetrize(A)
+    A = symmetrize(A)
     g = Graph(A)
     toc()
     println(STDERR, "size(A) = $(size(A))")

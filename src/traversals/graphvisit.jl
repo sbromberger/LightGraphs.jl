@@ -41,7 +41,7 @@ type VertexListVisitor <: SimpleGraphVisitor
     vertices::Vector{Int}
 
     function VertexListVisitor(n::Integer=0)
-        vs = Int[]
+        vs = Vector{Int}()
         sizehint!(vs, n)
         new(vs)
     end

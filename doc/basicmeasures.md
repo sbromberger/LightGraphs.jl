@@ -13,7 +13,7 @@ Return the vertices of a graph.
 ```
 edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Return the edges of a graph.
+Return an iterator to the edges of a graph.
 
 ### is_directed
 ```
@@ -173,11 +173,15 @@ Returns a list of all neighbors of vertex `v` in `g`.
 
 For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
 
+NOTE: returns a reference, not a copy. Do not modify result.
+
 ### in_neighbors
 ```
 in_neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
 ```
 Returns a list of all neighbors connected to vertex `v` by an incoming edge.
+
+NOTE: returns a reference, not a copy. Do not modify result.
 
 ### all_neighbors
 ```

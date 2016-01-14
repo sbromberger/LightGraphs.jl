@@ -13,15 +13,30 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 ### bfs_tree
 ```
 bfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
-bfs_tree(visitor::LightGraphs.TreeBFSVisitorVector, g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a breadth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
+
+This function is a high level wrapper around bfs_tree!, use that function for more performance.
 
 ### dfs_tree
 ```
 dfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
 ```
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
+
+## Random walks
+*LightGraphs* includes uniform random walks and self avoiding walks:
+### randomwalk
+```
+randomwalk(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Integer, niter::Integer)
+```
+Performs a random walk on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps. Returns a vector of vertices visited in order.
+
+### saw
+```
+saw(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Integer, niter::Integer)
+```
+Performs a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk) on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps. Returns a vector of vertices visited in order.
 
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
@@ -46,7 +61,7 @@ Returns `true` if the undirected graph of `g` is connected.
 
 ### connected_components
 ```
-connected_components(g::LightGraphs.Graph)
+connected_components(g)
 ```
 Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)) of an undirected graph `g` as a vector of components, each represented by a vector of vectors of vertices belonging to the component.
 
@@ -66,7 +81,7 @@ Returns connected components of the undirected graph of `g`.
 ```
 has_self_loop(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Returns true if `g` is has any self loops.
+Returns true if `g` has any self loops.
 
 ### attracting_components
 ```
@@ -112,7 +127,7 @@ Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 mincut(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 mincut{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, distmx::AbstractArray{T,2})
 ```
-Returns a tuple `(parity, bestcut)`, where `parity` is a vector of boolean values that determines the partition in `g` and `bestcut` is the weight of the cut that makes this partition. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1.
+Returns a tuple `(parity, bestcut)`, where `parity` is a vector of integer values that determines the partition in `g` (1 or 2) and `bestcut` is the weight of the cut that makes this partition. An optional `distmx` matrix may be specified; if omitted, edge distances are assumed to be 1.
 
 ### maximum_adjacency_visit
 ```
@@ -143,15 +158,6 @@ dijkstra_shortest_paths{T}(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, src:
 Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) on a graph, computing shortest distances between a source vertex `s` and all other nodes. Returns a `DijkstraState` that contains various traversal information (see below).
 
 With `allpaths=true`, returns a `DijkstraState` that keeps track of all predecessors of a given vertex (see below).
-
-### bellman_ford_shortest_paths
-```
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1})
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, distmx::AbstractArray{T,2})
-bellman_ford_shortest_paths(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
-bellman_ford_shortest_paths{T}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64, distmx::AbstractArray{T,2})
-```
-Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm) to compute shortest paths between a source vertex `s` or a set of source vertices `ss`. Returns a `BellmanFordState` with relevant traversal information (see below).
 
 ### bellman_ford_shortest_paths
 ```

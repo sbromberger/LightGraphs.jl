@@ -5,7 +5,7 @@ t = visitor.tree
 @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
 
-g = HouseGraph()
+g = smallgraph(:house)
 @test gdistances(g, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
 @test !is_bipartite(g)
@@ -18,7 +18,7 @@ add_edge!(g,3,4)
 
 
 import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
-g = HouseGraph()
+g = smallgraph(:house)
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
@@ -51,3 +51,13 @@ t = tree(parents)
 @test typeof(tvis.tree) <: DiGraph
 @test t == tvis.tree
 @test ne(t) < nv(t)
+
+
+g10 = CompleteGraph(10)
+@test bipartite_map(g10) == Vector{Int}()
+
+g10 = CompleteBipartiteGraph(10,10)
+@test bipartite_map(g10) == Vector{Int}([ones(10); 2*ones(10)])
+
+h10 = blkdiag(g10,g10)
+@test bipartite_map(h10) == Vector{Int}([ones(10); 2*ones(10); ones(10); 2*ones(10)])

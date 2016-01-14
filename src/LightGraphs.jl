@@ -1,7 +1,7 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 module LightGraphs
 
-using Compat
+using Requires
 using GZip
 using StatsBase
 using Base.Collections
@@ -9,26 +9,24 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-
-if VERSION < v"0.4.0-dev"
-    try
-        import Docile: @doc_str, @doc_mstr
-    catch
-        macro doc_str(x) x end
-        macro doc_mstr(x) x end
-    end
+import Combinatorics: combinations  # 0.5
+try
+    import GraphMatrices: CombinatorialAdjacency
+    nothing
+catch
 end
 
 try
-    using GraphMatrices
-    import GraphMatrices.CombinatorialAdjacency
+    using JuMP
     nothing
 catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy,
-            sum, size, sparse, eltype, length, ndims, issym
+            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            ctranspose, join, start, next, done, eltype
+
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
@@ -36,15 +34,16 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loop,
+common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
 
 # operators
-complement, reverse, reverse!, union, intersect,
+complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
-induced_subgraph,
+induced_subgraph, join, tensor_product, cartesian_product,
+crosspath,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -52,10 +51,13 @@ discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph, traverse_graph_withlog,
 
 # bfs
-BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite,
+BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
 
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
+
+# random
+randomwalk, saw, non_backtracking_randomwalk,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -73,18 +75,6 @@ a_star, dijkstra_shortest_paths,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
-# smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph,
-CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph,
-DiamondGraph, BullGraph,
-ChvatalGraph, CubicalGraph, DesarguesGraph,
-DodecahedralGraph, FruchtGraph, HeawoodGraph,
-HouseGraph, HouseXGraph, IcosahedralGraph,
-KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
-PappusGraph, PetersenGraph, SedgewickMazeGraph,
-TetrahedralGraph, TruncatedCubeGraph,
-TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
-
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
@@ -97,17 +87,30 @@ CombinatorialAdjacency, non_backtracking_matrix,
 a_star,
 
 # persistence
-readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-
+# readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
+load, save,
 # flow
-maximum_flow,
+maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
+
+#matching
+maximum_weight_maximal_matching,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
-stochastic_block_model,
+StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
 
 #community
-modularity, community_detection_nback
+modularity, community_detection_nback, core_periphery_deg,
+local_clustering,local_clustering_coefficient, global_clustering_coefficient,
+
+#generators
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph,
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+
+#Datasets
+Datasets
+
 
 """An optimized graphs package.
 
@@ -129,10 +132,12 @@ LightGraphs
 include("core.jl")
     include("digraph.jl")
     include("graph.jl")
+        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
+            include("traversals/randomwalks.jl")
         include("connectivity.jl")
         include("cliques.jl")
         include("distance.jl")
@@ -142,19 +147,30 @@ include("core.jl")
         include("shortestpaths/floyd-warshall.jl")
         include("spectral.jl")
         include("operators.jl")
-        include("persistence/default.jl")
-        include("persistence/dot.jl")
-        include("persistence/gexf.jl")
-        include("persistence/gml.jl")
-        include("persistence/graphml.jl")
+        include("persistence/common.jl")
+            include("persistence/lg.jl")
+            include("persistence/dot.jl")
+            include("persistence/gexf.jl")
+            include("persistence/gml.jl")
+            include("persistence/graphml.jl")
+            include("persistence/net.jl")
         include("randgraphs.jl")
-        include("smallgraphs.jl")
+        include("generators.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
-        include("flow/max-flow-min-cut.jl")
         include("community/modularity.jl")
         include("community/detection.jl")
+        include("community/core-periphery.jl")
+        include("community/clustering.jl")
+        include("flow/maximum_flow.jl")
+            include("flow/edmonds_karp.jl")
+            include("flow/dinic.jl")
+            include("flow/push_relabel.jl")
+        include("matching/linear-programming.jl")
+        include("datasets/Datasets.jl")
+        include("utils.jl")
+
 end # module

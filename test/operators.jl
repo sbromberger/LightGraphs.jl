@@ -38,6 +38,13 @@ z = union(g3, h)
 @test has_edge(z, e)
 @test z == PathGraph(6)
 
+h = DiGraph(6)
+add_edge!(h, 5, 6)
+e = Edge(5, 6)
+z = union(g4, h)
+@test has_edge(z, e)
+@test z == PathDiGraph(6)
+
 g10 = CompleteGraph(2)
 h10 = CompleteGraph(2)
 z = blkdiag(g10, h10)
@@ -50,11 +57,26 @@ z = blkdiag(g10, h10)
 @test !has_edge(z, 2, 3)
 @test !has_edge(z, 2, 4)
 
+g10 = Graph(2)
+h10 = Graph(2)
+z = join(g10, h10)
+@test nv(z) == nv(g10) + nv(h10)
+@test ne(z) == 4
+@test !has_edge(z, 1, 2)
+@test !has_edge(z, 3, 4)
+@test has_edge(z, 1, 3)
+@test has_edge(z, 1, 4)
+@test has_edge(z, 2, 3)
+@test has_edge(z, 2, 4)
+
 p = PathGraph(10)
 x = p*ones(10)
 @test  x[1]==1.0 && all(x[2:end-1].==2.0) && x[end]==1.0
 
 @test size(p) == (10,10)
+@test size(p, 1) == size(p, 2) == 10
+@test size(p, 3) == 1
+
 @test g5 * ones(nv(g5)) == [2.0, 1.0, 1.0, 0.0]
 @test sum(g5, 1) ==  [0, 1, 2, 1]
 @test sum(g5, 2) ==  [2, 1, 1, 0]
@@ -68,3 +90,13 @@ x = p*ones(10)
 @test ndims(p) == 2
 @test issym(p)
 @test !issym(g5)
+
+g22 = CompleteGraph(2)
+h = cartesian_product(g22, g22)
+@test nv(h) == 4
+@test ne(h)== 4
+
+g22 = CompleteGraph(2)
+h = tensor_product(g22, g22)
+@test nv(h) == 4
+@test ne(h) == 1

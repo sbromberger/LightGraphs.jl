@@ -1,3 +1,4 @@
+
 # TODO: implement readgexf
 
 """
@@ -7,7 +8,7 @@ to a file `f` in the
 
 Returns 1 (number of graphs written).
 """
-function writegexf(f::IO, g::SimpleGraph)
+function savegexf(f::IO, g::SimpleGraph, gname::AbstractString)
     xdoc = XMLDocument()
     xroot = create_root(xdoc, "gexf")
     set_attribute(xroot,"xmlns","http://www.gexf.net/1.2draft")
@@ -16,6 +17,8 @@ function writegexf(f::IO, g::SimpleGraph)
     set_attribute(xroot,"xsi:schemaLocation","http://www.gexf.net/1.2draft/gexf.xsd")
 
     xmeta = new_child(xroot, "meta")
+    xdesc = new_child(xmeta, "description")
+    add_text(xdesc, gname)
     xg = new_child(xroot, "graph")
     strdir = is_directed(g) ? "directed" : "undirected"
     set_attribute(xg,"defaultedgetype",strdir)
@@ -40,11 +43,4 @@ function writegexf(f::IO, g::SimpleGraph)
     return 1
 end
 
-writegexf(g::SimpleGraph) = writegexf(STDOUT, g)
-
-function writegexf(fname::AbstractString, g::SimpleGraph)
-    f = open(fname, "w")
-     writegexf(f, g)
-     close(f)
-     return 1
- end
+filemap[:gexf] = (NI, NI, savegexf, NI)

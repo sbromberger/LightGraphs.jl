@@ -1,9 +1,10 @@
-using Compat		# for readcentrality() in test/centrality/betweenness.jl
 using LightGraphs
+using LightGraphs.Datasets
+using Requires
 using Base.Test
 
-g1 = PetersenGraph()
-g2 = TutteGraph()
+g1 = smallgraph("PetersenGraph")
+g2 = smallgraph(:tutte)
 g3 = PathGraph(5)
 g4 = PathDiGraph(5)
 g5 = DiGraph(4)
@@ -29,7 +30,7 @@ re1 = Edge(2, 1)
 
 testdir = dirname(@__FILE__)
 
-pdict = readgraph(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
+pdict = load(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
 p1 = pdict["Tutte"]
 p2 = pdict["pathdigraph"]
 
@@ -43,34 +44,44 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
+    "core",
+    "edgeiter",
     "operators",
-    "community/detection",
-    "community/modularity",
-    "randgraphs",
     "graphdigraph",
     "persistence",
-    "core",
-    "smallgraphs",
+    "distance",
+    "spectral",
+    "cliques",
+    "subgraphs",
+    "connectivity",
+    "randgraphs",
+    "generators",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
-    "distance",
-    "spectral",
     "traversals/bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
-    "connectivity",
-    "cliques",
+    "traversals/randomwalks",
+    "community/core-periphery",
+    "community/detection",
+    "community/modularity",
+    "community/clustering",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
-    "subgraphs",
-    "flow/max-flow-min-cut"
-    ]
+    "flow/edmonds_karp",
+    "flow/dinic",
+    "flow/push_relabel",
+    "flow/maximum_flow",
+    "matching/linear-programming",
+    "datasets/runtests",
+    "utils"
+]
 
 
 for t in tests

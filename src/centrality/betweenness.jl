@@ -56,7 +56,7 @@ function betweenness_centrality(
     endpoints=false)
 
     n_v = nv(g)
-    is_directed = (typeof(g) == DiGraph)
+    isdir = is_directed(g)
 
     betweenness = zeros(n_v)
     if k == 0
@@ -65,18 +65,20 @@ function betweenness_centrality(
         nodes = sample(1:n_v, k, replace=false)   #112
     end
     for s in nodes
-        state = dijkstra_shortest_paths(g, s; allpaths=true)
-        if endpoints
-            _accumulate_endpoints!(betweenness, state, g, s)
-        else
-            _accumulate_basic!(betweenness, state, g, s)
+        if degree(g,s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s; allpaths=true)
+            if endpoints
+                _accumulate_endpoints!(betweenness, state, g, s)
+            else
+                _accumulate_basic!(betweenness, state, g, s)
+            end
         end
     end
 
     _rescale!(betweenness,
               n_v,
               normalize,
-              is_directed,
+              isdir,
               k)
 
     return betweenness

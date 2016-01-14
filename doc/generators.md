@@ -3,11 +3,12 @@
 *LightGraphs.jl* implements three common random graph generators:
 ### erdos_renyi
 ```
+erdos_renyi(n::Integer, ne::Integer)
 erdos_renyi(n::Integer, p::Real)
 ```
 Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random graph with `n` vertices. Edges are added between pairs of vertices with probability `p`. Undirected graphs are created by default; use `is_directed=true` to override.
 
-Note also that Erdős–Rényi graphs may be generated quickly using the `Graph(nv, ne)` constructor, which randomly includes `ne` edges from the set of vertices.
+Note also that Erdős–Rényi graphs may be generated quickly using `erdos_renyi(n, ne)` or the  `Graph(nv, ne)` constructor, which randomly select `ne` edges among all the potential edges.
 
 ### watts_strogatz
 ```
@@ -18,7 +19,6 @@ Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_mode
 ### random_regular_graph
 ```
 random_regular_graph(n::Int64, k::Int64)
-random_regular_graph(n::Int64, k::Int64, seed::Int64)
 ```
 Creates a random undirected [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`.
 
@@ -27,12 +27,28 @@ For undirected graphs, allocates an array of `nk` `Int`s, and takes approximatel
 ### random_regular_digraph
 ```
 random_regular_digraph(n::Int64, k::Int64)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol)
-random_regular_digraph(n::Int64, k::Int64, dir::Symbol, seed::Int64)
 ```
 Creates a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices, each with degree `k`. The degree (in or out) can be specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
 
 For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an adjacency matrix and uses that to generate the directed graph.
+
+In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
+graphs are available using the following constructs:
+StochasticBlockModel(n,nodemap,affinities) A type capturing the parameters of the SBM. Each vertex is assigned to a block and the probability of edge (i,j) depends only on the block labels of vertex i and vertex j.
+
+The assignement is stored in nodemap and the block affinities a k by k matrix is stored in affinities.
+
+affinities[k,l] is the probability of an edge between any vertex in block k and any vertex in block l.
+
+We are generating the graphs by taking random `i,j in vertices(g)` and flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
+
+### make_edgestream
+```
+make_edgestream(sbm::LightGraphs.StochasticBlockModel{T<:Integer,P<:Real})
+```
+Take an infinite sample from the sbm. Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
+
+`StochasticBlockModel` instances may be used to create Graph objects.
 
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
@@ -83,131 +99,4 @@ Creates a wheel graph with `n` vertices. A wheel graph is a star graph with the 
 WheelDiGraph(n::Integer)
 ```
 Creates a wheel digraph with `n` vertices. A wheel graph is a star digraph with the outer vertices connected via a closed path graph.
-
-The following graphs are undirected only:
-### DiamondGraph
-```
-DiamondGraph()
-```
-A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).
-
-### BullGraph
-```
-BullGraph()
-```
-A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).
-
-### ChvatalGraph
-```
-ChvatalGraph()
-```
-A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).
-
-### CubicalGraph
-```
-CubicalGraph()
-```
-A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).
-
-### DesarguesGraph
-```
-DesarguesGraph()
-```
-A [Desargues  graph](https://en.wikipedia.org/wiki/Desargues_graph).
-
-### DodecahedralGraph
-```
-DodecahedralGraph()
-```
-A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-
-### FruchtGraph
-```
-FruchtGraph()
-```
-A [Frucht  graph](https://en.wikipedia.org/wiki/Frucht_graph).
-
-### HeawoodGraph
-```
-HeawoodGraph()
-```
-A [Heawood  graph](https://en.wikipedia.org/wiki/Heawood_graph).
-
-### HouseGraph
-```
-HouseGraph()
-```
-A graph mimicing the classic outline of a house.
-
-### HouseXGraph
-```
-HouseXGraph()
-```
-A house graph, with two edges crossing the bottom square.
-
-### IcosahedralGraph
-```
-IcosahedralGraph()
-```
-A [Platonic icosahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-
-### KrackhardtKiteGraph
-```
-KrackhardtKiteGraph()
-```
-A [Krackhardt-Kite social network graph](http://mathworld.wolfram.com/KrackhardtKite.html).
-
-### MoebiusKantorGraph
-```
-MoebiusKantorGraph()
-```
-A [Möbius-Kantor  graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph).
-
-### OctahedralGraph
-```
-OctahedralGraph()
-```
-A [Platonic octahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-
-### PappusGraph
-```
-PappusGraph()
-```
-A [Pappus  graph](http://en.wikipedia.org/wiki/Pappus_graph).
-
-### PetersenGraph
-```
-PetersenGraph()
-```
-A [Petersen  graph](http://en.wikipedia.org/wiki/Petersen_graph).
-
-### SedgewickMazeGraph
-```
-SedgewickMazeGraph()
-```
-A simple maze graph used in Sedgewick's *Algorithms in C++: Graph Algorithms (3rd ed.)*
-
-### TetrahedralGraph
-```
-TetrahedralGraph()
-```
-A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-
-### TruncatedCubeGraph
-```
-TruncatedCubeGraph()
-```
-A skeleton of the [truncated cube  graph](https://en.wikipedia.org/wiki/Truncated_cube).
-
-### TruncatedTetrahedronGraph
-```
-TruncatedTetrahedronGraph()
-```
-A skeleton of the [truncated tetrahedron graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
-
-### TutteGraph
-```
-TutteGraph()
-```
-A [Tutte  graph](https://en.wikipedia.org/wiki/Tutte_graph).
 

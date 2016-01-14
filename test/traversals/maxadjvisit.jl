@@ -39,15 +39,15 @@ end
 parity, bestcut = mincut(g, eweights)
 
 @test length(parity) == 8
-@test parity == Bool[ true, true, false, false, true, true, false, false ]
+@test parity == [2, 2, 1, 1, 2, 2, 1, 1]
 @test bestcut == 4.0
 
 parity, bestcut = mincut(g)
 
 @test length(parity) == 8
-@test parity == Bool[ true, false, false, false, false, false, false, false ]
+@test parity == [2, 1, 1, 1, 1, 1, 1, 1]
 @test bestcut == 2.0
 
 v = maximum_adjacency_visit(g)
 
-@test v == Int64[1, 2, 5, 6, 3, 7, 4, 8]
+@test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])

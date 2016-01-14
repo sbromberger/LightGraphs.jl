@@ -48,7 +48,7 @@ function traverse_graph(
     s::Int,
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)),
-    que = @compat Vector{Int}())
+    que = Vector{Int}())
 
     colormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -63,7 +63,7 @@ function traverse_graph(
     sources::AbstractVector{Int},
     visitor::SimpleGraphVisitor;
     colormap = zeros(Int, nv(graph)),
-    que = @compat Vector{Int}())
+    que = Vector{Int}())
 
     for s in sources
         colormap[s] = 1
@@ -134,8 +134,6 @@ type TreeBFSVisitor <:SimpleGraphVisitor
     tree::DiGraph
 end
 
-TreeBFSVisitor(n::Int) = TreeBFSVisitor(DiGraph(n))
-
 @deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
 
 """TreeBFSVisitorVector is a type for representing a BFS traversal
@@ -179,18 +177,6 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor
     end
     return true
 end
-
-
-# Return the DAG representing the traversal of a graph.
-function examine_neighbor!(visitor::TreeBFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
-        add_edge!(visitor.tree, u, v)
-    end
-    return true
-end
-
-
 
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
@@ -263,16 +249,32 @@ end
 """Will return `true` if graph `g` is
 [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 """
-function is_bipartite(g::SimpleGraph, s::Int)
+is_bipartite(g::SimpleGraph, s::Int) = _bipartite_visitor(g, s).is_bipartite
+
+function is_bipartite(g::SimpleGraph)
+    cc = filter(x->length(x)>2, connected_components(g))
+    return all(x->is_bipartite(g,x[1]), cc)
+end
+
+function _bipartite_visitor(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
     traverse_graph(g, BreadthFirst(), s, visitor)
-    return visitor.is_bipartite
+    return visitor
 end
 
-function is_bipartite(g::SimpleGraph)
-    for v in vertices(g)
-        !is_bipartite(g, v) && return false
+"""
+If the graph is bipartite returns a vector `c`  of size `nv(g)` containing
+the assignment of each vertex to one of the two sets (`c[i] == 1` or `c[i]==2`).
+If `g` is not bipartite returns an empty vector.
+"""
+function bipartite_map(g::SimpleGraph)
+    cc = connected_components(g)
+    visitors = [_bipartite_visitor(g, x[1]) for x in cc]
+    !all([v.is_bipartite for v in visitors]) && return zeros(Int, 0)
+    m = zeros(Int, nv(g))
+    for i=1:nv(g)
+        m[i] = any(v->v.bipartitemap[i] == 1, visitors) ? 2 : 1
     end
-    return true
+    m
 end

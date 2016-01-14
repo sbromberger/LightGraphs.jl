@@ -128,23 +128,27 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 
 {{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph}}
 
+In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
+graphs are available using the following constructs:
+
+{{StochasticBlockModel, make_edgestream}}
+
+`StochasticBlockModel` instances may be used to create Graph objects.
+
 ### Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
 {{CompleteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph, WheelGraph, WheelDiGraph}}
 
-The following graphs are undirected only:
-
-{{DiamondGraph, BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DodecahedralGraph, FruchtGraph, HeawoodGraph, HouseGraph, HouseXGraph, IcosahedralGraph, KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph, PappusGraph, PetersenGraph, SedgewickMazeGraph, TetrahedralGraph, TruncatedCubeGraph, TruncatedTetrahedronGraph, TutteGraph}}
 """
 
 @file "gettingstarted.md" """
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
-*G = {V, E}*. *V* is an integer range `1:n`; *E* is stored as a set
-of `Edge` types containing `Pair(Int, Int)` values. Edge
-relationships are stored as forward and backward adjacency vectors, indexed by
-vertex.
+*G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward
+(and, for directed graphs, backward) adjacency lists indexed by vertex. Edges
+may also be accessed via an iterator that yields `Edge` types containing
+`(src::Int, dst::Int)` values.
 
 *LightGraphs.jl* provides two graph types: `Graph` is an undirected graph, and
 `DiGraph` is its directed counterpart.
@@ -156,8 +160,8 @@ Edges are added to a graph using `add_edge!(g, e)`. Instead of an edge type
 integers may be passed denoting the source and destination vertices (e.g.,
 `add_edge!(g, 1, 2)`).
 
-Edges must be unique; an attempt to add an edge that already exists in the graph
-will result in an error.
+Multiple edges between two given vertices are not allowed: an attempt to
+add an edge that already exists in a graph will result in a silent failure.
 
 Edges may be removed using `rem_edge!(g, e)`. Alternately, integers may be passed
 denoting the source and destination vertices (e.g., `rem_edge!(g, 1, 2)`). Note
@@ -183,13 +187,12 @@ julia> Pkg.install("LightGraphs")
 
 *LightGraphs.jl* requires the following packages:
 
-- [Compat](https://github.com/JuliaLang/Compat.jl)
 - [GZip](https://github.com/JuliaLang/GZip.jl)
 - [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
 - [Docile](https://github.com/MichaelHatherly/Docile.jl)
+- [LightXML](https://github.com/JuliaLang/LightXML.jl)
+- [ParserCombinator](https://github.com/andrewcooke/ParserCombinator.jl)
 
-In addition, [LightXML](https://github.com/JuliaLang/LightXML.jl) is
-recommended (required for GraphML support).
 
 ### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
@@ -223,8 +226,8 @@ distmx[5,4] = 2.5
 dijkstra_shortest_paths(g, 4, distmx=distmx).dists
 
 # graph I/O
-g = readgraph("mygraph.jgz")
-write(g,"mygraph.jgz")
+g = load("mygraph.jgz", "mygraph")
+save("mygraph.jgz", g, "mygraph")
 ```
 """
 
@@ -270,7 +273,7 @@ producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
 
 ###[TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
-Another nice graph visulaization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
+Another nice graph visualization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
 required to render/save):
 ```julia
 julia> g = WheelGraph(10); t = plot(g)
@@ -330,7 +333,7 @@ undirected graphs:
 functions with two graph arguments will require them to be of the same type
 (either both `Graph` or both `DiGraph`).
 
-{{complement, reverse, reverse!, blkdiag, intersect, difference, symmetric_difference, union, induced_subgraph}}
+{{complement, reverse, reverse!, blkdiag, union, intersect, difference, symmetric_difference, induced_subgraph, join, tensor_product, cartesian_product, crosspath}}
 """
 
 @file "pathing.md" """
@@ -347,6 +350,12 @@ matrix of real number values. The matrix should be indexed by `[src, dst]` (see 
 * `MaximumAdjacency`.
 
 {{bfs_tree, dfs_tree}}
+
+## Random walks
+*LightGraphs* includes uniform random walks and self avoiding walks:
+
+{{randomwalk, saw}}
+
 
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
@@ -369,7 +378,7 @@ Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 *  The distance from a vertex to itself is always `0`.
 * The distance between two vertices with no connecting edge is always `Inf`.
 
-{{a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths}}
+{{a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths}}
 
 ## Path discovery / enumeration
 
@@ -412,21 +421,21 @@ output above.
 
 @file "persistence.md" """
 ## Writing a Graph
-Graphs may be written to I/O streams and files using the `write` function:
+Graphs may be written to I/O streams and files using the `save` function:
 
-{{write}}
+{{save}}
 
 ## Reading a Graph From a File
-Graphs stored using the `write` functions above may be loaded using `readgraph`:
+Graphs stored using the `save` functions above may be loaded using `load`:
 
-{{readgraph, readgraphml, readgml}}
+{{load}}
 
 ## Examples
 ```julia
-julia> write(STDOUT, g)
-julia> write(g, "mygraph.jgz")
-julia> g = readgraph("mygraph.jgz")
-julia> g = readgraphml("mygraph.xml")
-julia> g = readgml("mygraph.gml")
+julia> save(STDOUT, g)
+julia> save("mygraph.jgz", g, "mygraph"; compress=true)
+julia> g = load("multiplegraphs.jgz")
+julia> g = load("multiplegraphs.xml", :graphml)
+julia> g = load("mygraph.gml", "mygraph", :gml)
 ```
 """
