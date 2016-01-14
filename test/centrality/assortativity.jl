@@ -12,7 +12,7 @@ end
 println(assorts_path)
 
 n = 10
-@show assortativity_degree(CompleteGraph(n))
+@test  assortativity_degree(CompleteGraph(n)) > 0
 
 g = PathGraph(20)
 cat = outdegree(g)
