@@ -5,7 +5,7 @@
 see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002), 
 http://arxiv.org/abs/cond-mat/0205405/
 """
-function assortativity_coefficient(g::Graph, sj, sk, sjs, sks, nue)
+function assortativity_coefficient(g::Graph, sjk, sj, sk, sjs, sks, nue)
     return res = (sjk/nue - ((sj + sk)/(2*nue))^2)/((sjs + sks)/(2*nue) - ((sj + sk)/(2*nue))^2)
 end
 
@@ -15,7 +15,7 @@ end
 see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
 http://arxiv.org/abs/cond-mat/0209450
 """
-function assortativity_coefficient(g::DiGraph, sj, sk, sjs, sks, nue)
+function assortativity_coefficient(g::DiGraph, sjk, ssj, sk, sjs, sks, nue)
     return res = (sjk - sj*sk/nue)/sqrt((sjs - sj^2/nue)*(sks - sk^2/nue))
 end
 
@@ -43,7 +43,7 @@ function assortativity_degree(g)
         sks += k^2
     end
 
-    res = assortativity_coefficient(g, sj, sk, sjs, sks, nue)
+    res = assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 
     return res
 end
@@ -121,12 +121,12 @@ end
 
 ### graph assortativity with one mapping
 function assortativity(g, cat)
-    return assortativity(g, cat1, cat1)
+    return assortativity(g, cat, cat)
 end
 
 """ categorical assortativity:
 """
-function assortativity(g, cat1, cat2)
+function assortativity(g::SimpleGraph, cat1, cat2)
     nue  = ne(g)
     sjk = 0
     sj  = 0
@@ -135,8 +135,8 @@ function assortativity(g, cat1, cat2)
     sks = 0
 
     for (u,v) in edges(g)
-        j   = cat1[u];
-        k   = cat2[v];
+        j   = cat1[u]
+        k   = cat2[v]
         sjk += j*k
         sj  += j
         sk  += k
@@ -144,14 +144,13 @@ function assortativity(g, cat1, cat2)
         sks += k^2
     end
 
-    res = assortativity_coefficient(g, sj, sk, sjs, sks,nue)
-
-    return res
+    return  assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
-function nominal_assortativity_coefficient(g::Digraph, sumaibi, sumeii)
+function nominal_assortativity_coefficient(g::DiGraph, sumaibi, sumeii)
     return (sumeii - sumaibi) / (1.0 - sumaibi)
 end
+
 function nominal_assortativity_coefficient(g::Graph, sumaibi, sumeii)
     sumaibi /= 4.0
     sumeii  /= 2.0
