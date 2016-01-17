@@ -32,6 +32,14 @@ function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     return g
 end
 
+function Graph{T}(v::Vector{Tuple{T, Int, Int}}, n::Int)
+	g = Graph(n)
+	for (w,i,j) in v
+		add_edge!(g, i, j)
+	end
+	return g
+end
+
 function Graph(g::DiGraph)
     gnv = nv(g)
 
