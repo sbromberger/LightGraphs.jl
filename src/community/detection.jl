@@ -18,7 +18,7 @@ function community_detection_nback(g::Graph, k::Int)
     c
 end
 
-function community_detection_threshold(g, coords)
+function community_detection_threshold(g::SimpleGraph, coords::AbstractArray)
     # TODO use a more intelligent method to set the threshold
     # 0 based thresholds are highly sensitive to errors.
     c = ones(Int, nv(g))
