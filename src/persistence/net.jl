@@ -42,7 +42,6 @@ function loadnet(f::IO, gname::AbstractString = "g")
     while ismatch(r"^\*Arcs",line)
         for fline in eachline(f)
             line = fline
-            orin
             m = matchall(r"\d+",line)
             length(m) < 2 && break
             add_edge!(g, parse(Int, m[1]), parse(Int, m[2]))
