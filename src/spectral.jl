@@ -133,3 +133,37 @@ function CombinatorialAdjacency(g::Graph)
     return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
 end
 end # @require
+
+
+"""Returns a sparse node-arc incidence matrix for a graph, indexed by
+`[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
+directed graphs, a value of `-1` indicates that `src(e) == v`, while a
+value of `1` indicates that `dst(e) == v`. Otherwise, the value is
+`0`. For undirected graphs, both entries are `1`.
+"""
+function incidence_matrix(g::SimpleGraph, T::DataType=Int)
+    isdir = is_directed(g)
+    n_v = nv(g)
+    n_e = ne(g)
+    nz = 2 * n_e
+    
+    # every col has the same 2 entries
+    colpt = collect(1:2:(nz + 1))
+    nzval = repmat([isdir ? -one(T) : one(T), one(T)], n_e)
+
+    # iterate over edges for row indices
+    rowval = zeros(Int, nz)
+    i = 1
+    for u in vertices(g)
+        for v in out_neighbors(g, u)
+            if isdir || u < v # add every edge only once
+                rowval[2*i - 1] = u
+                rowval[2*i] = v
+                i += 1
+            end
+        end
+    end
+
+    spmx = SparseMatrixCSC(n_v,n_e,colpt,rowval,nzval)
+    return spmx
+end
