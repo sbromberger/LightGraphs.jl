@@ -4,19 +4,19 @@ Abstract type that allows users to pass in their preferred Algorithm
 abstract AbstractFlowAlgorithm
 
 """
-Forces the maximum_flow function to use Edmonds Karp\'s maximum flow algorithm.
+Forces the maximum_flow function to use the Edmonds–Karp algorithm.
 """
 type EdmondsKarpAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
-Forces the maximum_flow function to use Dinic\'s maximum flow algorithm.
+Forces the maximum_flow function to use Dinic\'s algorithm.
 """
 type DinicAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
-Forces the maximum_flow function to use the Push-Relabel maximum flow algorithm.
+Forces the maximum_flow function to use the Push-Relabel algorithm.
 """
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
 end
@@ -49,8 +49,9 @@ in DefaultDistance cannot be changed, an array of ones is created. Returns the
 residual graph and the modified capacity_matrix (when DefaultDistance is used.)
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph,        # the input graph
-capacity_matrix::AbstractArray{T,2}     # input capacity matrix
+
+- flow_graph::LightGraphs.DiGraph,        # the input graph
+- capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
 
 function residual(
@@ -68,9 +69,7 @@ function residual(
     return residual_graph
 end
 
-"""
-Method for Edmonds Karp\'s Algorithm
-"""
+# Method for Edmonds–Karp algorithm
 
 function maximum_flow{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
@@ -83,9 +82,7 @@ function maximum_flow{T<:Number}(
     return edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
 end
 
-"""
-Method for Push-Relabel Algorithm
-"""
+# Method for Push-relabel algorithm
 
 function maximum_flow{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
@@ -98,9 +95,7 @@ function maximum_flow{T<:Number}(
     return push_relabel(residual_graph, source, target, capacity_matrix)
 end
 
-"""
-Method for Dinic\'s algorithm
-"""
+# Method for Dinic's algorithm
 
 function maximum_flow{T<:Number}(
     flow_graph::LightGraphs.DiGraph,       # the input graph
@@ -114,18 +109,49 @@ function maximum_flow{T<:Number}(
 end
 
 """
-Generic maximum_flow function that can use one of the three flow algorithms:
-1. Endmond-Karp\'s algorithm: O(VE^2).
-2. Dinic\'s blocking-flow algorithm: O(V^2E)
-3. Push-Relabel algorithm: O(V^3).
+Generic maximum_flow function. Requires arguments:
 
-Requires arguments:
-flow_graph::LightGraphs.DiGraph       # the input graph
-source::Int                           # the source vertex
-target::Int                           # the target vertex
-capacity_matrix::AbstractArray{T,2}   # edge flow capacities
-;
-algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
+- flow_graph::LightGraphs.DiGraph       # the input graph
+- source::Int                           # the source vertex
+- target::Int                           # the target vertex
+- capacity_matrix::AbstractArray{T,2}   # edge flow capacities
+- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
+
+The function defaults to the Push-relabel algorithm. Alternatively, the algorithm
+to be used can also be specified through a keyword argument. A default capacity of 1
+is assumed for each link if no capacity matrix is provided.
+
+### Usage Example:
+
+```julia
+
+# Create a flow-graph and a capacity matrix
+flow_graph = DiGraph(8)
+flow_edges = [
+    (1,2,10),(1,3,5),(1,4,15),(2,3,4),(2,5,9),
+    (2,6,15),(3,4,4),(3,6,8),(4,7,16),(5,6,15),
+    (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
+]
+capacity_matrix = zeros(Int, 8, 8)
+for e in flow_edges
+    u, v, f = e
+    add_edge!(flow_graph, u, v)
+    capacity_matrix[u,v] = f
+end
+
+# Run default maximum_flow without the capacity_matrix
+f, F = maximum_flow(flow_graph, 1, 8)
+
+# Run default maximum_flow with the capacity_matrix
+f, F = maximum_flow(flow_graph, 1, 8)
+
+# Run Endmonds-Karp algorithm
+f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorithm())
+
+# Run Dinic's algorithm
+f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())
+
+```
 """
 
 function maximum_flow{T<:Number}(
