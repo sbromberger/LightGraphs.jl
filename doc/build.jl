@@ -328,6 +328,17 @@ undirected graphs:
 {{laplacian_matrix, laplacian_spectrum}}
 """
 
+@file "maximumflow.md" """
+*LightGraphs.jl* provids three algorithms for [maximum flow](https://en.wikipedia.org/wiki/Maximum_flow_problem)
+computation:
+
+- [Edmonds–Karp algorithm](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
+- [Dinic's algorithm](https://en.wikipedia.org/wiki/Dinic%27s_algorithm)
+- [Push-relabel algorithm](https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm)
+
+{{maximum_flow}}
+"""
+
 @file "operators.md" """
 *LightGraphs.jl* implements the following graph operators. In general,
 functions with two graph arguments will require them to be of the same type
