@@ -1,6 +1,5 @@
 """
-sample!(rng, a, k; exclude = ())
-sample!(a, k; exclude = ())
+sample!([rng,] a, k; exclude = ())
 
 Sample `k` element from array `a` without repetition and eventually excluding elements in `exclude`.
 Pay attention, it changes the order of the elements in `a`.
