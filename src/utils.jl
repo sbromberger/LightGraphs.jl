@@ -1,9 +1,9 @@
 """
+sample!(rng, a, k; exclude = ())
+sample!(a, k; exclude = ())
+
 Sample `k` element from array `a` without repetition and eventually excluding elements in `exclude`.
 Pay attention, it changes the order of the elements in `a`.
-
-sample!(rng, a, k; exclude = nothing)
-sample!(a, k; exclude = ()))
 """
 function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = ())
     length(a) < k + length(exclude) && error("Array too short.")
