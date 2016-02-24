@@ -22,7 +22,6 @@ graphml_g = gs["G"]
 @test nv(graphml_g) == 13
 @test ne(graphml_g) == 15
 gs = load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), :graphml)
-println(keys(gs))
 @test gs["graph"] == Graph(gs["digraph"])
 @test save(f, g3, :graphml) == 1
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), "badname", :graphml)
@@ -50,6 +49,8 @@ gml1a = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), "gml1", :gml)
 @test gml1a == gml1
 @test nv(gml1) == nv(gml2) == 10
 @test ne(gml1) == ne(gml2) == 28
+gml1a = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), "gml1", :gml)
+@test gml1a == gml1
 gs = load(joinpath(testdir,"testdata", "twounnamedgraphs.gml"), :gml)
 gml1 = gs["graph"]
 gml2 = gs["digraph"]
@@ -58,6 +59,20 @@ gml2 = gs["digraph"]
 @test nv(gml2) == 4
 @test ne(gml2) == 9
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.gml"), "badname", :gml)
+
+@test save(f, gml1, :gml) == 1
+gml1 = load(f, :gml)["graph"]
+@test nv(gml1) == 4
+@test ne(gml1) == 6
+
+gs = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), :gml)
+@test save(f, gs, :gml) == 2
+gs = load(f, :gml)
+gml1 = gs["gml1"]
+gml2 = gs["digraph"]
+@test nv(gml1) == nv(gml2) == 10
+@test ne(gml1) == ne(gml2) == 28
+
 
 # test :dot
 gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
