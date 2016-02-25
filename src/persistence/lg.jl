@@ -109,7 +109,7 @@ end
 # savelg(io::IO, g::SimpleGraph, n::AbstractString) =
 #     savelg_mult(io, Dict(n=>g))
 
-# write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed Graph", fn; compress=compress)
-# write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed DiGraph", fn; compress=compress)
+# write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "graph", fn; compress=compress)
+# write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "digraph", fn; compress=compress)
 
 filemap[:lg] = (loadlg, loadlg_mult, savelg, savelg_mult)

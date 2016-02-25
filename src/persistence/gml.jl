@@ -22,9 +22,9 @@ function loadgml(io::IO, gname::AbstractString)
     for gs in p[:graph]
         dir = Bool(get(gs, :directed, 0))
         if dir
-            graphname = get(gs, :name, "Unnamed DiGraph")
+            graphname = get(gs, :name, "digraph")
         else
-            graphname = get(gs, :name, "Unnamed Graph")
+            graphname = get(gs, :name, "graph")
         end
         (gname == graphname) && return _gml_read_one_graph(gs, dir)
     end
@@ -37,9 +37,9 @@ function loadgml_mult(io::IO)
     for gs in p[:graph]
         dir = Bool(get(gs, :directed, 0))
         if dir
-            graphname = get(gs, :name, "Unnamed DiGraph")
+            graphname = get(gs, :name, "digraph")
         else
-            graphname = get(gs, :name, "Unnamed Graph")
+            graphname = get(gs, :name, "graph")
         end
         graphs[graphname] = _gml_read_one_graph(gs, dir)
     end
