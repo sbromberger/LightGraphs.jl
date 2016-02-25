@@ -23,7 +23,7 @@ function loaddot(io::IO, gname::AbstractString)
     p = Parsers.DOT.parse_dot(readall(io))
     for pg in p
         isdir = pg.directed
-        possname = isdir? Parsers.DOT.StringID("Unnamed DiGraph") : Parsers.DOT.StringID("Unnamed Graph")
+        possname = isdir? Parsers.DOT.StringID("digraph") : Parsers.DOT.StringID("graph")
         name = get(pg.id, possname).id
         name == gname && return _dot_read_one_graph(pg)
     end
@@ -37,7 +37,7 @@ function loaddot_mult(io::IO)
 
     for pg in p
         isdir = pg.directed
-        possname = isdir? Parsers.DOT.StringID("Unnamed DiGraph") : Parsers.DOT.StringID("Unnamed Graph")
+        possname = isdir? Parsers.DOT.StringID("digraph") : Parsers.DOT.StringID("graph")
         name = get(pg.id, possname).id
         graphs[name] = _dot_read_one_graph(pg)
     end
