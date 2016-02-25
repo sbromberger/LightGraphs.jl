@@ -22,7 +22,8 @@ graphml_g = gs["G"]
 @test nv(graphml_g) == 13
 @test ne(graphml_g) == 15
 gs = load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), :graphml)
-@test gs["Unnamed Graph"] == Graph(gs["Unnamed DiGraph"])
+println(keys(gs))
+@test gs["graph"] == Graph(gs["digraph"])
 @test save(f, g3, :graphml) == 1
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), "badname", :graphml)
 # test a graphml load that results in a warning
@@ -44,14 +45,14 @@ redirect_stderr(origSTDERR)
 # test :gml
 gs = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), :gml)
 gml1 = gs["gml1"]
-gml2 = gs["Unnamed DiGraph"]
+gml2 = gs["digraph"]
 gml1a = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), "gml1", :gml)
 @test gml1a == gml1
 @test nv(gml1) == nv(gml2) == 10
 @test ne(gml1) == ne(gml2) == 28
 gs = load(joinpath(testdir,"testdata", "twounnamedgraphs.gml"), :gml)
-gml1 = gs["Unnamed Graph"]
-gml2 = gs["Unnamed DiGraph"]
+gml1 = gs["graph"]
+gml2 = gs["digraph"]
 @test nv(gml1) == 4
 @test ne(gml1) == 6
 @test nv(gml2) == 4

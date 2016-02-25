@@ -30,8 +30,8 @@ function save(io::IO, g::SimpleGraph, gname::AbstractString, t::Symbol=:lg)
 end
 
 # save a single graph without name
-save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "Unnamed Graph", t)
-save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "Unnamed DiGraph", t)
+save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
+save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
 
 # save a dictionary of graphs {"name" => graph}
 """Saves multiple graphs in a dictionary mapping graph name to graph to stream

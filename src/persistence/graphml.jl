@@ -36,18 +36,14 @@ function loadgraphml(io::IO, gname::AbstractString)
             e = XMLElement(c)  # this makes an XMLElement instance
             if name(e) == "graph"
                 edgedefault = attribute(e, "edgedefault")
-                isdirected = edgedefault=="directed" ? true :
+                isdir = edgedefault=="directed" ? true :
                              edgedefault=="undirected" ? false : error("Unknown value of edgedefault: $edgedefault")
                 if has_attribute(e, "id")
                     graphname = attribute(e, "id")
                 else
-                    if isdirected
-                        graphname = "Unnamed DiGraph"
-                    else
-                        graphname = "Unnamed Graph"
-                    end
+                    graphname =  isdir ? "digraph" : "graph"
                 end
-                gname == graphname && return _graphml_read_one_graph(e, isdirected)
+                gname == graphname && return _graphml_read_one_graph(e, isdir)
             else
                 warn("Skipping unknown XML element '$(name(e))'")
             end
@@ -68,18 +64,14 @@ function loadgraphml_mult(io::IO)
             e = XMLElement(c)  # this makes an XMLElement instance
             if name(e) == "graph"
                 edgedefault = attribute(e, "edgedefault")
-                isdirected = edgedefault=="directed" ? true :
+                isdir = edgedefault=="directed" ? true :
                              edgedefault=="undirected" ? false : error("Unknown value of edgedefault: $edgedefault")
                 if has_attribute(e, "id")
                     graphname = attribute(e, "id")
                 else
-                    if isdirected
-                        graphname = "Unnamed DiGraph"
-                    else
-                        graphname = "Unnamed Graph"
-                    end
+                    graphname =  isdir ? "digraph" : "graph"
                 end
-                graphs[graphname] =  _graphml_read_one_graph(e, isdirected)
+                graphs[graphname] =  _graphml_read_one_graph(e, isdir)
             else
                 warn("Skipping unknown XML element '$(name(e))'")
             end

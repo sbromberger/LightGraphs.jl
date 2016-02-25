@@ -1,3 +1,4 @@
+# include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
 using Requires
