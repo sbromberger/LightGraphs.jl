@@ -28,7 +28,10 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     return g
 end
 
-"""Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
+"""
+erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
+
+Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
 probability `p`. Undirected graphs are created by default; use
 `is_directed=true` to override.
@@ -52,7 +55,10 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
 end
 
 
-"""Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+"""
+watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int = -1)
+
+Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
 small model random graph with `n` vertices, each with degree `k`. Edges are
 randomized per the model based on probability `β`. Undirected graphs are
 created by default; use `is_directed=true` to override.
@@ -144,7 +150,10 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     return edges
 end
 
-doc"""Creates a random undirected
+"""
+random_regular_graph(n::Int, k::Int; seed::Int=-1)
+
+Creates a random undirected
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
 each with degree `k`.
 
@@ -178,7 +187,10 @@ function random_regular_graph(n::Int, k::Int; seed::Int=-1)
 end
 
 
-doc"""Creates a random undirected graph according to the [configuraton model]
+"""
+random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
+
+Creates a random undirected graph according to the [configuraton model]
 (http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
 It contains `n` vertices, the vertex `ì` having degree `k[i]`.
 
@@ -206,7 +218,10 @@ function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
     return g
 end
 
-doc"""Creates a random directed
+doc"""
+random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
+
+Creates a random directed
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
 each with degree `k`. The degree (in or out) can be
 specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
