@@ -28,6 +28,12 @@ g = WheelDiGraph(5)
 g = WheelGraph(5)
 @test nv(g) == 5 && ne(g) == 8
 
+g = Grid([3,3,4])
+@test nv(g) == 3*3*4
+@test ne(g) == 75
+@test maximum(degree(g)) == 6
+@test minimum(degree(g)) == 3
+
 g = crosspath(3, BinaryTree(2))
 # f = Vector{Vector{Int}}[[2 3 4];
 # [1 5];

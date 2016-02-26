@@ -100,3 +100,23 @@ g22 = CompleteGraph(2)
 h = tensor_product(g22, g22)
 @test nv(h) == 4
 @test ne(h) == 1
+
+nx = 20; ny = 21
+G = PathGraph(ny); H = PathGraph(nx)
+@time c = cartesian_product(G, H)
+@time g = crosspath(ny, PathGraph(nx));
+@test g == c
+
+function crosspath_slow(len, h)
+    g = h
+    m = nv(h)
+    for i in 1:len-1
+        k = nv(g)
+        g = blkdiag(g,h)
+        for v in 1:m
+            add_edge!(g, v+(k-m), v+k)
+        end
+    end
+    return g
+end
+@test crosspath_slow(2, g22) == crosspath(2,g22)
