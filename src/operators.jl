@@ -148,18 +148,7 @@ end
 
 
 """Replicate h len times and connect each vertex with its copies in a path""" 
-function crosspath(len, h)
-    g = h
-    m = nv(h)
-    for i in 1:len-1
-        k = nv(g)
-        g = blkdiag(g,h)
-        for v in 1:m
-            add_edge!(g, v+(k-m), v+k)
-        end
-    end
-    return g
-end
+crosspath(len::Integer, g::Graph) = cartesian_product(PathGraph(len), g)
 
 """Filters graph `g` to include only the vertices present in the iterable
 argument `vs`. Returns the subgraph of `g` induced by `vs`.

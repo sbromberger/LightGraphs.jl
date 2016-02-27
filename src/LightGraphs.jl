@@ -105,7 +105,7 @@ local_clustering,local_clustering_coefficient, global_clustering_coefficient,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
-CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph,
+CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
 WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
 
 #Datasets
