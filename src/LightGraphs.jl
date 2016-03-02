@@ -34,6 +34,7 @@ in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
+adjlist, in_adjlist, out_adjlist,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # distance
@@ -98,7 +99,7 @@ maximum_weight_maximal_matching,
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
-stochastic_block_model, 
+stochastic_block_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,

@@ -38,8 +38,10 @@ end
 @test indegree(h,1) == 0
 @test outdegree(h) == [3, 1, 1, 0, 0]
 @test outdegree(h,1) == 3
-@test in_neighbors(h,5) == LightGraphs.badj(h)[5] == LightGraphs.badj(h,5) == [2, 3]
-@test out_neighbors(h,1) == LightGraphs.fadj(h)[1] == LightGraphs.fadj(h,1) == [2, 3, 4]
+@test in_neighbors(h,5) == in_adjlist(h)[5] == [2, 3]
+@test out_neighbors(h,1) == out_adjlist(h)[1] == [2, 3, 4]
+@test out_adjlist(h) == adjlist(h)
+@test out_adjlist(g) == in_adjlist(g)
 
 @test p1 == g2
 @test issubset(h2, h1)

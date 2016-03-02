@@ -58,6 +58,9 @@ NOTE: returns a reference, not a copy. Do not modify result.
 badj(g::Graph) = fadj(g)
 badj(g::Graph, v::Int) = fadj(g, v)
 
+in_adjlist(g::Graph) = out_adjlist(g)
+
+
 
 """Returns the adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.

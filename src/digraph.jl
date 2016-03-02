@@ -60,6 +60,12 @@ badj(g::DiGraph) = g.badjlist
 badj(g::DiGraph, v::Int) = badj(g)[v]
 
 
+"""
+The equivalent of `adjlist` but considering neighbors through incoming edges.
+"""
+in_adjlist(g::DiGraph) = badj(g)
+
+
 function copy(g::DiGraph)
     return DiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 end

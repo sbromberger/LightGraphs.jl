@@ -22,7 +22,6 @@ graphml_g = gs["G"]
 @test nv(graphml_g) == 13
 @test ne(graphml_g) == 15
 gs = load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), :graphml)
-println(keys(gs))
 @test gs["graph"] == Graph(gs["digraph"])
 @test save(f, g3, :graphml) == 1
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), "badname", :graphml)
