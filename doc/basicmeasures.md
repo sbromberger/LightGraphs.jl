@@ -13,7 +13,7 @@ Return the vertices of a graph.
 ```
 edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Return an iterator to the edges of a graph.
+Return an iterator to the edges of a graph. The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
 
 ### is_directed
 ```
@@ -72,21 +72,9 @@ dst(e::Pair{Int64,Int64})
 ```
 Return destination of an edge.
 
-### reverse
 ```
-reverse(g::LightGraphs.DiGraph)
+reverse(g::DiGraph)
 ```
-```
-reverse(s::AbstractString) -> AbstractString
-```
-
-Reverses a string
-
-```
-reverse(v [, start=1 [, stop=length(v) ]] )
-```
-
-Return a copy of `v` reversed from start to stop.
 
 (`DiGraph` only) Produces a graph where all edges are reversed from the original.
 

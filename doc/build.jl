@@ -1,4 +1,7 @@
+# include("../src/LightGraphs.jl")
+# pd = pwd()
 using LightGraphs
+pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
 
 # This file generated the Markdown documentation files.
 
@@ -26,20 +29,41 @@ buildwriter(t::AbstractString) = Expr(:block,
     [buildwriter(p, iseven(n)) for (n, p) in enumerate(split(t, r"^{{|\n{{|}}\s*(\n|$)"))]...
 )
 
+
 buildwriter(part, isdef) = isdef ?
     begin
         parts = Expr(:vect, [:(($(parse(p))), @doc($(parse(p)))) for p in split(part, r"\s*,\s*")]...)
         quote
             for (f, docstring) in $(esc(parts))
                 if isa(f, Function)
-                    md_methodtable(file, f)
+                    docs = getlgdoc(docstring)
+                    printsignature = true
+                    if isa(docs[1][1], Markdown.Code)
+                        c = docs[1][1].code
+                        s = split(string(f),".")
+                        if ((length(s) == 1  &&  startswith(c, s[1]))
+                           || (length(s) > 1 && s[1] == "LightGraphs" && startswith(c, s[2])))
+                            printsignature = false
+                        end
+                    end
+                    printsignature && md_methodtable(file, f)
+                    writemime(file, "text/plain", docs[1])
+                    if length(docs) > 1
+                        for d in docs[2:end]
+                            println(file)
+                            writemime(file, "text/plain", d)
+                        end
+                    end
+                else
+                    writemime(file, "text/plain", docstring)
                 end
-                writemime(file, "text/plain", docstring)
                 println(file)
             end
         end
     end :
     :(print(file, $(esc(part))))
+
+getlgdoc(docstring) = docstring.content[find(c->c.meta[:module] == LightGraphs, docstring.content)]
 
 function md_methodtable(io, f)
     println(io, "### ", first(methods(f)).func.code.name)
@@ -51,7 +75,6 @@ function md_methodtable(io, f)
 end
 function md_method(io, m)
     # We only print methods with are defined in the parent (project) directory
-    pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
     if !(startswith(string(m.func.code.file), pd))
         return
     end
