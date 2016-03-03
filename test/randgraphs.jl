@@ -97,6 +97,11 @@ rd = random_regular_digraph(10, 8, dir=:out, seed=4)
 @test ne(rd) == 80
 @test is_directed(rd)
 
+g = stochastic_block_model(2., 3., [100,100])
+@assert  4.5 < mean(degree(g)) < 5.5
+g = stochastic_block_model(3., 4., [100,100,100])
+@assert  10.5 < mean(degree(g)) < 11.5
+
 
 function generate_nbp_sbm(numedges, sizes)
     density = 1
@@ -120,6 +125,7 @@ bc = blockcounts(sbm, g)
 bp = blockfractions(sbm, g) ./ (sizes * sizes')
 ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
 @test norm(ratios) < 0.25
+
 
 sizes = [200, 200, 100]
 internaldeg = 15
