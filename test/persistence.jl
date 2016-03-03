@@ -86,3 +86,23 @@ rm(fname)
 g10 = load(joinpath(testdir, "testdata", "kinship.net"), :net)["g"]
 @test nv(g10) == 6
 @test ne(g10) == 8
+
+using JLD
+function testjldio(path::AbstractString, g::Graph)
+    jldfile = jldopen(path, "w")
+    jldfile["g"] = g
+    close(jldfile)
+
+    jldfile = jldopen(path, "r")
+    gs = read(jldfile, "g")
+    gloaded = Graph(gs)
+    @test gloaded == g
+end
+
+graphs = [PathGraph(10), CompleteGraph(5), WheelGraph(7)]
+for (i,g) in enumerate(graphs)
+    path = joinpath(testdir,"testdata", "test.$i.jld")
+    testjldio(path, g)
+    #delete the file (it gets left on test failure so you could debug it)
+    rm(path)
+end
