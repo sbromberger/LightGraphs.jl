@@ -49,45 +49,6 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
 end
 
 
-"""
-Given two oriented edges i->j and k->l in g, the
-non-backtraking matrix B is defined as
-
-B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
-
-returns a matrix B, and an edgemap storing the oriented edges' positions in B
-"""
-function non_backtracking_matrix(g::SimpleGraph)
-    # idedgemap = Dict{Int, Edge}()
-    edgeidmap = Dict{Edge, Int}()
-    m = 0
-    for e in edges(g)
-        m += 1
-        edgeidmap[e] = m
-    end
-
-    if !is_directed(g)
-        for e in edges(g)
-            m += 1
-            edgeidmap[reverse(e)] = m
-        end
-    end
-
-    B = zeros(Float64, m, m)
-
-    for (e,u) in edgeidmap
-        i, j = src(e), dst(e)
-        for k in in_neighbors(g,i)
-            k == j && continue
-            v = edgeidmap[Edge(k, i)]
-            B[v, u] = 1
-        end
-    end
-
-    return B, edgeidmap
-end
-
-
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
@@ -126,6 +87,7 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 
 
 # GraphMatrices integration
+# CombinatorialAdjacency(g) returns a type that supports iterative linear solvers and eigenvector solvers.
 @require GraphMatrices begin
 
 function CombinatorialAdjacency(g::Graph)
@@ -167,3 +129,134 @@ function incidence_matrix(g::SimpleGraph, T::DataType=Int)
     spmx = SparseMatrixCSC(n_v,n_e,colpt,rowval,nzval)
     return spmx
 end
+
+"""
+Given two oriented edges i->j and k->l in g, the
+non-backtraking matrix B is defined as
+
+B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+
+returns a matrix B, and an edgemap storing the oriented edges' positions in B
+"""
+function non_backtracking_matrix(g::SimpleGraph)
+    # idedgemap = Dict{Int, Edge}()
+    edgeidmap = Dict{Edge, Int}()
+    m = 0
+    for e in edges(g)
+        m += 1
+        edgeidmap[e] = m
+    end
+
+    if !is_directed(g)
+        for e in edges(g)
+            m += 1
+            edgeidmap[reverse(e)] = m
+        end
+    end
+
+    B = zeros(Float64, m, m)
+
+    for (e,u) in edgeidmap
+        i, j = src(e), dst(e)
+        for k in in_neighbors(g,i)
+            k == j && continue
+            v = edgeidmap[Edge(k, i)]
+            B[v, u] = 1
+        end
+    end
+
+    return B, edgeidmap
+end
+
+"""Nonbacktracking: a compact representation of the nonbacktracking operator
+
+    g: the underlying graph
+    edgeidmap: the association between oriented edges and index into the NBT matrix
+
+The Nonbacktracking operator can be used for community detection.
+This representation is compact in that it uses only ne(g) additional storage
+and provides an implicit representation of the matrix B_g defined below.
+
+Given two oriented edges i->j and k->l in g, the
+non-backtraking matrix B is defined as
+
+B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+
+This type is in the style of GraphMatrices.jl and supports the necessary operations
+for computed eigenvectors and conducting linear solves.
+
+Additionally the contract!(vertexspace, nbt, edgespace) method takes vectors represented in
+the domain of B and represents them in the domain of the adjacency matrix of g.
+"""
+type Nonbacktracking{G}
+    g::G
+    edgeidmap::Dict{Edge,Int}
+    m::Int
+end
+
+import Base: size, eltype, issym
+size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
+length(nbt::Nonbacktracking) = nbt.m*nbt.m
+eltype(nbt::Nonbacktracking) = Float64
+issym(nbt::Nonbacktracking) = false
+
+function Nonbacktracking(g::SimpleGraph)
+    edgeidmap = Dict{Edge, Int}()
+    m = 0
+    for e in edges(g)
+        m += 1
+        edgeidmap[e] = m
+    end
+    if !is_directed(g)
+        for e in edges(g)
+            m += 1
+            edgeidmap[reverse(e)] = m
+        end
+    end
+    return Nonbacktracking(g, edgeidmap,m)
+end
+
+import Base.*
+function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
+    length(x) == nbt.m || error("dimension mismatch")
+    y = zeros(T, length(x))
+    for (e,u) in nbt.edgeidmap
+        i, j = src(e), dst(e)
+        for k in in_neighbors(nbt.g,i)
+            k == j && continue
+            v = nbt.edgeidmap[Edge(k, i)]
+            y[v] += x[u]
+        end
+    end
+    return y
+end
+
+function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
+    y = zeros(x)
+    for i in 1:nbt.m
+        y[:,i] = nbt * x[:,i]
+    end
+    return y
+end
+
+"""contract!(vertexspace, nbt, edgespace) in place version of
+contract(nbt, edgespace). modifies first argument
+"""
+function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
+    for i=1:nv(nbt.g)
+        for j in neighbors(nbt.g, i)
+            u = nbt.edgeidmap[Edge(j,i)]
+            vertexspace[i] += edgespace[u]
+        end
+    end
+end
+
+"""contract(nbt, edgespace)
+Integrates out the edges by summing over the edges incident to each vertex.
+"""
+function contract(nbt::Nonbacktracking, edgespace::Vector)
+    y = zeros(eltype(edgespace), nv(nbt.g))
+    contract!(y,nbt,edgespace)
+    return y
+end
+
