@@ -42,7 +42,7 @@ function boykov_kolmogorov_impl{T<:Number}(
     PARENT = zeros(Int, n)
 
     A = [source,target]
-    O = Int[]
+    O = Vector{Int}()
 
     while true
       # growth stage
@@ -111,7 +111,7 @@ function find_path!{T<:Number}(
       pop!(A)
     end
 
-    return Int[]
+    return Vector{Int}()
 end
 
 function augment!{T<:Number}(
