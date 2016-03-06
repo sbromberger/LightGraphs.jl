@@ -2,7 +2,7 @@ language: julia
 sudo: false
 os:
   - linux
-  - osx
+#  - osx
 julia:
   - release
   - nightly
