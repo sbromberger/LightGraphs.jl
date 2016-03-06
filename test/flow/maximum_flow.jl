@@ -1,6 +1,3 @@
-using LightGraphs
-using Base.Test
-
 #### Graphs for testing
 graphs = [
   # Graph with 8 vertices
