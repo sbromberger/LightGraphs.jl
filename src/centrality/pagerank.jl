@@ -11,7 +11,7 @@ function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
     S = vec(sum(M,1))
     S = 1./S
     S[find(S .== Inf)]=0.0
-    M = Diagonal(S) *  M'
+    M = scale(S, M')
     N = nv(g)
     x = repmat([1.0/N], N)
     p = repmat([1.0/N], N)
