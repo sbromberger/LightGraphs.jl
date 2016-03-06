@@ -15,7 +15,7 @@ Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 Uses a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
-residual_graph::LightGraphs.DiGraph    # the input graph
+residual_graph::DiGraph                # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -24,7 +24,7 @@ Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 
 function boykov_kolmogorov_impl{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,   # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -61,7 +61,7 @@ function boykov_kolmogorov_impl{T<:Number}(
 end
 
 function find_path!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,   # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
@@ -154,7 +154,7 @@ function augment!{T<:Number}(
 end
 
 function adopt!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,   # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix

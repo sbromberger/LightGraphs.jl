@@ -4,7 +4,7 @@ graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%
 Returns the value of the maximum flow as well as the final flow matrix.
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 Requires arguments:
-- residual_graph::LightGraphs.DiGraph    # the input graph
+- residual_graph::DiGraph                # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -94,7 +94,7 @@ Flag Values:
 2 => No Path to source
 """
 function fetch_path{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
@@ -122,7 +122,7 @@ Flag Values:
 1 => No Path to target
 2 => No Path to source
 Requires arguments:
-    residual_graph::LightGraphs.DiGraph        # the input graph
+    residual_graph::DiGraph                # the input graph
     source::Int                            # the source vertex
     target::Int                            # the target vertex
     flow_matrix::AbstractArray{T,2}        # the current flow matrix
@@ -131,7 +131,7 @@ Requires arguments:
     S::Vector{Int}                         # successor table of path init to -1s
 """
 function fetch_path!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
