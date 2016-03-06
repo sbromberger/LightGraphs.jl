@@ -47,25 +47,25 @@ The returned iterator is valid for one pass over the edges, and is invalidated b
 """
 edges(g::SimpleGraph) = EdgeIter(g)
 
-"""Returns the forward adjacency list of a graph.
+"""
+    adjlist(g)
 
-The Array, where each vertex the Array of destinations for each of the edges eminating from that vertex.
-This is equivalent to:
+Returns the adjacency list of a graph, such that `adjlist(g)[v] == neighbors(g,v)` is
+a vector of neighbors of vertex `v`.
 
-    fadj = [Vector{Int}() for _ in vertices(g)]
-    for e in edges(g)
-        push!(fadj[src(e)], dst(e))
-    end
-    fadj
+For directed graphs only neighbors through outgoing edges are considered
+(see `in_adjlist` for the `in_neighbors`) version.
 
-For most graphs types this is pre-calculated.
-
-The optional second argument take the `v`th vertex adjacency list, that is:
-
-    fadj(g, v::Int) == fadj(g)[v]
+For most graph types this is pre-calculated.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
+adjlist(g::SimpleGraph) = out_adjlist(g)
+
+
+"Equivalent to `adjlist`."
+out_adjlist(g::SimpleGraph) = fadj(g)
+
 fadj(g::SimpleGraph) = g.fadjlist
 fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
 
@@ -110,12 +110,15 @@ Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-"""Remove the vertex `v` from graph `g`.
+"""
+    rem_vertex!(g, v)
+
+Remove the vertex `v` from graph `g`.
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
 After removal the vertices in the ` g` will be indexed by 1:n-1.
-This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
+This is an  `O(k^2)` operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Note: An exception will be raised if the vertex `v`  is not in the `g`.
 """
 function rem_vertex!(g::SimpleGraph, v::Int)
@@ -201,18 +204,28 @@ The number of histogram buckets is based on the number of vertices in `g`.
 degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
 
-"""Returns a list of all neighbors connected to vertex `v` by an incoming edge.
+"""
+    in_neighbors(g, v)
+
+Returns a list of all neighbors connected to vertex `v` by an incoming edge.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
 in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
-"""Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
+
+"""
+    out_neighbors(g, v)
+
+Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
 out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
 
-"""Returns a list of all neighbors of vertex `v` in `g`.
+"""
+    neighbors(g, v)
+
+Returns a list of all neighbors of vertex `v` in `g`.
 
 For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
 
@@ -220,7 +233,11 @@ NOTE: returns a reference, not a copy. Do not modify result.
 """
 neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
 
-"Returns the neighbors common to vertices `u` and `v` in `g`."
+"""
+    common_neighbors(g, u, v)
+
+Returns the neighbors common to vertices `u` and `v` in `g`.
+"""
 common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
 "Returns true if `g` has any self loops."
