@@ -30,7 +30,7 @@ import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-in_edges, out_edges, has_vertex, has_edge, is_directed,
+fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
