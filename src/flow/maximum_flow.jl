@@ -140,6 +140,9 @@ The function defaults to the Push-relabel algorithm. Alternatively, the algorith
 to be used can also be specified through a keyword argument. A default capacity of 1
 is assumed for each link if no capacity matrix is provided.
 
+All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix.
+For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
+
 ### Usage Example:
 
 ```julia
@@ -169,6 +172,9 @@ f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorith
 
 # Run Dinic's algorithm
 f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())
+
+# Run Boykov-Kolmogorov algorithm
+f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmogorovAlgorithm())
 
 ```
 """
