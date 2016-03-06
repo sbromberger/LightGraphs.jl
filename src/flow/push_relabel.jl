@@ -11,14 +11,14 @@ Maintains the following auxillary arrays:
 
 Requires arguments:
 
-- residual_graph::LightGraphs.DiGraph    # the input graph
+- residual_graph::DiGraph                # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function push_relabel{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,   # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -88,7 +88,7 @@ Pushes as much flow as possible through the given edge.
 
 Requires arguements:
 
-- residual_graph::LightGraphs.DiGraph  # the input graph
+- residual_graph::DiGraph              # the input graph
 - u::Int                               # input from-vertex
 - v::Int                               # input to-vetex
 - capacity_matrix::AbstractArray{T,2}
@@ -100,7 +100,7 @@ Requires arguements:
 """
 
 function push_flow!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,     # the input graph
+    residual_graph::DiGraph,             # the input graph
     u::Int,                              # input from-vertex
     v::Int,                              # input to-vetex
     capacity_matrix::AbstractArray{T,2},
@@ -131,7 +131,7 @@ Reduces the number of relabels required.
 
 Requires arguments:
 
-- residual_graph::LightGraphs.DiGraph    # the input graph
+- residual_graph::DiGraph                # the input graph
 - h::Int                                 # cutoff height
 - excess::AbstractArray{T,1}
 - height::AbstractArray{Int,1}
@@ -141,7 +141,7 @@ Requires arguments:
 """
 
 function gap!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     h::Int,                                # cutoff height
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
@@ -166,7 +166,7 @@ edge.
 
 Requires arguments:
 
-- residual_graph::LightGraphs.DiGraph     # the input graph
+- residual_graph::DiGraph                 # the input graph
 - v::Int                                  # input vertex to be relabeled
 - capacity_matrix::AbstractArray{T,2}
 - flow_matrix::AbstractArray{T,2}
@@ -178,7 +178,7 @@ Requires arguments:
 """
 
 function relabel!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::DiGraph,                # the input graph
     v::Int,                                 # input vertex to be relabeled
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
@@ -208,7 +208,7 @@ vertex if the excess remains non-zero.
 
 Requires arguments:
 
-- residual_graph::LightGraphs.DiGraph     # the input graph
+- residual_graph::DiGraph                 # the input graph
 - v::Int                                  # vertex to be discharged
 - capacity_matrix::AbstractArray{T,2}
 - flow_matrix::AbstractArray{T,2}
@@ -219,7 +219,7 @@ Requires arguments:
 - Q::AbstractArray{Int,1}
 """
 function discharge!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::DiGraph,                # the input graph
     v::Int,                                 # vertex to be discharged
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},

@@ -16,6 +16,12 @@ type DinicAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
+Forces the maximum_flow function to use the Boykov-Kolmogorov algorithm.
+"""
+type BoykovKolmogorovAlgorithm <: AbstractFlowAlgorithm
+end
+
+"""
 Forces the maximum_flow function to use the Push-Relabel algorithm.
 """
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
@@ -26,9 +32,9 @@ Type that returns 1 if a forward edge exists, and 0 otherwise
 """
 
 type DefaultCapacity <: AbstractArray{Int, 2}
-    flow_graph::LightGraphs.DiGraph
+    flow_graph::DiGraph
     nv::Int
-    DefaultCapacity(flow_graph::LightGraphs.DiGraph) = new(flow_graph, nv(flow_graph))
+    DefaultCapacity(flow_graph::DiGraph) = new(flow_graph, nv(flow_graph))
 end
 
 getindex(d::DefaultCapacity, s::Int, t::Int) = if has_edge(d.flow_graph, s , t) 1 else 0 end
@@ -50,12 +56,12 @@ residual graph and the modified capacity_matrix (when DefaultDistance is used.)
 
 Requires arguments:
 
-- flow_graph::LightGraphs.DiGraph,        # the input graph
+- flow_graph::DiGraph,                    # the input graph
 - capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
 
 function residual(
-    flow_graph::LightGraphs.DiGraph         # the input graph
+    flow_graph::DiGraph                     # the input graph
     )
 
     n = nv(flow_graph)
@@ -72,20 +78,46 @@ end
 # Method for Edmonds–Karp algorithm
 
 function maximum_flow{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    flow_graph::DiGraph,                   # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    algorithm::EdmondsKarpAlgorithm         # keyword argument for algorithm
+    algorithm::EdmondsKarpAlgorithm        # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
     return edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
 end
 
+# Method for Dinic's algorithm
+
+function maximum_flow{T<:Number}(
+    flow_graph::DiGraph,                   # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::DinicAlgorithm              # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
+    return dinic_impl(residual_graph, source, target, capacity_matrix)
+end
+
+# Method for Boykov-Kolmogorov algorithm
+
+function maximum_flow{T<:Number}(
+    flow_graph::DiGraph,                   # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::BoykovKolmogorovAlgorithm   # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
+    return boykov_kolmogorov_impl(residual_graph, source, target, capacity_matrix)
+end
+
 # Method for Push-relabel algorithm
 
 function maximum_flow{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    flow_graph::DiGraph,                   # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
@@ -95,23 +127,10 @@ function maximum_flow{T<:Number}(
     return push_relabel(residual_graph, source, target, capacity_matrix)
 end
 
-# Method for Dinic's algorithm
-
-function maximum_flow{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    algorithm::DinicAlgorithm             # keyword argument for algorithm
-    )
-    residual_graph = residual(flow_graph)
-    return dinic_impl(residual_graph, source, target, capacity_matrix)
-end
-
 """
 Generic maximum_flow function. Requires arguments:
 
-- flow_graph::LightGraphs.DiGraph       # the input graph
+- flow_graph::DiGraph                   # the input graph
 - source::Int                           # the source vertex
 - target::Int                           # the target vertex
 - capacity_matrix::AbstractArray{T,2}   # edge flow capacities
@@ -120,6 +139,9 @@ Generic maximum_flow function. Requires arguments:
 The function defaults to the Push-relabel algorithm. Alternatively, the algorithm
 to be used can also be specified through a keyword argument. A default capacity of 1
 is assumed for each link if no capacity matrix is provided.
+
+All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix.
+For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
 
 ### Usage Example:
 
@@ -151,16 +173,19 @@ f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorith
 # Run Dinic's algorithm
 f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())
 
+# Run Boykov-Kolmogorov algorithm
+f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmogorovAlgorithm())
+
 ```
 """
 
 function maximum_flow{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
+    flow_graph::DiGraph,                   # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2} =  # edge flow capacities
         DefaultCapacity(flow_graph);
-    algorithm::AbstractFlowAlgorithm  =     # keyword argument for algorithm
+    algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
         PushRelabelAlgorithm()
     )
     return maximum_flow(flow_graph, source, target, capacity_matrix, algorithm)
