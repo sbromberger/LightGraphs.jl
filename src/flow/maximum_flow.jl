@@ -16,6 +16,12 @@ type DinicAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
+Forces the maximum_flow function to use the Boykov-Kolmogorov algorithm.
+"""
+type BoykovKolmogorovAlgorithm <: AbstractFlowAlgorithm
+end
+
+"""
 Forces the maximum_flow function to use the Push-Relabel algorithm.
 """
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
@@ -82,19 +88,6 @@ function maximum_flow{T<:Number}(
     return edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
 end
 
-# Method for Push-relabel algorithm
-
-function maximum_flow{T<:Number}(
-    flow_graph::LightGraphs.DiGraph,       # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    algorithm::PushRelabelAlgorithm        # keyword argument for algorithm
-    )
-    residual_graph = residual(flow_graph)
-    return push_relabel(residual_graph, source, target, capacity_matrix)
-end
-
 # Method for Dinic's algorithm
 
 function maximum_flow{T<:Number}(
@@ -106,6 +99,32 @@ function maximum_flow{T<:Number}(
     )
     residual_graph = residual(flow_graph)
     return dinic_impl(residual_graph, source, target, capacity_matrix)
+end
+
+# Method for Boykov-Kolmogorov algorithm
+
+function maximum_flow{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::BoykovKolmogorovAlgorithm   # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
+    return boykov_kolmogorov_impl(residual_graph, source, target, capacity_matrix)
+end
+
+# Method for Push-relabel algorithm
+
+function maximum_flow{T<:Number}(
+    flow_graph::LightGraphs.DiGraph,       # the input graph
+    source::Int,                           # the source vertex
+    target::Int,                           # the target vertex
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    algorithm::PushRelabelAlgorithm        # keyword argument for algorithm
+    )
+    residual_graph = residual(flow_graph)
+    return push_relabel(residual_graph, source, target, capacity_matrix)
 end
 
 """

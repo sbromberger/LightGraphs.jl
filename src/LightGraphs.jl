@@ -90,7 +90,7 @@ a_star,
 # readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 load, save,
 # flow
-maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
+maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
 
 #matching
 maximum_weight_maximal_matching,
@@ -168,6 +168,7 @@ include("core.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
+            include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
         include("matching/linear-programming.jl")
         include("datasets/Datasets.jl")

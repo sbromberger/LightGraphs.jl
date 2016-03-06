@@ -28,18 +28,8 @@ d = LightGraphs.DefaultCapacity(flow_graph)
 @test typeof(transpose(d)) == LightGraphs.DefaultCapacity
 @test typeof(ctranspose(d)) == LightGraphs.DefaultCapacity
 
-# Test with default algorithm
-@test maximum_flow(flow_graph,1,8)[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix)[1] == 28
-
-# Test Edmonds Karp's algorithm
-@test maximum_flow(flow_graph,1,8,algorithm=EdmondsKarpAlgorithm())[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorithm())[1] == 28
-
-# Test Dinic's algorithm
-@test maximum_flow(flow_graph,1,8,algorithm=DinicAlgorithm())[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())[1] == 28
-
-# Test Push-Relabel algorithm
-@test maximum_flow(flow_graph,1,8,algorithm=PushRelabelAlgorithm())[1] == 3
-@test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=PushRelabelAlgorithm())[1] == 28
+# Test all algorithms
+for ALGO in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
+  @test maximum_flow(flow_graph,1,8,algorithm=ALGO())[1] == 3
+  @test maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=ALGO())[1] == 28
+end
