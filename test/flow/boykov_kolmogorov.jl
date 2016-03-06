@@ -18,7 +18,7 @@ TREE[target] = 2
 
 PARENT = zeros(Int, 3)
 
-A = [target,source]
+A = [source,target]
 
 residual_graph = LightGraphs.residual(G)
 
