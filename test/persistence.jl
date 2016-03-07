@@ -101,3 +101,43 @@ rm(fname)
 g10 = load(joinpath(testdir, "testdata", "kinship.net"), :net)["g"]
 @test nv(g10) == 6
 @test ne(g10) == 8
+
+using JLD
+
+function write_readback(path::AbstractString, g)
+    jldfile = jldopen(path, "w")
+    jldfile["g"] = g
+    close(jldfile)
+
+    jldfile = jldopen(path, "r")
+    gs = read(jldfile, "g")
+    return gs
+end
+
+function testjldio(path::AbstractString, g::Graph)
+    gs = write_readback(path, g)
+    gloaded = Graph(gs)
+    @test gloaded == g
+end
+
+println("*** Running JLD IO tests")
+graphs = [PathGraph(10), CompleteGraph(5), WheelGraph(7)]
+for (i,g) in enumerate(graphs)
+    path = joinpath(testdir,"testdata", "test.$i.jld")
+    testjldio(path, g)
+    #delete the file (it gets left on test failure so you could debug it)
+    rm(path)
+end
+
+Base.length(ei::LightGraphs.EdgeIter) = ei.m
+
+for (i,g) in enumerate(graphs)
+    eprop = Dict{Edge,Char}([(e, Char(i)) for e in edges(g)])
+    net = LightGraphs.Network{Graph, Int, Char}(g, 1:nv(g), eprop)
+    path = joinpath(testdir,"testdata", "test.$i.jld")
+    nsaved = write_readback(path, net)
+    @test LightGraphs.Network(nsaved) == net
+    #delete the file (it gets left on test failure so you could debug it)
+    rm(path)
+end
+println("*** Finished JLD IO tests")

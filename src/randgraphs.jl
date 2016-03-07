@@ -364,7 +364,7 @@ function make_edgestream(sbm::StochasticBlockModel)
     end
 end
 
-function Graph(nvg::Int, neg::Int, edgestream)
+function Graph(nvg::Int, neg::Int, edgestream::Task)
     g = Graph(nvg)
     # println(g)
     for (i,j) in edgestream
