@@ -194,12 +194,6 @@ type Nonbacktracking{G}
     m::Int
 end
 
-import Base: size, eltype, issym
-size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
-length(nbt::Nonbacktracking) = nbt.m*nbt.m
-eltype(nbt::Nonbacktracking) = Float64
-issym(nbt::Nonbacktracking) = false
-
 function Nonbacktracking(g::SimpleGraph)
     edgeidmap = Dict{Edge, Int}()
     m = 0
@@ -213,10 +207,13 @@ function Nonbacktracking(g::SimpleGraph)
             edgeidmap[reverse(e)] = m
         end
     end
-    return Nonbacktracking(g, edgeidmap,m)
+    return Nonbacktracking(g, edgeidmap, m)
 end
 
-import Base.*
+size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
+eltype(nbt::Nonbacktracking) = Float64
+issym(nbt::Nonbacktracking) = false
+
 function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
@@ -230,6 +227,26 @@ function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     end
     return y
 end
+
+function coo_sparse(nbt::Nonbacktracking)
+    m = nbt.m
+    #= I,J = zeros(Int, m), zeros(Int, m) =#
+    I,J = zeros(Int, 0), zeros(Int, 0)
+    for (e,u) in nbt.edgeidmap
+        i, j = src(e), dst(e)
+        for k in in_neighbors(nbt.g,i)
+            k == j && continue
+            v = nbt.edgeidmap[Edge(k, i)]
+            #= J[u] = v =#
+            #= I[u] = u =#
+            push!(I, v)
+            push!(J, u)
+        end
+    end
+    return I,J,1.0
+end
+
+sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m,nbt.m)
 
 function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
     y = zeros(x)
