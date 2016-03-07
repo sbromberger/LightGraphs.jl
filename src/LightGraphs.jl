@@ -82,6 +82,8 @@ indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 CombinatorialAdjacency, non_backtracking_matrix, incidence_matrix,
+nonbacktrack_embedding, Nonbacktracking,
+contract,
 
 # astar
 a_star,
