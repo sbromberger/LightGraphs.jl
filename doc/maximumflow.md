@@ -9,14 +9,15 @@ computation:
 ### maximum_flow
 ```
 maximum_flow(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64)
-maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T,2}, algorithm::LightGraphs.EdmondsKarpAlgorithm)
-maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T,2}, algorithm::LightGraphs.PushRelabelAlgorithm)
-maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T,2}, algorithm::LightGraphs.DinicAlgorithm)
-maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T,2})
+maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, algorithm::LightGraphs.EdmondsKarpAlgorithm)
+maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, algorithm::LightGraphs.DinicAlgorithm)
+maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, algorithm::LightGraphs.BoykovKolmogorovAlgorithm)
+maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, algorithm::LightGraphs.PushRelabelAlgorithm)
+maximum_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2})
 ```
 Generic maximum_flow function. Requires arguments:
 
-  * flow_graph::LightGraphs.DiGraph       # the input graph
+  * flow_graph::DiGraph                   # the input graph
   * source::Int                           # the source vertex
   * target::Int                           # the target vertex
   * capacity_matrix::AbstractArray{T,2}   # edge flow capacities
@@ -24,7 +25,7 @@ Generic maximum_flow function. Requires arguments:
 
 The function defaults to the Push-relabel algorithm. Alternatively, the algorithm to be used can also be specified through a keyword argument. A default capacity of 1 is assumed for each link if no capacity matrix is provided.
 
-All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix. For the Boykov-Kolmogorov algorithm specifically, the associated mincut is returned as a third output.
+All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix. For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
 
 ### Usage Example:
 
