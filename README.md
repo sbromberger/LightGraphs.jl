@@ -6,9 +6,6 @@
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 
-*NOTE: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3. Please upgrade to Julia 0.4 for the latest features.*
-
-
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -117,3 +114,10 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 ### Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
 Documentation for methods is also available via the Julia REPL help system.
+
+
+### Supported Versions
+* Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
+* Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
+* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue.
+
