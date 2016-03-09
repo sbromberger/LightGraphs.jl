@@ -12,7 +12,7 @@ type EdgeIter
 end
 
 eltype(::Type{EdgeIter}) = Edge
-
+length(edit::EdgeIter) = edit.m
 
 function EdgeIter(g::Graph)
     di = 1
