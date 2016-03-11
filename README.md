@@ -54,7 +54,9 @@ that, particularly for very large graphs, edge removal is a (relatively)
 expensive operation. An attempt to remove an edge that does not exist in the graph will result in an
 error.
 
-Use `nv(g)` and `ne(g)` to
+Use `nv(g)` and `ne(g)` to compute the number of vertices and edges respectively.
+
+`rem_vertex!(g, v)` alters the vertex identifiers. In particular, calling `n=nv(g)`, it swaps `v` and `n` and then removes `n`.
 
 `edges(g)` returns an iterator to the edge set. Use `collect(edge(set))` to fill
 an array with all edges in the graph.
@@ -84,6 +86,13 @@ add_edge!(g, 4, 5)
 
 # remove an edge between vertices 9 and 10
 rem_edge!(g, 9, 10)
+
+# create vertex 11
+add_vertex!(g)
+
+# remove vertex 2
+# attention: this changes the id of vertex nv(g) to 2
+rem_vertex!(g, 2)
 
 # get the neighbors of vertex 4
 neighbors(g, 4)

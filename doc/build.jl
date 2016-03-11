@@ -176,10 +176,6 @@ graphs are available using the following constructs:
 
 """
 
-# freadme = open("README.md", "r")
-# println(readall(freadme))
-# close(freadme)
-
 readme = open("README.md") do f
             readall(f)
         end
