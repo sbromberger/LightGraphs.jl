@@ -169,7 +169,7 @@ graphs are available using the following constructs:
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward
-(and, for directed graphs, backward) adjacency lists indexed by vertex. Edges
+(and, for directed graphs, backward) adjacency lists indexed by vertices. Edges
 may also be accessed via an iterator that yields `Edge` types containing
 `(src::Int, dst::Int)` values.
 
@@ -189,33 +189,19 @@ add an edge that already exists in a graph will result in a silent failure.
 Edges may be removed using `rem_edge!(g, e)`. Alternately, integers may be passed
 denoting the source and destination vertices (e.g., `rem_edge!(g, 1, 2)`). Note
 that, particularly for very large graphs, edge removal is a (relatively)
-expensive operation.
-
-An attempt to remove an edge that does not exist in the graph will result in an
+expensive operation. An attempt to remove an edge that does not exist in the graph will result in an
 error.
 
-Edge distances for most traversals may be passed in as a sparse or dense matrix
-of  values, indexed by `[src,dst]` vertices. That is, `distmx[2,4] = 2.5`
-assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
-Note that for undirected graphs, `distmx[4,2]` should also be set.
+Use `nv(g)` and `ne(g)` to
 
-Edge distances for undefined edges are ignored.
-
+`edges(g)` returns an iterator to the edge set. Use `collect(edge(set))` to fill
+an array with all edges in the graph.
 
 ### Installation
 Installation is straightforward:
 ```julia
-julia> Pkg.install("LightGraphs")
+julia> Pkg.add("LightGraphs")
 ```
-
-*LightGraphs.jl* requires the following packages:
-
-- [GZip](https://github.com/JuliaLang/GZip.jl)
-- [StatsBase](https://github.com/JuliaStats/StatsBase.jl)
-- [Docile](https://github.com/MichaelHatherly/Docile.jl)
-- [LightXML](https://github.com/JuliaLang/LightXML.jl)
-- [ParserCombinator](https://github.com/andrewcooke/ParserCombinator.jl)
-
 
 ### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
@@ -226,6 +212,7 @@ g = Graph()
 
 # create a 10-node undirected graph with no edges
 g = Graph(10)
+@assert nv(g) == 10
 
 # create a 10-node undirected graph with 30 randomly-selected edges
 g = Graph(10,30)
@@ -238,6 +225,13 @@ rem_edge!(g, 9, 10)
 
 # get the neighbors of vertex 4
 neighbors(g, 4)
+
+# iterate over the edges
+m = 0
+for e in edges(g)
+    m += 1
+end
+@assert m == ne(g)
 
 # show distances between vertex 4 and all other vertices
 dijkstra_shortest_paths(g, 4).dists
@@ -374,7 +368,18 @@ functions with two graph arguments will require them to be of the same type
 @file "pathing.md" """
 *LightGraphs.jl* provides several traversal and shortest-path algorithms, along with
 various utility functions. Where appropriate, edge distances may be passed in as a
-matrix of real number values. The matrix should be indexed by `[src, dst]` (see [Getting Started](gettingstarted.html) for more information).
+matrix of real number values.
+
+Edge distances for most traversals may be passed in as a sparse or dense matrix
+of  values, indexed by `[src,dst]` vertices. That is, `distmx[2,4] = 2.5`
+assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
+Note that also for undirected graphs `distmx[4,2]` has to be set.
+
+Any graph traversal  will traverse an edge only if it is present in the graph. When a distance matrix is passed in,
+
+1. distance values for undefined edges will be ignored, and
+2. any unassigned values (in sparse distance matrices), for edges that are present in the graph, will be assumed to take the default value of 1.0.
+3. any zero values (in sparse/dense distance matrices), for edges that are present in the graph, will instead have an implicit edge cost of 1.0.
 
 ## Graph Traversal
 

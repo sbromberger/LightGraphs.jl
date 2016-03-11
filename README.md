@@ -28,19 +28,44 @@ A graph *G* is described by a set of vertices *V* and edges *E*:
 
 Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will result in a silent failure.
 
-Edge distances for most traversals may be passed in as a sparse or dense matrix
-of `Float64` values, indexed by `[src,dst]` vertices. That is,
-`distmx[2,4] = 2.5` assigns the distance `2.5` to the (directed) edge
-connecting vertex 2 and vertex 4. Note that for undirected graphs,
-`distmx[4,2]` should also be set.
+### Core Concepts
+A graph *G* is described by a set of vertices *V* and edges *E*:
+*G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward
+(and, for directed graphs, backward) adjacency lists indexed by vertices. Edges
+may also be accessed via an iterator that yields `Edge` types containing
+`(src::Int, dst::Int)` values.
 
-Any graph traversal (in shortest-path/etc) will traverse an edge only if it is present in the graph. When a distance matrix is passed in,
+*LightGraphs.jl* provides two graph types: `Graph` is an undirected graph, and
+`DiGraph` is its directed counterpart.
 
-1. distance values for undefined edges will be ignored, and
-2. any unassigned values (in sparse distance matrices), for edges that are present in the graph, will be assumed to take the default value of 1.0.
-3. any zero values (in sparse/dense distance matrices), for edges that are present in the graph, will instead have an implicit edge cost of 1.0.
+Graphs are created using `Graph()` or `DiGraph()`; there are several options
+(see below for examples).
 
-### Basic Usage
+Edges are added to a graph using `add_edge!(g, e)`. Instead of an edge type
+integers may be passed denoting the source and destination vertices (e.g.,
+`add_edge!(g, 1, 2)`).
+
+Multiple edges between two given vertices are not allowed: an attempt to
+add an edge that already exists in a graph will result in a silent failure.
+
+Edges may be removed using `rem_edge!(g, e)`. Alternately, integers may be passed
+denoting the source and destination vertices (e.g., `rem_edge!(g, 1, 2)`). Note
+that, particularly for very large graphs, edge removal is a (relatively)
+expensive operation. An attempt to remove an edge that does not exist in the graph will result in an
+error.
+
+Use `nv(g)` and `ne(g)` to
+
+`edges(g)` returns an iterator to the edge set. Use `collect(edge(set))` to fill
+an array with all edges in the graph.
+
+### Installation
+Installation is straightforward:
+```julia
+julia> Pkg.add("LightGraphs")
+```
+
+### Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
 
 ```julia
@@ -49,6 +74,7 @@ g = Graph()
 
 # create a 10-node undirected graph with no edges
 g = Graph(10)
+@assert nv(g) == 10
 
 # create a 10-node undirected graph with 30 randomly-selected edges
 g = Graph(10,30)
@@ -62,8 +88,15 @@ rem_edge!(g, 9, 10)
 # get the neighbors of vertex 4
 neighbors(g, 4)
 
+# iterate over the edges
+m = 0
+for e in edges(g)
+    m += 1
+end
+@assert m == ne(g)
+
 # show distances between vertex 4 and all other vertices
-dijkstra_shortest_paths(g, 4).dists  
+dijkstra_shortest_paths(g, 4).dists
 
 # as above, but with non-default edge distances
 distmx = zeros(10,10)
@@ -73,7 +106,7 @@ dijkstra_shortest_paths(g, 4, distmx=distmx).dists
 
 # graph I/O
 g = load("mygraph.jgz", "mygraph")
-save(g,"mygraph.jgz"; compress=true)
+save("mygraph.jgz", g, "mygraph", compress=true)
 ```
 
 ### Current functionality
@@ -120,4 +153,3 @@ Documentation for methods is also available via the Julia REPL help system.
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
 * Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue.
-
