@@ -244,7 +244,65 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     end
 end
 
-"""StochasticBlockModel(n,nodemap,affinities)
+doc"""
+    stochastic_block_model(c::Matrix{Float64}, n::Vector{Int}; seed::Int = -1)
+    stochastic_block_model(cin::Float64, coff::Float64, n::Vector{Int}; seed::Int = -1)
+
+Returns a Graph generated according to the Stochastic Block Model (SBM).
+
+`c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
+           Only the upper triangular part is considered, since the lower traingular is
+           determined by c[b,a] = c[a,b] * n[a]/n[b].
+`n[a]` : Number of vertices in block `a`
+
+The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
+
+For a dynamic version of the SBM see the StochasticBlockModel type and
+related functions.
+"""
+function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int = -1)
+    @assert size(c,1) == length(n)
+    @assert size(c,2) == length(n)
+    # init dsfmt generator without altering GLOBAL_RNG
+    seed > 0 && Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
+    rng =  seed > 0 ? MersenneTwister(seed) : MersenneTwister()
+
+    N = sum(n)
+    K = length(n)
+    nedg = zeros(Int,K, K)
+    g = Graph(N)
+    cum = [sum(n[1:a]) for a=0:K]
+    for a=1:K
+        ra = cum[a]+1:cum[a+1]
+        for b=a:K
+            @assert a==b? c[a,b] <= n[b]-1 : c[a,b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
+
+            m = a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b]
+            p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
+            nedg = StatsBase.rand_binom(m, p)
+            rb = cum[b]+1:cum[b+1]
+            i=0
+            while i < nedg
+                source = rand(rng, ra)
+                dest = rand(rng, rb)
+                if source != dest && !has_edge(g, source, dest)
+                    i += 1
+                    add_edge!(g, source, dest)
+                end
+            end
+        end
+    end
+    return g
+end
+
+function stochastic_block_model{T<:Real}(cint::T, cext::T, n::Vector{Int}; seed::Int=-1)
+    K = length(n)
+    c = [ifelse(a==b, cint, cext) for a=1:K,b=1:K]
+    stochastic_block_model(c, n, seed=seed)
+end
+
+""""StochasticBlockModel(n,nodemap,affinities)
+
 A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge (i,j)
 depends only on the block labels of vertex i and vertex j.

@@ -103,8 +103,8 @@ h = tensor_product(g22, g22)
 
 nx = 20; ny = 21
 G = PathGraph(ny); H = PathGraph(nx)
-@time c = cartesian_product(G, H)
-@time g = crosspath(ny, PathGraph(nx));
+c = cartesian_product(G, H)
+g = crosspath(ny, PathGraph(nx));
 @test g == c
 
 function crosspath_slow(len, h)
