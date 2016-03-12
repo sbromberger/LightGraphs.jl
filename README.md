@@ -24,12 +24,6 @@ better-optimized mechanisms.
 
 ### Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
-*G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward (and, for DiGraphs, backward) adjacency lists indexed by vertex. Edges may also be accessed via an iterator that yields `Edge` types containing `(src::Int, dst::Int)` values.
-
-Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will result in a silent failure.
-
-### Core Concepts
-A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward
 (and, for directed graphs, backward) adjacency lists indexed by vertices. Edges
 may also be accessed via an iterator that yields `Edge` types containing
