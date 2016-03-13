@@ -26,7 +26,7 @@ end
 Loads multiple graphs from  `file` in the format `t`. Returns a dictionary
 mapping graph name to graph.
 
-Fo unnamed graphs the default names \"graph\" and \"digraph\" will be used.
+For unnamed graphs the default names \"graph\" and \"digraph\" will be used.
 """
 
 function load(io::IO, t::Symbol=:lg)

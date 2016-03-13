@@ -482,3 +482,25 @@ Installation of the `JuMP` package is required.
 
 {{maximum_weight_maximal_matching}}
 """
+
+@file "community.md" """
+# Community Structures
+*LightGraphs.jl* contains many algorithm to detect and analize community structures
+in graphs.
+
+## clustering coefficients
+
+{{local_clustering_coefficient,local_clustering, global_clustering_coefficient}}
+
+## modularity
+
+{{modularity}}
+
+## community detection
+
+{{community_detection_nback}}
+
+## core-periphery
+
+{{core_periphery_deg}}
+"""
