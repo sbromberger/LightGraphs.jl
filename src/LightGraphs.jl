@@ -95,7 +95,7 @@ load, save,
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
 
 #matching
-maximum_weight_maximal_matching,
+maximum_weight_maximal_matching, MatchingResult, 
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,

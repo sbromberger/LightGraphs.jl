@@ -1,7 +1,7 @@
-# include("../src/LightGraphs.jl")
-# pd = pwd()
+include("../src/LightGraphs.jl")
+pd = pwd()
 using LightGraphs
-pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
+# pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
 
 # This file generated the Markdown documentation files.
 
@@ -470,4 +470,15 @@ julia> g = load("multiplegraphs.jgz")
 julia> g = load("multiplegraphs.xml", :graphml)
 julia> g = load("mygraph.gml", "mygraph", :gml)
 ```
+"""
+
+@file "matching.md" """
+## Bipartite Matching
+*LightGraphs.jl* supports maximum weight maximal matching computation on bipartite graphs
+through linear programming relaxation.  In fact, on bipartite graphs, the solution
+of the linear problem is integer.
+
+Installation of the `JuMP` package is required.
+
+{{maximum_weight_maximal_matching}}
 """
