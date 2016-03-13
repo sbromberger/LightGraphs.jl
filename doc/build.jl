@@ -455,15 +455,12 @@ output above.
 """
 
 @file "persistence.md" """
-## Writing a Graph
-Graphs may be written to I/O streams and files using the `save` function:
+## Reading and writing a Graph
+Graphs may be written to I/O streams and files using the `save` function and
+read with the `load` function. Currently supported graph formats are the
+ *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
 
-{{save}}
-
-## Reading a Graph From a File
-Graphs stored using the `save` functions above may be loaded using `load`:
-
-{{load}}
+{{save, load}}
 
 ## Examples
 ```julia
