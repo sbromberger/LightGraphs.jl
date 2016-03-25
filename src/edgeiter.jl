@@ -17,6 +17,7 @@ eltype(::Type{EdgeIter}) = Edge
 function EdgeIter(g::Graph)
     di = 1
     s = 1
+    ne(g) == 0 && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(0,0,true), false)
     while di > length(g.fadjlist[s])    # get to the first valid edge.
         s += 1
         di = 1
@@ -28,6 +29,7 @@ end
 function EdgeIter(g::DiGraph)
     di = 1
     s = 1
+    ne(g) == 0 && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(0,0,true), false)
     while di > length(g.fadjlist[s])
         s += 1
         di = 1
