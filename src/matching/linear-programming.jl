@@ -33,7 +33,7 @@ inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
 m:       `m[i]=j` if vertex `i` is matched to vertex `j`.
          `m[i]=-1` for unmatched vertices.
 """
-maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff) = error("JuMP is required")
+maximum_weight_maximal_matching(args...; kws...) = isdefined(:JuMP) ?  error("wrong arguments") : error("JuMP is required")
 
 @require JuMP begin
 
