@@ -51,6 +51,7 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
+    "kruskal",
     "spectral",
     "cliques",
     "subgraphs",

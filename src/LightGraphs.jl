@@ -94,24 +94,27 @@ load, save,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
 
-#matching
+# matching
 maximum_weight_maximal_matching,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
 
-#community
+# community
 modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient,
 
-#generators
+# generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
 WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
 
-#Datasets
-Datasets
+# Datasets
+Datasets,
+
+# Minimum Spanning Tree
+kruskal_minimum_spanning_tree
 
 
 """An optimized graphs package.
@@ -173,6 +176,7 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
+        include("kruskal.jl")
         include("matching/linear-programming.jl")
         include("datasets/Datasets.jl")
         include("utils.jl")
