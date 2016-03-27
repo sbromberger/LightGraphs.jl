@@ -1,7 +1,7 @@
-# include("../src/LightGraphs.jl")
-# pd = pwd()
+include("../src/LightGraphs.jl")
+pd = pwd()
 using LightGraphs
-pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
+# pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
 
 # This file generated the Markdown documentation files.
 
@@ -394,15 +394,12 @@ output above.
 """
 
 @file "persistence.md" """
-## Writing a Graph
-Graphs may be written to I/O streams and files using the `save` function:
+## Reading and writing a Graph
+Graphs may be written to I/O streams and files using the `save` function and
+read with the `load` function. Currently supported graph formats are the
+ *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
 
-{{save}}
-
-## Reading a Graph From a File
-Graphs stored using the `save` functions above may be loaded using `load`:
-
-{{load}}
+{{save, load}}
 
 ## Examples
 ```julia
@@ -412,4 +409,37 @@ julia> g = load("multiplegraphs.jgz")
 julia> g = load("multiplegraphs.xml", :graphml)
 julia> g = load("mygraph.gml", "mygraph", :gml)
 ```
+"""
+
+@file "matching.md" """
+## Bipartite Matching
+*LightGraphs.jl* supports maximum weight maximal matching computation on bipartite graphs
+through linear programming relaxation.  In fact, on bipartite graphs, the solution
+of the linear problem is integer.
+
+Installation of the `JuMP` package is required.
+
+{{maximum_weight_maximal_matching}}
+"""
+
+@file "community.md" """
+# Community Structures
+*LightGraphs.jl* contains many algorithm to detect and analize community structures
+in graphs.
+
+## clustering coefficients
+
+{{local_clustering_coefficient,local_clustering, global_clustering_coefficient}}
+
+## modularity
+
+{{modularity}}
+
+## community detection
+
+{{community_detection_nback}}
+
+## core-periphery
+
+{{core_periphery_deg}}
 """

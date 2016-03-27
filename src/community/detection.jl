@@ -1,4 +1,6 @@
 """
+    community_detection_nback(g, k::Int)
+
 Community detection using the spectral properties of
 the non-backtracking matrix of `g` (see [Krzakala et al.](http://www.pnas.org/content/110/52/20935.short)).
 
