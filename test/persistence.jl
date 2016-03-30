@@ -22,7 +22,7 @@ graphml_g = gs["G"]
 @test nv(graphml_g) == 13
 @test ne(graphml_g) == 15
 gs = load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), :graphml)
-@test gs["Unnamed Graph"] == Graph(gs["Unnamed DiGraph"])
+@test gs["graph"] == Graph(gs["digraph"])
 @test save(f, g3, :graphml) == 1
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.graphml"), "badname", :graphml)
 # test a graphml load that results in a warning
@@ -44,19 +44,35 @@ redirect_stderr(origSTDERR)
 # test :gml
 gs = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), :gml)
 gml1 = gs["gml1"]
-gml2 = gs["Unnamed DiGraph"]
+gml2 = gs["digraph"]
 gml1a = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), "gml1", :gml)
 @test gml1a == gml1
 @test nv(gml1) == nv(gml2) == 10
 @test ne(gml1) == ne(gml2) == 28
+gml1a = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), "gml1", :gml)
+@test gml1a == gml1
 gs = load(joinpath(testdir,"testdata", "twounnamedgraphs.gml"), :gml)
-gml1 = gs["Unnamed Graph"]
-gml2 = gs["Unnamed DiGraph"]
+gml1 = gs["graph"]
+gml2 = gs["digraph"]
 @test nv(gml1) == 4
 @test ne(gml1) == 6
 @test nv(gml2) == 4
 @test ne(gml2) == 9
 @test_throws ErrorException load(joinpath(testdir, "testdata", "twounnamedgraphs.gml"), "badname", :gml)
+
+@test save(f, gml1, :gml) == 1
+gml1 = load(f, :gml)["graph"]
+@test nv(gml1) == 4
+@test ne(gml1) == 6
+
+gs = load(joinpath(testdir,"testdata", "twographs-10-28.gml"), :gml)
+@test save(f, gs, :gml) == 2
+gs = load(f, :gml)
+gml1 = gs["gml1"]
+gml2 = gs["digraph"]
+@test nv(gml1) == nv(gml2) == 10
+@test ne(gml1) == ne(gml2) == 28
+
 
 # test :dot
 gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
@@ -85,3 +101,43 @@ rm(fname)
 g10 = load(joinpath(testdir, "testdata", "kinship.net"), :net)["g"]
 @test nv(g10) == 6
 @test ne(g10) == 8
+
+using JLD
+
+function write_readback(path::AbstractString, g)
+    jldfile = jldopen(path, "w")
+    jldfile["g"] = g
+    close(jldfile)
+
+    jldfile = jldopen(path, "r")
+    gs = read(jldfile, "g")
+    return gs
+end
+
+function testjldio(path::AbstractString, g::Graph)
+    gs = write_readback(path, g)
+    gloaded = Graph(gs)
+    @test gloaded == g
+end
+
+println("*** Running JLD IO tests")
+graphs = [PathGraph(10), CompleteGraph(5), WheelGraph(7)]
+for (i,g) in enumerate(graphs)
+    path = joinpath(testdir,"testdata", "test.$i.jld")
+    testjldio(path, g)
+    #delete the file (it gets left on test failure so you could debug it)
+    rm(path)
+end
+
+Base.length(ei::LightGraphs.EdgeIter) = ei.m
+
+for (i,g) in enumerate(graphs)
+    eprop = Dict{Edge,Char}([(e, Char(i)) for e in edges(g)])
+    net = LightGraphs.Network{Graph, Int, Char}(g, 1:nv(g), eprop)
+    path = joinpath(testdir,"testdata", "test.$i.jld")
+    nsaved = write_readback(path, net)
+    @test LightGraphs.Network(nsaved) == net
+    #delete the file (it gets left on test failure so you could debug it)
+    rm(path)
+end
+println("*** Finished JLD IO tests")

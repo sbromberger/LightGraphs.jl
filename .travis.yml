@@ -2,10 +2,10 @@ language: julia
 sudo: false
 os:
   - linux
-  - osx
+#  - osx
 julia:
   - release
-  - nightly
+  # - nightly
 notifications:
   email: false
 # uncomment the following lines to override the default test script
@@ -16,5 +16,10 @@ script:
   - julia --check-bounds=yes -e 'Pkg.add("MatrixDepot")'
   - julia --check-bounds=yes -e 'Pkg.add("Clp")'
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
+  
+cache:
+  directories:
+    - $HOME/.julia/v0.4/JuMP/
+    - $HOME/.julia/v0.5/JuMP/
 after_success:
     - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'

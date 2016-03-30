@@ -62,7 +62,7 @@ function betweenness_centrality(
     if k == 0
         nodes = 1:n_v
     else
-        nodes = sample(1:n_v, k, replace=false)   #112
+        nodes = sample!([1:n_v;], k)   #112
     end
     for s in nodes
         if degree(g,s) > 0  # this might be 1?

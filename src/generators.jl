@@ -132,6 +132,15 @@ function WheelDiGraph(n::Integer)
     return g
 end
 
+"""Create a grid "Discrete Laplace operator" """
+function Grid{T<:Integer}(dims::AbstractVector{T})
+    g = PathGraph(dims[1])
+    for d in dims[2:end]
+        g = crosspath(d, g)
+    end
+    return g
+end
+
 """create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
 function BinaryTree(levels::Int)
     g = Graph(2^levels-1)

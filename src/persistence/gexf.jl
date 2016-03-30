@@ -2,6 +2,8 @@
 # TODO: implement readgexf
 
 """
+savegexf(f::IO, g::SimpleGraph, gname::AbstractString)
+
 Writes a graph `g` with name `gname`
 to a file `f` in the
 [Gexf](http://gexf.net/format/) format.

@@ -1,3 +1,4 @@
+# include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
 using Requires
@@ -76,6 +77,7 @@ tests = [
     "centrality/pagerank",
     "flow/edmonds_karp",
     "flow/dinic",
+    "flow/boykov_kolmogorov",
     "flow/push_relabel",
     "flow/maximum_flow",
     "matching/linear-programming",

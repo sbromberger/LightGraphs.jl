@@ -67,3 +67,14 @@ end
     @test_approx_eq_eps(eigs(lapl, which=:LR)[1][1], 3.902, 0.001)
     println("*** Finished GraphMatrices tests")
 end
+
+# testing incidence_matrix, first directed graph
+@test size(incidence_matrix(g4)) == (5,4)
+@test incidence_matrix(g4)[1,1] == -1
+@test incidence_matrix(g4)[2,1] == 1
+@test incidence_matrix(g4)[3,1] == 0
+# now undirected graph
+@test size(incidence_matrix(g3)) == (5,4)
+@test incidence_matrix(g3)[1,1] == 1
+@test incidence_matrix(g3)[2,1] == 1
+@test incidence_matrix(g3)[3,1] == 0
