@@ -75,6 +75,7 @@ tests = [
     "centrality/degree",
     "centrality/katz",
     "centrality/pagerank",
+    "centrality/assortativity",
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/boykov_kolmogorov",
