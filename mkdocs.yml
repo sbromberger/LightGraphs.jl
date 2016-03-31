@@ -3,14 +3,17 @@ site_author: Seth Bromberger
 repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
 theme: readthedocs
 pages:
-  - 'Home': 'index.md'
-  - 'About': 'about.md'
   - 'Getting Started': 'gettingstarted.md'
+  - 'Basic Functions': 'basicmeasures.md'
   - 'Operators': 'operators.md'
   - 'Path and Traversal': 'pathing.md'
   - 'Distance': 'distance.md'
-  - 'Centrality measures': 'centrality.md'
+  - 'Centrality Measures': 'centrality.md'
   - 'Linear Algebra': 'linalg.md'
+  - 'Matching': 'matching.md'
+  - 'Community Structures': 'community.md'
+  - 'Flow': 'maximumflow.md'
+  - 'Cliques': 'cliques.md'
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
