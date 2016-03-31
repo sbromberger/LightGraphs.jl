@@ -3,8 +3,6 @@ site_author: Seth Bromberger
 repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
 theme: readthedocs
 pages:
-  - 'Home': 'index.md'
-  - 'About': 'about.md'
   - 'Getting Started': 'gettingstarted.md'
   - 'Basic Functions': 'basicmeasures.md'
   - 'Operators': 'operators.md'

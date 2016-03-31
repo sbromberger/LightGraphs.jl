@@ -84,6 +84,7 @@ function md_methodtable(io, f)
     end
     println(io, "```")
 end
+
 function md_method(io, m)
     # We only print methods with are defined in the parent (project) directory
     if !(startswith(string(m.func.code.file), pd))
@@ -101,7 +102,11 @@ function md_method(io, m)
     println(io)
 end
 
-@file "about.md" "{{LightGraphs}}"
+readme = open("README.md") do f
+            readall(f)
+        end
+@file "gettingstarted.md" readme
+
 @file "basicmeasures.md" """
 The following basic measures have been implemented for `Graph` and `DiGraph`
 types:
@@ -174,29 +179,6 @@ graphs are available using the following constructs:
 
 {{CompleteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph, WheelGraph, WheelDiGraph}}
 
-"""
-
-readme = open("README.md") do f
-            readall(f)
-        end
-@file "gettingstarted.md" readme
-
-
-@file "index.md" """
-# LightGraphs.jl
-
-[![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
-[![Coverage Status](https://coveralls.io/repos/JuliaGraphs/LightGraphs.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_release.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=release)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=nightly)
-[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](https://readthedocs.org/projects/lightgraphsjl/?badge=latest)
-[![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
-
-
-An optimized graphs package.
-
-Simple graphs (not multi- or hypergraphs) are represented in a memory- and time-efficient
-manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
 """
 
 @file "integration.md" """
