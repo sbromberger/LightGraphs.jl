@@ -105,7 +105,8 @@ end
 readme = open("README.md") do f
             readall(f)
         end
-@file "gettingstarted.md" readme
+        
+@file "index.md" readme
 
 @file "basicmeasures.md" """
 The following basic measures have been implemented for `Graph` and `DiGraph`
