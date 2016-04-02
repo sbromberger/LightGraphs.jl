@@ -22,7 +22,7 @@ other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
 
-### Core Concepts
+## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
 *G = {V, E}*. *V* is an integer range `1:n`; *E* is represented as forward
 (and, for directed graphs, backward) adjacency lists indexed by vertices. Edges
@@ -55,13 +55,13 @@ Use `nv(g)` and `ne(g)` to compute the number of vertices and edges respectively
 `edges(g)` returns an iterator to the edge set. Use `collect(edge(set))` to fill
 an array with all edges in the graph.
 
-### Installation
+## Installation
 Installation is straightforward:
 ```julia
 julia> Pkg.add("LightGraphs")
 ```
 
-### Usage Examples
+## Usage Examples
 (all examples apply equally to `DiGraph` unless otherwise noted):
 
 ```julia
@@ -112,7 +112,7 @@ g = load("mygraph.jgz", "mygraph")
 save("mygraph.jgz", g, "mygraph", compress=true)
 ```
 
-### Current functionality
+## Current functionality
 - **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
 - **distance:** eccentricity, diameter, periphery, radius, center
@@ -147,12 +147,12 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl)
 
 
-### Documentation
+## Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
 Documentation for methods is also available via the Julia REPL help system.
 
 
-### Supported Versions
+## Supported Versions
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
 * Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue.
