@@ -47,6 +47,7 @@ buildwriter(part, isdef) = isdef ?
         quote
             for (f, docstring) in $(esc(parts))
                 if isa(f, Function)
+                    println(file, "### ", first(methods(f)).func.code.name)
                     docs = getlgdoc(docstring)
                     printsignature = true
                     if isa(docs[1][1], Markdown.Code)
@@ -54,7 +55,8 @@ buildwriter(part, isdef) = isdef ?
                         s = split(string(f),".")
                         if ((length(s) == 1  &&  startswith(c, s[1]))
                            || (length(s) > 1 && s[1] == "LightGraphs" && startswith(c, s[2])))
-                            printsignature = false
+                            printsignature = false  # the signature is in the docstring
+                            docs[1][1].language = "julia"    # set language to julia
                         end
                     end
                     printsignature && md_methodtable(file, f)
@@ -62,6 +64,7 @@ buildwriter(part, isdef) = isdef ?
                     if length(docs) > 1
                         for d in docs[2:end]
                             println(file)
+                            !printsignature && (d[1].language="julia")
                             writemime(file, "text/plain", d)
                         end
                     end
@@ -77,8 +80,7 @@ buildwriter(part, isdef) = isdef ?
 getlgdoc(docstring) = docstring.content[find(c->c.meta[:module] == LightGraphs, docstring.content)]
 
 function md_methodtable(io, f)
-    println(io, "### ", first(methods(f)).func.code.name)
-    println(io, "```")
+    println(io, "```julia")
     for m in methods(f)
         md_method(io, m)
     end
@@ -105,10 +107,12 @@ end
 readme = open("README.md") do f
             readall(f)
         end
-        
+
 @file "index.md" readme
 
 @file "basicmeasures.md" """
+# Basic Functions
+
 The following basic measures have been implemented for `Graph` and `DiGraph`
 types:
 
@@ -128,41 +132,21 @@ types:
 importance of a vertex to the rest of the graph using some set of criteria.
 Centrality measures implemented in *LightGraphs.jl* include the following:
 
-## Degree Centrality
-
-{{degree_centrality, indegree_centrality, outdegree_centrality}}
-
-### Closeness Centrality
-
-{{closeness_centrality}}
-
-## Betweenness Centrality
-
-{{betweenness_centrality}}
-
-## Katz Centrality
-
-{{katz_centrality}}
-
-## PageRank
-
-{{pagerank}}
+{{degree_centrality, indegree_centrality, outdegree_centrality,
+  closeness_centrality, betweenness_centrality, katz_centrality, pagerank}}
 """
 
 @file "distance.md" """
+# Distance
 *LightGraphs.jl* includes the following distance measurements:
 
 {{eccentricity, radius, diameter, center, periphery}}
 """
 
-@file "cliques.md" """
-## Cliques
-*LightGraphs.jl* implements maximal clique discovery using
-
-{{maximal_cliques}}
-"""
 
 @file "generators.md" """
+# Generators
+
 ## Random Graphs
 *LightGraphs.jl* implements three common random graph generators:
 
@@ -175,7 +159,7 @@ graphs are available using the following constructs:
 
 `StochasticBlockModel` instances may be used to create Graph objects.
 
-### Static Graphs
+## Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
 {{CompleteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph, WheelGraph, WheelDiGraph}}
@@ -183,9 +167,11 @@ graphs are available using the following constructs:
 """
 
 @file "integration.md" """
+# Integration with other packages
+
 *LightGraphs.jl*'s integration with other Julia packages is designed to be straightforward. Here are a few examples.
 
-### [Graphs.jl](http://github.com/JuliaLang/Graphs.jl)
+## [Graphs.jl](http://github.com/JuliaLang/Graphs.jl)
 Creating a Graphs.jl `simple_graph` is easy:
 ```julia
 julia> s = simple_graph(nv(g), is_directed=LightGraphs.is_directed(g))
@@ -194,7 +180,7 @@ julia> for e in LightGraphs.edges(g)
        end
 ```
 
-### [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
+## [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
 This excellent graph visualization package can be used with *LightGraphs.jl*
 as follows:
 
@@ -206,7 +192,7 @@ julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
 producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
 
-###[TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
+##[TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
 Another nice graph visualization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
 required to render/save):
 ```julia
@@ -216,7 +202,7 @@ julia> save(SVG("wheel10.svg"), t)
 producing a graph like this:
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960499/17f703c0-35c5-11e5-935e-044be51bc531.png)
 
-###[GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
+##[GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
 Another graph visualization package that is very simple to use.
 [Compose.jl](https://github.com/dcjones/Compose.jl) is required for most rendering functionality:
 ```julia
@@ -225,7 +211,7 @@ julia> g = WheelGraph(10)
 julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 ```
 
-###[Metis.jl](https://github.com/JuliaSparse/Metis.jl)
+##[Metis.jl](https://github.com/JuliaSparse/Metis.jl)
 The Metis graph partitioning package can interface with *LightGraphs.jl*:
 
 ```julia
@@ -235,7 +221,7 @@ julia> g = Graph(100,1000)
 julia> partGraphKway(g, 6)  # 6 partitions
 ```
 
-###[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
+##[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
 *LightGraphs.jl* can interface directly with this spectral graph analysis
 package:
 
@@ -250,6 +236,8 @@ GraphMatrices.CombinatorialAdjacency{Float64,LightGraphs.Graph,Array{Float64,1}}
 """
 
 @file "linalg.md" """
+# Linear Algebra
+
 *LightGraphs.jl* provides the following matrix operations on both directed and
 undirected graphs:
 
@@ -262,7 +250,10 @@ undirected graphs:
 {{laplacian_matrix, laplacian_spectrum}}
 """
 
-@file "maximumflow.md" """
+@file "flowcut.md" """
+# Flow and Cut
+
+## Flow
 *LightGraphs.jl* provides four algorithms for [maximum flow](https://en.wikipedia.org/wiki/Maximum_flow_problem)
 computation:
 
@@ -272,9 +263,16 @@ computation:
 - [Push-relabel algorithm](https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm)
 
 {{maximum_flow}}
+
+## Cut
+Stoer's simple minimum cut gets the minimum cut of an undirected graph.
+
+{{mincut}}
 """
 
 @file "operators.md" """
+# Operators
+
 *LightGraphs.jl* implements the following graph operators. In general,
 functions with two graph arguments will require them to be of the same type
 (either both `Graph` or both `DiGraph`).
@@ -283,6 +281,8 @@ functions with two graph arguments will require them to be of the same type
 """
 
 @file "pathing.md" """
+# Path and Traversal
+
 *LightGraphs.jl* provides several traversal and shortest-path algorithms, along with
 various utility functions. Where appropriate, edge distances may be passed in as a
 matrix of real number values.
@@ -306,7 +306,7 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
-{{bfs_tree, dfs_tree}}
+{{bfs_tree, dfs_tree,maximum_adjacency_visit}}
 
 ## Random walks
 *LightGraphs* includes uniform random walks and self avoiding walks:
@@ -324,11 +324,6 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
 
 {{is_cyclic}}
-
-##Simple Minimum Cut
-Stoer's simple minimum cut gets the minimum cut of an undirected graph.
-
-{{mincut, maximum_adjacency_visit}}
 
 ## Shortest-Path Algorithms
 ### General properties of shortest path algorithms
@@ -377,7 +372,8 @@ output above.
 """
 
 @file "persistence.md" """
-## Reading and writing a Graph
+# Reading and writing Graphs
+
 Graphs may be written to I/O streams and files using the `save` function and
 read with the `load` function. Currently supported graph formats are the
  *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
@@ -395,6 +391,8 @@ julia> g = load("mygraph.gml", "mygraph", :gml)
 """
 
 @file "matching.md" """
+# Matching
+
 ## Bipartite Matching
 *LightGraphs.jl* supports maximum weight maximal matching computation on bipartite graphs
 through linear programming relaxation.  In fact, on bipartite graphs, the solution
@@ -425,4 +423,10 @@ in graphs.
 ## core-periphery
 
 {{core_periphery_deg}}
+
+## cliques
+*LightGraphs.jl* implements maximal clique discovery using
+
+{{maximal_cliques}}
+
 """

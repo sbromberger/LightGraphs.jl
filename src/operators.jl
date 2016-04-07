@@ -33,7 +33,7 @@ end
 """
     reverse(g::DiGraph)
 
-(`DiGraph` only) Produces a graph where all edges are reversed from the
+Produces a graph where all edges are reversed from the
 original.
 """
 function reverse(g::DiGraph)
@@ -51,7 +51,7 @@ end
 """
     reverse!(g::DiGraph)
 
-(`DiGraph` only) In-place reverse (modifies the original graph).
+In-place reverse (modifies the original graph).
 """
 function reverse!(g::DiGraph)
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
@@ -114,7 +114,10 @@ function difference{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-"""Produces a graph with edges from graph `g` that do not exist in graph `h`,
+"""
+    symmetric_difference(g, h)
+
+Produces a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
 
 Note that this function may produce a graph with 0-degree vertices.
@@ -181,7 +184,10 @@ Replicate `len` times `h` and connect each vertex with its copies in a path
 """
 crosspath(len::Integer, g::Graph) = cartesian_product(PathGraph(len), g)
 
-"""Filters graph `g` to include only the vertices present in the iterable
+"""
+    induced_subgraph(g, iter)
+
+Filters graph `g` to include only the vertices present in the iterable
 argument `vs`. Returns the subgraph of `g` induced by `vs`.
 """
 function induced_subgraph{T<:SimpleGraph}(g::T, iter)
@@ -266,6 +272,8 @@ ndims(g::SimpleGraph) = 2
 issym(g::SimpleGraph) = !is_directed(g)
 
 """
+    cartesian_product(g, h)
+
 Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
 function cartesian_product{G<:SimpleGraph}(g::G, h::G)
@@ -287,6 +295,8 @@ function cartesian_product{G<:SimpleGraph}(g::G, h::G)
 end
 
 """
+    tensor_product(g, h)
+
 Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
 function tensor_product{G<:SimpleGraph}(g::G, h::G)
