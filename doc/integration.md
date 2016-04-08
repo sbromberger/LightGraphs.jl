@@ -65,3 +65,24 @@ julia> a = CombinatorialAdjacency(g)
 GraphMatrices.CombinatorialAdjacency{Float64,LightGraphs.Graph,Array{Float64,1}}({10, 9} undirected graph,[1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0])
 ```
 
+##[NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
+NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
+
+```julia
+#Run this code in Escher
+
+using NetworkViz
+using LightGraphs
+
+main(window) = begin
+  push!(window.assets, "widgets")
+  push!(window.assets,("ThreeJS","threejs"))
+  g = CompleteGraph(10)
+  drawGraph(g)
+end
+```
+
+The above code produces the following output :
+
+![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
+
