@@ -131,6 +131,13 @@ period(g::LightGraphs.DiGraph)
 ```
 Computes the (common) period for all nodes in a strongly connected graph.
 
+### neighborhood
+```julia
+neighborhood(g, v::Int, d::Int; dir=:out)
+```
+
+Returns a vector of the vertices in `g` at distance less or equal to `d` from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
+
 ## Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
