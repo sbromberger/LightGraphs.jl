@@ -2,7 +2,7 @@
 # Generators
 
 ## Random Graphs
-*LightGraphs.jl* implements three common random graph generators:
+*LightGraphs.jl* implements some common random graph generators:
 ### erdos_renyi
 ```julia
 erdos_renyi(n::Integer, p::Real; is_directed=false, seed=-1)
@@ -37,23 +37,53 @@ Creates a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_
 
 For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an adjacency matrix and uses that to generate the directed graph.
 
-In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
-graphs are available using the following constructs:
-StochasticBlockModel(n,nodemap,affinities) A type capturing the parameters of the SBM. Each vertex is assigned to a block and the probability of edge (i,j) depends only on the block labels of vertex i and vertex j.
+### random_configuration_model
+```julia
+random_configuration_model(n::Int, k::Array{Int}; seed=-1)
+```
 
-The assignement is stored in nodemap and the block affinities a k by k matrix is stored in affinities.
+Creates a random undirected graph according to the [configuraton model](http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf). It contains `n` vertices, the vertex `ì` having degree `k[i]`.
 
-affinities[k,l] is the probability of an edge between any vertex in block k and any vertex in block l.
+Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes approximately $nc^2$ time.
+
+### stochastic_block_model
+```julia
+stochastic_block_model(c::Matrix{Float64}, n::Vector{Int}; seed::Int = -1)
+stochastic_block_model(cin::Float64, coff::Float64, n::Vector{Int}; seed::Int = -1)
+```
+
+Returns a Graph generated according to the Stochastic Block Model (SBM).
+
+`c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.            Only the upper triangular part is considered, since the lower traingular is            determined by $c[b,a] = c[a,b] * n[a]/n[b]$. `n[a]` : Number of vertices in block `a`
+
+The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
+
+For a dynamic version of the SBM see the `StochasticBlockModel` type and related functions.
+
+### StochasticBlockModel
+```
+type StochasticBlockModel{T<:Integer,P<:Real}
+    n::T
+    nodemap::Array{T}
+    affinities::Matrix{P}
+    rng::MersenneTwister
+end
+```
+
+A type capturing the parameters of the SBM. Each vertex is assigned to a block and the probability of edge `(i,j)` depends only on the block labels of vertex `i` and vertex `j`.
+
+The assignement is stored in nodemap and the block affinities a `k` by `k` matrix is stored in affinities.
+
+`affinities[k,l]` is the probability of an edge between any vertex in block k and any vertex in block `l`.
 
 We are generating the graphs by taking random `i,j in vertices(g)` and flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 
 ### make_edgestream
 ```julia
-make_edgestream(sbm::LightGraphs.StochasticBlockModel{T<:Integer,P<:Real})
+make_edgestream(sbm::StochasticBlockModel)
 ```
-Take an infinite sample from the sbm. Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 
-`StochasticBlockModel` instances may be used to create Graph objects.
+Take an infinite sample from the sbm. Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 
 ## Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
@@ -62,6 +92,12 @@ Take an infinite sample from the sbm. Pass to `Graph(nvg, neg, edgestream)` to g
 CompleteGraph(n::Integer)
 ```
 Creates a complete graph with `n` vertices. A complete graph has edges connecting each pair of vertices.
+
+### CompleteBipartiteGraph
+```julia
+CompleteBipartiteGraph(n1::Integer, n2::Integer)
+```
+Creates a complete bipartite graph with `n1+n2` vertices. It has edges connecting each pair of vertices in the two sets.
 
 ### CompleteDiGraph
 ```julia
@@ -104,4 +140,60 @@ Creates a wheel graph with `n` vertices. A wheel graph is a star graph with the 
 WheelDiGraph(n::Integer)
 ```
 Creates a wheel digraph with `n` vertices. A wheel graph is a star digraph with the outer vertices connected via a closed path graph.
+
+### BinaryTree
+```julia
+BinaryTree(levels::Int64)
+```
+create a binary tree with k-levels vertices are numbered 1:2^levels-1
+
+### DoubleBinaryTree
+```julia
+DoubleBinaryTree(levels::Int64)
+```
+create a double complete binary tree with k-levels used as an example for spectral clustering by Guattery and Miller 1998.
+
+### RoachGraph
+```julia
+RoachGraph(k::Int64)
+```
+The Roach Graph from Guattery and Miller 1998
+
+## Smallgraphs
+Many notorious graphs are available in the Datasets submodule:
+```julia
+using LightGraphs.Datasets
+```
+### smallgraph
+```julia
+smallgraph(s::Symbol)
+smallgraph(s::AbstractString)
+```
+
+Creates a small graph of type `s`. Admissible values for `s` are:
+
+`s`                       | graph type                                                                                             
+:------------------------ | :------------------------------------------------------------------------------------------------------
+:bull                     | A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).                                              
+:chvatal                  | A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).                                        
+:cubical                  | A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).                              
+:desargues                | A [Desarguesgraph](https://en.wikipedia.org/wiki/Desargues_graph).                                     
+:diamond                  | A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).                                         
+:dodecahedral             | A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                        
+:frucht                   | A [Frucht graph](https://en.wikipedia.org/wiki/Frucht_graph).                                          
+:heawood                  | A [Heawood graph](https://en.wikipedia.org/wiki/Heawood_graph).                                        
+:house                    | A graph mimicing the classic outline of a house.                                                       
+:housex                   | A house graph, with two edges crossing the bottom square.                                              
+:icosahedral              | A [Platonic icosahedral   graph](https://en.wikipedia.org/wiki/Platonic_graph).                        
+:krackhardtkite           | A [Krackhardt-Kite social network  graph](http://mathworld.wolfram.com/KrackhardtKite.html).           
+:moebiuskantor            | A [Möbius-Kantor                                                                                       
+:octahedral               | A [Platonic octahedral                                                                                 
+:pappus                   | A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph).                                           
+:petersen                 | A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph).                                       
+:sedgewickmaze            | A simple maze graph used in Sedgewick's *Algorithms in C++: Graph  Algorithms (3rd ed.)*               
+:tetrahedral              | A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                         
+:truncatedcube            | A skeleton of the [truncated cube graph](https://en.wikipedia.org/wiki/Truncated_cube).                
+:truncatedtetrahedron     | A skeleton of the [truncated tetrahedron  graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron). 
+:truncatedtetrahedron_dir | A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
+:tutte                    | A [Tutte graph](https://en.wikipedia.org/wiki/Tutte_graph).                                            
 

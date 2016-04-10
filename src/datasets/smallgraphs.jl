@@ -18,33 +18,39 @@ function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,
     return g
 end
 
-doc"""Creates a small graph of the following types:
+doc"""
+    smallgraph(s::Symbol)
+    smallgraph(s::AbstractString)
 
+Creates a small graph of type `s`. Admissible values for `s` are:
 
-    :bull            A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).
-    :chvatal         A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).
-    :cubical         A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).
-    :desargues       A [Desargues graph](https://en.wikipedia.org/wiki/Desargues_graph).
-    :diamond         A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).
-    :dodecahedral    A [Platonic dodecahedral graph](https://en.wikipedia.org/wiki/Platonic_graph).
-    :frucht          A [Frucht graph](https://en.wikipedia.org/wiki/Frucht_graph).
-    :heawood         A [Heawood graph](https://en.wikipedia.org/wiki/Heawood_graph).
-    :house           A graph mimicing the classic outline of a house.
-    :housex          A house graph, with two edges crossing the bottom square.
-    :icosahedral     A [Platonic icosahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-    :krackhardtkite  A [Krackhardt-Kite social network graph](http://mathworld.wolfram.com/KrackhardtKite.html).
-    :moebiuskantor   A [Möbius-Kantor graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph).
-    :octahedral      A [Platonic octahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).
-    :pappus          A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph).
-    :petersen        A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph).
-    :sedgewickmaze   A simple maze graph used in Sedgewick's *Algorithms in C++Graph Algorithms (3rd ed.)*
-    :tetrahedral     A [Platonic tetrahedral graph](https://en.wikipedia.org/wiki/Platonic_graph).
-    :truncatedcube   A skeleton of the [truncated cube graph](https://en.wikipedia.org/wiki/Truncated_cube).
-    :truncatedtetrahedron        A skeleton of the [truncated tetrahedron graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
-    :truncatedtetrahedron_dir    A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
-    :tutte           A [Tutte graph](https://en.wikipedia.org/wiki/Tutte_graph).
+| `s`                       | graph type                       |
+|:------------------------|:---------------------------------|
+| :bull                       | A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).  |
+| :chvatal                    | A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph). |
+| :cubical                    | A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph). |
+| :desargues                |   A [Desarguesgraph](https://en.wikipedia.org/wiki/Desargues_graph).|
+| :diamond                  |   A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph). |
+| :dodecahedral             |   A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph). |
+| :frucht                   |   A [Frucht graph](https://en.wikipedia.org/wiki/Frucht_graph). |
+| :heawood                  |   A [Heawood graph](https://en.wikipedia.org/wiki/Heawood_graph). |
+| :house                    |   A graph mimicing the classic outline of a house. |
+| :housex                   |   A house graph, with two edges crossing the bottom square. |
+| :icosahedral              |   A [Platonic icosahedral   graph](https://en.wikipedia.org/wiki/Platonic_graph). |
+| :krackhardtkite           |   A [Krackhardt-Kite social network  graph](http://mathworld.wolfram.com/KrackhardtKite.html). |
+| :moebiuskantor            |   A [Möbius-Kantor | graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph). |
+| :octahedral               |   A [Platonic octahedral  | graph](https://en.wikipedia.org/wiki/Platonic_graph).
+| :pappus                   |   A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph). |
+| :petersen                 |   A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph). |
+| :sedgewickmaze            |   A simple maze graph used in Sedgewick's *Algorithms in C++: Graph  Algorithms (3rd ed.)* |
+| :tetrahedral              |   A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph). |
+| :truncatedcube            |   A skeleton of the [truncated cube graph](https://en.wikipedia.org/wiki/Truncated_cube). |
+| :truncatedtetrahedron     |   A skeleton of the [truncated tetrahedron  graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron). |
+| :truncatedtetrahedron_dir |   A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron). |
+| :tutte                    |   A [Tutte graph](https://en.wikipedia.org/wiki/Tutte_graph). |
+
 """
-function smallgraph(s::Symbol=:help)
+function smallgraph(s::Symbol)
     graphmap = Dict(
     :bull            => BullGraph,
     :chvatal         => ChvatalGraph,

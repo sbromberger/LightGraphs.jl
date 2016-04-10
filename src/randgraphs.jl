@@ -265,12 +265,12 @@ Returns a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
            Only the upper triangular part is considered, since the lower traingular is
-           determined by c[b,a] = c[a,b] * n[a]/n[b].
+           determined by $c[b,a] = c[a,b] * n[a]/n[b]$.
 `n[a]` : Number of vertices in block `a`
 
 The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
 
-For a dynamic version of the SBM see the StochasticBlockModel type and
+For a dynamic version of the SBM see the `StochasticBlockModel` type and
 related functions.
 """
 function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int = -1)
@@ -314,17 +314,23 @@ function stochastic_block_model{T<:Real}(cint::T, cext::T, n::Vector{Int}; seed:
     stochastic_block_model(c, n, seed=seed)
 end
 
-""""StochasticBlockModel(n,nodemap,affinities)
+"""
+    type StochasticBlockModel{T<:Integer,P<:Real}
+        n::T
+        nodemap::Array{T}
+        affinities::Matrix{P}
+        rng::MersenneTwister
+    end
 
 A type capturing the parameters of the SBM.
-Each vertex is assigned to a block and the probability of edge (i,j)
-depends only on the block labels of vertex i and vertex j.
+Each vertex is assigned to a block and the probability of edge `(i,j)`
+depends only on the block labels of vertex `i` and vertex `j`.
 
-The assignement is stored in nodemap and the block affinities a k by k
+The assignement is stored in nodemap and the block affinities a `k` by `k`
 matrix is stored in affinities.
 
-affinities[k,l] is the probability of an edge between any vertex in
-block k and any vertex in block l.
+`affinities[k,l]` is the probability of an edge between any vertex in
+block k and any vertex in block `l`.
 
 We are generating the graphs by taking random `i,j in vertices(g)` and
 flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
@@ -419,7 +425,10 @@ function random_pair(rng::AbstractRNG, n::Int)
 end
 
 
-"""Take an infinite sample from the sbm.
+"""
+    make_edgestream(sbm::StochasticBlockModel)
+
+Take an infinite sample from the sbm.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 """
 function make_edgestream(sbm::StochasticBlockModel)

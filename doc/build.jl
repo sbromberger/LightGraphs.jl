@@ -1,6 +1,7 @@
 include("../src/LightGraphs.jl")
 pd = pwd()
 using LightGraphs
+using LightGraphs.Datasets
 # pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
 
 # This file generated the Markdown documentation files.
@@ -47,14 +48,18 @@ buildwriter(part, isdef) = isdef ?
         quote
             for (f, docstring) in $(esc(parts))
                 if isa(f, Function)
-                    println(file, "### ", first(methods(f)).func.code.name)
+                    println(file, "### ", first(methods(f)).func.code.name) ### paragraph with function name
                     docs = getlgdoc(docstring)
                     printsignature = true
                     if isa(docs[1][1], Markdown.Code)
                         c = docs[1][1].code
                         s = split(string(f),".")
                         if ((length(s) == 1  &&  startswith(c, s[1]))
-                           || (length(s) > 1 && s[1] == "LightGraphs" && startswith(c, s[2])))
+                               || (length(s) > 1
+                                   && ((s[1] == "LightGraphs" && startswith(c, s[2]))
+                                   || (s[2] == "Datasets" && startswith(c, s[3])))
+                                  )
+                            )
                             printsignature = false  # the signature is in the docstring
                             docs[1][1].language = "julia"    # set language to julia
                         end
@@ -68,6 +73,10 @@ buildwriter(part, isdef) = isdef ?
                             writemime(file, "text/plain", d)
                         end
                     end
+                elseif isa(f, DataType)
+                    s=split(string(f),'.')[2]
+                    println(file, "### ", s[1:findfirst(s,'{')-1]) ### paragraph with type name
+                    writemime(file, "text/plain", docstring)
                 else
                     writemime(file, "text/plain", docstring)
                 end
@@ -77,7 +86,9 @@ buildwriter(part, isdef) = isdef ?
     end :
     :(print(file, $(esc(part))))
 
-getlgdoc(docstring) = docstring.content[find(c->c.meta[:module] == LightGraphs, docstring.content)]
+getlgdoc(docstring) = docstring.content[find(c->c.meta[:module] == LightGraphs
+                                                || c.meta[:module] == LightGraphs.Datasets
+                                            , docstring.content)]
 
 function md_methodtable(io, f)
     println(io, "```julia")
@@ -148,21 +159,25 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 # Generators
 
 ## Random Graphs
-*LightGraphs.jl* implements three common random graph generators:
+*LightGraphs.jl* implements some common random graph generators:
 
-{{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph}}
-
-In addition, [stochastic block model](https://en.wikipedia.org/wiki/Stochastic_block_model)
-graphs are available using the following constructs:
-
-{{StochasticBlockModel, make_edgestream}}
-
-`StochasticBlockModel` instances may be used to create Graph objects.
+{{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph,
+    random_configuration_model, stochastic_block_model,
+    StochasticBlockModel, make_edgestream}}
 
 ## Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
-{{CompleteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph, WheelGraph, WheelDiGraph}}
+{{CompleteGraph, CompleteBipartiteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph,
+ WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph}}
+
+## Smallgraphs
+Many notorious graphs are available in the Datasets submodule:
+```julia
+using LightGraphs.Datasets
+```
+
+{{smallgraph}}
 
 """
 
