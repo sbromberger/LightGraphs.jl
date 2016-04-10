@@ -62,7 +62,7 @@ randomwalk, saw, non_backtracking_randomwalk,
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
-condensation, attracting_components,
+condensation, attracting_components, neighborhood,
 
 # cliques
 maximal_cliques,
@@ -100,7 +100,7 @@ maximum_weight_maximal_matching, MatchingResult,
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
-stochastic_block_model, 
+stochastic_block_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,
