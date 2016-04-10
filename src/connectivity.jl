@@ -227,3 +227,29 @@ function attracting_components(g::DiGraph)
     end
     return scc[attracting]
 end
+
+"""
+    neighborhood(g, v::Int, d::Int; dir=:out)
+
+Returns a vector of the vertices in `g` at distance less or equal to `d`
+from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction
+with respect to `v` (i.e. `:in` or `:out`) to be considered.
+"""
+function neighborhood(g::SimpleGraph, v::Int, d::Int; dir=:out)
+    neig = Set{Int}(v)
+    ∂neig = copy(neig)
+    fneig = dir == :out ? out_neighbors : in_neighbors
+    for l=1:d
+        newneigs = Set{Int}()
+        for i in ∂neig
+            for j in fneig(g, i)
+                if j ∉ neig
+                    push!(newneigs, j)
+                    push!(neig, j)
+                end
+            end
+        end
+        ∂neig = newneigs
+    end
+    return collect(neig)
+end
