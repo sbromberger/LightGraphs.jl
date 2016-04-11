@@ -17,7 +17,7 @@ function depth_first_visit_impl!(
     graph::SimpleGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap,    # an (initialized) color-map to indicate status of vertices
-    edgecolormap::Dict{Edge,Int},      # an (initialized) color-map to indicate status of edges
+    edgecolormap,      # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)  # the visitor
 
 
@@ -29,13 +29,10 @@ function depth_first_visit_impl!(
             v, tstate = next(udsts, tstate)
             v_color = get(vertexcolormap, v, 0)
             v_edge = Edge(u,v)
-            e_color = haskey(edgecolormap, v_edge)?
-                edgecolormap[v_edge] : edgecolormap[reverse(v_edge)]
-            examine_neighbor!(visitor, u, v, v_color, e_color)
+            e_color = get(edgecolormap, v_edge, 0)
+            examine_neighbor!(visitor, u, v, v_color, e_color) #no return here
 
-            if e_color == 0
-                edgecolormap[v_edge] = 1
-            end
+            edgecolormap[v_edge] = 1
 
             if v_color == 0
                 found_new_vertex = true
@@ -56,21 +53,13 @@ function depth_first_visit_impl!(
     end
 end
 
-function _mkedgecolormap(g::SimpleGraph, n::Integer=0)
-    d = Dict{Edge, Int}()
-    for e in edges(g)
-        d[e] = n
-    end
-    return d
-end
-
 function traverse_graph!(
     graph::SimpleGraph,
     alg::DepthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
     vertexcolormap = zeros(Int, nv(graph)),
-    edgecolormap = _mkedgecolormap(graph))
+    edgecolormap = Dict{Edge, Int}())
 
     vertexcolormap[s] = 1
     discover_vertex!(visitor, s) || return
@@ -81,7 +70,6 @@ function traverse_graph!(
 
     depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
 end
-
 
 #################################################
 #

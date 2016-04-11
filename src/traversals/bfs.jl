@@ -15,7 +15,8 @@ end
 function breadth_first_visit_impl!(
     graph::SimpleGraph,                 # the graph
     queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
-    colormap,                           # an (initialized) color-map to indicate status of vertices (0=unseen, 1=seen, 2=closed)
+    vertexcolormap,                           # an (initialized) color-map to indicate status of vertices (0=unseen, 1=seen, 2=closed)
+    edgecolormap,                           # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)        # the visitor
 
     while !isempty(queue)
@@ -23,53 +24,41 @@ function breadth_first_visit_impl!(
         open_vertex!(visitor, u)
 
         for v in out_neighbors(graph, u)
-            v_color = get(colormap, v, 0)
-            # TODO: Incorporate edge colors to BFS
-            examine_neighbor!(visitor, u, v, v_color, -1) || return
+            v_color = get(vertexcolormap, v, 0)
+            v_edge = Edge(u,v)
+            e_color = get(edgecolormap, v_edge, 0)
+            examine_neighbor!(visitor, u, v, v_color, e_color) || return
+
+            edgecolormap[v_edge] = 1
 
             if v_color == 0
-                colormap[v] = 1
+                vertexcolormap[v] = 1
                 discover_vertex!(visitor, v) || return
                 push!(queue, v)
             end
         end
 
-        colormap[u] = 2
         close_vertex!(visitor, u)
+        vertexcolormap[u] = 2
     end
-    nothing
 end
 
 function traverse_graph!(
     graph::SimpleGraph,
     alg::BreadthFirst,
-    s::Int,
+    source,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)),
-    que = Vector{Int}())
+    vertexcolormap = zeros(Int, nv(graph)),
+    edgecolormap = Dict{Edge, Int}(),
+    queue = Vector{Int}())
 
-    colormap[s] = 1
-    discover_vertex!(visitor, s) || return
-    push!(que, s)
-
-    breadth_first_visit_impl!(graph, que, colormap, visitor)
-end
-
-function traverse_graph!(
-    graph::SimpleGraph,
-    alg::BreadthFirst,
-    sources::AbstractVector{Int},
-    visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)),
-    que = Vector{Int}())
-
-    for s in sources
-        colormap[s] = 1
+    for s in source
+        vertexcolormap[s] = 1
         discover_vertex!(visitor, s) || return
-        push!(que, s)
+        push!(queue, s)
     end
 
-    breadth_first_visit_impl!(graph, que, colormap, visitor)
+    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap, visitor)
 end
 
 
@@ -179,8 +168,8 @@ end
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
         s::Int;
-        colormap=zeros(Int, nv(g)),
-        que=Vector{Int}())
+        vertexcolormap = zeros(Int, nv(g)),
+        queue = Vector{Int}())
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
     # parent of the index. This function checks if the scratch space is too small for the graph.
@@ -191,7 +180,7 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
     nvg = nv(g)
     length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
     visitor.tree[s] = s
-    traverse_graph!(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
+    traverse_graph!(g, BreadthFirst(), s, visitor; vertexcolormap=vertexcolormap, queue=queue)
 end
 
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,

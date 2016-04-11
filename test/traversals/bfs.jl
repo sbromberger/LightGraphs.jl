@@ -58,7 +58,7 @@ n = nv(g)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
 parents = visitor.tree
-bfs_tree!(visitor, g, 1, colormap = Dict{Int,Int}())
+bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
 
 @test istree(parents, n) == true
 tvis = TreeBFSVisitor(visitor)

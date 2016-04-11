@@ -25,13 +25,13 @@ function connected_components!(label::Vector{Int}, g::SimpleGraph)
     nvg = nv(g)
     visitor = LightGraphs.ComponentVisitorVector(label, 0)
     colormap = zeros(Int,nvg)
-    que = Vector{Int}()
-    sizehint!(que, nvg)
+    queue = Vector{Int}()
+    sizehint!(queue, nvg)
     for v in 1:nvg
         if label[v] == 0
             visitor.labels[v] = v
             visitor.seed = v
-            traverse_graph!(g, BreadthFirst(), v, visitor; colormap=colormap, que=que)
+            traverse_graph!(g, BreadthFirst(), v, visitor; vertexcolormap=colormap, queue=queue)
         end
     end
     return label
