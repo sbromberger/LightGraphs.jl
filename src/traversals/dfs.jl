@@ -64,7 +64,7 @@ function _mkedgecolormap(g::SimpleGraph, n::Integer=0)
     return d
 end
 
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     alg::DepthFirst,
     s::Int,
@@ -120,7 +120,7 @@ function is_cyclic(graph::SimpleGraph)
 
     for s in vertices(graph)
         if cmap[s] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
         visitor.found_cycle && return true
     end
@@ -155,7 +155,7 @@ function topological_sort_by_dfs(graph::SimpleGraph)
 
     for s in vertices(graph)
         if cmap[s] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
     end
 
@@ -183,7 +183,7 @@ and returns a directed acyclic graph of vertices in the order they were discover
 function dfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)
-    traverse_graph(g, DepthFirst(), s, visitor)
+    traverse_graph!(g, DepthFirst(), s, visitor)
     # visitor = traverse_dfs(g, s, TreeDFSVisitor(nvg))
     h = DiGraph(nvg)
     for (v, u) in enumerate(visitor.predecessor)

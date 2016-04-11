@@ -58,7 +58,7 @@ function visited_vertices(
     sources)
 
     visitor = VertexListVisitor(nv(graph))
-    traverse_graph(graph, alg, sources, visitor)
+    traverse_graph!(graph, alg, sources, visitor)
     visitor.vertices::Vector{Int}
 end
 
@@ -96,5 +96,5 @@ function traverse_graph_withlog(
     io::IO = STDOUT
 )
     visitor = LogGraphVisitor(io)
-    traverse_graph(g, alg, sources, visitor)
+    traverse_graph!(g, alg, sources, visitor)
 end

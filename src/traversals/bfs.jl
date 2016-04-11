@@ -42,7 +42,7 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     alg::BreadthFirst,
     s::Int,
@@ -57,7 +57,7 @@ function traverse_graph(
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
 
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     alg::BreadthFirst,
     sources::AbstractVector{Int},
@@ -103,7 +103,7 @@ of source vertices `ss`.
 function gdistances!{DMap}(graph::SimpleGraph, s::Int, dists::DMap)
     visitor = GDistanceVisitor(graph, dists)
     dists[s] = 0
-    traverse_graph(graph, BreadthFirst(), s, visitor)
+    traverse_graph!(graph, BreadthFirst(), s, visitor)
     return dists
 end
 
@@ -112,7 +112,7 @@ function gdistances!{DMap}(graph::SimpleGraph, sources::AbstractVector{Int}, dis
     for s in sources
         dists[s] = 0
     end
-    traverse_graph(graph, BreadthFirst(), sources, visitor)
+    traverse_graph!(graph, BreadthFirst(), sources, visitor)
     return dists
 end
 
@@ -193,7 +193,7 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
     nvg = nv(g)
     length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
     visitor.tree[s] = s
-    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
+    traverse_graph!(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
 end
 
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
@@ -259,7 +259,7 @@ end
 function _bipartite_visitor(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
-    traverse_graph(g, BreadthFirst(), s, visitor)
+    traverse_graph!(g, BreadthFirst(), s, visitor)
     return visitor
 end
 

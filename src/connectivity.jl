@@ -31,7 +31,7 @@ function connected_components!(label::Vector{Int}, g::SimpleGraph)
         if label[v] == 0
             visitor.labels[v] = v
             visitor.seed = v
-            traverse_graph(g, BreadthFirst(), v, visitor; colormap=colormap, que=que)
+            traverse_graph!(g, BreadthFirst(), v, visitor; colormap=colormap, que=que)
         end
     end
     return label
@@ -160,7 +160,7 @@ function strongly_connected_components(g::DiGraph)
     for v in vertices(g)
         if cmap[v] == 0 # 0 means not visited yet
             visitor = TarjanVisitor(nvg)
-            traverse_graph(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
+            traverse_graph!(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
             for component in visitor.components
                 push!(components, component)
             end
