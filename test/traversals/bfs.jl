@@ -18,15 +18,8 @@ add_edge!(g,3,4)
 
 
 import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
-g = smallgraph(:house)
-n = nv(g)
-visitor = TreeBFSVisitorVector(n)
-@test length(visitor.tree) == n
-parents = visitor.tree
-bfs_tree!(visitor, g, 1)
-maxdepth = n
 
-function istree(parents::Vector{Int})
+function istree(parents::Vector{Int}, maxdepth)
     flag = true
     for i in 1:n
         s = i
@@ -42,7 +35,32 @@ function istree(parents::Vector{Int})
     return flag
 end
 
-@test istree(parents) == true
+g = smallgraph(:house)
+n = nv(g)
+visitor = TreeBFSVisitorVector(n)
+@test length(visitor.tree) == n
+parents = visitor.tree
+bfs_tree!(visitor, g, 1)
+
+@test istree(parents, n) == true
+tvis = TreeBFSVisitor(visitor)
+@test nv(tvis.tree) == nv(g)
+@test typeof(tvis.tree) <: DiGraph
+t = tree(parents)
+@test typeof(t) <: DiGraph
+@test typeof(tvis.tree) <: DiGraph
+@test t == tvis.tree
+@test ne(t) < nv(t)
+
+# test Dict{Int,Int}() colormap
+g = smallgraph(:house)
+n = nv(g)
+visitor = TreeBFSVisitorVector(n)
+@test length(visitor.tree) == n
+parents = visitor.tree
+bfs_tree!(visitor, g, 1, colormap = Dict{Int,Int}())
+
+@test istree(parents, n) == true
 tvis = TreeBFSVisitor(visitor)
 @test nv(tvis.tree) == nv(g)
 @test typeof(tvis.tree) <: DiGraph

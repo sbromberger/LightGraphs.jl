@@ -13,21 +13,19 @@ type BreadthFirst <: SimpleGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!(
-    graph::SimpleGraph,   # the graph
-    queue::Vector{Int},                  # an (initialized) queue that stores the active vertices
-    colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
-    visitor::SimpleGraphVisitor)  # the visitor
+    graph::SimpleGraph,                 # the graph
+    queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
+    colormap,                           # an (initialized) color-map to indicate status of vertices (0=unseen, 1=seen, 2=closed)
+    visitor::SimpleGraphVisitor)        # the visitor
 
     while !isempty(queue)
         u = shift!(queue)
         open_vertex!(visitor, u)
 
         for v in out_neighbors(graph, u)
-            v_color::Int = colormap[v]
+            v_color = get(colormap, v, 0)
             # TODO: Incorporate edge colors to BFS
-            if !(examine_neighbor!(visitor, u, v, v_color, -1))
-                return
-            end
+            examine_neighbor!(visitor, u, v, v_color, -1) || return
 
             if v_color == 0
                 colormap[v] = 1
