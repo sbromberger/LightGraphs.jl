@@ -64,48 +64,34 @@ end
 #
 #################################################
 
-# Get the map of the (geodesic) distances from vertices to source by BFS
+###########################################
+# Get the map of the (geodesic) distances from vertices to source by BFS                  #
+###########################################
 
 immutable GDistanceVisitor <: SimpleGraphVisitor
-    graph::SimpleGraph
-    dists::Vector{Int}
 end
 
-function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
-    if vcolor < 0
-        g = visitor.graph
-        dists = visitor.dists
-        dists[v] = dists[u] + 1
-    end
-    return true
-end
-
-"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
-of source vertices `ss`.
 """
-function gdistances!{DMap}(graph::SimpleGraph, s::Int, dists::DMap)
-    visitor = GDistanceVisitor(graph, dists)
-    dists[s] = 0
-    traverse_graph!(graph, BreadthFirst(), s, visitor)
+    gdistances!(g, source, dists) -> dists
+
+Fills `dists` with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+`dists` can be either a vector or a dictionary.
+"""
+function gdistances!(g::SimpleGraph, source, dists)
+    visitor = GDistanceVisitor()
+    traverse_graph!(g, BreadthFirst(), source, visitor, vertexcolormap=dists)
     return dists
 end
 
-function gdistances!{DMap}(graph::SimpleGraph, sources::AbstractVector{Int}, dists::DMap)
-    visitor = GDistanceVisitor(graph, dists)
-    for s in sources
-        dists[s] = 0
-    end
-    traverse_graph!(graph, BreadthFirst(), sources, visitor)
-    return dists
-end
 
-"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
-of source vertices `ss`.
 """
-function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
-    dists = fill(defaultdist, nv(graph))
-    gdistances!(graph, sources, dists)
-end
+    gdistances(g, source) -> dists
+
+Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+For vertices in disconnected components the default distance is -1.
+"""
+gdistances(g, source) = gdistances!(g, source, fill(-1,nv(g)))
+
 
 ###########################################
 # Constructing BFS trees                  #
@@ -138,7 +124,6 @@ end
 tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor < 0
         visitor.tree[v] = u
     end
@@ -185,7 +170,6 @@ type ComponentVisitorVector <: SimpleGraphVisitor
 end
 
 function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
     if u != v && vcolor <  0
         visitor.labels[v] = visitor.seed
     end
