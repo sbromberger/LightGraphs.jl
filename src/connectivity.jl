@@ -2,7 +2,10 @@
 # licensing details.
 
 
-"""connected_components! produces a label array of components
+"""
+    connected_components!(label::Vector{Int}, g::SimpleGraph)
+
+Fills `label` with the `id` of the connected component to which it belongs.
 
 Arguments:
     label: a place to store the output
@@ -51,25 +54,25 @@ function components_dict(labels::Vector{Int})
     return d
 end
 
-"""components(labels) converts an array of labels to a Vector{Vector{Int}} of components
+"""
+    components(labels::Vector{Int})
+
+Converts an array of labels to a Vector{Vector{Int}} of components
 
 Arguments:
     c = labels[i] => vertex i belongs to component c.
 Output:
     vs = c[i] => vertices in vs belong to component i.
-    a = d[i] => if label[v[j]]==i then j in c[a] end
+    a = d[i] => if labels[v]==i then v in c[a] end
 """
 function components(labels::Vector{Int})
     d = Dict{Int, Int}()
     c = Vector{Vector{Int}}()
     i = 1
     for (v,l) in enumerate(labels)
-        index = get(d, l, i)
-        d[l] = index
+        index = get!(d, l, i)
         if length(c) >= index
-            vec = c[index]
-            push!(vec, v)
-            c[index] = vec
+            push!(c[index], v)
         else
             push!(c, [v])
             i += 1
@@ -78,19 +81,26 @@ function components(labels::Vector{Int})
     return c, d
 end
 
-"""Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
-of an undirected graph `g` as a vector of components, each represented by a
-vector of vectors of vertices belonging to the component.
 """
-function connected_components(g)
+    connected_components(g)
+
+Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+of `g` as a vector of components, each represented by a
+vector of vertices belonging to the component.
+"""
+function connected_components(g::SimpleGraph)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
     c, d = components(label)
     return c
 end
 
-"""Returns `true` if `g` is connected.
-For DiGraphs, this is equivalent to a test of weak connectivity."""
+"""
+    is_connected(g)
+
+Returns `true` if `g` is connected.
+For DiGraphs, this is equivalent to a test of weak connectivity.
+"""
 is_connected(g::Graph) = length(connected_components(g)) == 1
 is_connected(g::DiGraph) = is_weakly_connected(g)
 
