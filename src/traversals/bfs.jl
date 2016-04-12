@@ -48,7 +48,7 @@ function traverse_graph!(
     alg::BreadthFirst,
     source,
     visitor::SimpleGraphVisitor;
-    vertexcolormap = zeros(Int, nv(graph)),
+    vertexcolormap = Dict{Int, Int}(),
     edgecolormap = DummyEdgeMap(),
     queue = Vector{Int}())
 
@@ -224,7 +224,7 @@ BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
 function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
     if vcolor == 0
-        visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1)? 2:1
+        visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
     else
         if visitor.bipartitemap[v] == visitor.bipartitemap[u]
             visitor.is_bipartite = false

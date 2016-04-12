@@ -58,7 +58,7 @@ function traverse_graph!(
     alg::DepthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    vertexcolormap = zeros(Int, nv(graph)),
+    vertexcolormap = Dict{Int, Int}(),
     edgecolormap = DummyEdgeMap())
 
     vertexcolormap[s] = 1
