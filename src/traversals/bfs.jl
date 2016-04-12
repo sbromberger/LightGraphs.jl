@@ -49,7 +49,7 @@ function traverse_graph!(
     source,
     visitor::SimpleGraphVisitor;
     vertexcolormap = zeros(Int, nv(graph)),
-    edgecolormap = Dict{Edge, Int}(),
+    edgecolormap = DummyEdgeMap(),
     queue = Vector{Int}())
 
     for s in source

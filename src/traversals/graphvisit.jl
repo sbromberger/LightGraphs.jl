@@ -28,6 +28,15 @@ end
 # This is the common base for BreadthFirst and DepthFirst
 abstract SimpleGraphVisitAlgorithm
 
+type DummyEdgeMap
+end
+
+getindex(d::DummyEdgeMap, e::Edge) = 0
+setindex!(d::DummyEdgeMap, x, e::Edge) = x
+get(d::DummyEdgeMap, e::Edge, x) = x
+
+
+
 
 ###########################################################
 #

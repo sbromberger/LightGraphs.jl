@@ -23,9 +23,9 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype
+            ctranspose, join, start, next, done, eltype, get
 
 
 # core

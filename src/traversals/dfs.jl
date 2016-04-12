@@ -59,7 +59,7 @@ function traverse_graph!(
     s::Int,
     visitor::SimpleGraphVisitor;
     vertexcolormap = zeros(Int, nv(graph)),
-    edgecolormap = Dict{Edge, Int}())
+    edgecolormap = DummyEdgeMap())
 
     vertexcolormap[s] = 1
     discover_vertex!(visitor, s) || return
