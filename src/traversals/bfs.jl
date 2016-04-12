@@ -115,14 +115,6 @@ end
 # Constructing BFS trees                  #
 ###########################################
 
-# this type has been deprecated in favor of TreeBFSVisitorVector and the tree function.
-"""TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph"""
-type TreeBFSVisitor <:SimpleGraphVisitor
-    tree::DiGraph
-end
-
-@deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
-
 """TreeBFSVisitorVector is a type for representing a BFS traversal
 of the graph as a parents array. This type allows for a more performant implementation.
 """
@@ -132,14 +124,6 @@ end
 
 function TreeBFSVisitorVector(n::Int)
     return TreeBFSVisitorVector(zeros(Int, n))
-end
-
-"""TreeBFSVisitor converts a parents array into a DiGraph"""
-function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
-    n = length(tvv.tree)
-    parents = tvv.tree
-    g = tree(parents)
-    return TreeBFSVisitor(g)
 end
 
 """tree converts a parents array into a DiGraph"""

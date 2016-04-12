@@ -17,7 +17,7 @@ add_edge!(g,3,4)
 @test is_bipartite(g)
 
 
-import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
+import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
 function istree(parents::Vector{Int}, maxdepth)
     flag = true
@@ -43,13 +43,8 @@ parents = visitor.tree
 bfs_tree!(visitor, g, 1)
 
 @test istree(parents, n) == true
-tvis = TreeBFSVisitor(visitor)
-@test nv(tvis.tree) == nv(g)
-@test typeof(tvis.tree) <: DiGraph
 t = tree(parents)
 @test typeof(t) <: DiGraph
-@test typeof(tvis.tree) <: DiGraph
-@test t == tvis.tree
 @test ne(t) < nv(t)
 
 # test Dict{Int,Int}() colormap
@@ -61,15 +56,9 @@ parents = visitor.tree
 bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
 
 @test istree(parents, n) == true
-tvis = TreeBFSVisitor(visitor)
-@test nv(tvis.tree) == nv(g)
-@test typeof(tvis.tree) <: DiGraph
 t = tree(parents)
 @test typeof(t) <: DiGraph
-@test typeof(tvis.tree) <: DiGraph
-@test t == tvis.tree
 @test ne(t) < nv(t)
-
 
 g10 = CompleteGraph(10)
 @test bipartite_map(g10) == Vector{Int}()
