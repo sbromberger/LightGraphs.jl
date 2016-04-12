@@ -15,31 +15,27 @@ end
 function breadth_first_visit_impl!(
     graph::SimpleGraph,                 # the graph
     queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
-    vertexcolormap,                           # an (initialized) color-map to indicate status of vertices (0=unseen, 1=seen, 2=closed)
+    vertexcolormap,                           # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
     edgecolormap,                           # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)        # the visitor
 
     while !isempty(queue)
         u = shift!(queue)
         open_vertex!(visitor, u)
-
+        u_color = vertexcolormap[u]
         for v in out_neighbors(graph, u)
-            v_color = get(vertexcolormap, v, 0)
+            v_color = get(vertexcolormap, v, -1)
             v_edge = Edge(u,v)
-            e_color = get(edgecolormap, v_edge, 0)
+            e_color = get(edgecolormap, v_edge, -1)
             examine_neighbor!(visitor, u, v, v_color, e_color) || return
-
             edgecolormap[v_edge] = 1
-
-            if v_color == 0
-                vertexcolormap[v] = 1
+            if v_color < 0
+                vertexcolormap[v] = u_color + 1
                 discover_vertex!(visitor, v) || return
                 push!(queue, v)
             end
         end
-
         close_vertex!(visitor, u)
-        vertexcolormap[u] = 2
     end
 end
 
@@ -53,7 +49,7 @@ function traverse_graph!(
     queue = Vector{Int}())
 
     for s in source
-        vertexcolormap[s] = 1
+        vertexcolormap[s] = 0
         discover_vertex!(visitor, s) || return
         push!(queue, s)
     end
@@ -76,7 +72,7 @@ immutable GDistanceVisitor <: SimpleGraphVisitor
 end
 
 function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
-    if vcolor == 0
+    if vcolor < 0
         g = visitor.graph
         dists = visitor.dists
         dists[v] = dists[u] + 1
@@ -123,7 +119,7 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
 end
 
 function TreeBFSVisitorVector(n::Int)
-    return TreeBFSVisitorVector(zeros(Int, n))
+    return TreeBFSVisitorVector(fill(-1, n))
 end
 
 """tree converts a parents array into a DiGraph"""
@@ -143,7 +139,7 @@ tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
+    if u != v && vcolor < 0
         visitor.tree[v] = u
     end
     return true
@@ -152,7 +148,7 @@ end
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
         s::Int;
-        vertexcolormap = zeros(Int, nv(g)),
+        vertexcolormap = Dict{Int,Int}(),
         queue = Vector{Int}())
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
@@ -190,7 +186,7 @@ end
 
 function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
     # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
-    if u != v && vcolor == 0
+    if u != v && vcolor <  0
         visitor.labels[v] = visitor.seed
     end
     return true
@@ -207,7 +203,7 @@ end
 BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
 function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    if vcolor == 0
+    if vcolor < 0
         visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
     else
         if visitor.bipartitemap[v] == visitor.bipartitemap[u]

@@ -24,7 +24,7 @@ function connected_components!(label::Vector{Int}, g::SimpleGraph)
     # passed to components(a)
     nvg = nv(g)
     visitor = LightGraphs.ComponentVisitorVector(label, 0)
-    colormap = zeros(Int,nvg)
+    colormap = fill(-1,nvg)
     queue = Vector{Int}()
     sizehint!(queue, nvg)
     for v in 1:nvg
@@ -133,7 +133,7 @@ function discover_vertex!(vis::TarjanVisitor, v)
 end
 
 function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
-    if w_color > 0 # 1 means added seen, but not explored; 2 means closed
+    if w_color >= 0 # >=0 means added seen
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
             pop!(vis.lowlink)
         end
