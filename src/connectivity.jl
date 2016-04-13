@@ -238,6 +238,22 @@ function attracting_components(g::DiGraph)
     return scc[attracting]
 end
 
+type NeighborhoodVisitor <: SimpleGraphVisitor
+    d::Int
+    neigs::Vector{Int}
+end
+
+NeighborhoodVisitor(d::Int) = NeighborhoodVisitor(d, Vector{Int}())
+
+function examine_neighbor!(visitor::NeighborhoodVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+    ucolor >= visitor.d && return false
+    if vcolor < 0
+        push!(visitor.neigs, v)
+    end
+    return true
+end
+
+
 """
     neighborhood(g, v::Int, d::Int; dir=:out)
 
@@ -246,20 +262,10 @@ from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge d
 with respect to `v` (i.e. `:in` or `:out`) to be considered.
 """
 function neighborhood(g::SimpleGraph, v::Int, d::Int; dir=:out)
-    neig = Set{Int}(v)
-    ∂neig = copy(neig)
-    fneig = dir == :out ? out_neighbors : in_neighbors
-    for l=1:d
-        newneigs = Set{Int}()
-        for i in ∂neig
-            for j in fneig(g, i)
-                if j ∉ neig
-                    push!(newneigs, j)
-                    push!(neig, j)
-                end
-            end
-        end
-        ∂neig = newneigs
-    end
-    return collect(neig)
+    @assert d >= 0 "Distance has to be greater then zero."
+    visitor = NeighborhoodVisitor(d)
+    push!(visitor.neigs, v)
+    traverse_graph!(g, BreadthFirst(), v, visitor,
+        vertexcolormap=Dict{Int,Int}(), dir=dir)
+    return visitor.neigs
 end

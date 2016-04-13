@@ -133,7 +133,8 @@ types:
 
 ## Neighbors and Degree
 
-{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors, in_neighbors, all_neighbors, common_neighbors}}
+{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors,
+    in_neighbors, all_neighbors, common_neighbors, neighborhood}}
 """
 
 @file "centrality.md" """

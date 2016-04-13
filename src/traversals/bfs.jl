@@ -17,17 +17,20 @@ function breadth_first_visit_impl!(
     queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
     vertexcolormap,                           # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
     edgecolormap,                           # an (initialized) color-map to indicate status of edges
-    visitor::SimpleGraphVisitor)        # the visitor
+    visitor::SimpleGraphVisitor,            # the visitor
+    dir::Symbol)                        # direction [:in,:out]
 
+    fneig = dir == :out ? out_neighbors : in_neighbors
     while !isempty(queue)
         u = shift!(queue)
         open_vertex!(visitor, u)
         u_color = vertexcolormap[u]
-        for v in out_neighbors(graph, u)
+
+        for v in fneig(graph, u)
             v_color = get(vertexcolormap, v, -1)
             v_edge = Edge(u,v)
             e_color = get(edgecolormap, v_edge, -1)
-            examine_neighbor!(visitor, u, v, v_color, e_color) || return
+            examine_neighbor!(visitor, u, v, u_color, v_color, e_color) || return
             edgecolormap[v_edge] = 1
             if v_color < 0
                 vertexcolormap[v] = u_color + 1
@@ -46,7 +49,8 @@ function traverse_graph!(
     visitor::SimpleGraphVisitor;
     vertexcolormap = Dict{Int, Int}(),
     edgecolormap = DummyEdgeMap(),
-    queue = Vector{Int}())
+    queue = Vector{Int}(),
+    dir = :out)
 
     for s in source
         vertexcolormap[s] = 0
@@ -54,7 +58,8 @@ function traverse_graph!(
         push!(queue, s)
     end
 
-    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap, visitor)
+    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap
+            , visitor, dir)
 end
 
 
@@ -123,7 +128,8 @@ end
 
 tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
-function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor < 0
         visitor.tree[v] = u
     end
@@ -169,7 +175,8 @@ type ComponentVisitorVector <: SimpleGraphVisitor
     seed::Int
 end
 
-function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor <  0
         visitor.labels[v] = visitor.seed
     end
@@ -186,7 +193,8 @@ end
 
 BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
-function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
+        ucolor::Int, vcolor::Int, ecolor::Int)
     if vcolor < 0
         visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
     else
@@ -210,7 +218,7 @@ end
 function _bipartite_visitor(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
-    traverse_graph!(g, BreadthFirst(), s, visitor)
+    traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=fill(-1,nv(g)))
     return visitor
 end
 

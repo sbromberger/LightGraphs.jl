@@ -15,7 +15,7 @@ discover_vertex!(vis::SimpleGraphVisitor, v) = true
 open_vertex!(vis::SimpleGraphVisitor, v) = true
 
 # invoked when a neighbor is discovered & examined
-examine_neighbor!(vis::SimpleGraphVisitor, u, v, vcolor::Int, ecolor::Int) = true
+examine_neighbor!(vis::SimpleGraphVisitor, u, v, ucolor::Int, vcolor::Int, ecolor::Int) = true
 
 # invoked when all of v's neighbors have been examined
 close_vertex!(vis::SimpleGraphVisitor, v) = true

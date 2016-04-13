@@ -186,3 +186,10 @@ common_neighbors(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, u::Int64, v::I
 ```
 Returns the neighbors common to vertices `u` and `v` in `g`.
 
+### neighborhood
+```julia
+neighborhood(g, v::Int, d::Int; dir=:out)
+```
+
+Returns a vector of the vertices in `g` at distance less or equal to `d` from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
+

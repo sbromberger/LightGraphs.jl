@@ -33,8 +33,9 @@ This function is a high level wrapper around bfs_tree!, use that function for mo
 
 ### dfs_tree
 ```julia
-dfs_tree(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+dfs_tree(g, s::Int)
 ```
+
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`, and returns a directed acyclic graph of vertices in the order they were discovered.
 
 ### maximum_adjacency_visit
@@ -62,9 +63,9 @@ Performs a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk
 `Graph connectivity` functions are defined on both undirected and directed graphs:
 ### is_connected
 ```julia
-is_connected(g::LightGraphs.Graph)
-is_connected(g::LightGraphs.DiGraph)
+is_connected(g)
 ```
+
 Returns `true` if `g` is connected. For DiGraphs, this is equivalent to a test of weak connectivity.
 
 ### is_strongly_connected
@@ -83,7 +84,8 @@ Returns `true` if the undirected graph of `g` is connected.
 ```julia
 connected_components(g)
 ```
-Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)) of an undirected graph `g` as a vector of components, each represented by a vector of vectors of vertices belonging to the component.
+
+Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)) of `g` as a vector of components, each represented by a vector of vertices belonging to the component.
 
 ### strongly_connected_components
 ```julia
@@ -143,8 +145,9 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
 ### is_cyclic
 ```julia
-is_cyclic(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+is_cyclic(g)
 ```
+
 Tests whether a graph contains a cycle through depth-first search. It returns `true` when it finds a cycle, otherwise `false`.
 
 ## Shortest-Path Algorithms
@@ -191,16 +194,17 @@ Note that this algorithm may return a large amount of data (it will allocate on 
 ## Path discovery / enumeration
 ### gdistances
 ```julia
-gdistances(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources)
+gdistances(g, source) -> dists
 ```
-Returns the geodesic distances of graph `g` from source vertex `s` or a set of source vertices `ss`.
+
+Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`. For vertices in disconnected components the default distance is -1.
 
 ### gdistances!
 ```julia
-gdistances!{DMap}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64, dists::DMap)
-gdistances!{DMap}(graph::Union{LightGraphs.DiGraph,LightGraphs.Graph}, sources::AbstractArray{Int64,1}, dists::DMap)
+gdistances!(g, source, dists) -> dists
 ```
-Returns the geodesic distances of graph `g` from source vertex `s` or a set of source vertices `ss`.
+
+Fills `dists` with the geodesic distances of vertices in  `g` from vertex/vertices `source`. `dists` can be either a vector or a dictionary.
 
 ### enumerate_paths
 ```julia

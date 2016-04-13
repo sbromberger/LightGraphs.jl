@@ -117,7 +117,7 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 
 - **distance:** eccentricity, diameter, periphery, radius, center
 
-- **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components
+- **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components, neighborhood
 
 - **operators:** complement, reverse, reverse!, union, join, intersect, difference,
 symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
