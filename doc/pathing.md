@@ -113,10 +113,11 @@ Returns a vector of vectors of integers representing lists of attracting compone
 
 ### is_bipartite
 ```julia
-is_bipartite(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-is_bipartite(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, s::Int64)
+is_bipartite(g)
+is_bipartite(g, v)
 ```
-Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+
+Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph). If a node `v` is specified, only the connected component to which it belongs is considered.
 
 ### condensation
 ```julia
@@ -138,7 +139,7 @@ Computes the (common) period for all nodes in a strongly connected graph.
 neighborhood(g, v::Int, d::Int; dir=:out)
 ```
 
-Returns a vector of the vertices in `g` at distance less or equal to `d` from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
+Returns a vector of the vertices in `g` at distance less or equal to `d` from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
 
 ## Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex
