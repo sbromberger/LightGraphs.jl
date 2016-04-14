@@ -151,3 +151,7 @@ g10 = StarDiGraph(10)
 @test length(neighborhood(g10, 2, 1, dir=:in)) == 2
 @test length(neighborhood(g10, 1, 2, dir=:in)) == 1
 @test length(neighborhood(g10, 2, 2, dir=:in)) == 2
+
+g10 = StarGraph(10)
+@test egonet(g10, 1, 0) == Graph(1,0)
+@test egonet(g10, 1, 1) == g10

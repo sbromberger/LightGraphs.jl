@@ -134,7 +134,7 @@ types:
 ## Neighbors and Degree
 
 {{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors,
-    in_neighbors, all_neighbors, common_neighbors, neighborhood}}
+    in_neighbors, all_neighbors, common_neighbors, neighborhood, egonet}}
 """
 
 @file "centrality.md" """

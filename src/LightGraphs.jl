@@ -62,7 +62,7 @@ randomwalk, saw, non_backtracking_randomwalk,
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
-condensation, attracting_components, neighborhood,
+condensation, attracting_components, neighborhood, egonet,
 
 # cliques
 maximal_cliques,
