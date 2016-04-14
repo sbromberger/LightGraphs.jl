@@ -215,7 +215,10 @@ If a node `v` is specified, only the connected component to which it belongs is 
 function is_bipartite(g::SimpleGraph)
     cc = filter(x->length(x)>2, connected_components(g))
     vmap = Dict{Int,Int}()
-    return all(x->_is_bipartite(g,x[1], vmap=vmap), cc)
+    for c in cc
+        _is_bipartite(g,c[1], vmap=vmap) || return false
+    end
+    return true
 end
 
 is_bipartite(g::SimpleGraph, v::Int) = _is_bipartite(g, v)
