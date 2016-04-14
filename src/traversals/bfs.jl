@@ -205,20 +205,30 @@ function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
     return visitor.is_bipartite
 end
 
-"""Will return `true` if graph `g` is
-[bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 """
-is_bipartite(g::SimpleGraph, s::Int) = _bipartite_visitor(g, s).is_bipartite
+    is_bipartite(g)
+    is_bipartite(g, v)
 
+Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+If a node `v` is specified, only the connected component to which it belongs is considered.
+"""
 function is_bipartite(g::SimpleGraph)
     cc = filter(x->length(x)>2, connected_components(g))
-    return all(x->is_bipartite(g,x[1]), cc)
+    vmap = Dict{Int,Int}()
+    return all(x->_is_bipartite(g,x[1], vmap=vmap), cc)
 end
 
-function _bipartite_visitor(g::SimpleGraph, s::Int)
+is_bipartite(g::SimpleGraph, v::Int) = _is_bipartite(g, v)
+
+_is_bipartite(g::SimpleGraph, v::Int; vmap = Dict{Int,Int}()) = _bipartite_visitor(g, v, vmap=vmap).is_bipartite
+
+function _bipartite_visitor(g::SimpleGraph, s::Int; vmap=Dict{Int,Int}())
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
-    traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=fill(-1,nv(g)))
+    for v in keys(vmap) #have to reset vmap, otherway problems with digraphs
+        vmap[v] = -1
+    end
+    traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=vmap)
     return visitor
 end
 

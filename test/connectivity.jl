@@ -40,7 +40,6 @@ for m=1:50
     end
 end
 
-
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
 h = DiGraph(8)
 add_edge!(h,1,2); add_edge!(h,2,3); add_edge!(h,2,5);
