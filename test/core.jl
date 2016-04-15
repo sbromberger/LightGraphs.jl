@@ -17,7 +17,6 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
-
 @test vertices(g) == 1:5
 i = 0
 for e in edges(g)

@@ -2,14 +2,12 @@
 Computes the maximum flow between the source and target vertexes in a flow
 graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm).
 Returns the value of the maximum flow as well as the final flow matrix.
-
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
-
 Requires arguments:
-residual_graph::LightGraphs.DiGraph        # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- residual_graph::DiGraph                # the input graph
+- source::Int                            # the source vertex
+- target::Int                            # the target vertex
+- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function edmonds_karp_impl{T<:Number}(
@@ -58,11 +56,10 @@ end
 """
 Calculates the amount by which flow can be augmented in the given path.
 Augments the flow and returns the augment value.
-
 Requires arguments:
-path::Vector{Int}                      # input path
-flow_matrix::AbstractArray{T,2}        # the current flow matrix
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- path::Vector{Int}                      # input path
+- flow_matrix::AbstractArray{T,2}        # the current flow matrix
+- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function augment_path!{T<:Number}(
@@ -91,14 +88,13 @@ end
 Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
 the two BFS searches intersect, the Parent table of the path, the
 Successor table of the path found, and a flag indicating success
-
 Flag Values:
 0 => success
 1 => No Path to target
 2 => No Path to source
 """
 function fetch_path{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
@@ -121,14 +117,12 @@ A preallocated version of fetch_paths. The parent and successor tables are pre-a
 Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
 the two BFS searches intersect, the Parent table of the path, the
 Successor table of the path found, and a flag indicating success
-
 Flag Values:
 0 => success
 1 => No Path to target
 2 => No Path to source
-
 Requires arguments:
-    residual_graph::LightGraphs.DiGraph        # the input graph
+    residual_graph::DiGraph                # the input graph
     source::Int                            # the source vertex
     target::Int                            # the target vertex
     flow_matrix::AbstractArray{T,2}        # the current flow matrix
@@ -137,7 +131,7 @@ Requires arguments:
     S::Vector{Int}                         # successor table of path init to -1s
 """
 function fetch_path!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix

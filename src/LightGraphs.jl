@@ -30,7 +30,7 @@ import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
 
 # core
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-in_edges, out_edges, has_vertex, has_edge, is_directed,
+fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
@@ -40,9 +40,10 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 eccentricity, diameter, periphery, radius, center,
 
 # operators
-complement, reverse, reverse!, union, intersect,
+complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
 induced_subgraph, join, tensor_product, cartesian_product,
+crosspath,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -74,46 +75,44 @@ a_star, dijkstra_shortest_paths,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths,
 
-# smallgraphs
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph, CompleteBipartiteGraph,
-CompleteDiGraph, StarDiGraph, PathDiGraph, WheelDiGraph, CycleDiGraph,
-DiamondGraph, BullGraph,
-ChvatalGraph, CubicalGraph, DesarguesGraph,
-DodecahedralGraph, FruchtGraph, HeawoodGraph,
-HouseGraph, HouseXGraph, IcosahedralGraph,
-KrackhardtKiteGraph, MoebiusKantorGraph, OctahedralGraph,
-PappusGraph, PetersenGraph, SedgewickMazeGraph,
-TetrahedralGraph, TruncatedCubeGraph,
-TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph, TutteGraph,
-
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-CombinatorialAdjacency, non_backtracking_matrix,
+CombinatorialAdjacency, non_backtracking_matrix, incidence_matrix,
+nonbacktrack_embedding, Nonbacktracking,
+contract,
 
 # astar
 a_star,
 
 # persistence
-readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-
+# readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
+load, save,
 # flow
-maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, PushRelabelAlgorithm,
+maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
 
 #matching
-maximum_weight_maximal_matching,
+maximum_weight_maximal_matching, MatchingResult,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
-stochastic_block_model,
+StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
+stochastic_block_model, 
 
 #community
-modularity, mutual_information, community_detection_nback, core_periphery_deg,
+modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient,
-label_propagation
+
+#generators
+CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+
+#Datasets
+Datasets
 
 
 """An optimized graphs package.
@@ -151,13 +150,16 @@ include("core.jl")
         include("shortestpaths/floyd-warshall.jl")
         include("spectral.jl")
         include("operators.jl")
-        include("persistence/default.jl")
-        include("persistence/dot.jl")
-        include("persistence/gexf.jl")
-        include("persistence/gml.jl")
-        include("persistence/graphml.jl")
+        include("persistence/common.jl")
+            include("persistence/lg.jl")
+            include("persistence/dot.jl")
+            include("persistence/gexf.jl")
+            include("persistence/gml.jl")
+            include("persistence/graphml.jl")
+            include("persistence/net.jl")
+            include("persistence/jld.jl")
         include("randgraphs.jl")
-        include("smallgraphs.jl")
+        include("generators.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
@@ -172,7 +174,10 @@ include("core.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
+            include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
         include("matching/linear-programming.jl")
+        include("datasets/Datasets.jl")
+        include("utils.jl")
 
 end # module
