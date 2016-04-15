@@ -7,6 +7,8 @@ for k=2:5
     c = label_propagation(z)
     a = collect(n:n:k*n)
     a = Int[div(i-1,n)+1 for i=1:k*n]
+    # check the number of community
     @test length(unique(a)) == length(unique(c))
+    # check the partition
     @test a == c
 end
