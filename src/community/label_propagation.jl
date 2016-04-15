@@ -72,7 +72,6 @@ function vote!(g, m, c, u)
     for lbl in c.neigh_pos
       if c.neigh_cnt[lbl] == max_cnt
         return lbl
-        break
       end
     end
 end
