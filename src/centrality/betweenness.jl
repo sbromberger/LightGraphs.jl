@@ -2,28 +2,24 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-doc"""Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
+doc"""
+    betweenness_centrality(g, k=0; normalize=true, endpoints=false)
+
+
+Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
 the graph `g`, or, optionally, of a random subset of `k` vertices. Can
 optionally include endpoints in the calculations. Normalization is enabled by
 default.
 
-Betweeness centrality is defined as:
+Betweenness centrality is defined as:
 
-$bc(v) = \frac{1}{\mathcal{N}}
-        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
+$bc(v) = \frac{1}{\mathcal{N}} \sum_{s \neq t \neq v}
+        \frac{\sigma_{st}(v)}{\sigma_{st}}$.
 
-
-#### Parameters
+ **Parameters**
 
 g: SimpleGraph
     A Graph, directed or undirected.
-
-weights: AbstractArray{Float64, 2}, optional
-    Matrix containing the weight associated with each edge (i,j)
-    `ω[i, j]` is the weight between vertices `i` and `j`.
-    If no weights are specified, shortest paths are computed using equal
-    weights. If values are missing, they are assumed equal to `1`.
-    *Advice* Use sparse matrices for better performances.
 
 k: Integer, optional
     Use `k` nodes sample to estimate the betweenness centrality. If none,
@@ -38,14 +34,13 @@ normalize: bool, optional
 endpoints: bool, optional
     If true, endpoints are included in the shortest path count.
 
-#### Returns
+**Returns**
 
 betweenness: Array{Float64}
     Betweenness centrality value per node id.
 
-#### Examples
 
-#### References
+**References**
 
 [1] Brandes 2001 & Brandes 2008
 """
@@ -62,14 +57,16 @@ function betweenness_centrality(
     if k == 0
         nodes = 1:n_v
     else
-        nodes = sample(1:n_v, k, replace=false)   #112
+        nodes = sample!([1:n_v;], k)   #112
     end
     for s in nodes
-        state = dijkstra_shortest_paths(g, s; allpaths=true)
-        if endpoints
-            _accumulate_endpoints!(betweenness, state, g, s)
-        else
-            _accumulate_basic!(betweenness, state, g, s)
+        if degree(g,s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s; allpaths=true)
+            if endpoints
+                _accumulate_endpoints!(betweenness, state, g, s)
+            else
+                _accumulate_basic!(betweenness, state, g, s)
+            end
         end
     end
 

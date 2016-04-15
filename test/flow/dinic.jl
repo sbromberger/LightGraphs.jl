@@ -1,6 +1,3 @@
-using LightGraphs
-using Base.Test
-
 # Construct DiGraph
 flow_graph = DiGraph(8)
 

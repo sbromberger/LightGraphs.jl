@@ -3,21 +3,22 @@ Implementation of the FIFO push relabel algorithm with gap heuristic. Takes
 approximately O(V^3) time.
 
 Maintains the following auxillary arrays:
-height -> Stores the labels of all vertices
-count  -> Stores the number of vertices at each height
-excess -> Stores the difference between incoming and outgoing flow for all vertices
-active -> Stores the status of all vertices. (e(v)>0 => active[v] = true)
-Q      -> The FIFO queue that stores active vertices waiting to be discharged.
+- height -> Stores the labels of all vertices
+- count  -> Stores the number of vertices at each height
+- excess -> Stores the difference between incoming and outgoing flow for all vertices
+- active -> Stores the status of all vertices. (e(v)>0 => active[v] = true)
+- Q      -> The FIFO queue that stores active vertices waiting to be discharged.
 
 Requires arguments:
-residual_graph::LightGraphs.DiGraph        # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+
+- residual_graph::DiGraph                # the input graph
+- source::Int                            # the source vertex
+- target::Int                            # the target vertex
+- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function push_relabel{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,   # the input graph
+    residual_graph::DiGraph,               # the input graph
     source::Int,                           # the source vertex
     target::Int,                           # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
@@ -62,10 +63,11 @@ end
 Pushes inactive nodes into the queue and activates them.
 
 Requires arguments:
-Q::AbstractArray{Int,1}
-v::Int                                 # input vertex
-active::AbstractArray{Bool,1}
-excess::AbstractArray{T,1}
+
+- Q::AbstractArray{Int,1}
+- v::Int
+- active::AbstractArray{Bool,1}
+- excess::AbstractArray{T,1}
 """
 
 function enqueue_vertex!{T<:Number}(
@@ -85,19 +87,20 @@ end
 Pushes as much flow as possible through the given edge.
 
 Requires arguements:
-residual_graph::LightGraphs.DiGraph      # the input graph
-u::Int                               # input from-vertex
-v::Int                               # input to-vetex
-capacity_matrix::AbstractArray{T,2}
-flow_matrix::AbstractArray{T,2}
-excess::AbstractArray{T,1}
-height::AbstractArray{Int,1}
-active::AbstractArray{Bool,1}
-Q::AbstractArray{Int,1}
+
+- residual_graph::DiGraph              # the input graph
+- u::Int                               # input from-vertex
+- v::Int                               # input to-vetex
+- capacity_matrix::AbstractArray{T,2}
+- flow_matrix::AbstractArray{T,2}
+- excess::AbstractArray{T,1}
+- height::AbstractArray{Int,1}
+- active::AbstractArray{Bool,1}
+- Q::AbstractArray{Int,1}
 """
 
 function push_flow!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,     # the input graph
+    residual_graph::DiGraph,             # the input graph
     u::Int,                              # input from-vertex
     v::Int,                              # input to-vetex
     capacity_matrix::AbstractArray{T,2},
@@ -122,22 +125,23 @@ function push_flow!{T<:Number}(
     nothing
 end
 
-  """
-  Implements the gap heuristic. Relabels all vertices above a cutoff height.
-  Reduces the number of relabels required.
+"""
+Implements the gap heuristic. Relabels all vertices above a cutoff height.
+Reduces the number of relabels required.
 
-  Requires arguments:
-  residual_graph::LightGraphs.DiGraph        # the input graph
-  h::Int                                 # cutoff height
-  excess::AbstractArray{T,1}
-  height::AbstractArray{Int,1}
-  active::AbstractArray{Bool,1}
-  count::AbstractArray{Int,1}
-  Q::AbstractArray{Int,1}                # FIFO queue
-  """
+Requires arguments:
+
+- residual_graph::DiGraph                # the input graph
+- h::Int                                 # cutoff height
+- excess::AbstractArray{T,1}
+- height::AbstractArray{Int,1}
+- active::AbstractArray{Bool,1}
+- count::AbstractArray{Int,1}
+- Q::AbstractArray{Int,1}
+"""
 
 function gap!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,       # the input graph
+    residual_graph::DiGraph,               # the input graph
     h::Int,                                # cutoff height
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
@@ -161,19 +165,20 @@ Relabels a vertex with respect to its neighbors, to produce an admissable
 edge.
 
 Requires arguments:
-residual_graph::LightGraphs.DiGraph         # the input graph
-v::Int                                  # input vertex to be relabeled
-capacity_matrix::AbstractArray{T,2}
-flow_matrix::AbstractArray{T,2}
-excess::AbstractArray{T,1}
-height::AbstractArray{Int,1}
-active::AbstractArray{Bool,1}
-count::AbstractArray{Int,1}
-Q::AbstractArray{Int,1}
+
+- residual_graph::DiGraph                 # the input graph
+- v::Int                                  # input vertex to be relabeled
+- capacity_matrix::AbstractArray{T,2}
+- flow_matrix::AbstractArray{T,2}
+- excess::AbstractArray{T,1}
+- height::AbstractArray{Int,1}
+- active::AbstractArray{Bool,1}
+- count::AbstractArray{Int,1}
+- Q::AbstractArray{Int,1}
 """
 
 function relabel!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::DiGraph,                # the input graph
     v::Int,                                 # input vertex to be relabeled
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
@@ -202,18 +207,19 @@ Drains the excess flow out of a vertex. Runs the gap heuristic or relabels the
 vertex if the excess remains non-zero.
 
 Requires arguments:
-residual_graph::LightGraphs.DiGraph         # the input graph
-v::Int                                  # vertex to be discharged
-capacity_matrix::AbstractArray{T,2}
-flow_matrix::AbstractArray{T,2}
-excess::AbstractArray{T,1}
-height::AbstractArray{Int,1}
-active::AbstractArray{Bool,1}
-count::AbstractArray{Int,1}
-Q::AbstractArray{Int,1}                 # FIFO queue
+
+- residual_graph::DiGraph                 # the input graph
+- v::Int                                  # vertex to be discharged
+- capacity_matrix::AbstractArray{T,2}
+- flow_matrix::AbstractArray{T,2}
+- excess::AbstractArray{T,1}
+- height::AbstractArray{Int,1}
+- active::AbstractArray{Bool,1}
+- count::AbstractArray{Int,1}
+- Q::AbstractArray{Int,1}
 """
 function discharge!{T<:Number}(
-    residual_graph::LightGraphs.DiGraph,        # the input graph
+    residual_graph::DiGraph,                # the input graph
     v::Int,                                 # vertex to be discharged
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},

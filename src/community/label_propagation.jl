@@ -7,10 +7,12 @@ return : array containing vertex assignments, the range of the output as 1:count
 function label_propagation(g::SimpleGraph; maxiter=1000)
     n = nv(g)
     membership = collect(1:n)
-    active_nodes = Set(vertices(g))
+    active_nodes = IntSet(vertices(g))
     nc = NeighComm(collect(1:n), fill(-1,n), 1)
-    i = 0
+    convergence_hist = Vector{Int}()
+    i = 1
     while !isempty(active_nodes) && i < maxiter
+    	push!(convergence_hist, length(active_nodes))
     	i += 1
         random_order = shuffle(collect(active_nodes))
         for u in random_order
@@ -25,8 +27,10 @@ function label_propagation(g::SimpleGraph; maxiter=1000)
             end
         end
     end
-    renumber_labels!(membership)
-    membership
+    # resue nc.neigh_pos to renumber labels
+    fill!(nc.neigh_pos, 0)
+    renumber_labels!(membership, nc.neigh_pos)
+    membership, convergence_hist
 end
 
 """Fast shuffle Array `a` in UnitRange `r` inplace."""
@@ -77,10 +81,9 @@ function vote!(g::SimpleGraph, membership::Vector{Int}, nc::NeighComm, u::Int)
     end
 end
 
-function renumber_labels!(membership::Vector{Int})
+function renumber_labels!(membership::Vector{Int}, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
-    label_counters = zeros(Int, N)
     j = 1
     for i=1:length(membership)
         k = membership[i]

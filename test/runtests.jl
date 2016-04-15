@@ -1,9 +1,11 @@
+# include("../src/LightGraphs.jl")
 using LightGraphs
+using LightGraphs.Datasets
 using Requires
 using Base.Test
 
-g1 = PetersenGraph()
-g2 = TutteGraph()
+g1 = smallgraph("PetersenGraph")
+g2 = smallgraph(:tutte)
 g3 = PathGraph(5)
 g4 = PathDiGraph(5)
 g5 = DiGraph(4)
@@ -29,7 +31,7 @@ re1 = Edge(2, 1)
 
 testdir = dirname(@__FILE__)
 
-pdict = readgraph(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
+pdict = load(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
 p1 = pdict["Tutte"]
 p2 = pdict["pathdigraph"]
 
@@ -46,16 +48,15 @@ tests = [
     "core",
     "edgeiter",
     "operators",
-    "randgraphs",
     "graphdigraph",
     "persistence",
-    "smallgraphs",
     "distance",
     "spectral",
     "cliques",
     "subgraphs",
     "connectivity",
     "randgraphs",
+    "generators",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
@@ -77,10 +78,13 @@ tests = [
     "centrality/pagerank",
     "flow/edmonds_karp",
     "flow/dinic",
+    "flow/boykov_kolmogorov",
     "flow/push_relabel",
     "flow/maximum_flow",
-    "matching/linear-programming"
-    ]
+    "matching/linear-programming",
+    "datasets/runtests",
+    "utils"
+]
 
 
 for t in tests

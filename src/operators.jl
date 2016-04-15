@@ -1,5 +1,9 @@
-"""Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
-of a graph."""
+"""
+    complement(g)
+
+Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
+of a graph.
+"""
 function complement(g::Graph)
     gnv = nv(g)
     h = Graph(gnv)
@@ -26,8 +30,12 @@ function complement(g::DiGraph)
     return h
 end
 
-"""(`DiGraph` only) Produces a graph where all edges are reversed from the
-original."""
+"""
+    reverse(g::DiGraph)
+
+Produces a graph where all edges are reversed from the
+original.
+"""
 function reverse(g::DiGraph)
     gnv = nv(g)
     gne = ne(g)
@@ -40,13 +48,20 @@ function reverse(g::DiGraph)
     return h
 end
 
-"""(`DiGraph` only) In-place reverse (modifies the original graph)."""
+"""
+    reverse!(g::DiGraph)
+
+In-place reverse (modifies the original graph).
+"""
 function reverse!(g::DiGraph)
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
 
-doc"""Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$
+doc"""
+    blkdiag(g, h)
+
+Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$
 edges.
 
 Put simply, the vertices and edges from graph `h` are appended to graph `g`.
@@ -63,7 +78,10 @@ function blkdiag{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-"""Produces a graph with edges that are only in both graph `g` and graph `h`.
+"""
+    intersect(g, h)
+
+Produces a graph with edges that are only in both graph `g` and graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
 """
@@ -78,7 +96,10 @@ function intersect{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-"""Produces a graph with edges in graph `g` that are not in graph `h`.
+"""
+    difference(g, h)
+
+Produces a graph with edges in graph `g` that are not in graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
 """
@@ -93,7 +114,10 @@ function difference{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-"""Produces a graph with edges from graph `g` that do not exist in graph `h`,
+"""
+    symmetric_difference(g, h)
+
+Produces a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
 
 Note that this function may produce a graph with 0-degree vertices.
@@ -112,7 +136,10 @@ function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
     return r
 end
 
-"""Merges graphs `g` and `h` by taking the set union of all vertices and edges.
+"""
+    union(g, h)
+
+Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 """
 function union{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
@@ -133,7 +160,10 @@ function union{T<:SimpleGraph}(g::T, h::T)
 end
 
 
-"""Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
+"""
+    join(g, h)
+
+Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
  the vertices in `g` and those in `h`.
 """
 function join(g::Graph, h::Graph)
@@ -146,7 +176,18 @@ function join(g::Graph, h::Graph)
     return r
 end
 
-"""Filters graph `g` to include only the vertices present in the iterable
+
+"""
+    crosspath(len::Integer, g::Graph)
+
+Replicate `len` times `h` and connect each vertex with its copies in a path
+"""
+crosspath(len::Integer, g::Graph) = cartesian_product(PathGraph(len), g)
+
+"""
+    induced_subgraph(g, iter)
+
+Filters graph `g` to include only the vertices present in the iterable
 argument `vs`. Returns the subgraph of `g` induced by `vs`.
 """
 function induced_subgraph{T<:SimpleGraph}(g::T, iter)
@@ -231,6 +272,8 @@ ndims(g::SimpleGraph) = 2
 issym(g::SimpleGraph) = !is_directed(g)
 
 """
+    cartesian_product(g, h)
+
 Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
 function cartesian_product{G<:SimpleGraph}(g::G, h::G)
@@ -252,6 +295,8 @@ function cartesian_product{G<:SimpleGraph}(g::G, h::G)
 end
 
 """
+    tensor_product(g, h)
+
 Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
 function tensor_product{G<:SimpleGraph}(g::G, h::G)

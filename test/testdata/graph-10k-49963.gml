@@ -1,6 +1,6 @@
 graph [
   directed 1
-  name "gnp_random_graph(10000,0.0005)"
+  label "gnp_random_graph(10000,0.0005)"
   node [
     id 0
     label "0"

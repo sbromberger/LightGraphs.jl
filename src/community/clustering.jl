@@ -1,4 +1,6 @@
 """
+    local_clustering_coefficient(g, v)
+
 Computes the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient) for node `v`.
 """
 function local_clustering_coefficient(g::SimpleGraph, v::Integer)
@@ -8,6 +10,8 @@ function local_clustering_coefficient(g::SimpleGraph, v::Integer)
 end
 
 """
+    local_clustering(g, v)
+
 Returns a tuple `(a,b)`, where `a` is the number of triangles in the neighborhood of
 `v` and `b` is the maximum number of possible triangles.
 It is related to the local clustering coefficient  by `r=a/b`.
@@ -30,11 +34,15 @@ end
 
 
 """
+    local_clustering_coefficient(g, vlist = vertices(g))
+
 Returns a vector containing  the [local clustering coefficients](https://en.wikipedia.org/wiki/Clustering_coefficient) for vertices `vlist`.
 """
 local_clustering_coefficient(g::SimpleGraph, vlist = vertices(g)) = Float64[local_clustering_coefficient(g, v) for v in vlist]
 
 """
+    local_clustering(g, vlist = vertices(g))
+
 Returns two vectors, respectively containing  the first and second result of `local_clustering_coefficients(g, v)`
 for each `v` in `vlist`.
 """
@@ -50,6 +58,8 @@ function local_clustering(g::SimpleGraph, vlist = vertices(g))
 end
 
 """
+    global_clustering_coefficient(g)
+
 Computes the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient).
 """
 function global_clustering_coefficient(g::SimpleGraph)
