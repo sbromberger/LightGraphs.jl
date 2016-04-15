@@ -1,20 +1,21 @@
 """
 Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
 `g`: imput Graph
-`ϵ`: proportion of unsatisfied nodes
 return : array containing vertex assignments, the range of the output as 1:countdistinct(membership)
 """
-function label_propagation(g::SimpleGraph; ϵ=1.0e-8, maxiter=1000)
+function label_propagation(g::SimpleGraph; maxiter=1000)
     n = nv(g)
     label = collect(1:n)
     runing_nodes = Set(vertices(g))
-
+    c = NeighComm(collect(1:n), fill(-1,n), 1)
     i = 0
-    while length(runing_nodes) > n*ϵ && i < maxiter
+    while !isempty(runing_nodes) && i < maxiter
     	i += 1
         order = shuffle(collect(runing_nodes))
         for u in order
-            if update_label!(g, label, u)
+          old_comm = label[u]
+          label[u] = vote!(g, label, c, u)
+            if old_comm != label[u]
                 for v in out_neighbors(g, u)
                     push!(runing_nodes, v)
                 end
@@ -27,38 +28,53 @@ function label_propagation(g::SimpleGraph; ϵ=1.0e-8, maxiter=1000)
     label
 end
 
-function label_count(g::SimpleGraph, membership::Vector{Int}, u::Int)
-    label_cnt = Dict{Int, Int}()
-    for v in out_neighbors(g,u)
-        v_lbl = membership[v]
-        label_cnt[v_lbl] = get(label_cnt, v_lbl, 0) + 1
-    end
-    label_cnt
+"""Fast shuffle Array `a` in UnitRange `r` inplace."""
+function range_shuffle!(r::UnitRange, a::AbstractVector)
+  for i=length(r):-1:2
+    j = rand(1:i)
+    ii = i + r.start - 1
+    jj = j + r.start - 1
+    a[ii],a[jj] = a[jj],a[ii]
+  end
 end
 
-function update_label!(g::SimpleGraph, membership::Vector{Int}, u::Int)
-	running = false
-	if degree(g, u) > 0
-	    old_lbl = membership[u]
-	    label_cnt = label_count(g, membership, u)
-	    neigh_lbls = collect(keys(label_cnt))
-	    neigh_lbls_cnt = collect(values(label_cnt))
-	    order = collect(1:length(label_cnt))
-	    shuffle!(order)
-	    max_cnt = neigh_lbls_cnt[order[1]]
-	    max_lbl = neigh_lbls[order[1]]
-	    for i=2:length(order)
-	        if neigh_lbls_cnt[order[i]] > max_cnt
-	            max_cnt = neigh_lbls_cnt[order[i]]
-	            max_lbl = neigh_lbls[order[i]]
-	        end
-	    end
-	    if max_lbl != old_lbl
-	        membership[u] = max_lbl
-	        running = true
-	    end
-	end
-    running
+"""Type to record neighbor labels and their count."""
+type NeighComm
+  neigh_pos::Vector{Int}
+  neigh_cnt::Vector{Int}
+  neigh_last::Int
+end
+
+"""Return the most frequency label."""
+function vote!(g, m, c, u)
+    for i=1:c.neigh_last-1
+        c.neigh_cnt[c.neigh_pos[i]] = -1
+    end
+    c.neigh_last = 1
+    c.neigh_pos[1] = m[u]
+    c.neigh_cnt[c.neigh_pos[1]] = 0
+    c.neigh_last = 2
+    max_cnt = 0
+    for neigh in out_neighbors(g,u)
+        neigh_comm = m[neigh]
+        if c.neigh_cnt[neigh_comm] < 0
+            c.neigh_cnt[neigh_comm] = 0
+            c.neigh_pos[c.neigh_last] = neigh_comm
+            c.neigh_last += 1
+        end
+        c.neigh_cnt[neigh_comm] += 1
+        if c.neigh_cnt[neigh_comm] > max_cnt
+          max_cnt = c.neigh_cnt[neigh_comm]
+        end
+    end
+    # ties breaking randomly
+    range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
+    for lbl in c.neigh_pos
+      if c.neigh_cnt[lbl] == max_cnt
+        return lbl
+        break
+      end
+    end
 end
 
 function renumber_labels!(membership::Vector{Int})
