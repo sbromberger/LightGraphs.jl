@@ -42,7 +42,9 @@ typealias SimpleGraph Union{Graph, DiGraph}
 """Return the vertices of a graph."""
 vertices(g::SimpleGraph) = g.vertices
 
-"""Return an iterator to the edges of a graph."""
+"""Return an iterator to the edges of a graph.
+The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
+"""
 edges(g::SimpleGraph) = EdgeIter(g)
 
 """Returns the forward adjacency list of a graph.

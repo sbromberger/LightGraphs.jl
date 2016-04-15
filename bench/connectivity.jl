@@ -1,7 +1,8 @@
 using LightGraphs
 using MatrixDepot
 using Base.Profile
-@doc "Find the largest connected component of graph and return it as a vector of indices." ->
+
+"""Find the largest connected component of graph and return it as a vector of indices."""
 function symmetrize(A)
     println("Symmetrizing ")
     tic()

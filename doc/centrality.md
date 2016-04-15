@@ -4,50 +4,46 @@
 [Centrality measures](https://en.wikipedia.org/wiki/Centrality) describe the
 importance of a vertex to the rest of the graph using some set of criteria.
 Centrality measures implemented in *LightGraphs.jl* include the following:
-
-## Degree Centrality
 ### degree_centrality
-```
+```julia
 degree_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
 ### indegree_centrality
-```
+```julia
 indegree_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
 ### outdegree_centrality
-```
+```julia
 outdegree_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality) of the graph `g`, with optional (default) normalization.
 
-### Closeness Centrality
 ### closeness_centrality
-```
+```julia
 closeness_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Calculates the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of the graph `g`.
 
-## Betweenness Centrality
 ### betweenness_centrality
+```julia
+betweenness_centrality(g, k=0; normalize=true, endpoints=false)
 ```
-betweenness_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
-betweenness_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, k::Integer)
-```
+
 Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of the graph `g`, or, optionally, of a random subset of `k` vertices. Can optionally include endpoints in the calculations. Normalization is enabled by default.
 
-Betweeness centrality is defined as:
+Betweenness centrality is defined as:
 
-$bc(v) = \frac{1}{\mathcal{N}}
-        \sum_{s \neq t \neq v} \frac{\sigma_{st}(v)}{\sigma_{st}}$
-#### Parameters
+$bc(v) = \frac{1}{\mathcal{N}} \sum_{s \neq t \neq v}
+        \frac{\sigma_{st}(v)}{\sigma_{st}}$
+.
+
+**Parameters**
 
 g: SimpleGraph     A Graph, directed or undirected.
-
-weights: AbstractArray{Float64, 2}, optional     Matrix containing the weight associated with each edge (i,j)     `ω[i, j]` is the weight between vertices `i` and `j`.     If no weights are specified, shortest paths are computed using equal     weights. If values are missing, they are assumed equal to `1`.     *Advice* Use sparse matrices for better performances.
 
 k: Integer, optional     Use `k` nodes sample to estimate the betweenness centrality. If none,     betweenness centrality is computed using the `n` nodes in the graph.
 
@@ -55,27 +51,23 @@ normalize: bool, optional     If true, the betweenness values are normalized by 
 
 endpoints: bool, optional     If true, endpoints are included in the shortest path count.
 
-#### Returns
+**Returns**
 
 betweenness: Array{Float64}     Betweenness centrality value per node id.
 
-#### Examples
-
-#### References
+**References**
 
 [1] Brandes 2001 & Brandes 2008
 
-## Katz Centrality
 ### katz_centrality
-```
+```julia
 katz_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 katz_centrality(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, α::Real)
 ```
 Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality) of the graph `g`.
 
-## PageRank
 ### pagerank
-```
+```julia
 pagerank(g::LightGraphs.DiGraph)
 pagerank(g::LightGraphs.DiGraph, α)
 pagerank(g::LightGraphs.DiGraph, α, n)

@@ -10,8 +10,8 @@
 # Multiple graphs may be present in one file.
 
 
-function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
-    readedges = Set{Tuple{Int,Int}}()
+
+function _lg_read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     if directed
         g = DiGraph(n_v)
     else
@@ -29,19 +29,17 @@ function _read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     return g
 end
 
-function _skip_one_graph(f::IO, n_e::Integer)
+function _lg_skip_one_graph(f::IO, n_e::Integer)
     for _ in 1:n_e
         readline(f)
     end
 end
 
 """Returns a dictionary of (name=>graph) loaded from file `fn`."""
-function readgraph(fn::AbstractString, gname::AbstractString="")
+function loadlg_mult(io::IO)
     graphs = Dict{AbstractString, SimpleGraph}()
-    f = GZip.open(fn,"r")        # should work even if uncompressed
-
-    while !eof(f)
-        line = strip(chomp(readline(f)))
+    while !eof(io)
+        line = strip(chomp(readline(io)))
         if startswith(line,"#") || line == ""
             next
         else
@@ -51,71 +49,67 @@ function readgraph(fn::AbstractString, gname::AbstractString="")
             dirundir = strip(dirundir)
             graphname = strip(graphname)
             directed = !(dirundir == "u")
-            if (gname == "" || gname == graphname)
-                g = _read_one_graph(f, n_v, n_e, directed)
-                graphs[graphname] = g
-            else
-                _skip_one_graph(f, n_e)
-            end
+
+            g = _lg_read_one_graph(io, n_v, n_e, directed)
+            graphs[graphname] = g
         end
     end
     return graphs
 end
 
+function loadlg(io::IO, gname::AbstractString)
+    while !eof(io)
+        line = strip(chomp(readline(io)))
+        (startswith(line,"#") || line == "") && continue
+        nvstr, nestr, dirundir, graphname = split(line, r"s*,s*", limit=4)
+        n_v = parse(Int, nvstr)
+        n_e = parse(Int, nestr)
+        graphname = strip(graphname)
+        if gname == graphname
+            dirundir = strip(dirundir)
+            directed = !(dirundir == "u")
+            return _lg_read_one_graph(io, n_v, n_e, directed)
+        else
+            _lg_skip_one_graph(io, n_e)
+        end
+    end
+    error("Graph $gname not found")
+end
 
 """Writes a graph `g` with name `graphname` in a proprietary format
 to the IO stream designated by `io`.
 
 Returns 1 (number of graphs written).
 """
-function write(io::IO, graphname::AbstractString, g::SimpleGraph)
+function savelg(io::IO, g::SimpleGraph, gname::AbstractString)
     # write header line
     dir = is_directed(g)? "d" : "u"
-    line = join([nv(g), ne(g), dir, graphname], ",")
+    line = join([nv(g), ne(g), dir, gname], ",")
     write(io, "$line\n")
     # write edges
     for e in edges(g)
-        write(io, "$(src(e)), $(dst(e))\n")
+        write(io, "$(src(e)),$(dst(e))\n")
     end
     return 1
 end
-
-write(io::IO, g::Graph) = write(io, "Unnamed Graph", g)
-write(io::IO, g::DiGraph) = write(io, "Unnamed DiGraph", g)
-
-write(g::Graph) = write(STDOUT, "Unnamed Graph", g)
-write(g::DiGraph) = write(STDOUT, "Unnamed DiGraph", g)
-
 
 """Writes a dictionary of (name=>graph) to a file `fn`,
 with default `GZip` compression.
 
 Returns number of graphs written.
 """
-function write{S<:AbstractString, G<:SimpleGraph}(
-    graphs::Dict{S, G},
-    fn::AbstractString;
-    compress::Bool=true
-)
-    if compress
-        f = GZip.open(fn,"w")
-    else
-        f = open(fn,"w")
-    end
+function savelg_mult(io::IO, graphs::Dict)
     ng = 0
     for (gname, g) in graphs
-        ng += write(f, gname, g)
+        ng += savelg(io, g, gname)
     end
-    close(f)
     return ng
 end
 
-write(
-    g::SimpleGraph,
-    gname::AbstractString,
-    fn::AbstractString;
-    compress::Bool=true
-) = write(Dict(gname=>g), fn; compress=compress)
+# savelg(io::IO, g::SimpleGraph, n::AbstractString) =
+#     savelg_mult(io, Dict(n=>g))
 
-write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed Graph", fn; compress=compress)
-write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "Unnamed DiGraph", fn; compress=compress)
+# write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "graph", fn; compress=compress)
+# write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "digraph", fn; compress=compress)
+
+filemap[:lg] = (loadlg, loadlg_mult, savelg, savelg_mult)

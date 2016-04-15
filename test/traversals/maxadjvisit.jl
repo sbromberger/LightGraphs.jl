@@ -31,10 +31,8 @@ for (s, d, w) in wedges
     eweights[d, s] = w
 end
 
-
-
-@assert nv(g) == 8
-@assert ne(g) == m
+@test nv(g) == 8
+@test ne(g) == m
 
 parity, bestcut = mincut(g, eweights)
 
