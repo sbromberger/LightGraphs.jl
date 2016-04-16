@@ -4,7 +4,7 @@ Community detection using the label propagation algorithm (see [Raghavan et al.]
 `maxiter`: optional, maximum iterations
 return : array containing vertex assignments, the range of the output as 1:countdistinct(membership)
 """
-function label_propagation(g::SimpleGraph; maxiter=1000)
+function label_propagation(g::SimpleGraph; maxiter=1000, verbose=false)
     n = nv(g)
     membership = collect(1:n)
     active_nodes = IntSet(vertices(g))
