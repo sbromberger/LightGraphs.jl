@@ -59,7 +59,7 @@ function vote!(g::SimpleGraph, membership::Vector{Int}, nc::NeighComm, u::Int)
         nc.neigh_cnt[nc.neigh_pos[i]] = -1
     end
     nc.neigh_last = 1
-    nc.neigh_pos[1] = m[u]
+    nc.neigh_pos[1] = membership[u]
     nc.neigh_cnt[c.neigh_pos[1]] = 0
     nc.neigh_last = 2
     max_cnt = 0
