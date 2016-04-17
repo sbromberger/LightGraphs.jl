@@ -105,6 +105,7 @@ stochastic_block_model,
 #community
 modularity, community_detection_nback, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient,
+label_propagation,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
@@ -167,6 +168,7 @@ include("core.jl")
         include("centrality/pagerank.jl")
         include("community/modularity.jl")
         include("community/detection.jl")
+        include("community/label_propagation.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
         include("flow/maximum_flow.jl")
