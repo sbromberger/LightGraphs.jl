@@ -1,7 +1,6 @@
 """
 Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
 `g`: imput Graph
-`active_proportion`: proportion of the active nodes in the end
 `maxiter`: maximum number of iterations
 return : vertex assignments and the convergence history
 """
@@ -11,14 +10,22 @@ function label_propagation(g::SimpleGraph; maxiter=1000)
     runing_nodes = Set(vertices(g))
     c = NeighComm(collect(1:n), fill(-1,n), 1)
     convergence_hist = Vector{Int}()
+    random_order = Array(Int, n)
     i = 0
     while !isempty(runing_nodes) && i < maxiter
-        push!(convergence_hist, length(runing_nodes))
+        num_active = length(runing_nodes)
+        push!(convergence_hist, num_active)
         i += 1
-        order = shuffle(collect(runing_nodes))
-        for u in order
-          old_comm = label[u]
-          label[u] = vote!(g, label, c, u)
+        
+        # processing nodes in random order
+        for (j,node) in enumerate(runing_nodes)
+            random_order[j] = node
+        end
+        range_shuffle!(1:num_active, random_order)
+        @inbounds for j=1:num_active
+            u = random_order[j]
+            old_comm = label[u]
+            label[u] = vote!(g, label, c, u)
             if old_comm != label[u]
                 for v in out_neighbors(g, u)
                     push!(runing_nodes, v)
@@ -30,7 +37,7 @@ function label_propagation(g::SimpleGraph; maxiter=1000)
     end
     fill!(c.neigh_cnt, 0)
     renumber_labels!(label, c.neigh_cnt)
-    label
+    label, convergence_hist
 end
 
 type NeighComm
@@ -40,16 +47,17 @@ type NeighComm
 end
 
 function range_shuffle!(r::UnitRange, a::AbstractVector)
-  for i=length(r):-1:2
-    j = rand(1:i)
-    ii = i + r.start - 1
-    jj = j + r.start - 1
-    a[ii],a[jj] = a[jj],a[ii]
-  end
+    (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
+    @inbounds for i=length(r):-1:2
+        j = rand(1:i)
+        ii = i + r.start - 1
+        jj = j + r.start - 1
+        a[ii],a[jj] = a[jj],a[ii]
+    end
 end
 
 function vote!(g::SimpleGraph, m::Vector{Int}, c::NeighComm, u::Int)
-    for i=1:c.neigh_last-1
+    @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
     c.neigh_last = 1
@@ -81,7 +89,7 @@ function renumber_labels!(membership::Vector{Int}, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     j = 1
-    for i=1:length(membership)
+    @inbounds for i=1:length(membership)
         k = membership[i]
         if k >= 1
             if label_counters[k] == 0
