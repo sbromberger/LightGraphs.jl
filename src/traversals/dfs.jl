@@ -16,8 +16,8 @@ end
 function depth_first_visit_impl!(
     graph::SimpleGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
-    vertexcolormap,    # an (initialized) color-map to indicate status of vertices
-    edgecolormap,      # an (initialized) color-map to indicate status of edges
+    vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
+    edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)  # the visitor
 
 
