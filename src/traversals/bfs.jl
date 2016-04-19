@@ -8,6 +8,17 @@
 #  Breadth-first visit
 #
 #################################################
+"""
+**Conventions in Breadth First Search and Depth First Search**
+VertexColorMap :
+- color == 0    => unseen
+- color < 0     => examined but not closed
+- color > 0     => examined and closed
+
+EdgeColorMap :
+- color == 0    => unseen
+- color == 1     => examined
+"""
 
 type BreadthFirst <: SimpleGraphVisitAlgorithm
 end
@@ -27,18 +38,19 @@ function breadth_first_visit_impl!(
         u_color = vertexcolormap[u]
 
         for v in fneig(graph, u)
-            v_color = get(vertexcolormap, v, -1)
+            v_color = get(vertexcolormap, v, 0)
             v_edge = Edge(u,v)
-            e_color = get(edgecolormap, v_edge, -1)
+            e_color = get(edgecolormap, v_edge, 0)
             examine_neighbor!(visitor, u, v, u_color, v_color, e_color) || return
             edgecolormap[v_edge] = 1
-            if v_color < 0
-                vertexcolormap[v] = u_color + 1
+            if v_color == 0
+                vertexcolormap[v] = u_color - 1
                 discover_vertex!(visitor, v) || return
                 push!(queue, v)
             end
         end
         close_vertex!(visitor, u)
+        vertexcolormap[u] *= -1
     end
 end
 
@@ -53,7 +65,7 @@ function traverse_graph!(
     dir = :out)
 
     for s in source
-        vertexcolormap[s] = 0
+        vertexcolormap[s] = -1
         discover_vertex!(visitor, s) || return
         push!(queue, s)
     end
@@ -85,6 +97,9 @@ Fills `dists` with the geodesic distances of vertices in  `g` from vertex/vertic
 function gdistances!(g::SimpleGraph, source, dists)
     visitor = GDistanceVisitor()
     traverse_graph!(g, BreadthFirst(), source, visitor, vertexcolormap=dists)
+    for i in eachindex(dists)
+        dists[i] -= 1
+    end
     return dists
 end
 
@@ -95,7 +110,7 @@ end
 Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
 For vertices in disconnected components the default distance is -1.
 """
-gdistances(g, source) = gdistances!(g, source, fill(-1,nv(g)))
+gdistances(g::SimpleGraph, source) = gdistances!(g, source, fill(0,nv(g)))
 
 
 ###########################################
@@ -110,7 +125,7 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
 end
 
 function TreeBFSVisitorVector(n::Int)
-    return TreeBFSVisitorVector(fill(-1, n))
+    return TreeBFSVisitorVector(fill(0, n))
 end
 
 """tree converts a parents array into a DiGraph"""
@@ -130,7 +145,7 @@ tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
 function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
                             ucolor::Int, vcolor::Int, ecolor::Int)
-    if u != v && vcolor < 0
+    if u != v && vcolor == 0
         visitor.tree[v] = u
     end
     return true
@@ -177,7 +192,7 @@ end
 
 function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int,
                             ucolor::Int, vcolor::Int, ecolor::Int)
-    if u != v && vcolor <  0
+    if u != v && vcolor == 0
         visitor.labels[v] = visitor.seed
     end
     return true
@@ -195,7 +210,7 @@ BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
 function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
         ucolor::Int, vcolor::Int, ecolor::Int)
-    if vcolor < 0
+    if vcolor == 0
         visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
     else
         if visitor.bipartitemap[v] == visitor.bipartitemap[u]
@@ -229,7 +244,7 @@ function _bipartite_visitor(g::SimpleGraph, s::Int; vmap=Dict{Int,Int}())
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
     for v in keys(vmap) #have to reset vmap, otherway problems with digraphs
-        vmap[v] = -1
+        vmap[v] = 0
     end
     traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=vmap)
     return visitor

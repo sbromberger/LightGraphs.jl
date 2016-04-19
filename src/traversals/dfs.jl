@@ -9,6 +9,17 @@
 #  Depth-first visit
 #
 #################################################
+"""
+**Conventions in Breadth First Search and Depth First Search**
+VertexColorMap :
+- color == 0    => unseen
+- color < 0     => examined but not closed
+- color > 0     => examined and closed
+
+EdgeColorMap :
+- color == 0    => unseen
+- color == 1     => examined
+"""
 
 type DepthFirst <: SimpleGraphVisitAlgorithm
 end
@@ -36,7 +47,7 @@ function depth_first_visit_impl!(
 
             if v_color == 0
                 found_new_vertex = true
-                vertexcolormap[v] = 1
+                vertexcolormap[v] = vertexcolormap[u] - 1 #negative numbers
                 discover_vertex!(visitor, v) || return
                 push!(stack, (u, udsts, tstate))
 
@@ -48,7 +59,7 @@ function depth_first_visit_impl!(
 
         if !found_new_vertex
             close_vertex!(visitor, u)
-            vertexcolormap[u] = 2
+            vertexcolormap[u] *= -1
         end
     end
 end
@@ -61,7 +72,7 @@ function traverse_graph!(
     vertexcolormap = Dict{Int, Int}(),
     edgecolormap = DummyEdgeMap())
 
-    vertexcolormap[s] = 1
+    vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
 
     sdsts = fadj(graph, s)
@@ -92,7 +103,7 @@ function examine_neighbor!(
     vcolor::Int,
     ecolor::Int)
 
-    if vcolor == 1 && ecolor == 0
+    if vcolor < 0 && ecolor == 0
         vis.found_cycle = true
     end
 end
@@ -132,7 +143,7 @@ end
 
 
 function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    (vcolor == 1 && ecolor == 0) && error("The input graph contains at least one loop.")
+    (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
 function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
