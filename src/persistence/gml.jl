@@ -38,13 +38,15 @@ function loadgml_mult(io::IO)
 end
 
 """
-savegml(f, g, gname = "graph")
+savegml(f, g, gname = "graph";
+    eprops = Dict{AbstractString, EdgeMap}())
 
 Writes a graph `g` with name `gname`
 to a file `f` in the
 [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 """
-function savegml(io::IO, g::SimpleGraph, gname::AbstractString = "")
+function savegml(io::IO, g::SimpleGraph, gname::AbstractString = "";
+        eprops = Dict{AbstractString, EdgeMap}())
     println(io, "graph")
     println(io, "[")
     length(gname) > 0 && println(io, "label \"$gname\"")
@@ -60,6 +62,16 @@ function savegml(io::IO, g::SimpleGraph, gname::AbstractString = "")
         println(io,"\t[")
         println(io,"\t\tsource $s")
         println(io,"\t\ttarget $t")
+        for (name, edgemap) in eprops
+            if haskey(edgemap, e)
+                val = edgemap[e]
+                if typeof(val) <: Union{Char, AbstactSting}
+                    println(io,"\t\t$name \"$val\"")
+                else
+                    println(io,"\t\t$name $val")
+                end
+            end
+        end
         println(io,"\t]")
     end
     println(io, "]")
