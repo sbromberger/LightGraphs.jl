@@ -14,11 +14,11 @@ function trivialgraphvisit(
     sources
 )
     visitor = TrivialGraphVisitor()
-    traverse_graph(g, alg, sources, visitor)
+    traverse_graph!(g, alg, sources, visitor)
 end
 
 @test trivialgraphvisit(g, BreadthFirst(), 1) == nothing
 
 # this just exercises some graph visitors
-@test traverse_graph(g, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
-@test traverse_graph(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing
+@test traverse_graph!(g, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
+@test traverse_graph!(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing

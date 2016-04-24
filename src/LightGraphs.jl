@@ -23,9 +23,9 @@ catch
 end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
-            reverse, reverse!, blkdiag, getindex, show, print, copy, in,
+            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype
+            ctranspose, join, start, next, done, eltype, get
 
 
 # core
@@ -48,7 +48,7 @@ crosspath,
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
 discover_vertex!, open_vertex!, close_vertex!,
-examine_neighbor!, visited_vertices, traverse_graph, traverse_graph_withlog,
+examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 
 # bfs
 BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
@@ -62,7 +62,7 @@ randomwalk, saw, non_backtracking_randomwalk,
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
-condensation, attracting_components,
+condensation, attracting_components, neighborhood, egonet,
 
 # cliques
 maximal_cliques,
@@ -100,7 +100,7 @@ maximum_weight_maximal_matching, MatchingResult,
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
-stochastic_block_model, 
+stochastic_block_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,

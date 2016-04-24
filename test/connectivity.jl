@@ -40,7 +40,6 @@ for m=1:50
     end
 end
 
-
 # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
 h = DiGraph(8)
 add_edge!(h,1,2); add_edge!(h,2,3); add_edge!(h,2,5);
@@ -132,3 +131,26 @@ fig8 = DiGraph(fig8)
 
 @test attracting_components(fig1) == Vector[[2,5]]
 @test attracting_components(fig3) == Vector[[3,4],[8]]
+
+g10 = StarGraph(10)
+@test neighborhood(g10, 1 , 0) == [1]
+@test length(neighborhood(g10, 1, 1)) == 10
+@test length(neighborhood(g10, 2, 1)) == 2
+@test length(neighborhood(g10, 1, 2)) == 10
+@test length(neighborhood(g10, 2, 2)) == 10
+
+g10 = StarDiGraph(10)
+@test neighborhood(g10, 1 , 0, dir=:out) == [1]
+@test length(neighborhood(g10, 1, 1, dir=:out)) == 10
+@test length(neighborhood(g10, 2, 1, dir=:out)) == 1
+@test length(neighborhood(g10, 1, 2, dir=:out)) == 10
+@test length(neighborhood(g10, 2, 2, dir=:out)) == 1
+@test neighborhood(g10, 1 , 0, dir=:in) == [1]
+@test length(neighborhood(g10, 1, 1, dir=:in)) == 1
+@test length(neighborhood(g10, 2, 1, dir=:in)) == 2
+@test length(neighborhood(g10, 1, 2, dir=:in)) == 1
+@test length(neighborhood(g10, 2, 2, dir=:in)) == 2
+
+g10 = StarGraph(10)
+@test egonet(g10, 1, 0) == Graph(1,0)
+@test egonet(g10, 1, 1) == g10

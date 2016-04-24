@@ -9,6 +9,17 @@
 #  Depth-first visit
 #
 #################################################
+"""
+**Conventions in Breadth First Search and Depth First Search**
+VertexColorMap :
+- color == 0    => unseen
+- color < 0     => examined but not closed
+- color > 0     => examined and closed
+
+EdgeColorMap :
+- color == 0    => unseen
+- color == 1     => examined
+"""
 
 type DepthFirst <: SimpleGraphVisitAlgorithm
 end
@@ -16,8 +27,8 @@ end
 function depth_first_visit_impl!(
     graph::SimpleGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
-    vertexcolormap::Vector{Int},    # an (initialized) color-map to indicate status of vertices
-    edgecolormap::Dict{Edge,Int},      # an (initialized) color-map to indicate status of edges
+    vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
+    edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)  # the visitor
 
 
@@ -27,19 +38,16 @@ function depth_first_visit_impl!(
 
         while !done(udsts, tstate) && !found_new_vertex
             v, tstate = next(udsts, tstate)
-            v_color = vertexcolormap[v]
+            v_color = get(vertexcolormap, v, 0)
             v_edge = Edge(u,v)
-            e_color = haskey(edgecolormap, v_edge)?
-                edgecolormap[v_edge] : edgecolormap[reverse(v_edge)]
-            examine_neighbor!(visitor, u, v, v_color, e_color)
+            e_color = get(edgecolormap, v_edge, 0)
+            examine_neighbor!(visitor, u, v, v_color, e_color) #no return here
 
-            if e_color == 0
-                edgecolormap[v_edge] = 1
-            end
+            edgecolormap[v_edge] = 1
 
             if v_color == 0
                 found_new_vertex = true
-                vertexcolormap[v] = 1
+                vertexcolormap[v] = vertexcolormap[u] - 1 #negative numbers
                 discover_vertex!(visitor, v) || return
                 push!(stack, (u, udsts, tstate))
 
@@ -51,28 +59,20 @@ function depth_first_visit_impl!(
 
         if !found_new_vertex
             close_vertex!(visitor, u)
-            vertexcolormap[u] = 2
+            vertexcolormap[u] *= -1
         end
     end
 end
 
-function _mkedgecolormap(g::SimpleGraph, n::Integer=0)
-    d = Dict{Edge, Int}()
-    for e in edges(g)
-        d[e] = n
-    end
-    return d
-end
-
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     alg::DepthFirst,
     s::Int,
     visitor::SimpleGraphVisitor;
-    vertexcolormap = zeros(Int, nv(graph)),
-    edgecolormap = _mkedgecolormap(graph))
+    vertexcolormap = Dict{Int, Int}(),
+    edgecolormap = DummyEdgeMap())
 
-    vertexcolormap[s] = 1
+    vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
 
     sdsts = fadj(graph, s)
@@ -81,7 +81,6 @@ function traverse_graph(
 
     depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
 end
-
 
 #################################################
 #
@@ -104,23 +103,26 @@ function examine_neighbor!(
     vcolor::Int,
     ecolor::Int)
 
-    if vcolor == 1 && ecolor == 0
+    if vcolor < 0 && ecolor == 0
         vis.found_cycle = true
     end
 end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-"""Tests whether a graph contains a cycle through depth-first search. It
+"""
+    is_cyclic(g)
+
+Tests whether a graph contains a cycle through depth-first search. It
 returns `true` when it finds a cycle, otherwise `false`.
 """
-function is_cyclic(graph::SimpleGraph)
-    cmap = zeros(Int, nv(graph))
+function is_cyclic(g::SimpleGraph)
+    cmap = zeros(Int, nv(g))
     visitor = DFSCyclicTestVisitor()
 
-    for s in vertices(graph)
+    for s in vertices(g)
         if cmap[s] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(g, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
         visitor.found_cycle && return true
     end
@@ -141,7 +143,7 @@ end
 
 
 function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    (vcolor == 1 && ecolor == 0) && error("The input graph contains at least one loop.")
+    (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
 function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
@@ -155,7 +157,7 @@ function topological_sort_by_dfs(graph::SimpleGraph)
 
     for s in vertices(graph)
         if cmap[s] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
     end
 
@@ -177,13 +179,16 @@ function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, vcolor::Int,
     return true
 end
 
-"""Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
+"""
+    dfs_tree(g, s::Int)
+
+Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
 function dfs_tree(g::SimpleGraph, s::Int)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)
-    traverse_graph(g, DepthFirst(), s, visitor)
+    traverse_graph!(g, DepthFirst(), s, visitor)
     # visitor = traverse_dfs(g, s, TreeDFSVisitor(nvg))
     h = DiGraph(nvg)
     for (v, u) in enumerate(visitor.predecessor)
