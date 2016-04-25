@@ -148,6 +148,37 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     return edges
 end
 
+"""
+    barabasi_albert(n::Integer, m::Integer; seed=-1)
+
+Creates an [Barabási-Albert](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+random graph with `n` vertices. A graph of `n` nodes is grown by attaching new nodes each with `m`
+edges that are preferentially attached to existing nodes with high degree. Undirected graphs are
+created by default; use `is_directed=true` to override.
+""" 
+function barabasi_albert(n::Integer, m::Integer; is_directed=false)
+    @assert(1 <= m < n, "Barabási-Albert network must have m>=1 and m<n, m=$m,n=$n")
+    if is_directed
+        g = DiGraph(n)
+    else
+        g = Graph(n)
+    end
+    targets = collect(1:m)
+    repeated_nodes = Vector{Int}()
+    sizehint!(repeated_nodes, (n-2)*m)
+    source = m+1
+    while source <= n
+        for i=1:m
+            add_edge!(g, source, targets[i])
+            push!(repeated_nodes, source)
+            push!(repeated_nodes, targets[i])
+        end
+        sample!(repeated_nodes, targets, replace=false)
+        source += 1
+    end
+    g
+end
+
 doc"""
     random_regular_graph(n::Int, k::Int; seed=-1)
 
