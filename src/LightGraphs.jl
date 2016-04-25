@@ -36,7 +36,7 @@ indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # maps
-EdgeMap,
+EdgeMap, #ConstEdgeMap, DefaultEdgeMap,
 
 # distance
 eccentricity, diameter, periphery, radius, center,

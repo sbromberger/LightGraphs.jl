@@ -1,4 +1,4 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
 using Requires
@@ -46,6 +46,7 @@ a2 = DiGraph(adjmx2)
 
 tests = [
     "core",
+    "edgemap"
     "edgeiter",
     "operators",
     "graphdigraph",
