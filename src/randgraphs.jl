@@ -148,25 +148,28 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     return edges
 end
 
-"""Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
-random graph with `n` nodes is grown by attaching new nodes each with `m` edges that 
+"""
+    barabasi_albert(n::Integer, k::Integer; is_directed=false)
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
+random graph with `n` nodes is grown by attaching new nodes each with `k` edges that 
 are preferentially attached to existing nodes with high degree. Undirected graphs are
 created by default; use `is_directed=true` to override.
 """
-function barabasi_albert(n::Integer, m::Integer; is_directed=false)
-    @assert(1<=m<n, "Barabási–Albert network must have 1 <= m < n")
+function barabasi_albert(n::Integer, k::Integer; is_directed=false)
+    @assert(1<=k<n, "Barabási–Albert network must have 1 <= k < n")
     g = is_directed ? DiGraph(n) : Graph(n)
     # Target nodes for new edges
-    targets = collect(1:m)
+    targets = collect(1:k)
     # List of existing nodes, with nodes repeated once for each adjacent edge
     repeated_nodes = Vector{Int}()
     # Array to record the node is or not picked
     node_status = fill(false, n)
-    sizehint!(repeated_nodes, (n-m)*m)
-    source = m + 1
+    sizehint!(repeated_nodes, (n-k)*k)
+    source = k + 1
     while source <= n
         for target in targets
-            # Add edges to m nodes from the source
+            # Add edges to k nodes from the source
             add_edge!(g, source, target)
             push!(repeated_nodes, source)
             push!(repeated_nodes, target)
@@ -174,10 +177,10 @@ function barabasi_albert(n::Integer, m::Integer; is_directed=false)
             node_status[target] = false
         end
 
-        # Choose m unique nodes from the existing nodes
+        # Choose k unique nodes from the existing nodes
         # Pick uniformly from repeated_nodes (preferential attachement)
         i = 1
-        while i <= m
+        while i <= k
             target = sample(repeated_nodes)
             if !node_status[target]
                 targets[i] = target
