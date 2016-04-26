@@ -2,7 +2,10 @@
 # licensing details.
 
 
-"""connected_components! produces a label array of components
+"""
+    connected_components!(label::Vector{Int}, g::SimpleGraph)
+
+Fills `label` with the `id` of the connected component to which it belongs.
 
 Arguments:
     label: a place to store the output
@@ -21,14 +24,14 @@ function connected_components!(label::Vector{Int}, g::SimpleGraph)
     # passed to components(a)
     nvg = nv(g)
     visitor = LightGraphs.ComponentVisitorVector(label, 0)
-    colormap = zeros(Int,nvg)
-    que = Vector{Int}()
-    sizehint!(que, nvg)
+    colormap = fill(0, nvg)
+    queue = Vector{Int}()
+    sizehint!(queue, nvg)
     for v in 1:nvg
         if label[v] == 0
             visitor.labels[v] = v
             visitor.seed = v
-            traverse_graph(g, BreadthFirst(), v, visitor; colormap=colormap, que=que)
+            traverse_graph!(g, BreadthFirst(), v, visitor; vertexcolormap=colormap, queue=queue)
         end
     end
     return label
@@ -51,25 +54,25 @@ function components_dict(labels::Vector{Int})
     return d
 end
 
-"""components(labels) converts an array of labels to a Vector{Vector{Int}} of components
+"""
+    components(labels::Vector{Int})
+
+Converts an array of labels to a Vector{Vector{Int}} of components
 
 Arguments:
     c = labels[i] => vertex i belongs to component c.
 Output:
     vs = c[i] => vertices in vs belong to component i.
-    a = d[i] => if label[v[j]]==i then j in c[a] end
+    a = d[i] => if labels[v]==i then v in c[a] end
 """
 function components(labels::Vector{Int})
     d = Dict{Int, Int}()
     c = Vector{Vector{Int}}()
     i = 1
     for (v,l) in enumerate(labels)
-        index = get(d, l, i)
-        d[l] = index
+        index = get!(d, l, i)
         if length(c) >= index
-            vec = c[index]
-            push!(vec, v)
-            c[index] = vec
+            push!(c[index], v)
         else
             push!(c, [v])
             i += 1
@@ -78,19 +81,26 @@ function components(labels::Vector{Int})
     return c, d
 end
 
-"""Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
-of an undirected graph `g` as a vector of components, each represented by a
-vector of vectors of vertices belonging to the component.
 """
-function connected_components(g)
+    connected_components(g)
+
+Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
+of `g` as a vector of components, each represented by a
+vector of vertices belonging to the component.
+"""
+function connected_components(g::SimpleGraph)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
     c, d = components(label)
     return c
 end
 
-"""Returns `true` if `g` is connected.
-For DiGraphs, this is equivalent to a test of weak connectivity."""
+"""
+    is_connected(g)
+
+Returns `true` if `g` is connected.
+For DiGraphs, this is equivalent to a test of weak connectivity.
+"""
 is_connected(g::Graph) = length(connected_components(g)) == 1
 is_connected(g::DiGraph) = is_weakly_connected(g)
 
@@ -123,7 +133,7 @@ function discover_vertex!(vis::TarjanVisitor, v)
 end
 
 function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
-    if w_color > 0 # 1 means added seen, but not explored; 2 means closed
+    if w_color != 0 # != 0 means seen
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
             pop!(vis.lowlink)
         end
@@ -150,7 +160,7 @@ function strongly_connected_components(g::DiGraph)
     for v in vertices(g)
         if cmap[v] == 0 # 0 means not visited yet
             visitor = TarjanVisitor(nvg)
-            traverse_graph(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
+            traverse_graph!(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
             for component in visitor.components
                 push!(components, component)
             end
@@ -227,3 +237,46 @@ function attracting_components(g::DiGraph)
     end
     return scc[attracting]
 end
+
+type NeighborhoodVisitor <: SimpleGraphVisitor
+    d::Int
+    neigs::Vector{Int}
+end
+
+NeighborhoodVisitor(d::Int) = NeighborhoodVisitor(d, Vector{Int}())
+
+function examine_neighbor!(visitor::NeighborhoodVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+    -ucolor > visitor.d && return false # color is negative for not-closed vertices
+    if vcolor == 0
+        push!(visitor.neigs, v)
+    end
+    return true
+end
+
+
+"""
+    neighborhood(g, v::Int, d::Int; dir=:out)
+
+Returns a vector of the vertices in `g` at distance less or equal to `d`
+from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction
+the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
+"""
+function neighborhood(g::SimpleGraph, v::Int, d::Int; dir=:out)
+    @assert d >= 0 "Distance has to be greater then zero."
+    visitor = NeighborhoodVisitor(d)
+    push!(visitor.neigs, v)
+    traverse_graph!(g, BreadthFirst(), v, visitor,
+        vertexcolormap=Dict{Int,Int}(), dir=dir)
+    return visitor.neigs
+end
+
+
+"""
+    egonet(g, v::Int, d::Int; dir=:out)
+
+Returns the subgraph of `g` induced by the neighbors of `v` up to distance
+`d`. If `g` is a `DiGraph` the `dir` optional argument specifies
+the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
+to be considered. This is equivalent to `induced_subgraph(g, neighborhood(g, v, d, dir=dir)).`
+"""
+egonet(g::SimpleGraph, v::Int, d::Int; dir=:out) = induced_subgraph(g, neighborhood(g, v, d, dir=dir))

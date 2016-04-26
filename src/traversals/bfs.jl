@@ -8,70 +8,70 @@
 #  Breadth-first visit
 #
 #################################################
+"""
+**Conventions in Breadth First Search and Depth First Search**
+VertexColorMap :
+- color == 0    => unseen
+- color < 0     => examined but not closed
+- color > 0     => examined and closed
+
+EdgeColorMap :
+- color == 0    => unseen
+- color == 1     => examined
+"""
 
 type BreadthFirst <: SimpleGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!(
-    graph::SimpleGraph,   # the graph
-    queue::Vector{Int},                  # an (initialized) queue that stores the active vertices
-    colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
-    visitor::SimpleGraphVisitor)  # the visitor
+    graph::SimpleGraph,                 # the graph
+    queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
+    vertexcolormap::AbstractVertexMap,   # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
+    edgecolormap::AbstractEdgeMap,        # an (initialized) color-map to indicate status of edges
+    visitor::SimpleGraphVisitor,            # the visitor
+    dir::Symbol)                        # direction [:in,:out]
 
+    fneig = dir == :out ? out_neighbors : in_neighbors
     while !isempty(queue)
         u = shift!(queue)
         open_vertex!(visitor, u)
+        u_color = vertexcolormap[u]
 
-        for v in out_neighbors(graph, u)
-            v_color::Int = colormap[v]
-            # TODO: Incorporate edge colors to BFS
-            if !(examine_neighbor!(visitor, u, v, v_color, -1))
-                return
-            end
-
+        for v in fneig(graph, u)
+            v_color = get(vertexcolormap, v, 0)
+            v_edge = Edge(u,v)
+            e_color = get(edgecolormap, v_edge, 0)
+            examine_neighbor!(visitor, u, v, u_color, v_color, e_color) || return
+            edgecolormap[v_edge] = 1
             if v_color == 0
-                colormap[v] = 1
+                vertexcolormap[v] = u_color - 1
                 discover_vertex!(visitor, v) || return
                 push!(queue, v)
             end
         end
-
-        colormap[u] = 2
         close_vertex!(visitor, u)
+        vertexcolormap[u] *= -1
     end
-    nothing
 end
 
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     alg::BreadthFirst,
-    s::Int,
+    source,
     visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)),
-    que = Vector{Int}())
+    vertexcolormap::AbstractVertexMap = Dict{Int, Int}(),
+    edgecolormap::AbstractEdgeMap = DummyEdgeMap(),
+    queue = Vector{Int}(),
+    dir = :out)
 
-    colormap[s] = 1
-    discover_vertex!(visitor, s) || return
-    push!(que, s)
-
-    breadth_first_visit_impl!(graph, que, colormap, visitor)
-end
-
-function traverse_graph(
-    graph::SimpleGraph,
-    alg::BreadthFirst,
-    sources::AbstractVector{Int},
-    visitor::SimpleGraphVisitor;
-    colormap = zeros(Int, nv(graph)),
-    que = Vector{Int}())
-
-    for s in sources
-        colormap[s] = 1
+    for s in source
+        vertexcolormap[s] = -1
         discover_vertex!(visitor, s) || return
-        push!(que, s)
+        push!(queue, s)
     end
 
-    breadth_first_visit_impl!(graph, que, colormap, visitor)
+    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap
+            , visitor, dir)
 end
 
 
@@ -81,60 +81,41 @@ end
 #
 #################################################
 
-# Get the map of the (geodesic) distances from vertices to source by BFS
+###########################################
+# Get the map of the (geodesic) distances from vertices to source by BFS                  #
+###########################################
 
 immutable GDistanceVisitor <: SimpleGraphVisitor
-    graph::SimpleGraph
-    dists::Vector{Int}
 end
 
-function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
-    if vcolor == 0
-        g = visitor.graph
-        dists = visitor.dists
-        dists[v] = dists[u] + 1
-    end
-    return true
-end
-
-"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
-of source vertices `ss`.
 """
-function gdistances!{DMap}(graph::SimpleGraph, s::Int, dists::DMap)
-    visitor = GDistanceVisitor(graph, dists)
-    dists[s] = 0
-    traverse_graph(graph, BreadthFirst(), s, visitor)
+    gdistances!(g, source, dists) -> dists
+
+Fills `dists` with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+`dists` can be either a vector or a dictionary.
+"""
+function gdistances!(g::SimpleGraph, source, dists)
+    visitor = GDistanceVisitor()
+    traverse_graph!(g, BreadthFirst(), source, visitor, vertexcolormap=dists)
+    for i in eachindex(dists)
+        dists[i] -= 1
+    end
     return dists
 end
 
-function gdistances!{DMap}(graph::SimpleGraph, sources::AbstractVector{Int}, dists::DMap)
-    visitor = GDistanceVisitor(graph, dists)
-    for s in sources
-        dists[s] = 0
-    end
-    traverse_graph(graph, BreadthFirst(), sources, visitor)
-    return dists
-end
 
-"""Returns the geodesic distances of graph `g` from source vertex `s` or a set
-of source vertices `ss`.
 """
-function gdistances(graph::SimpleGraph, sources; defaultdist::Int=-1)
-    dists = fill(defaultdist, nv(graph))
-    gdistances!(graph, sources, dists)
-end
+    gdistances(g, source) -> dists
+
+Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+For vertices in disconnected components the default distance is -1.
+"""
+gdistances(g::SimpleGraph, source) = gdistances!(g, source, fill(0,nv(g)))
+
 
 ###########################################
 # Constructing BFS trees                  #
 ###########################################
-
-# this type has been deprecated in favor of TreeBFSVisitorVector and the tree function.
-"""TreeBFSVisitor is a type for representing a BFS traversal of the graph as a DiGraph"""
-type TreeBFSVisitor <:SimpleGraphVisitor
-    tree::DiGraph
-end
-
-@deprecate TreeBFSVisitor(x) TreeBFSVisitorVector(x)
 
 """TreeBFSVisitorVector is a type for representing a BFS traversal
 of the graph as a parents array. This type allows for a more performant implementation.
@@ -144,15 +125,7 @@ type TreeBFSVisitorVector <: SimpleGraphVisitor
 end
 
 function TreeBFSVisitorVector(n::Int)
-    return TreeBFSVisitorVector(zeros(Int, n))
-end
-
-"""TreeBFSVisitor converts a parents array into a DiGraph"""
-function TreeBFSVisitor(tvv::TreeBFSVisitorVector)
-    n = length(tvv.tree)
-    parents = tvv.tree
-    g = tree(parents)
-    return TreeBFSVisitor(g)
+    return TreeBFSVisitorVector(fill(0, n))
 end
 
 """tree converts a parents array into a DiGraph"""
@@ -170,8 +143,8 @@ end
 
 tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
-function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor == 0
         visitor.tree[v] = u
     end
@@ -181,8 +154,8 @@ end
 function bfs_tree!(visitor::TreeBFSVisitorVector,
         g::SimpleGraph,
         s::Int;
-        colormap=zeros(Int, nv(g)),
-        que=Vector{Int}())
+        vertexcolormap = Dict{Int,Int}(),
+        queue = Vector{Int}())
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
     # parent of the index. This function checks if the scratch space is too small for the graph.
@@ -193,7 +166,7 @@ function bfs_tree!(visitor::TreeBFSVisitorVector,
     nvg = nv(g)
     length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
     visitor.tree[s] = s
-    traverse_graph(g, BreadthFirst(), s, visitor; colormap=colormap, que=que)
+    traverse_graph!(g, BreadthFirst(), s, visitor; vertexcolormap=vertexcolormap, queue=queue)
 end
 
 """Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
@@ -217,8 +190,8 @@ type ComponentVisitorVector <: SimpleGraphVisitor
     seed::Int
 end
 
-function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    # println("discovering $u -> $v, vcolor = $vcolor, ecolor = $ecolor")
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor == 0
         visitor.labels[v] = visitor.seed
     end
@@ -235,9 +208,10 @@ end
 
 BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
 
-function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
+        ucolor::Int, vcolor::Int, ecolor::Int)
     if vcolor == 0
-        visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1)? 2:1
+        visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
     else
         if visitor.bipartitemap[v] == visitor.bipartitemap[u]
             visitor.is_bipartite = false
@@ -246,20 +220,33 @@ function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int, vcolor::In
     return visitor.is_bipartite
 end
 
-"""Will return `true` if graph `g` is
-[bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 """
-is_bipartite(g::SimpleGraph, s::Int) = _bipartite_visitor(g, s).is_bipartite
+    is_bipartite(g)
+    is_bipartite(g, v)
 
+Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+If a node `v` is specified, only the connected component to which it belongs is considered.
+"""
 function is_bipartite(g::SimpleGraph)
     cc = filter(x->length(x)>2, connected_components(g))
-    return all(x->is_bipartite(g,x[1]), cc)
+    vmap = Dict{Int,Int}()
+    for c in cc
+        _is_bipartite(g,c[1], vmap=vmap) || return false
+    end
+    return true
 end
 
-function _bipartite_visitor(g::SimpleGraph, s::Int)
+is_bipartite(g::SimpleGraph, v::Int) = _is_bipartite(g, v)
+
+_is_bipartite(g::SimpleGraph, v::Int; vmap = Dict{Int,Int}()) = _bipartite_visitor(g, v, vmap=vmap).is_bipartite
+
+function _bipartite_visitor(g::SimpleGraph, s::Int; vmap=Dict{Int,Int}())
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
-    traverse_graph(g, BreadthFirst(), s, visitor)
+    for v in keys(vmap) #have to reset vmap, otherway problems with digraphs
+        vmap[v] = 0
+    end
+    traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=vmap)
     return visitor
 end
 

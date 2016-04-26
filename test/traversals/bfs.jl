@@ -17,16 +17,9 @@ add_edge!(g,3,4)
 @test is_bipartite(g)
 
 
-import LightGraphs: TreeBFSVisitorVector, bfs_tree!, TreeBFSVisitor, tree
-g = smallgraph(:house)
-n = nv(g)
-visitor = TreeBFSVisitorVector(n)
-@test length(visitor.tree) == n
-parents = visitor.tree
-bfs_tree!(visitor, g, 1)
-maxdepth = n
+import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
-function istree(parents::Vector{Int})
+function istree(parents::Vector{Int}, maxdepth)
     flag = true
     for i in 1:n
         s = i
@@ -42,16 +35,30 @@ function istree(parents::Vector{Int})
     return flag
 end
 
-@test istree(parents) == true
-tvis = TreeBFSVisitor(visitor)
-@test nv(tvis.tree) == nv(g)
-@test typeof(tvis.tree) <: DiGraph
+g = smallgraph(:house)
+n = nv(g)
+visitor = TreeBFSVisitorVector(n)
+@test length(visitor.tree) == n
+parents = visitor.tree
+bfs_tree!(visitor, g, 1)
+
+@test istree(parents, n) == true
 t = tree(parents)
 @test typeof(t) <: DiGraph
-@test typeof(tvis.tree) <: DiGraph
-@test t == tvis.tree
 @test ne(t) < nv(t)
 
+# test Dict{Int,Int}() colormap
+g = smallgraph(:house)
+n = nv(g)
+visitor = TreeBFSVisitorVector(n)
+@test length(visitor.tree) == n
+parents = visitor.tree
+bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
+
+@test istree(parents, n) == true
+t = tree(parents)
+@test typeof(t) <: DiGraph
+@test ne(t) < nv(t)
 
 g10 = CompleteGraph(10)
 @test bipartite_map(g10) == Vector{Int}()
