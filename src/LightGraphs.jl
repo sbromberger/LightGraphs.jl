@@ -9,7 +9,6 @@ using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
 using Clustering
-import Combinatorics: combinations  # 0.5
 try
     import GraphMatrices: CombinatorialAdjacency
     nothing
