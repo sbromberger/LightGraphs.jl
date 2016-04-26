@@ -1,8 +1,5 @@
-typealias DEM{T} Dict{Edge, T}
 type EdgeMap{T, D}
     data::D
-
-    EdgeMap() = EdgeMap{T, D}(D())
 
     function EdgeMap(data::D)
         if D <: AbstractMatrix
@@ -17,7 +14,7 @@ end
 ###### Constructors ###################
 EdgeMap{D<:Associative}(d::D) = EdgeMap{valtype(d), D}(d)
 EdgeMap{D<:AbstractMatrix}(d::D) = EdgeMap{eltype(d), D}(d)
-EdgeMap{T}(::Type{T}) = EdgeMap{T, DEM{T}}(DEM{T}())
+EdgeMap{T}(::Type{T}) = EdgeMap(Dict{Edge,T}())
 
 ConstEdgeMap{T}(x::T) = EdgeMap{T,T}(x)
 
@@ -40,6 +37,7 @@ setindex!{T, D<:AbstractMatrix}(em::EdgeMap{T, D}, val, e::Edge) = setindex!(em.
 
 ### ConstEdgeMap
 setindex!{D<:Associative}(em::EdgeMap{D, D}, val, e::Edge) = error() # have to define this otherwise julia complains
+setindex!{D<:AbstractMatrix}(em::EdgeMap{D, D}, val, e::Edge) = error() # have to define this otherwise julia complains
 setindex!{T}(em::EdgeMap{T,T}, val, e::Edge) = error("Cannot assign to ConstEdgeMap.")
 
 ###### Matrix interface ###################
@@ -62,6 +60,17 @@ setindex!{D<:Associative}(em::EdgeMap{D, D}, val, u::Int, v::Int) = error() # ha
 setindex!{T}(em::EdgeMap{T,T}, val, u::Int, v::Int) = error("Cannot assign to ConstEdgeMap.")
 
 ####### Iterable interface ######################
-start(em::EdgeMap) = start(em.data)
-next(em::EdgeMap, state)  = next(em.data, state)
-done(em::EdgeMap, state) = done(em.data, state)
+
+### D <: Associative
+start{T,D<:Associative}(em::EdgeMap{T,D}) = start(em.data)
+next{T,D<:Associative}(em::EdgeMap{T,D}, state)  = next(em.data, state)
+done{T,D<:Associative}(em::EdgeMap{T,D}, state) = done(em.data, state)
+
+### D <: AbstractMatrix
+# start{T,D<:AbstractMatrix}(em::EdgeMap{T,D}) = start(em.data)
+# function next{T,D<:AbstractMatrix}(em::EdgeMap{T,D}, state)
+#     val, state2 = next(em.data, state)
+#     sub = ind2sub(em.data, state)
+#     return (Edge(sub[1], sub[2]), val), state2
+# end
+# done{T,D<:AbstractMatrix}(em::EdgeMap{T,D}, state) = done(em.data, state)
