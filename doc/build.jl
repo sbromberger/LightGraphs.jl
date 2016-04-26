@@ -133,7 +133,8 @@ types:
 
 ## Neighbors and Degree
 
-{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors, in_neighbors, all_neighbors, common_neighbors}}
+{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors,
+    in_neighbors, all_neighbors, common_neighbors, neighborhood, egonet}}
 """
 
 @file "centrality.md" """
@@ -354,7 +355,9 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 ## Connectivity / Bipartiteness
 `Graph connectivity` functions are defined on both undirected and directed graphs:
 
-{{is_connected, is_strongly_connected, is_weakly_connected, connected_components, strongly_connected_components, weakly_connected_components, has_self_loop, attracting_components, is_bipartite, condensation, period}}
+{{is_connected, is_strongly_connected, is_weakly_connected, connected_components,
+ strongly_connected_components, weakly_connected_components, has_self_loop,
+ attracting_components, is_bipartite, condensation, period, neighborhood}}
 
 ## Cycle Detection
 In graph theory, a cycle is defined to be a path that starts from some vertex

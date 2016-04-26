@@ -37,7 +37,7 @@ function maximum_adjacency_visit_impl!{T}(
 
 end
 
-function traverse_graph(
+function traverse_graph!(
     graph::SimpleGraph,
     T::DataType,
     alg::MaximumAdjacency,
@@ -184,7 +184,7 @@ function mincut{T}(
 )
     visitor = MinCutVisitor(graph, distmx)
     colormap = zeros(Int, nv(graph))
-    traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, colormap)
+    traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, colormap)
     return(visitor.parities + 1, visitor.bestweight)
 end
 
@@ -203,7 +203,7 @@ function maximum_adjacency_visit{T}(
     io::IO
 )
     visitor = MASVisitor(io, Vector{Int}(), distmx, log)
-    traverse_graph(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
+    traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
     return visitor.vertices
 end
 

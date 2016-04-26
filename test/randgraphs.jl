@@ -31,15 +31,15 @@ ws = watts_strogatz(10, 4, 0.2, is_directed=true)
 @test ne(ws) == 20
 @test is_directed(ws) == true
 
-ba = barabasi_albert(10,4,0.2)
-@test nv(ws) == 10
-@test ne(ws) == 20
-@test is_directed(ws) == false
+ba = barabasi_albert(10,2)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == false
 
-ba = watts_strogatz(10, 4, 0.2, is_directed=true)
-@test nv(ws) == 10
-@test ne(ws) == 20
-@test is_directed(ws) == true
+ba = barabasi_albert(10, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == true
 
 rr = random_regular_graph(5, 0)
 @test nv(rr) == 5
