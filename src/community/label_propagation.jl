@@ -1,24 +1,24 @@
 """
 Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
-`g`: imput Graph
+`g`: input Graph
 `maxiter`: maximum number of iterations
 return : vertex assignments and the convergence history
 """
 function label_propagation(g::SimpleGraph; maxiter=1000)
     n = nv(g)
     label = collect(1:n)
-    runing_nodes = Set(vertices(g))
+    active_nodes = IntSet(vertices(g))
     c = NeighComm(collect(1:n), fill(-1,n), 1)
     convergence_hist = Vector{Int}()
     random_order = Array(Int, n)
     i = 0
-    while !isempty(runing_nodes) && i < maxiter
-        num_active = length(runing_nodes)
+    while !isempty(active_nodes) && i < maxiter
+        num_active = length(active_nodes)
         push!(convergence_hist, num_active)
         i += 1
-        
+
         # processing nodes in random order
-        for (j,node) in enumerate(runing_nodes)
+        for (j,node) in enumerate(active_nodes)
             random_order[j] = node
         end
         range_shuffle!(1:num_active, random_order)
@@ -28,10 +28,10 @@ function label_propagation(g::SimpleGraph; maxiter=1000)
             label[u] = vote!(g, label, c, u)
             if old_comm != label[u]
                 for v in out_neighbors(g, u)
-                    push!(runing_nodes, v)
+                    push!(active_nodes, v)
                 end
             else
-                delete!(runing_nodes, u)
+                delete!(active_nodes, u)
             end
         end
     end
@@ -40,12 +40,14 @@ function label_propagation(g::SimpleGraph; maxiter=1000)
     label, convergence_hist
 end
 
+"""Type to record neighbor labels and their counts."""
 type NeighComm
   neigh_pos::Vector{Int}
   neigh_cnt::Vector{Int}
   neigh_last::Int
 end
 
+"""Fast shuffle Array `a` in UnitRange `r` inplace."""
 function range_shuffle!(r::UnitRange, a::AbstractVector)
     (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
     @inbounds for i=length(r):-1:2
@@ -56,6 +58,7 @@ function range_shuffle!(r::UnitRange, a::AbstractVector)
     end
 end
 
+"""Return the most frequency label."""
 function vote!(g::SimpleGraph, m::Vector{Int}, c::NeighComm, u::Int)
     @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
@@ -77,6 +80,7 @@ function vote!(g::SimpleGraph, m::Vector{Int}, c::NeighComm, u::Int)
           max_cnt = c.neigh_cnt[neigh_comm]
         end
     end
+    # ties breaking randomly
     range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
     for lbl in c.neigh_pos
       if c.neigh_cnt[lbl] == max_cnt
