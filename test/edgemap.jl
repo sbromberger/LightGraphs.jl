@@ -5,9 +5,9 @@ m = 10
 g = Graph(n, m)
 println(Dict{Edge,Int}() |> valtype)
 
-em = EdgeMap(Int)
-em2 = EdgeMap(Dict{Edge, Int}())
-em5 = ConstEdgeMap(1)
+em = EdgeMap(Int, g)
+em2 = EdgeMap(g, Dict{Edge, Int}())
+em5 = ConstEdgeMap(g, 1)
 # em = ConstEdgeMap(g, x)
 #em = DefaultEdgeMap(Int)
 @test_throws(ErrorException, em5[1,2] = 1)
@@ -23,12 +23,12 @@ for e in edges(g)
     @test  em2[src(e), dst(e)] == em[src(e), dst(e)]
 end
 
-for (e, w) in em
-    @test typeof(e) == Edge
-    @test typeof(w) == Int
-end
+# for (e, w) in em
+#     @test typeof(e) == Edge
+#     @test typeof(w) == Int
+# end
 
-em = EdgeMap(spzeros(Int, n, n))
+em = EdgeMap(g, spzeros(Int, n, n))
 @test eltype(em) == Pair{Edge,Int}
 @test valtype(em) == Int
 @test keytype(em) == Edge
