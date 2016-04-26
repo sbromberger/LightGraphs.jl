@@ -132,7 +132,12 @@ function WheelDiGraph(n::Integer)
     return g
 end
 
-"""Create a grid "Discrete Laplace operator" """
+"""
+    Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
+
+Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`. 
+If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.   
+"""
 function Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
     func = periodic ? CycleGraph : PathGraph
     g = func(dims[1])
