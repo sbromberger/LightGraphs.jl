@@ -8,7 +8,7 @@ using Base.Collections
 using LightXML
 using ParserCombinator
 using ParserCombinator.Parsers
-using Clustering
+using Clustering: kmeans
 try
     import GraphMatrices: CombinatorialAdjacency
     nothing
