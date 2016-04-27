@@ -23,13 +23,8 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-<<<<<<< HEAD
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            sum, size, sparse, eltype, valtype, keytype, haskey, length, ndims, issym, transpose,
             ctranspose, join, start, next, done, eltype, get
-=======
-            sum, size, sparse, eltype, valtype, keytype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype
->>>>>>> c7f5291... more work
 
 
 # core
@@ -41,7 +36,7 @@ indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # maps
-EdgeMap, ConstEdgeMap, #DefaultEdgeMap,
+EdgeMap, ConstEdgeMap,
 
 # distance
 eccentricity, diameter, periphery, radius, center,

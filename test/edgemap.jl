@@ -3,7 +3,6 @@ srand(17)
 n = 10
 m = 10
 g = Graph(n, m)
-println(Dict{Edge,Int}() |> valtype)
 
 em = EdgeMap(Int, g)
 em2 = EdgeMap(g, Dict{Edge, Int}())

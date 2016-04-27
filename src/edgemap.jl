@@ -33,10 +33,12 @@ keytype{T,G,D}(em::EdgeMap{T,G,D}) = Edge
 ### D <: Associative
 getindex{T,G,D<:Associative}(em::EdgeMap{T,G,D}, e::Edge) = getindex(em.data, e)
 setindex!{T,G,D<:Associative}(em::EdgeMap{T,G,D}, val, e::Edge) = setindex!(em.data, val, e)
+haskey{T,G,D<:Associative}(em::EdgeMap{T,G,D}, e::Edge) = haskey(em.data, e)
 
 ### D <: AbstractMatrix
 getindex{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, e::Edge) = getindex(em.data, src(e), dst(e))
 setindex!{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, val, e::Edge) = setindex!(em.data, val, src(e), dst(e))
+haskey{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, e::Edge) = true
 
 ### ConstEdgeMap
 setindex!{G,D<:Associative}(em::EdgeMap{D,G,D}, val, e::Edge) = error() # have to define this otherwise julia complains
@@ -65,11 +67,11 @@ setindex!{T,G}(em::EdgeMap{T,G,T}, val, u::Int, v::Int) = error("Cannot assign t
 
 ####### Iterable interface ######################
 
-### D <: Associative
-# start{T,G,D<:Associative}(em::EdgeMap{T,G,D}) = start(em.data)
-# next{T,G,D<:Associative}(em::EdgeMap{T,G,D}, state)  = next(em.data, state)
-# done{T,G,D<:Associative}(em::EdgeMap{T,G,D}, state) = done(em.data, state)
-#
+## D <: Associative
+start{T,G,D<:Associative}(em::EdgeMap{T,G,D}) = start(em.data)
+next{T,G,D<:Associative}(em::EdgeMap{T,G,D}, state)  = next(em.data, state)
+done{T,G,D<:Associative}(em::EdgeMap{T,G,D}, state) = done(em.data, state)
+
 # ### D <: AbstractMatrix
 # start{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}) = start(em.data)
 # function next{T,D<:AbstractMatrix}(em::EdgeMap{T,D}, state)
