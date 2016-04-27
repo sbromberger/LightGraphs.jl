@@ -6,8 +6,7 @@ using GZip
 using StatsBase
 using Base.Collections
 using LightXML
-using ParserCombinator
-using ParserCombinator.Parsers
+using ParserCombinator: Parsers.DOT, Parsers.GML
 using Clustering: kmeans
 try
     import GraphMatrices: CombinatorialAdjacency
