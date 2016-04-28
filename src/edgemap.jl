@@ -15,9 +15,17 @@ end
 ###### Constructors ###################
 EdgeMap{G<:SimpleGraph,D<:Associative}(g::G, d::D) =
     EdgeMap{valtype(d),G,D}(g, d)
+EdgeMap{D<:Associative}(d::D) =
+    EdgeMap{valtype(d),Graph,D}(Graph(), d)
+
 EdgeMap{G<:SimpleGraph, D<:AbstractMatrix}(g::G, d::D) =
     EdgeMap{eltype(d),G,D}(g, d)
+EdgeMap{D<:AbstractMatrix}(d::D) =
+    EdgeMap{eltype(d),Graph,D}(Graph(), d)
+
+
 EdgeMap{T,G<:SimpleGraph}(::Type{T}, g::G) = EdgeMap(g, Dict{Edge,T}())
+EdgeMap{T}(::Type{T}) = EdgeMap(Graph(), Dict{Edge,T}())
 
 ConstEdgeMap{T,G<:SimpleGraph}(g::G, x::T) = EdgeMap{T, G, T}(g, x)
 ConstEdgeMap{T}(x::T) = EdgeMap{T, Graph, T}(Graph(), x)
@@ -73,6 +81,9 @@ setindex!{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, val, u::Int, v::Int) =
 setindex!{G,D<:Associative}(em::EdgeMap{D,G,D}, val, u::Int, v::Int) = error() # have to define this otherwise julia complains
 setindex!{G,D<:AbstractMatrix}(em::EdgeMap{D,G,D}, val, u::Int, v::Int) = error() # have to define this otherwise julia complains
 setindex!{T,G}(em::EdgeMap{T,G,T}, val, u::Int, v::Int) = val #error("Cannot assign to ConstEdgeMap.")
+getindex{G,D<:Associative}(em::EdgeMap{D,G,D}, u::Int, v::Int) = error() # have to define this otherwise julia complains
+getindex{G,D<:AbstractMatrix}(em::EdgeMap{D,G,D}, u::Int, v::Int) = error() # have to define this otherwise julia complains
+getindex{T,G}(em::EdgeMap{T,G,T}, u::Int, v::Int) = em.data
 
 ####### Iterable interface ######################
 

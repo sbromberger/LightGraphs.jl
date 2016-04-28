@@ -20,7 +20,7 @@ end
 function bellman_ford_shortest_paths!(
     graph::SimpleGraph,
     sources::AbstractVector{Int},
-    distmx::AbstractArray{Float64, 2},
+    distmx::EdgeMap,
     state::BellmanFordState
 )
 
@@ -59,21 +59,22 @@ to compute shortest paths between a source vertex `s` or a set of source
 vertices `ss`. Returns a `BellmanFordState` with relevant traversal information
 (see below).
 """
-function bellman_ford_shortest_paths{T}(
+function bellman_ford_shortest_paths(
     graph::SimpleGraph,
 
     sources::AbstractVector{Int},
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::EdgeMap=ConstEdgeMap(1)
     )
+    T= valtype(distmx)
     nvg = nv(graph)
     state = BellmanFordState(zeros(Int,nvg), fill(typemax(T), nvg))
     bellman_ford_shortest_paths!(graph, sources, distmx, state)
 end
 
-bellman_ford_shortest_paths{T}(
+bellman_ford_shortest_paths(
     graph::SimpleGraph,
     v::Int,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::EdgeMap=ConstEdgeMap(1)
 ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 function has_negative_edge_cycle(graph::SimpleGraph)
