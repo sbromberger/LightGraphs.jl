@@ -47,7 +47,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
         # init dsfmt generator without altering GLOBAL_RNG
         Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
     end
-    ne = StatsBase.rand_binom(m, p) # sadly Distributions.jl doesn't support non-global RNG
+    ne = rand_binom(m, p) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -150,8 +150,8 @@ end
 """
     barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
-random graph with `n` nodes is grown by attaching new nodes each with `k` edges that 
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+random graph with `n` nodes is grown by attaching new nodes each with `k` edges that
 are preferentially attached to existing nodes with high degree. Undirected graphs are
 created by default; use `is_directed=true` to override.
 """
@@ -337,7 +337,7 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
 
             m = a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-            nedg = StatsBase.rand_binom(m, p)
+            nedg = rand_binom(m, p)
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg

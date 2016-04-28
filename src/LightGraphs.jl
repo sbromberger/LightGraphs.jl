@@ -3,12 +3,11 @@ module LightGraphs
 
 using Requires
 using GZip
-using StatsBase
+using StatsBase: rand_binom, sample
 using Base.Collections
 using LightXML
-using ParserCombinator
-using ParserCombinator.Parsers
-using Clustering
+using ParserCombinator: Parsers.DOT, Parsers.GML
+using Clustering: kmeans
 try
     import GraphMatrices: CombinatorialAdjacency
     nothing
