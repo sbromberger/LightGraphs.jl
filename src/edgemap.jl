@@ -20,6 +20,7 @@ EdgeMap{G<:SimpleGraph, D<:AbstractMatrix}(g::G, d::D) =
 EdgeMap{T,G<:SimpleGraph}(::Type{T}, g::G) = EdgeMap(g, Dict{Edge,T}())
 
 ConstEdgeMap{T,G<:SimpleGraph}(g::G, x::T) = EdgeMap{T, G, T}(g, x)
+ConstEdgeMap{T}(x::T) = EdgeMap{T, Graph, T}(Graph(), x)
 
 ###### I/O ###################
 show(io::IO, em::EdgeMap) = print(io, "EdgeMap($(em.data))")
@@ -29,21 +30,29 @@ length(em::EdgeMap) = length(em.data)
 eltype{T,G,D}(em::EdgeMap{T,G,D}) = Pair{Edge, T}
 valtype{T,G,D}(em::EdgeMap{T,G,D}) = T
 keytype{T,G,D}(em::EdgeMap{T,G,D}) = Edge
+get{T,G,D}(em::EdgeMap{T,G,D}, e::Edge, x) = get(em.data, e, x)
 
 ### D <: Associative
 getindex{T,G,D<:Associative}(em::EdgeMap{T,G,D}, e::Edge) = getindex(em.data, e)
 setindex!{T,G,D<:Associative}(em::EdgeMap{T,G,D}, val, e::Edge) = setindex!(em.data, val, e)
 haskey{T,G,D<:Associative}(em::EdgeMap{T,G,D}, e::Edge) = haskey(em.data, e)
+get{T,G,D<:Associative}(em::EdgeMap{T,G,D}, e::Edge, x) = get(em.data, e, x)
+
 
 ### D <: AbstractMatrix
 getindex{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, e::Edge) = getindex(em.data, src(e), dst(e))
 setindex!{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, val, e::Edge) = setindex!(em.data, val, src(e), dst(e))
 haskey{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, e::Edge) = true
+get{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, e::Edge, x) = get(em.data, (src(e),dst(e)), x)
+
 
 ### ConstEdgeMap
 setindex!{G,D<:Associative}(em::EdgeMap{D,G,D}, val, e::Edge) = error() # have to define this otherwise julia complains
 setindex!{G,D<:AbstractMatrix}(em::EdgeMap{D,G,D}, val, e::Edge) = error() # have to define this otherwise julia complains
-setindex!{T,G}(em::EdgeMap{T,G,T}, val, e::Edge) = error("Cannot assign to ConstEdgeMap.")
+setindex!{T,G}(em::EdgeMap{T,G,T}, val, e::Edge) = val #; error("Cannot assign to ConstEdgeMap.")
+get{G,D<:Associative}(em::EdgeMap{D,G,D}, e::Edge, x) = error()
+get{G,D<:AbstractMatrix}(em::EdgeMap{D,G,D}, e::Edge, x) = error()
+get{T,G}(em::EdgeMap{T,G,T}, e::Edge, x) = em.data
 
 ###### Matrix interface ###################
 ## TODO check u < v for Graphs
@@ -63,7 +72,7 @@ setindex!{T,G,D<:AbstractMatrix}(em::EdgeMap{T,G,D}, val, u::Int, v::Int) =
 ### ConstEdgeMap
 setindex!{G,D<:Associative}(em::EdgeMap{D,G,D}, val, u::Int, v::Int) = error() # have to define this otherwise julia complains
 setindex!{G,D<:AbstractMatrix}(em::EdgeMap{D,G,D}, val, u::Int, v::Int) = error() # have to define this otherwise julia complains
-setindex!{T,G}(em::EdgeMap{T,G,T}, val, u::Int, v::Int) = error("Cannot assign to ConstEdgeMap.")
+setindex!{T,G}(em::EdgeMap{T,G,T}, val, u::Int, v::Int) = val #error("Cannot assign to ConstEdgeMap.")
 
 ####### Iterable interface ######################
 

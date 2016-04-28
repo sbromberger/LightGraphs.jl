@@ -28,7 +28,7 @@ function depth_first_visit_impl!(
     graph::SimpleGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
-    edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
+    edgecolormap::EdgeMap,      # an (initialized) color-map to indicate status of edges
     visitor::SimpleGraphVisitor)  # the visitor
 
 
@@ -70,7 +70,7 @@ function traverse_graph!(
     s::Int,
     visitor::SimpleGraphVisitor;
     vertexcolormap = Dict{Int, Int}(),
-    edgecolormap = DummyEdgeMap())
+    edgecolormap = ConstEdgeMap(0))
 
     vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
