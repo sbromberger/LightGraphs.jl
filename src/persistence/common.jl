@@ -66,7 +66,7 @@ save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
 save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
 
 # save a dictionary of graphs {"name" => graph}
-function save(io::IO, d::Dict{AbstractString, SimpleGraph}, t::Symbol=:lg)
+function save{T<:AbstractString}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][4](io, d)
 end
