@@ -113,6 +113,7 @@ is_weakly_connected(g::DiGraph) = length(weakly_connected_components(g)) == 1
 # Adapated from Graphs.jl
 type TarjanVisitor <: SimpleGraphVisitor
     stack::Vector{Int}
+    onstack::BitVector
     lowlink::Vector{Int}
     index::Vector{Int}
     components::Vector{Vector{Int}}
@@ -120,6 +121,7 @@ end
 
 TarjanVisitor(n::Int) = TarjanVisitor(
     Vector{Int}(),
+    falses(n),
     Vector{Int}(),
     zeros(Int, n),
     Vector{Vector{Int}}()
@@ -129,11 +131,12 @@ function discover_vertex!(vis::TarjanVisitor, v)
     vis.index[v] = length(vis.stack) + 1
     push!(vis.lowlink, length(vis.stack) + 1)
     push!(vis.stack, v)
+    vis.onstack[v] = true
     return true
 end
 
 function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
-    if w_color != 0 # != 0 means seen
+    if w_color != 0 && vis.onstack[w] # != 0 means seen
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
             pop!(vis.lowlink)
         end
@@ -143,8 +146,8 @@ end
 
 function close_vertex!(vis::TarjanVisitor, v)
     if vis.index[v] == vis.lowlink[end]
-        component = vis.stack[vis.index[v]:end]
-        splice!(vis.stack, vis.index[v]:length(vis.stack))
+        component = splice!(vis.stack, vis.index[v]:length(vis.stack))
+        vis.onstack[component] = false
         pop!(vis.lowlink)
         push!(vis.components, component)
     end
