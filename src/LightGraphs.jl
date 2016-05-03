@@ -36,7 +36,7 @@ indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # maps
-EdgeMap, ConstEdgeMap,
+EdgeMap, ConstEdgeMap, VertexMap, ConstVertexMap,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -139,7 +139,8 @@ include("core.jl")
     include("digraph.jl")
     include("graph.jl")
         include("edgeiter.jl")
-        include("edgemap.jl")
+        include("maps/edgemap.jl")
+        include("maps/vertexmap.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
