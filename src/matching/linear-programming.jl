@@ -77,7 +77,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     end
 
     model = Model()
-    @defVar(model, x[1:length(w)] >= 0)
+    @variable(model, x[1:length(w)] >= 0)
 
     for i in v1
         idx = Vector{Int}()
@@ -87,7 +87,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
             end
         end
         if length(idx) > 0
-            @addConstraint(model, sum{x[id], id=idx} == 1)
+            @constraint(model, sum{x[id], id=idx} == 1)
         end
     end
 
@@ -100,11 +100,11 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
         end
 
         if length(idx) > 0
-            @addConstraint(model, sum{x[id], id=idx} <= 1)
+            @constraint(model, sum{x[id], id=idx} <= 1)
         end
     end
 
-    @setObjective(model, Max, sum{c * x[edgemap[e]], (e,c)=w})
+    @objective(model, Max, sum{c * x[edgemap[e]], (e,c)=w})
 
     status = solve(model)
     status != :Optimal && error("JuMP solver failed to find optimal solution.")
