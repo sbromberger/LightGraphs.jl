@@ -197,6 +197,10 @@ end
 
 """Produces a histogram of degree values across all vertices for the graph `g`.
 The number of histogram buckets is based on the number of vertices in `g`.
+Degree 0 vertices are excluded.
+
+`degree_histogram(g)[i]` is the number of vertices in g with degree `i`.
+
 """
 degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 
