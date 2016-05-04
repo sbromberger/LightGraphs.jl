@@ -171,6 +171,10 @@ Please include version numbers of all relevant libraries and Julia itself.
 - PRs should contain one logical enhancement to the codebase.
 - Squash commits in a PR.
 - Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
+- Minimize dependencies on external packages. In general,
+    - dependencies on core Julia packages (things under [JuliaLang](https://github.org/JuliaLang)) are ok.
+    - dependencies on non-core "leaf" packages (no subdependencies except for core Julia packages) are less ok.
+    - dependencies on non-core non-leaf packages require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
 - Put type assertions on all function arguments (use abstract types, Union, or Any if necessary).
 - If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
 - Take steps to ensure that code works on graphs with multiple connected components efficiently.
