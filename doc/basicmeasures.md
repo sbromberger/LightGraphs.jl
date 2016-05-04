@@ -147,7 +147,9 @@ Return the minimum `indegree` of vertices in `g`.
 ```julia
 degree_histogram(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
-Produces a histogram of degree values across all vertices for the graph `g`. The number of histogram buckets is based on the number of vertices in `g`.
+Produces a histogram of degree values across all vertices for the graph `g`. The number of histogram buckets is based on the number of vertices in `g`. Degree 0 vertices are excluded.
+
+`degree_histogram(g)[i]` is the number of vertices in g with degree `i`.
 
 ### density
 ```julia
