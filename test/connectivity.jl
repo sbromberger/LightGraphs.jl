@@ -56,6 +56,19 @@ wcc = weakly_connected_components(h)
 @test length(scc) == 3 && sort(scc[3]) == [1,2,5]
 @test length(wcc) == 1 && length(wcc[1]) == nv(h)
 
+function scc_ok(graph)
+  """Check that all SCC really are strongly connected"""
+  scc = strongly_connected_components(graph)
+  scc_as_subgraphs = map(i -> induced_subgraph(graph, i), scc)
+  return all(is_strongly_connected, scc_as_subgraphs)
+end
+
+# the two graphs below are isomorphic (exchange 2 <--> 4)
+h = DiGraph(4);  add_edge!(h, 1, 4); add_edge!(h, 4, 2); add_edge!(h, 2, 3); add_edge!(h, 1, 3);
+h2 = DiGraph(4); add_edge!(h2, 1, 2); add_edge!(h2, 2, 4); add_edge!(h2, 4, 3); add_edge!(h2, 1, 3);
+@test scc_ok(h)
+@test scc_ok(h2)
+
 h = DiGraph(6)
 add_edge!(h,1,3); add_edge!(h,3,4); add_edge!(h,4,2); add_edge!(h,2,1)
 add_edge!(h,3,5); add_edge!(h,5,6); add_edge!(h,6,4)
