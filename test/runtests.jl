@@ -51,7 +51,6 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
-    "spectral",
     "cliques",
     "subgraphs",
     "connectivity",
@@ -66,8 +65,9 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "traversals/randomwalks",
-    "community/core-periphery",
+    "spectral",
     "community/detection",
+    "community/core-periphery",
     "community/modularity",
     "community/clustering",
     "centrality/betweenness",
@@ -82,7 +82,7 @@ tests = [
     "flow/maximum_flow",
     "matching/linear-programming",
     "datasets/runtests",
-    "utils"
+    "utils",
 ]
 
 

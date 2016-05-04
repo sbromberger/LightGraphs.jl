@@ -44,7 +44,8 @@ See `Nonbacktracking` for details.
 """
 function nonbacktrack_embedding(g::Graph, k::Int)
     B = Nonbacktracking(g)
-    λ,eigv,conv = eigs(B, nev=k+1, v0=ones(Float64, B.m))
+    2 <= k+1 <= size(B)[2] || throw(BoundsError("cannot get $(k+1) eigenvectors"))
+    λ,eigv,conv = eigs(B, nev=k+1)
     ϕ = zeros(Complex64, nv(g), k-1)
     # TODO decide what to do with the stationary distribution ϕ[:,1]
     # this code just throws it away in favor of eigv[:,2:k+1].

@@ -1,3 +1,5 @@
+import Base.full
+
 @test adjacency_matrix(g3)[3,2] == 1
 @test adjacency_matrix(g3)[2,4] == 0
 @test laplacian_matrix(g3)[3,2] == -1
@@ -21,6 +23,15 @@ for i=1:10
     @test sum(B[:,i]) == 8
     @test sum(B[i,:]) == 8
 end
+B₁ = Nonbacktracking(g10)
+
+# just so that we can assert equality of matrices
+full(nbt::Nonbacktracking) = full(sparse(nbt))
+
+@test full(B₁) == full(B)
+@test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
+@test size(B₁) == size(B)
+@test_approx_eq_eps norm(eigs(B₁)[1] - eigs(B)[1]) 0.0 1e-8
 
 @test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
 
