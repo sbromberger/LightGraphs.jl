@@ -41,6 +41,26 @@ ba = barabasi_albert(10, 2, is_directed=true)
 @test ne(ba) == 16
 @test is_directed(ba) == true
 
+fm = static_fitness_model(20, rand(10))
+@test nv(fm) == 10
+@test ne(fm) == 20
+@test is_directed(fm) == false
+
+fm = static_fitness_model(20, rand(10), rand(10))
+@test nv(fm) == 10
+@test ne(fm) == 20
+@test is_directed(fm) == true
+
+sf = static_scale_free(10, 20, 2.0)
+@test nv(sf) == 10
+@test ne(sf) == 20
+@test is_directed(sf) == false
+
+sf = static_scale_free(10, 20, 2.0, 2.0)
+@test nv(sf) == 10
+@test ne(sf) == 20
+@test is_directed(sf) == true
+
 rr = random_regular_graph(5, 0)
 @test nv(rr) == 5
 @test ne(rr) == 0
