@@ -98,7 +98,7 @@ maximum_weight_maximal_matching, MatchingResult,
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
-stochastic_block_model, barabasi_albert,
+stochastic_block_model, barabasi_albert, static_fitness_model, static_scale_free,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,
