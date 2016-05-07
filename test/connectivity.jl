@@ -167,3 +167,7 @@ g10 = StarDiGraph(10)
 g10 = StarGraph(10)
 @test egonet(g10, 1, 0) == Graph(1,0)
 @test egonet(g10, 1, 1) == g10
+
+@test !isgraphical([1,1,1])
+@test isgraphical([2,2,2])
+@test isgraphical(fill(3,10))

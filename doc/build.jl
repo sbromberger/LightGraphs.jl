@@ -134,7 +134,7 @@ types:
 ## Neighbors and Degree
 
 {{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors,
-    in_neighbors, all_neighbors, common_neighbors, neighborhood, egonet}}
+    in_neighbors, all_neighbors, common_neighbors, neighborhood, egonet, isgraphical}}
 """
 
 @file "centrality.md" """
@@ -163,14 +163,14 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 *LightGraphs.jl* implements some common random graph generators:
 
 {{erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph,
-    random_configuration_model, stochastic_block_model,
+    random_configuration_model, barabasi_albert, stochastic_block_model,
     StochasticBlockModel, make_edgestream}}
 
 ## Static Graphs
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
 {{CompleteGraph, CompleteBipartiteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph,
- WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph}}
+ WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, Grid}}
 
 ## Smallgraphs
 Many notorious graphs are available in the Datasets submodule:
