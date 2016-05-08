@@ -277,8 +277,7 @@ end
 Generates a non-growing random graph with expected power-law degree distributions.
 `n` is the number of nodes in the generated graph. `m` is the number of edges in the generated graph.
 `alpha` is the power law exponent of digree distribution.
-`finite_size_correction` determines whether to use the proposed finite size correction of Cho et al.
-Time complexity is Time complexity is O(|V| + |E| log |E|).
+`finite_size_correction` determines whether to use the proposed finite size correction of Cho et al. Time complexity is O(|V| + |E| log |E|).
 
 References:
 
