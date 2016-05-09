@@ -21,8 +21,6 @@ The algorithm relies on a linear relaxation on of the matching problem, which is
 
 Eventually a `cutoff` argument can be given, to reduce computational times excluding edges with weights lower than the cutoff.
 
-The package JuMP.jl and one of its supported solvers is required.
-
 The returned object is of type
 
 ```
@@ -35,9 +33,11 @@ end
 
 where
 
+```
 weight: total weight of the matching
 
 inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
 
-m:       `m[i]=j` if vertex `i` is matched to vertex `j`.          `m[i]=-1` for unmatched vertices.
-
+m:      `m[i]=j` if vertex `i` is matched to vertex `j`.
+        `m[i]=-1` for unmatched vertices.
+```

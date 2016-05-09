@@ -1,3 +1,9 @@
+type MatchingResult
+    weight::Float64
+    inmatch::Dict{Edge,Bool}
+    m::Vector{Int}
+end
+
 """
     maximum_weight_maximal_matching{T<:Number}(g, w::Dict{Edge,T})
     maximum_weight_maximal_matching{T<:Number}(g, w::Dict{Edge,T}, cutoff)
@@ -14,8 +20,6 @@ guaranteed to have integer solution on bipartite graps.
 Eventually a `cutoff` argument can be given, to reduce computational times
 excluding edges with weights lower than the cutoff.
 
-The package JuMP.jl and one of its supported solvers is required.
-
 The returned object is of type
 
     type MatchingResult
@@ -26,25 +30,13 @@ The returned object is of type
 
 where
 
-weight: total weight of the matching
+    weight: total weight of the matching
 
-inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
+    inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
 
-m:       `m[i]=j` if vertex `i` is matched to vertex `j`.
-         `m[i]=-1` for unmatched vertices.
+    m:      `m[i]=j` if vertex `i` is matched to vertex `j`.
+            `m[i]=-1` for unmatched vertices.
 """
-maximum_weight_maximal_matching(args...; kws...) = isdefined(:JuMP) ?  error("wrong arguments") : error("JuMP is required")
-
-@require JuMP begin
-
-type MatchingResult
-    weight::Float64
-    inmatch::Dict{Edge,Bool}
-    m::Vector{Int}
-end
-
-
-
 function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
     wnew = Dict{Edge,T}()
     for (e,x) in w
@@ -130,4 +122,3 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 
     return MatchingResult(cost, inmatch, m)
 end
-end # @require

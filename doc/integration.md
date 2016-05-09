@@ -61,6 +61,7 @@ package:
 julia> g = PathGraph(10)
 {10, 9} undirected graph
 
+julia> using GraphMatrices
 julia> a = CombinatorialAdjacency(g)
 GraphMatrices.CombinatorialAdjacency{Float64,LightGraphs.Graph,Array{Float64,1}}({10, 9} undirected graph,[1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0])
 ```

@@ -1,7 +1,6 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
-using Requires
 using Base.Test
 
 g1 = smallgraph("PetersenGraph")

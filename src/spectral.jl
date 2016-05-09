@@ -84,19 +84,6 @@ eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
 adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
 adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
 
-
-
-# GraphMatrices integration
-# CombinatorialAdjacency(g) returns a type that supports iterative linear solvers and eigenvector solvers.
-@require GraphMatrices begin
-
-function CombinatorialAdjacency(g::Graph)
-    d = float(indegree(g))
-    return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
-end
-end # @require
-
-
 """Returns a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
@@ -108,7 +95,7 @@ function incidence_matrix(g::SimpleGraph, T::DataType=Int)
     n_v = nv(g)
     n_e = ne(g)
     nz = 2 * n_e
-    
+
     # every col has the same 2 entries
     colpt = collect(1:2:(nz + 1))
     nzval = repmat([isdir ? -one(T) : one(T), one(T)], n_e)
@@ -276,4 +263,3 @@ function contract(nbt::Nonbacktracking, edgespace::Vector)
     contract!(y,nbt,edgespace)
     return y
 end
-

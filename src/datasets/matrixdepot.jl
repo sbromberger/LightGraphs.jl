@@ -1,4 +1,3 @@
-@require MatrixDepot begin
 function MDGraph(a::AbstractString, x...)
     a in matrixdepot("symmetric") || error("Valid matrix not found in collection")
     external = a in matrixdepot("data")
@@ -16,5 +15,3 @@ function MDDiGraph(a::AbstractString, x...)
 
     return DiGraph(m)
 end
-
-end     # @require MatrixDepot
