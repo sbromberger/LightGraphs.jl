@@ -196,9 +196,9 @@ end
 """
     static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
 
-Generates a non-growing random undirected graph with `length(fitness)` nodes and `m` edges,
-in which the edge probabilities proportional to node fitness scores.
-Time complexity is O(|V| + |E| log |E|).
+Generates a random graph with `length(fitness)` nodes and `m` edges,
+in which the probability of the existence of edge `(i, j)` is proportional
+to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
 
 Reference:
 
@@ -267,12 +267,13 @@ function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, 
 end
 
 """
-    function static_scale_free(n::Int, m::Int, alpha::Float64; seed::Int=-1, finite_size_correction::Bool=false)
+    function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
 
-Generates a non-growing random graph with expected power-law degree distributions.
-`n` is the number of nodes in the generated graph. `m` is the number of edges in the generated graph.
-`alpha` is the power law exponent of digree distribution.
-`finite_size_correction` determines whether to use the proposed finite size correction of Cho et al. Time complexity is O(|V| + |E| log |E|).
+Generates a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α`. `finite_size_correction` determines
+whether to use the finite size correction proposed by Cho et al.
+This generator calls internally the `static_fitness_model function`.
+Time complexity is O(|V| + |E| log |E|).
 
 References:
 
