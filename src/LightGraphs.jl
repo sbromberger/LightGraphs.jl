@@ -1,24 +1,13 @@
 __precompile__(true)
 module LightGraphs
 
-using Requires
 using GZip
 using StatsBase: rand_binom, sample
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using Clustering: kmeans
-try
-    import GraphMatrices: CombinatorialAdjacency
-    nothing
-catch
-end
-
-try
-    using JuMP
-    nothing
-catch
-end
+using JuMP
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
@@ -79,7 +68,7 @@ indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-CombinatorialAdjacency, non_backtracking_matrix, incidence_matrix,
+non_backtracking_matrix, incidence_matrix,
 nonbacktrack_embedding, Nonbacktracking,
 contract,
 

@@ -11,9 +11,9 @@ notifications:
 # uncomment the following lines to override the default test script
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'Pkg.add("GraphMatrices"); Pkg.add("JuMP"); Pkg.add("MatrixDepot"); Pkg.add("Clp")'
+  - julia --check-bounds=yes -e 'Pkg.add("MatrixDepot"); Pkg.add("JuMP"); Pkg.add("Clp")'
   - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
-  
+
 cache:
   directories:
     - $HOME/.julia/v0.4/JuMP/
