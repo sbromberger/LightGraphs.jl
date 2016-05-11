@@ -193,6 +193,131 @@ function barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1
     return g
 end
 
+"""
+    static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+
+Generates a random graph with `length(fitness)` nodes and `m` edges,
+in which the probability of the existence of edge `(i, j)` is proportional
+to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
+
+Reference:
+
+* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution
+in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+"""
+function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+    @assert(m >= 0, "invalid number of edges")
+    n = length(fitness)
+    m == 0 && return Graph(n)
+    nodes = 0
+    for f in fitness
+        # sanity check for the fitness
+        f < zero(T) && error("fitness scores must be non-negative")
+        f > zero(T) && (nodes += 1)
+    end
+    # avoid getting into an infinite loop when too many edges are requested
+    max_no_of_edges = div(nodes*(nodes-1), 2)
+    @assert(m <= max_no_of_edges, "too many edges requested")
+    # calculate the cumulative fitness scores
+    cum_fitness = cumsum(fitness)
+    g = Graph(n)
+    _create_static_fitness_graph!(g, m, cum_fitness, cum_fitness, seed)
+    return g
+end
+
+function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1)
+    @assert(m >= 0, "invalid number of edges")
+    n = length(fitness_out)
+    @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
+    m == 0 && return DiGraph(n)
+    # avoid getting into an infinite loop when too many edges are requested
+    outnodes = innodes = nodes = 0
+    @inbounds for i=1:n
+        # sanity check for the fitness
+        (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
+        fitness_out[i] > zero(T) && (outnodes += 1)
+        fitness_in[i] > zero(S) && (innodes += 1)
+        (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nodes += 1)
+    end
+    max_no_of_edges = outnodes*innodes - nodes
+    @assert(m <= max_no_of_edges, "too many edges requested")
+    # calculate the cumulative fitness scores
+    cum_fitness_out = cumsum(fitness_out)
+    cum_fitness_in = cumsum(fitness_in)
+    g = DiGraph(n)
+    _create_static_fitness_graph!(g, m, cum_fitness_out, cum_fitness_in, seed)
+    return g
+end
+
+function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+    rng = getRNG(seed)
+    max_out = cum_fitness_out[end]
+    max_in = cum_fitness_in[end]
+    while m > 0
+        source = searchsortedfirst(cum_fitness_out, rand(rng)*max_out)
+        target = searchsortedfirst(cum_fitness_in, rand(rng)*max_in)
+        # skip if loop edge
+        (source == target) && continue
+        edge = Edge(source, target)
+        # is there already an edge? If so, try again
+        has_edge(g, edge) && continue
+        add_edge!(g, edge)
+        m -= 1
+    end
+end
+
+"""
+    function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+
+Generates a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α`. `finite_size_correction` determines
+whether to use the finite size correction proposed by Cho et al.
+This generator calls internally the `static_fitness_model function`.
+Time complexity is O(|V| + |E| log |E|).
+
+References:
+
+* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+* Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
+
+* Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
+"""
+function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of nodes")
+    @assert(α >= 2, "out-degree exponent must be >= 2")
+    fitness = _construct_fitness(n, α, finite_size_correction)
+    static_fitness_model(m, fitness, seed=seed)
+end
+
+function static_scale_free(n::Int, m::Int, α_out::Float64, α_in::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of nodes")
+    @assert(α_out >= 2, "out-degree exponent must be >= 2")
+    @assert(α_in >= 2, "in-degree exponent must be >= 2")
+    # construct the fitness
+    fitness_out = _construct_fitness(n, α_out, finite_size_correction)
+    fitness_in = _construct_fitness(n, α_in, finite_size_correction)
+    # eliminate correlation
+    shuffle!(fitness_in)
+    static_fitness_model(m, fitness_out, fitness_in, seed=seed)
+end
+
+function _construct_fitness(n::Int, α::Float64, finite_size_correction::Bool)
+    α = -1/(α-1)
+    fitness = zeros(n)
+    j = float(n)
+    if finite_size_correction && α < -0.5
+        # See the Cho et al paper, first page first column + footnote 7
+        j += n^(1+1/2α) * (10sqrt(2)*(1+α)) ^ (-1/α) - 1
+    end
+    j = max(j, n)
+    @inbounds for i=1:n
+        fitness[i] = j ^ α
+        j -= 1
+    end
+    return fitness
+end
+
 doc"""
     random_regular_graph(n::Int, k::Int; seed=-1)
 
