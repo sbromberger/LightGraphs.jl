@@ -23,7 +23,7 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
-```@doc
+```@docs
 bfs_tree
 dfs_tree
 maximum_adjacency_visit
@@ -33,7 +33,7 @@ maximum_adjacency_visit
 
 *LightGraphs* includes uniform random walks and self avoiding walks:
 
-```@doc
+```@docs
 randomwalk
 saw
 ```
@@ -42,7 +42,7 @@ saw
 
 `Graph connectivity` functions are defined on both undirected and directed graphs:
 
-```@doc
+```@docs
 is_connected
 is_strongly_connected
 is_weakly_connected
@@ -54,7 +54,6 @@ attracting_components
 is_bipartite
 condensation
 period
-neighborhood
 ```
 
 ## Cycle Detection
@@ -62,7 +61,7 @@ neighborhood
 In graph theory, a cycle is defined to be a path that starts from some vertex
 `v` and ends up at `v`.
 
-```@doc
+```@docs
 is_cyclic
 ```
 
@@ -73,7 +72,7 @@ is_cyclic
 * The distance from a vertex to itself is always `0`.
 * The distance between two vertices with no connecting edge is always `Inf`.
 
-```@doc
+```@docs
 a_star
 dijkstra_shortest_paths
 bellman_ford_shortest_paths
@@ -82,7 +81,7 @@ floyd_warshall_shortest_paths
 
 ## Path discovery / enumeration
 
-```@doc
+```@docs
 gdistances
 gdistances!
 enumerate_paths

@@ -4,7 +4,7 @@
 
 *LightGraphs.jl* implements some common random graph generators:
 
-```@doc
+```@docs
 erdos_renyi
 watts_strogatz
 random_regular_graph
@@ -20,7 +20,7 @@ make_edgestream
 
 *LightGraphs.jl* also implements a collection of classic graph generators:
 
-```@doc
+```@docs
 CompleteGraph
 CompleteBipartiteGraph
 CompleteDiGraph
@@ -43,6 +43,6 @@ Many notorious graphs are available in the Datasets submodule:
 using LightGraphs.Datasets
 ```
 
-```@doc
+```@docs
 smallgraph
 ```

@@ -10,7 +10,7 @@ computation:
 - [Boykov-Kolmogorov algorithm](http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1316848&tag=1)
 - [Push-relabel algorithm](https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm)
 
-```@doc
+```@docs
 maximum_flow
 ```
 
@@ -18,6 +18,6 @@ maximum_flow
 
 Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 
-```@doc
+```@docs
 mincut
 ```

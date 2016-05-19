@@ -1,11 +1,10 @@
 # Distance
 *LightGraphs.jl* includes the following distance measurements:
 
-```@doc
+```@docs
 eccentricity
 radius
 diameter
 center
 periphery
 ```
-

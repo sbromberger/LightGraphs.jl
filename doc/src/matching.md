@@ -8,6 +8,6 @@ of the linear problem is integer.
 
 Installation of the `JuMP` package is required.
 
-```@doc
+```@docs
 maximum_weight_maximal_matching
 ```

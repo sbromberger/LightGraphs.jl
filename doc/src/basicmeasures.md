@@ -5,7 +5,7 @@ types:
 
 ## Vertices and Edges
 
-```@doc
+```@docs
 vertices
 edges
 is_directed
@@ -17,13 +17,12 @@ in_edges
 out_edges
 src
 dst
-reverse
 ```
 
 
 ## Neighbors and Degree
 
-```@doc
+```@docs
 degree
 indegree
 outdegree

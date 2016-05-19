@@ -4,7 +4,7 @@ Graphs may be written to I/O streams and files using the `save` function and
 read with the `load` function. Currently supported graph formats are the
  *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
 
-```@doc
+```@docs
 save
 load
 ```

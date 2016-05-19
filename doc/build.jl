@@ -1,6 +1,6 @@
 macro file(fn, contents)
    # new doc syntax
-   contents = replace(contents, r"{{([^}]+,\s?[^}]+)+}}", x -> "```@doc\n" * join(split(x, r",\s?"), "\n")[3:end-2] * "\n```\n")
+   contents = replace(contents, r"{{([^}]+,\s?[^}]+)+}}", x -> "```@docs\n" * join(split(x, r",\s?"), "\n")[3:end-2] * "\n```\n")
    open("src/$fn", "w") do f write(f, contents) end
 end
 

@@ -5,14 +5,14 @@ undirected graphs:
 
 ## Adjacency
 
-```@doc
+```@docs
 adjacency_matrix
 adjacency_spectrum
 ```
 
 ## Laplacian
 
-```@doc
+```@docs
 laplacian_matrix
 laplacian_spectrum
 ```

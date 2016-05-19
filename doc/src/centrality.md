@@ -4,7 +4,7 @@
 importance of a vertex to the rest of the graph using some set of criteria.
 Centrality measures implemented in *LightGraphs.jl* include the following:
 
-```@doc
+```@docs
 degree_centrality
 indegree_centrality
 outdegree_centrality

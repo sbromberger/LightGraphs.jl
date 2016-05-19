@@ -5,7 +5,7 @@ in graphs.
 
 ## clustering coefficients
 
-```@doc
+```@docs
 local_clustering_coefficient
 local_clustering
 global_clustering_coefficient
@@ -13,25 +13,25 @@ global_clustering_coefficient
 
 ## modularity
 
-```@doc
+```@docs
 modularity
 ```
 
 ## community detection
 
-```@doc
+```@docs
 community_detection_nback
 ```
 
 ## core-periphery
 
-```@doc
+```@docs
 core_periphery_deg
 ```
 
 ## cliques
 *LightGraphs.jl* implements maximal clique discovery using
 
-```@doc
+```@docs
 maximal_cliques
 ```

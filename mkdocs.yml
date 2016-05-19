@@ -16,13 +16,13 @@ pages:
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
-docs_dir: 'doc'
+docs_dir: 'doc/build'
 markdown_extensions:
   - extra
   - tables
   - fenced_code
 extra_css:
-  - LightGraphs.css
+  - assets/Documenter.css
 extra_javascript:
   - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
-  - mathjaxhelper.js
+  - assets/mathjaxhelper.js
