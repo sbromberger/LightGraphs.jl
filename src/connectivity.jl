@@ -135,7 +135,7 @@ function discover_vertex!(vis::TarjanVisitor, v)
     return true
 end
 
-function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
+function examine_neighbor!(vis::TarjanVisitor, v, w, v_color::Int, w_color::Int, e_color::Int)
     if w_color != 0 && vis.onstack[w] # != 0 means seen
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
             pop!(vis.lowlink)
