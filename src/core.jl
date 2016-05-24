@@ -17,10 +17,6 @@ dst(e::Edge) = e.second
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 
-function show(io::IO, e::Edge)
-    print(io, "edge $(e.first) - $(e.second)")
-end
-
 """A type representing an undirected graph."""
 type Graph
     vertices::UnitRange{Int}
