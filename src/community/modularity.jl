@@ -5,18 +5,28 @@ Computes Newman's modularity `Q`
 for graph `g` given the partitioning `c`.
 """
 function modularity(g::Graph, c)
-    Q = 0.
-    m = 2 * ne(g)
-    m == 0 && return 0.
-    s1 = 0
-    s2 = 0
+    n = nv(g)
+    m = 2*ne(g)
+    m == 0 && return 0.0
+    e = zeros(Int,n)
+    a = zeros(Int,n)
     for u in vertices(g)
-        for v in vertices(g)
-            c[u] != c[v] && continue
-            s1 += has_edge(g, u, v) ? 1 : 0
-            s2 += degree(g, u)*degree(g, v)
+        for v in neighbors(g,u)
+            if u <= v
+                c1 = c[u]
+                c2 = c[v]
+                if c1 == c2
+                    e[c1] += 2
+                end
+                a[c1] += 1
+                a[c2] += 1
+            end
         end
     end
-    Q = s1/m - s2/m^2
-    return Q
+
+    Q = 0
+    @inbounds for i=1:n
+        Q += e[i]*m - a[i]*a[i]
+    end
+    return Q/m/m
 end
