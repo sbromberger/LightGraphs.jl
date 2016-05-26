@@ -7,12 +7,12 @@ for graph `g` given the partitioning `c`.
 function modularity(g::Graph, c)
     n = nv(g)
     m = 2*ne(g)
-    m == 0 && return 0.0
+    m == 0 && return 0.
     nc = maximum(c)
-    a = zeros(Int, nc)
-    Q = 0.0
+    a = zeros(Int,nc)
+    Q = 0.
     for u in vertices(g)
-        for v in neighbors(g, u)
+        for v in neighbors(g,u)
             if u <= v
                 c1 = c[u]
                 c2 = c[v]
@@ -24,8 +24,9 @@ function modularity(g::Graph, c)
             end
         end
     end
+    Q = Q*m
     @inbounds for i=1:nc
-        Q -= a[i]*a[i]/m/m
+        Q -= a[i]*a[i]
     end
     return Q
 end
