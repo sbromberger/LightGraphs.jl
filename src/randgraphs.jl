@@ -194,6 +194,109 @@ function barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1
 end
 
 """
+barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
+random graph with `n` nodes that is grown by attaching new nodes to existing graph with `k` nodes, each
+with `k` edges that are preferentially attached to existing nodes with high degree.
+"""
+barabasi_albert(n::Integer, k::Integer; keyargs...) =
+    barabasi_albert(n, k, k; keyargs...)
+
+
+"""
+barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
+random graph with `n` nodes that is grown by attaching new nodes to existing graph with `n0` nodes, each
+with `k` edges that are preferentially attached to existing nodes with high degree.
+"""
+function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, keyargs...)
+    if complete
+        g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
+    else
+        g = is_directed ? DiGraph(n0) : Graph(n0)
+    end
+    
+    barabasi_albert!(g, n, k; keyargs...)
+    return g
+end
+
+"""
+barabasi_albert!(g::Union{Graph,DiGraph}, n::Integer, k::Integer; seed::Int = -1)
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
+random graph with `n` nodes that is grown by attaching new nodes to existing graph `g`, each
+with `k` edges that are preferentially attached to existing nodes with high degree.
+"""
+function barabasi_albert!(g::Union{Graph,DiGraph}, n::Integer, k::Integer; seed::Int=-1)
+    n0 = nv(g)
+    1 <= k <= n0 <= n || throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n where n0 is the number of nodes in graph g"))
+    n0 == n && return g
+    
+    # seed random number generator
+    seed > 0 && srand(seed)
+
+    # add missing vertices
+    sizehint!(g.fadjlist, n)
+    add_vertices!(g, n - n0)
+
+    # vector of targets
+    targets = Vector{Int}(k)
+
+    # if graph doesn't contain edges add k edges from node n0+1
+    # this ensures that the sum of all weights is nonzero
+    if ne(g) == 0
+        sample!(1:n0, targets; :replace => false)
+
+        # add links to targets
+        for target in targets
+            add_edge!(g, n0+1, target)
+        end
+
+        # prevents adding another k edges from node n0+1
+        n0 += 1
+    end
+
+    # list of existing nodes (each node is repeated once for each adjacent edge)
+    repeated_nodes = Vector{Int}()
+    sizehint!(repeated_nodes, 2*(n-n0)*k + 2*ne(g))
+
+    # initialize list of existing nodes
+    for i in 1:n0
+        for _ in 1:degree(g, i)
+            push!(repeated_nodes, i)
+        end
+    end
+    
+    # array to record if a node is picked
+    node_status = fill(false, n)
+
+    for source in n0+1:n
+        # choose k unique nodes from the existing nodes
+        # pick uniformly from repeated_nodes (preferential attachement)
+        i = 1
+        while i <= k
+            target = sample(repeated_nodes)
+            if !node_status[target]
+                targets[i] = target
+                i += 1
+                node_status[target] = true
+            end
+        end
+
+        for target in targets
+            # add edges to k nodes from the source
+            add_edge!(g, source, target)
+            push!(repeated_nodes, source)
+            push!(repeated_nodes, target)
+            # reset the node_status for target in targets
+            node_status[target] = false
+        end
+    end
+
+    return g
+end
+
+
+"""
     static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
 
 Generates a random graph with `length(fitness)` nodes and `m` edges,

@@ -31,14 +31,64 @@ ws = watts_strogatz(10, 4, 0.2, is_directed=true)
 @test ne(ws) == 20
 @test is_directed(ws) == true
 
-ba = barabasi_albert(10,2)
+ba = barabasi_albert(10, 2)
 @test nv(ba) == 10
 @test ne(ba) == 16
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, 2)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 4, 2)
+@test nv(ba) == 10
+@test ne(ba) == 12
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 17
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 17
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 4, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
 @test is_directed(ba) == false
 
 ba = barabasi_albert(10, 2, is_directed=true)
 @test nv(ba) == 10
 @test ne(ba) == 16
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 4, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 12
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
+@test is_directed(ba) == true
+
+ba = barabasi_albert_complete(10, 4, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 24
 @test is_directed(ba) == true
 
 fm = static_fitness_model(20, rand(10))
