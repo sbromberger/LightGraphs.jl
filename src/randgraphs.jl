@@ -196,9 +196,9 @@ end
 """
     static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
 
-Generates a non-growing random undirected graph with `length(fitness)` nodes and `m` edges,
-in which the edge probabilities proportional to node fitness scores.
-Time complexity is O(|V| + |E| log |E|).
+Generates a random graph with `length(fitness)` nodes and `m` edges,
+in which the probability of the existence of edge `(i, j)` is proportional
+to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
 
 Reference:
 
@@ -209,16 +209,19 @@ function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
     @assert(m >= 0, "invalid number of edges")
     n = length(fitness)
     m == 0 && return Graph(n)
-    # sanity check for the fitness
-    @assert(minimum(fitness) >= zero(eltype(fitness)), "fitness scores must be non-negative")
+    nodes = 0
+    for f in fitness
+        # sanity check for the fitness
+        f < zero(T) && error("fitness scores must be non-negative")
+        f > zero(T) && (nodes += 1)
+    end
     # avoid getting into an infinite loop when too many edges are requested
-    nodes = countnz(fitness)
     max_no_of_edges = div(nodes*(nodes-1), 2)
     @assert(m <= max_no_of_edges, "too many edges requested")
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
     g = Graph(n)
-    _creat_static_fitness_graph!(g, m, cum_fitness, cum_fitness, seed)
+    _create_static_fitness_graph!(g, m, cum_fitness, cum_fitness, seed)
     return g
 end
 
@@ -227,22 +230,14 @@ function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, f
     n = length(fitness_out)
     @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
     m == 0 && return DiGraph(n)
-    # sanity check for the fitness
-    @assert(minimum(fitness_out) >= zero(eltype(fitness_out)) && minimum(fitness_in) >= zero(eltype(fitness_in)), "fitness scores must be non-negative")
     # avoid getting into an infinite loop when too many edges are requested
-    outnodes = 0
-    innodes = 0
-    nodes = 0
+    outnodes = innodes = nodes = 0
     @inbounds for i=1:n
-        if fitness_out[i] > zero(T)
-            outnodes += 1
-        end
-        if fitness_in[i] > zero(S)
-            innodes += 1
-        end
-        if fitness_out[i] > zero(T) && fitness_in[i] > zero(S)
-            nodes += 1
-        end
+        # sanity check for the fitness
+        (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
+        fitness_out[i] > zero(T) && (outnodes += 1)
+        fitness_in[i] > zero(S) && (innodes += 1)
+        (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nodes += 1)
     end
     max_no_of_edges = outnodes*innodes - nodes
     @assert(m <= max_no_of_edges, "too many edges requested")
@@ -250,11 +245,11 @@ function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, f
     cum_fitness_out = cumsum(fitness_out)
     cum_fitness_in = cumsum(fitness_in)
     g = DiGraph(n)
-    _creat_static_fitness_graph!(g, m, cum_fitness_out, cum_fitness_in, seed)
+    _create_static_fitness_graph!(g, m, cum_fitness_out, cum_fitness_in, seed)
     return g
 end
 
-function _creat_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -272,12 +267,13 @@ function _creat_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, c
 end
 
 """
-    function static_scale_free(n::Int, m::Int, alpha::Float64; seed::Int=-1, finite_size_correction::Bool=false)
+    function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
 
-Generates a non-growing random graph with expected power-law degree distributions.
-`n` is the number of nodes in the generated graph. `m` is the number of edges in the generated graph.
-`alpha` is the power law exponent of digree distribution.
-`finite_size_correction` determines whether to use the proposed finite size correction of Cho et al. Time complexity is O(|V| + |E| log |E|).
+Generates a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α`. `finite_size_correction` determines
+whether to use the finite size correction proposed by Cho et al.
+This generator calls internally the `static_fitness_model function`.
+Time complexity is O(|V| + |E| log |E|).
 
 References:
 
