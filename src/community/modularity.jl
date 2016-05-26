@@ -10,14 +10,14 @@ function modularity(g::Graph, c)
     m == 0 && return 0.0
     nc = maximum(c)
     a = zeros(Int, nc)
-    Q = 0.0
+    Q = 0
     for u in vertices(g)
         for v in neighbors(g,u)
             if u <= v
                 c1 = c[u]
                 c2 = c[v]
                 if c1 == c2
-                    Q += 2/m
+                    Q += 2m
                 end
                 a[c1] += 1
                 a[c2] += 1
@@ -25,7 +25,7 @@ function modularity(g::Graph, c)
         end
     end
     @inbounds for i=1:nc
-        Q -= a[i]*a[i]/m/m
+        Q -= a[i]*a[i]
     end
-    return Q
+    return Q/m/m
 end
