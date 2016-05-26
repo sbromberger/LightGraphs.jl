@@ -172,12 +172,16 @@ Please include version numbers of all relevant libraries and Julia itself.
 - PRs should contain one logical enhancement to the codebase.
 - Squash commits in a PR.
 - Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
+- Minimize dependencies on external packages, and avoid introducing new dependencies. In general,
+    - PRs introducing dependencies on core Julia packages are ok.
+    - PRs introducing dependencies on non-core "leaf" packages (no subdependencies except for core Julia packages) are less ok.
+    - PRs introducing dependencies on non-core non-leaf packages require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
 - Put type assertions on all function arguments (use abstract types, Union, or Any if necessary).
 - If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
 - Take steps to ensure that code works on graphs with multiple connected components efficiently.
 - Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
 - We can accept code that does not work for directed graphs as long as it comes with an explanation of what it would take to make it work for directed graphs.
-- Style point: prefer the short circuiting conditional over if/else when convenient ex. `condition && error("message")`
+- Style point: prefer the short circuiting conditional over if/else when convenient, and where state is not explicitly being mutated (*e.g.*, `condition && error("message")` is good; `condition && i += 1` is not).
 - When possible write code to reuse memory. For example:
 ```julia
 function f(g, v)

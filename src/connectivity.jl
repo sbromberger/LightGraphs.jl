@@ -283,3 +283,21 @@ the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
 to be considered. This is equivalent to `induced_subgraph(g, neighborhood(g, v, d, dir=dir)).`
 """
 egonet(g::SimpleGraph, v::Int, d::Int; dir=:out) = induced_subgraph(g, neighborhood(g, v, d, dir=dir))
+
+"""
+    isgraphical(degs::Vector{Int})
+
+Check whether the degree sequence `degs` is graphical, according to
+[Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
+
+Time complexity: O(length(degs)^2)
+"""
+function isgraphical(degs::Vector{Int})
+    iseven(sum(degs)) || return false
+    n = length(degs)
+    for r=1:n-1
+        cond = sum(i->degs[i], 1:r) <= r*(r-1) + sum(i->min(r,degs[i]), r+1:n)
+        cond || return false
+    end
+    return true
+end

@@ -39,12 +39,21 @@ For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an ad
 
 ### random_configuration_model
 ```julia
-random_configuration_model(n::Int, k::Array{Int}; seed=-1)
+random_configuration_model(n::Int, k::Array{Int}; seed=-1, check_graphical=false)
 ```
 
-Creates a random undirected graph according to the [configuraton model](http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf). It contains `n` vertices, the vertex `ì` having degree `k[i]`.
+Creates a random undirected graph according to the [configuraton model](http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf). It contains `n` vertices, the vertex `i` having degree `k[i]`.
 
 Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes approximately $nc^2$ time.
+
+If `check_graphical=true` makes sure that `k` is a graphical sequence (see `isgraphical`).
+
+### barabasi_albert
+```julia
+barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1)
+```
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) random graph with `n` nodes is grown by attaching new nodes each with `k` edges that are preferentially attached to existing nodes with high degree. Undirected graphs are created by default; use `is_directed=true` to override.
 
 ### stochastic_block_model
 ```julia
@@ -158,6 +167,13 @@ create a double complete binary tree with k-levels used as an example for spectr
 RoachGraph(k::Int64)
 ```
 The Roach Graph from Guattery and Miller 1998
+
+### Grid
+```julia
+Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
+```
+
+Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`.  If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.   
 
 ## Smallgraphs
 Many notorious graphs are available in the Datasets submodule:
