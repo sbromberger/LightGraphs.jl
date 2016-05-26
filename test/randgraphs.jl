@@ -102,6 +102,11 @@ rr = random_configuration_model(1000, zeros(Int,1000))
 @test ne(rr) == 0
 @test is_directed(rr) == false
 
+rr = random_configuration_model(3, [2,2,2], check_graphical=true)
+@test nv(rr) == 3
+@test ne(rr) == 3
+@test is_directed(rr) == false
+
 rd = random_regular_digraph(1000, 4)
 @test nv(rd) == 1000
 @test ne(rd) == 4000
