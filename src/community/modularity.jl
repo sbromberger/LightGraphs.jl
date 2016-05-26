@@ -17,13 +17,14 @@ function modularity(g::Graph, c)
                 c1 = c[u]
                 c2 = c[v]
                 if c1 == c2
-                    Q += 2m
+                    Q += 2
                 end
                 a[c1] += 1
                 a[c2] += 1
             end
         end
     end
+    Q = Q*m
     @inbounds for i=1:nc
         Q -= a[i]*a[i]
     end
