@@ -3,7 +3,7 @@ module LightGraphs
 
 using Requires
 using GZip
-using StatsBase: rand_binom, sample
+using StatsBase: rand_binom
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
