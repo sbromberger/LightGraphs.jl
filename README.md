@@ -56,12 +56,15 @@ Use `nv(g)` and `ne(g)` to compute the number of vertices and edges respectively
 an array with all edges in the graph.
 
 ## Installation
+
 Installation is straightforward:
+
 ```julia
 julia> Pkg.add("LightGraphs")
 ```
 
 ## Usage Examples
+
 (all examples apply equally to `DiGraph` unless otherwise noted):
 
 ```julia
@@ -148,11 +151,12 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 
 ## Documentation
+
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
 Documentation for methods is also available via the Julia REPL help system.
 
-
 ## Supported Versions
+
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
 * Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue.
@@ -182,6 +186,7 @@ Please include version numbers of all relevant libraries and Julia itself.
 - We can accept code that does not work for directed graphs as long as it comes with an explanation of what it would take to make it work for directed graphs.
 - Style point: prefer the short circuiting conditional over if/else when convenient, and where state is not explicitly being mutated (*e.g.*, `condition && error("message")` is good; `condition && i += 1` is not).
 - When possible write code to reuse memory. For example:
+
 ```julia
 function f(g, v)
     storage = Vector{Int}(nv(g))
@@ -192,7 +197,9 @@ function f(g, v)
     return sum(storage)
 end
 ```
+
 should be rewritten as two functions
+
 ```julia
 function f(g::SimpleGraph, v::Integer)
     storage = Vector{Int}(nv(g))
@@ -207,4 +214,5 @@ function inner!(storage::AbstractArray{Int,1}, g::SimpleGraph, v::Integer)
     return sum(storage)
 end
 ```
+
 This allows us to reuse the memory and improve performance.
