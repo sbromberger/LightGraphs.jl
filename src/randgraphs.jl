@@ -148,52 +148,6 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
 end
 
 """
-    barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1)
-
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
-random graph with `n` nodes is grown by attaching new nodes each with `k` edges that
-are preferentially attached to existing nodes with high degree. Undirected graphs are
-created by default; use `is_directed=true` to override.
-"""
-function barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1)
-    @assert(1<=k<n, "Barabási–Albert network must have 1 <= k < n")
-    g = is_directed ? DiGraph(n) : Graph(n)
-    seed > 0 && srand(seed)
-    # Target nodes for new edges
-    targets = collect(1:k)
-    # List of existing nodes, with nodes repeated once for each adjacent edge
-    repeated_nodes = Vector{Int}()
-    # Array to record the node is or not picked
-    node_status = fill(false, n)
-    sizehint!(repeated_nodes, (n-k)*k)
-    source = k + 1
-    while source <= n
-        for target in targets
-            # Add edges to k nodes from the source
-            add_edge!(g, source, target)
-            push!(repeated_nodes, source)
-            push!(repeated_nodes, target)
-            # Reset the node_status for target in targets
-            node_status[target] = false
-        end
-
-        # Choose k unique nodes from the existing nodes
-        # Pick uniformly from repeated_nodes (preferential attachement)
-        i = 1
-        while i <= k
-            target = sample(repeated_nodes)
-            if !node_status[target]
-                targets[i] = target
-                i += 1
-                node_status[target] = true
-            end
-        end
-        source += 1
-    end
-    return g
-end
-
-"""
 barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
 Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) 
 random graph with `n` nodes that is grown by attaching new nodes to existing graph with `k` nodes, each
@@ -201,7 +155,6 @@ with `k` edges that are preferentially attached to existing nodes with high degr
 """
 barabasi_albert(n::Integer, k::Integer; keyargs...) =
     barabasi_albert(n, k, k; keyargs...)
-
 
 """
 barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
@@ -244,10 +197,8 @@ function barabasi_albert!(g::Union{Graph,DiGraph}, n::Integer, k::Integer; seed:
     # if graph doesn't contain edges add k edges from node n0+1
     # this ensures that the sum of all weights is nonzero
     if ne(g) == 0
-        sample!(1:n0, targets; :replace => false)
-
         # add links to targets
-        for target in targets
+        for target in sample!(collect(1:n0), k)
             add_edge!(g, n0+1, target)
         end
 
