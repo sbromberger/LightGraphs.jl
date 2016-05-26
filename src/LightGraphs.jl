@@ -4,7 +4,6 @@ module LightGraphs
 using Requires
 using GZip
 using StatsBase: rand_binom, sample
-import StatsBase: sample!
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML

@@ -86,7 +86,7 @@ ba = barabasi_albert(10, 2, 2, is_directed=true, complete=true)
 @test ne(ba) == 18
 @test is_directed(ba) == true
 
-ba = barabasi_albert_complete(10, 4, 2, is_directed=true, complete=true)
+ba = barabasi_albert(10, 4, 2, is_directed=true, complete=true)
 @test nv(ba) == 10
 @test ne(ba) == 24
 @test is_directed(ba) == true
