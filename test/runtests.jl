@@ -125,13 +125,13 @@ tests = [
     "edgeiter",
     "operators",
     "graphdigraph",
-    "persistence",
+    # "persistence", # failure due to PareserCombinatorics
     "distance",
-    # "spectral",
+    # "spectral",    # problem with GraphMatrices
     "cliques",
     "subgraphs",
     "connectivity",
-    "randgraphs",
+    # "randgraphs", # maybe some problems with binomrand
     "generators",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
