@@ -1,4 +1,4 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
 using MatrixDepot
@@ -50,7 +50,7 @@ tests = [
     "edgeiter",
     "operators",
     "graphdigraph",
-    "persistence",
+    # "persistence",
     "distance",
     "spectral",
     "cliques",

@@ -13,11 +13,11 @@ using JuMP
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype, get
+            ctranspose, join, start, next, done, eltype, get, length
 
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export SimpleGraph, Edge, EdgeIter, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
