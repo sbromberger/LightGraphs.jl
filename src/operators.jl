@@ -265,11 +265,11 @@ sum(g::SimpleGraph) = ne(g)
 """sparse(g) is the adjacency_matrix of g"""
 sparse(g::SimpleGraph) = adjacency_matrix(g)
 
-#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
+#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
 eltype(g::SimpleGraph) = Float64
 length(g::SimpleGraph) = nv(g)*nv(g)
 ndims(g::SimpleGraph) = 2
-issym(g::SimpleGraph) = !is_directed(g)
+issymmetric(g::SimpleGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)
