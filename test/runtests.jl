@@ -125,7 +125,7 @@ tests = [
     "edgeiter",
     "operators",
     "graphdigraph",
-    # "persistence",
+    "persistence",
     "distance",
     # "spectral",
     "cliques",
