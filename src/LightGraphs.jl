@@ -7,7 +7,7 @@ using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 
-import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
+import Base: write, ==, <, *, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
             ctranspose, join, start, next, done, eltype, get, length
