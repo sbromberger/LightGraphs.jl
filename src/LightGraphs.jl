@@ -12,7 +12,7 @@ using JuMP
 
 import Base: write, ==, <, *, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            sum, size, sparse, eltype, length, ndims, issymmetric, transpose,
             ctranspose, join, start, next, done, eltype, get, length
 
 

@@ -209,7 +209,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-issym(nbt::Nonbacktracking) = false
+issymmetric(nbt::Nonbacktracking) = false
 
 function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     length(x) == nbt.m || error("dimension mismatch")
