@@ -66,7 +66,6 @@ end
 @test CompleteDiGraph(4) != PathDiGraph(4)
 @test CompleteDiGraph(4) == CompleteDiGraph(4)
 
-@test degree_histogram(g)[1:4] == [1, 3, 1, 0]
 @test neighbors(g, 1) == [2, 3, 4]
 @test common_neighbors(g, 2, 3) == [1, 5]
 @test common_neighbors(h, 2, 3) == [5]

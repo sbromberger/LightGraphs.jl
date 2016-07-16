@@ -2,7 +2,11 @@ __precompile__(true)
 module LightGraphs
 
 using GZip
+<<<<<<< HEAD
 using Distributions: Binomial
+=======
+import StatsFuns: RFunctions.binomrand
+>>>>>>> 3edced6... rand_binom -> binomrand
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
@@ -20,7 +24,7 @@ import Base: write, ==, <, *, isless, issubset, union, intersect,
 export SimpleGraph, Edge, EdgeIter, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
-indegree, outdegree, degree, degree_histogram, density, Δ, δ,
+indegree, outdegree, degree, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
