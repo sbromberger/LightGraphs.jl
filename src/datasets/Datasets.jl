@@ -1,13 +1,7 @@
 module Datasets
 
 using ...LightGraphs
-using Requires
-try
-    using MatrixDepot
-    nothing
-catch
-end
-
+using MatrixDepot
 # smallgraphs
 export smallgraph,
 
