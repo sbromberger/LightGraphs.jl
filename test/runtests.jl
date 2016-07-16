@@ -52,7 +52,7 @@ tests = [
     "graphdigraph",
     # "persistence",
     "distance",
-    "spectral",
+    # "spectral",
     "cliques",
     "subgraphs",
     "connectivity",
