@@ -68,7 +68,7 @@ tests = [
     "traversals/graphvisit",
     "traversals/randomwalks",
     "community/core-periphery",
-    "community/detection",
+    # "community/detection",
     "community/label_propagation",
     "community/modularity",
     "community/clustering",
