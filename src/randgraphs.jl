@@ -47,7 +47,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
         # init dsfmt generator without altering GLOBAL_RNG
         Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
     end
-    ne = rand_binom(m, p) # sadly StatsBase doesn't support non-global RNG
+    ne = round(Int, binomrand(m, p)) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -154,7 +154,7 @@ Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph with `k` vertices. Each new vertex is attached with `k` edges to `k`
 different vertices already present in the system by preferential attachment.
-Initial graphs are undirected and consist of isolated vertices by default; 
+Initial graphs are undirected and consist of isolated vertices by default;
 use `is_directed=true` and `complete=true` for directed and complete initial graphs.
 """
 barabasi_albert(n::Integer, k::Integer; keyargs...) =
@@ -176,7 +176,7 @@ function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool 
     else
         g = is_directed ? DiGraph(n0) : Graph(n0)
     end
-    
+
     barabasi_albert!(g, n, k; seed = seed)
     return g
 end
@@ -195,7 +195,7 @@ function barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int=-1)
         throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
 			    "where n0 is the number of nodes in graph g"))
     n0 == n && return g
-    
+
     # seed random number generator
     seed > 0 && srand(seed)
 
@@ -208,8 +208,8 @@ function barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int=-1)
     if ne(g) == 0
         # expand initial graph
         n0 += 1
-        
-        # add edges to k existing nodes 
+
+        # add edges to k existing nodes
         for target in sample!(collect(1:n0-1), k)
             add_edge!(g, n0, target)
         end
@@ -217,14 +217,14 @@ function barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int=-1)
 
     # vector of weighted nodes (each node is repeated once for each adjacent edge)
     weightedNodes = Vector{Int}(2*(n-n0)*k + 2*ne(g))
-    
+
     # initialize vector of weighted nodes
     offset = 0
     for e in edges(g)
         weightedNodes[offset+=1] = src(e)
         weightedNodes[offset+=1] = dst(e)
     end
-    
+
     # array to record if a node is picked
     picked = fill(false, n)
 
@@ -531,7 +531,7 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
 
             m = a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-            nedg = rand_binom(m, p)
+            nedg = round(Int, binomrand(m, p))
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg
