@@ -67,7 +67,7 @@ end
 """
     triangles(g, vlist = vertices(g))
 
-Returns a vector containing the number of traingles for vertices `vlist`.
+Returns a vector containing the number of triangles for vertices `vlist`.
 """
 triangles(g::SimpleGraph, vlist = vertices(g)) = local_clustering(g, vlist)[1]
 
