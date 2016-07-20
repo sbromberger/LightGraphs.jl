@@ -3,7 +3,6 @@ module LightGraphs
 
 using Requires
 using GZip
-using StatsBase: binomrand
 using Distributions
 using Base.Collections
 using LightXML
