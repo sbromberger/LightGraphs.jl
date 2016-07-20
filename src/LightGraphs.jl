@@ -102,7 +102,7 @@ stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model,
 
 #community
 modularity, community_detection_nback, core_periphery_deg,
-local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles
+local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
 label_propagation,
 
 #generators
