@@ -3,7 +3,7 @@ module LightGraphs
 
 using Requires
 using GZip
-using Distributions
+using Distributions: Binomial
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
