@@ -129,8 +129,6 @@ for (i,g) in enumerate(graphs)
     rm(path)
 end
 
-Base.length(ei::LightGraphs.EdgeIter) = ei.m
-
 for (i,g) in enumerate(graphs)
     eprop = Dict{Edge,Char}([(e, Char(i)) for e in edges(g)])
     net = LightGraphs.Network{Graph, Int, Char}(g, 1:nv(g), eprop)
