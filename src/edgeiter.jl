@@ -7,80 +7,38 @@ end
 type EdgeIter
     m::Int
     adj::Vector{Vector{Int}}
-    start::EdgeIterState
     directed::Bool
 end
 
 eltype(::Type{EdgeIter}) = Edge
 
+EdgeIter(g::Graph) = EdgeIter(ne(g), g.fadjlist, false)
+EdgeIter(g::DiGraph) = EdgeIter(ne(g), g.fadjlist, true)
 
-function EdgeIter(g::Graph)
-    di = 1
-    s = 1
-    ne(g) == 0 && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(0,0,true), false)
-    while di > length(g.fadjlist[s])    # get to the first valid edge.
-        s += 1
-        di = 1
-        s > length(g.fadjlist) && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(1,1, true), false)
-    end
-    return EdgeIter(ne(g), g.fadjlist, EdgeIterState(s, di, false), false)
-end
-
-function EdgeIter(g::DiGraph)
-    di = 1
-    s = 1
-    ne(g) == 0 && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(0,0,true), false)
-    while di > length(g.fadjlist[s])
-        s += 1
-        di = 1
-        s > length(g.fadjlist) && return EdgeIter(ne(g), g.fadjlist, EdgeIterState(1,1, true), true)
-    end
-    return EdgeIter(ne(g), g.fadjlist, EdgeIterState(s, di, false), true)
-end
-
-
-start(eit::EdgeIter) = eit.start
-done(eit::EdgeIter, state::EdgeIterState) = state.fin
-
-_isfin(eit::EdgeIter, state::EdgeIterState) =
-    state.s > length(eit.adj) || (
-        state.s == length(eit.adj) &&
-        state.di > length(eit.adj[state.s])
-    )
-
-function next(eit::EdgeIter, state::EdgeIterState)
-    # calculate the edge we're currently looking at.
-    # this is guaranteed to be valid.
-    d = eit.adj[state.s][state.di]
-    edge = Edge(state.s, d)
-    found = false       # have we found a valid next state?
-
-    # now, let's get the next valid state, or set fin if there are no more.
-
-    while !found
-        state.di += 1                           # increase di.
-        while (state.s < length(eit.adj) &&     # if we're at the end of a vector and
-            state.di > length(eit.adj[state.s]))  # not at the end of the list
-            # println("end of vector $(state.s)")
-            state.s += 1                        # go to the next vector, and
-            state.di = 1                        # index to the first element.
-        end
-        if _isfin(eit, state)                   # oops, we've hit the end
-            state.fin = true
-            return(edge, state)             # return a finished nextstate
-        end
-        if !eit.directed                    # for undirected graphs
-            if state.s <= eit.adj[state.s][state.di]     # skip edges where s > d
-                found = true
-            # else
-            #     println("skipping because $(state.s) > $(eit.adj[state.s][state.di])")
+function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false))
+    while state.s <= length(eit.adj)
+        arr = eit.adj[state.s]
+        while state.di <= length(arr)
+            if eit.directed || state.s <= arr[state.di]
+                return state
             end
-        else
-            found = true
+            state.di += 1
         end
+        state.s += 1
+        state.di = 1
     end
-    state.fin = _isfin(eit, state)                   # oops, we've hit the end
-    return (edge, state)
+    state.fin = true
+    return state
+end
+
+start(eit::EdgeIter) = _next(eit)
+done(eit::EdgeIter, state::EdgeIterState) = state.fin
+length(eit::EdgeIter) = eit.m
+
+function next(eit::EdgeIter, state)
+    edge = Edge(state.s, eit.adj[state.s][state.di])
+    state.di += 1
+    return(edge, _next(eit, state))
 end
 
 function _isequal(e1::EdgeIter, e2)
