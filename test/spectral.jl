@@ -52,7 +52,6 @@ for dir in [:in, :out, :both]
     @test_approx_eq_eps minimum(evals) 0 1e-13
 end
 
-
 # testing incidence_matrix, first directed graph
 @test size(incidence_matrix(g4)) == (5,4)
 @test incidence_matrix(g4)[1,1] == -1
