@@ -52,7 +52,7 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
-    # "spectral",    # problem with GraphMatrices
+    "spectral",    # Excluded GraphMatrices tests for the moment
     "cliques",
     "subgraphs",
     "connectivity",
@@ -68,7 +68,7 @@ tests = [
     "traversals/graphvisit",
     "traversals/randomwalks",
     "community/core-periphery",
-    # "community/detection",  # failure due to Nonbacktracking)
+    "community/detection",
     "community/label_propagation",
     "community/modularity",
     "community/clustering",
