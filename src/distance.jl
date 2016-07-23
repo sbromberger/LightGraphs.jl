@@ -1,17 +1,17 @@
 # used in shortest path calculations
 # has_distances{T}(distmx::AbstractArray{T,2}) =
 #     issparse(distmx)? (nnz(distmx) > 0) : !isempty(distmx)
-
-type DefaultDistance<:AbstractArray{Int, 2}
-    nv::Int
-    DefaultDistance(nv::Int=typemax(Int)) = new(nv)
-end
-
-getindex(::DefaultDistance, s::Int, d::Int) = 1
-getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
-size(d::DefaultDistance) = (d.nv, d.nv)
-transpose(d::DefaultDistance) = d
-ctranspose(d::DefaultDistance) = d
+#
+# type DefaultDistance<:AbstractArray{Int, 2}
+#     nv::Int
+#     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
+# end
+#
+# getindex(::DefaultDistance, s::Int, d::Int) = 1
+# getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
+# size(d::DefaultDistance) = (d.nv, d.nv)
+# transpose(d::DefaultDistance) = d
+# ctranspose(d::DefaultDistance) = d
 
 """
 Calculates the eccentricity[ies] of a vertex `v`, vertex vector `vs`, or the
@@ -33,30 +33,31 @@ provided, it will be used. Otherwise, an eccentricity vector will be calculated
 for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
 """
-function eccentricity{T}(
+function eccentricity(
     g::SimpleGraph,
     v::Int,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::EdgeMap = ConstEdgeMap(1)
 )
+    T = valtype(distmx)
     e = maximum(dijkstra_shortest_paths(g,v,distmx).dists)
     e == typemax(T) && error("Infinite path length detected")
 
     return e
 end
 
-eccentricity{T}(
+eccentricity(
     g::SimpleGraph,
     vs::AbstractArray{Int, 1}=vertices(g),
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::EdgeMap = ConstEdgeMap(1)
 ) =
     [eccentricity(g,v,distmx) for v in vs]
 
-eccentricity{T}(g::SimpleGraph, distmx::AbstractArray{T, 2}) =
+eccentricity(g::SimpleGraph, distmx::EdgeMap) =
     eccentricity(g, vertices(g), distmx)
 
 """Returns the maximum eccentricity of the graph."""
 diameter{T}(all_e::Vector{T}) = maximum(all_e)
-diameter{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+diameter(g::SimpleGraph, distmx::EdgeMap = ConstEdgeMap(1)) =
     maximum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
@@ -68,12 +69,12 @@ function periphery{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
 
-periphery{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+periphery(g::SimpleGraph, distmx::EdgeMap = ConstEdgeMap(1)) =
     periphery(eccentricity(g, distmx))
 
 """Returns the minimum eccentricity of the graph."""
 radius{T}(all_e::Vector{T}) = minimum(all_e)
-radius{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+radius(g::SimpleGraph, distmx::EdgeMap = ConstEdgeMap(1)) =
     minimum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
@@ -84,5 +85,5 @@ function center{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+center(g::SimpleGraph, distmx::EdgeMap = ConstEdgeMap(1)) =
     center(eccentricity(g, distmx))

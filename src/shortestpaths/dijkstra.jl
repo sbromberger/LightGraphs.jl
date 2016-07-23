@@ -22,12 +22,13 @@ information (see below).
 With `allpaths=true`, returns a `DijkstraState` that keeps track of all
 predecessors of a given vertex (see below).
 """
-function dijkstra_shortest_paths{T}(
+function dijkstra_shortest_paths(
     g::SimpleGraph,
     srcs::Vector{Int},
-    distmx::AbstractArray{T, 2}=DefaultDistance();
+    distmx::EdgeMap=ConstEdgeMap(1);
     allpaths=false
 )
+    T = valtype(distmx)
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(Int, nvg)
@@ -87,5 +88,5 @@ function dijkstra_shortest_paths{T}(
     return DijkstraState{T}(parents, dists, preds, pathcounts)
 end
 
-dijkstra_shortest_paths{T}(g::SimpleGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
+dijkstra_shortest_paths(g::SimpleGraph, src::Int, distmx::EdgeMap=ConstEdgeMap(1); allpaths=false) =
   dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)

@@ -16,11 +16,11 @@ graph.
 Note that this algorithm may return a large amount of data (it will allocate
 on the order of $\mathcal{O}(nv^2)$).
 """
-function floyd_warshall_shortest_paths{T}(
+function floyd_warshall_shortest_paths(
     g::SimpleGraph,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::EdgeMap=ConstEdgeMap(1)
 )
-
+    T = valtype(distmx)
     n_v = nv(g)
     dists = fill(typemax(T), (n_v,n_v))
     parents = zeros(Int, (n_v,n_v))

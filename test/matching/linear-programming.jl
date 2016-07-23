@@ -1,6 +1,6 @@
 @require JuMP begin
 g =CompleteBipartiteGraph(2,2)
-w =Dict{Edge,Float64}()
+w =EdgeMap(Float64, g)
 w[Edge(1,3)] = 10.
 w[Edge(1,4)] = 1.
 w[Edge(2,3)] = 2.
@@ -17,7 +17,7 @@ match = maximum_weight_maximal_matching(g,w)
 @test match.m[4] == 2
 
 g =CompleteBipartiteGraph(2,4)
-w =Dict{Edge,Float64}()
+w =EdgeMap(Float64, g)
 w[Edge(1,3)] = 10
 w[Edge(1,4)] = 0.5
 w[Edge(2,3)] = 11
@@ -38,7 +38,7 @@ match = maximum_weight_maximal_matching(g,w)
 @test match.m[3] == 2
 
 g =CompleteBipartiteGraph(2,6)
-w =Dict{Edge,Float64}()
+w =EdgeMap(Float64, g)
 w[Edge(1,3)] = 10
 w[Edge(1,4)] = 0.5
 w[Edge(2,3)] = 11
@@ -61,7 +61,7 @@ match = maximum_weight_maximal_matching(g,w,0)
 @test match.m[3] == 2
 
 g =CompleteBipartiteGraph(4,2)
-w =Dict{Edge,Float64}()
+w =EdgeMap(Float64, g)
 w[Edge(3,5)] = 10
 w[Edge(3,6)] = 0.5
 w[Edge(2,5)] = 11

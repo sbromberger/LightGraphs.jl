@@ -20,7 +20,7 @@ The returned object is of type
 
     type MatchingResult
         weight::Float64
-        inmatch::Dict{Edge,Bool}
+        inmatch::EdgeMap #bool
         m::Vector{Int}
     end
 
@@ -39,14 +39,14 @@ maximum_weight_maximal_matching(args...; kws...) = isdefined(:JuMP) ?  error("wr
 
 type MatchingResult
     weight::Float64
-    inmatch::Dict{Edge,Bool}
+    inmatch::EdgeMap # bool
     m::Vector{Int}
 end
 
 
 
-function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
-    wnew = Dict{Edge,T}()
+function maximum_weight_maximal_matching(g::Graph, w::EdgeMap, cutoff)
+    wnew = EdgeMap(valtype(w), g)
     for (e,x) in w
         if x >= cutoff
             wnew[e] = x
@@ -57,7 +57,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, c
 end
 
 
-function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
+function maximum_weight_maximal_matching(g::Graph, w::EdgeMap)
 # TODO support for graphs with zero degree nodes
 # TODO apply separately on each connected component
     bpmap = bipartite_map(g)
@@ -69,7 +69,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
     end
 
     nedg = 0
-    edgemap = Dict{Edge,Int}()
+    edgemap = EdgeMap(Int, g)
     for (e,_) in w
         nedg += 1
         edgemap[e] = nedg
@@ -114,7 +114,7 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 
     cost = getObjectiveValue(model)
 
-    inmatch = Dict{Edge,Bool}()
+    inmatch = EdgeMap(Bool, g)
     m = fill(-1, nv(g))
     for e in edges(g)
         if haskey(w, e)

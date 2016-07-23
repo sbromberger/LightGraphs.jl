@@ -23,7 +23,7 @@ wedges = [
 
 
 m = length(wedges)
-eweights = spzeros(nv(g),nv(g))
+eweights = EdgeMap(spzeros(nv(g),nv(g)))
 
 for (s, d, w) in wedges
     add_edge!(g, s, d)

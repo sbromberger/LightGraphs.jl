@@ -1,4 +1,4 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 using LightGraphs.Datasets
 using Requires
@@ -38,14 +38,15 @@ p2 = pdict["pathdigraph"]
 
 adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
 adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
-distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
-distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
+distmx1 = EdgeMap([Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf])
+distmx2 = EdgeMap([Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf])
 
 a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
     "core",
+    "edgemap",
     "edgeiter",
     "operators",
     "graphdigraph",

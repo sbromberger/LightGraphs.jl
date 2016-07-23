@@ -84,11 +84,12 @@ type MinCutVisitor{T} <: AbstractMASVisitor
     bestweight::T
     cutweight::T
     visited::Integer
-    distmx::AbstractArray{T, 2}
+    distmx::EdgeMap
     vertices::Vector{Int}
 end
 
-function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
+function MinCutVisitor(graph::SimpleGraph, distmx::EdgeMap)
+    T = valtype(distmx)
     n = nv(graph)
     parities = falses(n)
     return MinCutVisitor(
@@ -143,14 +144,14 @@ end
 #
 #################################################
 
-type MASVisitor{T} <: AbstractMASVisitor
+type MASVisitor <: AbstractMASVisitor
     io::IO
     vertices::Vector{Int}
-    distmx::AbstractArray{T, 2}
+    distmx::EdgeMap
     log::Bool
 end
 
-function discover_vertex!{T}(visitor::MASVisitor{T}, v::Int)
+function discover_vertex!(visitor::MASVisitor, v::Int)
     push!(visitor.vertices,v)
     visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
     return true
@@ -178,17 +179,18 @@ values that determines the partition in `g` (1 or 2) and `bestcut` is the
 weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
-function mincut{T}(
+function mincut(
     graph::SimpleGraph,
-    distmx::AbstractArray{T, 2}
+    distmx::EdgeMap
 )
+    T = valtype(distmx)
     visitor = MinCutVisitor(graph, distmx)
     colormap = zeros(Int, nv(graph))
     traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, colormap)
     return(visitor.parities + 1, visitor.bestweight)
 end
 
-mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
+mincut(graph::SimpleGraph) = mincut(graph,ConstEdgeMap(1))
 
 """Returns the vertices in `g` traversed by maximum adjacency search. An optional
 `distmx` matrix may be specified; if omitted, edge distances are assumed to
@@ -196,12 +198,13 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 `io`, which defaults to `STDOUT`; otherwise, no event information will be
 displayed.
 """
-function maximum_adjacency_visit{T}(
+function maximum_adjacency_visit(
     graph::SimpleGraph,
-    distmx::AbstractArray{T, 2},
+    distmx::EdgeMap,
     log::Bool,
     io::IO
 )
+    T = valtype(distmx)
     visitor = MASVisitor(io, Vector{Int}(), distmx, log)
     traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
     return visitor.vertices
@@ -209,7 +212,7 @@ end
 
 maximum_adjacency_visit(graph::SimpleGraph) = maximum_adjacency_visit(
     graph,
-    DefaultDistance(),
+    ConstEdgeMap(1),
     false,
     STDOUT
 )

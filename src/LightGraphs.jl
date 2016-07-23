@@ -22,7 +22,7 @@ end
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            sum, size, sparse, eltype, valtype, keytype, haskey, length, ndims, issym, transpose,
             ctranspose, join, start, next, done, eltype, get
 
 
@@ -33,6 +33,9 @@ nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
+
+# maps
+EdgeMap, ConstEdgeMap, VertexMap, ConstVertexMap,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -135,6 +138,8 @@ include("core.jl")
     include("digraph.jl")
     include("graph.jl")
         include("edgeiter.jl")
+        include("maps/edgemap.jl")
+        include("maps/vertexmap.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
