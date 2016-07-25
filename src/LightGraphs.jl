@@ -1,24 +1,14 @@
 __precompile__(true)
 module LightGraphs
 
-using Requires
 using GZip
 using Distributions: Binomial
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using Clustering: kmeans
-try
-    import GraphMatrices: CombinatorialAdjacency
-    nothing
-catch
-end
-
-try
-    using JuMP
-    nothing
-catch
-end
+import GraphMatrices: CombinatorialAdjacency
+using JuMP
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,

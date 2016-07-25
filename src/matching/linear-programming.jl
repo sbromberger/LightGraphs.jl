@@ -1,3 +1,10 @@
+type MatchingResult
+    weight::Float64
+    inmatch::Dict{Edge,Bool}
+    m::Vector{Int}
+end
+
+
 """
     maximum_weight_maximal_matching{T<:Number}(g, w::Dict{Edge,T})
     maximum_weight_maximal_matching{T<:Number}(g, w::Dict{Edge,T}, cutoff)
@@ -33,18 +40,6 @@ inmatch: `inmatch[e]=true` if edge `e` belongs to the matching.
 m:       `m[i]=j` if vertex `i` is matched to vertex `j`.
          `m[i]=-1` for unmatched vertices.
 """
-maximum_weight_maximal_matching(args...; kws...) = isdefined(:JuMP) ?  error("wrong arguments") : error("JuMP is required")
-
-@require JuMP begin
-
-type MatchingResult
-    weight::Float64
-    inmatch::Dict{Edge,Bool}
-    m::Vector{Int}
-end
-
-
-
 function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T}, cutoff)
     wnew = Dict{Edge,T}()
     for (e,x) in w
@@ -108,11 +103,11 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 
     status = solve(model)
     status != :Optimal && error("JuMP solver failed to find optimal solution.")
-    sol = getValue(x)
+    sol = getvalue(x)
 
     all(Bool[s == 1 || s == 0 for s in sol]) || error("Found non-integer solution.")
 
-    cost = getObjectiveValue(model)
+    cost = getobjectivevalue(model)
 
     inmatch = Dict{Edge,Bool}()
     m = fill(-1, nv(g))
@@ -130,4 +125,3 @@ function maximum_weight_maximal_matching{T<:Number}(g::Graph, w::Dict{Edge,T})
 
     return MatchingResult(cost, inmatch, m)
 end
-end # @require

@@ -1,4 +1,3 @@
-@require JuMP begin
 g =CompleteBipartiteGraph(2,2)
 w =Dict{Edge,Float64}()
 w[Edge(1,3)] = 10.
@@ -83,4 +82,3 @@ match = maximum_weight_maximal_matching(g,w,0)
 @test match.m[4] == -1
 @test match.m[5] == 2
 @test match.m[6] == 1
-end
