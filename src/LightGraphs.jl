@@ -2,11 +2,7 @@ __precompile__(true)
 module LightGraphs
 
 using GZip
-<<<<<<< HEAD
 using Distributions: Binomial
-=======
-import StatsFuns: RFunctions.binomrand
->>>>>>> 3edced6... rand_binom -> binomrand
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML

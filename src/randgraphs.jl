@@ -47,11 +47,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
         # init dsfmt generator without altering GLOBAL_RNG
         Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
     end
-<<<<<<< HEAD
     ne = round(Int, rand(Binomial(m, p))) # sadly StatsBase doesn't support non-global RNG
-=======
-    ne = Int(binomrand(m, p)) # sadly StatsBase doesn't support non-global RNG
->>>>>>> 3edced6... rand_binom -> binomrand
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -535,11 +531,7 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
 
             m = a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-<<<<<<< HEAD
             nedg = round(Int, rand(Binomial(m, p)))
-=======
-            nedg = Int(binomrand(m, p))
->>>>>>> 3edced6... rand_binom -> binomrand
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg
