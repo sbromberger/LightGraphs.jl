@@ -9,12 +9,14 @@ g = smallgraph(:house)
 @test gdistances(g, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
 @test !is_bipartite(g)
+@test !is_bipartite(g, 2)
 
 g = Graph(5)
 add_edge!(g,1,2); add_edge!(g,1,4)
 add_edge!(g,2,3); add_edge!(g,2,5)
 add_edge!(g,3,4)
 @test is_bipartite(g)
+@test is_bipartite(g, 2)
 
 
 import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
