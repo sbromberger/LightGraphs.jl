@@ -134,7 +134,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **flow operations:** maximum flow
 
-- **matching:** bipartite maximum matching
+- **matching:** Matching functions have been moved to [LGmatching.jl](https://github.com/JuliaGraphs/LGmatching.jl).
 
 - **clique enumeration:** maximal cliques
 

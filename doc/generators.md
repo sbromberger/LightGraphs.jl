@@ -50,10 +50,16 @@ If `check_graphical=true` makes sure that `k` is a graphical sequence (see `isgr
 
 ### barabasi_albert
 ```julia
-barabasi_albert(n::Integer, k::Integer; is_directed=false, seed::Int=-1)
+barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
 ```
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) random graph with `n` nodes is grown by attaching new nodes each with `k` edges that are preferentially attached to existing nodes with high degree. Undirected graphs are created by default; use `is_directed=true` to override.
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) random graph with `n` vertices. It is grown by adding new vertices to an initial graph with `n0` vertices. Each new vertex is attached with `k` edges to `k` different vertices already present in the system by preferential attachment. Initial graphs are undirected and consist of isolated vertices by default; use `is_directed=true` and `complete=true` for directed and complete initial graphs.
+
+```julia
+barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+```
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) random graph with `n` vertices. It is grown by adding new vertices to an initial graph with `k` vertices. Each new vertex is attached with `k` edges to `k` different vertices already present in the system by preferential attachment. Initial graphs are undirected and consist of isolated vertices by default; use `is_directed=true` and `complete=true` for directed and complete initial graphs.
 
 ### stochastic_block_model
 ```julia
@@ -188,28 +194,28 @@ smallgraph(s::AbstractString)
 
 Creates a small graph of type `s`. Admissible values for `s` are:
 
-`s`                       | graph type                                                                                             
-:------------------------ | :------------------------------------------------------------------------------------------------------
-:bull                     | A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).                                              
-:chvatal                  | A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).                                        
-:cubical                  | A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).                              
-:desargues                | A [Desarguesgraph](https://en.wikipedia.org/wiki/Desargues_graph).                                     
-:diamond                  | A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).                                         
-:dodecahedral             | A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                        
-:frucht                   | A [Frucht graph](https://en.wikipedia.org/wiki/Frucht_graph).                                          
-:heawood                  | A [Heawood graph](https://en.wikipedia.org/wiki/Heawood_graph).                                        
-:house                    | A graph mimicing the classic outline of a house.                                                       
-:housex                   | A house graph, with two edges crossing the bottom square.                                              
-:icosahedral              | A [Platonic icosahedral   graph](https://en.wikipedia.org/wiki/Platonic_graph).                        
-:krackhardtkite           | A [Krackhardt-Kite social network  graph](http://mathworld.wolfram.com/KrackhardtKite.html).           
-:moebiuskantor            | A [Möbius-Kantor                                                                                       
-:octahedral               | A [Platonic octahedral                                                                                 
-:pappus                   | A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph).                                           
-:petersen                 | A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph).                                       
-:sedgewickmaze            | A simple maze graph used in Sedgewick's *Algorithms in C++: Graph  Algorithms (3rd ed.)*               
-:tetrahedral              | A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                         
-:truncatedcube            | A skeleton of the [truncated cube graph](https://en.wikipedia.org/wiki/Truncated_cube).                
-:truncatedtetrahedron     | A skeleton of the [truncated tetrahedron  graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron). 
-:truncatedtetrahedron_dir | A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).
-:tutte                    | A [Tutte graph](https://en.wikipedia.org/wiki/Tutte_graph).                                            
+| `s`                       | graph type                                                                                              |
+|:------------------------- |:------------------------------------------------------------------------------------------------------- |
+| :bull                     | A [bull graph](https://en.wikipedia.org/wiki/Bull_graph).                                               |
+| :chvatal                  | A [Chvátal graph](https://en.wikipedia.org/wiki/Chvátal_graph).                                         |
+| :cubical                  | A [Platonic cubical graph](https://en.wikipedia.org/wiki/Platonic_graph).                               |
+| :desargues                | A [Desarguesgraph](https://en.wikipedia.org/wiki/Desargues_graph).                                      |
+| :diamond                  | A [diamond graph](http://en.wikipedia.org/wiki/Diamond_graph).                                          |
+| :dodecahedral             | A [Platonic dodecahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                         |
+| :frucht                   | A [Frucht graph](https://en.wikipedia.org/wiki/Frucht_graph).                                           |
+| :heawood                  | A [Heawood graph](https://en.wikipedia.org/wiki/Heawood_graph).                                         |
+| :house                    | A graph mimicing the classic outline of a house.                                                        |
+| :housex                   | A house graph, with two edges crossing the bottom square.                                               |
+| :icosahedral              | A [Platonic icosahedral   graph](https://en.wikipedia.org/wiki/Platonic_graph).                         |
+| :krackhardtkite           | A [Krackhardt-Kite social network  graph](http://mathworld.wolfram.com/KrackhardtKite.html).            |
+| :moebiuskantor            | A [Möbius-Kantor                                                                                        |
+| :octahedral               | A [Platonic octahedral                                                                                  |
+| :pappus                   | A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph).                                            |
+| :petersen                 | A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph).                                        |
+| :sedgewickmaze            | A simple maze graph used in Sedgewick's *Algorithms in C++: Graph  Algorithms (3rd ed.)*                |
+| :tetrahedral              | A [Platonic tetrahedral  graph](https://en.wikipedia.org/wiki/Platonic_graph).                          |
+| :truncatedcube            | A skeleton of the [truncated cube graph](https://en.wikipedia.org/wiki/Truncated_cube).                 |
+| :truncatedtetrahedron     | A skeleton of the [truncated tetrahedron  graph](https://en.wikipedia.org/wiki/Truncated_tetrahedron).  |
+| :truncatedtetrahedron_dir | A skeleton of the [truncated tetrahedron digraph](https://en.wikipedia.org/wiki/Truncated_tetrahedron). |
+| :tutte                    | A [Tutte graph](https://en.wikipedia.org/wiki/Tutte_graph).                                             |
 

@@ -82,7 +82,6 @@ tests = [
     "flow/boykov_kolmogorov",
     "flow/push_relabel",
     "flow/maximum_flow",
-    "matching/linear-programming",
     "datasets/runtests",
     "utils"
 ]
