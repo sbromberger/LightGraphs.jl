@@ -52,7 +52,7 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
-    "spectral",
+    "spectral",    # Excluded GraphMatrices tests for the moment
     "cliques",
     "subgraphs",
     "connectivity",

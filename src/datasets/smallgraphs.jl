@@ -88,7 +88,7 @@ function smallgraph(s::AbstractString)
         ls = replace(ls, "graph", "")
     end
 
-    return smallgraph(symbol(ls))
+    return smallgraph(Symbol(ls))
 end
 
 

@@ -39,13 +39,9 @@ end
 `k`: number of dimensions in which to embed
 
 return : a matrix ϕ where ϕ[:,i] are the coordinates for vertex i.
-
-Note does not explicitly construct the `non_backtracking_matrix`.
-See `Nonbacktracking` for details.
-
 """
 function nonbacktrack_embedding(g::Graph, k::Int)
-    B = Nonbacktracking(g)
+    B, edgmap = non_backtracking_matrix(g)
     λ,eigv,conv = eigs(B, nev=k+1, v0=ones(Float64, B.m))
     ϕ = zeros(Complex64, nv(g), k-1)
     # TODO decide what to do with the stationary distribution ϕ[:,1]
@@ -54,7 +50,12 @@ function nonbacktrack_embedding(g::Graph, k::Int)
     # common with the laplacian/adjacency methods.
     for n=1:k-1
         v= eigv[:,n+1]
-        ϕ[:,n] = contract(B, v)
+        for i=1:nv(g)
+            for j in neighbors(g, i)
+                u = edgmap[Edge(j,i)]
+                ϕ[i,n] += v[u]
+            end
+        end
     end
     return ϕ'
 end

@@ -133,7 +133,7 @@ non-backtraking matrix B is defined as
 
 B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
 
-returns a matrix B, and an edgemap storing the oriented edges' positions in B
+returns a sparse matrix B, and an edgemap storing the oriented edges' positions in B
 """
 function non_backtracking_matrix(g::SimpleGraph)
     # idedgemap = Dict{Int, Edge}()
@@ -151,7 +151,7 @@ function non_backtracking_matrix(g::SimpleGraph)
         end
     end
 
-    B = zeros(Float64, m, m)
+    B = spzeros(Float64, m, m)
 
     for (e,u) in edgeidmap
         i, j = src(e), dst(e)
@@ -209,7 +209,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-issym(nbt::Nonbacktracking) = false
+issymmetric(nbt::Nonbacktracking) = false
 
 function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     length(x) == nbt.m || error("dimension mismatch")

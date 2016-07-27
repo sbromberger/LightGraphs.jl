@@ -133,7 +133,7 @@ types:
 
 ## Neighbors and Degree
 
-{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, degree_histogram, density, neighbors,
+{{degree, indegree, outdegree, Δ, δ, Δout, δout, δin, Δin, density, neighbors,
     in_neighbors, all_neighbors, common_neighbors, neighborhood, egonet, isgraphical}}
 """
 

@@ -58,6 +58,8 @@ for k=2:5
     add_edge!(z, (k-1)*n, k*n)
     c = community_detection_nback(z, k)
     a = collect(n:n:k*n)
+    @show c[a]
+    @show unique(c[a])
     @test length(c[a]) == length(unique(c[a]))
     for i=1:k
         for j=(i-1)*n+1:i*n
@@ -65,4 +67,3 @@ for k=2:5
         end
     end
 end
-

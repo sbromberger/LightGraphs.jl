@@ -4,8 +4,8 @@ os:
   - linux
 #  - osx
 julia:
-  - release
-#  - nightly
+  #- release
+  - nightly
 notifications:
   email: false
 # uncomment the following lines to override the default test script
