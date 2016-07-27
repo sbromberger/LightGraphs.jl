@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
