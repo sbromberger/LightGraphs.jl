@@ -7,7 +7,6 @@ using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using Clustering: kmeans
-import GraphMatrices: CombinatorialAdjacency
 using JuMP
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,

@@ -3,6 +3,10 @@
 
 *LightGraphs.jl*'s integration with other Julia packages is designed to be straightforward. Here are a few examples.
 
+##[LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl)
+*LightGraphsExtras.jl* provides additional integrations with various packages.
+Details may be found in [the documentation](http://lightgraphsextrasjl.readthedocs.io/en/latest/?badge=latest).
+
 ## [Graphs.jl](http://github.com/JuliaLang/Graphs.jl)
 Creating a Graphs.jl `simple_graph` is easy:
 ```julia
@@ -53,18 +57,6 @@ julia> g = Graph(100,1000)
 julia> partGraphKway(g, 6)  # 6 partitions
 ```
 
-##[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
-*LightGraphs.jl* can interface directly with this spectral graph analysis
-package:
-
-```julia
-julia> g = PathGraph(10)
-{10, 9} undirected graph
-
-julia> a = CombinatorialAdjacency(g)
-GraphMatrices.CombinatorialAdjacency{Float64,LightGraphs.Graph,Array{Float64,1}}({10, 9} undirected graph,[1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0])
-```
-
 ##[NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
 NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
 
@@ -85,5 +77,3 @@ end
 The above code produces the following output :
 
 ![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
-
-

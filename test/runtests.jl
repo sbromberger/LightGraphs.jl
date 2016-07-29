@@ -2,7 +2,6 @@
 using LightGraphs
 using LightGraphs.Datasets
 using MatrixDepot
-using GraphMatrices
 using Base.Test
 
 g1 = smallgraph("PetersenGraph")
