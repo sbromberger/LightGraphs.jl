@@ -52,18 +52,6 @@ for dir in [:in, :out, :both]
     @test_approx_eq_eps minimum(evals) 0 1e-13
 end
 
-println("*** Running GraphMatrices tests")
-mat = PathGraph(10)
-onevec = ones(Float64, 10)
-adjmat = CombinatorialAdjacency(mat)
-@test eltype(mat) == Float64
-@test zero(eltype(mat)) == 0.0
-@test eltype(adjmat) == Float64
-@test zero(eltype(adjmat)) == 0.0
-@test sum(abs(adjmat*onevec)) != 0
-lapl = GraphMatrices.CombinatorialLaplacian(adjmat)
-@test_approx_eq_eps(eigs(lapl, which=:LR)[1][1], 3.902, 0.001)
-println("*** Finished GraphMatrices tests")
 
 # testing incidence_matrix, first directed graph
 @test size(incidence_matrix(g4)) == (5,4)
