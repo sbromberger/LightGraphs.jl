@@ -85,15 +85,6 @@ adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(a
 adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
 
 
-
-# GraphMatrices integration
-# CombinatorialAdjacency(g) returns a type that supports iterative linear solvers and eigenvector solvers.
-function CombinatorialAdjacency(g::Graph)
-    d = float(indegree(g))
-    return CombinatorialAdjacency{Float64, typeof(g), typeof(d)}(g,d)
-end
-
-
 """Returns a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a

@@ -139,7 +139,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **clique enumeration:** maximal cliques
 
-- **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
+- **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix
 
 - **community:** modularity, community detection, core-periphery, clustering coefficients
 

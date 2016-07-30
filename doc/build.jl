@@ -237,18 +237,6 @@ julia> g = Graph(100,1000)
 julia> partGraphKway(g, 6)  # 6 partitions
 ```
 
-##[GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl)
-*LightGraphs.jl* can interface directly with this spectral graph analysis
-package:
-
-```julia
-julia> g = PathGraph(10)
-{10, 9} undirected graph
-
-julia> a = CombinatorialAdjacency(g)
-GraphMatrices.CombinatorialAdjacency{Float64,LightGraphs.Graph,Array{Float64,1}}({10, 9} undirected graph,[1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0])
-```
-
 ##[NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
 NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
 
