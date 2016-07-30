@@ -8,7 +8,6 @@ using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using Clustering: kmeans
 import GraphMatrices: CombinatorialAdjacency
-using JuMP
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
@@ -81,9 +80,6 @@ a_star,
 load, save,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
-
-#matching
-maximum_weight_maximal_matching, MatchingResult,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
@@ -164,7 +160,6 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
-        include("matching/linear-programming.jl")
         include("datasets/Datasets.jl")
         include("utils.jl")
 
