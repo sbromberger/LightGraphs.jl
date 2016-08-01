@@ -10,7 +10,6 @@ pages:
   - 'Distance': 'distance.md'
   - 'Centrality Measures': 'centrality.md'
   - 'Linear Algebra': 'linalg.md'
-  - 'Matching': 'matching.md'
   - 'Community Structures': 'community.md'
   - 'Flow and Cut': 'flowcut.md'
   - 'Graph Generators': 'generators.md'
