@@ -9,7 +9,7 @@
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-#### For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.
+**For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.**
 
 An optimized graphs package.
 
@@ -26,6 +26,9 @@ decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
+
+Also check the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl). for additional functionalities.
+
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
@@ -139,7 +142,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **flow operations:** maximum flow
 
-- **matching:** Matching functions have been moved to [LGmatching.jl](https://github.com/JuliaGraphs/LGmatching.jl).
+- **matching:** Matching functions have been moved to [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 - **clique enumeration:** maximal cliques
 

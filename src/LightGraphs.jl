@@ -49,8 +49,6 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, egonet, isgraphical,
 
-# cliques
-maximal_cliques,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -89,7 +87,7 @@ stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model,
 #community
 modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
-label_propagation,
+label_propagation, maximal_cliques,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
@@ -125,7 +123,6 @@ include("core.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
-        include("cliques.jl")
         include("distance.jl")
         include("shortestpaths/astar.jl")
         include("shortestpaths/bellman-ford.jl")
@@ -141,8 +138,8 @@ include("core.jl")
             include("persistence/graphml.jl")
             include("persistence/net.jl")
             include("persistence/jld.jl")
-        include("randgraphs.jl")
-        include("generators.jl")
+        include("generators/staticgraphs.jl")
+            include("generators/randgraphs.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
@@ -152,6 +149,7 @@ include("core.jl")
         include("community/label_propagation.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
+        include("community/cliques.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
