@@ -1,7 +1,6 @@
 include("../src/LightGraphs.jl")
 pd = pwd()
 using LightGraphs
-using LightGraphs.Datasets
 # pd = joinpath(Pkg.dir(), string(module_name(LightGraphs)))
 
 # This file generated the Markdown documentation files.
@@ -56,8 +55,7 @@ buildwriter(part, isdef) = isdef ?
                         s = split(string(f),".")
                         if ((length(s) == 1  &&  startswith(c, s[1]))
                                || (length(s) > 1
-                                   && ((s[1] == "LightGraphs" && startswith(c, s[2]))
-                                   || (s[2] == "Datasets" && startswith(c, s[3])))
+                                   && ((s[1] == "LightGraphs" && startswith(c, s[2])))
                                   )
                             )
                             printsignature = false  # the signature is in the docstring
@@ -87,7 +85,6 @@ buildwriter(part, isdef) = isdef ?
     :(print(file, $(esc(part))))
 
 getlgdoc(docstring) = docstring.content[find(c->c.meta[:module] == LightGraphs
-                                                || c.meta[:module] == LightGraphs.Datasets
                                             , docstring.content)]
 
 function md_methodtable(io, f)
@@ -173,12 +170,10 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
  WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, Grid}}
 
 ## Smallgraphs
-Many notorious graphs are available in the Datasets submodule:
+Many notorious graphs are available in the Datasets submodule in LightGraphsExtras.jl
 ```julia
-using LightGraphs.Datasets
+using LightGraphsExtras.Datasets
 ```
-
-{{smallgraph}}
 
 """
 
@@ -432,8 +427,7 @@ in graphs.
 {{modularity}}
 
 ## community detection
-
-{{community_detection_nback}}
+See 'LightGraphsExtras.jl'.
 
 ## core-periphery
 

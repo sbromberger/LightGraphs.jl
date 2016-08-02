@@ -7,7 +7,7 @@ add_edge!(g,10,9)
 
 
 @test !is_connected(g)
-@test is_connected(smallgraph(:house))
+@test is_connected(HouseGraph())
 
 cc = connected_components(g)
 label = zeros(Int, nv(g))

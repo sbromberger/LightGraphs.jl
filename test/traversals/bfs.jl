@@ -5,7 +5,7 @@ t = visitor.tree
 @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
 
-g = smallgraph(:house)
+g = HouseGraph()
 @test gdistances(g, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
 @test !is_bipartite(g)
@@ -37,7 +37,7 @@ function istree(parents::Vector{Int}, maxdepth)
     return flag
 end
 
-g = smallgraph(:house)
+g = HouseGraph()
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
@@ -50,7 +50,7 @@ t = tree(parents)
 @test ne(t) < nv(t)
 
 # test Dict{Int,Int}() colormap
-g = smallgraph(:house)
+g = HouseGraph()
 n = nv(g)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
