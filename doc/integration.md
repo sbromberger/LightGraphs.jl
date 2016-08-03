@@ -3,10 +3,6 @@
 
 *LightGraphs.jl*'s integration with other Julia packages is designed to be straightforward. Here are a few examples.
 
-##[LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl)
-*LightGraphsExtras.jl* provides additional integrations with various packages.
-Details may be found in [the documentation](http://lightgraphsextrasjl.readthedocs.io/en/latest/?badge=latest).
-
 ## [Graphs.jl](http://github.com/JuliaLang/Graphs.jl)
 Creating a Graphs.jl `simple_graph` is easy:
 ```julia
@@ -77,3 +73,5 @@ end
 The above code produces the following output :
 
 ![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
+
+

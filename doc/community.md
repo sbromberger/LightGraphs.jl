@@ -46,16 +46,7 @@ modularity(g, c)
 Computes Newman's modularity `Q` for graph `g` given the partitioning `c`.
 
 ## community detection
-### community_detection_nback
-```julia
-community_detection_nback(g, k::Int)
-```
-
-Community detection using the spectral properties of the non-backtracking matrix of `g` (see [Krzakala et al.](http://www.pnas.org/content/110/52/20935.short)).
-
-`g`: imput Graph `k`: number of communities to detect
-
-return : array containing vertex assignments
+See 'LightGraphsExtras.jl'.
 
 ## core-periphery
 ### core_periphery_deg

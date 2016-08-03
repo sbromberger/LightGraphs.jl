@@ -2,7 +2,7 @@
 
 f = IOBuffer()
 
-g = smallgraph(:house)
+g = HouseGraph()
 @test traverse_graph_withlog(g, BreadthFirst(), [1;], f) == nothing
 
 @test visited_vertices(g, BreadthFirst(), [1;]) == [1, 2, 3, 4, 5]

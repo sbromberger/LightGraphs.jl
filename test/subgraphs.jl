@@ -2,7 +2,7 @@ using LightGraphs
 import LightGraphs: induced_subgraph
 using Base.Test
 
-g = smallgraph(:bull)
+g = BullGraph()
 n = 3
 h = g[1:n]
 @test nv(h) == n

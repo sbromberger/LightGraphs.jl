@@ -6,7 +6,6 @@ using Distributions: Binomial
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
-using Clustering: kmeans
 
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
@@ -86,17 +85,14 @@ StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfract
 stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model, static_scale_free,
 
 #community
-modularity, community_detection_nback, core_periphery_deg,
+modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
 label_propagation,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
-
-#Datasets
-Datasets
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph
 
 
 """An optimized graphs package.
@@ -150,7 +146,6 @@ include("core.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
         include("community/modularity.jl")
-        include("community/detection.jl")
         include("community/label_propagation.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
@@ -159,7 +154,6 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
-        include("datasets/Datasets.jl")
         include("utils.jl")
 
 end # module
