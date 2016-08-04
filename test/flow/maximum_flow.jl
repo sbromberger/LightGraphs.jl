@@ -9,7 +9,8 @@ graphs = [
    ],
    1,8, # source/target
    3,   # answer for default capacity
-   28   # answer for custom capacity
+   28,  # answer for custom capacity
+   15,5 # answer for restricted capacity/restriction
   ),
 
   # Graph with 6 vertices
@@ -20,11 +21,12 @@ graphs = [
    ],
    1,6, # source/target
    2,   # answer for default capacity
-   12   # answer for custom capacity
+   12,  # answer for custom capacity
+   8,5  # answer for restricted capacity/restriction
   )
 ]
 
-for (nvertices,flow_edges,s,t,fdefault,fcustom) in graphs
+for (nvertices,flow_edges,s,t,fdefault,fcustom,frestrict,caprestrict) in graphs
     flow_graph = DiGraph(nvertices)
     capacity_matrix = zeros(Int,nvertices,nvertices)
     for e in flow_edges
@@ -45,5 +47,6 @@ for (nvertices,flow_edges,s,t,fdefault,fcustom) in graphs
     for ALGO in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
       @test maximum_flow(flow_graph,s,t,algorithm=ALGO())[1] == fdefault
       @test maximum_flow(flow_graph,s,t,capacity_matrix,algorithm=ALGO())[1] == fcustom
+      @test maximum_flow(flow_graph,s,t,capacity_matrix,algorithm=ALGO(),restriction=caprestrict)[1] == frestrict
     end
 end
