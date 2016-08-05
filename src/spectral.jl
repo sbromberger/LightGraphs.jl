@@ -1,5 +1,5 @@
-"""Returns a sparse boolean adjacency matrix for a graph, indexed by `[src, dst]`
-vertices. `true` values indicate an edge between `src` and `dst`. Users may
+"""Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]`
+vertices. `true` values indicate an edge between `u` and `v`. Users may
 specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out`
 is default for both directed and undirected graphs) and a data type for the
 matrix (defaults to `Int`).
@@ -50,7 +50,7 @@ end
 
 
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
-for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir`
+for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
 defaults to `Int` for both graph types.
 """

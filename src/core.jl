@@ -81,8 +81,8 @@ function add_vertices!(g::SimpleGraph, n::Integer)
     return nv(g)
 end
 
-"""Return true if the graph `g` has an edge from `src` to `dst`."""
-has_edge(g::SimpleGraph, src::Int, dst::Int) = has_edge(g, Edge(src,dst))
+"""Return true if the graph `g` has an edge from `u` to `v`."""
+has_edge(g::SimpleGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
 
 """
     in_edges(g, v)
@@ -122,7 +122,7 @@ ne(g::SimpleGraph) = g.ne
 
 Add a new edge to `g` from `u` to `v`.
 """
-add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
+add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
 
 """
     rem_edge!(g, u, v)
@@ -131,7 +131,7 @@ Remove the edge from `u` to `v`.
 
 Note: An exception will be raised if the edge is not in the graph.
 """
-rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
+rem_edge!(g::SimpleGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
 
 """
     rem_vertex!(g, v)
