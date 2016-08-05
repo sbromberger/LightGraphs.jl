@@ -112,7 +112,7 @@ function rem_edge!(g::Graph, e::Edge)
         deleteat!(g.fadjlist[dst(e)], i)
     end
     g.ne -= 1
-    return is_ordered(e) ? e : reverse(e)
+    return issorted(e) ? e : reverse(e)
 end
 
 

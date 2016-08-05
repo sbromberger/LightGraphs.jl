@@ -2,6 +2,11 @@
 @test e1.second == dst(e1) == 2
 @test reverse(e1) == re1
 
+@test sort(Edge(2,1)) == Edge(1,2)
+@test sort(Edge(1,2),increasing=false) == Edge(2,1)
+@test issorted(Edge(1,2))
+@test !issorted(Edge(2,1))
+
 g = Graph(5)
 add_edge!(g, 1, 2)
 e2 = add_edge!(g, 1, 3)
