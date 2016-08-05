@@ -118,16 +118,16 @@ The number of edges in `g`.
 ne(g::SimpleGraph) = g.ne
 
 """
-    add_edge!(g, u, v)
+    add_edge!(g, src, dst)
 
-Add a new edge to `g` from `u` to `v`.
+Add a new edge to `g` from `src` to `dst`.
 """
 add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
 
 """
-    rem_edge!(g, u, v)
+    rem_edge!(g, src, dst)
 
-Remove the edge from `u` to `v`.
+Remove the edge from `src` to `dst`.
 
 Note: An exception will be raised if the edge is not in the graph.
 """
