@@ -82,31 +82,61 @@ function add_vertices!(g::SimpleGraph, n::Integer)
 end
 
 """Return true if the graph `g` has an edge from `src` to `dst`."""
-has_edge(g::SimpleGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
+has_edge(g::SimpleGraph, src::Int, dst::Int) = has_edge(g, Edge(src,dst))
 
-"""Return an Array of the edges in `g` that arrive at vertex `v`."""
-in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
-"""Return an Array of the edges in `g` that emanate from vertex `v`."""
+"""
+    in_edges(g, v)
+
+Returns an Array of the edges in `g` that arrive at vertex `v`.
+`v=dst(e)` for each returned edge `e`.
+"""
+in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
+
+"""
+    out_edges(g, v)
+
+Returns an Array of the edges in `g` that depart from vertex `v`.
+`v = src(e)` for each returned edge `e`.
+"""
 out_edges(g::SimpleGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
+
 
 """Return true if `v` is a vertex of `g`."""
 has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 
-"""The number of vertices in `g`."""
+"""
+    nv(g)
+
+The number of vertices in `g`.
+"""
 nv(g::SimpleGraph) = length(vertices(g))
-"""The number of edges in `g`."""
+"""
+    ne(g)
+
+The number of edges in `g`.
+"""
 ne(g::SimpleGraph) = g.ne
 
-"""Add a new edge to `g` from `src` to `dst`."""
+"""
+    add_edge!(g, u, v)
+
+Add a new edge to `g` from `u` to `v`.
+"""
 add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
 
-"""Remove the edge from `src` to `dst`.
+"""
+    rem_edge!(g, u, v)
+
+Remove the edge from `u` to `v`.
 
 Note: An exception will be raised if the edge is not in the graph.
 """
 rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
 
-"""Remove the vertex `v` from graph `g`.
+"""
+    rem_vertex!(g, v)
+
+Remove the vertex `v` from graph `g`.
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
