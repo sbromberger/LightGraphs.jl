@@ -10,7 +10,7 @@ using ParserCombinator: Parsers.DOT, Parsers.GML
 import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype, get
+            ctranspose, join, start, next, done, eltype, get, sort, issorted
 
 
 # core

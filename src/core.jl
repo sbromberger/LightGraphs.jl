@@ -7,12 +7,34 @@ _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
 
-"""Return source of an edge."""
+"""Returns the source of an edge."""
 src(e::Edge) = e.first
-"""Return destination of an edge."""
+"""Returns the destination of an edge."""
 dst(e::Edge) = e.second
 
- is_ordered(e::Edge) = src(e) <= dst(e)
+"""
+    issorted(e::Edge)
+
+Returns `true` if `src(e) ≤ dst(e)`.
+"""
+issorted(e::Edge) = src(e) <= dst(e)
+
+
+"""
+    sort(e::Edge; increasing=true)
+
+Returns a sorted version of `e` so that `src(enew) ≤ dst(enew)`,
+or `src(enew) ≥ dst(enew)` if `increasing=false`).
+"""
+function sort(e::Edge; increasing=true)
+    if increasing
+        enew = src(e) ≤ dst(e) ? e : reverse(e)
+    else
+        enew = src(e) ≥ dst(e) ? e : reverse(e)
+    end
+    return enew
+end
+
 @deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
