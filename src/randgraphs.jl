@@ -42,7 +42,7 @@ or the  `Graph(nv, ne)` constructor, which randomly select `ne` edges among all 
 edges.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
-    m = Int(is_directed ? n*(n-1) : div(n*(n-1),2))
+    m = is_directed ? n*(n-1) : div(n*(n-1),2)
     if seed >= 0
         # init dsfmt generator without altering GLOBAL_RNG
         Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
@@ -529,7 +529,7 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
         for b=a:K
             @assert a==b? c[a,b] <= n[b]-1 : c[a,b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
 
-            m = Int(a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b])
+            m = a==b ? div(n[a]*(n[a]-1),2) : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
             nedg = rand(Binomial(m, p))
             rb = cum[b]+1:cum[b+1]
