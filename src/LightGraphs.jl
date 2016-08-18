@@ -78,6 +78,7 @@ a_star,
 load, save,
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
+multiroute_flow, KishimotoAlgorithm,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
@@ -154,6 +155,7 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
+            include("flow/multiroute_flow.jl")
         include("utils.jl")
 
 end # module
