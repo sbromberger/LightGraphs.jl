@@ -26,23 +26,25 @@ Returns `true` if `g` is a `DiGraph`.
 
 ### nv
 ```julia
-nv(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+nv(g)
 ```
+
 The number of vertices in `g`.
 
 ### ne
 ```julia
-ne(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
+ne(g)
 ```
+
 The number of edges in `g`.
 
 ### has_edge
 ```julia
-has_edge(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, src::Int64, dst::Int64)
+has_edge(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, u::Int64, v::Int64)
 has_edge(g::LightGraphs.DiGraph, e::Pair{Int64,Int64})
 has_edge(g::LightGraphs.Graph, e::Pair{Int64,Int64})
 ```
-Return true if the graph `g` has an edge from `src` to `dst`.
+Return true if the graph `g` has an edge from `u` to `v`.
 
 ### has_vertex
 ```julia
@@ -52,15 +54,17 @@ Return true if `v` is a vertex of `g`.
 
 ### in_edges
 ```julia
-in_edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+in_edges(g, v)
 ```
-Return an Array of the edges in `g` that arrive at vertex `v`.
+
+Returns an Array of the edges in `g` that arrive at vertex `v`. `v=dst(e)` for each returned edge `e`.
 
 ### out_edges
 ```julia
-out_edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, v::Int64)
+out_edges(g, v)
 ```
-Return an Array of the edges in `g` that emanate from vertex `v`.
+
+Returns an Array of the edges in `g` that depart from vertex `v`. `v = src(e)` for each returned edge `e`.
 
 ### src
 ```julia

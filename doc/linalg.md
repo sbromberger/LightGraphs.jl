@@ -11,7 +11,7 @@ adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, dir::Symbol)
 adjacency_matrix(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, dir::Symbol, T::DataType)
 ```
-Returns a sparse boolean adjacency matrix for a graph, indexed by `[src, dst]` vertices. `true` values indicate an edge between `src` and `dst`. Users may specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out` is default for both directed and undirected graphs) and a data type for the matrix (defaults to `Int`).
+Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]` vertices. `true` values indicate an edge between `u` and `v`. Users may specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out` is default for both directed and undirected graphs) and a data type for the matrix (defaults to `Int`).
 
 Note: This function is optimized for speed.
 
@@ -36,7 +36,7 @@ laplacian_matrix(g::LightGraphs.DiGraph)
 laplacian_matrix(g::LightGraphs.DiGraph, dir::Symbol)
 laplacian_matrix(g::LightGraphs.DiGraph, dir::Symbol, T::DataType)
 ```
-Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix) for a graph `g`, indexed by `[src, dst]` vertices. For undirected graphs, `dir` defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T` defaults to `Int` for both graph types.
+Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix) for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir` defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T` defaults to `Int` for both graph types.
 
 ### laplacian_spectrum
 ```julia
