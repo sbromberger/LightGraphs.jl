@@ -6,10 +6,11 @@ using Distributions: Binomial
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
+using StatsBase: fit, Histogram
 
-import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
+import Base: write, ==, <, *, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            sum, size, sparse, eltype, length, ndims, issymmetric, transpose,
             ctranspose, join, start, next, done, eltype, get
 
 
@@ -17,9 +18,10 @@ import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
 export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
-indegree, outdegree, degree, degree_histogram, density, Δ, δ,
+indegree, outdegree, degree, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
 common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
+degree_histogram,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
