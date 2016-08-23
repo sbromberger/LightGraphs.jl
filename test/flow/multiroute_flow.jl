@@ -40,10 +40,7 @@ for (nvertices,flow_edges,s,t,froutes,breakpts,ffloat) in graphs
     for ALGOMRF in [ExtendedMultirouteFlowAlgorithm,KishimotoAlgorithm]
       for ALGOFLOW in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
         for (k, val) in enumerate(froutes)
-          println("ALGOFLOW = $ALGOFLOW, ALGOMRF = $ALGOMRF")
-          println("k = $k, val = $val")
-          println(multiroute_flow(flow_graph,s,t,capacity_matrix,flow_algorithm=ALGOFLOW(),mrf_algorithm=ALGOMRF(),routes=k),"\n")
-#          @test multiroute_flow(flow_graph,s,t,capacity_matrix,flow_algorithm=ALGOFLOW(),mrf_algorithm=ALGOMRF(),routes=k)[1] ≈ val
+          @test multiroute_flow(flow_graph,s,t,capacity_matrix,flow_algorithm=ALGOFLOW(),mrf_algorithm=ALGOMRF(),routes=k)[1] ≈ val
         end
       end
     end

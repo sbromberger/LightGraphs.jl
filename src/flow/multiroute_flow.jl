@@ -15,6 +15,25 @@ Forces the multiroute_flow function to use the Extended Multiroute Flow algorith
 type ExtendedMultirouteFlowAlgorithm <: AbstractMultirouteFlowAlgorithm
 end
 
+# Methods when the number of routes is more than the connectivity
+# 1) When using Boykov-Kolmogorov as a flow subroutine
+# 2) Other flow algorithm
+function multiroute_flow{T<:Number}(
+  capacity_matrix::AbstractArray{T,2},      # edge flow capacities
+  flow_algorithm::BoykovKolmogorovAlgorithm # keyword argument for algorithm
+  )
+  n = size(capacity_matrix,1)
+  return zero(T), zeros(T,n,n), zeros(T,n)
+end
+# 2) Other flow algorithm
+function multiroute_flow{T<:Number}(
+  capacity_matrix::AbstractArray{T,2},      # edge flow capacities
+  flow_algorithm::AbstractFlowAlgorithm     # keyword argument for algorithm
+  )
+  n = size(capacity_matrix,1)
+  return zero(T), zeros(T,n,n)
+end
+
 # Method for Kishimoto algorithm
 function multiroute_flow{T<:Number}(
   flow_graph::DiGraph,                   # the input graph
@@ -129,11 +148,7 @@ function multiroute_flow{T<:Number,R<:Number}(
   end
   if routes > maximum_flow(flow_graph,source,target,        # routes > λ → f = 0
     DefaultCapacity(flow_graph),algorithm=flow_algorithm)[1]
-    n = nv(flow_graph)
-    if flow_algorithm ≠ BoykovKolmogorovAlgorithm()
-      return zero(T), zeros(T,n,n)
-    end
-    return zero(T), zeros(T,n,n), zeros(T,n)
+    return multiroute_flow(capacity_matrix,flow_algorithm)
   end
 
   if !(T<:AbstractFloat) # Capacities need to be Floats
