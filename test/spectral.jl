@@ -21,6 +21,8 @@ for i=1:10
     @test sum(B[:,i]) == 8
     @test sum(B[i,:]) == 8
 end
+@test !issymmetric(B)
+@test !issymmetric(Nonbacktracking(g10))
 
 @test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
 
