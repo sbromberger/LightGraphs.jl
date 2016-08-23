@@ -134,7 +134,7 @@ Generic maximum_flow function. Requires arguments:
 - source::Int                           # the source vertex
 - target::Int                           # the target vertex
 - capacity_matrix::AbstractArray{T,2}   # edge flow capacities
-- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm,
+- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 - restriction::T                        # keyword argument for a restriction
 
 The function defaults to the Push-relabel algorithm. Alternatively, the algorithm

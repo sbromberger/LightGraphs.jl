@@ -18,7 +18,7 @@ end
 # Methods when the number of routes is more than the connectivity
 # 1) When using Boykov-Kolmogorov as a flow subroutine
 # 2) Other flow algorithm
-function multiroute_flow{T<:Number}(
+function empty_flow{T<:Number}(
   capacity_matrix::AbstractArray{T,2},      # edge flow capacities
   flow_algorithm::BoykovKolmogorovAlgorithm # keyword argument for algorithm
   )
@@ -26,7 +26,7 @@ function multiroute_flow{T<:Number}(
   return zero(T), zeros(T,n,n), zeros(T,n)
 end
 # 2) Other flow algorithm
-function multiroute_flow{T<:Number}(
+function empty_flow{T<:Number}(
   capacity_matrix::AbstractArray{T,2},      # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm     # keyword argument for algorithm
   )
@@ -71,9 +71,13 @@ function multiroute_flow{T<:Number,R<:Number}(
 end
 
 """
-Generic multiroute_flow function. Requires arguments:
+The generic multiroute_flow function will output two kinds of results:
 
-I. When the main input is a network
+- When the number of routes is 0 or non-specified, the set of breaking points of the multiroute flow is returned.
+- Otherwise, a tuple with 1) the maximum flow and 2) the flow matrix. When the max-flow subroutine is the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
+
+When the input is a network, it requires the following arguments:
+
 - flow_graph::DiGraph                   # the input graph
 - source::Int                           # the source vertex
 - target::Int                           # the target vertex
@@ -82,19 +86,18 @@ I. When the main input is a network
 - mrf_algorithm::AbstractFlowAlgorithm  # keyword argument for multiroute flow algorithm
 - routes::R<:Number                     # keyword argument for the number of routes
 
+When the input is the set of (breaking) points (the number of route is then a parameter), it requires the following arguments:
+
+- breakingpoints::Vector{Tuple{T,T,Int}},      # vector of breaking points
+- routes::R<:Number,                           # keyword argument for routes
+- flow_algorithm::AbstractFlowAlgorithm        # keyword argument for flow algorithm
+
 The function defaults to the Push-relabel (classical flow) and Kishimoto (multiroute) algorithms. Alternatively, the algorithms to be used can also be specified through  keyword arguments. A default capacity of 1 is assumed for each link if no capacity matrix is provided.
+
 The mrf_algorithm keyword is inforced to Extended Multiroute Flow in the following cases:
-a) The number of routes is noninteger (however a max-flow )
-b) The number of routes is 0 (the algorithm will output all the breaking points)
 
-II. When the main input is a set of (breaking) points
-  - breakingpoints::Vector{Tuple{T,T,Int}},      # vector of breaking points
-  - routes::R<:Number,                           # keyword argument for routes
-  - flow_algorithm::AbstractFlowAlgorithm        # keyword argument for flow algorithm
-
-Except for I.2) (routes ≠ 0), all algorithms return a tuple with 1) the maximum flow and 2) the flow matrix. For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
-
-For I.2) (routes = 0), the set of breaking points of the multiroute flow is returned.
+- The number of routes is non-integer
+- The number of routes is 0 or non-specified
 
 ### Usage Example :
 (please consult the  max_flow section for options about flow_algorithm and capacity_matrix)
@@ -131,6 +134,7 @@ f, F, labels = multiroute_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKo
 
 ```
 """
+
 function multiroute_flow{T<:Number,R<:Number}(
   flow_graph::DiGraph,                   # the input graph
   source::Int,                           # the source vertex
@@ -148,7 +152,7 @@ function multiroute_flow{T<:Number,R<:Number}(
   end
   if routes > maximum_flow(flow_graph,source,target,        # routes > λ → f = 0
     DefaultCapacity(flow_graph),algorithm=flow_algorithm)[1]
-    return multiroute_flow(capacity_matrix,flow_algorithm)
+    return empty_flow(capacity_matrix,flow_algorithm)
   end
 
   if !(T<:AbstractFloat) # Capacities need to be Floats
