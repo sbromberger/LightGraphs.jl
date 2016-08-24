@@ -13,15 +13,15 @@ function kishimoto{T<:AbstractFloat}(
          capacity_matrix, algorithm = flow_algorithm)
   restriction = flow / routes
   flow, F, labels = maximum_flow(flow_graph, source, target, capacity_matrix,
-         algorithm = flow_algorithm, restriction = restriction)
+                       algorithm = flow_algorithm, restriction = restriction)
 
-  # Loop
+  # Loop condition : approximatively not equal is enforced by floating precision
   i = 1
-  while flow ≉ routes * restriction && flow < routes * restriction
+  while flow < routes * restriction && flow ≉ routes * restriction
     restriction = (flow - i * restriction) / (routes - i)
-    i = i + 1
+    i += 1
     flow, F, labels = maximum_flow(flow_graph, source, target, capacity_matrix,
-              algorithm = flow_algorithm, restriction = restriction)
+                         algorithm = flow_algorithm, restriction = restriction)
   end
 
   # End
@@ -61,9 +61,9 @@ function kishimoto{T<:AbstractFloat}(
   flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,
           algorithm = flow_algorithm, restriction = restriction)
 
-  # Loop
+  # Loop condition : approximatively not equal is enforced by floating precision
   i = 1
-  while flow ≉ routes * restriction && flow < routes * restriction
+  while flow < routes * restriction && flow ≉ routes * restriction
     restriction = (flow - i * restriction) / (routes - i)
     i = i + 1
     flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,

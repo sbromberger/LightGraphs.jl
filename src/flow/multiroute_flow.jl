@@ -49,7 +49,7 @@ end
 
 ## Methods for Extended Multiroute Flow Algorithm
 #1 When the breaking points are not already known
-function multiroute_flow{T<:Number,R<:Number}(
+function multiroute_flow{T<:Number,R<:Real}(
   flow_graph::DiGraph,                            # the input graph
   source::Int,                                    # the source vertex
   target::Int,                                    # the target vertex
@@ -61,7 +61,7 @@ function multiroute_flow{T<:Number,R<:Number}(
   return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes)
 end
 #2 When the breaking points are already known
-function multiroute_flow{T<:Number,R<:Number}(
+function multiroute_flow{T<:Number,R<:Real}(
   breakingpoints::Vector{Tuple{T,T,Int}},         # vector of breaking points
   routes::R,                                      # keyword argument for routes
   flow_algorithm::AbstractFlowAlgorithm =         # keyword argument for algorithm
@@ -73,8 +73,11 @@ end
 """
 The generic multiroute_flow function will output two kinds of results:
 
-- When the number of routes is 0 or non-specified, the set of breaking points of the multiroute flow is returned.
-- Otherwise, a tuple with 1) the maximum flow and 2) the flow matrix. When the max-flow subroutine is the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
+- When the number of routes is 0 or non-specified, the set of breaking points of
+the multiroute flow is returned.
+- Otherwise, a tuple with 1) the maximum flow and 2) the flow matrix. When the
+max-flow subroutine is the Boykov-Kolmogorov algorithm, the associated mincut is
+returned as a third output.
 
 When the input is a network, it requires the following arguments:
 
@@ -86,13 +89,17 @@ When the input is a network, it requires the following arguments:
 - mrf_algorithm::AbstractFlowAlgorithm  # keyword argument for multiroute flow algorithm
 - routes::R<:Number                     # keyword argument for the number of routes
 
-When the input is the set of (breaking) points (the number of route is then a parameter), it requires the following arguments:
+When the input is the set of (breaking) points (the number of route is then a parameter),
+it requires the following arguments:
 
 - breakingpoints::Vector{Tuple{T,T,Int}},      # vector of breaking points
 - routes::R<:Number,                           # keyword argument for routes
 - flow_algorithm::AbstractFlowAlgorithm        # keyword argument for flow algorithm
 
-The function defaults to the Push-relabel (classical flow) and Kishimoto (multiroute) algorithms. Alternatively, the algorithms to be used can also be specified through  keyword arguments. A default capacity of 1 is assumed for each link if no capacity matrix is provided.
+The function defaults to the Push-relabel (classical flow) and Kishimoto
+(multiroute) algorithms. Alternatively, the algorithms to be used can also
+be specified through  keyword arguments. A default capacity of 1 is assumed
+for each link if no capacity matrix is provided.
 
 The mrf_algorithm keyword is inforced to Extended Multiroute Flow in the following cases:
 
@@ -135,7 +142,7 @@ f, F, labels = multiroute_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKo
 ```
 """
 
-function multiroute_flow{T<:Number,R<:Number}(
+function multiroute_flow{T<:Number,R<:Real}(
   flow_graph::DiGraph,                   # the input graph
   source::Int,                           # the source vertex
   target::Int,                           # the target vertex
@@ -147,24 +154,29 @@ function multiroute_flow{T<:Number,R<:Number}(
     KishimotoAlgorithm(),
   routes::R = 0              # keyword argument for number of routes (0 = all values)
   )
-  if routes == 1 # a flow with a set of 1-disjoint path is a classical max-flow
-    return maximum_flow(flow_graph, source, target, capacity_matrix, flow_algorithm)
-  end
-  if routes > maximum_flow(flow_graph,source,target,        # routes > λ → f = 0
-    DefaultCapacity(flow_graph),algorithm=flow_algorithm)[1]
-    return empty_flow(capacity_matrix,flow_algorithm)
-  end
+  # a flow with a set of 1-disjoint pathes is a classical max-flow
+  (routes == 1) &&
+  return maximum_flow(flow_graph, source, target, capacity_matrix, flow_algorithm)
 
+  # routes > λ (connectivity) → f = 0
+  λ = maximum_flow(flow_graph, source, target, DefaultCapacity(flow_graph),
+                                             algorithm = flow_algorithm)[1]
+  (routes > λ) && return empty_flow(capacity_matrix, flow_algorithm)
+
+  # For other cases, capacities need to be Floats
   if !(T<:AbstractFloat) # Capacities need to be Floats
     capacity_matrix = convert(AbstractArray{Float64,2}, capacity_matrix)
   end
 
-  if routes == 0 # Ask for all possible values (breaking points)
-    return emrf(flow_graph,source,target,capacity_matrix,flow_algorithm)
-  end
-  if R <: AbstractFloat # The number of routes is a float → EMRF
-    return emrf(flow_graph,source,target,capacity_matrix,flow_algorithm,routes)
-  end
-  return multiroute_flow(flow_graph, source, target, # Other calls
-    capacity_matrix, flow_algorithm, mrf_algorithm, routes)
+  # Ask for all possible values (breaking points)
+  (routes == 0) &&
+  return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm)
+
+  # The number of routes is a float → EMRF
+  (R <: AbstractFloat) &&
+  return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes)
+
+  # Other calls
+  return multiroute_flow(flow_graph, source, target, capacity_matrix,
+                               flow_algorithm, mrf_algorithm, routes)
 end

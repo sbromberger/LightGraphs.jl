@@ -88,9 +88,9 @@ LightGraphs.jl provides two algorithms for multiroute flow computation:
 ```julia
 multiroute_flow(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64)
 multiroute_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, flow_algorithm::LightGraphs.AbstractFlowAlgorithm, mrf_algorithm::LightGraphs.KishimotoAlgorithm, routes::Int64)
-multiroute_flow{T<:Number,R<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, flow_algorithm::LightGraphs.AbstractFlowAlgorithm, mrf_algorithm::LightGraphs.ExtendedMultirouteFlowAlgorithm, routes::R<:Number)
-multiroute_flow{T<:Number,R<:Number}(breakingpoints::Array{Tuple{T<:Number,T<:Number,Int64},1}, routes::R<:Number)
-multiroute_flow{T<:Number,R<:Number}(breakingpoints::Array{Tuple{T<:Number,T<:Number,Int64},1}, routes::R<:Number, flow_algorithm::LightGraphs.AbstractFlowAlgorithm)
+multiroute_flow{T<:Number,R<:Real}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2}, flow_algorithm::LightGraphs.AbstractFlowAlgorithm, mrf_algorithm::LightGraphs.ExtendedMultirouteFlowAlgorithm, routes::R<:Real)
+multiroute_flow{T<:Number,R<:Real}(breakingpoints::Array{Tuple{T<:Number,T<:Number,Int64},1}, routes::R<:Real)
+multiroute_flow{T<:Number,R<:Real}(breakingpoints::Array{Tuple{T<:Number,T<:Number,Int64},1}, routes::R<:Real, flow_algorithm::LightGraphs.AbstractFlowAlgorithm)
 multiroute_flow{T<:Number}(flow_graph::LightGraphs.DiGraph, source::Int64, target::Int64, capacity_matrix::AbstractArray{T<:Number,2})
 ```
 The generic multiroute_flow function will output two kinds of results:

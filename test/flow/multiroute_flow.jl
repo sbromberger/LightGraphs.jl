@@ -24,6 +24,31 @@ graphs = [
    [12, 6, 0],                        # answer for 1 to 3 route(s) flows
    [(0.,0.,2),(3.,6.,1),(9.,12.,0)],  # breaking points
    11.0                               # value for 1.5 routes
+  ),
+
+  # Graph with 7 vertices
+  (7,
+   [
+     (1,2,1),(1,3,2),(1,4,3),(1,5,4),(1,6,5),
+     (2,7,1),(3,7,2),(4,7,3),(5,7,4),(6,7,5)
+   ],
+   1,7,                               # source/target
+   [15,15,15,12,5,0],                 # answer for 1 to 6 route(s) flows
+   [(0.,0.,5),(1.,5.,4),(2.,9.,3),    # breaking points
+    (3.,12.,2),(4.,14.,1),(5.,15.,0)],
+   15.0                               # value for 1.5 routes
+  ),
+
+  # Graph with 6 vertices
+  (6,
+   [
+     (1,2,1),(1,3,1),(1,4,2),(1,5,2),
+     (2,6,1),(3,6,1),(4,6,2),(5,6,2),
+   ],
+   1,6,                               # source/target
+   [6,6,6,4,0],                       # answer for 1 to 5 route(s) flows
+   [(0.,0.,4),(1.,4.,2),(2.,6.,0)],   # breaking points    
+   6.0                                # value for 1.5 routes
   )
 ]
 
@@ -36,11 +61,15 @@ for (nvertices,flow_edges,s,t,froutes,breakpts,ffloat) in graphs
         capacity_matrix[u,v] = f
     end
 
+    println("Breaking points = $(multiroute_flow(flow_graph,s,t,capacity_matrix))")
+
     # Test all algorithms
-    for ALGOMRF in [ExtendedMultirouteFlowAlgorithm,KishimotoAlgorithm]
-      for ALGOFLOW in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
+    for AlgoMrf in [ExtendedMultirouteFlowAlgorithm,KishimotoAlgorithm]
+      for AlgoFlow in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
         for (k, val) in enumerate(froutes)
-          @test multiroute_flow(flow_graph,s,t,capacity_matrix,flow_algorithm=ALGOFLOW(),mrf_algorithm=ALGOMRF(),routes=k)[1] ≈ val
+          println("val = $val, k = $k")
+          println("AlgoFlow=$AlgoFlow, AlgoMrf=$AlgoMrf")
+          @test multiroute_flow(flow_graph,s,t,capacity_matrix,flow_algorithm=AlgoFlow(),mrf_algorithm=AlgoMrf(),routes=k)[1] ≈ val
         end
       end
     end
