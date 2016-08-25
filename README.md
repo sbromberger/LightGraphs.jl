@@ -9,6 +9,8 @@
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
+#### For 0.5 prerelease compatibility, please check out the `bleeding-edge` branch.
+
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
