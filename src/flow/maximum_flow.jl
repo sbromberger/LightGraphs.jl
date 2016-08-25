@@ -134,17 +134,13 @@ Generic maximum_flow function. Requires arguments:
 - source::Int                           # the source vertex
 - target::Int                           # the target vertex
 - capacity_matrix::AbstractArray{T,2}   # edge flow capacities
-- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm,
+- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 - restriction::T                        # keyword argument for a restriction
 
 The function defaults to the Push-relabel algorithm. Alternatively, the algorithm
 to be used can also be specified through a keyword argument. A default capacity of 1
 is assumed for each link if no capacity matrix is provided.
-<<<<<<< HEAD
 If the restriction is bigger than 0, it is applied to capacity_matrix.
-=======
-If the restriction is bigger than 0, it is apply to capacity_matrix.
->>>>>>> e6632ac... Compressed the restricted max-flow into classical max-flow
 
 All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix.
 For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.

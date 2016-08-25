@@ -156,6 +156,7 @@ tests = [
     "flow/boykov_kolmogorov",
     "flow/push_relabel",
     "flow/maximum_flow",
+    "flow/multiroute_flow",
     "utils"
 ]
 

@@ -289,6 +289,19 @@ computation:
 Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 
 {{mincut}}
+
+## Multiroute Flow
+A multiroute flow of k routes (k-route flow) is a non-negative linear combination of k edge-disjoint paths. Intuitively, for a set of k edge-disjoint elementary paths with the same value v, after any attack/failure of k-1 edges, there still is a flow of value at least v.
+
+Formally, the multiroute context can be extented to a parametric non-integer number number of routes. The multiroute flow is then piecewise linear and can be characterized as a set of breaking points.
+
+LightGraphs.jl provides two algorithms for multiroute flow computation:
+
+* [Kishimoto algorithm](http://dx.doi.org/10.1109/ICCS.1992.255031) (k must be a fixed integer)
+* [Extended Multiroute Flow (EMRF) algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002) (k can be a real number and/or a variable)
+
+{{multiroute_flow}}
+
 """
 
 @file "operators.md" """

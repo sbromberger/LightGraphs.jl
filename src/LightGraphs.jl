@@ -7,7 +7,7 @@ using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 
-import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
+import Base: write, ==, <, *, ≈, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
             ctranspose, join, start, next, done, eltype, get
@@ -76,8 +76,10 @@ a_star,
 # persistence
 # readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 load, save,
+
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
+multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
@@ -154,6 +156,9 @@ include("core.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
+            include("flow/multiroute_flow.jl")
+                include("flow/kishimoto.jl")
+                include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
 
 end # module
