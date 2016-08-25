@@ -4,7 +4,7 @@ function kishimoto{T<:AbstractFloat}(
   flow_graph::DiGraph,                       # the input graph
   source::Int,                               # the source vertex
   target::Int,                               # the target vertex
-  capacity_matrix::AbstractArray{T,2},       # edge flow capacities
+  capacity_matrix::AbstractArray{T, 2},      # edge flow capacities
   flow_algorithm::BoykovKolmogorovAlgorithm, # keyword argument for algorithm
   routes::Int                                # keyword argument for routes
   )
@@ -40,7 +40,7 @@ Requires arguments:
 - flow_graph::DiGraph                    # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
 - flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
 - routes::Int                            # keyword argument for routes
 """
@@ -49,7 +49,7 @@ function kishimoto{T<:AbstractFloat}(
   flow_graph::DiGraph,                   # the input graph
   source::Int,                           # the source vertex
   target::Int,                           # the target vertex
-  capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+  capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
   routes::Int                            # keyword argument for routes
   )
@@ -65,7 +65,7 @@ function kishimoto{T<:AbstractFloat}(
   i = 1
   while flow < routes * restriction && flow ≉ routes * restriction
     restriction = (flow - i * restriction) / (routes - i)
-    i = i + 1
+    i += 1
     flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,
               algorithm = flow_algorithm, restriction = restriction)
   end
