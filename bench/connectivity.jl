@@ -6,7 +6,7 @@ using Base.Profile
 function symmetrize(A)
     println("Symmetrizing ")
     tic()
-    if !issym(A)
+    if !issymmetric(A)
         println(STDERR, "the matrix is not symmetric using A+A'")
         A = A + A'
     end
