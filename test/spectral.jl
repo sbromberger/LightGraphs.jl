@@ -72,3 +72,12 @@ end
 @test incidence_matrix(g3)[1,1] == 1
 @test incidence_matrix(g3)[2,1] == 1
 @test incidence_matrix(g3)[3,1] == 0
+
+# spectral distance checks
+triangle = random_regular_graph(3, 2)
+quadrangle = random_regular_graph(4, 2)
+pentagon = random_regular_graph(5, 2)
+for polygon in [triangle, quadrangle, pentagon]
+  @test spectral_distance(polygon, polygon) == 0
+end
+@test spectral_distance(triangle, quadrangle) < spectral_distance(triangle, pentagon)
