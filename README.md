@@ -123,7 +123,7 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 ## Current functionality
 - **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
-- **distance:** eccentricity, diameter, periphery, radius, center
+- **distance within graphs:** eccentricity, diameter, periphery, radius, center
 
 - **distance between graphs:** spectral_distance
 
