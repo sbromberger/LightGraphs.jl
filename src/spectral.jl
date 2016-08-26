@@ -279,7 +279,7 @@ function spectral_distance(G₁::SimpleGraph, G₂::SimpleGraph, k::Integer)
   λ₁ = adjacency_spectrum(G₁)[end-k+1:end]
   λ₂ = adjacency_spectrum(G₂)[end-k+1:end]
 
-  sumabs2(λ₁ - λ₂)
+  sumabs(λ₁ - λ₂)
 end
 
 spectral_distance(G₁::SimpleGraph, G₂::SimpleGraph) = spectral_distance(G₁, G₂, min(nv(G₁), nv(G₂)))
