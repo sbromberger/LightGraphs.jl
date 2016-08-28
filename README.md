@@ -5,11 +5,9 @@
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-#### For 0.5 prerelease compatibility, please check out the `bleeding-edge` branch.
+#### LightGraphs v0.7.0 and higher is designed for Julia 0.5. For Julia 0.4 support, please use the latest version in the 0.6 series.
 
 An optimized graphs package.
 
@@ -158,9 +156,11 @@ Documentation for methods is also available via the Julia REPL help system.
 
 
 ## Supported Versions
+* LightGraphs master is designed to work with the latest stable version of Julia.
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
-* Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
-* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `bleeding-edge` branch. Please use that branch if you're testing with 0.5.
+* Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
+* Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
+* Julia 0.6: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.6, please file an issue. 
 
 # Contributing
 
