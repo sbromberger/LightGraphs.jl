@@ -7,7 +7,7 @@
 
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-#### LightGraphs v0.7.0 and higher is designed for Julia 0.5. For Julia 0.4 support, please use the latest version in the 0.6 series.
+#### LightGraphs versions in the v0.7 series are designed for Julia 0.5. For Julia 0.4 support, please use the latest version in the 0.6 series.
 
 An optimized graphs package.
 
