@@ -163,5 +163,5 @@ Documentation for methods is also available via the Julia REPL help system.
 * Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `bleeding-edge` branch. Please use that branch if you're testing with 0.5.
 
 # Contributing and Reporting Bugs
-We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/CONTRIBUTING.md)
+We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
