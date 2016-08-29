@@ -18,7 +18,9 @@ EdgeIter(g::DiGraph) = EdgeIter(ne(g), g.fadjlist, true)
 function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false), first::Bool = true)
     s = state.s
     di = state.di
-    first || (di += 1)
+    if !first
+        di += 1
+    end
     fin = state.fin
     while s <= length(eit.adj)
         arr = eit.adj[s]
