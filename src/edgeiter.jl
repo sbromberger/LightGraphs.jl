@@ -15,10 +15,10 @@ eltype(::Type{EdgeIter}) = Edge
 EdgeIter(g::Graph) = EdgeIter(ne(g), g.fadjlist, false)
 EdgeIter(g::DiGraph) = EdgeIter(ne(g), g.fadjlist, true)
 
-function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false))
-    #ret_state = EdgeIterState(state.s, state.di, state.fin)
+function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false), first::Bool = true)
     s = state.s
-    di = state.di + 1
+    di = state.di
+    first || (di += 1)
     fin = state.fin
     while s <= length(eit.adj)
         arr = eit.adj[s]
@@ -41,7 +41,7 @@ length(eit::EdgeIter) = eit.m
 
 function next(eit::EdgeIter, state)
     edge = Edge(state.s, eit.adj[state.s][state.di])
-    return(edge, _next(eit, state))
+    return(edge, _next(eit, state, false))
 end
 
 function _isequal(e1::EdgeIter, e2)
