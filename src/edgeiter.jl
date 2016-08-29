@@ -1,4 +1,4 @@
-type EdgeIterState
+immutable EdgeIterState
     s::Int  # src vertex
     di::Int # index into adj of dest vertex
     fin::Bool
@@ -15,20 +15,26 @@ eltype(::Type{EdgeIter}) = Edge
 EdgeIter(g::Graph) = EdgeIter(ne(g), g.fadjlist, false)
 EdgeIter(g::DiGraph) = EdgeIter(ne(g), g.fadjlist, true)
 
-function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false))
-    while state.s <= length(eit.adj)
-        arr = eit.adj[state.s]
-        while state.di <= length(arr)
-            if eit.directed || state.s <= arr[state.di]
-                return state
-            end
-            state.di += 1
-        end
-        state.s += 1
-        state.di = 1
+function _next(eit::EdgeIter, state::EdgeIterState = EdgeIterState(1,1,false), first::Bool = true)
+    s = state.s
+    di = state.di
+    if !first
+        di += 1
     end
-    state.fin = true
-    return state
+    fin = state.fin
+    while s <= length(eit.adj)
+        arr = eit.adj[s]
+        while di <= length(arr)
+            if eit.directed || s <= arr[di]
+                return EdgeIterState(s, di, fin)
+            end
+            di += 1
+        end
+        s += 1
+        di = 1
+    end
+    fin = true
+    return EdgeIterState(s, di, fin)
 end
 
 start(eit::EdgeIter) = _next(eit)
@@ -37,8 +43,7 @@ length(eit::EdgeIter) = eit.m
 
 function next(eit::EdgeIter, state)
     edge = Edge(state.s, eit.adj[state.s][state.di])
-    state.di += 1
-    return(edge, _next(eit, state))
+    return(edge, _next(eit, state, false))
 end
 
 function _isequal(e1::EdgeIter, e2)
