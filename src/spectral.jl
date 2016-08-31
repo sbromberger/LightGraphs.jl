@@ -250,7 +250,7 @@ contract(nbt, edgespace). modifies first argument
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     for i=1:nv(nbt.g)
         for j in neighbors(nbt.g, i)
-            u = nbt.edgeidmap[Edge(j,i)]
+            u = nbt.edgeidmap[i > j ? Edge(j,i) : Edge(i,j)]
             vertexspace[i] += edgespace[u]
         end
     end

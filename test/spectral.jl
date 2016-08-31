@@ -24,6 +24,15 @@ end
 @test !issymmetric(B)
 @test !issymmetric(Nonbacktracking(g10))
 
+v = ones(Float64, ne(g10))
+z = zeros(Float64, nv(g10))
+n10 = Nonbacktracking(g10)
+LightGraphs.contract!(z, n10, v)
+
+zprime = contract(n10, v)
+@test z == zprime
+@test z == 9*ones(Float64, nv(g10))
+
 @test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
 
 @test adjacency_matrix(g3) ==

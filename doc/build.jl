@@ -163,18 +163,13 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
     random_configuration_model, barabasi_albert, stochastic_block_model,
     StochasticBlockModel, make_edgestream}}
 
-## Static Graphs
-*LightGraphs.jl* also implements a collection of classic graph generators:
+## Static and Small Graphs
+*LightGraphs.jl* also implements a collection of classic graph generators and small graphs:
 
 {{CompleteGraph, CompleteBipartiteGraph, CompleteDiGraph, StarGraph, StarDiGraph,PathGraph, PathDiGraph,
- WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, Grid}}
+ WheelGraph, WheelDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, Grid, smallgraph}}
 
-## Smallgraphs
-Many notorious graphs are available in the Datasets submodule in LightGraphsExtras.jl
-```julia
-using LightGraphsExtras.Datasets
-```
-
+ Other common graphs are available in `LightGraphsExtras.Datasets`.
 """
 
 @file "integration.md" """
