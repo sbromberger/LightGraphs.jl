@@ -78,6 +78,7 @@ triangle = random_regular_graph(3, 2)
 quadrangle = random_regular_graph(4, 2)
 pentagon = random_regular_graph(5, 2)
 for polygon in [triangle, quadrangle, pentagon]
-  @test spectral_distance(polygon, polygon) == 0
+  @test isapprox(spectral_distance(polygon, polygon), 0, atol=1e-8)
+  @test isapprox(spectral_distance(polygon, polygon, 1), 0, atol=1e-8)
 end
 @test spectral_distance(triangle, quadrangle) < spectral_distance(triangle, pentagon)
