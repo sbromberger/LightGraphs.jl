@@ -5,11 +5,10 @@ t = visitor.tree
 @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
 
-g = HouseGraph()
-@test gdistances(g, 2) == [1, 0, 2, 1, 2]
-@test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
-@test !is_bipartite(g)
-@test !is_bipartite(g, 2)
+@test gdistances(g6, 2) == [1, 0, 2, 1, 2]
+@test gdistances(g6, [1,2]) == [0, 0, 1, 1, 2]
+@test !is_bipartite(g6)
+@test !is_bipartite(g6, 2)
 
 g = Graph(5)
 add_edge!(g,1,2); add_edge!(g,1,4)
@@ -37,12 +36,11 @@ function istree(parents::Vector{Int}, maxdepth)
     return flag
 end
 
-g = HouseGraph()
-n = nv(g)
+n = nv(g6)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
 parents = visitor.tree
-bfs_tree!(visitor, g, 1)
+bfs_tree!(visitor, g6, 1)
 
 @test istree(parents, n) == true
 t = tree(parents)
@@ -50,12 +48,11 @@ t = tree(parents)
 @test ne(t) < nv(t)
 
 # test Dict{Int,Int}() colormap
-g = HouseGraph()
-n = nv(g)
+n = nv(g6)
 visitor = TreeBFSVisitorVector(n)
 @test length(visitor.tree) == n
 parents = visitor.tree
-bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
+bfs_tree!(visitor, g6, 1, vertexcolormap = Dict{Int,Int}())
 
 @test istree(parents, n) == true
 t = tree(parents)

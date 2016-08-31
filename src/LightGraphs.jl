@@ -94,9 +94,10 @@ label_propagation,
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
 
-
+#smallgraphs
+smallgraph
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -160,5 +161,6 @@ include("core.jl")
                 include("flow/kishimoto.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
+        include("smallgraphs.jl")
 
 end # module
