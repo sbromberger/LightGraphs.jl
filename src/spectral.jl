@@ -282,10 +282,6 @@ function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
   λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : sort(eigvals(full(A₁)), rev=true)[1:k]
   λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : sort(eigvals(full(A₂)), rev=true)[1:k]
 
-  # mirror axes for comparison
-  λ₁[1] < 0 && (λ₁ *= -1)
-  λ₂[1] < 0 && (λ₂ *= -1)
-
   sumabs(λ₁ - λ₂)
 end
 
