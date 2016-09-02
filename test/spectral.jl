@@ -74,3 +74,31 @@ end
 @test incidence_matrix(g3)[1,1] == 1
 @test incidence_matrix(g3)[2,1] == 1
 @test incidence_matrix(g3)[3,1] == 0
+
+# TESTS FOR Nonbacktracking operator.
+
+n = 10; k = 5
+pg = PathGraph(n)
+# ϕ1 = nonbacktrack_embedding(pg, k)'
+
+nbt = Nonbacktracking(pg)
+B, emap = non_backtracking_matrix(pg)
+Bs = sparse(nbt)
+@test sparse(B) == Bs
+
+# check that matvec works
+x = ones(Float64, nbt.m)
+y = nbt * x
+z = B * x
+@test norm(y-z) < 1e-8
+
+#check that matmat works and full(nbt) == B
+@test norm(nbt*eye(nbt.m) - B) < 1e-8
+
+#check that matmat works and full(nbt) == B
+@test norm(nbt*eye(nbt.m) - B) < 1e-8
+
+#check that we can use the implicit matvec in nonbacktrack_embedding
+@test size(y) == size(x)
+
+# END tests for Nonbacktracking
