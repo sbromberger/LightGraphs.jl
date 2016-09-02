@@ -279,8 +279,8 @@ function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
   A₁ = adjacency_matrix(G₁)
   A₂ = adjacency_matrix(G₂)
 
-  λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : sort(eigvals(full(A₁)), rev=true)[1:k]
-  λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : sort(eigvals(full(A₂)), rev=true)[1:k]
+  λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
+  λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
 
   sumabs(λ₁ - λ₂)
 end
