@@ -72,7 +72,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
-            if rand(rng) > β && !has_edge(g,s,target)
+            if rand(rng) > β && !has_edge(g, s, target) # TODO: optimize this based on return of add_edge!
                 add_edge!(g, s, target)
             else
                 while true
@@ -83,9 +83,8 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
                             d += 1
                         end
                     end
-                    if !has_edge(g, s, d) && s != d
-                        add_edge!(g, s, d)
-                        break
+                    if s != d
+                        add_edge!(g, s, d) && break
                     end
                 end
             end
@@ -324,8 +323,7 @@ function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, 
         (source == target) && continue
         edge = Edge(source, target)
         # is there already an edge? If so, try again
-        has_edge(g, edge) && continue
-        add_edge!(g, edge)
+        add_edge!(g, edge) || continue
         m -= 1
     end
 end
@@ -537,9 +535,10 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
             while i < nedg
                 source = rand(rng, ra)
                 dest = rand(rng, rb)
-                if source != dest && !has_edge(g, source, dest)
-                    i += 1
-                    add_edge!(g, source, dest)
+                if source != dest
+                    if add_edge!(g, source, dest)
+                        i += 1
+                    end
                 end
             end
         end
@@ -688,7 +687,7 @@ function Graph(nvg::Int, neg::Int, edgestream::Task)
     # println(g)
     for (i,j) in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g,Edge(i,j))
+        add_edge!(g, Edge(i, j))
         ne(g) >= neg && break
     end
     # println(g)

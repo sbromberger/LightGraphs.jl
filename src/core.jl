@@ -73,12 +73,14 @@ function issubset{T<:SimpleGraph}(g::T, h::T)
 end
 
 
-"""Add `n` new vertices to the graph `g`."""
+"""Add `n` new vertices to the graph `g`. Returns true if all vertices
+were added successfully, false otherwise."""
 function add_vertices!(g::SimpleGraph, n::Integer)
+    added = true
     for i = 1:n
-        add_vertex!(g)
+        added &= add_vertex!(g)
     end
-    return nv(g)
+    return added
 end
 
 """Return true if the graph `g` has an edge from `u` to `v`."""
@@ -121,6 +123,7 @@ ne(g::SimpleGraph) = g.ne
     add_edge!(g, u, v)
 
 Add a new edge to `g` from `u` to `v`.
+Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
 """
 add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
 
@@ -129,7 +132,7 @@ add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
 
 Remove the edge from `u` to `v`.
 
-Note: An exception will be raised if the edge is not in the graph.
+Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
 """
 rem_edge!(g::SimpleGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
 
@@ -142,10 +145,10 @@ edges or vertices in the graph, since internally the removal is performed swappi
 and removing the vertex `n` from the graph.
 After removal the vertices in the ` g` will be indexed by 1:n-1.
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
-Note: An exception will be raised if the vertex `v`  is not in the `g`.
+Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
 """
 function rem_vertex!(g::SimpleGraph, v::Int)
-    v in vertices(g) || throw(BoundsError())
+    v in vertices(g) || return false
     n = nv(g)
 
     edgs = in_edges(g, v)
@@ -183,7 +186,7 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     if is_directed(g)
         pop!(g.badjlist)
     end
-    g
+    return true
 end
 
 """Return the number of edges which start at vertex `v`."""

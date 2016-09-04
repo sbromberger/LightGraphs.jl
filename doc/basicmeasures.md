@@ -17,6 +17,42 @@ edges(g::Union{LightGraphs.DiGraph,LightGraphs.Graph})
 ```
 Return an iterator to the edges of a graph. The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
 
+### add_edge!
+```julia
+add_edge!(g, u, v)
+```
+
+Add a new edge to `g` from `u` to `v`. Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
+
+### add_vertex!
+```julia
+add_vertex!(g::LightGraphs.DiGraph)
+add_vertex!(g::LightGraphs.Graph)
+```
+Add a new vertex to the graph `g`.
+
+### add_vertices!
+```julia
+add_vertices!(g::Union{LightGraphs.DiGraph,LightGraphs.Graph}, n::Integer)
+```
+Add `n` new vertices to the graph `g`. Returns true if all vertices were added successfully, false otherwise.
+
+### rem_edge!
+```julia
+rem_edge!(g, u, v)
+```
+
+Remove the edge from `u` to `v`.
+
+Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
+
+### rem_vertex!
+```julia
+rem_vertex!(g, v)
+```
+
+Remove the vertex `v` from graph `g`. This operation has to be performed carefully if one keeps external data structures indexed by edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`, and removing the vertex `n` from the graph. After removal the vertices in the ` g` will be indexed by 1:n-1. This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`. Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
+
 ### is_directed
 ```julia
 is_directed(g::LightGraphs.DiGraph)

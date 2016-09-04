@@ -126,7 +126,7 @@ types:
 
 ## Vertices and Edges
 
-{{vertices, edges, is_directed, nv, ne, has_edge, has_vertex, in_edges, out_edges, src, dst, reverse}}
+{{vertices, edges, add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!, is_directed, nv, ne, has_edge, has_vertex, in_edges, out_edges, src, dst, reverse}}
 
 ## Neighbors and Degree
 

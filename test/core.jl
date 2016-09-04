@@ -2,19 +2,28 @@
 @test e1.second == dst(e1) == 2
 @test reverse(e1) == re1
 
+e2 = Edge(1,3)
+e3 = Edge(1,4)
+e4 = Edge(2,5)
+e5 = Edge(3,5)
+
+@test LightGraphs.is_ordered(e5)
+@test !LightGraphs.is_ordered(reverse(e5))
+
 g = Graph(5)
-add_edge!(g, 1, 2)
-e2 = add_edge!(g, 1, 3)
-e3 = add_edge!(g, 1, 4)
-e4 = add_edge!(g, 2, 5)
-e5 = add_edge!(g, 3, 5)
+@test add_edge!(g, 1, 2)
+@test add_edge!(g, e2)
+@test add_edge!(g, e3)
+@test add_edge!(g, e4)
+@test add_edge!(g, e5)
+
 
 h = DiGraph(5)
-add_edge!(h, 1, 2)
-add_edge!(h, 1, 3)
-add_edge!(h, 1, 4)
-add_edge!(h, 2, 5)
-add_edge!(h, 3, 5)
+@test add_edge!(h, 1, 2)
+@test add_edge!(h, e2)
+@test add_edge!(h, e3)
+@test add_edge!(h, e4)
+@test add_edge!(h, e5)
 
 @test vertices(g) == 1:5
 i = 0
@@ -47,10 +56,9 @@ end
 @test in_edges(g, 2) == [e1, reverse(e4)]
 @test out_edges(g, 1) == [e1, e2, e3]
 
-@test add_vertex!(g) == 6
-@test add_vertices!(g,5) == 11
+@test add_vertex!(g) && nv(g) == 6
+@test add_vertices!(g,5) && nv(g) == 11
 @test has_vertex(g, 11)
-@test nv(g) == 11
 @test ne(g) == 5
 @test !is_directed(g)
 @test is_directed(h)
@@ -71,22 +79,24 @@ end
 @test common_neighbors(g, 2, 3) == [1, 5]
 @test common_neighbors(h, 2, 3) == [5]
 
-add_edge!(g, 1, 1)
-@test rem_edge!(g, 1, 1) == Edge(1, 1)
+@test add_edge!(g, 1, 1)
+@test !add_edge!(g, 1, 1)
+@test rem_edge!(g, 1, 1)
+@test !rem_edge!(g, 1, 1)
 @test ne(g) == 5
-@test rem_edge!(g, 1, 2) == e1
+@test rem_edge!(g, 1, 2)
 @test ne(g) == 4
-@test_throws ErrorException rem_edge!(g, 2, 1)
+@test !rem_edge!(g, 2, 1)
 add_edge!(g, 1, 2)
 @test ne(g) == 5
 
 @test has_edge(g,2,1)
 @test has_edge(g,1,2)
-@test rem_edge!(g, 2, 1) == e1
-add_edge!(h, 1, 1)
-@test rem_edge!(h, 1, 1) == Edge(1, 1)
-@test rem_edge!(h, 1, 2) == e1
-@test_throws ErrorException rem_edge!(h, 1, 2)
+@test rem_edge!(g, 2, 1)
+@test add_edge!(h, 1, 1)
+@test rem_edge!(h, 1, 1)
+@test rem_edge!(h, 1, 2)
+@test !rem_edge!(h, 1, 2)
 
 function test_rem_edge(g, srcv)
     srcv = 2
@@ -105,51 +115,51 @@ end
 @test g == copy(g)
 @test !(g === copy(g))
 g10 = CompleteGraph(5)
-rem_vertex!(g10, 1)
+@test rem_vertex!(g10, 1)
 @test g10 == CompleteGraph(4)
-rem_vertex!(g10, 4)
+@test rem_vertex!(g10, 4)
 @test g10 == CompleteGraph(3)
-@test_throws BoundsError rem_vertex!(g10, 9)
+@test !rem_vertex!(g10, 9)
 
 g10 = CompleteDiGraph(5)
-rem_vertex!(g10, 1)
+@test rem_vertex!(g10, 1)
 @test g10 == CompleteDiGraph(4)
 rem_vertex!(g10, 4)
 @test g10 == CompleteDiGraph(3)
-@test_throws BoundsError rem_vertex!(g10, 9)
+@test !rem_vertex!(g10, 9)
 g10 = PathGraph(5)
-rem_vertex!(g10, 5)
+@test rem_vertex!(g10, 5)
 @test g10 == PathGraph(4)
-rem_vertex!(g10, 4)
+@test rem_vertex!(g10, 4)
 @test g10 == PathGraph(3)
 
 g10 = PathDiGraph(5)
-rem_vertex!(g10, 5)
+@test rem_vertex!(g10, 5)
 @test g10 == PathDiGraph(4)
-rem_vertex!(g10, 4)
+@test rem_vertex!(g10, 4)
 @test g10 == PathDiGraph(3)
 
 g10 = PathDiGraph(5)
-rem_vertex!(g10, 1)
+@test rem_vertex!(g10, 1)
 h10 = PathDiGraph(6)
-rem_vertex!(h10, 1)
-rem_vertex!(h10, 1)
+@test rem_vertex!(h10, 1)
+@test rem_vertex!(h10, 1)
 @test g10 == h10
 
 g10 = CycleGraph(5)
-rem_vertex!(g10, 5)
+@test rem_vertex!(g10, 5)
 @test g10 == PathGraph(4)
 
 g10 = PathGraph(3)
-rem_vertex!(g10, 2)
+@test rem_vertex!(g10, 2)
 @test g10 == Graph(2)
 
 g10 = PathGraph(4)
-rem_vertex!(g10, 3)
+@test rem_vertex!(g10, 3)
 h10 =Graph(3)
-add_edge!(h10,1,2)
+@test add_edge!(h10,1,2)
 @test g10 == h10
 
 g10 = CompleteGraph(5)
-rem_vertex!(g10, 3)
+@test rem_vertex!(g10, 3)
 @test g10 == CompleteGraph(4)

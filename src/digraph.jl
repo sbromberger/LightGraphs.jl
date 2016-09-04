@@ -74,24 +74,23 @@ is_directed(g::DiGraph) = true
 
 function add_edge!(g::DiGraph, e::Edge)
     s, d = e
-    s in vertices(g) || error("Vertex $s not in graph")
-    d in vertices(g) || error("Vertex $d not in graph")
-    if _insert_and_dedup!(g.fadjlist[s], d)
+    (s in vertices(g) && d in vertices(g)) || return false
+    inserted = _insert_and_dedup!(g.fadjlist[s], d)
+    if inserted
         g.ne += 1
     end
-    _insert_and_dedup!(g.badjlist[d], s)
-    return e
+    return inserted && _insert_and_dedup!(g.badjlist[d], s)
 end
 
 
 function rem_edge!(g::DiGraph, e::Edge)
-    has_edge(g,e) || error("$e is not in graph")
+    has_edge(g,e) || return false
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     deleteat!(g.fadjlist[src(e)], i)
     i = searchsorted(g.badjlist[dst(e)], src(e))[1]
     deleteat!(g.badjlist[dst(e)], i)
     g.ne -= 1
-    return e
+    return true
 end
 
 
@@ -100,7 +99,7 @@ function add_vertex!(g::DiGraph)
     push!(g.badjlist, Vector{Int}())
     push!(g.fadjlist, Vector{Int}())
 
-    return nv(g)
+    return true
 end
 
 
