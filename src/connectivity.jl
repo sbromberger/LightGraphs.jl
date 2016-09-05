@@ -209,7 +209,7 @@ function condensation(g::DiGraph, scc::Vector{Vector{Int}})
 
     @inbounds for e in edges(g)
         s, d = component[src(e)], component[dst(e)]
-        if (s != d) && !has_edge(h,s,d)
+        if (s != d)
             add_edge!(h,s,d)
         end
     end
