@@ -18,4 +18,5 @@ script:
 
 after_success:
     - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
+    - julia -e 'Pkg.add("Documenter")'
     - julia -e 'cd(Pkg.dir("LightGraphs")); include(joinpath("docs", "make.jl"))'
