@@ -24,6 +24,8 @@ pages:
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
+  - 'Contributing': 'contributing.md'
+  - 'License Information': 'license.md'
 
 extra_css:
   - assets/Documenter.css
