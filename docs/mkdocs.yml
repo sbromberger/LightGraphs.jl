@@ -25,6 +25,9 @@ pages:
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
 
+extra_css:
+  - assets/Documenter.css
+
 markdown_extensions:
   - extra
   - tables
