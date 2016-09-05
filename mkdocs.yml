@@ -1,7 +1,13 @@
 site_name: LightGraphs.jl
 site_author: Seth Bromberger
 repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
-theme: readthedocs
+theme: material
+
+extra:
+  palette:
+    primary: 'indigo'
+    accent:  'blue'
+
 pages:
   - 'Getting Started': 'index.md'
   - 'Basic Functions': 'basicmeasures.md'
