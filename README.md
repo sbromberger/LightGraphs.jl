@@ -2,14 +2,14 @@
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/LightGraphs.jl/latest)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-#### For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.
+**For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.**
 
 An optimized graphs package.
 
@@ -26,6 +26,9 @@ decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
+
+Also check the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl). for additional functionalities.
+
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
@@ -139,7 +142,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **flow operations:** maximum flow
 
-- **matching:** Matching functions have been moved to [LGmatching.jl](https://github.com/JuliaGraphs/LGmatching.jl).
+- **matching:** Matching functions have been moved to [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 - **clique enumeration:** maximal cliques
 
@@ -153,15 +156,17 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 
 ## Documentation
-Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
+Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
 
 
 ## Supported Versions
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
-* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `bleeding-edge` branch. Please use that branch if you're testing with 0.5.
+* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `compat-0.5` branch. Please use that branch if you're testing with 0.5.
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
+
+
