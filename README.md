@@ -156,14 +156,14 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 
 ## Documentation
-Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
+Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
 
 
 ## Supported Versions
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
-* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `bleeding-edge` branch. Please use that branch if you're testing with 0.5.
+* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `compat-0.5` branch. Please use that branch if you're testing with 0.5.
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
