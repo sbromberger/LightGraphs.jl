@@ -168,3 +168,5 @@ Documentation for methods is also available via the Julia REPL help system.
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
+
+
