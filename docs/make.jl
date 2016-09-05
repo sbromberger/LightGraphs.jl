@@ -12,5 +12,5 @@ rm(normpath(@__FILE__, "../src/index.md"))
 deploydocs(
     deps   = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
     repo   = "github.com/JuliaGraphs/LightGraphs.jl.git",
-    julia  = "release"
+#    julia  = "release"
 )
