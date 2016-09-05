@@ -21,7 +21,7 @@ pages:
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
-docs_dir: 'doc'
+docs_dir: 'docs'
 markdown_extensions:
   - extra
   - tables
