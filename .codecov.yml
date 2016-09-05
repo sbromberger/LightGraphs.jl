@@ -1,3 +1,11 @@
+coverage:
+  status:
+    patch:
+      default:
+        target: '97'
+    project:
+      default:
+        target: '97'
 comment:
   layout: "header, diff"
   behavior: default
