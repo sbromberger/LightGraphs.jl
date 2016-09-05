@@ -6,7 +6,7 @@ os:
 
 julia:
   - release
-#  - nightly
+  - nightly
 
 notifications:
   email: false
