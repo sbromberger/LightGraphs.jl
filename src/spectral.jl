@@ -266,9 +266,9 @@ function contract(nbt::Nonbacktracking, edgespace::Vector)
 end
 
 """spectral_distance(G₁, G₂ [, k])
-Compute the spectral distance between undirected graphs
-G₁ and G₂ using the top k greatest eigenvalues. If k is
-ommitted, uses k = min(|G₁|,|G₂|).
+Compute the spectral distance between undirected n-vertex
+graphs G₁ and G₂ using the top k ≤ n greatest eigenvalues.
+If k is ommitted, uses full spectrum.
 
 For further details, please refer to:
 
