@@ -1,7 +1,15 @@
 site_name: LightGraphs.jl
 site_author: Seth Bromberger
 repo_url: https://github.com/JuliaGraphs/LightGraphs.jl/
-theme: readthedocs
+docs_dir: 'build'
+
+theme: material
+
+extra:
+  palette:
+    primary: 'indigo'
+    accent:  'blue'
+
 pages:
   - 'Getting Started': 'index.md'
   - 'Basic Functions': 'basicmeasures.md'
@@ -10,18 +18,23 @@ pages:
   - 'Distance': 'distance.md'
   - 'Centrality Measures': 'centrality.md'
   - 'Linear Algebra': 'linalg.md'
+  - 'Matching': 'matching.md'
   - 'Community Structures': 'community.md'
   - 'Flow and Cut': 'flowcut.md'
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
   - 'Integration with other packages': 'integration.md'
-docs_dir: 'doc'
+  - 'Contributing': 'contributing.md'
+  - 'License Information': 'license.md'
+
+extra_css:
+  - assets/Documenter.css
+
 markdown_extensions:
   - extra
   - tables
   - fenced_code
-extra_css:
-  - LightGraphs.css
+
 extra_javascript:
   - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
-  - mathjaxhelper.js
+  - assets/mathjaxhelper.js

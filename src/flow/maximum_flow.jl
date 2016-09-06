@@ -60,20 +60,7 @@ Requires arguments:
 - capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
 
-function residual(
-    flow_graph::DiGraph                     # the input graph
-    )
-
-    n = nv(flow_graph)
-    residual_graph = copy(flow_graph)       # make a copy of the input graph
-    for (u,v) in edges(flow_graph)
-        if !has_edge(flow_graph, v, u)      # create reverse edge
-            add_edge!(residual_graph, v, u)
-        end
-    end
-
-    return residual_graph
-end
+residual(flow_graph::DiGraph) = DiGraph(Graph(flow_graph))
 
 # Method for Edmonds–Karp algorithm
 

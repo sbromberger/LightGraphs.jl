@@ -70,7 +70,7 @@ function blkdiag{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
-        add_edge!(r,e)
+        add_edge!(r, e)
     end
     for e in edges(h)
         add_edge!(r, gnv+src(e), gnv+dst(e))
@@ -304,7 +304,7 @@ function tensor_product{G<:SimpleGraph}(g::G, h::G)
     id(i, j) = (i-1)*nv(h) + j
     for (i1, i2) in edges(g)
         for (j1, j2) in edges(h)
-            add_edge!(z, id(i1,j1), id(i2,j2))
+            add_edge!(z, id(i1, j1), id(i2, j2))
         end
     end
     return z
