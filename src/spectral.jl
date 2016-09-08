@@ -285,4 +285,7 @@ function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
   sumabs(λ₁ - λ₂)
 end
 
-spectral_distance(G₁::Graph, G₂::Graph) = spectral_distance(G₁, G₂, min(nv(G₁), nv(G₂)))
+function spectral_distance(G₁::Graph, G₂::Graph)
+  @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| == |G₂|"
+  spectral_distance(G₁, G₂, nv(G₁))
+end

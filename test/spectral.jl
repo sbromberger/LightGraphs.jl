@@ -74,11 +74,8 @@ end
 @test incidence_matrix(g3)[3,1] == 0
 
 # spectral distance checks
-triangle = random_regular_graph(3, 2)
-quadrangle = random_regular_graph(4, 2)
-pentagon = random_regular_graph(5, 2)
-for polygon in [triangle, quadrangle, pentagon]
+for n=3:10
+  polygon = random_regular_graph(n, 2)
   @test isapprox(spectral_distance(polygon, polygon), 0, atol=1e-8)
   @test isapprox(spectral_distance(polygon, polygon, 1), 0, atol=1e-8)
 end
-@test spectral_distance(triangle, quadrangle) < spectral_distance(triangle, pentagon)
