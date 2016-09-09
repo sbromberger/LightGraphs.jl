@@ -72,3 +72,10 @@ end
 @test incidence_matrix(g3)[1,1] == 1
 @test incidence_matrix(g3)[2,1] == 1
 @test incidence_matrix(g3)[3,1] == 0
+
+# spectral distance checks
+for n=3:10
+  polygon = random_regular_graph(n, 2)
+  @test isapprox(spectral_distance(polygon, polygon), 0, atol=1e-8)
+  @test isapprox(spectral_distance(polygon, polygon, 1), 0, atol=1e-8)
+end

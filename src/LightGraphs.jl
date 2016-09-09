@@ -24,6 +24,9 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 # distance
 eccentricity, diameter, periphery, radius, center,
 
+# distance between graphs
+spectral_distance,
+
 # operators
 complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,

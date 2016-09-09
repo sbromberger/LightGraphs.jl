@@ -264,3 +264,28 @@ function contract(nbt::Nonbacktracking, edgespace::Vector)
     contract!(y,nbt,edgespace)
     return y
 end
+
+"""spectral_distance(G₁, G₂ [, k])
+Compute the spectral distance between undirected n-vertex
+graphs G₁ and G₂ using the top k ≤ n greatest eigenvalues.
+If k is ommitted, uses full spectrum.
+
+For further details, please refer to:
+
+JOVANOVIC, I.; STANIC, Z., 2014. Spectral Distances of
+Graphs Based on their Different Matrix Representations
+"""
+function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
+  A₁ = adjacency_matrix(G₁)
+  A₂ = adjacency_matrix(G₂)
+
+  λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
+  λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
+
+  sumabs(λ₁ - λ₂)
+end
+
+function spectral_distance(G₁::Graph, G₂::Graph)
+  @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
+  spectral_distance(G₁, G₂, nv(G₁))
+end
