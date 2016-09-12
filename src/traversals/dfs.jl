@@ -38,10 +38,11 @@ function depth_first_visit_impl!(
 
         while !done(udsts, tstate) && !found_new_vertex
             v, tstate = next(udsts, tstate)
+            u_color = get(vertexcolormap, u, 0)
             v_color = get(vertexcolormap, v, 0)
             v_edge = Edge(u,v)
             e_color = get(edgecolormap, v_edge, 0)
-            examine_neighbor!(visitor, u, v, v_color, e_color) #no return here
+            examine_neighbor!(visitor, u, v, u_color, v_color, e_color) #no return here
 
             edgecolormap[v_edge] = 1
 
@@ -100,6 +101,7 @@ function examine_neighbor!(
     vis::DFSCyclicTestVisitor,
     u::Int,
     v::Int,
+    ucolor::Int,
     vcolor::Int,
     ecolor::Int)
 
@@ -142,7 +144,7 @@ type TopologicalSortVisitor <: SimpleGraphVisitor
 end
 
 
-function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
     (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
@@ -172,7 +174,7 @@ end
 
 TreeDFSVisitor(n::Int) = TreeDFSVisitor(DiGraph(n), zeros(Int,n))
 
-function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
     if (vcolor == 0)
         visitor.predecessor[v] = u
     end

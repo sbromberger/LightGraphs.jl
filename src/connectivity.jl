@@ -113,6 +113,7 @@ is_weakly_connected(g::DiGraph) = length(weakly_connected_components(g)) == 1
 # Adapated from Graphs.jl
 type TarjanVisitor <: SimpleGraphVisitor
     stack::Vector{Int}
+    onstack::BitVector
     lowlink::Vector{Int}
     index::Vector{Int}
     components::Vector{Vector{Int}}
@@ -120,6 +121,7 @@ end
 
 TarjanVisitor(n::Int) = TarjanVisitor(
     Vector{Int}(),
+    falses(n),
     Vector{Int}(),
     zeros(Int, n),
     Vector{Vector{Int}}()
@@ -129,11 +131,12 @@ function discover_vertex!(vis::TarjanVisitor, v)
     vis.index[v] = length(vis.stack) + 1
     push!(vis.lowlink, length(vis.stack) + 1)
     push!(vis.stack, v)
+    vis.onstack[v] = true
     return true
 end
 
-function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
-    if w_color != 0 # != 0 means seen
+function examine_neighbor!(vis::TarjanVisitor, v, w, v_color::Int, w_color::Int, e_color::Int)
+    if w_color != 0 && vis.onstack[w] # != 0 means seen
         while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
             pop!(vis.lowlink)
         end
@@ -143,8 +146,8 @@ end
 
 function close_vertex!(vis::TarjanVisitor, v)
     if vis.index[v] == vis.lowlink[end]
-        component = vis.stack[vis.index[v]:end]
-        splice!(vis.stack, vis.index[v]:length(vis.stack))
+        component = splice!(vis.stack, vis.index[v]:length(vis.stack))
+        vis.onstack[component] = false
         pop!(vis.lowlink)
         push!(vis.components, component)
     end
@@ -206,7 +209,7 @@ function condensation(g::DiGraph, scc::Vector{Vector{Int}})
 
     @inbounds for e in edges(g)
         s, d = component[src(e)], component[dst(e)]
-        if (s != d) && !has_edge(h,s,d)
+        if (s != d)
             add_edge!(h,s,d)
         end
     end
@@ -280,3 +283,21 @@ the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
 to be considered. This is equivalent to `induced_subgraph(g, neighborhood(g, v, d, dir=dir)).`
 """
 egonet(g::SimpleGraph, v::Int, d::Int; dir=:out) = induced_subgraph(g, neighborhood(g, v, d, dir=dir))
+
+"""
+    isgraphical(degs::Vector{Int})
+
+Check whether the degree sequence `degs` is graphical, according to
+[Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
+
+Time complexity: O(length(degs)^2)
+"""
+function isgraphical(degs::Vector{Int})
+    iseven(sum(degs)) || return false
+    n = length(degs)
+    for r=1:n-1
+        cond = sum(i->degs[i], 1:r) <= r*(r-1) + sum(i->min(r,degs[i]), r+1:n)
+        cond || return false
+    end
+    return true
+end

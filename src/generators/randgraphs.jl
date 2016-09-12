@@ -47,7 +47,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
         # init dsfmt generator without altering GLOBAL_RNG
         Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
     end
-    ne = StatsBase.rand_binom(m, p) # sadly Distributions.jl doesn't support non-global RNG
+    ne = rand(Binomial(m, p)) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -72,7 +72,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     for s in 1:n
         for i in 1:(floor(Integer, k/2))
             target = ((s + i - 1) % n) + 1
-            if rand(rng) > β && !has_edge(g,s,target)
+            if rand(rng) > β && !has_edge(g, s, target) # TODO: optimize this based on return of add_edge!
                 add_edge!(g, s, target)
             else
                 while true
@@ -83,9 +83,8 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
                             d += 1
                         end
                     end
-                    if !has_edge(g, s, d) && s != d
-                        add_edge!(g, s, d)
-                        break
+                    if s != d
+                        add_edge!(g, s, d) && break
                     end
                 end
             end
@@ -96,11 +95,10 @@ end
 
 function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     isempty(potential_edges) && return true
-    for (s1, s2) in combinations(collect(keys(potential_edges)), 2)
-        if (s1 > s2)
-            s1, s2 = s2, s1
-        end
-        ∉(Edge(s1, s2), edges) && return true
+    list = keys(potential_edges)
+    for s1 in list, s2 in list
+        s1 >= s2 && continue
+        (Edge(s1, s2) ∉ edges) && return true
     end
     return false
 end
@@ -148,6 +146,240 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     return edges
 end
 
+"""
+    barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+random graph with `n` vertices. It is grown by adding new vertices to an initial
+graph with `k` vertices. Each new vertex is attached with `k` edges to `k`
+different vertices already present in the system by preferential attachment.
+Initial graphs are undirected and consist of isolated vertices by default;
+use `is_directed=true` and `complete=true` for directed and complete initial graphs.
+"""
+barabasi_albert(n::Integer, k::Integer; keyargs...) =
+    barabasi_albert(n, k, k; keyargs...)
+
+"""
+    barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+random graph with `n` vertices. It is grown by adding new vertices to an initial
+graph with `n0` vertices. Each new vertex is attached with `k` edges to `k`
+different vertices already present in the system by preferential attachment.
+Initial graphs are undirected and consist of isolated vertices by default;
+use `is_directed=true` and `complete=true` for directed and complete initial graphs.
+"""
+function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+    if complete
+        g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
+    else
+        g = is_directed ? DiGraph(n0) : Graph(n0)
+    end
+
+    barabasi_albert!(g, n, k; seed = seed)
+    return g
+end
+
+"""
+    barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int = -1)
+
+Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+random graph with `n` vertices. It is grown by adding new vertices to an initial
+graph `g`. Each new vertex is attached with `k` edges to `k` different vertices
+already present in the system by preferential attachment.
+"""
+function barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int=-1)
+    n0 = nv(g)
+    1 <= k <= n0 <= n ||
+        throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
+			    "where n0 is the number of nodes in graph g"))
+    n0 == n && return g
+
+    # seed random number generator
+    seed > 0 && srand(seed)
+
+    # add missing vertices
+    sizehint!(g.fadjlist, n)
+    add_vertices!(g, n - n0)
+
+    # if initial graph doesn't contain any edges
+    # expand it by one vertex and add k edges from this additional node
+    if ne(g) == 0
+        # expand initial graph
+        n0 += 1
+
+        # add edges to k existing nodes
+        for target in sample!(collect(1:n0-1), k)
+            add_edge!(g, n0, target)
+        end
+    end
+
+    # vector of weighted nodes (each node is repeated once for each adjacent edge)
+    weightedNodes = Vector{Int}(2*(n-n0)*k + 2*ne(g))
+
+    # initialize vector of weighted nodes
+    offset = 0
+    for e in edges(g)
+        weightedNodes[offset+=1] = src(e)
+        weightedNodes[offset+=1] = dst(e)
+    end
+
+    # array to record if a node is picked
+    picked = fill(false, n)
+
+    # vector of targets
+    targets = Vector{Int}(k)
+
+    for source in n0+1:n
+        # choose k targets from the existing nodes
+        # pick uniformly from weightedNodes (preferential attachement)
+        i = 0
+        while i < k
+            target = weightedNodes[rand(1:offset)]
+            if !picked[target]
+                targets[i+=1] = target
+                picked[target] = true
+            end
+        end
+
+        # add edges to k targets
+        for target in targets
+            add_edge!(g, source, target)
+
+            weightedNodes[offset+=1] = source
+            weightedNodes[offset+=1] = target
+            picked[target] = false
+        end
+    end
+
+    return g
+end
+
+
+"""
+    static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+
+Generates a random graph with `length(fitness)` nodes and `m` edges,
+in which the probability of the existence of edge `(i, j)` is proportional
+to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
+
+Reference:
+
+* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution
+in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+"""
+function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+    @assert(m >= 0, "invalid number of edges")
+    n = length(fitness)
+    m == 0 && return Graph(n)
+    nodes = 0
+    for f in fitness
+        # sanity check for the fitness
+        f < zero(T) && error("fitness scores must be non-negative")
+        f > zero(T) && (nodes += 1)
+    end
+    # avoid getting into an infinite loop when too many edges are requested
+    max_no_of_edges = div(nodes*(nodes-1), 2)
+    @assert(m <= max_no_of_edges, "too many edges requested")
+    # calculate the cumulative fitness scores
+    cum_fitness = cumsum(fitness)
+    g = Graph(n)
+    _create_static_fitness_graph!(g, m, cum_fitness, cum_fitness, seed)
+    return g
+end
+
+function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1)
+    @assert(m >= 0, "invalid number of edges")
+    n = length(fitness_out)
+    @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
+    m == 0 && return DiGraph(n)
+    # avoid getting into an infinite loop when too many edges are requested
+    outnodes = innodes = nodes = 0
+    @inbounds for i=1:n
+        # sanity check for the fitness
+        (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
+        fitness_out[i] > zero(T) && (outnodes += 1)
+        fitness_in[i] > zero(S) && (innodes += 1)
+        (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nodes += 1)
+    end
+    max_no_of_edges = outnodes*innodes - nodes
+    @assert(m <= max_no_of_edges, "too many edges requested")
+    # calculate the cumulative fitness scores
+    cum_fitness_out = cumsum(fitness_out)
+    cum_fitness_in = cumsum(fitness_in)
+    g = DiGraph(n)
+    _create_static_fitness_graph!(g, m, cum_fitness_out, cum_fitness_in, seed)
+    return g
+end
+
+function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+    rng = getRNG(seed)
+    max_out = cum_fitness_out[end]
+    max_in = cum_fitness_in[end]
+    while m > 0
+        source = searchsortedfirst(cum_fitness_out, rand(rng)*max_out)
+        target = searchsortedfirst(cum_fitness_in, rand(rng)*max_in)
+        # skip if loop edge
+        (source == target) && continue
+        edge = Edge(source, target)
+        # is there already an edge? If so, try again
+        add_edge!(g, edge) || continue
+        m -= 1
+    end
+end
+
+"""
+    function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+
+Generates a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α`. `finite_size_correction` determines
+whether to use the finite size correction proposed by Cho et al.
+This generator calls internally the `static_fitness_model function`.
+Time complexity is O(|V| + |E| log |E|).
+
+References:
+
+* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+* Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
+
+* Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
+"""
+function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of nodes")
+    @assert(α >= 2, "out-degree exponent must be >= 2")
+    fitness = _construct_fitness(n, α, finite_size_correction)
+    static_fitness_model(m, fitness, seed=seed)
+end
+
+function static_scale_free(n::Int, m::Int, α_out::Float64, α_in::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of nodes")
+    @assert(α_out >= 2, "out-degree exponent must be >= 2")
+    @assert(α_in >= 2, "in-degree exponent must be >= 2")
+    # construct the fitness
+    fitness_out = _construct_fitness(n, α_out, finite_size_correction)
+    fitness_in = _construct_fitness(n, α_in, finite_size_correction)
+    # eliminate correlation
+    shuffle!(fitness_in)
+    static_fitness_model(m, fitness_out, fitness_in, seed=seed)
+end
+
+function _construct_fitness(n::Int, α::Float64, finite_size_correction::Bool)
+    α = -1/(α-1)
+    fitness = zeros(n)
+    j = float(n)
+    if finite_size_correction && α < -0.5
+        # See the Cho et al paper, first page first column + footnote 7
+        j += n^(1+1/2α) * (10sqrt(2)*(1+α)) ^ (-1/α) - 1
+    end
+    j = max(j, n)
+    @inbounds for i=1:n
+        fitness[i] = j ^ α
+        j -= 1
+    end
+    return fitness
+end
+
 doc"""
     random_regular_graph(n::Int, k::Int; seed=-1)
 
@@ -186,21 +418,26 @@ end
 
 
 doc"""
-    random_configuration_model(n::Int, k::Array{Int}; seed=-1)
+    random_configuration_model(n::Int, k::Array{Int}; seed=-1, check_graphical=false)
 
 Creates a random undirected graph according to the [configuraton model]
 (http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
-It contains `n` vertices, the vertex `ì` having degree `k[i]`.
+It contains `n` vertices, the vertex `i` having degree `k[i]`.
 
 Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes
 approximately $nc^2$ time.
+
+
+If `check_graphical=true` makes sure that `k` is a graphical sequence (see `isgraphical`).
 """
-function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1)
+function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1, check_graphical::Bool=false)
     @assert(n == length(k), "a degree sequence of length n has to be provided")
     m = sum(k)
     @assert(iseven(m), "sum(k) must be even")
     @assert(all(0 .<= k .< n), "the 0 <= k[i] < n inequality must be satisfied")
-
+    if check_graphical
+        isgraphical(k) || error("Degree sequence non graphical")
+    end
     rng = getRNG(seed)
 
     edges = _try_creation(n, k, rng)
@@ -290,17 +527,18 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
         for b=a:K
             @assert a==b? c[a,b] <= n[b]-1 : c[a,b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
 
-            m = a==b ? n[a]*(n[a]-1)/2 : n[a]*n[b]
+            m = a==b ? div(n[a]*(n[a]-1),2) : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-            nedg = StatsBase.rand_binom(m, p)
+            nedg = rand(Binomial(m, p))
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg
                 source = rand(rng, ra)
                 dest = rand(rng, rb)
-                if source != dest && !has_edge(g, source, dest)
-                    i += 1
-                    add_edge!(g, source, dest)
+                if source != dest
+                    if add_edge!(g, source, dest)
+                        i += 1
+                    end
                 end
             end
         end
@@ -449,7 +687,7 @@ function Graph(nvg::Int, neg::Int, edgestream::Task)
     # println(g)
     for (i,j) in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g,Edge(i,j))
+        add_edge!(g, Edge(i, j))
         ne(g) >= neg && break
     end
     # println(g)

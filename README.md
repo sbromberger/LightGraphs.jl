@@ -2,9 +2,14 @@
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
-[![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](http://lightgraphsjl.readthedocs.org/en/latest/)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/LightGraphs.jl/latest)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
+
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
+
+**For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.**
 
 An optimized graphs package.
 
@@ -21,6 +26,9 @@ decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
+
+Also check the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl). for additional functionalities.
+
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
@@ -115,7 +123,9 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 ## Current functionality
 - **core functions:** vertices and edges addition and removal, degree (in/out/histogram), neighbors (in/out/all/common)
 
-- **distance:** eccentricity, diameter, periphery, radius, center
+- **distance within graphs:** eccentricity, diameter, periphery, radius, center
+
+- **distance between graphs:** spectral_distance
 
 - **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components, neighborhood
 
@@ -134,11 +144,11 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **flow operations:** maximum flow
 
-- **matching:** bipartite maximum matching
+- **matching:** Matching functions have been moved to [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 - **clique enumeration:** maximal cliques
 
-- **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix, integration with [GraphMatrices](https://github.com/jpfairbanks/GraphMatrices.jl)
+- **linear algebra / spectral graph theory:** adjacency matrix (works as input to [GraphLayout](https://github.com/IainNZ/GraphLayout.jl) and [Metis](https://github.com/JuliaSparse/Metis.jl)), Laplacian matrix, non-backtracking matrix
 
 - **community:** modularity, community detection, core-periphery, clustering coefficients
 
@@ -148,59 +158,17 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 
 ## Documentation
-Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).
+Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
 
 
 ## Supported Versions
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
-* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue.
+* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `compat-0.5` branch. Please use that branch if you're testing with 0.5.
 
-# Contributing
+# Contributing and Reporting Bugs
+We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
+for guidance on development and bug reporting.
 
-We welcome all possible contributors and ask that you read these guidelines before starting to work on this project. Following these guidelines will reduce friction and improve the speed at which your code gets merged.
 
-## Bug reports
-If you notice code that is incorrect/crashes/too slow please file a bug report. The report should be raised as a github issue with a minimal working example that reproduces the error message. The example should include any data needed. If the problem is incorrectness, then please post the correct result along with an incorrect result.
-
-Please include version numbers of all relevant libraries and Julia itself.
-
-## Development guidelines.
-
-- PRs should contain one logical enhancement to the codebase.
-- Squash commits in a PR.
-- Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
-- Put type assertions on all function arguments (use abstract types, Union, or Any if necessary).
-- If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
-- Take steps to ensure that code works on graphs with multiple connected components efficiently.
-- Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
-- We can accept code that does not work for directed graphs as long as it comes with an explanation of what it would take to make it work for directed graphs.
-- Style point: prefer the short circuiting conditional over if/else when convenient ex. `condition && error("message")`
-- When possible write code to reuse memory. For example:
-```julia
-function f(g, v)
-    storage = Vector{Int}(nv(g))
-    # some code operating on storage, g, and v.
-    for i in 1:nv(g)
-        storage[i] = v-i
-    end
-    return sum(storage)
-end
-```
-should be rewritten as two functions
-```julia
-function f(g::SimpleGraph, v::Integer)
-    storage = Vector{Int}(nv(g))
-    return inner!(storage, g, v)
-end
-
-function inner!(storage::AbstractArray{Int,1}, g::SimpleGraph, v::Integer)
-    # some code operating on storage, g, and v.
-    for i in 1:nv(g)
-        storage[i] = v-i
-    end
-    return sum(storage)
-end
-```
-This allows us to reuse the memory and improve performance.

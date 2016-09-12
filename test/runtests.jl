@@ -1,15 +1,15 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
-using LightGraphs.Datasets
-using Requires
 using Base.Test
 
-g1 = smallgraph("PetersenGraph")
+
+g1 = smallgraph(:petersen)
 g2 = smallgraph(:tutte)
 g3 = PathGraph(5)
 g4 = PathDiGraph(5)
 g5 = DiGraph(4)
 add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
+g6 = smallgraph(:house)
 
 h1 = Graph(5)
 h2 = Graph(3)
@@ -67,7 +67,6 @@ tests = [
     "traversals/graphvisit",
     "traversals/randomwalks",
     "community/core-periphery",
-    "community/detection",
     "community/label_propagation",
     "community/modularity",
     "community/clustering",
@@ -81,9 +80,9 @@ tests = [
     "flow/boykov_kolmogorov",
     "flow/push_relabel",
     "flow/maximum_flow",
-    "matching/linear-programming",
-    "datasets/runtests",
-    "utils"
+    "flow/multiroute_flow",
+    "utils",
+    "smallgraphs"
 ]
 
 

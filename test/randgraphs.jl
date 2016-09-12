@@ -31,6 +31,86 @@ ws = watts_strogatz(10, 4, 0.2, is_directed=true)
 @test ne(ws) == 20
 @test is_directed(ws) == true
 
+ba = barabasi_albert(10, 2)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, 2)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 4, 2)
+@test nv(ba) == 10
+@test ne(ba) == 12
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 17
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 17
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 4, 2, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
+@test is_directed(ba) == false
+
+ba = barabasi_albert(10, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 16
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 4, 2, is_directed=true)
+@test nv(ba) == 10
+@test ne(ba) == 12
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 2, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 18
+@test is_directed(ba) == true
+
+ba = barabasi_albert(10, 4, 2, is_directed=true, complete=true)
+@test nv(ba) == 10
+@test ne(ba) == 24
+@test is_directed(ba) == true
+
+fm = static_fitness_model(20, rand(10))
+@test nv(fm) == 10
+@test ne(fm) == 20
+@test is_directed(fm) == false
+
+fm = static_fitness_model(20, rand(10), rand(10))
+@test nv(fm) == 10
+@test ne(fm) == 20
+@test is_directed(fm) == true
+
+sf = static_scale_free(10, 20, 2.0)
+@test nv(sf) == 10
+@test ne(sf) == 20
+@test is_directed(sf) == false
+
+sf = static_scale_free(10, 20, 2.0, 2.0)
+@test nv(sf) == 10
+@test ne(sf) == 20
+@test is_directed(sf) == true
+
 rr = random_regular_graph(5, 0)
 @test nv(rr) == 5
 @test ne(rr) == 0
@@ -70,6 +150,11 @@ end
 rr = random_configuration_model(1000, zeros(Int,1000))
 @test nv(rr) == 1000
 @test ne(rr) == 0
+@test is_directed(rr) == false
+
+rr = random_configuration_model(3, [2,2,2], check_graphical=true)
+@test nv(rr) == 3
+@test ne(rr) == 3
 @test is_directed(rr) == false
 
 rd = random_regular_digraph(1000, 4)

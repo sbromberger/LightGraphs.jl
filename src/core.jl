@@ -17,10 +17,6 @@ dst(e::Edge) = e.second
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 
-function show(io::IO, e::Edge)
-    print(io, "edge $(e.first) - $(e.second)")
-end
-
 """A type representing an undirected graph."""
 type Graph
     vertices::UnitRange{Int}
@@ -77,49 +73,82 @@ function issubset{T<:SimpleGraph}(g::T, h::T)
 end
 
 
-"""Add `n` new vertices to the graph `g`."""
+"""Add `n` new vertices to the graph `g`. Returns true if all vertices
+were added successfully, false otherwise."""
 function add_vertices!(g::SimpleGraph, n::Integer)
+    added = true
     for i = 1:n
-        add_vertex!(g)
+        added &= add_vertex!(g)
     end
-    return nv(g)
+    return added
 end
 
-"""Return true if the graph `g` has an edge from `src` to `dst`."""
-has_edge(g::SimpleGraph, src::Int, dst::Int) = has_edge(g,Edge(src,dst))
+"""Return true if the graph `g` has an edge from `u` to `v`."""
+has_edge(g::SimpleGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
 
-"""Return an Array of the edges in `g` that arrive at vertex `v`."""
-in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g,v)]
-"""Return an Array of the edges in `g` that emanate from vertex `v`."""
+"""
+    in_edges(g, v)
+
+Returns an Array of the edges in `g` that arrive at vertex `v`.
+`v=dst(e)` for each returned edge `e`.
+"""
+in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
+
+"""
+    out_edges(g, v)
+
+Returns an Array of the edges in `g` that depart from vertex `v`.
+`v = src(e)` for each returned edge `e`.
+"""
 out_edges(g::SimpleGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
+
 
 """Return true if `v` is a vertex of `g`."""
 has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
 
-"""The number of vertices in `g`."""
+"""
+    nv(g)
+
+The number of vertices in `g`.
+"""
 nv(g::SimpleGraph) = length(vertices(g))
-"""The number of edges in `g`."""
+"""
+    ne(g)
+
+The number of edges in `g`.
+"""
 ne(g::SimpleGraph) = g.ne
 
-"""Add a new edge to `g` from `src` to `dst`."""
-add_edge!(g::SimpleGraph, src::Int, dst::Int) = add_edge!(g, Edge(src,dst))
-
-"""Remove the edge from `src` to `dst`.
-
-Note: An exception will be raised if the edge is not in the graph.
 """
-rem_edge!(g::SimpleGraph, src::Int, dst::Int) = rem_edge!(g, Edge(src,dst))
+    add_edge!(g, u, v)
 
-"""Remove the vertex `v` from graph `g`.
+Add a new edge to `g` from `u` to `v`.
+Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
+"""
+add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
+
+"""
+    rem_edge!(g, u, v)
+
+Remove the edge from `u` to `v`.
+
+Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
+"""
+rem_edge!(g::SimpleGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
+
+"""
+    rem_vertex!(g, v)
+
+Remove the vertex `v` from graph `g`.
 This operation has to be performed carefully if one keeps external data structures indexed by
 edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
 and removing the vertex `n` from the graph.
 After removal the vertices in the ` g` will be indexed by 1:n-1.
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
-Note: An exception will be raised if the vertex `v`  is not in the `g`.
+Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
 """
 function rem_vertex!(g::SimpleGraph, v::Int)
-    v in vertices(g) || throw(BoundsError())
+    v in vertices(g) || return false
     n = nv(g)
 
     edgs = in_edges(g, v)
@@ -157,7 +186,7 @@ function rem_vertex!(g::SimpleGraph, v::Int)
     if is_directed(g)
         pop!(g.badjlist)
     end
-    g
+    return true
 end
 
 """Return the number of edges which start at vertex `v`."""
@@ -197,6 +226,10 @@ end
 
 """Produces a histogram of degree values across all vertices for the graph `g`.
 The number of histogram buckets is based on the number of vertices in `g`.
+Degree 0 vertices are excluded.
+
+`degree_histogram(g)[i]` is the number of vertices in g with degree `i`.
+
 """
 degree_histogram(g::SimpleGraph) = (hist(degree(g), 0:nv(g)-1)[2])
 

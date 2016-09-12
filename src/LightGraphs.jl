@@ -1,28 +1,13 @@
 __precompile__(true)
 module LightGraphs
 
-using Requires
 using GZip
-using StatsBase
+using Distributions: Binomial
 using Base.Collections
 using LightXML
-using ParserCombinator
-using ParserCombinator.Parsers
-using Clustering
-import Combinatorics: combinations  # 0.5
-try
-    import GraphMatrices: CombinatorialAdjacency
-    nothing
-catch
-end
+using ParserCombinator: Parsers.DOT, Parsers.GML
 
-try
-    using JuMP
-    nothing
-catch
-end
-
-import Base: write, ==, <, *, isless, issubset, complement, union, intersect,
+import Base: write, ==, <, *, ≈, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, issym, transpose,
             ctranspose, join, start, next, done, eltype, get
@@ -38,6 +23,9 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
+
+# distance between graphs
+spectral_distance,
 
 # operators
 complement, reverse, reverse!, blkdiag, union, intersect,
@@ -62,10 +50,8 @@ randomwalk, saw, non_backtracking_randomwalk,
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
-condensation, attracting_components, neighborhood, egonet,
+condensation, attracting_components, neighborhood, egonet, isgraphical,
 
-# cliques
-maximal_cliques,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -91,31 +77,28 @@ a_star,
 # persistence
 # readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
 load, save,
+
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
-
-#matching
-maximum_weight_maximal_matching, MatchingResult,
+multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
 
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
-stochastic_block_model,
+stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model, static_scale_free,
 
 #community
-modularity, community_detection_nback, core_periphery_deg,
-local_clustering,local_clustering_coefficient, global_clustering_coefficient,
-label_propagation,
+modularity, core_periphery_deg,
+local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
+label_propagation, maximal_cliques,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
 WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph
 
-#Datasets
-Datasets
-
-
+#smallgraphs
+smallgraph
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -143,7 +126,6 @@ include("core.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
-        include("cliques.jl")
         include("distance.jl")
         include("shortestpaths/astar.jl")
         include("shortestpaths/bellman-ford.jl")
@@ -159,25 +141,27 @@ include("core.jl")
             include("persistence/graphml.jl")
             include("persistence/net.jl")
             include("persistence/jld.jl")
-        include("randgraphs.jl")
-        include("generators.jl")
+        include("generators/staticgraphs.jl")
+            include("generators/randgraphs.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
         include("community/modularity.jl")
-        include("community/detection.jl")
         include("community/label_propagation.jl")
         include("community/core-periphery.jl")
         include("community/clustering.jl")
+        include("community/cliques.jl")
         include("flow/maximum_flow.jl")
             include("flow/edmonds_karp.jl")
             include("flow/dinic.jl")
             include("flow/boykov_kolmogorov.jl")
             include("flow/push_relabel.jl")
-        include("matching/linear-programming.jl")
-        include("datasets/Datasets.jl")
+            include("flow/multiroute_flow.jl")
+                include("flow/kishimoto.jl")
+                include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
+        include("smallgraphs.jl")
 
 end # module

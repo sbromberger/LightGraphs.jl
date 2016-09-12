@@ -90,21 +90,22 @@ function has_edge(g::Graph, e::Edge)
 end
 
 function add_edge!(g::Graph, e::Edge)
+
     s, d = e
-    s in vertices(g) || error("Source vertex $s not in graph")
-    d in vertices(g) || error("Destination vertex $d not in graph")
-    if _insert_and_dedup!(g.fadjlist[s], d)
+    (s in vertices(g) && d in vertices(g)) || return false
+    inserted = _insert_and_dedup!(g.fadjlist[s], d)
+    if inserted
         g.ne += 1
     end
     if s != d
-        _insert_and_dedup!(g.fadjlist[d], s)
+        inserted = _insert_and_dedup!(g.fadjlist[d], s)
     end
-    return e
+    return inserted
 end
 
 function rem_edge!(g::Graph, e::Edge)
     i = searchsorted(g.fadjlist[src(e)], dst(e))
-    length(i) > 0 || error("$e not in graph")
+    length(i) > 0 || return false   # edge not in graph
     i = i[1]
     deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
@@ -112,7 +113,7 @@ function rem_edge!(g::Graph, e::Edge)
         deleteat!(g.fadjlist[dst(e)], i)
     end
     g.ne -= 1
-    return is_ordered(e) ? e : reverse(e)
+    return true # edge successfully removed
 end
 
 
@@ -121,7 +122,7 @@ function add_vertex!(g::Graph)
     g.vertices = 1:nv(g)+1
     push!(g.fadjlist, Vector{Int}())
 
-    return nv(g)
+    return true
 end
 
 

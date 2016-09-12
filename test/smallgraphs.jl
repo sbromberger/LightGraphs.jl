@@ -1,3 +1,9 @@
+g = smallgraph("diamondgraph")
+@test nv(g) == 4 && ne(g) == 5
+
+g = smallgraph("diamond")
+@test nv(g) == 4 && ne(g) == 5
+
 g = smallgraph(:diamond)
 @test nv(g) == 4 && ne(g) == 5
 

@@ -7,7 +7,7 @@ add_edge!(g,10,9)
 
 
 @test !is_connected(g)
-@test is_connected(smallgraph(:house))
+@test is_connected(g6)
 
 cc = connected_components(g)
 label = zeros(Int, nv(g))
@@ -55,6 +55,19 @@ wcc = weakly_connected_components(h)
 
 @test length(scc) == 3 && sort(scc[3]) == [1,2,5]
 @test length(wcc) == 1 && length(wcc[1]) == nv(h)
+
+function scc_ok(graph)
+  """Check that all SCC really are strongly connected"""
+  scc = strongly_connected_components(graph)
+  scc_as_subgraphs = map(i -> induced_subgraph(graph, i), scc)
+  return all(is_strongly_connected, scc_as_subgraphs)
+end
+
+# the two graphs below are isomorphic (exchange 2 <--> 4)
+h = DiGraph(4);  add_edge!(h, 1, 4); add_edge!(h, 4, 2); add_edge!(h, 2, 3); add_edge!(h, 1, 3);
+h2 = DiGraph(4); add_edge!(h2, 1, 2); add_edge!(h2, 2, 4); add_edge!(h2, 4, 3); add_edge!(h2, 1, 3);
+@test scc_ok(h)
+@test scc_ok(h2)
 
 h = DiGraph(6)
 add_edge!(h,1,3); add_edge!(h,3,4); add_edge!(h,4,2); add_edge!(h,2,1)
@@ -154,3 +167,7 @@ g10 = StarDiGraph(10)
 g10 = StarGraph(10)
 @test egonet(g10, 1, 0) == Graph(1,0)
 @test egonet(g10, 1, 1) == g10
+
+@test !isgraphical([1,1,1])
+@test isgraphical([2,2,2])
+@test isgraphical(fill(3,10))

@@ -22,6 +22,15 @@ for i=1:10
     @test sum(B[i,:]) == 8
 end
 
+v = ones(Float64, ne(g10))
+z = zeros(Float64, nv(g10))
+n10 = Nonbacktracking(g10)
+LightGraphs.contract!(z, n10, v)
+
+zprime = contract(n10, v)
+@test z == zprime
+@test z == 9*ones(Float64, nv(g10))
+
 @test_approx_eq_eps(adjacency_spectrum(g5)[3],0.311, 0.001)
 
 @test adjacency_matrix(g3) ==
@@ -52,21 +61,6 @@ for dir in [:in, :out, :both]
     @test_approx_eq_eps minimum(evals) 0 1e-13
 end
 
-# GraphMatrices integration tests
-@require GraphMatrices begin
-    println("*** Running GraphMatrices tests")
-    mat = PathGraph(10)
-    onevec = ones(Float64, 10)
-    adjmat = CombinatorialAdjacency(mat)
-    @test eltype(mat) == Float64
-    @test zero(eltype(mat)) == 0.0
-    @test eltype(adjmat) == Float64
-    @test zero(eltype(adjmat)) == 0.0
-    @test sum(abs(adjmat*onevec)) != 0
-    lapl = GraphMatrices.CombinatorialLaplacian(adjmat)
-    @test_approx_eq_eps(eigs(lapl, which=:LR)[1][1], 3.902, 0.001)
-    println("*** Finished GraphMatrices tests")
-end
 
 # testing incidence_matrix, first directed graph
 @test size(incidence_matrix(g4)) == (5,4)
@@ -78,3 +72,10 @@ end
 @test incidence_matrix(g3)[1,1] == 1
 @test incidence_matrix(g3)[2,1] == 1
 @test incidence_matrix(g3)[3,1] == 0
+
+# spectral distance checks
+for n=3:10
+  polygon = random_regular_graph(n, 2)
+  @test isapprox(spectral_distance(polygon, polygon), 0, atol=1e-8)
+  @test isapprox(spectral_distance(polygon, polygon, 1), 0, atol=1e-8)
+end

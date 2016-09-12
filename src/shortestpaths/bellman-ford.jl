@@ -17,10 +17,10 @@ type BellmanFordState{T<:Number}<:AbstractPathState
     dists::Vector{T}
 end
 
-function bellman_ford_shortest_paths!(
+function bellman_ford_shortest_paths!{R<:Real}(
     graph::SimpleGraph,
     sources::AbstractVector{Int},
-    distmx::AbstractArray{Float64, 2},
+    distmx::AbstractArray{R, 2},
     state::BellmanFordState
 )
 

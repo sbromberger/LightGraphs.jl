@@ -94,8 +94,8 @@ function close_vertex!(vis::LogGraphVisitor, v::Int)
     return true
 end
 
-function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, vcolor::Int, ecolor::Int)
-    println(vis.io, "examine neighbor: $u -> $v (vertexcolor = $vcolor, edgecolor= $ecolor)")
+function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+    println(vis.io, "examine neighbor: $u -> $v (ucolor = $ucolor, vcolor = $vcolor, edgecolor= $ecolor)")
     return true
 end
 

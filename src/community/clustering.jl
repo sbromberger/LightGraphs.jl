@@ -32,6 +32,13 @@ function local_clustering(g::SimpleGraph, v::Integer)
     return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
 end
 
+"""
+    triangles(g, v)
+
+Returns the number of triangles in the neighborhood for node `v`.
+"""
+triangles(g::SimpleGraph, v::Integer) = local_clustering(g, v)[1]
+
 
 """
     local_clustering_coefficient(g, vlist = vertices(g))
@@ -56,6 +63,14 @@ function local_clustering(g::SimpleGraph, vlist = vertices(g))
     end
     return ntriang, nalltriang
 end
+
+"""
+    triangles(g, vlist = vertices(g))
+
+Returns a vector containing the number of triangles for vertices `vlist`.
+"""
+triangles(g::SimpleGraph, vlist = vertices(g)) = local_clustering(g, vlist)[1]
+
 
 """
     global_clustering_coefficient(g)
