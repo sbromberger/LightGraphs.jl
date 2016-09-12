@@ -25,7 +25,10 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 eccentricity, diameter, periphery, radius, center,
 
 # distance between graphs
-spectral_distance,
+spectral_distance, edit_distance,
+
+# edit path cost functions
+MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
 complement, reverse, reverse!, blkdiag, union, intersect,
@@ -127,6 +130,7 @@ include("core.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
         include("distance.jl")
+        include("edit_distance.jl")
         include("shortestpaths/astar.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
