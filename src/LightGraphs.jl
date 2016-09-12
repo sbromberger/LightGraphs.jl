@@ -110,7 +110,7 @@ label_propagation,
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph
 
 #Datasets
 Datasets

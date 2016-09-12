@@ -34,6 +34,9 @@ g = Grid([3,3,4])
 @test maximum(degree(g)) == 6
 @test minimum(degree(g)) == 3
 
+g = CliqueGraph(3,5)
+@test nv(g) == 15 && ne(g) == 20
+
 g = crosspath(3, BinaryTree(2))
 # f = Vector{Vector{Int}}[[2 3 4];
 # [1 5];

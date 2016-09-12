@@ -175,3 +175,19 @@ function RoachGraph(k::Int)
     add_edge!(roach, nv(antannae), nv(antannae)+2)
     return roach
 end
+
+
+"""This function generates `n` connected k-cliques """
+function CliqueGraph(k::Integer, n::Integer)
+    g = Graph(k*n)
+    for c=1:n
+        for i=(c-1)*k+1:c*k-1, j=i+1:c*k
+            add_edge!(g, i, j)
+        end
+    end
+    for i=1:n-1
+        add_edge!(g, (i-1)*k+1, i*k+1)
+    end
+    add_edge!(g, 1, (n-1)*k+1)
+    return g
+end
