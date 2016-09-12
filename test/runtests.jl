@@ -29,6 +29,11 @@ e0 = Edge(2, 3)
 e1 = Edge(1, 2)
 re1 = Edge(2, 1)
 
+# polygons
+triangle = random_regular_graph(3,2)
+quadrangle = random_regular_graph(4,2)
+pentagon = random_regular_graph(5,2)
+
 testdir = dirname(@__FILE__)
 
 pdict = load(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
@@ -51,6 +56,7 @@ tests = [
     "graphdigraph",
     "persistence",
     "distance",
+    "edit_distance",
     "spectral",
     "cliques",
     "subgraphs",
