@@ -25,7 +25,7 @@ default heuristic is not satisfactory.
 Performance tips:
 -----------------
 - Given two graphs |G₁| < |G₂|, `edit_distance(G₁, G₂)` is faster to
-compute than `edit_distance(G₂, G₁)`. Consider swaping the arguments
+compute than `edit_distance(G₂, G₁)`. Consider swapping the arguments
 if involved costs are ``symmetric''.
 - The use of simple Minkowski costs can improve performance considerably.
 - Exploit vertex attributes when designing operation costs.
@@ -82,21 +82,20 @@ function edit_distance(G₁::SimpleGraph, G₂::SimpleGraph;
 end
 
 function is_complete_path(λ, G₁, G₂)
-  us = []; vs = []
+  us = Set(); vs = Set()
   for (u,v) in λ
     push!(us, u)
     push!(vs, v)
   end
+  delete!(us, 0)
+  delete!(vs, 0)
 
-  us = unique(us[us .> 0])
-  vs = unique(vs[vs .> 0])
-
-  length(us) == nv(G₁) && length(vs) == nv(G₂)
+  return length(us) == nv(G₁) && length(vs) == nv(G₂)
 end
 
 function DefaultEditHeuristic(λ, G₁::SimpleGraph, G₂::SimpleGraph)
-  vs = [v for (u,v) in λ]
-  vs = unique(vs[vs .> 0])
+  vs = Set([v for (u,v) in λ])
+  delete!(vs, 0)
 
   nv(G₂) - length(vs)
 end
