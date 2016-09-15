@@ -107,10 +107,18 @@ end
 # Edit path cost functions
 #-------------------------
 
+"""
+For labels μ₁ on the vertices of graph G₁ and labels μ₂ on the vertices
+of graph G₂, compute the p-norm cost of substituting vertex u ∈ G₁ by
+vertex v ∈ G₂.
+"""
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
   (u,v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
+"""
+Similar to MinkowskiCost, but ensures costs smaller than 2τ.
+"""
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
   (u,v) -> 1 / (1/(2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end
