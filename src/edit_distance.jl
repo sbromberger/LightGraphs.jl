@@ -107,10 +107,10 @@ end
 # Edit path cost functions
 #-------------------------
 
-function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Integer=1)
+function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
   (u,v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
-function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Integer=1, τ::Real=1)
+function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
   (u,v) -> 1 / (1/(2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end
