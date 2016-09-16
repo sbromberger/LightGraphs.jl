@@ -125,7 +125,7 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 
 - **distance within graphs:** eccentricity, diameter, periphery, radius, center
 
-- **distance between graphs:** spectral_distance
+- **distance between graphs:** spectral_distance, edit_distance
 
 - **connectivity:** strongly- and weakly-connected components, bipartite checks, condensation, attracting components, neighborhood
 
