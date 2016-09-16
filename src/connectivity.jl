@@ -88,7 +88,7 @@ Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(g
 of `g` as a vector of components, each represented by a
 vector of vertices belonging to the component.
 """
-function connected_components(g::SimpleGraph)
+function connected_components(g::Graph)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
     c, d = components(label)
