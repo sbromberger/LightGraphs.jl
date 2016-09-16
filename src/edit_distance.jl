@@ -74,7 +74,7 @@ function edit_distance(G₁::SimpleGraph, G₂::SimpleGraph;
       else
         # add remaining vertices of G₂ to the path
         λ⁺ = [λ; [(0,v) for v in vs]]
-        total_insert_cost = sum([insert_cost(v) for v in vs])
+        total_insert_cost = sum(insert_cost, vs)
         enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
       end
     end
