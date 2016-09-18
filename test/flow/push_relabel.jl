@@ -80,3 +80,13 @@ flow_matrix = zeros(Int, 8, 8)
 
 # Test with capacity matrix
 @test LightGraphs.push_relabel(residual_graph, 1, 8, capacity_matrix)[1] == 28
+
+# Non regression test added for #448
+M448 =[0 1 0 0 1 1      
+       1 0 0 0 1 0    
+       0 0 0 1 0 0    
+       0 0 0 0 0 0    
+       1 0 1 0 0 1    
+       0 0 0 0 1 0]  
+g448 = DiGraph(M448)
+@test maximum_flow(g448, 1, 2, M448, algorithm=PushRelabelAlgorithm())[1] == 1
