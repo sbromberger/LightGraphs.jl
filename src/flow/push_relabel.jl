@@ -196,7 +196,7 @@ function relabel!{T<:Number}(
             height[v] = min(height[v], height[to]+1)
         end
     end
-    count[height[v]] += 1
+    count[height[v]+1] += 1
     enqueue_vertex!(Q, v, active, excess)
     nothing
 end
