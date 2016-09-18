@@ -175,9 +175,7 @@ function maximum_flow{T<:Number}(
     capacity_matrix::AbstractArray{T,2} =  # edge flow capacities
         DefaultCapacity(flow_graph);
     algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
-    # TODO: reverse to the line below after PushRelabelAlgorithm fix
-        # PushRelabelAlgorithm(),
-        EdmondsKarpAlgorithm(),
+        PushRelabelAlgorithm(),
     restriction::T = zero(T)               # keyword argument for restriction max-flow
     )
     if restriction > zero(T)
