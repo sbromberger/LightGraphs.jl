@@ -135,8 +135,8 @@ end
 """
     Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
 
-Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`. 
-If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.   
+Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`.
+If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.
 """
 function Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
     func = periodic ? CycleGraph : PathGraph
@@ -180,4 +180,20 @@ function RoachGraph(k::Int)
     add_edge!(roach, nv(antannae)-1, nv(antannae)+1)
     add_edge!(roach, nv(antannae), nv(antannae)+2)
     return roach
+end
+
+
+"""This function generates `n` connected k-cliques """
+function CliqueGraph(k::Integer, n::Integer)
+    g = Graph(k*n)
+    for c=1:n
+        for i=(c-1)*k+1:c*k-1, j=i+1:c*k
+            add_edge!(g, i, j)
+        end
+    end
+    for i=1:n-1
+        add_edge!(g, (i-1)*k+1, i*k+1)
+    end
+    add_edge!(g, 1, (n-1)*k+1)
+    return g
 end

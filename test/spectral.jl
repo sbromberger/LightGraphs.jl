@@ -105,3 +105,10 @@ z = B * x
 @test size(y) == size(x)
 
 # END tests for Nonbacktracking
+
+# spectral distance checks
+for n=3:10
+  polygon = random_regular_graph(n, 2)
+  @test isapprox(spectral_distance(polygon, polygon), 0, atol=1e-8)
+  @test isapprox(spectral_distance(polygon, polygon, 1), 0, atol=1e-8)
+end

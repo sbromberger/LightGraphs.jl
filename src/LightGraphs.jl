@@ -25,6 +25,12 @@ common_neighbors, all_neighbors, has_self_loop, rem_vertex!,
 # distance
 eccentricity, diameter, periphery, radius, center,
 
+# distance between graphs
+spectral_distance, edit_distance,
+
+# edit path cost functions
+MinkowskiCost, BoundedMinkowskiCost,
+
 # operators
 complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
@@ -93,7 +99,7 @@ label_propagation, maximal_cliques,
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
 
 #smallgraphs
 smallgraph
@@ -125,6 +131,7 @@ include("core.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
         include("distance.jl")
+        include("edit_distance.jl")
         include("shortestpaths/astar.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
