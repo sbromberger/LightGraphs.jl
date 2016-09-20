@@ -118,7 +118,7 @@ function test_other(mat, n )
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 	
-    println("equality testing "); begin
+    begin
         @test CombinatorialAdjacency(mat) == CombinatorialAdjacency(mat)
         S = StochasticAdjacency(CombinatorialAdjacency(mat))
         @test S.A == S.A
@@ -151,30 +151,30 @@ function test_punchedmatrix(mat, n)
     @test_approx_eq_eps dot(perron(ahatp), evecs[:,1]) 0.0 1e-8
 end
 
-println("constructors");begin
+begin
 	n = 10
 	mat = sparse(spones(sprand(n,n,0.3)))
-	println("Adjacency");begin
+	begin
         test_adjacency(mat)
     end
 
-	println("Laplacian");begin
+	begin
         test_laplacian(mat)
     end
 
-	println("Accessors");begin
+	begin
         test_accessors(mat, n)
     end
 end
 
 
-println("arithmetic");begin
+begin
 	n = 10
 	mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
     test_arithmetic(mat, n)
 end
 
-println("other tests");begin
+begin
 	n = 10
 	mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
 	test_other(mat, n)
@@ -202,7 +202,6 @@ function stationarydistribution(A::CombinatorialAdjacency; kwargs...)
 	stationarydistribution(R; kwargs...)
 end
 
-println("Random Walk Demo")
 begin
 	n = 100
 	p = 16/n
