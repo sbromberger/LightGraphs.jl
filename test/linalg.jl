@@ -1,8 +1,7 @@
 module TestLinAlg
 using LightGraphs.LinAlg
 using Base.Test
-import LightGraphs.LinAlg.SparseMatrix
-import LightGraphs.LinAlg.perron
+import LightGraphs.LinAlg: SparseMatrix, perron, A_mul_B!
 
 
 export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other

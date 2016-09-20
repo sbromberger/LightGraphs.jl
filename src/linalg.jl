@@ -2,7 +2,7 @@ __precompile__(true)
 
 module LinAlg
 @doc "A package for using the type system to check types of graph matrices." -> LinAlg
-import Base: convert, sparse, size, scale, diag, eltype, ndims, issym, ==, *, .*
+import Base: convert, sparse, size, scale, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length
 export  convert,
 		SparseMatrix,
 		GraphMatrix,
