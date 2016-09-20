@@ -50,7 +50,6 @@ a1 = Graph(adjmx1)
 a2 = DiGraph(adjmx2)
 
 tests = [
-    "linalg",
     "core",
     "edgeiter",
     "operators",
@@ -64,6 +63,7 @@ tests = [
     "connectivity",
     "randgraphs",
     "generators",
+    "linalg",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
