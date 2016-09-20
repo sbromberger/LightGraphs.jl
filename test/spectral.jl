@@ -81,13 +81,14 @@ end
 # TESTS FOR Nonbacktracking operator.
 
 n = 10; k = 5
-pg = PathGraph(n)
+pg = CompleteGraph(n)
 # ϕ1 = nonbacktrack_embedding(pg, k)'
 
 nbt = Nonbacktracking(pg)
 B, emap = non_backtracking_matrix(pg)
 Bs = sparse(nbt)
 @test sparse(B) == Bs
+@test_approx_eq_eps(eigs(nbt, nev=1)[1], eigs(B, nev=1)[1], 1e-5)
 
 # check that matvec works
 x = ones(Float64, nbt.m)
