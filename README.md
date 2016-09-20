@@ -9,7 +9,7 @@
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-**For 0.5 prerelease compatibility, please check out the `compat-0.5` branch.**
+#### LightGraphs versions in the v0.7 series are designed for Julia 0.5. For Julia 0.4 support, please use the latest version in the 0.6 series.
 
 An optimized graphs package.
 
@@ -26,9 +26,6 @@ decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
-
-Also check the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl). for additional functionalities.
-
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
@@ -163,12 +160,12 @@ Documentation for methods is also available via the Julia REPL help system.
 
 
 ## Supported Versions
+* LightGraphs master is designed to work with the latest stable version of Julia.
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
-* Julia 0.4: LightGraphs master is designed to work with the latest stable version of Julia (currently 0.4.x).
-* Julia 0.5: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.5, please file an issue. NOTE as of 2016-08-25: 0.5 prerelease support is in the `compat-0.5` branch. Please use that branch if you're testing with 0.5.
+* Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
+* Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
+* Julia 0.6: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.6, please file an issue. 
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
-
-

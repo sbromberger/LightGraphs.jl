@@ -22,7 +22,7 @@ Graph() = Graph(0)
 function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
-    issym(adjmx) || error("Adjacency / distance matrices must be symmetric")
+    issymmetric(adjmx) || error("Adjacency / distance matrices must be symmetric")
 
     g = Graph(dima)
     for i in find(triu(adjmx))

@@ -6,10 +6,11 @@ using Distributions: Binomial
 using Base.Collections
 using LightXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
+using StatsBase: fit, Histogram
 
 import Base: write, ==, <, *, ≈, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
+            sum, size, sparse, eltype, length, ndims, issymmetric, transpose,
             ctranspose, join, start, next, done, eltype, get
 
 
