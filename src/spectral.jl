@@ -244,6 +244,14 @@ function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
     return y
 end
 
+function A_mul_B!(C, nbt::Nonbacktracking, B)
+    # computs C = A*B
+    for i in 1:size(B,2)
+        C[:,i] = nbt*B[:,i]
+    end
+    return C
+end
+
 """contract!(vertexspace, nbt, edgespace) in place version of
 contract(nbt, edgespace). modifies first argument
 """
