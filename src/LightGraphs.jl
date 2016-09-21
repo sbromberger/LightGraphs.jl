@@ -102,7 +102,10 @@ CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
 WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
 
 #smallgraphs
-smallgraph
+smallgraph,
+
+#minimum spanning trees
+kruskal_mst
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -168,5 +171,6 @@ include("core.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
         include("smallgraphs.jl")
+        include("spanningtrees/kruskal.jl")
 
 end # module
