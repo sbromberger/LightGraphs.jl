@@ -102,7 +102,12 @@ CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
 WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
 
 #smallgraphs
-smallgraph
+smallgraph,
+
+# Euclidean graphs
+euclidean_graph
+
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -148,6 +153,8 @@ include("core.jl")
             include("persistence/jld.jl")
         include("generators/staticgraphs.jl")
             include("generators/randgraphs.jl")
+            include("generators/euclideangraphs.jl")
+            include("generators/smallgraphs.jl")
         include("centrality/betweenness.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
@@ -167,6 +174,5 @@ include("core.jl")
                 include("flow/kishimoto.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
-        include("smallgraphs.jl")
 
 end # module

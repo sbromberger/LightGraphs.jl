@@ -38,8 +38,8 @@ Creates a small graph of type `s`. Admissible values for `s` are:
 | :housex                   |   A house graph, with two edges crossing the bottom square. |
 | :icosahedral              |   A [Platonic icosahedral   graph](https://en.wikipedia.org/wiki/Platonic_graph). |
 | :krackhardtkite           |   A [Krackhardt-Kite social network  graph](http://mathworld.wolfram.com/KrackhardtKite.html). |
-| :moebiuskantor            |   A [Möbius-Kantor | graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph). |
-| :octahedral               |   A [Platonic octahedral  | graph](https://en.wikipedia.org/wiki/Platonic_graph).
+| :moebiuskantor            |   A [Möbius-Kantor graph](http://en.wikipedia.org/wiki/Möbius–Kantor_graph). |
+| :octahedral               |   A [Platonic octahedral graph](https://en.wikipedia.org/wiki/Platonic_graph).
 | :pappus                   |   A [Pappus graph](http://en.wikipedia.org/wiki/Pappus_graph). |
 | :petersen                 |   A [Petersen graph](http://en.wikipedia.org/wiki/Petersen_graph). |
 | :sedgewickmaze            |   A simple maze graph used in Sedgewick's *Algorithms in C++: Graph  Algorithms (3rd ed.)* |

@@ -61,8 +61,10 @@ tests = [
     "cliques",
     "subgraphs",
     "connectivity",
-    "randgraphs",
-    "generators",
+    "generators/randgraphs",
+    "generators/staticgraphs",
+    "generators/smallgraphs",
+    "generators/euclideangraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
@@ -87,8 +89,7 @@ tests = [
     "flow/push_relabel",
     "flow/maximum_flow",
     "flow/multiroute_flow",
-    "utils",
-    "smallgraphs"
+    "utils"
 ]
 
 
