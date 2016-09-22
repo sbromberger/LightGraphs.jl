@@ -89,7 +89,7 @@ tests = [
     "flow/multiroute_flow",
     "utils",
     "smallgraphs",
-    "spanningtrees/kruskal.jl"
+    "spanningtrees/kruskal"
 ]
 
 
