@@ -1,14 +1,15 @@
-immutable KruskalHeapEntry{T}
-    edge::Pair{Int, Int}
+immutable KruskalHeapEntry{T<:Real}
+    edge::LightGraphs.Edge
     dist::T
 end
 
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
 
-""" Performs Quick-Find algorithm
-to check for connected vertices
+""" Performs [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
+on a given pair of nodes `p`and `q`, and makes a connection between them
+in the vector `nodes`.
 """
-function quick_find(nodes, p, q)
+function quick_find!(nodes, p, q)
     pid = nodes[p]
     qid = nodes[q]
     for i in 1:length(nodes)
@@ -18,25 +19,24 @@ function quick_find(nodes, p, q)
     end
 end
 
-function check_connected(nodes, p, q)
-
-    return nodes[p] == nodes[q]
-end
-
-"""Kruskal's algorithm
-to find minimum spanning tree for undirected graphs
+"""Performs [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
+on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
+and computes minimum spanning tree. Returns a `Vector{KruskalHeapEntry}`,
+that contains the containing edges and its weights.
 """
-function kruskal_mst{T}(
+function kruskal_mst{T<:Real}(
     g::SimpleGraph,
     distmx::AbstractArray{T, 2}
 )
 
-    edge_list = []
-    mst = []
+    edge_list = Vector{KruskalHeapEntry{T}}()
+    mst = Vector{KruskalHeapEntry{T}}()
     connected_nodes = Vector{Int}(1:nv(g))
 
+    sizehint!(edge_list, ne(g))
+    sizehint!(mst, ne(g))
+
     for e in edges(g)
-        println(e)
         heappush!(edge_list, KruskalHeapEntry{T}(e, distmx[src(e), dst(e)]))
     end
 
@@ -45,8 +45,8 @@ function kruskal_mst{T}(
         v = src(e.edge)
         w = dst(e.edge)
 
-        if !check_connected(connected_nodes, v, w)
-            quick_find(connected_nodes, v, w)
+        if connected_nodes[v] != connected_nodes[w]
+            quick_find!(connected_nodes, v, w)
             push!(mst, e)
         end
     end

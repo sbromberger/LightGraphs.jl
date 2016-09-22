@@ -88,7 +88,8 @@ tests = [
     "flow/maximum_flow",
     "flow/multiroute_flow",
     "utils",
-    "smallgraphs"
+    "smallgraphs",
+    "spanningtrees/kruskal.jl"
 ]
 
 
