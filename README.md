@@ -9,7 +9,6 @@
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
-#### LightGraphs versions in the v0.7 series are designed for Julia 0.5. For Julia 0.4 support, please use the latest version in the 0.6 series.
 
 An optimized graphs package.
 
@@ -26,6 +25,12 @@ decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
+
+Additional functionalities can be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
+
+## Documentation
+Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
+Documentation for methods is also available via the Julia REPL help system.
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
@@ -154,17 +159,12 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl), [NetworkViz](https://github.com/abhijithanilkumar/NetworkViz.jl/)
 
 
-## Documentation
-Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
-Documentation for methods is also available via the Julia REPL help system.
-
-
 ## Supported Versions
 * LightGraphs master is designed to work with the latest stable version of Julia.
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
-* Julia 0.6: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.6, please file an issue. 
+* Julia 0.6: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.6, please file an issue.
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
