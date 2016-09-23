@@ -1,7 +1,7 @@
 # TODO: implement writing a dict of graphs
 
 function _graphml_read_one_graph(e::XMLElement, isdirected::Bool)
-    nodes = Dict{AbstractString,Int}()
+    nodes = Dict{String,Int}()
     edges = Vector{Edge}()
 
     nodeid = 1
@@ -25,7 +25,7 @@ function _graphml_read_one_graph(e::XMLElement, isdirected::Bool)
     return g
 end
 
-function loadgraphml(io::IO, gname::AbstractString)
+function loadgraphml(io::IO, gname::String)
     xdoc = parse_string(readall(io))
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
@@ -58,7 +58,7 @@ function loadgraphml_mult(io::IO)
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = Dict{AbstractString, SimpleGraph}()
+    graphs = Dict{String, SimpleGraph}()
     for c in child_nodes(xroot)  # c is an instance of XMLNode
         if is_elementnode(c)
             e = XMLElement(c)  # this makes an XMLElement instance
@@ -111,7 +111,7 @@ function savegraphml_mult(io::IO, graphs::Dict)
     return length(graphs)
 end
 
-savegraphml(io::IO, g::SimpleGraph, gname::AbstractString) =
+savegraphml(io::IO, g::SimpleGraph, gname::String) =
     savegraphml_mult(io, Dict(gname=>g))
 
 filemap[:graphml] = (loadgraphml, loadgraphml_mult, savegraphml, savegraphml_mult)

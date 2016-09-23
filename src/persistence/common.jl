@@ -1,13 +1,33 @@
 NI(x...) = error("This function is not implemented.")
 
-@deprecate readgraph load
-
+# filemap is filled in the format specific source files
 const filemap = Dict{Symbol, Tuple{Function, Function, Function, Function}}()
         # :gml        => (loadgml, loadgml_mult, savegml, savegml_mult)
         # :graphml    => (loadgraphml, loadgraphml_mult, savegraphml, savegraphml_mult)
         # :md         => (loadmatrixdepot, NOTIMPLEMENTED, NOTIMPLEMENTED, NOTIMPLEMENTED)
 
 # load a single graph by name
+
+"""
+    loadgraph(file, t=:lg)
+
+Reads a graph from  `file` in the format `t`.
+
+Supported formats are `:lg, :gml, :dot, :graphml, :gexf, :net, :jld`.
+"""
+function loadgraph(fn::String, x...)
+    GZip.open(fn,"r") do io
+        loadgraph(io, x...)
+    end
+end
+
+function loadgraph(io::IO, t::Symbol=:lg)
+    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
+    d = filemap[t][2](io)
+    return first(d)[2]
+end
+
+
 """
     load(file, name, t=:lg)
 
@@ -15,7 +35,7 @@ Loads a graph with name `name` from `file` in format `t`.
 
 Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
 """
-function load(io::IO, gname::AbstractString, t::Symbol=:lg)
+function load(io::IO, gname::String, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][1](io, gname)
 end
@@ -35,12 +55,17 @@ function load(io::IO, t::Symbol=:lg)
 end
 
 # load from a file
-function load(fn::AbstractString, x...)
+function load(fn::String, x...)
     GZip.open(fn,"r") do io
         load(io, x...)
     end
 end
 
+
+"""
+Save a graph to file. See [`save`](@ref).
+"""
+savegraph(f, g::SimpleGraph, x...; kws...) = save(f, g::SimpleGraph, x...; kws...)
 
 """
     save(file, g, t=:lg)
@@ -56,7 +81,7 @@ For some graph formats, multiple graphs in a  `dict` `"name"=>g` can be saved in
 
 Returns the number of graphs written.
 """
-function save(io::IO, g::SimpleGraph, gname::AbstractString, t::Symbol=:lg)
+function save(io::IO, g::SimpleGraph, gname::String, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][3](io, g, gname)
 end
@@ -66,13 +91,13 @@ save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
 save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
 
 # save a dictionary of graphs {"name" => graph}
-function save{T<:AbstractString}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
+function save{T<:String}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][4](io, d)
 end
 
 # save to a file
-function save(fn::AbstractString, x...; compress::Bool=false)
+function save(fn::String, x...; compress::Bool=false)
     if compress
         io = GZip.open(fn,"w")
     else
