@@ -1,5 +1,4 @@
 abstract AbstractPathState
-
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
 _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
@@ -7,13 +6,14 @@ _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x
 """A type representing a single edge between two vertices of a graph."""
 typealias Edge Pair{Int,Int}
 
+@deprecate rev(e::Edge) reverse(e)
+
 """Return source of an edge."""
 src(e::Edge) = e.first
 """Return destination of an edge."""
 dst(e::Edge) = e.second
 
  is_ordered(e::Edge) = src(e) <= dst(e)
-@deprecate rev(e::Edge) reverse(e)
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 

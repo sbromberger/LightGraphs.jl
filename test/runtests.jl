@@ -2,7 +2,6 @@
 using LightGraphs
 using Base.Test
 
-
 g1 = smallgraph(:petersen)
 g2 = smallgraph(:tutte)
 g3 = PathGraph(5)
@@ -58,7 +57,6 @@ tests = [
     "edit_distance",
     "spectral",
     "cliques",
-    "subgraphs",
     "connectivity",
     "persistence/persistence",
     "generators/randgraphs",
