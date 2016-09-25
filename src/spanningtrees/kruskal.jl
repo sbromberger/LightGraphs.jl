@@ -1,5 +1,5 @@
 immutable KruskalHeapEntry{T<:Real}
-    edge::LightGraphs.Edge
+    edge::Edge
     dist::T
 end
 
@@ -26,11 +26,11 @@ that contains the containing edges and its weights.
 """
 function kruskal_mst{T<:Real}(
     g::SimpleGraph,
-    distmx::AbstractArray{T, 2}
+    distmx::AbstractArray{T, 2} = DefaultDistance()
 )
 
     edge_list = Vector{KruskalHeapEntry{T}}()
-    mst = Vector{KruskalHeapEntry{T}}()
+    mst = Vector{Edge}()
     connected_nodes = Vector{Int}(1:nv(g))
 
     sizehint!(edge_list, ne(g))
@@ -47,7 +47,7 @@ function kruskal_mst{T<:Real}(
 
         if connected_nodes[v] != connected_nodes[w]
             quick_find!(connected_nodes, v, w)
-            push!(mst, e)
+            push!(mst, e.edge)
         end
     end
 
