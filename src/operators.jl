@@ -314,7 +314,7 @@ sg, vmap = subgraph(g, elist)
 @asssert sg == g[elist]
 ```
 """
-function induced_subgraph{T<:SimpleGraph}(g::T, vlist)
+function induced_subgraph{T<:SimpleGraph}(g::T, vlist::AbstractVector{Int})
     allunique(vlist) || error("Vertices in subgraph list must be unique")
     h = T(length(vlist))
     newvid = Dict{Int, Int}()
@@ -338,7 +338,7 @@ function induced_subgraph{T<:SimpleGraph}(g::T, vlist)
 end
 
 
-function induced_subgraph{T<:SimpleGraph}(g::T, elist::Vector{Edge})
+function induced_subgraph{T<:SimpleGraph}(g::T, elist::AbstractVector{Edge})
     h = T()
     newvid = Dict{Int, Int}()
     vmap = Vector{Int}()
