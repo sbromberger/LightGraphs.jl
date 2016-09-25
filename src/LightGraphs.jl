@@ -80,7 +80,7 @@ a_star,
 
 # persistence
 # readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-load, save,
+load, save, savegraph, loadgraph,
 
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,

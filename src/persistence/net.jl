@@ -4,7 +4,7 @@ Writes a graph `g` to a file `f` in the [Pajek
 NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
 Returns 1 (number of graphs written).
 """
-function savenet(f::IO, g::SimpleGraph, gname::AbstractString = "g")
+function savenet(f::IO, g::SimpleGraph, gname::String = "g")
     println(f, "*Vertices $(nv(g))")
     # write edges
     if is_directed(g)
@@ -23,7 +23,7 @@ end
  NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
  Returns 1 (number of graphs written).
 """
-function loadnet(f::IO, gname::AbstractString = "g")
+function loadnet(f::IO, gname::String = "g")
     line =readline(f)
     # skip comments
     while startswith(line, "%")

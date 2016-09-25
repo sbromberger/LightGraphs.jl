@@ -37,7 +37,7 @@ end
 
 """Returns a dictionary of (name=>graph) loaded from file `fn`."""
 function loadlg_mult(io::IO)
-    graphs = Dict{AbstractString, SimpleGraph}()
+    graphs = Dict{String, SimpleGraph}()
     while !eof(io)
         line = strip(chomp(readline(io)))
         if startswith(line,"#") || line == ""
@@ -57,7 +57,7 @@ function loadlg_mult(io::IO)
     return graphs
 end
 
-function loadlg(io::IO, gname::AbstractString)
+function loadlg(io::IO, gname::String)
     while !eof(io)
         line = strip(chomp(readline(io)))
         (startswith(line,"#") || line == "") && continue
@@ -81,7 +81,7 @@ to the IO stream designated by `io`.
 
 Returns 1 (number of graphs written).
 """
-function savelg(io::IO, g::SimpleGraph, gname::AbstractString)
+function savelg(io::IO, g::SimpleGraph, gname::String)
     # write header line
     dir = is_directed(g)? "d" : "u"
     line = join([nv(g), ne(g), dir, gname], ",")
@@ -106,10 +106,10 @@ function savelg_mult(io::IO, graphs::Dict)
     return ng
 end
 
-# savelg(io::IO, g::SimpleGraph, n::AbstractString) =
+# savelg(io::IO, g::SimpleGraph, n::String) =
 #     savelg_mult(io, Dict(n=>g))
 
-# write(g::Graph, fn::AbstractString; compress::Bool=true) = write(g, "graph", fn; compress=compress)
-# write(g::DiGraph, fn::AbstractString; compress::Bool=true) = write(g, "digraph", fn; compress=compress)
+# write(g::Graph, fn::String; compress::Bool=true) = write(g, "graph", fn; compress=compress)
+# write(g::DiGraph, fn::String; compress::Bool=true) = write(g, "digraph", fn; compress=compress)
 
 filemap[:lg] = (loadlg, loadlg_mult, savelg, savelg_mult)

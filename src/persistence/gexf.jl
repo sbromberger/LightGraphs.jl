@@ -2,7 +2,7 @@
 # TODO: implement readgexf
 
 """
-savegexf(f::IO, g::SimpleGraph, gname::AbstractString)
+savegexf(f::IO, g::SimpleGraph, gname::String)
 
 Writes a graph `g` with name `gname`
 to a file `f` in the
@@ -10,7 +10,7 @@ to a file `f` in the
 
 Returns 1 (number of graphs written).
 """
-function savegexf(f::IO, g::SimpleGraph, gname::AbstractString)
+function savegexf(f::IO, g::SimpleGraph, gname::String)
     xdoc = XMLDocument()
     xroot = create_root(xdoc, "gexf")
     set_attribute(xroot,"xmlns","http://www.gexf.net/1.2draft")

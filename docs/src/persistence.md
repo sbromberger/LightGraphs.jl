@@ -4,17 +4,24 @@ Graphs may be written to I/O streams and files using the `save` function and
 read with the `load` function. Currently supported graph formats are the
  *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
 
-```@docs
-save
-load
+```@autodocs
+Modules = [LightGraphs]
+Pages   = [ "persistence/common.jl"]
+Private = false
 ```
 
 ## Examples
 
 ```julia
-julia> save(STDOUT, g)
-julia> save("mygraph.jgz", g, "mygraph"; compress=true)
-julia> g = load("multiplegraphs.jgz")
-julia> g = load("multiplegraphs.xml", :graphml)
-julia> g = load("mygraph.gml", "mygraph", :gml)
+save(STDOUT, g)
+save("mygraph.jgz", g, "mygraph", compress=true)
+
+savegraph("mygraph.jgz", g, compress=true)
+
+dg = load("multiplegraphs.jgz") # dictionary of graphs
+dg = load("multiplegraphs.graphml", :graphml)
+dg = load("mygraph.gml", "mygraph", :gml)
+
+g = laoadgraph("mygraph.gml",  :gml)
+
 ```
