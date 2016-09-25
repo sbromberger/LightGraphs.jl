@@ -34,9 +34,9 @@ distmx[4,3] = 3
 
 # Testing Kruskal's algorithm
 mst = kruskal_mst(g, distmx)
-vec_mst = Vector{LightGraphs.KruskalHeapEntry{Float64}}()
-push!(vec_mst, LightGraphs.KruskalHeapEntry(LightGraphs.Edge(1, 2), 1.0))
-push!(vec_mst, LightGraphs.KruskalHeapEntry(LightGraphs.Edge(3, 4), 3.0))
-push!(vec_mst, LightGraphs.KruskalHeapEntry(LightGraphs.Edge(2, 3), 4.0))
+vec_mst = Vector{Edge}()
+push!(vec_mst, Edge(1, 2))
+push!(vec_mst, Edge(3, 4))
+push!(vec_mst, Edge(2, 3))
 
 @test mst == vec_mst

@@ -41,13 +41,13 @@ function kruskal_mst{T<:Real}(
     end
 
     while !isempty(edge_list) && length(mst) < nv(g) - 1
-        e = heappop!(edge_list)
-        v = src(e.edge)
-        w = dst(e.edge)
+        heap_entry = heappop!(edge_list)
+        v = src(heap_entry.edge)
+        w = dst(heap_entry.edge)
 
         if connected_nodes[v] != connected_nodes[w]
             quick_find!(connected_nodes, v, w)
-            push!(mst, e.edge)
+            push!(mst, heap_entry.edge)
         end
     end
 
