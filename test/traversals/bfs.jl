@@ -1,9 +1,12 @@
+g5 = DiGraph(4)
+add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
+
 z = bfs_tree(g5, 1)
 visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int,nv(g5)))
 LightGraphs.bfs_tree!(visitor, g5, 1)
 t = visitor.tree
-@test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 @test t == [1,1,1,3]
+@test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
 
 @test gdistances(g6, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g6, [1,2]) == [0, 0, 1, 1, 2]

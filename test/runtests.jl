@@ -1,7 +1,6 @@
-# include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 using Base.Test
-
 
 g1 = smallgraph(:petersen)
 g2 = smallgraph(:tutte)
@@ -58,7 +57,6 @@ tests = [
     "edit_distance",
     "spectral",
     "cliques",
-    "subgraphs",
     "connectivity",
     "persistence/persistence",
     "generators/randgraphs",

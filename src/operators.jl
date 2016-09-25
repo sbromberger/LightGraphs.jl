@@ -184,41 +184,6 @@ Replicate `len` times `h` and connect each vertex with its copies in a path
 """
 crosspath(len::Integer, g::Graph) = cartesian_product(PathGraph(len), g)
 
-"""
-    induced_subgraph(g, iter)
-
-Filters graph `g` to include only the vertices present in the iterable
-argument `vs`. Returns the subgraph of `g` induced by `vs`.
-"""
-function induced_subgraph{T<:SimpleGraph}(g::T, iter)
-    n = length(iter)
-    isequal(n, length(unique(iter))) || error("Vertices in subgraph list must be unique")
-    isequal(n, nv(g)) && return copy(g) # if iter is not a proper subgraph
-
-    h = T(n)
-    newvid = Dict{Int, Int}()
-    i=1
-    for (i,v) in enumerate(iter)
-        newvid[v] = i
-    end
-
-    iterset = Set(iter)
-    for s in iter
-        for d in out_neighbors(g, s)
-            # println("s = $s, d = $d")
-            if d in iterset && has_edge(g, s, d)
-                newe = Edge(newvid[s], newvid[d])
-                add_edge!(h, newe)
-            end
-        end
-    end
-    return h
-end
-
-# dispatch for g[[1,2,3]], g[1:3], g[Set([1,2,3])]
-# these are the only allowed dispatches, everything else is slow
-getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)
-
 
 # The following operators allow one to use a LightGraphs.Graph as a matrix in eigensolvers for spectral ranking and partitioning.
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
@@ -309,3 +274,104 @@ function tensor_product{G<:SimpleGraph}(g::G, h::G)
     end
     return z
 end
+
+
+## subgraphs ###
+
+"""
+    induced_subgraph(g, vlist)
+
+Returns the subgraph of `g` induced by the vertices in  `vlist`.
+
+The returned graph has `length(vlist)` vertices, with the new vertex `i`
+corresponding to the vertex of the original graph in the `i`-th position
+of `vlist`.
+
+Returns  also a vector `vmap` mapping the new vertices to the
+old ones: the  vertex `i` in the subgraph corresponds to
+the vertex `vmap[i]` in `g`.
+
+    induced_subgraph(g, elist)
+
+Returns the subgraph of `g` induced by the edges in `elist`, along with
+the associated vector `vmap` mapping new vertices to the old ones.
+
+
+### Usage Examples:
+```julia
+g = CompleteGraph(10)
+sg, vmap = subgraph(g, 5:8)
+@assert g[5:8] == sg
+@assert nv(sg) == 4
+@assert ne(sg) == 6
+@assert vm[4] == 8
+
+sg, vmap = subgraph(g, [2,8,3,4])
+@asssert sg == g[[2,8,3,4]]
+
+elist = [Edge(1,2), Edge(3,4), Edge(4,8)]
+sg, vmap = subgraph(g, elist)
+@asssert sg == g[elist]
+```
+"""
+function induced_subgraph{T<:SimpleGraph}(g::T, vlist::AbstractVector{Int})
+    allunique(vlist) || error("Vertices in subgraph list must be unique")
+    h = T(length(vlist))
+    newvid = Dict{Int, Int}()
+    vmap =Vector{Int}(length(vlist))
+    for (i,v) in enumerate(vlist)
+        newvid[v] = i
+        vmap[i] = v
+    end
+
+    vset = Set(vlist)
+    for s in vlist
+        for d in out_neighbors(g, s)
+            # println("s = $s, d = $d")
+            if d in vset && has_edge(g, s, d)
+                newe = Edge(newvid[s], newvid[d])
+                add_edge!(h, newe)
+            end
+        end
+    end
+    return h, vmap
+end
+
+
+function induced_subgraph{T<:SimpleGraph}(g::T, elist::AbstractVector{Edge})
+    h = T()
+    newvid = Dict{Int, Int}()
+    vmap = Vector{Int}()
+
+    for e in elist
+        u, v = e
+        for i in (u,v)
+            if !haskey(newvid, i)
+                add_vertex!(h)
+                newvid[i] = nv(h)
+                push!(vmap, i)
+            end
+        end
+        add_edge!(h, newvid[u], newvid[v])
+    end
+    return h, vmap
+end
+
+
+"""
+    g[iter]
+
+Returns the subgraph induced by `iter`. Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
+"""
+getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)[1]
+
+
+"""
+    egonet(g, v::Int, d::Int; dir=:out)
+
+Returns the subgraph of `g` induced by the neighbors of `v` up to distance
+`d`. If `g` is a `DiGraph` the `dir` optional argument specifies
+the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
+to be considered. This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
+"""
+egonet(g::SimpleGraph, v::Int, d::Int; dir=:out) = g[neighborhood(g, v, d, dir=dir)]

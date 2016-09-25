@@ -59,7 +59,7 @@ wcc = weakly_connected_components(h)
 function scc_ok(graph)
   """Check that all SCC really are strongly connected"""
   scc = strongly_connected_components(graph)
-  scc_as_subgraphs = map(i -> induced_subgraph(graph, i), scc)
+  scc_as_subgraphs = map(i -> graph[i], scc)
   return all(is_strongly_connected, scc_as_subgraphs)
 end
 
@@ -163,10 +163,6 @@ g10 = StarDiGraph(10)
 @test length(neighborhood(g10, 2, 1, dir=:in)) == 2
 @test length(neighborhood(g10, 1, 2, dir=:in)) == 1
 @test length(neighborhood(g10, 2, 2, dir=:in)) == 2
-
-g10 = StarGraph(10)
-@test egonet(g10, 1, 0) == Graph(1,0)
-@test egonet(g10, 1, 1) == g10
 
 @test !isgraphical([1,1,1])
 @test isgraphical([2,2,2])

@@ -77,6 +77,9 @@ x = p*ones(10)
 @test size(p, 1) == size(p, 2) == 10
 @test size(p, 3) == 1
 
+
+g5 = DiGraph(4)
+add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
 @test g5 * ones(nv(g5)) == [2.0, 1.0, 1.0, 0.0]
 @test sum(g5, 1) ==  [0, 1, 2, 1]
 @test sum(g5, 2) ==  [2, 1, 1, 0]
@@ -120,3 +123,52 @@ function crosspath_slow(len, h)
     return g
 end
 @test crosspath_slow(2, g22) == crosspath(2,g22)
+
+
+## test subgraphs ##
+
+g = smallgraph(:bull)
+n = 3
+h = g[1:n]
+@test nv(h) == n
+@test ne(h) == 3
+
+h = g[[1,2,4]]
+@test nv(h) == n
+@test ne(h) == 2
+
+h = g[[1,5]]
+@test nv(h) == 2
+@test ne(h) == 0
+@test typeof(h) == typeof(g)
+
+g = DiGraph(100,200)
+h = g[5:26]
+@test nv(h) == 22
+@test typeof(h) == typeof(g)
+@test_throws ErrorException g[[1,1]]
+
+r = 5:26
+h2, vm = induced_subgraph(g, r)
+@test h2 == h
+@test vm == collect(r)
+@test h2 == g[r]
+
+sg, vm = induced_subgraph(CompleteGraph(10), 5:8)
+@test nv(sg) == 4
+@test ne(sg) == 6
+
+sg2, vm = induced_subgraph(CompleteGraph(10), [5,6,7,8])
+@test sg2 == sg
+@test vm[4] == 8
+
+gg5 = CompleteGraph(10)
+elist = [Edge(1,2),Edge(2,3),Edge(3,4),Edge(4,5),Edge(5,1)]
+sg, vm = induced_subgraph(gg5, elist)
+@test sg == CycleGraph(5)
+@test sort(vm) == [1:5;]
+
+
+g10 = StarGraph(10)
+@test egonet(g10, 1, 0) == Graph(1,0)
+@test egonet(g10, 1, 1) == g10

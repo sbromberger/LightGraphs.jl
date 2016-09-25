@@ -34,8 +34,8 @@ MinkowskiCost, BoundedMinkowskiCost,
 # operators
 complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
-induced_subgraph, join, tensor_product, cartesian_product,
-crosspath,
+join, tensor_product, cartesian_product, crosspath,
+induced_subgraph, egonet,
 
 # graph visit
 SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -54,7 +54,7 @@ randomwalk, saw, non_backtracking_randomwalk,
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
-condensation, attracting_components, neighborhood, egonet, isgraphical,
+condensation, attracting_components, neighborhood, isgraphical,
 
 
 # maximum_adjacency_visit

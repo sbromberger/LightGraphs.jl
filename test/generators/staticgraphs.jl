@@ -36,7 +36,7 @@ g = Grid([3,3,4])
 
 g = CliqueGraph(3,5)
 @test nv(g) == 15 && ne(g) == 20
-@test induced_subgraph(g,[1 2 3]) == CompleteGraph(3)
+@test g[1:3] == CompleteGraph(3)
 
 g = crosspath(3, BinaryTree(2))
 # f = Vector{Vector{Int}}[[2 3 4];
