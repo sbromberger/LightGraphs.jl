@@ -11,6 +11,7 @@ Please include version numbers of all relevant libraries and Julia itself.
 - Squash commits in a PR.
 - Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
 - Minimize dependencies on external packages, and avoid introducing new dependencies. In general,
+
     - PRs introducing dependencies on core Julia packages are ok.
     - PRs introducing dependencies on non-core "leaf" packages (no subdependencies except for core Julia packages) are less ok.
     - PRs introducing dependencies on non-core non-leaf packages require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
