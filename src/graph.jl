@@ -43,10 +43,13 @@ function Graph(g::DiGraph)
                 edgect += 2     # this is a new edge only in badjlist
             else
                 edgect += 1     # this is an existing edge - we already have it
+                if i == j
+                    edgect += 1 # need to count self loops
+                end
             end
         end
     end
-
+    iseven(edgect) || throw(AssertionError("invalid edgect in graph creation - please file bug report"))
     return Graph(vertices(g), edgect ÷ 2, newfadj)
 end
 

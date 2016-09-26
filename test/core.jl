@@ -82,6 +82,8 @@ end
 @test common_neighbors(h, 2, 3) == [5]
 
 @test add_edge!(g, 1, 1)
+@test has_self_loops(g)
+@test num_self_loops(g) == 1
 @test !add_edge!(g, 1, 1)
 @test rem_edge!(g, 1, 1)
 @test !rem_edge!(g, 1, 1)
