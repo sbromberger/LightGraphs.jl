@@ -180,7 +180,7 @@ function period(g::DiGraph)
     !is_strongly_connected(g) && error("Graph must be strongly connected")
 
     # First check if there's a self loop
-    has_self_loop(g) && return 1
+    has_self_loops(g) && return 1
 
     g_bfs_tree  = bfs_tree(g,1)
     levels      = gdistances(g_bfs_tree,1)

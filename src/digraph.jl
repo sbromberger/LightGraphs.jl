@@ -50,7 +50,7 @@ end
 
 function DiGraph(g::Graph)
     h = DiGraph(nv(g))
-    h.ne = ne(g) * 2
+    h.ne = ne(g) * 2 - num_self_loops(g)
     h.fadjlist = deepcopy(fadj(g))
     h.badjlist = deepcopy(badj(g))
     return h
