@@ -88,8 +88,8 @@ x = p*ones(10)
 @test eltype(p) == Float64
 @test length(p) == 100
 @test ndims(p) == 2
-@test issym(p)
-@test !issym(g5)
+@test issymmetric(p)
+@test !issymmetric(g5)
 
 g22 = CompleteGraph(2)
 h = cartesian_product(g22, g22)

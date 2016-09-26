@@ -1,3 +1,15 @@
+import Base: *
+
+export adjacency_matrix,
+    laplacian_matrix,
+    incidence_matrix,
+    non_backtracking_matrix,
+    Nonbacktracking,
+    coo_sparse,
+    contract!,
+    contract,
+    spectral_distance
+
 """Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]`
 vertices. `true` values indicate an edge between `u` and `v`. Users may
 specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out`
@@ -200,7 +212,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-issym(nbt::Nonbacktracking) = false
+issymmetric(nbt::Nonbacktracking) = false
 
 function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     length(x) == nbt.m || error("dimension mismatch")

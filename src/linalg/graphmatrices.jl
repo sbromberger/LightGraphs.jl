@@ -1,11 +1,10 @@
 __precompile__(true)
-
-module LinAlg
 @doc "A package for using the type system to check types of graph matrices." -> LinAlg
-import Base: convert, sparse, size, scale, diag, eltype, ndims, issym, ==, *, .*
+import Base: convert, sparse, size, scale, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
 export  convert,
 		SparseMatrix,
 		GraphMatrix,
+		Adjacency,
 		adjacency,
 		Laplacian,
 		CombinatorialAdjacency,
@@ -112,7 +111,7 @@ type PunchedAdjacency{T} <: Adjacency{T}
 end
 
 function PunchedAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-        return PunchedAdjacency{T}(adjmat)
+    return PunchedAdjacency{T}(adjmat)
 end
 perron(m::PunchedAdjacency) = m.perron
 
@@ -136,6 +135,32 @@ end
 function .*(::Noop, x::Any)
 	return x
 end
+
+function Diagonal(::Noop)
+    return I
+end
+
+
+function A_mul_B!(Y, A::Noop, B)
+    return copy!(Y, B)
+end
+
+function A_mul_B!(Y, A::UniformScaling, B)
+    for i in 1:length(Y)
+        Y[i] = A.λ * B[i]
+    end
+    return Y
+end
+
+function A_mul_B!(Y::SubArray{Float64,1,Array{Float64,1},Tuple{UnitRange{Int64}},true},
+                  A::Array{Float64,1},
+                  B::SubArray{Float64,1,Array{Float64,1},Tuple{UnitRange{Int64}},true})
+    for i in 1:length(Y)
+        Y[i] = A[i] * B[i]
+    end
+    return Y
+end
+
 
 function ==(g::GraphMatrix, h::GraphMatrix)
 	if typeof(g) != typeof(h)
@@ -202,14 +227,14 @@ end
 # size(A,n)	the size of A in a particular dimension
 # stride(A,k)	the stride (linear index distance between adjacent elements) along dimension k
 # strides(A)	a tuple of the strides in each dimension
-arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issym)
+arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
 for f in arrayfunctions
 	@eval $f(a::GraphMatrix) = $f(a.A)
 end
-size(a::GraphMatrix, i::Integer) = size(a.A, i)
-issym(::StochasticAdjacency) = false
-issym(::AveragingAdjacency) = false
 
+size(a::GraphMatrix, i::Integer) = size(a.A, i)
+issymmetric(::StochasticAdjacency) = false
+issymmetric(::AveragingAdjacency) = false
 @doc "degrees of a graph as a Vector." ->
 function degrees(adjmat::CombinatorialAdjacency)
 	return adjmat.D
@@ -253,13 +278,14 @@ end
 
 function sparse(adjmat::Adjacency)
     A = sparse(adjmat.A)
-	return scale(prescalefactor(adjmat), scale(A, postscalefactor(adjmat)))
+    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
 function convert{T}(::Type{SparseMatrix{T}}, adjmat::Adjacency{T})
     A = sparse(adjmat.A)
-	return scale(prescalefactor(adjmat), scale(A, postscalefactor(adjmat)))
+    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
+
 
 function convert{T}(::Type{SparseMatrix{T}}, lapl::Laplacian{T})
 	adjmat = adjacency(lapl)
@@ -278,8 +304,12 @@ function diag(lapl::Laplacian)
 end
 
 
-function *{T<:Number}(adjmat::Adjacency{T}, x::Vector{T})
+function *{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T})
 	return  postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
+end
+
+function *{T<:Number}(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T})
+	return  adjmat.A * x
 end
 
 function *{T<:Number}(lapl::Laplacian{T}, x::Vector{T})
@@ -289,9 +319,39 @@ function *{T<:Number}(lapl::Laplacian{T}, x::Vector{T})
 end
 
 function *{T<:Number}(adjmat::PunchedAdjacency{T}, x::Vector{T})
-        y=adjmat.A*x
-        return y - dot(adjmat.perron, y)*adjmat.perron
+    y=adjmat.A*x
+    return y - dot(adjmat.perron, y)*adjmat.perron
 end
+
+function A_mul_B!(Y, A::Adjacency, B)
+    # we need to do 3 matrix products
+    # Y and B can't overlap in any one call to A_mul_B!
+    # The last call to A_mul_B! must be (Y, postscalefactor, tmp)
+    # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
+    # and the first step (Y, prescalefactor, B)
+    A_mul_B!(Y, prescalefactor(A), B)
+    tmp = similar(Y)
+    A_mul_B!(tmp, A.A, Y)
+    return A_mul_B!(Y, Diagonal(postscalefactor(A)), tmp)
+end
+
+function A_mul_B!(Y, A::CombinatorialAdjacency, B)
+    return A_mul_B!(Y, A.A, B)
+end
+
+function A_mul_B!(Y, adjmat::PunchedAdjacency, x)
+    y = adjmat.A*x
+    Y[:] = y - dot(adjmat.perron, y)*adjmat.perron
+    return Y
+end
+
+function A_mul_B!(Y, lapl::Laplacian, B)
+    A_mul_B!(Y, lapl.A, B)
+	  z = diag(lapl) .* B
+    Y[:] = z - Y[:]
+    return Y
+end
+
 
 @doc "Symmetrize the matrix.
 :triu, :tril, :sum, :or.
@@ -325,5 +385,4 @@ function symmetrize(adjmat::CombinatorialAdjacency, which=:or)
 	# end
 	Aprime = symmetrize(adjmat.A, which)
 	return CombinatorialAdjacency(Aprime)
-end
 end

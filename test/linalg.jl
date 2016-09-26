@@ -56,7 +56,7 @@ function test_laplacian(mat)
     @test typeof(adjacency(stochlapl))  <: StochasticAdjacency
     averaginglapl = AveragingLaplacian(AveragingAdjacency{Float64}(adjmat))
     @test typeof(adjacency(averaginglapl))  <: AveragingAdjacency
-    
+
     normalizedlapl = NormalizedLaplacian(NormalizedAdjacency{Float64}(adjmat))
     @test typeof(adjacency(normalizedlapl))  <: NormalizedAdjacency
     @test !( typeof(adjacency(normalizedlapl)) <: CombinatorialAdjacency)

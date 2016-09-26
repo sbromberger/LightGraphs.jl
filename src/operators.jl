@@ -269,7 +269,7 @@ sparse(g::SimpleGraph) = adjacency_matrix(g)
 eltype(g::SimpleGraph) = Float64
 length(g::SimpleGraph) = nv(g)*nv(g)
 ndims(g::SimpleGraph) = 2
-issym(g::SimpleGraph) = !is_directed(g)
+issymmetric(g::SimpleGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)

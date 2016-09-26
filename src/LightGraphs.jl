@@ -9,8 +9,8 @@ using ParserCombinator: Parsers.DOT, Parsers.GML
 
 import Base: write, ==, <, *, ≈, isless, issubset, complement, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issym, transpose,
-            ctranspose, join, start, next, done, eltype, get
+            sum, size, sparse, eltype, length, ndims, transpose,
+            ctranspose, join, start, next, done, eltype, get, issymmetric
 
 
 # core
@@ -135,8 +135,7 @@ include("core.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
         include("shortestpaths/floyd-warshall.jl")
-        include("linalg.jl")
-        include("spectral.jl")
+        include("linalg/LinAlg.jl")
         include("operators.jl")
         include("persistence/common.jl")
             include("persistence/lg.jl")
