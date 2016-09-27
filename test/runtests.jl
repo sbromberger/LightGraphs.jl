@@ -87,7 +87,8 @@ tests = [
     "flow/push_relabel",
     "flow/maximum_flow",
     "flow/multiroute_flow",
-    "utils"
+    "utils",
+    "spanningtrees/kruskal"
 ]
 
 

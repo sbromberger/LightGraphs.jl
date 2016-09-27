@@ -106,9 +106,10 @@ WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGrap
 smallgraph,
 
 # Euclidean graphs
-euclidean_graph
+euclidean_graph,
 
-
+#minimum_spanning_trees
+kruskal_mst
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -175,5 +176,6 @@ include("core.jl")
                 include("flow/kishimoto.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
+        include("spanningtrees/kruskal.jl")
 
 end # module
