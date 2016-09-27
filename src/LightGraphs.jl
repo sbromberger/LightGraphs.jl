@@ -10,8 +10,8 @@ using StatsBase: fit, Histogram
 
 import Base: write, ==, <, *, ≈, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, issymmetric, transpose,
-            ctranspose, join, start, next, done, eltype, get, A_mul_B!
+            sum, size, sparse, eltype, length, ndims, transpose,
+            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!
 
 
 # core
@@ -142,7 +142,7 @@ include("core.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
         include("shortestpaths/floyd-warshall.jl")
-        include("spectral.jl")
+        include("linalg/LinAlg.jl")
         include("operators.jl")
         include("persistence/common.jl")
             include("persistence/lg.jl")

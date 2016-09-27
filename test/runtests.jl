@@ -1,5 +1,5 @@
-include("../src/LightGraphs.jl")
 using LightGraphs
+using LightGraphs.LinAlg
 using Base.Test
 
 g1 = smallgraph(:petersen)
