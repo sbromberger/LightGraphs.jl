@@ -37,12 +37,7 @@ function euclidean_graph(points::Matrix;
     weights = Dict{Edge,Float64}()
     cutoff < 0. && (cutoff=typemax(Float64))
     if bc == :periodic
-        mx = maximum(points)
-        if mx > L
-            warn("Some points are outside the box of size $L.
-                Setting box size to L=$mx.")
-            L = mx
-        end
+        maximum(points) > L &&  error("Some points are outside the box of size $L.")
     end
     for i=1:N
         for j=i+1:N
