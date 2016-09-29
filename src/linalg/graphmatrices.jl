@@ -120,18 +120,6 @@ The purpose is to help write more general code for the different scaled GraphMat
 type Noop
 end
 
-function scale(::Noop, x::Noop)
-	return x
-end
-
-function scale(::Noop, x::Any)
-	return x
-end
-
-function scale(x::Any, ::Noop)
-	return x
-end
-
 function .*(::Noop, x::Any)
 	return x
 end
