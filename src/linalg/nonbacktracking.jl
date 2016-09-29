@@ -100,6 +100,13 @@ function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
     end
     return y
 end
+function A_mul_B!(C, nbt::Nonbacktracking, B)
+    # computs C = A*B
+    for i in 1:size(B,2)
+        C[:,i] = nbt*B[:,i]
+    end
+    return C
+end
 
 function coo_sparse(nbt::Nonbacktracking)
     m = nbt.m
