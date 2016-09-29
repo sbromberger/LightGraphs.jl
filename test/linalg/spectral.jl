@@ -108,6 +108,16 @@ z = B * x
 #check that we can use the implicit matvec in nonbacktrack_embedding
 @test size(y) == size(x)
 
+B₁ = Nonbacktracking(g10)
+
+# just so that we can assert equality of matrices
+import Base: full
+full(nbt::Nonbacktracking) = full(sparse(nbt))
+
+@test full(B₁) == full(B)
+@test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
+@test size(B₁) == size(B)
+@test_approx_eq_eps norm(eigs(B₁)[1] - eigs(B)[1]) 0.0 1e-8
 # END tests for Nonbacktracking
 
 # spectral distance checks
