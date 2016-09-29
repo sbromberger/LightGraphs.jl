@@ -117,6 +117,7 @@ function test_other(mat, n )
 	
 	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
+  @test !issymmetric(AveragingAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 	
     println("equality testing "); begin
@@ -128,6 +129,7 @@ function test_other(mat, n )
         @test NormalizedAdjacency(adjmat) != adjmat
         @test StochasticLaplacian(S) != adjmat
         @test_throws MethodError StochasticLaplacian(adjmat) # --> not(adjmat)
+        @test !issymmetric(S)
     end
 end
 
@@ -151,6 +153,9 @@ end
 function test_punchedmatrix(mat, n)
     adjmat = CombinatorialAdjacency(mat)
     ahatp  = PunchedAdjacency(adjmat)
+    y = ahatp * perron(ahatp)
+    @test_approx_eq_eps dot(y, ahatp.perron) 0.0 1e-8
+    @test_approx_eq_eps sumabs(y) 0.0 1e-8
     eval, evecs = eigs(ahatp, which=:LM)
     @test eval[1]-1  <= 0
     @test_approx_eq_eps dot(perron(ahatp), evecs[:,1]) 0.0 1e-8
