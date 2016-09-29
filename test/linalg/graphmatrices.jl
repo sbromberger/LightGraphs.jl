@@ -142,6 +142,10 @@ function test_symmetry(mat,n)
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 	@test symmetrize(adjmat).A == adjmat.A
+    # these tests are basically the code
+	@test symmetrize(adjmat, :triu).A == triu(adjmat.A) + triu(adjmat.A)'
+	@test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'
+	@test symmetrize(adjmat, :sum).A == adjmat.A + adjmat.A
 end
 
 function test_punchedmatrix(mat, n)

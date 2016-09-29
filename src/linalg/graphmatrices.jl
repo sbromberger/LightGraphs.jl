@@ -357,22 +357,23 @@ end
 :triu, :tril, :sum, :or.
 use :sum for weighted graphs."->
 function symmetrize(A::SparseMatrix, which=:or)
-	if which==:triu
-		T = triu(A)
-	end
-	if which==:tril
-		T = tril(A)
-	end
-	if which==:sum
-		T = A
-	end
-	if which==:or
-	    M = A + A'
-	    M.nzval[M.nzval .== 2] = 1
-	else
+	  if which==:or
+	      M = A + A'
+	      M.nzval[M.nzval .== 2] = 1
+        return M
+    end
+    T = A
+	  if which==:triu
+		    T = triu(A)
+	  elseif which==:tril
+		    T = tril(A)
+    elseif which==:sum
+		    T = A
+    else
+        error("$which is not a supported method of symmetrizing a matrix")
+    end
 		M = T + T'
-	end
-	return M
+	  return M
 end
 
 @doc "Only works on Adjacency because the normalizations don't commute with symmetrization"->
