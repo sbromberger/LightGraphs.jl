@@ -28,7 +28,7 @@ function katz_centrality(g::SimpleGraph, α::Real = 0.3)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = speye(Float64, nvg)
-    A = adjacency_matrix(g, :out, Bool)
+    A = adjacency_matrix(g, :in, Bool)
     v = (spI - α*A)\v
     v /=  norm(v)
     return v

@@ -19,10 +19,13 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     nz = ne(g) * (is_directed(g)? 1 : 2)
     colpt = ones(Int, n_v + 1)
 
+    # see below - we iterate over columns. That's why we take the
+    # "opposite" neighbor function. It's faster than taking the transpose
+    # at the end.
     if dir == :out
-        neighborfn = out_neighbors
-    elseif dir == :in
         neighborfn = in_neighbors
+    elseif dir == :in
+        neighborfn = out_neighbors
     elseif dir == :both
         if is_directed(g)
             neighborfn = all_neighbors
@@ -35,7 +38,7 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     end
     rowval = sizehint!(Vector{Int}(), nz)
     selfloops = Vector{Int}()
-    for j in 1:n_v
+    for j in 1:n_v  # this is by column, not by row.
         if has_edge(g,j,j)
             push!(selfloops, j)
         end
@@ -56,6 +59,7 @@ function adjacency_matrix(g::SimpleGraph, dir::Symbol=:out, T::DataType=Int)
     return spmx
 end
 
+adjacency_matrix(g::Graph, T::DataType=Int) = adjacency_matrix(g, :out, T)
 
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
