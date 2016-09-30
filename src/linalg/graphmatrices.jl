@@ -255,8 +255,6 @@ function convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency)
 	return adjmat.A
 end
 
-sparse(m::SparseMatrixCSC{Float64,Int64}) = m
-
 function sparse{M <: Laplacian}(lapl::M)
 	adjmat = adjacency(lapl)
 	A = sparse(adjmat)
