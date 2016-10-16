@@ -420,7 +420,7 @@ end
 doc"""
     random_configuration_model(n::Int, k::Array{Int}; seed=-1, check_graphical=false)
 
-Creates a random undirected graph according to the [configuraton model]
+Creates a random undirected graph according to the [configuration model]
 (http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
 It contains `n` vertices, the vertex `i` having degree `k[i]`.
 
