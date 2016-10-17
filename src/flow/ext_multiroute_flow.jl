@@ -181,7 +181,13 @@ function slope{T<:AbstractFloat}(
   )
   slope = 0
   for e in edges(flow_graph)
-    if cut[dst(e)] - cut[src(e)] > 0 &&
+    ## Chain comparison to wether an edge cross the cut from the source side of
+    # the cut to the target side of the cut. Then the edge is selected iff the
+    # capacity of the edge is larger then the restriction argument.
+    # cut[dst(e)] == 2 > cut[src(e)] is equivalent to
+    # cut[dst(e)] == 2 && 2 > cut[src(e)]
+    # Description of chain comparisons can be found at https://goo.gl/IJpCqe
+    if cut[dst(e)] == 2 > cut[src(e)] &&
       capacity_matrix[src(e), dst(e)] > restriction
         slope += 1
     end
