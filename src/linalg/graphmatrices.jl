@@ -125,28 +125,12 @@ function .*(::Noop, x::Any)
 end
 
 function Diagonal(::Noop)
-    return I
+    return Noop()
 end
 
 
 function A_mul_B!(Y, A::Noop, B)
     return copy!(Y, B)
-end
-
-function A_mul_B!(Y, A::UniformScaling, B)
-    for i in 1:length(Y)
-        Y[i] = A.λ * B[i]
-    end
-    return Y
-end
-
-function A_mul_B!(Y::SubArray{Float64,1,Array{Float64,1},Tuple{UnitRange{Int64}},true},
-                  A::Array{Float64,1},
-                  B::SubArray{Float64,1,Array{Float64,1},Tuple{UnitRange{Int64}},true})
-    for i in 1:length(Y)
-        Y[i] = A[i] * B[i]
-    end
-    return Y
 end
 
 
@@ -289,6 +273,12 @@ function diag(lapl::Laplacian)
 	return ones(size(lapl)[2])
 end
 
+function *(x::AbstractArray, ::Noop)
+	  return x
+end
+function *(::Noop, x::Any)
+	  return x
+end
 
 function *{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T})
 	return  postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
@@ -298,13 +288,13 @@ function *{T<:Number}(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T})
 	return  adjmat.A * x
 end
 
-function *{T<:Number}(lapl::Laplacian{T}, x::Vector{T})
+function *{T<:Number}(lapl::Laplacian{T}, x::AbstractVector{T})
 	y = adjacency(lapl)*x
 	z = diag(lapl) .* x
 	return z - y
 end
 
-function *{T<:Number}(adjmat::PunchedAdjacency{T}, x::Vector{T})
+function *{T<:Number}(adjmat::PunchedAdjacency{T}, x::AbstractVector{T})
     y=adjmat.A*x
     return y - dot(adjmat.perron, y)*adjmat.perron
 end
@@ -315,14 +305,23 @@ function A_mul_B!(Y, A::Adjacency, B)
     # The last call to A_mul_B! must be (Y, postscalefactor, tmp)
     # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
     # and the first step (Y, prescalefactor, B)
-    A_mul_B!(Y, prescalefactor(A), B)
+    tmp1 = Diagonal(prescalefactor(A)) * B
     tmp = similar(Y)
-    A_mul_B!(tmp, A.A, Y)
+    A_mul_B!(tmp, A.A, tmp1)
     return A_mul_B!(Y, Diagonal(postscalefactor(A)), tmp)
 end
 
 function A_mul_B!(Y, A::CombinatorialAdjacency, B)
     return A_mul_B!(Y, A.A, B)
+end
+
+# You can compute the StochasticAdjacency product without allocating a similar of Y.
+# This is true for all Adjacency where the postscalefactor is a Noop
+# at time of writing this is just StochasticAdjacency and CombinatorialAdjacency
+function A_mul_B!(Y, A::StochasticAdjacency, B)
+    tmp = Diagonal(prescalefactor(A)) * B
+    A_mul_B!(Y, A.A, tmp)
+    return Y
 end
 
 function A_mul_B!(Y, adjmat::PunchedAdjacency, x)
