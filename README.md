@@ -29,7 +29,7 @@ better-optimized mechanisms.
 Additional functionality may be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 ## Documentation
-Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
+Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
 
 ## Core Concepts
