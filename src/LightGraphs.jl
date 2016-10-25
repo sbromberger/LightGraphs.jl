@@ -109,7 +109,7 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst
+kruskal_mst, prim_mst
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -177,5 +177,6 @@ include("core.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
         include("spanningtrees/kruskal.jl")
+        include("spanningtrees/prim.jl")
 
 end # module
