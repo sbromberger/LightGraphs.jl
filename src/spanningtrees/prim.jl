@@ -13,31 +13,31 @@ that contains the edges.
 function prim_mst{T<:Real}(
     g::SimpleGraph,
     distmx::AbstractArray{T, 2} = DefaultDistance()
-)
+    ) :: Vector{Edge}
+
     pq = Vector{PrimHeapEntry{T}}()
     mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
     sizehint!(mst, ne(g))
-    visit(g, 1, marked, pq, distmx)
+    visit!(g, 1, marked, pq, distmx)
 
     while !isempty(pq)
         heap_entry = heappop!(pq)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
-        if marked[v] && marked[w]
-            continue
+        if marked[v] && marked[w] && continue
         end
         push!(mst, heap_entry.edge)
 
         if !marked[v]
-            visit(g, v, marked, pq, distmx)
+            visit!(g, v, marked, pq, distmx)
         end
 
         if !marked[w]
-            visit(g, w, marked, pq, distmx)
+            visit!(g, w, marked, pq, distmx)
         end
     end
 
@@ -48,7 +48,7 @@ end
 Used to mark the visited vertices. Marks the vertex `v` of graph `g` true in the array `marked`
 and enters all its edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
-function visit{T<:Real}(
+function visit!{T<:Real}(
     g::SimpleGraph,
     v::Int,
     marked::AbstractArray{Bool, 1},
