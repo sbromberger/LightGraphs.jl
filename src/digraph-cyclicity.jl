@@ -16,7 +16,6 @@ Note: This is an O(V^3) algorithm.
 default to `false`.
 """
 function transitiveclosure!(dg::DiGraph, selflooped = false)
-    toadd = Vector{Tuple{Int, Int}}()
     if selflooped
         for k in vertices(dg)
             for i in vertices(dg)
