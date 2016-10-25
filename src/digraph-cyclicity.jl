@@ -8,12 +8,15 @@ algorithm.
 
 Version of the function that modifies the original graph.
 
+Note: This is an O(V^3) algorithm. 
+
 # Arguments
 * `dg`: the directed graph on which the transitive closure is computed.
 * `selflooped`: whether self loop should be added to the directed graph,
 default to `false`.
 """
 function transitiveclosure!(dg::DiGraph, selflooped = false)
+    toadd = Vector{Tuple{Int, Int}}()
     if selflooped
         for k in vertices(dg)
             for i in vertices(dg)
@@ -130,11 +133,13 @@ function maxcycles(dg::DiGraph, byscc::Bool = true)
 end
 
 """
-```type JohnsonVisitor <: Visitor
-    stack::Vector{Int}
-    blocked::Dict{Int, Bool}
-    blockedmap::Dict{Int, Set{Int}}
-end```
+```
+type JohnsonVisitor <: Visitor
+stack::Vector{Int}
+blocked::Vector{Bool}
+blockedmap::Vector{IntSet}
+end
+```
 
 Composite type that regroups the information needed for Johnson's algorithm.
 
@@ -146,7 +151,7 @@ Composite type that regroups the information needed for Johnson's algorithm.
 type JohnsonVisitor <: Visitor
     stack::Vector{Int}
     blocked::Vector{Bool}
-    blockedmap::Vector{Set{Int}}
+    blockedmap::Vector{IntSet}
 end
 
 """
@@ -157,7 +162,7 @@ Constructor of the visitor, using the directed graph information.
 JohnsonVisitor(dg::DiGraph) = JohnsonVisitor(
 Vector{Int}(),
 falses(vertices(dg)),
-[Set{Int}() for i in vertices(dg)]
+[IntSet() for i in vertices(dg)]
 )
 
 """
@@ -170,7 +175,7 @@ Unblock the vertices recursively.
 * `blocked`: tell whether a vertex is blocked or not
 * `B`: the map that tells if the unblocking of one vertex should unblock other vertices
 """
-function unblock!(v::Int, blocked::Vector{Bool}, B::Vector{Set{Int}})
+function unblock!(v::Int, blocked::Vector{Bool}, B::Vector{IntSet})
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
@@ -220,7 +225,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, allcycles::Vector{Vec
         unblock!(v, vis.blocked, vis.blockedmap)
     else
         for w in fadj(dg, v)
-			if !in(v, vis.blockedmap[w])
+			if !in(vis.blockedmap[w], v)
 				push!(vis.blockedmap[w], v)
 			end
         end
@@ -305,7 +310,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, st
         unblock!(v, vis.blocked, vis.blockedmap)
     else
         for w in fadj(dg, v)
-			if !in(v, vis.blockedmap[w]) 
+			if !in(vis.blockedmap[w], v) 
 				push!(vis.blockedmap[w], v)
 			end
         end
