@@ -26,7 +26,7 @@ other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
 
-Additional functionalities can be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
+Additional functionality may be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 ## Documentation
 Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
