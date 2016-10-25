@@ -1,22 +1,73 @@
 abstract Visitor
 
 """
-```transitiveclosure!(dg::DiGraph)```
+```transitiveclosure!(dg::DiGraph, selflooped = false)```
 
 Compute the transitive closure of a directed graph, using the Floyd-Warshall
 algorithm.
+
+Version of the function that modifies the original graph.
+
+# Arguments
+* `dg`: the directed graph on which the transitive closure is computed.
+* `selflooped`: whether self loop should be added to the directed graph,
+default to `false`.
 """
-function transitiveclosure!(dg::DiGraph)
-    for k in dg.vertices
-        for i in dg.vertices
-            for j in dg.vertices
-                if (has_edge(dg, i, k) & has_edge(dg, k, j))
-                    add_edge!(dg, i, j)
+function transitiveclosure!(dg::DiGraph, selflooped = false)
+    if selflooped
+        for k in vertices(dg)
+            for i in vertices(dg)
+                if i == k
+                    continue
+                end
+                for j in vertices(dg)
+                    if j == k
+                        continue
+                    end
+                    if (has_edge(dg, i, k) & has_edge(dg, k, j))
+                        add_edge!(dg, i, j)
+                    end
                 end
             end
         end
+    else
+        for k in vertices(dg)
+            for i in vertices(dg)
+                if i == k
+                   continue
+                end
+                for j in vertices(dg)
+                    if j == k
+                        continue
+                    end
+                    if (has_edge(dg, i, k) & has_edge(dg, k, j))
+                        if i!=j
+                            add_edge!(dg, i, j)
+                        end
+                    end
+                end
+            end
+        end  
     end
     return dg
+end
+    
+"""
+```transitiveclosure(dg::DiGraph, selflooped = false)```
+
+Compute the transitive closure of a directed graph, using the Floyd-Warshall
+algorithm.
+
+Version of the function that does not modify the original graph.
+
+# Arguments
+* `dg`: the directed graph on which the transitive closure is computed.
+* `selflooped`: whether self loop should be added to the directed graph,
+default to `false`.
+"""
+function transitiveclosure(dg::DiGraph, selflooped = false)
+    copydg = copy(dg)
+    return transitiveclosure!(copydg, selflooped)
 end
 
 """
@@ -56,7 +107,7 @@ decomposition in strongly connected components. The formula is coming from
 # Arguments:
 * `dg`: The directed graph to be considered.
 * `byscc`: whether it should be computed knowing the strongly connected components of the
- directed or not (default:yes)
+ directed or not (default:true)
 
 # Return
 * `c`: the theoretical maximum number of cycles.
@@ -65,12 +116,14 @@ Note: A more efficient version is possible.
 """    
 function maxcycles(dg::DiGraph, byscc::Bool = true) 
     c = 0
-    n = dg.vertices[end]
+    n = nv(dg)
     if !byscc        
         c = maxcycles(n)
     else
         for scc in strongly_connected_components(dg)
-            length(scc) > 1 && (c += maxcycles(length(scc)))
+			if length(scc) > 1
+				c += maxcycles(length(scc))
+			end
         end     
     end
     return c
@@ -103,8 +156,8 @@ Constructor of the visitor, using the directed graph information.
 """
 JohnsonVisitor(dg::DiGraph) = JohnsonVisitor(
 Vector{Int}(),
-falses(dg.vertices),
-[Set{Int}() for i in dg.vertices]
+falses(vertices(dg)),
+[Set{Int}() for i in vertices(dg)]
 )
 
 """
@@ -121,7 +174,9 @@ function unblock!(v::Int, blocked::Vector{Bool}, B::Vector{Set{Int}})
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
-        blocked[w] && unblock!(w, blocked, B)
+		if blocked[w] 
+			unblock!(w, blocked, B)
+		end
     end
 end
 
@@ -153,7 +208,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, allcycles::Vector{Vec
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in dg.fadjlist[v]
+    for w in fadj(dg,v)
         if w == startnode
             push!(allcycles, vmap[vis.stack])           
             done = true
@@ -164,8 +219,10 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, allcycles::Vector{Vec
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
     else
-        for w in dg.fadjlist[v]
-            in(v, vis.blockedmap[w]) || push!(vis.blockedmap[w], v)
+        for w in fadj(dg, v)
+			if !in(v, vis.blockedmap[w])
+				push!(vis.blockedmap[w], v)
+			end
         end
     end
     pop!(vis.stack)
@@ -194,10 +251,11 @@ function simplecycles(dg::DiGraph)
     sccs = strongly_connected_components(dg)
     cycles = Vector{Vector{Int}}()
     for scc in sccs
-        while length(scc) > 1
-            wdg, vmap = induced_subgraph(dg, scc)
+        #while length(scc) > 1
+        for i in 1:(length(scc)-1)
+            wdg, vmap = induced_subgraph(dg, scc[i:end])
             #startnode = 1
-            shift!(scc)
+            #shift!(scc)
             visitor = JohnsonVisitor(wdg)
             circuit(1, wdg, visitor, cycles, vmap)
         end
@@ -209,7 +267,7 @@ end
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
 """
-```circuit(v::T, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, startnode = v)```
+```circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, startnode = v)```
 
 One step of the recursive version of simple cycle detection, using a DFS algorithm.
 
@@ -235,7 +293,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, st
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in dg.fadjlist[v]
+    for w in fadj(dg, v)
         if w == startnode
             produce(vmap[vis.stack])        
             done = true
@@ -245,9 +303,11 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, st
     end
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
-            else
-                for w in dg.fadjlist[v]
-            in(v, vis.blockedmap[w]) || push!(vis.blockedmap[w], v)
+    else
+        for w in fadj(dg, v)
+			if !in(v, vis.blockedmap[w]) 
+				push!(vis.blockedmap[w], v)
+			end
         end
     end
     pop!(vis.stack)
@@ -271,11 +331,11 @@ function itercycles(dg::DiGraph)
     sccs = strongly_connected_components(dg)
     for scc in sccs
         while length(scc) > 1
-                    wdg, vmap = induced_subgraph(dg, scc)
-            startnode = 1
-                    shift!(scc)
+            wdg, vmap = induced_subgraph(dg, scc)
+            #startnode = 1
+            shift!(scc)
             visitor = JohnsonVisitor(wdg)
-            circuit(startnode, wdg, visitor, vmap)
+            circuit(1, wdg, visitor, vmap)
         end
     end
 end
@@ -336,13 +396,15 @@ function getcycles(dg::DiGraph, ceiling = 10^6)
     while (t.state == :runnable) & (i < ceiling)
         cycle = consume(t)
         i += 1
-        cycle == nothing || push!(cycles, cycle)
+		if !(cycle == nothing)
+			push!(cycles, cycle)
+		end
     end
     return cycles
 end
 
 """
-```getcycleslength(dg::DiGraph)```
+```getcycleslength(dg::DiGraph, ceiling = 10^6)```
 
 Search all cycles of the given directed graph, using 
 [Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007), 
@@ -360,12 +422,14 @@ To get an idea of the possible number of cycles, using function
 """
 function getcycleslength(dg::DiGraph, ceiling = 10^6)
     t = Task(() -> itercycles(dg))
-    ncycles = - 1
-    cyclelength = zeros(Int, dg.vertices[end])
+    ncycles = 0
+    cyclelength = zeros(Int, nv(dg))
     while (t.state == :runnable) & (ncycles < ceiling)
         cycle = consume(t)
-        cycle == nothing || (cyclelength[length(cycle)] +=1)
-        ncycles += 1
+		if !(cycle == nothing)
+			cyclelength[length(cycle)] +=1
+            ncycles += 1
+		end
     end
     return cyclelength, ncycles
 end
