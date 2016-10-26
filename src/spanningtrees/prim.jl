@@ -31,13 +31,8 @@ function prim_mst{T<:Real}(
         marked[v] && marked[w] && continue
         push!(mst, heap_entry.edge)
 
-        if !marked[v]
-            visit!(g, v, marked, pq, distmx)
-        end
-
-        if !marked[w]
-            visit!(g, w, marked, pq, distmx)
-        end
+        !marked[v] && visit!(g, v, marked, pq, distmx)
+        !marked[w] && visit!(g, w, marked, pq, distmx)
     end
 
     return mst
@@ -56,8 +51,6 @@ function visit!{T<:Real}(
 )
     marked[v] = true
     for w in fadj(g)[v]
-        if !marked[w]
-            heappush!(pq, PrimHeapEntry(Edge(v, w), distmx[v, w]))
-        end
+        !marked[w] && heappush!(pq, PrimHeapEntry(Edge(v, w), distmx[v, w]))
     end
 end
