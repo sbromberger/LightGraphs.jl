@@ -3,6 +3,7 @@ complete = CompleteDiGraph(4)
 @test maxcycles(g4) == 0
 @test maxcycles(complete) == 20
 @test maxcycles(4) == 20
+@test maxcycles(g4, false) == 84
 
 @test length(simplecycles(complete)) == 20
 @test simplecycles(complete) == getcycles(complete)
@@ -24,6 +25,7 @@ complete = CompleteDiGraph(4)
 
 trianglelengths, triangletotal = getcycleslength(DiGraph(triangle))
 @test sum(trianglelengths) == triangletotal
+@test simplecycles(DiGraph(triangle)) == getcycles(DiGraph(triangle))
 
 quadranglelengths, quadrangletotal = getcycleslength(DiGraph(quadrangle))
 @test sum(quadranglelengths) == quadrangletotal
