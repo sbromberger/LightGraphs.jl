@@ -28,8 +28,7 @@ function prim_mst{T<:Real}(
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
-        if marked[v] && marked[w] && continue
-        end
+        marked[v] && marked[w] && continue
         push!(mst, heap_entry.edge)
 
         if !marked[v]
