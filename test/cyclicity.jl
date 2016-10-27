@@ -25,10 +25,10 @@ complete = CompleteDiGraph(4)
 
 trianglelengths, triangletotal = getcycleslength(DiGraph(triangle))
 @test sum(trianglelengths) == triangletotal
-@test simplecycles(DiGraph(triangle)) == getcycles(DiGraph(triangle))
 
 quadranglelengths, quadrangletotal = getcycleslength(DiGraph(quadrangle))
 @test sum(quadranglelengths) == quadrangletotal
+@test simplecycles(DiGraph(quadrangle)) == getcycles(DiGraph(quadrangle))
 
 pentagonlengths, pentagontotal = getcycleslength(DiGraph(pentagon))
 @test sum(pentagonlengths) == pentagontotal
