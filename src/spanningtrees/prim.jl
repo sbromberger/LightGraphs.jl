@@ -51,6 +51,10 @@ function visit!{T<:Real}(
 )
     marked[v] = true
     for w in fadj(g)[v]
-        !marked[w] && heappush!(pq, PrimHeapEntry(Edge(v, w), distmx[v, w]))
+        if !marked[w]
+            x = min(v, w)
+            y = max(v, w)
+            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+        end
     end
 end
