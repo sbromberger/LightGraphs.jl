@@ -1,6 +1,3 @@
-using LightGraphs
-using Base.Test
-
 g = CompleteGraph(4)
 
 distmx = [
