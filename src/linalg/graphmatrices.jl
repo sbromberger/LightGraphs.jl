@@ -98,7 +98,7 @@ function AveragingAdjacency{T}(adjmat::CombinatorialAdjacency{T})
 	return AveragingAdjacency{T}(adjmat)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt(adjmat.D)/norm(sqrt(adjmat.D))
+perron(adjmat::NormalizedAdjacency) = sqrt(adjmat.A.D)/norm(sqrt(adjmat.A.D))
 
 type PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}

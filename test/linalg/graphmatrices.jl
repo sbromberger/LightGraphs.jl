@@ -118,6 +118,7 @@ function test_other(mat, n )
 	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
   @test !issymmetric(AveragingAdjacency{Float64}(adjmat))
+  @test !issymmetric(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 	
     println("equality testing "); begin
@@ -139,7 +140,7 @@ function test_symmetry(mat,n)
 	@test size(lapl, 1) == n
 	@test size(lapl, 2) == n
 	@test size(lapl, 3) == 1
-	
+
 	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
@@ -148,6 +149,8 @@ function test_symmetry(mat,n)
 	@test symmetrize(adjmat, :triu).A == triu(adjmat.A) + triu(adjmat.A)'
 	@test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'
 	@test symmetrize(adjmat, :sum).A == adjmat.A + adjmat.A
+
+  @test_throws ErrorException symmetrize(adjmat, :fake)
 end
 
 function test_punchedmatrix(mat, n)
@@ -159,6 +162,11 @@ function test_punchedmatrix(mat, n)
     eval, evecs = eigs(ahatp, which=:LM)
     @test eval[1]-1  <= 0
     @test_approx_eq_eps dot(perron(ahatp), evecs[:,1]) 0.0 1e-8
+    ahat = ahatp.A
+    @test isa(ahat, NormalizedAdjacency)
+
+    z = ahatp * perron(ahat)
+    @test_approx_eq_eps norm(z) 0.0 1e-8
 end
 
 println("constructors");begin
