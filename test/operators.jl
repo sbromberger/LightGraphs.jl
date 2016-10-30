@@ -172,3 +172,6 @@ sg, vm = induced_subgraph(gg5, elist)
 g10 = StarGraph(10)
 @test egonet(g10, 1, 0) == Graph(1,0)
 @test egonet(g10, 1, 1) == g10
+
+@test eltype(g10) == Float64
+@test ndims(g10) == 2
