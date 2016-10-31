@@ -81,37 +81,6 @@ end
 #
 #################################################
 
-###########################################
-# Get the map of the (geodesic) distances from vertices to source by BFS                  #
-###########################################
-
-immutable GDistanceVisitor <: SimpleGraphVisitor
-end
-
-"""
-    gdistances!(g, source, dists) -> dists
-
-Fills `dists` with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
-`dists` can be either a vector or a dictionary.
-"""
-function gdistances!(g::SimpleGraph, source, dists)
-    visitor = GDistanceVisitor()
-    traverse_graph!(g, BreadthFirst(), source, visitor, vertexcolormap=dists)
-    for i in eachindex(dists)
-        dists[i] -= 1
-    end
-    return dists
-end
-
-
-"""
-    gdistances(g, source) -> dists
-
-Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
-For vertices in disconnected components the default distance is -1.
-"""
-gdistances(g::SimpleGraph, source) = gdistances!(g, source, fill(0,nv(g)))
-
 
 ###########################################
 # Constructing BFS trees                  #
@@ -265,3 +234,49 @@ function bipartite_map(g::SimpleGraph)
     end
     m
 end
+
+###########################################
+# Get the map of the (geodesic) distances from vertices to source #
+###########################################
+
+"""
+    gdistances!(g, source, dists) -> dists
+
+Fills `dists` with the geodesic distances of vertices in `g` from vertex/vertices `source`.
+`dists` should be a vector of length `nv(g)`.
+"""
+function gdistances!(g::SimpleGraph, source, dists)
+    n = nv(g)
+    fill!(dists, -1)
+    queue = fill(-1, n)
+    for i in 1:length(source)
+        queue[i] = source[i]
+        dists[source[i]] = 0
+    end
+    head = 1
+    tail = length(source)
+    while head <= tail
+        current = queue[head]
+        distance = dists[current] + 1
+        head += 1
+        for j in fadj(g, current)
+            if dists[j] == -1
+                dists[j] = distance
+                tail += 1
+                queue[tail] = j
+            end
+        end
+    end
+    return dists
+end
+
+
+"""
+    gdistances(g, source) -> dists
+
+Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+If `source` is a collection of vertices they should be unique (not checked).
+For vertices in disconnected components the default distance is -1.
+"""
+gdistances(g::SimpleGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+

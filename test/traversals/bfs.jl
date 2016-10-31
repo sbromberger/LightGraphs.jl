@@ -10,6 +10,7 @@ t = visitor.tree
 
 @test gdistances(g6, 2) == [1, 0, 2, 1, 2]
 @test gdistances(g6, [1,2]) == [0, 0, 1, 1, 2]
+@test gdistances(g6, []) == [-1, -1, -1, -1, -1]
 @test !is_bipartite(g6)
 @test !is_bipartite(g6, 2)
 
