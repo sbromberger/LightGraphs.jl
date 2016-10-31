@@ -248,7 +248,7 @@ Fills `dists` with the geodesic distances of vertices in `g` from vertex/vertice
 function gdistances!(g::SimpleGraph, source, dists)
     n = nv(g)
     fill!(dists, -1)
-    queue = fill(-1, n)
+    queue = Vector{Int}(n)
     for i in 1:length(source)
         queue[i] = source[i]
         dists[source[i]] = 0
