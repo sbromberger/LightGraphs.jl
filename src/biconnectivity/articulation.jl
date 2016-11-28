@@ -25,7 +25,7 @@ end
 """
 Does a depth first search storing the depth (in `depth`) and low-points (in `low`) of each vertex.
 """
-function visit!(g::SimpleGraph, state::Articulation, u::Int, v::Int)
+function visit!(g::SimpleGraph, state::Articulations, u::Int, v::Int)
     children = 0
     state.id += 1
     state.depth[v] = state.id
