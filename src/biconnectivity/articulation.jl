@@ -1,4 +1,13 @@
-id = 0
+type Articulations
+    low::Vector{Int}
+    depth::Vector{Int}
+    articulation_points::Vector{Bool}
+    id::Int
+end
+
+function new_articulations(n::Int)
+    return Articulations(zeros(Int, n), zeros(Int, n), zeros(Int, n), 0)
+end
 
 """
 Computes the articulation points(https://en.wikipedia.org/wiki/Biconnected_component)
@@ -6,44 +15,38 @@ of a connected graph `g` and returns an array containing all cut vertices.
 """
 
 function articulation(g::SimpleGraph) :: AbstractArray{Int}
-    depth = zeros(Int, nv(g))
-    low = zeros(Int, nv(g))
-    articulation_points = fill(false, nv(g))
-
-    for u in 1:nv(g)
-        depth[u] == 0 && visit!(g, depth, low, articulation_points, u, u)
+    state = new_articulations(nv(g))
+    for u in vertices(g)
+        state.depth[u] == 0 && visit!(g, state, u, u)
     end
-    return [x for (x, y) in enumerate(articulation_points) if y == true]
+    return [x for (x, y) in enumerate(state.articulation_points) if y == true]
 end
 
 """
 Does a depth first search storing the depth (in `depth`) and low-points (in `low`) of each vertex.
 """
-function visit!(g::SimpleGraph, depth::AbstractArray{Int},
-                low::AbstractArray{Int}, articulation_points::AbstractArray{Bool},
-                u::Int, v::Int)
+function visit!(g::SimpleGraph, state::Articulation, u::Int, v::Int)
     children = 0
-    global id
-    id = id + 1
-    depth[v] = id
-    low[v] = depth[v]
+    state.id += 1
+    state.depth[v] = state.id
+    state.low[v] = state.depth[v]
 
-    for w in fadj(g)[v]
-        if depth[w] == 0
+    for w in out_neighbors(g, v)
+        if state.depth[w] == 0
             children = children + 1
-            visit!(g, depth, low, articulation_points, v, w)
+            visit!(g, state, v, w)
 
-            low[v] = min(low[v], low[w])
-            if low[w] >= depth[v] && u != v
-                articulation_points[v] = true
+            state.low[v] = min(state.low[v], state.low[w])
+            if state.low[w] >= state.depth[v] && u != v
+                state.articulation_points[v] = true
             end
 
         elseif w != u
-            low[v] = min(low[v], depth[w])
+            state.low[v] = min(state.low[v], state.depth[w])
         end
 	end
 
     if u == v && children > 1
-        articulation_points[v] = true
+        state.articulation_points[v] = true
     end
 end
