@@ -5,7 +5,9 @@ of a connected graph `g` and returns an array containing all cut vertices.
 function articulation(g::SimpleGraph) :: AbstractArray{Int}
     state = Articulations(g)
     for u in vertices(g)
-        state.depth[u] == 0 && visit!(state, g, u, u)
+        if state.depth[u] == 0
+            visit!(state, g, u, u)
+        end
     end
     return [x for (x, y) in enumerate(state.articulation_points) if y == true]
 end
