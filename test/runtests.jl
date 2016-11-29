@@ -59,6 +59,7 @@ tests = [
     "linalg/graphmatrices",
     "cliques",
     "connectivity",
+    "cyclicity",
     "persistence/persistence",
     "generators/randgraphs",
     "generators/staticgraphs",
