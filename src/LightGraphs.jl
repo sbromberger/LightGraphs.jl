@@ -4,7 +4,7 @@ module LightGraphs
 using GZip
 using Distributions: Binomial
 using Base.Collections
-using LightXML
+using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 

@@ -1,17 +1,17 @@
 # TODO: implement writing a dict of graphs
 
-function _graphml_read_one_graph(e::XMLElement, isdirected::Bool)
+function _graphml_read_one_graph(el::EzXML.Node, isdirected::Bool)
     nodes = Dict{String,Int}()
     edges = Vector{Edge}()
 
     nodeid = 1
-    for f in child_elements(e)
+    for f in eachelement(el)
         if name(f) == "node"
-            nodes[attribute(f, "id")] = nodeid
+            nodes[f["id"]] = nodeid
             nodeid += 1
         elseif name(f) == "edge"
-            n1 = attribute(f, "source")
-            n2 = attribute(f, "target")
+            n1 = f["source"]
+            n2 = f["target"]
             push!(edges, Edge(nodes[n1], nodes[n2]))
         else
             warn("Skipping unknown node '$(name(f))'")
@@ -26,55 +26,51 @@ function _graphml_read_one_graph(e::XMLElement, isdirected::Bool)
 end
 
 function loadgraphml(io::IO, gname::String)
-    xdoc = parse_string(readall(io))
+    xdoc = parsexml(readall(io))
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    for c in child_nodes(xroot)  # c is an instance of XMLNode
-        if is_elementnode(c)
-            e = XMLElement(c)  # this makes an XMLElement instance
-            if name(e) == "graph"
-                edgedefault = attribute(e, "edgedefault")
-                isdir = edgedefault=="directed" ? true :
-                             edgedefault=="undirected" ? false : error("Unknown value of edgedefault: $edgedefault")
-                if has_attribute(e, "id")
-                    graphname = attribute(e, "id")
-                else
-                    graphname =  isdir ? "digraph" : "graph"
-                end
-                gname == graphname && return _graphml_read_one_graph(e, isdir)
+    for el in eachelement(xroot)
+        if name(el) == "graph"
+            edgedefault = el["edgedefault"]
+            isdir = edgedefault == "directed"   ? true  :
+                    edgedefault == "undirected" ? false :
+                    error("Unknown value of edgedefault: $edgedefault")
+            if haskey(el, "id")
+                graphname = el["id"]
             else
-                warn("Skipping unknown XML element '$(name(e))'")
+                graphname = isdir ? "digraph" : "graph"
             end
+            gname == graphname && return _graphml_read_one_graph(el, isdir)
+        else
+            warn("Skipping unknown XML element '$(name(el))'")
         end
     end
     error("Graph $gname not found")
 end
 
 function loadgraphml_mult(io::IO)
-    xdoc = parse_string(readall(io))
+    xdoc = parsexml(readall(io))
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
     graphs = Dict{String, SimpleGraph}()
-    for c in child_nodes(xroot)  # c is an instance of XMLNode
-        if is_elementnode(c)
-            e = XMLElement(c)  # this makes an XMLElement instance
-            if name(e) == "graph"
-                edgedefault = attribute(e, "edgedefault")
-                isdir = edgedefault=="directed" ? true :
-                             edgedefault=="undirected" ? false : error("Unknown value of edgedefault: $edgedefault")
-                if has_attribute(e, "id")
-                    graphname = attribute(e, "id")
-                else
-                    graphname =  isdir ? "digraph" : "graph"
-                end
-                graphs[graphname] =  _graphml_read_one_graph(e, isdir)
+    for el in eachelement(xroot)
+        if name(el) == "graph"
+            edgedefault = el["edgedefault"]
+            isdir = edgedefault == "directed"   ? true  :
+                    edgedefault == "undirected" ? false :
+                    error("Unknown value of edgedefault: $edgedefault")
+            if haskey(el, "id")
+                graphname = el["id"]
             else
-                warn("Skipping unknown XML element '$(name(e))'")
+                graphname = isdir ? "digraph" : "graph"
             end
+            graphs[graphname] = _graphml_read_one_graph(el, isdir)
+        else
+            warn("Skipping unknown XML element '$(name(el))'")
         end
     end
     return graphs
@@ -82,32 +78,31 @@ end
 
 function savegraphml_mult(io::IO, graphs::Dict)
     xdoc = XMLDocument()
-    xroot = create_root(xdoc, "graphml")
-    set_attribute(xroot,"xmlns","http://graphml.graphdrawing.org/xmlns")
-    set_attribute(xroot,"xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-    set_attribute(xroot,"xsi:schemaLocation","http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd")
+    xroot = setroot!(xdoc, ElementNode("graphml"))
+    xroot["xmlns"] = "http://graphml.graphdrawing.org/xmlns"
+    xroot["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance"
+    xroot["xsi:schemaLocation"] = "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
 
     for (gname, g) in graphs
-        xg = new_child(xroot, "graph")
-        set_attribute(xg,"id",gname)
-        strdir = is_directed(g) ? "directed" : "undirected"
-        set_attribute(xg,"edgedefault",strdir)
+        xg = addelement!(xroot, "graph")
+        xg["id"] = gname
+        xg["edgedefault"] = is_directed(g) ? "directed" : "undirected"
 
-        for i=1:nv(g)
-            xv = new_child(xg, "node")
-            set_attribute(xv,"id","n$(i-1)")
+        for i in 1:nv(g)
+            xv = addelement!(xg, "node")
+            xv["id"] = "n$(i-1)"
         end
 
         m = 0
         for e in edges(g)
-            xe = new_child(xg, "edge")
-            set_attribute(xe,"id","e$m")
-            set_attribute(xe,"source","n$(src(e)-1)")
-            set_attribute(xe,"target","n$(dst(e)-1)")
+            xe = addelement!(xg, "edge")
+            xe["id"] = "e$m"
+            xe["source"] = "n$(src(e)-1)"
+            xe["target"] = "n$(dst(e)-1)"
             m += 1
         end
     end
-    show(io, xdoc)
+    prettyprint(io, xdoc)
     return length(graphs)
 end
 
