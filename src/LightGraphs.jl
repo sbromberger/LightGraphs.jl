@@ -109,7 +109,11 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst, prim_mst
+kruskal_mst, prim_mst,
+
+#biconnectivity and articulation points
+articulation
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -178,5 +182,6 @@ include("core.jl")
         include("utils.jl")
         include("spanningtrees/kruskal.jl")
         include("spanningtrees/prim.jl")
+        include("biconnectivity/articulation.jl")
 
 end # module
