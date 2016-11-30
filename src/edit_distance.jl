@@ -94,13 +94,10 @@ function is_complete_path(λ, G₁, G₂)
 end
 
 function DefaultEditHeuristic(λ, G₁::SimpleGraph, G₂::SimpleGraph)
-  vs = Set()
-  for (u,v) in λ
-    push!(vs, v)
-  end
+  vs = Set([v for (u,v) in λ])
   delete!(vs, 0)
 
-  nv(G₂) - length(vs)
+  return nv(G₂) - length(vs)
 end
 
 #-------------------------
