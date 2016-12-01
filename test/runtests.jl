@@ -59,6 +59,7 @@ tests = [
     "linalg/graphmatrices",
     "cliques",
     "connectivity",
+    "cyclicity",
     "persistence/persistence",
     "generators/randgraphs",
     "generators/staticgraphs",
@@ -89,7 +90,9 @@ tests = [
     "flow/maximum_flow",
     "flow/multiroute_flow",
     "utils",
-    "spanningtrees/kruskal"
+    "spanningtrees/kruskal",
+    "spanningtrees/prim",
+    "biconnectivity/articulation"
 ]
 
 

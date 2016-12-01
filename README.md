@@ -26,10 +26,10 @@ other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
 better-optimized mechanisms.
 
-Additional functionalities can be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
+Additional functionality may be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
 ## Documentation
-Full documentation available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
+Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
 
 ## Core Concepts
@@ -115,7 +115,7 @@ dijkstra_shortest_paths(g, 4).dists
 distmx = zeros(10,10)
 distmx[4,5] = 2.5
 distmx[5,4] = 2.5
-dijkstra_shortest_paths(g, 4, distmx=distmx).dists
+dijkstra_shortest_paths(g, 4, distmx).dists
 
 # graph I/O
 g = loadgraph("mygraph.jgz", :lg)
@@ -136,7 +136,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **shortest paths:** Dijkstra, Dijkstra with predecessors, Bellman-Ford, Floyd-Warshall, A*
 
-- **small graph generators:** see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/datasets/smallgraphs.jl) for list
+- **small graph generators:** see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/generators/smallgraphs.jl) for list
 
 - **random graph generators:** Erdős–Rényi, Watts-Strogatz, random regular, arbitrary degree sequence, stochastic block model
 
@@ -156,7 +156,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **persistence formats:** proprietary compressed, [GraphML](http://en.wikipedia.org/wiki/GraphML), [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language), [Gexf](http://gexf.net/format), [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)), [Pajek NET](http://gephi.org/users/supported-graph-formats/pajek-net-format/)
 
-- **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/afternone/GraphPlot.jl), [NetworkViz](https://github.com/abhijithanilkumar/NetworkViz.jl/)
+- **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/JuliaGraphs/GraphPlot.jl), [NetworkViz](https://github.com/abhijithanilkumar/NetworkViz.jl/)
 
 
 ## Supported Versions

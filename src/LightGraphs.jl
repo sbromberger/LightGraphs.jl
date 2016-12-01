@@ -4,7 +4,7 @@ module LightGraphs
 using GZip
 using Distributions: Binomial
 using Base.Collections
-using LightXML
+using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 
@@ -57,6 +57,8 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
+# cyclicity
+maxcycles, simplecycles, getcycles, countcycles, getcycleslength,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -109,7 +111,11 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst
+kruskal_mst, prim_mst,
+
+#biconnectivity and articulation points
+articulation
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -129,6 +135,7 @@ LightGraphs
 
 include("core.jl")
     include("digraph.jl")
+    include("digraph-transitivity.jl")
     include("graph.jl")
         include("edgeiter.jl")
         include("traversals/graphvisit.jl")
@@ -177,5 +184,7 @@ include("core.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
         include("spanningtrees/kruskal.jl")
+        include("spanningtrees/prim.jl")
+        include("biconnectivity/articulation.jl")
 
 end # module
