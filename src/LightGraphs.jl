@@ -131,7 +131,7 @@ LightGraphs
 
 include("core.jl")
     include("digraph.jl")
-	include("digraph-cyclicity.jl")
+    include("digraph-transitivity.jl")
     include("graph.jl")
         include("edgeiter.jl")
         include("traversals/graphvisit.jl")

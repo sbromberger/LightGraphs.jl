@@ -1,78 +1,6 @@
 abstract Visitor
 
 """
-```transitiveclosure!(dg::DiGraph, selflooped = false)```
-
-Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm.
-
-Version of the function that modifies the original graph.
-
-Note: This is an O(V^3) algorithm.
-
-# Arguments
-* `dg`: the directed graph on which the transitive closure is computed.
-* `selflooped`: whether self loop should be added to the directed graph,
-default to `false`.
-"""
-function transitiveclosure!(dg::DiGraph, selflooped = false)
-    if selflooped
-        for k in vertices(dg)
-            for i in vertices(dg)
-                if i == k
-                    continue
-                end
-                for j in vertices(dg)
-                    if j == k
-                        continue
-                    end
-                    if (has_edge(dg, i, k) & has_edge(dg, k, j))
-                        add_edge!(dg, i, j)
-                    end
-                end
-            end
-        end
-    else
-        for k in vertices(dg)
-            for i in vertices(dg)
-                if i == k
-                    continue
-                end
-                for j in vertices(dg)
-                    if j == k
-                        continue
-                    end
-                    if (has_edge(dg, i, k) & has_edge(dg, k, j))
-                        if i!=j
-                            add_edge!(dg, i, j)
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return dg
-end
-
-"""
-```transitiveclosure(dg::DiGraph, selflooped = false)```
-
-Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm.
-
-Version of the function that does not modify the original graph.
-
-# Arguments
-* `dg`: the directed graph on which the transitive closure is computed.
-* `selflooped`: whether self loop should be added to the directed graph,
-default to `false`.
-"""
-function transitiveclosure(dg::DiGraph, selflooped = false)
-    copydg = copy(dg)
-    return transitiveclosure!(copydg, selflooped)
-end
-
-"""
 ```ncycles_n_i(n::Integer, i::Integer)```
 
 Compute the theoretical maximum number of cycles of size `i` in a directed graph of `n`
@@ -136,7 +64,7 @@ end
 type JohnsonVisitor <: Visitor
 stack::Vector{Int}
 blocked::Vector{Bool}
-blockedmap::Vector{IntSet}
+blockedmap::Vector{Set{Int}}
 end
 ```
 
@@ -150,7 +78,8 @@ Composite type that regroups the information needed for Johnson's algorithm.
 type JohnsonVisitor <: Visitor
     stack::Vector{Int}
     blocked::Vector{Bool}
-    blockedmap::Vector{IntSet}
+    #blockedmap::Vector{IntSet}
+    blockedmap::Vector{Set{Int}}
 end
 
 """
@@ -160,7 +89,7 @@ Constructor of the visitor, using the directed graph information.
 """
 JohnsonVisitor(dg::DiGraph) = JohnsonVisitor(Vector{Int}(),
                                              falses(vertices(dg)),
-                                             [IntSet() for i in vertices(dg)])
+                                             [Set{Int}() for i in vertices(dg)])
 
 """
 ```unblock!(v::T, blocked::Vector{Bool}, B::Vector{Set{Int}})```
@@ -172,7 +101,7 @@ Unblock the vertices recursively.
 * `blocked`: tell whether a vertex is blocked or not
 * `B`: the map that tells if the unblocking of one vertex should unblock other vertices
 """
-function unblock!(v::Int, blocked::Vector{Bool}, B::Vector{IntSet})
+function unblock!(v::Int, blocked::Vector{Bool}, B::Vector{Set{Int}})
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
@@ -395,7 +324,7 @@ function getcycles(dg::DiGraph, ceiling = 10^6)
 end
 
 """
-```getcycleslength(dg::DiGraph, ceiling = 10^6)```
+```cycleslength(dg::DiGraph, ceiling = 10^6)```
 
 Search all cycles of the given directed graph, using
 [Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007),
@@ -411,7 +340,7 @@ To get an idea of the possible number of cycles, using function
 * `cyclelengths`: the lengths of all cycles, the index in the array is the length
 * `ncycles`: the number of cycles in the directed graph, up to the ceiling
 """
-function getcycleslength(dg::DiGraph, ceiling = 10^6)
+function cycleslength(dg::DiGraph, ceiling = 10^6)
     t = Task(() -> itercycles(dg))
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
