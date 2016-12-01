@@ -90,7 +90,9 @@ tests = [
     "flow/maximum_flow",
     "flow/multiroute_flow",
     "utils",
-    "spanningtrees/kruskal"
+    "spanningtrees/kruskal",
+    "spanningtrees/prim",
+    "biconnectivity/articulation"
 ]
 
 

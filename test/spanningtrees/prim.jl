@@ -7,9 +7,9 @@ distmx = [
   6  10  3  0
 ]
 
-# Testing Kruskal's algorithm
-mst = kruskal_mst(g, distmx)
-vec_mst = Vector{Edge}([Edge(1, 2), Edge(3, 4), Edge(2, 3)])
+# Testing Prim's algorithm
+mst = prim_mst(g, distmx)
+vec_mst = Vector{Edge}([Edge(1, 2), Edge(2, 3), Edge(3, 4)])
 
 @test mst == vec_mst
 
@@ -26,7 +26,7 @@ distmx_sec = [
                 ]
                 
 g = Graph(distmx_sec)
-mst2 = kruskal_mst(g, distmx_sec)
-vec2 = Vector{Edge}([Edge(1, 8),Edge(3, 4),Edge(2, 8),Edge(1, 3),Edge(6, 8),Edge(5, 6),Edge(3, 7)])
+mst2 = prim_mst(g, distmx_sec)
+vec2 = Vector{Edge}([Edge(1, 8),Edge(2, 8),Edge(1, 3),Edge(3, 4),Edge(6, 8),Edge(5, 6),Edge(3, 7)])
 
 @test mst2 == vec2
