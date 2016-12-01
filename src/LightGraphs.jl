@@ -4,7 +4,7 @@ module LightGraphs
 using GZip
 using Distributions: Binomial
 using Base.Collections
-using LightXML
+using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 
@@ -108,7 +108,11 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst
+kruskal_mst, prim_mst,
+
+#biconnectivity and articulation points
+articulation
+
 """An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
@@ -177,5 +181,7 @@ include("core.jl")
                 include("flow/ext_multiroute_flow.jl")
         include("utils.jl")
         include("spanningtrees/kruskal.jl")
+        include("spanningtrees/prim.jl")
+        include("biconnectivity/articulation.jl")
 
 end # module

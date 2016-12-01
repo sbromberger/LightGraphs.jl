@@ -64,6 +64,9 @@ badadjmx = [ 0 1 0; 1 0 1]
 
 g = Graph(sparse(adjmx1))
 h = DiGraph(sparse(adjmx1))
+@test !is_directed(g)
+@test is_directed(h)
+
 
 @test (nv(g), ne(g)) == (3, 2)
 @test (nv(h), ne(h)) == (3, 4)

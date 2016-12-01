@@ -11,6 +11,8 @@ gb = Graph(10,20; seed=1)
 @test Set{Edge}(collect(Edge, edges(gb))) == edges(ga)
 @test edges(ga) == Set{Edge}(collect(Edge, edges(gb)))
 
+@test eltype(edges(ga)) == Edge
+
 ga = DiGraph(10,20; seed=1)
 gb = DiGraph(10,20; seed=1)
 @test edges(ga) == edges(gb)

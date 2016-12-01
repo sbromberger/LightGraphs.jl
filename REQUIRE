@@ -1,6 +1,6 @@
 julia 0.5-
 GZip 0.2.20
-LightXML 0.4.0
+EzXML 0.3.0
 ParserCombinator 1.7.11
 JLD 0.6.3
 Distributions 0.10.2
