@@ -16,13 +16,9 @@ default to `false`.
 function transitiveclosure!(dg::DiGraph, selflooped = false)
     for k in vertices(dg)
         for i in vertices(dg)
-            if i == k
-                continue
-            end
+            i == k && continue
             for j in vertices(dg)
-                if j == k
-                    continue
-                end
+                j == k && continue
                 if (has_edge(dg, i, k) && has_edge(dg, k, j))
                     if ( i != j || selflooped )
                         add_edge!(dg, i, j)
@@ -41,6 +37,8 @@ Compute the transitive closure of a directed graph, using the Floyd-Warshall
 algorithm.
 
 Version of the function that does not modify the original graph.
+
+Note: This is an O(V^3) algorithm.
 
 # Arguments
 * `dg`: the directed graph on which the transitive closure is computed.
