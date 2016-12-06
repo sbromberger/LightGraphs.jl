@@ -23,13 +23,9 @@ function transitiveclosure!(dg::DiGraph, selflooped = false)
                 if j == k
                     continue
                 end
-                if (has_edge(dg, i, k) & has_edge(dg, k, j))
-                    if i != j 
+                if (has_edge(dg, i, k) && has_edge(dg, k, j))
+                    if ( i != j || selflooped )
                         add_edge!(dg, i, j)
-                    else
-                        if selflooped
-                            add_edge!(dg, i, j)
-                        end
                     end
                 end
             end
