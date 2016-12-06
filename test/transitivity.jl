@@ -1,3 +1,4 @@
+complete = CompleteDiGraph(4)
 circle = PathDiGraph(4)
 add_edge!(circle, 4, 1)
 newcircle = transitiveclosure(circle)
