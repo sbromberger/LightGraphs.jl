@@ -57,14 +57,13 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
-
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
-floyd_warshall_shortest_paths,
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -133,6 +132,7 @@ LightGraphs
 
 include("core.jl")
     include("digraph.jl")
+    include("digraph-transitivity.jl")
     include("graph.jl")
         include("edgeiter.jl")
         include("traversals/graphvisit.jl")
