@@ -60,6 +60,7 @@ tests = [
     "cliques",
     "connectivity",
     "transitivity",
+	"cyclicity",
     "persistence/persistence",
     "generators/randgraphs",
     "generators/staticgraphs",
