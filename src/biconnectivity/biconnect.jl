@@ -11,7 +11,7 @@ end
 
 function Biconnections(g::SimpleGraph)
     n = nv(g)
-    return Biconnections(zeros(Int, n), zeros(Int, n), [], [], 0)
+    return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
 end
 
 """
@@ -21,7 +21,9 @@ and returns a Vector of vectors containing each biconnected component
 function biconnected_components(g::SimpleGraph)
     state = Biconnections(g)
     for u in vertices(g)
-        state.depth[u] == 0 && visit!(g, state, u, u)
+        if state.depth[u] == 0
+            visit!(g, state, u, u)
+        end
 
         if !isempty(state.stack)
             st = Vector{Edge}()
@@ -37,7 +39,7 @@ function biconnected_components(g::SimpleGraph)
 end
 
 """
-Does a DFS visit and stores the depth and low-points of each vetex
+Does a DFS visit and stores the depth and low-points of each vertex
 """
 function visit!(g::SimpleGraph, state::Biconnections, u::Int, v::Int)
     children = 0
@@ -52,8 +54,9 @@ function visit!(g::SimpleGraph, state::Biconnections, u::Int, v::Int)
             visit!(g, state, v, w)
             state.low[v] = min(state.low[v], state.low[w])
 
-            if u == v && children > 1 || u != v && state.low[w] >= state.depth[v]
-                e = Edge(0, 0)
+            #Checking the root, and then the non-roots if they are articulation points
+            if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
+                e = Edge(0, 0)  #so that min, max are correctly initialized below
                 st = Vector{Edge}()
                 while e != Edge(min(v, w),max(v, w))
                     e = pop!(state.stack)
