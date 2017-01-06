@@ -55,7 +55,7 @@ function edit_distance(G₁::SimpleGraph, G₂::SimpleGraph;
 
   while true
     # minimum (partial) edit path
-    λ, cost = Collections.peek(OPEN)
+    λ, cost = DataStructures.peek(OPEN)
     dequeue!(OPEN)
 
     if is_complete_path(λ, G₁, G₂)

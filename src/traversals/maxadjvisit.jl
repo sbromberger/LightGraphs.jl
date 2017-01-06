@@ -16,13 +16,13 @@ end
 abstract AbstractMASVisitor <: SimpleGraphVisitor
 
 function maximum_adjacency_visit_impl!{T}(
-    graph::SimpleGraph,	                      # the graph
-    pq::Collections.PriorityQueue{Int, T},               # priority queue
+    graph::SimpleGraph,                               # the graph
+    pq::DataStructures.PriorityQueue{Int, T},         # priority queue
     visitor::AbstractMASVisitor,                      # the visitor
     colormap::Vector{Int})                            # traversal status
 
     while !isempty(pq)
-        u = Collections.dequeue!(pq)
+        u = DataStructures.dequeue!(pq)
         discover_vertex!(visitor, u)
         for v in fadj(graph, u)
             examine_neighbor!(visitor, u, v, 0, 0, 0)
@@ -46,7 +46,7 @@ function traverse_graph!(
     colormap::Vector{Int})
 
 
-    pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
+    pq = DataStructures.PriorityQueue(Int,T,Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(graph)
