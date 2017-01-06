@@ -101,9 +101,10 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
 value of `1` indicates that `dst(e) == v`. Otherwise, the value is
-`0`. For undirected graphs, both entries are `1`.
+`0`. For undirected graphs, if the optional keyword `oriented` is `false`, 
+both entries are `1`, otherwise, a random orientation is chosen.
 """
-function incidence_matrix(g::SimpleGraph, T::DataType=Int)
+function incidence_matrix(g::SimpleGraph, T::DataType=Int; oriented=false)
     isdir = is_directed(g)
     n_v = nv(g)
     n_e = ne(g)
@@ -111,7 +112,7 @@ function incidence_matrix(g::SimpleGraph, T::DataType=Int)
 
     # every col has the same 2 entries
     colpt = collect(1:2:(nz + 1))
-    nzval = repmat([isdir ? -one(T) : one(T), one(T)], n_e)
+    nzval = repmat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
 
     # iterate over edges for row indices
     rowval = zeros(Int, nz)
