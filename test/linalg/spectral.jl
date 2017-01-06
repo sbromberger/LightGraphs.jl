@@ -81,6 +81,12 @@ end
 @test incidence_matrix(g3)[2,1] == 1
 @test incidence_matrix(g3)[3,1] == 0
 
+# undirected graph with orientation
+@test size(incidence_matrix(g3; oriented=true)) == (5,4)
+@test incidence_matrix(g3; oriented=true)[1,1] == -1
+@test incidence_matrix(g3; oriented=true)[2,1] == 1
+@test incidence_matrix(g3; oriented=true)[3,1] == 0
+
 # TESTS FOR Nonbacktracking operator.
 
 n = 10; k = 5
