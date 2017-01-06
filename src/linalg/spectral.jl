@@ -102,7 +102,7 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
 value of `1` indicates that `dst(e) == v`. Otherwise, the value is
 `0`. For undirected graphs, if the optional keyword `oriented` is `false`, 
-both entries are `1`, otherwise, a random orientation is chosen.
+both entries are `1`, otherwise, an arbitrary orientation is chosen.
 """
 function incidence_matrix(g::SimpleGraph, T::DataType=Int; oriented=false)
     isdir = is_directed(g)
