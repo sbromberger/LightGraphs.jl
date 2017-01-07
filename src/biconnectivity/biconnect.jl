@@ -15,10 +15,11 @@ function Biconnections(g::SimpleGraph)
 end
 
 """
-Computes the biconnected components of a graph `g`
-and returns a Vector of vectors containing each biconnected component
+Computes the biconnected components of an undirected graph `g`
+and returns a Vector of vectors containing each biconnected component.
+It's a DFS based linear time algorithm.
 """
-function biconnected_components(g::SimpleGraph)
+function biconnected_components(g::Graph)
     state = Biconnections(g)
     for u in vertices(g)
         if state.depth[u] == 0
@@ -26,12 +27,8 @@ function biconnected_components(g::SimpleGraph)
         end
 
         if !isempty(state.stack)
-            st = Vector{Edge}()
-            while !isempty(state.stack)
-                e = pop!(state.stack)
-                push!(st, e)
-            end
-            push!(state.biconnected_comps, st)
+            push!(state.biconnected_comps, reverse(state.stack))
+            empty!(state.stack)
         end
     end
 
@@ -41,7 +38,7 @@ end
 """
 Does a DFS visit and stores the depth and low-points of each vertex
 """
-function visit!(g::SimpleGraph, state::Biconnections, u::Int, v::Int)
+function visit!(g::Graph, state::Biconnections, u::Int, v::Int)
     children = 0
     state.id += 1
     state.depth[v] = state.id
@@ -56,18 +53,18 @@ function visit!(g::SimpleGraph, state::Biconnections, u::Int, v::Int)
 
             #Checking the root, and then the non-roots if they are articulation points
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = Edge(0, 0)  #so that min, max are correctly initialized below
+                e = Edge(0, 0)  #Invalid Edge, used for comparison only
                 st = Vector{Edge}()
                 while e != Edge(min(v, w),max(v, w))
                     e = pop!(state.stack)
                     push!(st, e)
                 end
-            push!(state.biconnected_comps, st)
+                push!(state.biconnected_comps, st)
             end
 
         elseif w != u && state.low[v] > state.depth[w]
             push!(state.stack, Edge(min(v, w), max(v, w)))
-            state.low[v] = min(state.low[v], state.depth[w])
+            state.low[v] = state.depth[w]
         end
     end
 end
