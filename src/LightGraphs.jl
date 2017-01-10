@@ -111,7 +111,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation
+articulation, biconnected_components
 
 """An optimized graphs package.
 
@@ -183,5 +183,6 @@ include("core.jl")
         include("spanningtrees/kruskal.jl")
         include("spanningtrees/prim.jl")
         include("biconnectivity/articulation.jl")
+        include("biconnectivity/biconnect.jl")
 
 end # module
