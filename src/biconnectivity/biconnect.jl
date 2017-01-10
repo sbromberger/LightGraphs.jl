@@ -17,7 +17,7 @@ end
 """
 Computes the biconnected components of an undirected graph `g`
 and returns a Vector of vectors containing each biconnected component.
-It's a DFS based linear time algorithm.
+(https://en.wikipedia.org/wiki/Biconnected_component).It's a DFS based linear time algorithm.
 """
 function biconnected_components(g::Graph)
     state = Biconnections(g)
