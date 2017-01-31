@@ -41,7 +41,7 @@ an field A for the Adjacency instance, then attach another method to this functi
 an Adjacency{T} representation of the Laplacian. The Adjacency matrix here
 is the final subtype that corresponds to this type of Laplacian" ->
 abstract Adjacency{T} <: GraphMatrix{T}
-abstract Laplacian{T} <: GraphMatrix
+abstract Laplacian{T} <: GraphMatrix{T}
 
 @doc "Combinatorial Adjacency matrix is the standard adjacency matrix from math" ->
 type CombinatorialAdjacency{T,S,V} <: Adjacency{T}
@@ -120,7 +120,7 @@ The purpose is to help write more general code for the different scaled GraphMat
 type Noop
 end
 
-function .*(::Noop, x::Any)
+function Base.broadcast(::typeof(*), ::Noop, x::Any)
 	return x
 end
 

@@ -17,7 +17,7 @@ abstract AbstractMASVisitor <: SimpleGraphVisitor
 
 function maximum_adjacency_visit_impl!{T}(
     graph::SimpleGraph,	                      # the graph
-    pq::Collections.PriorityQueue{Int, T},               # priority queue
+    pq::PriorityQueue{Int, T},               # priority queue
     visitor::AbstractMASVisitor,                      # the visitor
     colormap::Vector{Int})                            # traversal status
 
@@ -46,7 +46,7 @@ function traverse_graph!(
     colormap::Vector{Int})
 
 
-    pq = Collections.PriorityQueue(Int,T,Base.Order.Reverse)
+    pq = PriorityQueue(Int,T,Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(graph)
