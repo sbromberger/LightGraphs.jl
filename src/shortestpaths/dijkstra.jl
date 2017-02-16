@@ -42,6 +42,7 @@ function dijkstra_shortest_paths{T}(
 
     for v in srcs
         heappush!(H, DijkstraHeapEntry{T}(v, dists[v]))
+        visited[v] = true
     end
 
     while !isempty(H)
@@ -77,7 +78,6 @@ function dijkstra_shortest_paths{T}(
         end
     end
 
-    dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     parents[srcs] = 0
     for src in srcs
