@@ -29,9 +29,12 @@ z = dijkstra_shortest_paths(g,1,d)
 # @Beatzekatze on github
 spath(target, dijkstraStruct, sourse) = target == sourse ? target : [spath(dijkstraStruct.parents[target], dijkstraStruct, sourse) target]
 function spaths(ds, targets, source)
+    shortest_paths = []
     for i in targets
         push!(shortest_paths,spath(i,ds,source))
     end
+    return shortest_paths
+    
 end
 
 
@@ -47,18 +50,17 @@ w = [0. 3. 0. 1.;
     0. 2. 0. 3.;
     1. 0. 3. 0.]
 ds = dijkstra_shortest_paths(G,2,w)
-shortest_paths = []
 # this loop reconstructs the shortest path for nodes 1, 3 and 4
-@test spaths(ds, [1,3,4], 2) == [[2 1]
-                                 [2 3]
-                                 [2 1 4]]
+@test spaths(ds, [1,3,4], 2) == Array[[2 1],
+                                      [2 3],
+                                      [2 1 4]]
 
 # here a selflink at source is introduced; it should not change the shortest paths
 w[2,2] = 10.0
 ds = dijkstra_shortest_paths(G,2,w)
 shortest_paths = []
 # this loop reconstructs the shortest path for nodes 1, 3 and 4
-@test spaths(ds, [1,3,4], 2) == [[2 1]
-                                 [2 1 4 3]
-                                 [2 1 4]]
+@test spaths(ds, [1,3,4], 2) == Array[[2 1],
+                                      [2 3],
+                                      [2 1 4]]
 
