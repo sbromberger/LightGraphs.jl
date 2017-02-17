@@ -6,6 +6,12 @@ end
 
 s = LightGraphs.sample!([1:10;], 6, exclude=[1,2])
 @test length(s) == 6
-for  e in s
+for e in s
+    @test 3 <= e <= 10
+end
+
+s = LightGraphs.sample(1:10, 6, exclude=[1,2])
+@test length(s) == 6
+for e in s
     @test 3 <= e <= 10
 end
