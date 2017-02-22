@@ -23,4 +23,11 @@ end
 
 sample!(a::AbstractArray, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
 
+"""
+sample([rng,] r, k; exclude = ())
+Sample `k` element from unit range `r` without repetition and eventually excluding elements in `exclude`.
+Unlike `sample!`, does not produce side effects.
+"""
+sample(a::UnitRange, k::Integer; exclude = ()) = sample!(getRNG(), collect(a), k; exclude = exclude)
+
 getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG

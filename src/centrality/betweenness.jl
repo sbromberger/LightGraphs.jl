@@ -46,19 +46,15 @@ betweenness: Array{Float64}
 """
 function betweenness_centrality(
     g::SimpleGraph,
-    k::Integer=0;
+    nodes::AbstractArray{Int, 1} = vertices(g);
     normalize=true,
     endpoints=false)
 
     n_v = nv(g)
+    k = length(nodes)
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
-    if k == 0
-        nodes = 1:n_v
-    else
-        nodes = sample!([1:n_v;], k)   #112
-    end
     for s in nodes
         if degree(g,s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true)
@@ -78,6 +74,10 @@ function betweenness_centrality(
 
     return betweenness
 end
+
+betweenness_centrality(g::SimpleGraph, k::Int; normalize=true, endpoints=false) =
+    betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
+
 
 
 function _accumulate_basic!(

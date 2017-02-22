@@ -19,6 +19,7 @@ z = betweenness_centrality(g)
 y = betweenness_centrality(g, endpoints=true, normalize=false)
 @test round(y[1:3],4) ==
     round([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
+
 x = betweenness_centrality(g,3)
 @test length(x) == 50
 
@@ -29,6 +30,11 @@ g = Graph(2)
 add_edge!(g,1,2)
 z = betweenness_centrality(g; normalize=true)
 @test z[1] == z[2] == 0.0
+z2 = betweenness_centrality(g, vertices(g))
+z3 = betweenness_centrality(g, [vertices(g);])
+
+@test z == z2 == z3
+
 
 z = betweenness_centrality(g3; normalize=false)
 @test z[1] == z[5] == 0.0
