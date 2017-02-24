@@ -15,7 +15,7 @@ const filemap = Dict{Symbol, Tuple{Function, Function, Function, Function}}()
 
 Reads a graph from  `file` in the format `t`.
 
-Supported formats are `:lg, :gml, :dot, :graphml, :gexf, :net, :jld`.
+Supported formats are `:lg, :gml, :dot, :graphml, :gexf, :net, :jld, :graph6`.
 """
 function loadgraph(fn::String, x...)
     GZip.open(fn,"r") do io
