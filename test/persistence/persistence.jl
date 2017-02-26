@@ -1,3 +1,16 @@
+function readback_test(format::Symbol, g::Graph,
+                       remove=true, fnamefio=mktemp())
+    fname,fio = fnamefio
+    close(fio)
+    @test save(fname, g, format) == 1
+    @test load(fname, format)["g"] == g
+    if remove
+        rm(fname)
+    else
+        info("persistence/readback_test: Left temporary file at: $fname")
+    end
+end
+
 (f,fio) = mktemp()
 # test :lg
 @test save(f, p1) == 1
@@ -105,12 +118,13 @@ for n in ns
     @test LightGraphs.Np(n[2])[1] == n[1]
 end
 
-g10 = CompleteGraph(10)
-fname,fio = mktemp()
-close(fio)
-@test save(fname, g10, :graph6) == 1
-@test load(fname, :graph6)["g"] == g10
-rm(fname)
+
+graphs = [PathGraph(10), CompleteGraph(5), WheelGraph(7)]
+for g in graphs
+    readback_test(:graph6, g)
+end
+
+
 
 #test :net
 g10 = CompleteGraph(10)
