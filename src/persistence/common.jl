@@ -67,7 +67,7 @@ end
 """
 Save a graph to file. See [`save`](@ref).
 """
-savegraph(f, g::SimpleGraph, x...; kws...) = save(f, g::SimpleGraph, x...; kws...)
+savegraph{T<:SimpleGraph}(f, g::T, x...; kws...) = save(f, g::T, x...; kws...)
 
 """
     save(file, g, t=:lg)
@@ -77,13 +77,13 @@ savegraph(f, g::SimpleGraph, x...; kws...) = save(f, g::SimpleGraph, x...; kws..
 Saves a graph `g` with name `name` to `file` in the format `t`. If `name` is not given
 the default names \"graph\" and \"digraph\" will be used.
 
-Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
+Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net, :graph6`.
 
 For some graph formats, multiple graphs in a  `dict` `"name"=>g` can be saved in the same file.
 
 Returns the number of graphs written.
 """
-function save(io::IO, g::SimpleGraph, gname::String, t::Symbol=:lg)
+function save{T<:SimpleGraph}(io::IO, g::T, gname::String, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][3](io, g, gname)
 end
@@ -93,7 +93,7 @@ save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
 save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
 
 # save a dictionary of graphs {"name" => graph}
-function save{T<:String}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
+function save{T<:String, U<:SimpleGraph}(io::IO, d::Dict{T, U}, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][4](io, d)
 end
