@@ -96,6 +96,15 @@ gs = load(joinpath(testdir, "testdata", "twographs.dot"), :dot)
 @test_throws ErrorException load(STDIN, :gexf)
 
 #test :graph6
+n1 = (30, UInt8.([93]))
+n2 = (12345, UInt8.([126; 66; 63; 120]))
+n3 = (460175067, UInt8.([126; 126; 63; 90; 90; 90; 90; 90]))
+ns = [n1; n2; n3]
+for n in ns
+    @test LightGraphs.N(n[1]) == n[2]
+    @test LightGraphs.Np(n[2])[1] == n[1]
+end
+
 g10 = CompleteGraph(10)
 fname,fio = mktemp()
 close(fio)

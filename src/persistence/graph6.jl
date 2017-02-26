@@ -84,14 +84,6 @@ function _graphToG6String(g::Graph)
   return join([">>graph6<<", String(N(n)), String(R(x))])
 end
 
-"""Given a string, return the graph6 vector"""
-function _strToG6(s::String)::Vector{UInt8}
-  if startswith(s, ">>graph6<<")
-    s = s[11:end]
-  end
-  return Vector{UInt8}(s) .- 0x3f
-end
-
 function _g6StringToGraph(s::String)
   if startswith(s, ">>graph6<<")
     s = s[11:end]
