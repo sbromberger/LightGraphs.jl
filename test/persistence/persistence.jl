@@ -1,9 +1,10 @@
-function readback_test(format::Symbol, g::Graph,
+function readback_test(format::Symbol, g::Graph, gname="g",
                        remove=true, fnamefio=mktemp())
     fname,fio = fnamefio
     close(fio)
     @test save(fname, g, format) == 1
-    @test load(fname, format)["g"] == g
+    @test load(fname, format)[gname] == g
+    @test load(fname, gname, format) == g
     if remove
         rm(fname)
     else
@@ -114,16 +115,26 @@ n2 = (12345, UInt8.([126; 66; 63; 120]))
 n3 = (460175067, UInt8.([126; 126; 63; 90; 90; 90; 90; 90]))
 ns = [n1; n2; n3]
 for n in ns
-    @test LightGraphs.N(n[1]) == n[2]
-    @test LightGraphs.Np(n[2])[1] == n[1]
+    @test LightGraphs._g6_N(n[1]) == n[2]
+    @test LightGraphs._g6_Np(n[2])[1] == n[1]
 end
+
+gs = load(joinpath(testdir,"testdata", "twographs.g6"), :graph6)
+@test length(gs) == 2
+@test nv(gs["g1"]) == 6 && ne(gs["g1"]) == 5
+@test nv(gs["g2"]) == 6 && ne(gs["g2"]) == 6
 
 
 graphs = [PathGraph(10), CompleteGraph(5), WheelGraph(7)]
 for g in graphs
-    readback_test(:graph6, g)
+    readback_test(:graph6, g, "g1")
 end
 
+(f,fio) = mktemp()
+close(fio)
+d = Dict{String, Graph}("g1"=>CompleteGraph(10), "g2"=>PathGraph(5))
+@test save(f,d, :graph6) == 2
+rm(f)
 
 
 #test :net
