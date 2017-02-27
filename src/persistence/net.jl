@@ -21,7 +21,7 @@ end
 
 """Reads a graph from file `fname` in the [Pajek
  NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
- Returns 1 (number of graphs written).
+ Returns the graph.
 """
 function loadnet(f::IO, gname::String = "g")
     line =readline(f)
