@@ -132,9 +132,14 @@ end
 
 (f,fio) = mktemp()
 close(fio)
-d = Dict{String, Graph}("g1"=>CompleteGraph(10), "g2"=>PathGraph(5))
-@test save(f,d, :graph6) == 2
+d = Dict{String, Graph}("g1"=>CompleteGraph(10), "g2"=>PathGraph(5), "g3" => WheelGraph(7))
+@test save(f,d, :graph6) == 3
+g6graphs = LightGraphs.loadgraph6_mult(fio)
+for (gname, g) in g6graphs
+    @test g == d[gnames]
+end
 rm(f)
+
 
 
 #test :net
