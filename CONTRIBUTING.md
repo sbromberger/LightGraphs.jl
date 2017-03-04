@@ -35,12 +35,12 @@ end
 ```
 should be rewritten as two functions
 ```julia
-function f(g::SimpleGraph, v::Integer)
+function f(g::AbstractGraph, v::Integer)
     storage = Vector{Int}(nv(g))
     return inner!(storage, g, v)
 end
 
-function inner!(storage::AbstractArray{Int,1}, g::SimpleGraph, v::Integer)
+function inner!(storage::AbstractArray{Int,1}, g::AbstractGraph, v::Integer)
     # some code operating on storage, g, and v.
     for i in 1:nv(g)
         storage[i] = v-i

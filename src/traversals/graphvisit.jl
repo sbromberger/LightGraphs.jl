@@ -3,30 +3,30 @@
 
 # The concept and trivial implementation of graph visitors
 
-abstract SimpleGraphVisitor
+abstract AbstractGraphVisitor
 
 # trivial implementation
 
 # invoked when a vertex v is encountered for the first time
 # this function returns whether to continue search
-discover_vertex!(vis::SimpleGraphVisitor, v) = true
+discover_vertex!(vis::AbstractGraphVisitor, v) = true
 
 # invoked when the algorithm is about to examine v's neighbors
-open_vertex!(vis::SimpleGraphVisitor, v) = true
+open_vertex!(vis::AbstractGraphVisitor, v) = true
 
 # invoked when a neighbor is discovered & examined
-examine_neighbor!(vis::SimpleGraphVisitor, u, v, ucolor::Int, vcolor::Int, ecolor::Int) = true
+examine_neighbor!(vis::AbstractGraphVisitor, u, v, ucolor::Int, vcolor::Int, ecolor::Int) = true
 
 # invoked when all of v's neighbors have been examined
-close_vertex!(vis::SimpleGraphVisitor, v) = true
+close_vertex!(vis::AbstractGraphVisitor, v) = true
 
 
-type TrivialGraphVisitor <: SimpleGraphVisitor
+type TrivialGraphVisitor <: AbstractGraphVisitor
 end
 
 
 # This is the common base for BreadthFirst and DepthFirst
-abstract SimpleGraphVisitAlgorithm
+abstract AbstractGraphVisitAlgorithm
 
 typealias AbstractEdgeMap{T} Associative{Edge,T}
 typealias AbstractVertexMap{T} Union{AbstractVector{T},Associative{Int, T}}
@@ -47,7 +47,7 @@ get(d::DummyEdgeMap, e::Edge, x::Int) = x
 
 # List vertices by the order of being discovered
 
-type VertexListVisitor <: SimpleGraphVisitor
+type VertexListVisitor <: AbstractGraphVisitor
     vertices::Vector{Int}
 
     function VertexListVisitor(n::Integer=0)
@@ -63,8 +63,8 @@ function discover_vertex!(visitor::VertexListVisitor, v::Int)
 end
 
 function visited_vertices(
-    graph::SimpleGraph,
-    alg::SimpleGraphVisitAlgorithm,
+    graph::AbstractGraph,
+    alg::AbstractGraphVisitAlgorithm,
     sources)
 
     visitor = VertexListVisitor(nv(graph))
@@ -75,7 +75,7 @@ end
 
 # Print visit log
 
-type LogGraphVisitor{S<:IO} <: SimpleGraphVisitor
+type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
 end
 
@@ -100,8 +100,8 @@ function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, ucolor::Int, vc
 end
 
 function traverse_graph_withlog(
-    g::SimpleGraph,
-    alg::SimpleGraphVisitAlgorithm,
+    g::AbstractGraph,
+    alg::AbstractGraphVisitAlgorithm,
     sources,
     io::IO = STDOUT
 )

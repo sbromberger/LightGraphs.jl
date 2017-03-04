@@ -18,7 +18,7 @@ $bc(v) = \frac{1}{\mathcal{N}} \sum_{s \neq t \neq v}
 
  **Parameters**
 
-g: SimpleGraph
+g: AbstractGraph
     A Graph, directed or undirected.
 
 k: Integer, optional
@@ -45,7 +45,7 @@ betweenness: Array{Float64}
 [1] Brandes 2001 & Brandes 2008
 """
 function betweenness_centrality(
-    g::SimpleGraph,
+    g::AbstractGraph,
     nodes::AbstractArray{Int, 1} = vertices(g);
     normalize=true,
     endpoints=false)
@@ -75,7 +75,7 @@ function betweenness_centrality(
     return betweenness
 end
 
-betweenness_centrality(g::SimpleGraph, k::Int; normalize=true, endpoints=false) =
+betweenness_centrality(g::AbstractGraph, k::Int; normalize=true, endpoints=false) =
     betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
 
@@ -83,7 +83,7 @@ betweenness_centrality(g::SimpleGraph, k::Int; normalize=true, endpoints=false) 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
     state::DijkstraState,
-    g::SimpleGraph,
+    g::AbstractGraph,
     si::Integer
     )
 
@@ -114,7 +114,7 @@ end
 function _accumulate_endpoints!(
     betweenness::Vector{Float64},
     state::DijkstraState,
-    g::SimpleGraph,
+    g::AbstractGraph,
     si::Integer
     )
 

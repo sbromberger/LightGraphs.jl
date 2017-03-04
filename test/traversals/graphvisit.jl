@@ -8,8 +8,8 @@ f = IOBuffer()
 
 
 function trivialgraphvisit(
-    g::SimpleGraph,
-    alg::LightGraphs.SimpleGraphVisitAlgorithm,
+    g::AbstractGraph,
+    alg::LightGraphs.AbstractGraphVisitAlgorithm,
     sources
 )
     visitor = TrivialGraphVisitor()
