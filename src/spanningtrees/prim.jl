@@ -8,6 +8,7 @@ isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 
 """
 Checks whether a given vertex `v` is a member of a Vector{PrimHeapEntry}
+and returns a tuple containing a Bool and the dist value.
 """
 function contains{T<:Real}(pq::Vector{PrimHeapEntry{T}}, v::Int) :: Tuple{Bool, T}
     for item in pq
