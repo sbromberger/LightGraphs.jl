@@ -159,6 +159,43 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 - **visualization:** integration with [GraphLayout](https://github.com/IainNZ/GraphLayout.jl), [TikzGraphs](https://github.com/sisl/TikzGraphs.jl), [GraphPlot](https://github.com/JuliaGraphs/GraphPlot.jl), [NetworkViz](https://github.com/abhijithanilkumar/NetworkViz.jl/)
 
 
+## Core API
+These functions are defined as the public contract of the LightGraphs.AbstractGraph interface.
+
+### Constructing and modifying the graph
+
+- add_edge!
+- rem_edge!
+- add_vertex!
+- add_vertices!
+- rem_vertex!
+
+### Edge/Arc interface
+- src
+- dst
+
+### Accessing state
+- nv::Int
+- ne::Int
+- vertices (Iterable)
+- edges (Iterable)
+- neighbors
+- in_edges
+- out_edges
+- has_vertex
+- has_edge
+- has_self_loops (though this might be a trait or an abstract graph type)
+
+
+### Non-Core APIs
+These functions can be constructed from the Core API functions but can be given specialized implementations in order to improve performance.
+
+- adjacency_matrix
+- degree
+
+This can be computed from neighbors by default `degree(g,v) = length(neighbors(g,v))` so you don't need to implement this unless your type can compute degree faster than this method.
+
+
 ## Supported Versions
 * LightGraphs master is designed to work with the latest stable version of Julia.
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
