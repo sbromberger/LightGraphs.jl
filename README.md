@@ -164,11 +164,11 @@ These functions are defined as the public contract of the LightGraphs.AbstractGr
 
 ### Constructing and modifying the graph
 
-- add_edge
-- rem_edge
-- add_vertex
-- add_vertices
-- rem_vertex
+- add_edge!
+- rem_edge!
+- add_vertex!
+- add_vertices!
+- rem_vertex!
 
 ### Edge/Arc interface
 - src
