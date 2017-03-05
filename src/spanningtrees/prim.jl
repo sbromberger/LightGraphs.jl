@@ -9,21 +9,11 @@ isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 """
 Checks whether a given vertex `v` is a member of a Vector{PrimHeapEntry}
 """
-function contains{T<:Real}(pq::Vector{PrimHeapEntry{T}}, v::Int) :: Bool
+function contains{T<:Real}(pq::Vector{PrimHeapEntry{T}}, v::Int) :: Tuple{Bool, T}
     for item in pq
-        v == item.vertex && return true
+        v == item.vertex && return (true, item.dist)
     end
-    return false
-end
-
-"""
-Takes a Vector{PrimHeapEntry} `pq` and a vertex `v` as arguments and returns the
-dist key of the vertex.
-"""
-function get_dist{T<:Real}(pq::Vector{PrimHeapEntry{T}}, v::Int) :: T
-    for item in pq
-        v == item.vertex && return item.dist
-    end
+    return (false, zero(T))
 end
 
 """
@@ -74,9 +64,10 @@ function visit!{T<:Real}(g::SimpleGraph,
     marked[v] = true
     for w in fadj(g, v)
         if !marked[w]
-            if !contains(pq, w)
+            (ismember, distance) = contains(pq, w)
+            if !ismember
                 heappush!(pq, PrimHeapEntry(w, Edge(min(v, w), max(v, w)), distmx[v, w]))
-            elseif distmx[v, w] < get_dist(pq, w)
+            elseif distmx[v, w] < distance
                 changeKey!(pq, w, Edge(min(v, w), max(v, w)), distmx[v, w])
             end
         end
