@@ -33,7 +33,7 @@ gs = load(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
 @test gs == p2
 @test_throws ErrorException load(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "badname")
 
-d = Dict{String, SimpleGraph}("p1"=>p1, "p2"=>p2)
+d = Dict{String, AbstractGraph}("p1"=>p1, "p2"=>p2)
 @test save(f,d) == 2
 
 

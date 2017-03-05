@@ -17,31 +17,31 @@ dst(e::Edge) = e.second
 
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 
+"""An abstract type representing a graph."""
+abstract AbstractGraph
+
 """A type representing an undirected graph."""
-type Graph
+type Graph <: AbstractGraph
     vertices::UnitRange{Int}
     ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
 end
 
 """A type representing a directed graph."""
-type DiGraph
+type DiGraph <: AbstractGraph
     vertices::UnitRange{Int}
     ne::Int
     fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-typealias SimpleGraph Union{Graph, DiGraph}
-
-
 """Return the vertices of a graph."""
-vertices(g::SimpleGraph) = g.vertices
+vertices(g::AbstractGraph) = g.vertices
 
 """Return an iterator to the edges of a graph.
 The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
 """
-edges(g::SimpleGraph) = EdgeIter(g)
+edges(g::AbstractGraph) = EdgeIter(g)
 
 """Returns the forward adjacency list of a graph.
 
@@ -62,11 +62,11 @@ The optional second argument take the `v`th vertex adjacency list, that is:
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-fadj(g::SimpleGraph) = g.fadjlist
-fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
+fadj(g::AbstractGraph) = g.fadjlist
+fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
 
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
-function issubset{T<:SimpleGraph}(g::T, h::T)
+function issubset{T<:AbstractGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
     return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
@@ -75,7 +75,7 @@ end
 
 """Add `n` new vertices to the graph `g`. Returns true if all vertices
 were added successfully, false otherwise."""
-function add_vertices!(g::SimpleGraph, n::Integer)
+function add_vertices!(g::AbstractGraph, n::Integer)
     added = true
     for i = 1:n
         added &= add_vertex!(g)
@@ -84,7 +84,7 @@ function add_vertices!(g::SimpleGraph, n::Integer)
 end
 
 """Return true if the graph `g` has an edge from `u` to `v`."""
-has_edge(g::SimpleGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
+has_edge(g::AbstractGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
 
 """
     in_edges(g, v)
@@ -92,7 +92,7 @@ has_edge(g::SimpleGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
 Returns an Array of the edges in `g` that arrive at vertex `v`.
 `v=dst(e)` for each returned edge `e`.
 """
-in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
+in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
 
 """
     out_edges(g, v)
@@ -100,24 +100,24 @@ in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
 Returns an Array of the edges in `g` that depart from vertex `v`.
 `v = src(e)` for each returned edge `e`.
 """
-out_edges(g::SimpleGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
+out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
 
 
 """Return true if `v` is a vertex of `g`."""
-has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
+has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
 
 """
     nv(g)
 
 The number of vertices in `g`.
 """
-nv(g::SimpleGraph) = length(vertices(g))
+nv(g::AbstractGraph) = length(vertices(g))
 """
     ne(g)
 
 The number of edges in `g`.
 """
-ne(g::SimpleGraph) = g.ne
+ne(g::AbstractGraph) = g.ne
 
 """
     add_edge!(g, u, v)
@@ -125,7 +125,7 @@ ne(g::SimpleGraph) = g.ne
 Add a new edge to `g` from `u` to `v`.
 Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
 """
-add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
+add_edge!(g::AbstractGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
 
 """
     rem_edge!(g, u, v)
@@ -134,7 +134,7 @@ Remove the edge from `u` to `v`.
 
 Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
 """
-rem_edge!(g::SimpleGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
+rem_edge!(g::AbstractGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
 
 """
     rem_vertex!(g, v)
@@ -147,7 +147,7 @@ After removal the vertices in the ` g` will be indexed by 1:n-1.
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
 """
-function rem_vertex!(g::SimpleGraph, v::Int)
+function rem_vertex!(g::AbstractGraph, v::Int)
     v in vertices(g) || return false
     n = nv(g)
 
@@ -190,14 +190,14 @@ function rem_vertex!(g::SimpleGraph, v::Int)
 end
 
 """Return the number of edges which start at vertex `v`."""
-indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
+indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
 """Return the number of edges which end at vertex `v`."""
-outdegree(g::SimpleGraph, v::Int) = length(fadj(g,v))
+outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
 
 
-indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
-outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
-degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
+indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
+outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
+degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 
 "Return the maxium `outdegree` of vertices in `g`."
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
@@ -229,18 +229,18 @@ end
 
 Returns a `StatsBase.Histogram` of the degrees of vertices in `g`.
 """
-degree_histogram(g::SimpleGraph) = fit(Histogram, degree(g))
+degree_histogram(g::AbstractGraph) = fit(Histogram, degree(g))
 
 """Returns a list of all neighbors connected to vertex `v` by an incoming edge.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
+in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
 """Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
 
 """Returns a list of all neighbors of vertex `v` in `g`.
 
@@ -248,16 +248,16 @@ For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
+neighbors(g::AbstractGraph, v::Int) = out_neighbors(g, v)
 
 "Returns the neighbors common to vertices `u` and `v` in `g`."
-common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
 
 @deprecate has_self_loop has_self_loops
 
 "Returns true if `g` has any self loops."
 
-has_self_loops(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGraph) = any(v->has_edge(g, v, v), vertices(g))
 
 "Returns the number of self loops in `g`."
-num_self_loops(g::SimpleGraph) = sum(v->has_edge(g, v, v), vertices(g))
+num_self_loops(g::AbstractGraph) = sum(v->has_edge(g, v, v), vertices(g))

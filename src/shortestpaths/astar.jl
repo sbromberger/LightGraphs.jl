@@ -4,7 +4,7 @@
 # A* shortest-path algorithm
 
 function a_star_impl!{T<:Number}(
-    graph::SimpleGraph,# the graph
+    graph::AbstractGraph,# the graph
     t::Int, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
@@ -41,7 +41,7 @@ end
 optional heuristic function and edge distance matrix may be supplied.
 """
 function a_star{T<:Number}(
-    graph::SimpleGraph,  # the graph
+    graph::AbstractGraph,  # the graph
 
     s::Int,                       # the start vertex
     t::Int,                       # the end vertex

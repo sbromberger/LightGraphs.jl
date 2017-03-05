@@ -11,7 +11,7 @@ and computes minimum spanning tree. Returns a `Vector{Edge}`,
 that contains the edges.
 """
 function prim_mst{T<:Real}(
-    g::SimpleGraph,
+    g::AbstractGraph,
     distmx::AbstractArray{T, 2} = DefaultDistance()
     ) :: Vector{Edge}
 
@@ -43,7 +43,7 @@ Used to mark the visited vertices. Marks the vertex `v` of graph `g` true in the
 and enters all its edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
 function visit!{T<:Real}(
-    g::SimpleGraph,
+    g::AbstractGraph,
     v::Int,
     marked::AbstractArray{Bool, 1},
     pq::Vector{PrimHeapEntry{T}},

@@ -9,7 +9,7 @@ type Biconnections
     id::Int
 end
 
-function Biconnections(g::SimpleGraph)
+function Biconnections(g::AbstractGraph)
     n = nv(g)
     return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
 end

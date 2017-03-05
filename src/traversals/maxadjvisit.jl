@@ -10,13 +10,13 @@
 #
 #################################################
 
-type MaximumAdjacency <: SimpleGraphVisitAlgorithm
+type MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: SimpleGraphVisitor
+abstract AbstractMASVisitor <: AbstractGraphVisitor
 
 function maximum_adjacency_visit_impl!{T}(
-    graph::SimpleGraph,                               # the graph
+    graph::AbstractGraph,                               # the graph
     pq::DataStructures.PriorityQueue{Int, T},         # priority queue
     visitor::AbstractMASVisitor,                      # the visitor
     colormap::Vector{Int})                            # traversal status
@@ -38,7 +38,7 @@ function maximum_adjacency_visit_impl!{T}(
 end
 
 function traverse_graph!(
-    graph::SimpleGraph,
+    graph::AbstractGraph,
     T::DataType,
     alg::MaximumAdjacency,
     s::Int,
@@ -78,7 +78,7 @@ end
 #################################################
 
 type MinCutVisitor{T} <: AbstractMASVisitor
-    graph::SimpleGraph
+    graph::AbstractGraph
     parities::AbstractArray{Bool,1}
     colormap::Vector{Int}
     bestweight::T
@@ -88,7 +88,7 @@ type MinCutVisitor{T} <: AbstractMASVisitor
     vertices::Vector{Int}
 end
 
-function MinCutVisitor{T}(graph::SimpleGraph, distmx::AbstractArray{T, 2})
+function MinCutVisitor{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2})
     n = nv(graph)
     parities = falses(n)
     return MinCutVisitor(
@@ -179,7 +179,7 @@ weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
 function mincut{T}(
-    graph::SimpleGraph,
+    graph::AbstractGraph,
     distmx::AbstractArray{T, 2}
 )
     visitor = MinCutVisitor(graph, distmx)
@@ -188,7 +188,7 @@ function mincut{T}(
     return(visitor.parities + 1, visitor.bestweight)
 end
 
-mincut(graph::SimpleGraph) = mincut(graph,DefaultDistance())
+mincut(graph::AbstractGraph) = mincut(graph,DefaultDistance())
 
 """Returns the vertices in `g` traversed by maximum adjacency search. An optional
 `distmx` matrix may be specified; if omitted, edge distances are assumed to
@@ -197,7 +197,7 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 displayed.
 """
 function maximum_adjacency_visit{T}(
-    graph::SimpleGraph,
+    graph::AbstractGraph,
     distmx::AbstractArray{T, 2},
     log::Bool,
     io::IO
@@ -207,7 +207,7 @@ function maximum_adjacency_visit{T}(
     return visitor.vertices
 end
 
-maximum_adjacency_visit(graph::SimpleGraph) = maximum_adjacency_visit(
+maximum_adjacency_visit(graph::AbstractGraph) = maximum_adjacency_visit(
     graph,
     DefaultDistance(),
     false,

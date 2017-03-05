@@ -2,7 +2,7 @@
 of the graph `g`.
 """
 function closeness_centrality(
-    g::SimpleGraph;
+    g::AbstractGraph;
     normalize=true)
 
     n_v = nv(g)
