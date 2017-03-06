@@ -84,7 +84,7 @@ end
 is_directed(g::Graph) = false
 
 function has_edge(g::Graph, e::Edge)
-    u, v = e
+    u, v = Tuple(e)
     u > nv(g) || v > nv(g) && return false
     if degree(g,u) > degree(g,v)
         u, v = v, u
@@ -94,7 +94,7 @@ end
 
 function add_edge!(g::Graph, e::Edge)
 
-    s, d = e
+    s, d = Tuple(e)
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
     if inserted

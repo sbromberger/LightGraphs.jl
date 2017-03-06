@@ -8,7 +8,7 @@ using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 
-import Base: write, ==, <, *, ≈, isless, issubset, union, intersect,
+import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!

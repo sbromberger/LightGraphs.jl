@@ -244,14 +244,15 @@ Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_
 function cartesian_product{G<:AbstractGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
-    for (i1, i2) in edges(g)
+    for e in edges(g)
+        i1, i2 = Tuple(e)
         for j=1:nv(h)
             add_edge!(z, id(i1,j), id(i2,j))
         end
     end
 
     for e in edges(h)
-        j1, j2 = src(e), dst(e)
+        j1, j2 = Tuple(e)
         for i=1:nv(g)
             add_edge!(z, id(i,j1), id(i,j2))
         end
@@ -267,8 +268,10 @@ Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_gra
 function tensor_product{G<:AbstractGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
-    for (i1, i2) in edges(g)
-        for (j1, j2) in edges(h)
+    for e1 in edges(g)
+        i1, i2 = Tuple(e1)
+        for e2 in edges(h)
+            j1, j2 = Tuple(e2)
             add_edge!(z, id(i1, j1), id(i2, j2))
         end
     end
@@ -344,7 +347,7 @@ function induced_subgraph{T<:AbstractGraph}(g::T, elist::AbstractVector{Edge})
     vmap = Vector{Int}()
 
     for e in elist
-        u, v = e
+        u, v = Tuple(e)
         for i in (u,v)
             if !haskey(newvid, i)
                 add_vertex!(h)
