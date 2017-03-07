@@ -199,20 +199,20 @@ indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,
 outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
 degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 
-"Return the maxium `outdegree` of vertices in `g`."
+"Return the maximum `outdegree` of vertices in `g`."
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
 "Return the minimum `outdegree` of vertices in `g`."
 δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
 "Return the maximum `indegree` of vertices in `g`."
-δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
-"Return the minimum `indegree` of vertices in `g`."
 Δin(g)  = noallocextreme(indegree,(>), typemin(Int), g)
-"Return the minimum `degree` of vertices in `g`."
-δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
+"Return the minimum `indegree` of vertices in `g`."
+δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
 "Return the maximum `degree` of vertices in `g`."
 Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
+"Return the minimum `degree` of vertices in `g`."
+δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
 
-"computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
+"Computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
 function noallocextreme(f, comparison, initial, g)
     value = initial
     for i in 1:nv(g)
