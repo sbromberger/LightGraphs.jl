@@ -189,9 +189,9 @@ function rem_vertex!(g::AbstractGraph, v::Int)
     return true
 end
 
-"""Return the number of edges which start at vertex `v`."""
-indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
 """Return the number of edges which end at vertex `v`."""
+indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
+"""Return the number of edges which start at vertex `v`."""
 outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
 
 
