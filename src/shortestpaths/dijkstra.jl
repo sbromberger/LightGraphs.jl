@@ -1,4 +1,4 @@
-abstract AbstractDijkstraState<:AbstractPathState
+abstract type AbstractDijkstraState <: AbstractPathState end
 
 immutable DijkstraHeapEntry{T}
     vertex::Int

@@ -3,7 +3,7 @@
 
 # The concept and trivial implementation of graph visitors
 
-abstract AbstractGraphVisitor
+abstract type AbstractGraphVisitor end
 
 # trivial implementation
 
@@ -26,10 +26,10 @@ end
 
 
 # This is the common base for BreadthFirst and DepthFirst
-abstract AbstractGraphVisitAlgorithm
+abstract type AbstractGraphVisitAlgorithm end
 
-typealias AbstractEdgeMap{T} Associative{Edge,T}
-typealias AbstractVertexMap{T} Union{AbstractVector{T},Associative{Int, T}}
+AbstractEdgeMap{T} = Associative{Edge,T}
+AbstractVertexMap{T} = Union{AbstractVector{T},Associative{Int, T}}
 
 type DummyEdgeMap <: AbstractEdgeMap{Int}
 end

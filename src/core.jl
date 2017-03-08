@@ -1,10 +1,10 @@
-abstract AbstractPathState
+abstract type AbstractPathState end
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
 _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
-typealias Edge Pair{Int,Int}
+const Edge = Pair{Int,Int}
 
 @deprecate rev(e::Edge) reverse(e)
 
@@ -18,7 +18,7 @@ dst(e::Edge) = e.second
 ==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
 
 """An abstract type representing a graph."""
-abstract AbstractGraph
+abstract type AbstractGraph end
 
 """A type representing an undirected graph."""
 type Graph <: AbstractGraph

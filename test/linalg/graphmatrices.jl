@@ -68,7 +68,7 @@ function test_laplacian(mat)
     @test_throws MethodError AveragingLaplacian(lapl)
     @test_throws MethodError convert(CombinatorialAdjacency, lapl)
     L = convert(SparseMatrix{Float64}, lapl)
-    @test sum(abs(sum(L,1))) == 0
+    @test sum(abs.(sum(L,1))) == 0
 end
 
 function test_accessors(mat, n)
@@ -91,17 +91,17 @@ function test_arithmetic(mat, n)
 	lapl = CombinatorialLaplacian(adjmat)
 	onevec = ones(Float64, n)
 	v = @show adjmat*ones(Float64, n)
-	@test sum(abs(adjmat*onevec)) > 0.0
-  @test_approx_eq sum(abs(stochmat*onevec/sum(onevec))) 1.0
-	@test sum(abs(lapl*onevec)) == 0
-	g(a) = sum(abs(sum(sparse(a),1)))
+	@test sum(abs.(adjmat*onevec)) > 0.0
+    @test sum(abs.((stochmat * onevec) / sum(onevec))) ≈ 1.0
+	@test sum(abs.(lapl*onevec)) == 0
+	g(a) = sum(abs.(sum(sparse(a),1)))
 	@test g(lapl) == 0
 	@test g(NormalizedLaplacian(adjhat)) > 1e-13
 	@test g(StochasticLaplacian(stochmat)) > 1e-13
 
 	@test eigs(adjmat, which=:LR)[1][1] > 1.0
-	@test_approx_eq eigs(stochmat, which=:LR)[1][1]  1.0
-	@test_approx_eq eigs(avgmat, which=:LR)[1][1]  1.0
+	@test eigs(stochmat, which=:LR)[1][1] ≈ 1.0
+	@test eigs(avgmat, which=:LR)[1][1] ≈ 1.0
 	@test eigs(lapl, which=:LR)[1][1] > 2.0
 	@test_throws MethodError eigs(lapl, which=:SM)[1][1] # --> greater_than(-0.0)
 	lhat = NormalizedLaplacian(adjhat)
@@ -114,13 +114,13 @@ function test_other(mat, n )
 	@test size(lapl, 1) == n
 	@test size(lapl, 2) == n
 	@test size(lapl, 3) == 1
-	
+
 	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
   @test !issymmetric(AveragingAdjacency{Float64}(adjmat))
   @test !issymmetric(StochasticAdjacency{Float64}(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
-	
+
     println("equality testing "); begin
         @test CombinatorialAdjacency(mat) == CombinatorialAdjacency(mat)
         S = StochasticAdjacency(CombinatorialAdjacency(mat))
@@ -157,16 +157,17 @@ function test_punchedmatrix(mat, n)
     adjmat = CombinatorialAdjacency(mat)
     ahatp  = PunchedAdjacency(adjmat)
     y = ahatp * perron(ahatp)
-    @test_approx_eq_eps dot(y, ahatp.perron) 0.0 1e-8
-    @test_approx_eq_eps sumabs(y) 0.0 1e-8
+    @test dot(y, ahatp.perron) ≈ 0.0 atol=1.0e-8
+    @test sum(abs, y) ≈ 0.0 atol=1.0e-8
     eval, evecs = eigs(ahatp, which=:LM)
     @test eval[1]-1  <= 0
-    @test_approx_eq_eps dot(perron(ahatp), evecs[:,1]) 0.0 1e-8
+    @test dot(perron(ahatp), evecs[:,1]) ≈ 0.0 atol=1e-8
+
     ahat = ahatp.A
     @test isa(ahat, NormalizedAdjacency)
 
     z = ahatp * perron(ahat)
-    @test_approx_eq_eps norm(z) 0.0 1e-8
+    @test norm(z) ≈ 0.0 atol=1e-8
 end
 
 println("constructors");begin

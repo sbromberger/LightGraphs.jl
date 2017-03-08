@@ -17,8 +17,8 @@ z = betweenness_centrality(g)
 @test map(Float32, z) == map(Float32, c)
 
 y = betweenness_centrality(g, endpoints=true, normalize=false)
-@test round(y[1:3],4) ==
-    round([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
+@test round.(y[1:3],4) ==
+    round.([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
 
 x = betweenness_centrality(g,3)
 @test length(x) == 50

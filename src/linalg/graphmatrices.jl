@@ -25,10 +25,10 @@ export  convert,
 
 
 
-typealias SparseMatrix{T} SparseMatrixCSC{T,Int64}
+SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
 @doc "An abstract type to allow opertions on any type of graph matrix" ->
-abstract GraphMatrix{T}
+abstract type GraphMatrix{T} end
 
 
 @doc "The core Adjacency matrix structure. Keeps the vertex degrees around.
@@ -40,8 +40,9 @@ adjacency matrix of a Laplacian matrix. If your subtype of Laplacian does not pr
 an field A for the Adjacency instance, then attach another method to this function to provide
 an Adjacency{T} representation of the Laplacian. The Adjacency matrix here
 is the final subtype that corresponds to this type of Laplacian" ->
-abstract Adjacency{T} <: GraphMatrix{T}
-abstract Laplacian{T} <: GraphMatrix
+
+abstract type Adjacency{T}<:GraphMatrix{T} end
+abstract type Laplacian{T}<:GraphMatrix{T} end
 
 @doc "Combinatorial Adjacency matrix is the standard adjacency matrix from math" ->
 type CombinatorialAdjacency{T,S,V} <: Adjacency{T}
@@ -98,14 +99,14 @@ function AveragingAdjacency{T}(adjmat::CombinatorialAdjacency{T})
 	return AveragingAdjacency{T}(adjmat)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt(adjmat.A.D)/norm(sqrt(adjmat.A.D))
+perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
 
 type PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
 
 	function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-                perron=sqrt(adjmat.D)/norm(sqrt(adjmat.D))
+                perron=sqrt.(adjmat.D)/norm(sqrt.(adjmat.D))
                 return new(NormalizedAdjacency(adjmat), perron)
 	end
 end
