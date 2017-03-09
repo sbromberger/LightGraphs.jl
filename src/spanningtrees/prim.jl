@@ -62,7 +62,7 @@ function visit!{T<:Real}(g::AbstractGraph,
                             v::Int,
                             pq::Vector{PrimHeapEntry{T}},
                             distmx::AbstractArray{T, 2},
-                            marked::AbstractVector{Bool,1})
+                            marked::AbstractVector{Bool})
     marked[v] = true
     for w in fadj(g, v)
         if !marked[w]
