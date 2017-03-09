@@ -35,9 +35,10 @@ on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
 and computes minimum spanning tree. Returns a `Vector{Edge}`,
 that contains the edges. This is an eager implementation which requires only O(V) additional space
 """
-function prim_mst{T<:Real}(g::SimpleGraph,
+function prim_mst{T<:Real}(g::AbstractGraph,
                             distmx::AbstractArray{T, 2} = DefaultDistance()
 ) :: Vector{Edge}
+  
     pq = Vector{PrimHeapEntry{T}}()
     mst = Vector{Edge}()
     marked = fill(false, nv(g))
@@ -57,11 +58,11 @@ end
 """
 Used to mark the vertices and update the priority queue `pq`.
 """
-function visit!{T<:Real}(g::SimpleGraph,
+function visit!{T<:Real}(g::AbstractGraph,
                             v::Int,
                             pq::Vector{PrimHeapEntry{T}},
                             distmx::AbstractArray{T, 2},
-                            marked::AbstractArray{Bool,1})
+                            marked::AbstractVector{Bool,1})
     marked[v] = true
     for w in fadj(g, v)
         if !marked[w]

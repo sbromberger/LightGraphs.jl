@@ -34,7 +34,7 @@ for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
 """
 function eccentricity{T}(
-    g::SimpleGraph,
+    g::AbstractGraph,
     v::Int,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
@@ -45,18 +45,18 @@ function eccentricity{T}(
 end
 
 eccentricity{T}(
-    g::SimpleGraph,
+    g::AbstractGraph,
     vs::AbstractArray{Int, 1}=vertices(g),
     distmx::AbstractArray{T, 2} = DefaultDistance()
 ) =
     [eccentricity(g,v,distmx) for v in vs]
 
-eccentricity{T}(g::SimpleGraph, distmx::AbstractArray{T, 2}) =
+eccentricity{T}(g::AbstractGraph, distmx::AbstractArray{T, 2}) =
     eccentricity(g, vertices(g), distmx)
 
 """Returns the maximum eccentricity of the graph."""
 diameter{T}(all_e::Vector{T}) = maximum(all_e)
-diameter{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+diameter{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     maximum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
@@ -68,12 +68,12 @@ function periphery{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
 
-periphery{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+periphery{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     periphery(eccentricity(g, distmx))
 
 """Returns the minimum eccentricity of the graph."""
 radius{T}(all_e::Vector{T}) = minimum(all_e)
-radius{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+radius{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     minimum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
@@ -84,5 +84,5 @@ function center{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center{T}(g::SimpleGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+center{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
     center(eccentricity(g, distmx))

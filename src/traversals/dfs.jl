@@ -21,15 +21,15 @@ EdgeColorMap :
 - color == 1     => examined
 """
 
-type DepthFirst <: SimpleGraphVisitAlgorithm
+type DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function depth_first_visit_impl!(
-    graph::SimpleGraph,      # the graph
+    graph::AbstractGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
     edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
-    visitor::SimpleGraphVisitor)  # the visitor
+    visitor::AbstractGraphVisitor)  # the visitor
 
 
     while !isempty(stack)
@@ -66,10 +66,10 @@ function depth_first_visit_impl!(
 end
 
 function traverse_graph!(
-    graph::SimpleGraph,
+    graph::AbstractGraph,
     alg::DepthFirst,
     s::Int,
-    visitor::SimpleGraphVisitor;
+    visitor::AbstractGraphVisitor;
     vertexcolormap = Dict{Int, Int}(),
     edgecolormap = DummyEdgeMap())
 
@@ -91,7 +91,7 @@ end
 
 # Test whether a graph is cyclic
 
-type DFSCyclicTestVisitor <: SimpleGraphVisitor
+type DFSCyclicTestVisitor <: AbstractGraphVisitor
     found_cycle::Bool
 
     DFSCyclicTestVisitor() = new(false)
@@ -118,7 +118,7 @@ discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 Tests whether a graph contains a cycle through depth-first search. It
 returns `true` when it finds a cycle, otherwise `false`.
 """
-function is_cyclic(g::SimpleGraph)
+function is_cyclic(g::AbstractGraph)
     cmap = zeros(Int, nv(g))
     visitor = DFSCyclicTestVisitor()
 
@@ -133,7 +133,7 @@ end
 
 # Topological sort using DFS
 
-type TopologicalSortVisitor <: SimpleGraphVisitor
+type TopologicalSortVisitor <: AbstractGraphVisitor
     vertices::Vector{Int}
 
     function TopologicalSortVisitor(n::Int)
@@ -152,7 +152,7 @@ function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
     push!(visitor.vertices, v)
 end
 
-function topological_sort_by_dfs(graph::SimpleGraph)
+function topological_sort_by_dfs(graph::AbstractGraph)
     nvg = nv(graph)
     cmap = zeros(Int, nvg)
     visitor = TopologicalSortVisitor(nvg)
@@ -167,7 +167,7 @@ function topological_sort_by_dfs(graph::SimpleGraph)
 end
 
 
-type TreeDFSVisitor <:SimpleGraphVisitor
+type TreeDFSVisitor <:AbstractGraphVisitor
     tree::DiGraph
     predecessor::Vector{Int}
 end
@@ -187,7 +187,7 @@ end
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
-function dfs_tree(g::SimpleGraph, s::Int)
+function dfs_tree(g::AbstractGraph, s::Int)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)
     traverse_graph!(g, DepthFirst(), s, visitor)

@@ -37,7 +37,7 @@ end
 
 """Returns a dictionary of (name=>graph) loaded from file `fn`."""
 function loadlg_mult(io::IO)
-    graphs = Dict{String, SimpleGraph}()
+    graphs = Dict{String, AbstractGraph}()
     while !eof(io)
         line = strip(chomp(readline(io)))
         if startswith(line,"#") || line == ""
@@ -81,7 +81,7 @@ to the IO stream designated by `io`.
 
 Returns 1 (number of graphs written).
 """
-function savelg(io::IO, g::SimpleGraph, gname::String)
+function savelg(io::IO, g::AbstractGraph, gname::String)
     # write header line
     dir = is_directed(g)? "d" : "u"
     line = join([nv(g), ne(g), dir, gname], ",")
@@ -106,7 +106,7 @@ function savelg_mult(io::IO, graphs::Dict)
     return ng
 end
 
-# savelg(io::IO, g::SimpleGraph, n::String) =
+# savelg(io::IO, g::AbstractGraph, n::String) =
 #     savelg_mult(io, Dict(n=>g))
 
 # write(g::Graph, fn::String; compress::Bool=true) = write(g, "graph", fn; compress=compress)
