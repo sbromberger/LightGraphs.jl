@@ -4,7 +4,8 @@ abstract type AbstractPathState end
 _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
-abstract AbstractEdge
+abstract type AbstractEdge end
+
 struct Edge <: AbstractEdge
     src::Int
     dst::Int
@@ -18,7 +19,7 @@ src(e::Edge) = e.src
 dst(e::Edge) = e.dst
 
 convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
-convert(::Type{Tuple}, e::Edge) = (src(e), dst(e))
+Tuple(e::Edge) = (e.src, e.dst)
 
 reverse(e::Edge) = Edge(dst(e), src(e))
 is_ordered(e::Edge) = src(e) <= dst(e)
