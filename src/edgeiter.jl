@@ -48,7 +48,7 @@ end
 
 function _isequal(e1::EdgeIter, e2)
     for e in e2
-        s, d = e
+        s, d = Tuple(e)
         found = length(searchsorted(e1.adj[s], d)) > 0
         if !e1.directed
             found = found || length(searchsorted(e1.adj[d],s)) > 0

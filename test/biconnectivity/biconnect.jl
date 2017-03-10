@@ -15,8 +15,8 @@ add_edge!(g, 9, 10)
 add_edge!(g, 11, 12)
 
 bcc = biconnected_components(g)
-ans = [[3=>5,4=>5,2=>4,3=>4,2=>3], [9=>10], [6=>9,8=>9,6=>8], [1=>7,6=>7,2=>6,1=>2], [11=>12]]
-@test bcc == ans
+a = [[Edge(3, 5),Edge(4, 5), Edge(2, 4),Edge(3, 4),Edge(2, 3)], [Edge(9, 10)], [Edge(6, 9),Edge(8, 9),Edge(6, 8)], [Edge(1, 7),Edge(6, 7),Edge(2, 6),Edge(1, 2)], [Edge(11, 12)]]
+@test bcc == a
 
 g = Graph(4)
 add_edge!(g, 1, 2)
@@ -34,5 +34,5 @@ G = blkdiag(g, h)
 add_edge!(G, 4, 5)
 
 bcc = biconnected_components(G)
-ans = [[5=>8,7=>8,6=>7,5=>6], [4=>5], [1=>4,3=>4,2=>3,1=>2]]
-@test bcc == ans
+a = [[Edge(5, 8),Edge(7, 8),Edge(6, 7),Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4),Edge(3, 4),Edge(2, 3),Edge(1, 2)]]
+@test bcc == a

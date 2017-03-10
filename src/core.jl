@@ -4,18 +4,26 @@ abstract AbstractPathState
 _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
-typealias Edge Pair{Int,Int}
+abstract AbstractEdge
+immutable Edge <: AbstractEdge
+    src::Int
+    dst::Int
+end
 
-@deprecate rev(e::Edge) reverse(e)
+show(io::IO, e::Edge) = print(io, "Edge $(e.src) => $(e.dst)")
 
 """Return source of an edge."""
-src(e::Edge) = e.first
+src(e::Edge) = e.src
 """Return destination of an edge."""
-dst(e::Edge) = e.second
+dst(e::Edge) = e.dst
 
- is_ordered(e::Edge) = src(e) <= dst(e)
+convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
+convert(::Type{Tuple}, e::Edge) = (src(e), dst(e))
 
-==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
+reverse(e::Edge) = Edge(dst(e), src(e))
+is_ordered(e::Edge) = src(e) <= dst(e)
+
+==(e1::Edge, e2::Edge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
 
 """An abstract type representing a graph."""
 abstract AbstractGraph
