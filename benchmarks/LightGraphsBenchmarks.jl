@@ -34,8 +34,9 @@ GRAPHS = Dict{String, Graph}(
 )
 
 MODULES = [
-	"core.jl",
-	"centrality.jl",
+	  "core.jl",
+    "edgetype.jl",
+	# "centrality.jl",
     "max-flow.jl",
     "connectivity.jl",
     "traversals.jl"
@@ -47,5 +48,6 @@ end
 
 run_benchmarks() = run(SUITE, verbose=true)
 
-
+run_benchmarks()
 end
+
