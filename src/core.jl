@@ -1,3 +1,5 @@
+_NI(m...) = error("Not implementedxxx")
+
 abstract AbstractPathState
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
@@ -5,46 +7,29 @@ _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x
 
 """A type representing a single edge between two vertices of a graph."""
 abstract AbstractEdge
-immutable Edge <: AbstractEdge
-    src::Int
-    dst::Int
-end
-
-show(io::IO, e::Edge) = print(io, "Edge $(e.src) => $(e.dst)")
-
-"""Return source of an edge."""
-src(e::Edge) = e.src
-"""Return destination of an edge."""
-dst(e::Edge) = e.dst
-
-convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
-convert(::Type{Tuple}, e::Edge) = (src(e), dst(e))
-
-reverse(e::Edge) = Edge(dst(e), src(e))
-is_ordered(e::Edge) = src(e) <= dst(e)
-
-==(e1::Edge, e2::Edge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
 
 """An abstract type representing a graph."""
 abstract AbstractGraph
 
-"""A type representing an undirected graph."""
-type Graph <: AbstractGraph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-end
+"""Return the type of a graph's edge"""
+edgetype(g::AbstractGraph) = _NI()
 
-"""A type representing a directed graph."""
-type DiGraph <: AbstractGraph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
-end
+"""Return source of an edge."""
+src(e::AbstractEdge) = _NI()
+"""Return destination of an edge."""
+dst(e::AbstractEdge) = _NI()
+
+# The following functions should be implemented for each edge type.
+Pair(e::AbstractEdge) = _NI()
+Tuple(e::AbstractEdge) = _NI()
+reverse(e::AbstractEdge) = _NI()
+==(e1::AbstractEdge, e2::AbstractEdge) = _NI()
+
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
+
 
 """Return the vertices of a graph."""
-vertices(g::AbstractGraph) = g.vertices
+vertices(g::AbstractGraph) = _NI()
 
 """Return an iterator to the edges of a graph.
 The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
@@ -70,29 +55,26 @@ The optional second argument take the `v`th vertex adjacency list, that is:
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-fadj(g::AbstractGraph) = g.fadjlist
-fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
+fadj(g::AbstractGraph) = _NI()
+fadj(g::AbstractGraph, v::Int) = _NI()
 
+badj(g::AbstractGraph) = _NI()
+badj(g::AbstractGraph, v::Int) = _NI()
+
+adj(g::AbstractGraph) = _NI()
+adj(g::AbstractGraph, v::Int) = _NI()
 """Returns true if all of the vertices and edges of `g` are contained in `h`."""
-function issubset{T<:AbstractGraph}(g::T, h::T)
-    (gmin, gmax) = extrema(vertices(g))
-    (hmin, hmax) = extrema(vertices(h))
-    return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
-end
+issubset{T<:AbstractGraph}(g::T, h::T) = _NI()
 
+is_directed(g::AbstractGraph) = _NI()
 
+add_vertex!(g::AbstractGraph) = _NI()
 """Add `n` new vertices to the graph `g`. Returns true if all vertices
 were added successfully, false otherwise."""
-function add_vertices!(g::AbstractGraph, n::Integer)
-    added = true
-    for i = 1:n
-        added &= add_vertex!(g)
-    end
-    return added
-end
+add_vertices!(g::AbstractGraph) = _NI()
 
 """Return true if the graph `g` has an edge from `u` to `v`."""
-has_edge(g::AbstractGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
+has_edge(g::AbstractGraph, u::Int, v::Int) = _NI()
 
 """
     in_edges(g, v)
@@ -100,7 +82,7 @@ has_edge(g::AbstractGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
 Returns an Array of the edges in `g` that arrive at vertex `v`.
 `v=dst(e)` for each returned edge `e`.
 """
-in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
+in_edges(g::AbstractGraph, v::Int) = _NI()
 
 """
     out_edges(g, v)
@@ -108,24 +90,24 @@ in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
 Returns an Array of the edges in `g` that depart from vertex `v`.
 `v = src(e)` for each returned edge `e`.
 """
-out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
+out_edges(g::AbstractGraph, v::Int) = _NI()
 
 
 """Return true if `v` is a vertex of `g`."""
-has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
+has_vertex(g::AbstractGraph, v::Int) = _NI()
 
 """
     nv(g)
 
 The number of vertices in `g`.
 """
-nv(g::AbstractGraph) = length(vertices(g))
+nv(g::AbstractGraph) = _NI()
 """
     ne(g)
 
 The number of edges in `g`.
 """
-ne(g::AbstractGraph) = g.ne
+ne(g::AbstractGraph) = _NI()
 
 """
     add_edge!(g, u, v)
@@ -133,7 +115,7 @@ ne(g::AbstractGraph) = g.ne
 Add a new edge to `g` from `u` to `v`.
 Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
 """
-add_edge!(g::AbstractGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
+add_edge!(g::AbstractGraph, u::Int, v::Int) = _NI()
 
 """
     rem_edge!(g, u, v)
@@ -142,7 +124,7 @@ Remove the edge from `u` to `v`.
 
 Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
 """
-rem_edge!(g::AbstractGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
+rem_edge!(g::AbstractGraph, u::Int, v::Int) = _NI()
 
 """
     rem_vertex!(g, v)
@@ -155,56 +137,19 @@ After removal the vertices in the ` g` will be indexed by 1:n-1.
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
 """
-function rem_vertex!(g::AbstractGraph, v::Int)
-    v in vertices(g) || return false
-    n = nv(g)
-
-    edgs = in_edges(g, v)
-    for e in edgs
-        rem_edge!(g, e)
-    end
-    neigs = copy(in_neighbors(g, n))
-    for i in neigs
-        rem_edge!(g, Edge(i, n))
-    end
-    if v != n
-        for i in neigs
-            add_edge!(g, Edge(i, v))
-        end
-    end
-
-    if is_directed(g)
-        edgs = out_edges(g, v)
-        for e in edgs
-            rem_edge!(g, e)
-        end
-        neigs = copy(out_neighbors(g, n))
-        for i in neigs
-            rem_edge!(g, Edge(n, i))
-        end
-        if v != n
-            for i in neigs
-                add_edge!(g, Edge(v, i))
-            end
-        end
-    end
-
-    g.vertices = 1:n-1
-    pop!(g.fadjlist)
-    if is_directed(g)
-        pop!(g.badjlist)
-    end
-    return true
-end
+rem_vertex!(g::AbstractGraph, v::Int) = _NI()
 
 """Return the number of edges which end at vertex `v`."""
-indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
+indegree(g::AbstractGraph, v::Int) = _NI()
 """Return the number of edges which start at vertex `v`."""
-outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
+outdegree(g::AbstractGraph, v::Int) = _NI()
 
 
 indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
 outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
+"""Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
+degree(g::AbstractGraph, v::Int) = _NI()
+
 degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
 
 "Return the maximum `outdegree` of vertices in `g`."
@@ -243,12 +188,12 @@ degree_histogram(g::AbstractGraph) = fit(Histogram, degree(g))
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
+in_neighbors(g::AbstractGraph, v::Int) = _NI()
 """Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
+out_neighbors(g::AbstractGraph, v::Int) = _NI()
 
 """Returns a list of all neighbors of vertex `v` in `g`.
 
@@ -256,16 +201,17 @@ For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
-neighbors(g::AbstractGraph, v::Int) = out_neighbors(g, v)
+neighbors(g::AbstractGraph, v::Int) = _NI()
 
 "Returns the neighbors common to vertices `u` and `v` in `g`."
-common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+common_neighbors(g::AbstractGraph, u::Int, v::Int) = _NI()
 
-@deprecate has_self_loop has_self_loops
+all_neighbors(g::AbstractGraph) = _NI()
 
 "Returns true if `g` has any self loops."
-
 has_self_loops(g::AbstractGraph) = any(v->has_edge(g, v, v), vertices(g))
 
 "Returns the number of self loops in `g`."
 num_self_loops(g::AbstractGraph) = sum(v->has_edge(g, v, v), vertices(g))
+
+density(g::AbstractGraph) = _NI()

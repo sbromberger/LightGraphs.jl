@@ -1,28 +1,32 @@
-function show(io::IO, g::DiGraph)
-    if nv(g) == 0
-        print(io, "empty directed graph")
-    else
-        print(io, "{$(nv(g)), $(ne(g))} directed graph")
-    end
+typealias SimpleDiGraphEdge SimpleEdge
+
+"""A type representing a directed graph."""
+type SimpleDiGraph <: AbstractSimpleGraph
+    vertices::UnitRange{Int}
+    ne::Int
+    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
+    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
 end
 
-function DiGraph(n::Int)
+edgetype(::SimpleDiGraph) = SimpleDiGraphEdge
+
+function SimpleDiGraph(n::Int)
     fadjlist = Vector{Vector{Int}}()
     badjlist = Vector{Vector{Int}}()
     for i = 1:n
         push!(badjlist, Vector{Int}())
         push!(fadjlist, Vector{Int}())
     end
-    return DiGraph(1:n, 0, badjlist, fadjlist)
+    return SimpleDiGraph(1:n, 0, badjlist, fadjlist)
 end
 
-DiGraph() = DiGraph(0)
+SimpleDiGraph() = SimpleDiGraph(0)
 
-function DiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
+function SimpleDiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
     dima, dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
-    g = DiGraph(dima)
+    g = SimpleDiGraph(dima)
     maxc = length(adjmx.colptr)
     for c = 1:(maxc-1)
         for rind = adjmx.colptr[c]:adjmx.colptr[c+1]-1
@@ -36,11 +40,11 @@ function DiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
     return g
 end
 
-function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
+function SimpleDiGraph{T<:Real}(adjmx::AbstractMatrix{T})
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
-    g = DiGraph(dima)
+    g = SimpleDiGraph(dima)
     for i in find(adjmx)
         ind = ind2sub((dima,dimb),i)
         add_edge!(g,ind...)
@@ -48,31 +52,31 @@ function DiGraph{T<:Real}(adjmx::AbstractMatrix{T})
     return g
 end
 
-function DiGraph(g::Graph)
-    h = DiGraph(nv(g))
+function SimpleDiGraph(g::AbstractSimpleGraph)
+    h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)
     h.fadjlist = deepcopy(fadj(g))
     h.badjlist = deepcopy(badj(g))
     return h
 end
 
-badj(g::DiGraph) = g.badjlist
-badj(g::DiGraph, v::Int) = badj(g)[v]
+badj(g::SimpleDiGraph) = g.badjlist
+badj(g::SimpleDiGraph, v::Int) = badj(g)[v]
 
 
-function copy(g::DiGraph)
-    return DiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+function copy(g::SimpleDiGraph)
+    return SimpleDiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 end
 
-==(g::DiGraph, h::DiGraph) =
+==(g::SimpleDiGraph, h::SimpleDiGraph) =
     vertices(g) == vertices(h) &&
     ne(g) == ne(h) &&
     fadj(g) == fadj(h) &&
     badj(g) == badj(h)
 
-is_directed(g::DiGraph) = true
+is_directed(g::SimpleDiGraph) = true
 
-function add_edge!(g::DiGraph, e::Edge)
+function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     s, d = Tuple(e)
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
@@ -83,7 +87,7 @@ function add_edge!(g::DiGraph, e::Edge)
 end
 
 
-function rem_edge!(g::DiGraph, e::Edge)
+function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     has_edge(g,e) || return false
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     deleteat!(g.fadjlist[src(e)], i)
@@ -94,7 +98,7 @@ function rem_edge!(g::DiGraph, e::Edge)
 end
 
 
-function add_vertex!(g::DiGraph)
+function add_vertex!(g::SimpleDiGraph)
     g.vertices = 1:nv(g)+1
     push!(g.badjlist, Vector{Int}())
     push!(g.fadjlist, Vector{Int}())
@@ -103,7 +107,7 @@ function add_vertex!(g::DiGraph)
 end
 
 
-function has_edge(g::DiGraph, e::Edge)
+function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
     u > nv(g) || v > nv(g) && return false
     if degree(g,u) < degree(g,v)
@@ -113,7 +117,7 @@ function has_edge(g::DiGraph, e::Edge)
     end
 end
 
-degree(g::DiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
+degree(g::SimpleDiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
 "Returns all the vertices which share an edge with `v`."
-all_neighbors(g::DiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
-density(g::DiGraph) = ne(g) / (nv(g) * (nv(g)-1))
+all_neighbors(g::SimpleDiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
+density(g::SimpleDiGraph) = ne(g) / (nv(g) * (nv(g)-1))

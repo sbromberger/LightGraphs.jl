@@ -1,5 +1,5 @@
-@test sprint(show, h1) == "{5, 0} undirected graph"
-@test sprint(show, h3) == "empty undirected graph"
+@test sprint(show, h1) == "{5, 0} undirected simple graph"
+@test sprint(show, h3) == "empty undirected simple graph"
 
 @test Graph(DiGraph(g3)) == g3
 
@@ -33,8 +33,8 @@ h = DiGraph(5)
     LightGraphs.adj(g)[1] == LightGraphs.adj(g,1) ==
     [2,3,4]
 
-@test sprint(show, h4) == "{7, 0} directed graph"
-@test sprint(show, h5) == "empty directed graph"
+@test sprint(show, h4) == "{7, 0} directed simple graph"
+@test sprint(show, h5) == "empty directed simple graph"
 @test has_edge(g, e1)
 @test has_edge(h, e1)
 @test !has_edge(g, e0)

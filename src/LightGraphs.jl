@@ -13,15 +13,14 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             sum, size, sparse, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!
 
-
 # core
-export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export AbstractGraph, AbstractEdge, Edge, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
 common_neighbors, all_neighbors, has_self_loops, num_self_loops,
-rem_vertex!,
+rem_vertex!, is_ordered,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -131,9 +130,14 @@ more traditional and better-optimized mechanisms.
 LightGraphs
 
 include("core.jl")
-    include("digraph.jl")
+    include("graphtypes/simpleedge/SimpleEdges.jl")
+    typealias Edge SimpleEdges.SimpleEdge
+
+    include("graphtypes/simplegraph/SimpleGraphs.jl")
+    typealias Graph SimpleGraphs.SimpleGraph
+    typealias DiGraph SimpleGraphs.SimpleDiGraph
+
     include("digraph-transitivity.jl")
-    include("graph.jl")
         include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
