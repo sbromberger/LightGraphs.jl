@@ -1,6 +1,9 @@
-@test e1.first == src(e1) == 1
-@test e1.second == dst(e1) == 2
+@test e1.src == src(e1) == 1
+@test e1.dst == dst(e1) == 2
 @test reverse(e1) == re1
+@test sprint(show, e1) == "Edge 1 => 2"
+@test Pair(e1) == Pair(1,2)
+@test Tuple(e1) == (1,2)
 
 e2 = Edge(1,3)
 e3 = Edge(1,4)
