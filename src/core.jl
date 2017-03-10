@@ -18,11 +18,12 @@ src(e::Edge) = e.src
 """Return destination of an edge."""
 dst(e::Edge) = e.dst
 
-convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
-Tuple(e::Edge) = (e.src, e.dst)
+Pair(e::AbstractEdge) = Pair(src(e), dst(e))
+Tuple(e::AbstractEdge) = (src(e), dst(e))
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 reverse(e::Edge) = Edge(dst(e), src(e))
-is_ordered(e::Edge) = src(e) <= dst(e)
+
 
 ==(e1::Edge, e2::Edge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
 
