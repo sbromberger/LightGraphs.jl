@@ -20,7 +20,7 @@ function _dot_read_one_graph(pg::DOT.Graph)
 end
 
 function loaddot(io::IO, gname::String)
-    p = DOT.parse_dot(readall(io))
+    p = DOT.parse_dot(readstring(io))
     for pg in p
         isdir = pg.directed
         possname = isdir? DOT.StringID("digraph") : DOT.StringID("graph")
@@ -31,7 +31,7 @@ function loaddot(io::IO, gname::String)
 end
 
 function loaddot_mult(io::IO)
-    p = DOT.parse_dot(readall(io))
+    p = DOT.parse_dot(readstring(io))
 
     graphs = Dict{String, AbstractGraph}()
 
