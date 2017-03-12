@@ -51,13 +51,14 @@ function test_laplacian(mat)
     end
 
     adjmat, stochmat, adjhat, avgmat = constructors(mat)
+    @test typeof(adjmat) <: CombinatorialAdjacency{Float64}
     @test typeof(adjacency(lapl))  <: CombinatorialAdjacency
-    stochlapl = StochasticLaplacian(StochasticAdjacency{Float64}(adjmat))
+    stochlapl = StochasticLaplacian(StochasticAdjacency(adjmat))
     @test typeof(adjacency(stochlapl))  <: StochasticAdjacency
-    averaginglapl = AveragingLaplacian(AveragingAdjacency{Float64}(adjmat))
+    averaginglapl = AveragingLaplacian(AveragingAdjacency(adjmat))
     @test typeof(adjacency(averaginglapl))  <: AveragingAdjacency
 
-    normalizedlapl = NormalizedLaplacian(NormalizedAdjacency{Float64}(adjmat))
+    normalizedlapl = NormalizedLaplacian(NormalizedAdjacency(adjmat))
     @test typeof(adjacency(normalizedlapl))  <: NormalizedAdjacency
     @test !( typeof(adjacency(normalizedlapl)) <: CombinatorialAdjacency)
 
@@ -115,10 +116,10 @@ function test_other(mat, n )
 	@test size(lapl, 2) == n
 	@test size(lapl, 3) == 1
 
-	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
-	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
-  @test !issymmetric(AveragingAdjacency{Float64}(adjmat))
-  @test !issymmetric(StochasticAdjacency{Float64}(adjmat))
+	@test_throws MethodError symmetrize(StochasticAdjacency(adjmat))
+	@test_throws MethodError symmetrize(AveragingAdjacency(adjmat))
+  @test !issymmetric(AveragingAdjacency(adjmat))
+  @test !issymmetric(StochasticAdjacency(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 
     println("equality testing "); begin
@@ -141,8 +142,8 @@ function test_symmetry(mat,n)
 	@test size(lapl, 2) == n
 	@test size(lapl, 3) == 1
 
-	@test_throws MethodError symmetrize(StochasticAdjacency{Float64}(adjmat))
-	@test_throws MethodError symmetrize(AveragingAdjacency{Float64}(adjmat))
+	@test_throws MethodError symmetrize(StochasticAdjacency(adjmat))
+	@test_throws MethodError symmetrize(AveragingAdjacency(adjmat))
 	@test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 	@test symmetrize(adjmat).A == adjmat.A
     # these tests are basically the code

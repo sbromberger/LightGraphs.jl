@@ -1,6 +1,6 @@
 __precompile__(true)
 @doc "A package for using the type system to check types of graph matrices." -> LinAlg
-import Base: convert, sparse, size, scale, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
+import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
 export  convert,
 		SparseMatrix,
 		GraphMatrix,
@@ -63,40 +63,32 @@ type NormalizedAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
 
-	function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1/2)
-		return new(adjmat, sf)
-	end
 end
 function NormalizedAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return NormalizedAdjacency{T}(adjmat)
+  sf = adjmat.D.^(-1/2)
+  return NormalizedAdjacency(adjmat, sf)
 end
 
 @doc "Transition matrix for the random walk." ->
 type StochasticAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
+end
 
-	function StochasticAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1)
-		return new(adjmat, sf)
-	end
-end
 function StochasticAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return StochasticAdjacency{T}(adjmat)
+    sf = adjmat.D.^(-1)
+    return StochasticAdjacency(adjmat, sf)
 end
+
 @doc "The matrix whos action is to average over each neighborhood." ->
 type AveragingAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
-
-	function AveragingAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1)
-		return new(adjmat, sf)
-	end
 end
+
 function AveragingAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return AveragingAdjacency{T}(adjmat)
+		sf = adjmat.D.^(-1)
+		return AveragingAdjacency(adjmat, sf)
 end
 
 perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
@@ -104,25 +96,18 @@ perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
 type PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
-
-	function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-                perron=sqrt.(adjmat.D)/norm(sqrt.(adjmat.D))
-                return new(NormalizedAdjacency(adjmat), perron)
-	end
 end
 
 function PunchedAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-    return PunchedAdjacency{T}(adjmat)
+    perron=sqrt.(adjmat.D)/norm(sqrt.(adjmat.D))
+    return PunchedAdjacency(NormalizedAdjacency(adjmat), perron)
 end
+
 perron(m::PunchedAdjacency) = m.perron
 
 @doc "Noop: a type to represent don't do anything.
 The purpose is to help write more general code for the different scaled GraphMatrix types." ->
 type Noop
-end
-
-function .*(::Noop, x::Any)
-	return x
 end
 
 function Diagonal(::Noop)
