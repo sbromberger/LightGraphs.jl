@@ -121,9 +121,33 @@ import Base: full
 full(nbt::Nonbacktracking) = full(sparse(nbt))
 
 @test full(B₁) == full(B)
+@test sum(sparse(B₁) - sparse(B)) == 0
+
+for i in 1:100
+    x = randn(size(B,2))
+    y  = B*x
+    y₁ = B₁*x
+    @test norm(y-y₁) < 1e-6
+end
+
+
+@test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
 @test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
 @test size(B₁) == size(B)
-@test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8
+evd = eigs(B)
+evd1 = eigs(B₁)
+@show λ11 = evd1[1]
+@show λ1 = evd[1]
+evecs  = evd[2]
+evecs1 = evd1[2]
+# @show norm(evecs'*λ1*evecs - evecs1'*λ1*evecs)
+# @test norm(evecs'*evecs - I) < 1e-6
+# @test norm(evecs1'*evecs1 - I) < 1e-6
+# @show evecs[1:5, 1:5]
+# @show evecs1[1:5, 1:5]
+@show norm(evecs'*evecs1 - I)
+
+@test_skip norm(λ11 - λ1) ≈ 0.0 atol=1e-4
 @test !issymmetric(B₁)
 @test eltype(B₁) == Float64
 # END tests for Nonbacktracking
