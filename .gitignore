@@ -3,4 +3,5 @@
 *.jl.mem
 docs/build/
 docs/site/
-.results/
+benchmark/.results/*
+benchmark/.tune.jld
