@@ -17,11 +17,11 @@
         traverse_graph!(g, alg, sources, visitor)
     end
 
-    @test trivialgraphvisit(g, BreadthFirst(), 1) == nothing
+    @test trivialgraphvisit(g6, BreadthFirst(), 1) == nothing
 
     # this just exercises some graph visitors
-    @test traverse_graph!(g, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
-    @test traverse_graph!(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing
+    @test traverse_graph!(g6, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
+    @test traverse_graph!(g6, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing
 
     # dummy edge map test
     d = LightGraphs.DummyEdgeMap()
