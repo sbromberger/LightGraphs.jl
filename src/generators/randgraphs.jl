@@ -657,9 +657,12 @@ end
 
 """Generates a stream of random pairs in 1:n"""
 function random_pair(rng::AbstractRNG, n::Int)
-    while true
-        produce( rand(rng, 1:n), rand(rng, 1:n) )
+    f(ch) = begin
+        while true
+            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+        end
     end
+    return f
 end
 
 
@@ -670,24 +673,28 @@ Take an infinite sample from the sbm.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = @task random_pair(sbm.rng, sbm.n)
-    for (i,j) in pairs
-    	if i == j
-            continue
-        end
-        p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-        if rand(sbm.rng) < p
-            produce(i, j)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    edges(ch) = begin
+        for e in pairs
+            i, j = Tuple(e)
+    	      if i == j
+                continue
+            end
+            p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
+            if rand(sbm.rng) < p
+                put!(ch, e)
+            end
         end
     end
+    return Channel(edges, ctype=Edge, csize=32)
 end
 
-function Graph(nvg::Int, neg::Int, edgestream::Task)
+function Graph(nvg::Int, neg::Int, edgestream::Channel)
     g = Graph(nvg)
     # println(g)
-    for (i,j) in edgestream
+    for e in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g, Edge(i, j))
+        add_edge!(g, e)
         ne(g) >= neg && break
     end
     # println(g)
@@ -695,7 +702,7 @@ function Graph(nvg::Int, neg::Int, edgestream::Task)
 end
 
 Graph(nvg::Int, neg::Int, sbm::StochasticBlockModel) =
-    Graph(nvg, neg, @task make_edgestream(sbm))
+    Graph(nvg, neg, make_edgestream(sbm))
 
 """counts the number of edges that go between each block"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
