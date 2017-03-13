@@ -1,9 +1,7 @@
-using LightGraphs
-using Base.Test
-
-g = Graph(8)
 
 @testset "Max adj visit" begin
+    g = Graph(8)
+
     # Test of Min-Cut and maximum adjacency visit
     # Original example by Stoer
 
