@@ -1,4 +1,8 @@
 @testset "Randgraphs" begin
+@test nv(r1) == 10
+@test ne(r1) == 20
+@test nv(r2) == 5
+@test ne(r2) == 10
 
     r1 = Graph(10,20)
     r2 = DiGraph(5,10)
@@ -182,66 +186,67 @@
         @test degree(rr, v) == 8
     end
 
-    rd = random_regular_digraph(10, 8, dir=:out, seed=4)
-    @test nv(rd) == 10
-    @test ne(rd) == 80
-    @test is_directed(rd)
-
-    g = stochastic_block_model(2., 3., [100,100])
-    @test  4.5 < mean(degree(g)) < 5.5
-    g = stochastic_block_model(3., 4., [100,100,100])
-    @test  10.5 < mean(degree(g)) < 11.5
-
-    function generate_nbp_sbm(numedges, sizes)
-        density = 1
-        # print(STDERR, "Generating communites with sizes: $sizes\n")
-        between = density * 0.90
-        intra = density * -0.005
-        noise = density * 0.00501
-        sbm = nearbipartiteSBM(sizes, between, intra, noise)
-        edgestream = @task make_edgestream(sbm)
-        g = Graph(sum(sizes), numedges, edgestream)
-        return sbm, g
-    end
-
-
-    numedges = 100
-    sizes = [10, 10, 10, 10]
-
-    n = sum(sizes)
-    sbm, g = generate_nbp_sbm(numedges, sizes)
-    bc = blockcounts(sbm, g)
-    bp = blockfractions(sbm, g) ./ (sizes * sizes')
-    ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(Array(ratios)) < 0.25
-
-    sizes = [200, 200, 100]
-    internaldeg = 15
-    externaldeg = 6
-    internalp = Float64[internaldeg/i for i in sizes]
-    externalp = externaldeg/sum(sizes)
-    numedges = internaldeg + externaldeg #+ sum(externaldeg.*sizes[2:end])
-    numedges *= div(sum(sizes), 2)
-    sbm = StochasticBlockModel(internalp, externalp, sizes)
-    g = Graph(sum(sizes), numedges, sbm)
-    @test ne(g) <= numedges
-    @test nv(g) == sum(sizes)
-    bc = blockcounts(sbm, g)
-    bp = blockfractions(sbm, g) ./ (sizes * sizes')
-    ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(Array(ratios)) < 0.25
-
-    # check that average degree is not too high
-    # factor of two is cushion for random process
-    @test mean(degree(g)) <= 4//2*numedges/sum(sizes)
-    # check that the internal degrees are higher than the external degrees
-    # 5//4 is cushion for random process.
-    @test all(sum(bc-diagm(diag(bc)), 1) .<= 5//4 .* diag(bc))
-
-
-    sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
-    sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
-    @test sbm == sbm2
-    sbm.affinities[1,1] = 0
-    @test sbm != sbm2
+function generate_nbp_sbm(numedges, sizes)
+    density = 1
+    # print(STDERR, "Generating communites with sizes: $sizes\n")
+    between = density * 0.90
+    intra = density * -0.005
+    noise = density * 0.00501
+    sbm = nearbipartiteSBM(sizes, between, intra, noise)
+    edgestream = make_edgestream(sbm)
+    g = Graph(sum(sizes), numedges, edgestream)
+    return sbm, g
 end
+
+
+function test_sbm(sbm, bp)
+    @test sum(sbm.affinities) != NaN
+    @test all(sbm.affinities .> 0)
+    @test sum(sbm.affinities) != 0
+    @test all(bp .>= 0)
+    @test all(bp .!= NaN)
+end
+
+numedges = 100
+sizes = [10, 10, 10, 10]
+
+n = sum(sizes)
+sbm, g = generate_nbp_sbm(numedges, sizes)
+@test ne(g) >= 0.9numedges
+bc = blockcounts(sbm, g)
+bp = blockfractions(sbm, g) ./ (sizes * sizes')
+ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
+test_sbm(sbm, bp)
+@test norm(collect(ratios)) < 0.25
+
+sizes = [200, 200, 100]
+internaldeg = 15
+externaldeg = 6
+internalp = Float64[internaldeg/i for i in sizes]
+externalp = externaldeg/sum(sizes)
+numedges = internaldeg + externaldeg #+ sum(externaldeg.*sizes[2:end])
+numedges *= div(sum(sizes), 2)
+sbm = StochasticBlockModel(internalp, externalp, sizes)
+g = Graph(sum(sizes), numedges, sbm)
+@test ne(g) >= 0.9numedges
+@test ne(g) <= numedges
+@test nv(g) == sum(sizes)
+bc = blockcounts(sbm, g)
+bp = blockfractions(sbm, g) ./ (sizes * sizes')
+test_sbm(sbm, bp)
+ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
+@test norm(collect(ratios)) < 0.25
+
+# check that average degree is not too high
+# factor of two is cushion for random process
+@test mean(degree(g)) <= 4//2*numedges/sum(sizes)
+# check that the internal degrees are higher than the external degrees
+# 5//4 is cushion for random process.
+@test all(sum(bc-diagm(diag(bc)), 1) .<= 5//4 .* diag(bc))
+
+
+sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
+sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
+@test sbm == sbm2
+sbm.affinities[1,1] = 0
+@test sbm != sbm2

@@ -500,8 +500,8 @@ stochastic_block_model(cin::Float64, coff::Float64, n::Vector{Int}; seed::Int = 
 Returns a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
-Only the upper triangular part is considered, since the lower traingular is
-determined by $c[b,a] = c[a,b] * n[a]/n[b]$.
+           Only the upper triangular part is considered, since the lower traingular is
+           determined by $c[b,a] = c[a,b] * n[a]/n[b]$.
 `n[a]` : Number of vertices in block `a`
 
 The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
@@ -552,12 +552,12 @@ function stochastic_block_model{T<:Real}(cint::T, cext::T, n::Vector{Int}; seed:
 end
 
 """
-type StochasticBlockModel{T<:Integer,P<:Real}
-n::T
-nodemap::Array{T}
-affinities::Matrix{P}
-rng::MersenneTwister
-end
+    type StochasticBlockModel{T<:Integer,P<:Real}
+        n::T
+        nodemap::Array{T}
+        affinities::Matrix{P}
+        rng::MersenneTwister
+    end
 
 A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge `(i,j)`
@@ -580,7 +580,7 @@ type StochasticBlockModel{T<:Integer,P<:Real}
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
-(sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
+    (sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
 
 """A constructor for StochasticBlockModel that uses the sizes of the blocks
 and the affinity matrix. This construction implies that consecutive
@@ -611,17 +611,17 @@ function sbmaffinity(internalp::Vector{Float64}, externalp::Float64, sizes::Vect
 end
 
 function StochasticBlockModel(internalp::Float64,
-    externalp::Float64,
-    size::Int,
-    numblocks::Int;
-    seed::Int = -1)
+                              externalp::Float64,
+                              size::Int,
+                              numblocks::Int;
+                              seed::Int = -1)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
     StochasticBlockModel(sizes, B, seed=seed)
 end
 
 function StochasticBlockModel(internalp::Vector{Float64}, externalp::Float64
-    , sizes::Vector{Int}; seed::Int = -1)
+        , sizes::Vector{Int}; seed::Int = -1)
     B = sbmaffinity(internalp, externalp, sizes)
     return StochasticBlockModel(sizes, B, seed=seed)
 end
@@ -634,8 +634,8 @@ between is the affinity between the two parts of each bipartite community
 intra is the probability of an edge within the parts of the partitions.
 
 This is a specific type of SBM with k/2 blocks each with two halves.
-    Each half is connected as a random bipartite graph with probability `intra`
-    The blocks are connected with probability `between`.
+Each half is connected as a random bipartite graph with probability `intra`
+The blocks are connected with probability `between`.
 """
 function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, intra::Float64)
     numblocks = div(length(sizes), 2)
@@ -656,9 +656,12 @@ end
 
 """Generates a stream of random pairs in 1:n"""
 function random_pair(rng::AbstractRNG, n::Int)
-    while true
-        produce( rand(rng, 1:n), rand(rng, 1:n) )
+    f(ch) = begin
+        while true
+            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+        end
     end
+    return f
 end
 
 
@@ -669,24 +672,28 @@ Take an infinite sample from the sbm.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = @task random_pair(sbm.rng, sbm.n)
-    for (i,j) in pairs
-        if i == j
-            continue
-        end
-        p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-        if rand(sbm.rng) < p
-            produce(i, j)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    edges(ch) = begin
+        for e in pairs
+            i, j = Tuple(e)
+    	      if i == j
+                continue
+            end
+            p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
+            if rand(sbm.rng) < p
+                put!(ch, e)
+            end
         end
     end
+    return Channel(edges, ctype=Edge, csize=32)
 end
 
-function Graph(nvg::Int, neg::Int, edgestream::Task)
+function Graph(nvg::Int, neg::Int, edgestream::Channel)
     g = Graph(nvg)
     # println(g)
-    for (i,j) in edgestream
+    for e in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g, Edge(i, j))
+        add_edge!(g, e)
         ne(g) >= neg && break
     end
     # println(g)
@@ -694,7 +701,7 @@ function Graph(nvg::Int, neg::Int, edgestream::Task)
 end
 
 Graph(nvg::Int, neg::Int, sbm::StochasticBlockModel) =
-Graph(nvg, neg, @task make_edgestream(sbm))
+    Graph(nvg, neg, make_edgestream(sbm))
 
 """counts the number of edges that go between each block"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
