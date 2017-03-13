@@ -1,3 +1,5 @@
+import Base: full
+
 @testset "Spectral" begin
 	@test adjacency_matrix(g3)[3,2] == 1
 	@test adjacency_matrix(g3)[2,4] == 0
@@ -118,7 +120,6 @@
 	B₁ = Nonbacktracking(g10)
 
 	# just so that we can assert equality of matrices
-	import Base: full
 	full(nbt::Nonbacktracking) = full(sparse(nbt))
 
 	@test full(B₁) == full(B)
