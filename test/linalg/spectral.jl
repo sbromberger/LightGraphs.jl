@@ -125,9 +125,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     @test full(B₁) == full(B)
     @test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
     @test size(B₁) == size(B)
-    @test_skip begin
-        @test_approx_eq_eps norm(eigs(B₁)[1] - eigs(B)[1]) 0.0 1e-8
-    end
+    #    @test_approx_eq_eps norm(eigs(B₁)[1] - eigs(B)[1]) 0.0 1e-8
     @test !issymmetric(B₁)
     @test eltype(B₁) == Float64
     # END tests for Nonbacktracking
