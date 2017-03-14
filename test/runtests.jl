@@ -3,12 +3,6 @@ using LightGraphs.SimpleGraphs
 using LightGraphs.LinAlg
 using Base.Test
 
-
-type DummyGraph <: AbstractGraph end
-type DummyDiGraph <: AbstractGraph end
-type DummyEdge <: AbstractEdge end
-
-
 # g1 = smallgraph(:petersen)
 # g2 = smallgraph(:tutte)
 # g3 = PathGraph(5)

@@ -1,3 +1,7 @@
+type DummyGraph <: AbstractGraph end
+type DummyDiGraph <: AbstractGraph end
+type DummyEdge <: AbstractEdge end
+
 @testset "Interface" begin
     dummygraph = DummyGraph()
     dummydigraph = DummyDiGraph()
@@ -12,7 +16,7 @@
      end
 
     for graphfunbasic in [
-      nv, ne, vertices, edges, is_directed, add_vertex!
+      nv, ne, vertices, edges, is_directed, add_vertex!, edgetype
       ]
       @test_throws ErrorException graphfunbasic(dummygraph)
     end

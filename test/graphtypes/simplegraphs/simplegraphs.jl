@@ -1,4 +1,9 @@
+type DummySimpleGraph <: AbstractSimpleGraph end
 @testset "SimpleGraphs" begin
+    dsg = DummySimpleGraph()
+
+    @test_throws ErrorException badj(dsg)
+
     e1 = SimpleEdge(1,2)
     e2 = SimpleEdge(1,3)
     e3 = SimpleEdge(1,4)
@@ -26,6 +31,8 @@
     @test LightGraphs.is_ordered(e5)
     @test !LightGraphs.is_ordered(reverse(e5))
 
+    @test !is_directed(SimpleGraph)
+    @test is_directed(SimpleDiGraph)
 
     @test sprint(show, SimpleGraph()) == "empty undirected simple graph"
 

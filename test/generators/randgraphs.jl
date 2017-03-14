@@ -1,8 +1,8 @@
-@testset "Rand graphs" begin
+@testset "Randgraphs" begin
 
     r1 = Graph(10,20)
     r2 = DiGraph(5,10)
-    
+
     @test nv(r1) == 10
     @test ne(r1) == 20
     @test nv(r2) == 5

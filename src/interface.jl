@@ -1,6 +1,6 @@
 # This file contans the common interface for LightGraphs.
 
-_NI(m...) = error("Not implemented")
+_NI(m) = error("Not implemented: $m")
 
 """A type representing a single edge between two vertices of a graph."""
 abstract AbstractEdge
@@ -41,10 +41,10 @@ reverse(e::AbstractEdge) = _NI("reverse")
 edgetype(g::AbstractGraph) = _NI("edgetype")
 
 """Return the number of vertices in `g`."""
-nv(g::AbstractGraph) = _NI()
+nv(g::AbstractGraph) = _NI("nv")
 
 """Return the number of edges in `g`."""
-ne(g::AbstractGraph) = _NI()
+ne(g::AbstractGraph) = _NI("ne")
 
 """Return the vertices of a graph."""
 vertices(g::AbstractGraph) = _NI("vertices")
