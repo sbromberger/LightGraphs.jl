@@ -1,4 +1,5 @@
 import Base: full
+import Base.LinAlg: eigvals
 
 @testset "Spectral" begin
 	@test adjacency_matrix(g3)[3,2] == 1
