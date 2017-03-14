@@ -34,8 +34,12 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test !is_directed(SimpleGraph)
     @test is_directed(SimpleDiGraph)
 
-    @test sprint(show, SimpleGraph()) == "empty undirected simple graph"
+    @test edgetype(SimpleGraph()) == SimpleEdge
+    @test edgetype(SimpleDiGraph()) == SimpleEdge
 
+    @test sprint(show, SimpleGraph()) == "empty undirected simple graph"
+    @test sprint(show, SimpleDiGraph()) == "empty directed simple graph"
+    @test sprint(show, SimpleDiGraph(5)) == "{5, 0} directed simple graph"
     g = SimpleGraph(5)
     @test sprint(show, g) == "{5, 0} undirected simple graph"
     @test add_edge!(g, 1, 2)
@@ -62,7 +66,13 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test has_edge(g, 3, 5)
     # @test edges(g) == Set([e1, e2, e3, e4, e5])
     # @test Set{Edge}(edges(g)) == Set([e1, e2, e3, e4, e5])
-    # fadj, badj, and adj tested in graphdigraph.jl
+    @test fadj(g, 1) == adj(g, 1) == badj(g, 1) ==  out_neighbors(g, 1)
+    @test fadj(g) == badj(g) == adj(g) == g.fadjlist
+
+    @test fadj(h, 1) == out_neighbors(h, 1)
+    @test badj(h, 1) == in_neighbors(h, 1)
+    @test fadj(h) == h.fadjlist
+    @test badj(h) == h.badjlist
 
     @test degree(g) == [3, 2, 2, 1, 2]
     @test degree(g, 1) == 3
@@ -96,7 +106,9 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test has_vertex(g, 11)
     @test ne(g) == 5
     @test !is_directed(g)
+    @test !is_directed(typeof(g))
     @test is_directed(h)
+    @test is_directed(typeof(h))
 
     @test δ(g) == δin(g) == δout(g) == 0
     @test Δ(g) == Δout(g) == 3

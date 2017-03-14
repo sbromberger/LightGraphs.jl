@@ -12,7 +12,7 @@
     @test Set{Edge}(collect(Edge, edges(gb))) == edges(ga)
     @test edges(ga) == Set{Edge}(collect(Edge, edges(gb)))
 
-    @test eltype(edges(ga)) == SimpleEdge
+    @test eltype(edges(ga)) == eltype(typeof(edges(ga))) == SimpleEdge
 
     ga = SimpleDiGraph(10,20; seed=1)
     gb = SimpleDiGraph(10,20; seed=1)
