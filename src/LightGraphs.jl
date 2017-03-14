@@ -7,19 +7,22 @@ using DataStructures
 using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
+using SimpleTraits
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!
+            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
+            Pair, Tuple
 
 # core
-export AbstractGraph, AbstractEdge, Edge, Graph, DiGraph, vertices, edges, src, dst,
-fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
+export AbstractGraph, AbstractDiGraph, AbstractEdge, AbstractEdgeIter,
+Edge, Graph, DiGraph, vertices, edges, src, dst,
+adj, fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
 Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loops, num_self_loops,
+common_neighbors, has_self_loops, num_self_loops,
 rem_vertex!, is_ordered,
 
 # distance
@@ -128,17 +131,15 @@ outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
 """
 LightGraphs
-
+include("interface.jl")
+include("deprecations.jl")
 include("core.jl")
-    include("graphtypes/simpleedge/SimpleEdges.jl")
-    typealias Edge SimpleEdges.SimpleEdge
-
     include("graphtypes/simplegraph/SimpleGraphs.jl")
     typealias Graph SimpleGraphs.SimpleGraph
     typealias DiGraph SimpleGraphs.SimpleDiGraph
+    typealias Edge SimpleGraphs.SimpleEdge
 
     include("digraph-transitivity.jl")
-        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")

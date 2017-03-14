@@ -53,7 +53,7 @@ function depth_first_visit_impl!(
                 push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
-                vdsts = fadj(graph, v)
+                vdsts = out_neighbors(graph, v)
                 push!(stack, (v, vdsts, start(vdsts)))
             end
         end
@@ -76,7 +76,7 @@ function traverse_graph!(
     vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
 
-    sdsts = fadj(graph, s)
+    sdsts = out_neighbors(graph, s)
     sstate = start(sdsts)
     stack = [(s, sdsts, sstate)]
 

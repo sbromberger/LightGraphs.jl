@@ -83,7 +83,8 @@ end
     fadj(g) == fadj(h)
 
 
-"Returns `true` if `g` is a `SimpleDiSimpleGraph`."
+"""Return `true` if `g` is a directed graph."""
+is_directed(::Type{SimpleGraph}) = false
 is_directed(g::SimpleGraph) = false
 
 function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
@@ -130,12 +131,3 @@ function add_vertex!(g::SimpleGraph)
 
     return true
 end
-
-
-"""Return the number of edges (both ingoing and outgoing) from the vertex `v`."""
-degree(g::SimpleGraph, v::Int) = indegree(g,v)
-doc"""Density is defined as the ratio of the number of actual edges to the
-number of possible edges. This is $|v| |v-1|$ for directed graphs and
-$(|v| |v-1|) / 2$ for undirected graphs.
-"""
-density(g::SimpleGraph) = (2*ne(g)) / (nv(g) * (nv(g)-1))

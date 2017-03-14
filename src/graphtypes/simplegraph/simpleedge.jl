@@ -1,8 +1,5 @@
-module SimpleEdges
-
 import Base: Pair, Tuple, show, ==
 import LightGraphs: AbstractEdge, src, dst, reverse
-export AbstractSimpleEdge, SimpleEdge
 
 abstract AbstractSimpleEdge <: AbstractEdge
 
@@ -25,5 +22,3 @@ Tuple{T<:AbstractSimpleEdge}(e::T) = (src(e), dst(e))
 # Convenience functions
 reverse{T<:AbstractSimpleEdge}(e::T) = T(dst(e), src(e))
 =={T<:AbstractSimpleEdge}(e1::T, e2::T) = (src(e1) == src(e2) && dst(e1) == dst(e2))
-
-end

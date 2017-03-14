@@ -35,7 +35,7 @@ function bellman_ford_shortest_paths!{R<:Real}(
         no_changes = true
         new_active = Set{Int}()
         for u in active
-            for v in fadj(graph, u)
+            for v in out_neighbors(graph, u)
                 edist = distmx[u, v]
                 if state.dists[v] > state.dists[u] + edist
                     state.dists[v] = state.dists[u] + edist

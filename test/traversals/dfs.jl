@@ -1,4 +1,7 @@
 @testset "DFS" begin
+    g5 = DiGraph(4)
+    add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
+
     z = dfs_tree(g5,1)
 
     @test ne(z) == 3 && nv(z) == 4

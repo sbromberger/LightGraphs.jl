@@ -4,6 +4,10 @@ import Base: full
 full(nbt::Nonbacktracking) = full(sparse(nbt))
 
 @testset "Spectral" begin
+
+    g3 = PathGraph(5)
+    g4 = PathDiGraph(5)
+    g5 = DiGraph(4)
     @test adjacency_matrix(g3)[3,2] == 1
     @test adjacency_matrix(g3)[2,4] == 0
     @test laplacian_matrix(g3)[3,2] == -1
@@ -11,7 +15,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     @test laplacian_spectrum(g3)[5] == 3.6180339887498945
     @test adjacency_spectrum(g3)[1] == -1.732050807568878
 
-    g5 = DiGraph(4)
+    
     add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
     @test laplacian_spectrum(g5)[3] == laplacian_spectrum(g5,:both)[3] == 3.0
     @test laplacian_spectrum(g5,:in)[3] == 1.0

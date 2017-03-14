@@ -1,4 +1,5 @@
 @testset "Graph visit" begin
+    g6 = smallgraph(:house)
     # stub tests for coverage; disregards output.
 
     f = IOBuffer()

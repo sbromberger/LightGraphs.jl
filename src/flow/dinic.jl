@@ -93,7 +93,7 @@ function blocking_flow!{T<:Number}(
 
     while length(Q) > 0                   # Construct the Level Graph using BFS
         u = pop!(Q)
-        for v in fadj(residual_graph, u)
+        for v in out_neighbors(residual_graph, u)
             if P[v] == -1 && capacity_matrix[u,v] > flow_matrix[u,v]
                 P[v] = u
                 unshift!(Q, v)
@@ -105,7 +105,7 @@ function blocking_flow!{T<:Number}(
 
     total_flow = 0
 
-    for bv in badj(residual_graph, target)    # Trace all possible routes to source
+    for bv in in_neighbors(residual_graph, target)    # Trace all possible routes to source
         flow = typemax(T)
         v = target
         u = bv

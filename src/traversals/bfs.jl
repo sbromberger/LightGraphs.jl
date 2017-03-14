@@ -259,7 +259,7 @@ function gdistances!(g::AbstractGraph, source, dists)
         current = queue[head]
         distance = dists[current] + 1
         head += 1
-        for j in fadj(g, current)
+        for j in out_neighbors(g, current)
             if dists[j] == -1
                 dists[j] = distance
                 tail += 1
@@ -279,4 +279,3 @@ If `source` is a collection of vertices they should be unique (not checked).
 For vertices in disconnected components the default distance is -1.
 """
 gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
-

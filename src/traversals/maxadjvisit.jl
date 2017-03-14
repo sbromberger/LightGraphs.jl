@@ -24,7 +24,7 @@ function maximum_adjacency_visit_impl!{T}(
     while !isempty(pq)
         u = DataStructures.dequeue!(pq)
         discover_vertex!(visitor, u)
-        for v in fadj(graph, u)
+        for v in out_neighbors(graph, u)
             examine_neighbor!(visitor, u, v, 0, 0, 0)
 
             if haskey(pq,v)

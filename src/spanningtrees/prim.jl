@@ -50,7 +50,7 @@ function visit!{T<:Real}(
     distmx::AbstractArray{T, 2}
 )
     marked[v] = true
-    for w in fadj(g)[v]
+    for w in out_neighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)

@@ -1,4 +1,6 @@
 @testset "Closeness" begin
+    g5 = DiGraph(4)
+    add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
     y = closeness_centrality(g5; normalize=false)
     z = closeness_centrality(g5)
 

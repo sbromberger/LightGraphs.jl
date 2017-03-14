@@ -1,6 +1,11 @@
 @testset "Operators" begin
+    g3 = PathGraph(5)
+    g4 = PathDiGraph(5)
+
     c3 = complement(g3)
     c4 = complement(g4)
+
+    re1 = Edge(2, 1)
 
     @test nv(c3) == 5
     @test ne(c3) == 6
@@ -34,23 +39,23 @@
 
     h = Graph(6)
     add_edge!(h, 5, 6)
-    e = Edge(5, 6)
+    e = SimpleEdge(5, 6)
     z = union(g3, h)
     @test has_edge(z, e)
     @test z == PathGraph(6)
 
     h = DiGraph(6)
     add_edge!(h, 5, 6)
-    e = Edge(5, 6)
+    e = SimpleEdge(5, 6)
     z = union(g4, h)
     @test has_edge(z, e)
     @test z == PathDiGraph(6)
 
-    g10 = CompleteGraph(2)
-    h10 = CompleteGraph(2)
-    z = blkdiag(g10, h10)
-    @test nv(z) == nv(g10) + nv(h10)
-    @test ne(z) == ne(g10) + ne(h10)
+    g = CompleteGraph(2)
+    h = CompleteGraph(2)
+    z = blkdiag(g, h)
+    @test nv(z) == nv(g) + nv(h)
+    @test ne(z) == ne(g) + ne(h)
     @test has_edge(z, 1, 2)
     @test has_edge(z, 3, 4)
     @test !has_edge(z, 1, 3)
@@ -58,10 +63,10 @@
     @test !has_edge(z, 2, 3)
     @test !has_edge(z, 2, 4)
 
-    g10 = Graph(2)
-    h10 = Graph(2)
-    z = join(g10, h10)
-    @test nv(z) == nv(g10) + nv(h10)
+    g = Graph(2)
+    h = Graph(2)
+    z = join(g, h)
+    @test nv(z) == nv(g) + nv(h)
     @test ne(z) == 4
     @test !has_edge(z, 1, 2)
     @test !has_edge(z, 3, 4)
@@ -79,12 +84,12 @@
     @test size(p, 3) == 1
 
 
-    g5 = DiGraph(4)
-    add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
-    @test g5 * ones(nv(g5)) == [2.0, 1.0, 1.0, 0.0]
-    @test sum(g5, 1) ==  [0, 1, 2, 1]
-    @test sum(g5, 2) ==  [2, 1, 1, 0]
-    @test sum(g5) == 4
+    g = DiGraph(4)
+    add_edge!(g,1,2); add_edge!(g,2,3); add_edge!(g,1,3); add_edge!(g,3,4)
+    @test g * ones(nv(g)) == [2.0, 1.0, 1.0, 0.0]
+    @test sum(g, 1) ==  [0, 1, 2, 1]
+    @test sum(g, 2) ==  [2, 1, 1, 0]
+    @test sum(g) == 4
     @test sum(p,1) == sum(p,2)
     @test_throws ErrorException sum(p,3)
 
@@ -93,17 +98,7 @@
     @test length(p) == 100
     @test ndims(p) == 2
     @test issymmetric(p)
-    @test !issymmetric(g5)
-
-    g22 = CompleteGraph(2)
-    h = cartesian_product(g22, g22)
-    @test nv(h) == 4
-    @test ne(h)== 4
-
-    g22 = CompleteGraph(2)
-    h = tensor_product(g22, g22)
-    @test nv(h) == 4
-    @test ne(h) == 1
+    @test !issymmetric(g)
 
     nx = 20; ny = 21
     G = PathGraph(ny); H = PathGraph(nx)
@@ -123,7 +118,18 @@
         end
         return g
     end
-    @test crosspath_slow(2, g22) == crosspath(2,g22)
+
+    g = CompleteGraph(2)
+    h = cartesian_product(g, g)
+    @test nv(h) == 4
+    @test ne(h)== 4
+
+    h = tensor_product(g, g)
+    @test nv(h) == 4
+    @test ne(h) == 1
+
+    g2 = CompleteGraph(2)
+    @test crosspath_slow(2, g2) == crosspath(2, g2)
 
 
     ## test subgraphs ##
@@ -163,17 +169,20 @@
     @test sg2 == sg
     @test vm[4] == 8
 
-    gg5 = CompleteGraph(10)
-    elist = [Edge(1,2),Edge(2,3),Edge(3,4),Edge(4,5),Edge(5,1)]
-    sg, vm = induced_subgraph(gg5, elist)
+    gg = CompleteGraph(10)
+    elist = [
+      SimpleEdge(1, 2), SimpleEdge(2, 3), SimpleEdge(3, 4),
+      SimpleEdge(4, 5),SimpleEdge(5, 1)
+    ]
+    sg, vm = induced_subgraph(gg, elist)
     @test sg == CycleGraph(5)
     @test sort(vm) == [1:5;]
 
 
-    g10 = StarGraph(10)
-    @test egonet(g10, 1, 0) == Graph(1,0)
-    @test egonet(g10, 1, 1) == g10
+    g = StarGraph(10)
+    @test egonet(g, 1, 0) == Graph(1,0)
+    @test egonet(g, 1, 1) == g
 
-    @test eltype(g10) == Float64
-    @test ndims(g10) == 2
+    @test eltype(g) == Float64
+    @test ndims(g) == 2
 end

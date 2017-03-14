@@ -1,4 +1,10 @@
 @testset "Betweenness" begin
+    # self loops
+    s2 = DiGraph(3)
+    add_edge!(s2,1,2); add_edge!(s2,2,3); add_edge!(s2,3,3)
+    s1 = Graph(s2)
+    g3 = PathGraph(5)
+
     function readcentrality(f::AbstractString)
         f = open(f,"r")
         c = Vector{Float64}()

@@ -75,6 +75,7 @@ end
     badj(g) == badj(h)
 
 is_directed(g::SimpleDiGraph) = true
+is_directed(::Type{SimpleDiGraph}) = true
 
 function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     s, d = Tuple(e)
@@ -116,8 +117,3 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
         return length(searchsorted(badj(g,v), u)) > 0
     end
 end
-
-degree(g::SimpleDiGraph, v::Int) = indegree(g,v) + outdegree(g,v)
-"Returns all the vertices which share an edge with `v`."
-all_neighbors(g::SimpleDiGraph, v::Int) = union(in_neighbors(g,v), out_neighbors(g,v))
-density(g::SimpleDiGraph) = ne(g) / (nv(g) * (nv(g)-1))

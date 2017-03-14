@@ -1,4 +1,5 @@
 @testset "Connectivity" begin
+    g6 = smallgraph(:house)
     g = PathGraph(4)
     add_vertices!(g,10)
     add_edge!(g,5,6)

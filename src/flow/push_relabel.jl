@@ -46,7 +46,7 @@ function push_relabel{T<:Number}(
     sizehint!(Q, n)
 
 
-    for v in fadj(residual_graph, source)
+    for v in out_neighbors(residual_graph, source)
         push_flow!(residual_graph, source, v, capacity_matrix, flow_matrix, excess, height, active, Q)
     end
 
@@ -56,7 +56,7 @@ function push_relabel{T<:Number}(
         discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
     end
 
-    return sum([flow_matrix[v,target] for v in badj(residual_graph, target) ]), flow_matrix
+    return sum([flow_matrix[v,target] for v in in_neighbors(residual_graph, target) ]), flow_matrix
 end
 
 """
@@ -191,7 +191,7 @@ function relabel!{T<:Number}(
     n = nv(residual_graph)
     count[height[v]+1] -= 1
     height[v] = 2*n
-    for to in fadj(residual_graph, v)
+    for to in out_neighbors(residual_graph, v)
         if capacity_matrix[v,to] > flow_matrix[v,to]
             height[v] = min(height[v], height[to]+1)
         end
@@ -229,7 +229,7 @@ function discharge!{T<:Number}(
     count::AbstractArray{Int,1},
     Q::AbstractArray{Int,1}                 # FIFO queue
     )
-    for to in fadj(residual_graph, v)
+    for to in out_neighbors(residual_graph, v)
         excess[v] == 0 && break
         push_flow!(residual_graph, v, to, capacity_matrix, flow_matrix, excess, height, active, Q)
     end

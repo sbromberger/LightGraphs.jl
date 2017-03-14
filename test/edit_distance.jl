@@ -1,4 +1,9 @@
 @testset "Edit distance" begin
+
+    triangle = random_regular_graph(3,2)
+    quadrangle = random_regular_graph(4,2)
+    pentagon = random_regular_graph(5,2)
+    
     d, λ = edit_distance(triangle, quadrangle, subst_cost=MinkowskiCost(1:3,1:4))
     @test d == 1.0
     @test λ == Tuple[(1,1),(2,2),(3,3),(0,4)]
