@@ -77,9 +77,12 @@ Return a list of all inbound and outbount neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to `out_neighbors` and
 `in_neighbors`.
 """
-all_neighbors(g::AbstractGraph, v::Int) = neighbors(g, v)
+all_neighbors(x...) = _NI("all_neighbors")
 @traitfn all_neighbors{G<:AbstractGraph; IsDirected{G}}(g::G, v::Int) =
   union(out_neighbors(g, v), in_neighbors(g, v))
+@traitfn all_neighbors{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Int) =
+  neighbors(g, v)
+
 
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::AbstractGraph, u::Int, v::Int) =

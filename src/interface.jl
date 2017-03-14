@@ -56,7 +56,7 @@ is invalidated by changes to `g`.
 edges(g::AbstractGraph) = _NI("edges")
 
 is_directed(g::AbstractGraph) = _NI("is_directed")
-
+is_directed{T<:AbstractGraph}(::Type{T}) = _NI("is_directed")
 """Add a new vertex to the graph `g`.
 Returns true if the vertex was added successfully, false otherwise.
 """

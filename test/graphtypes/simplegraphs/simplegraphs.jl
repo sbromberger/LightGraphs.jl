@@ -72,6 +72,7 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test outdegree(g, 1) == 3
     @test in_neighbors(g, 5) == [2, 3]
     @test out_neighbors(g, 1) == [2, 3, 4]
+
     @test density(g) == 0.5
 
     @test degree(h) == [3, 2, 2, 1, 2]
@@ -82,6 +83,7 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test outdegree(h, 1) == 3
     @test in_neighbors(h, 5) == [2, 3]
     @test out_neighbors(h, 1) == [2, 3, 4]
+    @test all_neighbors(h, 1) == union(in_neighbors(h, 1), out_neighbors(h, 1))
     @test density(h) == 0.25
 
     @test p1 == g2
@@ -221,6 +223,4 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     h = DiGraph(sparse(adjmx1))
     @test !is_directed(g)
     @test is_directed(h)
-
-
 end

@@ -51,6 +51,7 @@ testdir = dirname(@__FILE__)
 
 tests = [
     "interface",
+    "core",
     "graphtypes/simplegraphs/simplegraphs",
     "graphtypes/simplegraphs/simpleedgeiter",
     "operators",
