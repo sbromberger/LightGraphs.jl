@@ -16,17 +16,17 @@ Uses a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
 residual_graph::DiGraph                # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
+source::Integer                        # the source vertex
+target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 
 Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 
-function boykov_kolmogorov_impl{T<:Number}(
+function boykov_kolmogorov_impl{T<:Number, U<:Integer}(
     residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::U,                           # the source vertex
+    target::U,                           # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
 
@@ -35,14 +35,14 @@ function boykov_kolmogorov_impl{T<:Number}(
     flow = 0
     flow_matrix = zeros(T, n, n)
 
-    TREE = zeros(Int, n)
-    TREE[source] = 1
-    TREE[target] = 2
+    TREE = zeros(U, n)
+    TREE[source] = U(1)
+    TREE[target] = U(2)
 
-    PARENT = zeros(Int, n)
+    PARENT = zeros(U, n)
 
     A = [source,target]
-    O = Vector{Int}()
+    O = Vector{U}()
 
     while true
       # growth stage
@@ -60,15 +60,15 @@ function boykov_kolmogorov_impl{T<:Number}(
     return flow, flow_matrix, TREE
 end
 
-function find_path!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+function find_path!{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},            # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    PARENT::Vector{Int},                   # parent table
-    TREE::Vector{Int},                     # tree table
-    A::Vector{Int}                         # active set
+    PARENT::Vector{U},                     # parent table
+    TREE::Vector{U},                       # tree table
+    A::Vector{U}                           # active set
     )
 
     tree_cap(p,q) = TREE[p] == 1 ? capacity_matrix[p,q] - flow_matrix[p,q] :
@@ -77,22 +77,22 @@ function find_path!{T<:Number}(
       p = last(A)
       for q in neighbors(residual_graph, p)
         if tree_cap(p,q) > 0
-          if TREE[q] == 0
+          if TREE[q] == zero(U)
             TREE[q] = TREE[p]
             PARENT[q] = p
             unshift!(A, q)
           end
-          if TREE[q] ≠ 0 && TREE[q] ≠ TREE[p]
+          if TREE[q] ≠ zero(U) && TREE[q] ≠ TREE[p]
             # p -> source
             path_to_source = [p]
-            while PARENT[p] ≠ 0
+            while PARENT[p] ≠ zero(U)
               p = PARENT[p]
               push!(path_to_source, p)
             end
 
             # q -> target
             path_to_target = [q]
-            while PARENT[q] ≠ 0
+            while PARENT[q] ≠ zero(U)
               q = PARENT[q]
               push!(path_to_target, q)
             end
@@ -111,16 +111,29 @@ function find_path!{T<:Number}(
       pop!(A)
     end
 
-    return Vector{Int}()
+    return Vector{U}()
 end
 
-function augment!{T<:Number}(
+find_path!{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},            # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    flow_matrix::AbstractArray{T,2},       # the current flow matrix
+    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    PARENT::Vector,                     # parent table
+    TREE::Vector,                       # tree table
+    A::Vector                           # active set
+    ) = find_path!(residual_graph, U(source), U(target),
+                  flow_matrix, capacity_matrix, U.(PARENT),
+                  U.(TREE), U.(A))
+
+function augment!{T<:Number, U<:Integer}(
     path::AbstractVector,                  # path from source to target
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    PARENT::Vector{Int},                   # parent table
-    TREE::Vector{Int},                     # tree table
-    O::Vector{Int}                         # orphan set
+    PARENT::Vector{U},                     # parent table
+    TREE::Vector{U},                       # tree table
+    O::Vector{U}                           # orphan set
     )
 
     # bottleneck capacity
@@ -139,12 +152,12 @@ function augment!{T<:Number}(
 
       # create orphans
       if flow_matrix[p,q] == capacity_matrix[p,q]
-        if TREE[p] == TREE[q] == 1
-          PARENT[q] = 0
+        if TREE[p] == TREE[q] == one(U)
+          PARENT[q] = zero(U)
           unshift!(O, q)
         end
         if TREE[p] == TREE[q] == 2
-          PARENT[p] = 0
+          PARENT[p] = zero(U)
           unshift!(O, p)
         end
       end
@@ -153,19 +166,19 @@ function augment!{T<:Number}(
     return Δ
 end
 
-function adopt!{T<:Number}(
+function adopt!{T<:Number, U<:Integer}(
     residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::U,                             # the source vertex
+    target::U,                             # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    PARENT::Vector{Int},                   # parent table
-    TREE::Vector{Int},                     # tree table
-    A::Vector{Int},                        # active set
-    O::Vector{Int}                         # orphan set
+    PARENT::Vector{U},                     # parent table
+    TREE::Vector{U},                       # tree table
+    A::Vector{U},                          # active set
+    O::Vector{U}                           # orphan set
     )
 
-    tree_cap(p,q) = TREE[p] == 1 ? capacity_matrix[p,q] - flow_matrix[p,q] :
+    tree_cap(p,q) = TREE[p] == one(U) ? capacity_matrix[p,q] - flow_matrix[p,q] :
                                    capacity_matrix[q,p] - flow_matrix[q,p]
     while !isempty(O)
       p = pop!(O)
@@ -175,7 +188,7 @@ function adopt!{T<:Number}(
         if TREE[q] == TREE[p] && tree_cap(q,p) > 0
           # check if "origin" is either source or target
           o = q
-          while PARENT[o] ≠ 0
+          while PARENT[o] ≠ zero(U)
              o = PARENT[o]
           end
           if o == source || o == target
@@ -194,13 +207,13 @@ function adopt!{T<:Number}(
               unshift!(A, q)
             end
             if PARENT[q] == p
-              PARENT[q] = 0
+              PARENT[q] = zero(U)
               unshift!(O, q)
             end
           end
         end
 
-        TREE[p] = 0
+        TREE[p] = zero(U)
         B = setdiff(A, p)
         resize!(A, length(B))[:] = B
       end

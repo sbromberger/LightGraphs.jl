@@ -231,7 +231,7 @@ sum(g::AbstractGraph) = ne(g)
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
-eltype(g::AbstractGraph) = Float64
+# eltype(g::AbstractGraph) = Float64
 length(g::AbstractGraph) = nv(g)*nv(g)
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
@@ -310,20 +310,20 @@ sg, vmap = subgraph(g, 5:8)
 @assert vm[4] == 8
 
 sg, vmap = subgraph(g, [2,8,3,4])
-@asssert sg == g[[2,8,3,4]]
+@assert sg == g[[2,8,3,4]]
 
 elist = [Edge(1,2), Edge(3,4), Edge(4,8)]
 sg, vmap = subgraph(g, elist)
-@asssert sg == g[elist]
+@assert sg == g[elist]
 ```
 """
-function induced_subgraph{T<:AbstractGraph}(g::T, vlist::AbstractVector{Int})
+function induced_subgraph{T<:AbstractGraph, U<:Integer}(g::T, vlist::AbstractVector{U})
     allunique(vlist) || error("Vertices in subgraph list must be unique")
     h = T(length(vlist))
-    newvid = Dict{Int, Int}()
-    vmap =Vector{Int}(length(vlist))
+    newvid = Dict{U, U}()
+    vmap =Vector{U}(length(vlist))
     for (i,v) in enumerate(vlist)
-        newvid[v] = i
+        newvid[v] = U(i)
         vmap[i] = v
     end
 
@@ -341,10 +341,11 @@ function induced_subgraph{T<:AbstractGraph}(g::T, vlist::AbstractVector{Int})
 end
 
 
-function induced_subgraph{T<:AbstractGraph}(g::T, elist::AbstractVector{Edge})
-    h = T()
-    newvid = Dict{Int, Int}()
-    vmap = Vector{Int}()
+function induced_subgraph{T<:AbstractGraph, U<:AbstractEdge}(g::T, elist::AbstractVector{U})
+    h = empty(g)
+    et = eltype(h)
+    newvid = Dict{et, et}()
+    vmap = Vector{et}()
 
     for e in elist
         u, v = Tuple(e)

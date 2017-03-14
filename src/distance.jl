@@ -7,7 +7,7 @@ type DefaultDistance<:AbstractArray{Int, 2}
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end
 
-getindex(::DefaultDistance, s::Int, d::Int) = 1
+getindex(::DefaultDistance, s::Integer, d::Integer) = 1
 getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
 size(d::DefaultDistance) = (d.nv, d.nv)
 transpose(d::DefaultDistance) = d
@@ -33,9 +33,9 @@ provided, it will be used. Otherwise, an eccentricity vector will be calculated
 for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
 """
-function eccentricity{T}(
+function eccentricity{T, U<:Integer}(
     g::AbstractGraph,
-    v::Int,
+    v::U,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
     e = maximum(dijkstra_shortest_paths(g,v,distmx).dists)
@@ -44,9 +44,9 @@ function eccentricity{T}(
     return e
 end
 
-eccentricity{T}(
+eccentricity{T, U<:Integer}(
     g::AbstractGraph,
-    vs::AbstractArray{Int, 1}=vertices(g),
+    vs::AbstractArray{U, 1}=vertices(g),
     distmx::AbstractArray{T, 2} = DefaultDistance()
 ) =
     [eccentricity(g,v,distmx) for v in vs]

@@ -5,21 +5,21 @@ Returns the value of the maximum flow as well as the final flow matrix.
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 Requires arguments:
 - residual_graph::DiGraph                # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
+- source::Integer                        # the source vertex
+- target::Integer                        # the target vertex
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function edmonds_karp_impl{T<:Number}(
     residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
     n = nv(residual_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
-
+##============== STOPPED HERE 14 MAR
     P = zeros(Int, n)
     S = zeros(Int, n)
     while true

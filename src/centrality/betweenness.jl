@@ -46,7 +46,7 @@ betweenness: Array{Float64}
 """
 function betweenness_centrality(
     g::AbstractGraph,
-    nodes::AbstractArray{Int, 1} = vertices(g);
+    nodes::AbstractVector = vertices(g);
     normalize=true,
     endpoints=false)
 
@@ -75,7 +75,7 @@ function betweenness_centrality(
     return betweenness
 end
 
-betweenness_centrality(g::AbstractGraph, k::Int; normalize=true, endpoints=false) =
+betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
     betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
 
@@ -139,7 +139,7 @@ function _accumulate_endpoints!(
     end
 end
 
-function _rescale!(betweenness::Vector{Float64}, n::Int, normalize::Bool, directed::Bool, k::Int)
+function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Int)
     if normalize
         if n <= 2
             do_scale = false

@@ -37,6 +37,7 @@ Distance: Approximation Algorithms and Applications. (Chapter 2)
 
 Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
+
 function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                        insert_cost::Function=v->1.0,
                        delete_cost::Function=u->1.0,

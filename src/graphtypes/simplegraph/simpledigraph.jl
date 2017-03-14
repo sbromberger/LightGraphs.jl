@@ -1,36 +1,46 @@
 typealias SimpleDiGraphEdge SimpleEdge
 
 """A type representing a directed graph."""
-type SimpleDiGraph <: AbstractSimpleGraph
-    vertices::UnitRange{Int}
+type SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
+    vertices::UnitRange{T}
     ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
+    fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
+    badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
 end
 
-edgetype(::SimpleDiGraph) = SimpleDiGraphEdge
+eltype{T<:Integer}(x::SimpleDiGraph{T}) = T
 
-function SimpleDiGraph(n::Int)
-    fadjlist = Vector{Vector{Int}}()
-    badjlist = Vector{Vector{Int}}()
-    for i = 1:n
-        push!(badjlist, Vector{Int}())
-        push!(fadjlist, Vector{Int}())
-    end
-    return SimpleDiGraph(1:n, 0, badjlist, fadjlist)
+# DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
+function (::Type{SimpleDiGraph{T}}){T<:Integer}(n::Integer = 0)
+  fadjlist = Vector{Vector{T}}()
+  badjlist = Vector{Vector{T}}()
+  for i = one(T):n
+      push!(badjlist, Vector{T}())
+      push!(fadjlist, Vector{T}())
+  end
+  vertices = one(T):n
+  return SimpleDiGraph(vertices, 0, badjlist, fadjlist)
 end
 
-SimpleDiGraph() = SimpleDiGraph(0)
+# DiGraph()
+SimpleDiGraph() = SimpleDiGraph{Int}()
 
-function SimpleDiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
+# DiGraph(6), DiGraph(0x5)
+SimpleDiGraph{T<:Integer}(n::T) = SimpleDiGraph{T}(n)
+
+# SimpleDiGraph(UInt8)
+SimpleDiGraph{T<:Integer}(::Type{T}) = SimpleDiGraph{T}(zero(T))
+
+# sparse adjacency matrix constructor: DiGraph(adjmx)
+function (::Type{SimpleDiGraph{T}}){T<:Integer, U}(adjmx::SparseMatrixCSC{U})
     dima, dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
-    g = SimpleDiGraph(dima)
+    g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
     for c = 1:(maxc-1)
         for rind = adjmx.colptr[c]:adjmx.colptr[c+1]-1
-            isnz = (adjmx.nzval[rind] != zero(T))
+            isnz = (adjmx.nzval[rind] != zero(U))
             if isnz
                 r = adjmx.rowval[rind]
                 add_edge!(g,r,c)
@@ -40,11 +50,12 @@ function SimpleDiGraph{T<:Real}(adjmx::SparseMatrixCSC{T})
     return g
 end
 
-function SimpleDiGraph{T<:Real}(adjmx::AbstractMatrix{T})
+# dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
+function (::Type{SimpleDiGraph{T}}){T<:Integer}(adjmx::AbstractMatrix)
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
-    g = SimpleDiGraph(dima)
+    g = SimpleDiGraph(T(dima))
     for i in find(adjmx)
         ind = ind2sub((dima,dimb),i)
         add_edge!(g,ind...)
@@ -52,6 +63,19 @@ function SimpleDiGraph{T<:Real}(adjmx::AbstractMatrix{T})
     return g
 end
 
+# DiGraph(adjmx)
+SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
+
+# converts DiGraph{Int} to DiGraph{Int32}
+function (::Type{SimpleDiGraph{T}}){T<:Integer}(g::SimpleDiGraph)
+  h_vertices = one(T):T(nv(g))
+  h_fadj = [Vector{T}(x) for x in fadj(g)]
+  h_badj = [Vector{T}(x) for x in badj(g)]
+  return SimpleDiGraph(h_vertices, ne(g), h_fadj, h_badj)
+end
+
+
+# constructor from abstract graph: DiGraph(graph)
 function SimpleDiGraph(g::AbstractSimpleGraph)
     h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)
@@ -60,13 +84,16 @@ function SimpleDiGraph(g::AbstractSimpleGraph)
     return h
 end
 
+edgetype{T<:Integer}(::SimpleDiGraph{T}) = SimpleGraphEdge{T}
+
+
 badj(g::SimpleDiGraph) = g.badjlist
-badj(g::SimpleDiGraph, v::Int) = badj(g)[v]
+badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
-function copy(g::SimpleDiGraph)
-    return SimpleDiGraph(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
-end
+copy{T<:Integer}(g::SimpleDiGraph{T}) =
+  SimpleDiGraph{T}(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
     vertices(g) == vertices(h) &&
@@ -76,8 +103,9 @@ end
 
 is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
+is_directed{T}(::Type{SimpleDiGraph{T}}) = true
 
-function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
+function add_edge!{T<:Integer}(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge)
     s, d = Tuple(e)
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
@@ -99,10 +127,10 @@ function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
 end
 
 
-function add_vertex!(g::SimpleDiGraph)
+function add_vertex!{T<:Integer}(g::SimpleDiGraph{T})
     g.vertices = 1:nv(g)+1
-    push!(g.badjlist, Vector{Int}())
-    push!(g.fadjlist, Vector{Int}())
+    push!(g.badjlist, Vector{T}())
+    push!(g.fadjlist, Vector{T}())
 
     return true
 end
@@ -117,3 +145,5 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
         return length(searchsorted(badj(g,v), u)) > 0
     end
 end
+
+empty{T<:Integer}(g::SimpleDiGraph{T}) = SimpleDiGraph{T}()

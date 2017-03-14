@@ -34,8 +34,8 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test !is_directed(SimpleGraph)
     @test is_directed(SimpleDiGraph)
 
-    @test edgetype(SimpleGraph()) == SimpleEdge
-    @test edgetype(SimpleDiGraph()) == SimpleEdge
+    @test edgetype(SimpleGraph()) == SimpleEdge{Int}
+    @test edgetype(SimpleDiGraph()) == SimpleEdge{Int}
 
     @test sprint(show, SimpleGraph()) == "empty undirected simple graph"
     @test sprint(show, SimpleDiGraph()) == "empty directed simple graph"
@@ -215,7 +215,6 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     g = CompleteGraph(5)
     @test rem_vertex!(g, 3)
     @test g == CompleteGraph(4)
-
 
     badadjmx = [ 0 1 0; 1 0 1]
     @test_throws ErrorException SimpleGraph(badadjmx)

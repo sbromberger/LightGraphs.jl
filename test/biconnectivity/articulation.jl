@@ -1,5 +1,5 @@
 @testset "Articulation" begin
-    g = Graph(13)
+    g = Graph{UInt8}(13)
     add_edge!(g, 1, 7)
     add_edge!(g, 1, 2)
     add_edge!(g, 1, 3)
@@ -29,6 +29,7 @@
     end
 
     h = LightGraphs.blkdiag(WheelGraph(5), WheelGraph(5))
+    h = Graph{UInt16}(h)
     add_edge!(h, 5,6)
     @test articulation(h) == [5,6]
 end

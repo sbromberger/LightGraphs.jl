@@ -9,7 +9,7 @@ import LightGraphs:
   add_vertex!, add_edge!, rem_vertex!, rem_edge!,
   has_vertex, has_edge, in_neighbors, out_neighbors,
 
-  indegree, outdegree, degree, has_self_loops, num_self_loops
+  indegree, outdegree, degree, has_self_loops, num_self_loops, empty
 
 export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
 SimpleEdge, SimpleGraph, SimpleGraphEdge,
@@ -42,19 +42,19 @@ end
 
 vertices(g::AbstractSimpleGraph) = g.vertices
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
-nv(g::AbstractSimpleGraph) = length(vertices(g))
+nv(g::AbstractSimpleGraph) = last(vertices(g))
 
 fadj(g::AbstractSimpleGraph) = g.fadjlist
-fadj(g::AbstractSimpleGraph, v::Int) = g.fadjlist[v]
+fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 
 
 badj(x...) = _NI("badj")
 
-has_edge(g::AbstractSimpleGraph, u::Int, v::Int) = has_edge(g, edgetype(g)(u,v))
-add_edge!(g::AbstractSimpleGraph, u::Int, v::Int) = add_edge!(g, edgetype(g)(u,v))
+has_edge(g::AbstractSimpleGraph, u::Integer, v::Integer) = has_edge(g, edgetype(g)(u,v))
+add_edge!{T<:Integer}(g::AbstractSimpleGraph, u::T, v::T) = add_edge!(g, edgetype(g)(u,v))
 
-in_neighbors(g::AbstractSimpleGraph, v::Int) = badj(g,v)
-out_neighbors(g::AbstractSimpleGraph, v::Int) = fadj(g,v)
+in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g,v)
+out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g,v)
 
 
 function issubset{T<:AbstractSimpleGraph}(g::T, h::T)
@@ -63,12 +63,12 @@ function issubset{T<:AbstractSimpleGraph}(g::T, h::T)
     return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
 end
 
-in_edges(g::AbstractSimpleGraph, v::Int) = [edgetype(g)(x,v) for x in in_neighbors(g, v)]
-out_edges(g::AbstractSimpleGraph, v::Int) = [edgetype(g)(v,x) for x in out_neighbors(g, v)]
-has_vertex(g::AbstractSimpleGraph, v::Int) = v in vertices(g)
+in_edges(g::AbstractSimpleGraph, v::Integer) = [edgetype(g)(x,v) for x in in_neighbors(g, v)]
+out_edges(g::AbstractSimpleGraph, v::Integer) = [edgetype(g)(v,x) for x in out_neighbors(g, v)]
+has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
-rem_edge!(g::AbstractSimpleGraph, u::Int, v::Int) = rem_edge!(g, edgetype(g)(u, v))
+rem_edge!{T<:Integer}(g::AbstractSimpleGraph, u::T, v::T) = rem_edge!(g, edgetype(g)(u, v))
 
 """
 Remove the vertex `v` from graph `g`.
@@ -79,7 +79,7 @@ and removing the vertex `n` from the graph. After removal the vertices in the ` 
 This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
 Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
 """
-function rem_vertex!(g::AbstractSimpleGraph, v::Int)
+function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     v in vertices(g) || return false
     n = nv(g)
 
@@ -125,9 +125,5 @@ include("simpleedge.jl")
 include("simpledigraph.jl")
 include("simplegraph.jl")
 include("simpleedgeiter.jl")
-
-
-
-
 
 end # module

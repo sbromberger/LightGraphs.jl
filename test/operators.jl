@@ -94,7 +94,7 @@
     @test_throws ErrorException sum(p,3)
 
     @test sparse(p) == adjacency_matrix(p)
-    @test eltype(p) == Float64
+    @test eltype(p) == Int
     @test length(p) == 100
     @test ndims(p) == 2
     @test issymmetric(p)
@@ -183,6 +183,6 @@
     @test egonet(g, 1, 0) == Graph(1,0)
     @test egonet(g, 1, 1) == g
 
-    @test eltype(g) == Float64
+    @test eltype(g) == Int
     @test ndims(g) == 2
 end

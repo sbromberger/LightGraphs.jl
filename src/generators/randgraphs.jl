@@ -1,4 +1,4 @@
-function Graph(nv::Integer, ne::Integer; seed::Int = -1)
+function Graph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
     maxe = div(nv * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
@@ -6,8 +6,8 @@ function Graph(nv::Integer, ne::Integer; seed::Int = -1)
     rng = getRNG(seed)
     g = Graph(nv)
     while g.ne < ne
-        source = rand(rng, 1:nv)
-        dest = rand(rng, 1:nv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g,source,dest)
     end
     return g

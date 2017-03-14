@@ -5,12 +5,13 @@ Community detection using the label propagation algorithm (see [Raghavan et al.]
 return : vertex assignments and the convergence history
 """
 function label_propagation(g::AbstractGraph; maxiter=1000)
+    T = eltype(g)
     n = nv(g)
-    label = collect(1:n)
+    label = collect(one(T):n)
     active_nodes = IntSet(vertices(g))
-    c = NeighComm(collect(1:n), fill(-1,n), 1)
+    c = NeighComm(collect(one(T):n), fill(-1,n), T(1))
     convergence_hist = Vector{Int}()
-    random_order = Array(Int, n)
+    random_order = Array(T, n)
     i = 0
     while !isempty(active_nodes) && i < maxiter
         num_active = length(active_nodes)
@@ -41,10 +42,10 @@ function label_propagation(g::AbstractGraph; maxiter=1000)
 end
 
 """Type to record neighbor labels and their counts."""
-type NeighComm
-  neigh_pos::Vector{Int}
+type NeighComm{T<:Integer}
+  neigh_pos::Vector{T}
   neigh_cnt::Vector{Int}
-  neigh_last::Int
+  neigh_last::T
 end
 
 """Fast shuffle Array `a` in UnitRange `r` inplace."""
@@ -59,7 +60,7 @@ function range_shuffle!(r::UnitRange, a::AbstractVector)
 end
 
 """Return the most frequency label."""
-function vote!(g::AbstractGraph, m::Vector{Int}, c::NeighComm, u::Int)
+function vote!{T<:Integer}(g::AbstractGraph, m::Vector{T}, c::NeighComm, u::T)
     @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -89,7 +90,7 @@ function vote!(g::AbstractGraph, m::Vector{Int}, c::NeighComm, u::Int)
     end
 end
 
-function renumber_labels!(membership::Vector{Int}, label_counters::Vector{Int})
+function renumber_labels!{T<:Integer}(membership::Vector{T}, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     j = 1

@@ -1,33 +1,41 @@
 typealias SimpleGraphEdge SimpleEdge
 
 """A type representing an undirected graph."""
-type SimpleGraph <: AbstractSimpleGraph
-    vertices::UnitRange{Int}
+type SimpleGraph{T<:Integer} <: AbstractSimpleGraph
+    vertices::UnitRange{T}
     ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
+    fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
 
-edgetype(::SimpleGraph) = SimpleGraphEdge
+eltype{T<:Integer}(x::SimpleGraph{T}) = T
 
-function SimpleGraph(n::Int)
-    fadjlist = Vector{Vector{Int}}()
-    sizehint!(fadjlist,n)
-    for i = 1:n
-        # sizehint!(i_s, n/4)
-        # sizehint!(o_s, n/4)
-        push!(fadjlist, Vector{Int}())
+# Graph{UInt8}(6), Graph{Int16}(7)
+function (::Type{SimpleGraph{T}}){T<:Integer}(n::Integer = 0)
+    fadjlist = Vector{Vector{T}}()
+    sizehint!(fadjlist, n)
+    for _ = one(T):n
+        push!(fadjlist, Vector{T}())
     end
-    return SimpleGraph(1:n, 0, fadjlist)
+    vertices = one(T):T(n)
+    return SimpleGraph{T}(vertices, 0, fadjlist)
 end
 
-SimpleGraph() = SimpleGraph(0)
+# Graph()
+SimpleGraph() = SimpleGraph{Int}()
 
-function SimpleGraph{T<:Real}(adjmx::AbstractMatrix{T})
+# Graph(6), Graph(0x5)
+SimpleGraph{T<:Integer}(n::T) = SimpleGraph{T}(n)
+
+# SimpleGraph(UInt8)
+SimpleGraph{T<:Integer}(::Type{T}) = SimpleGraph{T}(zero(T))
+
+# Graph{UInt8}(adjmx)
+function (::Type{SimpleGraph{T}}){T<:Integer}(adjmx::AbstractMatrix)
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
     issymmetric(adjmx) || error("Adjacency / distance matrices must be symmetric")
 
-    g = SimpleGraph(dima)
+    g = SimpleGraph(T(dima))
     for i in find(triu(adjmx))
         ind = ind2sub((dima,dimb),i)
         add_edge!(g,ind...)
@@ -35,12 +43,23 @@ function SimpleGraph{T<:Real}(adjmx::AbstractMatrix{T})
     return g
 end
 
+# converts Graph{Int} to Graph{Int32}
+function (::Type{SimpleGraph{T}}){T<:Integer}(g::SimpleGraph)
+  h_vertices = one(T):T(nv(g))
+  h_fadj = [Vector{T}(x) for x in fadj(g)]
+  return SimpleGraph(h_vertices, ne(g), h_fadj)
+end
+
+
+# Graph(adjmx)
+SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
+
+# Graph(digraph)
 function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
-
     edgect = 0
     newfadj = deepcopy(g.fadjlist)
-    for i in 1:gnv
+    for i in vertices(g)
         for j in badj(g,i)
             if (_insert_and_dedup!(newfadj[i], j))
                 edgect += 2     # this is a new edge only in badjlist
@@ -56,13 +75,15 @@ function SimpleGraph(g::SimpleDiGraph)
     return SimpleGraph(vertices(g), edgect ÷ 2, newfadj)
 end
 
+edgetype{T<:Integer}(::SimpleGraph{T}) = SimpleGraphEdge{T}
+
 """Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.
 
 NOTE: returns a reference, not a copy. Do not modify result.
 """
 badj(g::SimpleGraph) = fadj(g)
-badj(g::SimpleGraph, v::Int) = fadj(g, v)
+badj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
 
 """Returns the adjacency list of a graph.
@@ -71,11 +92,9 @@ For each vertex the Array of `dst` for each edge eminating from that vertex.
 NOTE: returns a reference, not a copy. Do not modify result.
 """
 adj(g::SimpleGraph) = fadj(g)
-adj(g::SimpleGraph, v::Int) = fadj(g, v)
+adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
-function copy(g::SimpleGraph)
-    return SimpleGraph(g.vertices, g.ne, deepcopy(g.fadjlist))
-end
+copy(g::SimpleGraph) =  SimpleGraph(g.vertices, g.ne, deepcopy(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
     vertices(g) == vertices(h) &&
@@ -85,6 +104,7 @@ end
 
 """Return `true` if `g` is a directed graph."""
 is_directed(::Type{SimpleGraph}) = false
+is_directed{T}(::Type{SimpleGraph{T}}) = false
 is_directed(g::SimpleGraph) = false
 
 function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
@@ -125,9 +145,11 @@ end
 
 
 """Add a new vertex to the graph `g`."""
-function add_vertex!(g::SimpleGraph)
-    g.vertices = 1:nv(g)+1
-    push!(g.fadjlist, Vector{Int}())
+function add_vertex!{T<:Integer}(g::SimpleGraph{T})
+    g.vertices = one(T):nv(g)+one(T)
+    push!(g.fadjlist, Vector{T}())
 
     return true
 end
+
+empty{T<:Integer}(g::SimpleGraph{T}) = SimpleGraph{T}()

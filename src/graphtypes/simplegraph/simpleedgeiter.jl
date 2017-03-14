@@ -1,17 +1,17 @@
-type SimpleEdgeIter <: AbstractEdgeIter
+type SimpleEdgeIter{T<:Integer} <: AbstractEdgeIter
     m::Int
-    adj::Vector{Vector{Int}}
+    adj::Vector{Vector{T}}
     directed::Bool
 end
 
-immutable SimpleEdgeIterState
-    s::Int  # src vertex
-    di::Int # index into adj of dest vertex
+immutable SimpleEdgeIterState{T<:Integer}
+    s::T  # src vertex
+    di::T # index into adj of dest vertex
     fin::Bool
 end
 
 
-eltype(::Type{SimpleEdgeIter}) = SimpleEdge
+eltype{T}(::Type{SimpleEdgeIter{T}}) = SimpleEdge
 
 SimpleEdgeIter(g::SimpleGraph) = SimpleEdgeIter(ne(g), g.fadjlist, false)
 SimpleEdgeIter(g::SimpleDiGraph) = SimpleEdgeIter(ne(g), g.fadjlist, true)

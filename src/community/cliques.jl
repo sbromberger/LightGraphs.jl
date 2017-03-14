@@ -20,16 +20,16 @@ julia> maximal_cliques(g)
 ```
 """
 function maximal_cliques(g::Graph)
-
+    T = eltype(g)
 
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
-    nnbrs = Vector{Set{Int}}()
+    nnbrs = Vector{Set{T}}()
     for n in vertices(g)
-        push!(nnbrs, Set{Int}())
+        push!(nnbrs, Set{T}())
     end
-    pivotnbrs = Set{Int}() # handle empty graph
-    pivotdonenbrs = Set{Int}()  # initialize
+    pivotnbrs = Set{T}() # handle empty graph
+    pivotdonenbrs = Set{T}()  # initialize
 
     for n in vertices(g)
         nbrs = Set{Int}()

@@ -7,21 +7,21 @@ Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
 residual_graph::DiGraph                # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
+source::Integer                        # the source vertex
+target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
-function dinic_impl{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+function dinic_impl{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},               # the input graph
+    source::U,                       # the source vertex
+    target::U,                       # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
     n = nv(residual_graph)                     # number of vertexes
 
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
-    P = zeros(Int, n)                      # Sharable parent vector
+    P = zeros(U, n)                      # Sharable parent vector
 
     flow = 0
 
@@ -40,15 +40,15 @@ along all possible paths.
 
 Requires arguments:
 residual_graph::DiGraph                # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
+source::Integer                        # the source vertex
+target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 flow_matrix::AbstractArray{T,2}        # the current flow matrix
 """
-function blocking_flow!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+function blocking_flow!{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},               # the input graph
+    source::U,                       # the source vertex
+    target::U,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     )
@@ -68,17 +68,17 @@ along all possible paths.
 
 Requires arguments:
 residual_graph::DiGraph                # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
+source::Integer                        # the source vertex
+target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 flow_matrix::AbstractArray{T,2}        # the current flow matrix
 P::AbstractArray{Int, 1}               # Parent vector to store Level Graph
 """
 
-function blocking_flow!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+function blocking_flow!{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},               # the input graph
+    source::U,                           # the source vertex
+    target::U,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     P::AbstractArray{Int, 1}               # Parent vector to store Level Graph

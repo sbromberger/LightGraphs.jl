@@ -80,14 +80,12 @@ Computes the [global clustering coefficient](https://en.wikipedia.org/wiki/Clust
 function global_clustering_coefficient(g::AbstractGraph)
     c = 0
     ntriangles = 0
-    for v in 1:nv(g)
+    for v in vertices(g)
         neighs = neighbors(g, v)
-        for i=1:length(neighs)
-            for j=1:length(neighs)
-                i == j && continue
-                if has_edge(g, neighs[i], neighs[j])
-                    c += 1
-                end
+        for i=1:length(neighs), j=1:length(neighs)
+            i == j && continue
+            if has_edge(g, neighs[i], neighs[j])
+                c += 1
             end
         end
         k = degree(g, v)

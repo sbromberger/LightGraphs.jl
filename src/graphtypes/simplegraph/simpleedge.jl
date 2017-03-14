@@ -3,9 +3,9 @@ import LightGraphs: AbstractEdge, src, dst, reverse
 
 abstract AbstractSimpleEdge <: AbstractEdge
 
-immutable SimpleEdge <: AbstractSimpleEdge
-    src::Int
-    dst::Int
+immutable SimpleEdge{T<:Integer} <: AbstractSimpleEdge
+    src::T
+    dst::T
 end
 
 # Accessors
