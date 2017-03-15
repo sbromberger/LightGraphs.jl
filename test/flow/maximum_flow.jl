@@ -29,26 +29,29 @@
 
     for (nvertices,flow_edges,s,t,fdefault,fcustom,frestrict,caprestrict) in graphs
         flow_graph = DiGraph(nvertices)
-        capacity_matrix = zeros(Int,nvertices,nvertices)
-        for e in flow_edges
-            u,v,f = e
-            add_edge!(flow_graph,u,v)
-            capacity_matrix[u,v] = f
-        end
+        for g in (flow_graph, DiGraph{UInt8}(flow_graph), DiGraph{Int16}(flow_graph))
+          capacity_matrix = zeros(Int,nvertices,nvertices)
+          for e in flow_edges
+              u,v,f = e
+              add_edge!(g,u,v)
+              capacity_matrix[u,v] = f
+          end
 
-        # Test DefaultCapacity
-        d = LightGraphs.DefaultCapacity(flow_graph)
-        @test typeof(d) <: AbstractArray{Int, 2}
-        @test d[s,t] == 0
-        @test size(d) == (nvertices,nvertices)
-        @test typeof(transpose(d)) == LightGraphs.DefaultCapacity
-        @test typeof(ctranspose(d)) == LightGraphs.DefaultCapacity
+          # Test DefaultCapacity
+          d = LightGraphs.DefaultCapacity(g)
+          T = eltype(d)
+          @test typeof(d) <: AbstractArray{T, 2}
+          @test d[s,t] == 0
+          @test size(d) == (nvertices,nvertices)
+          @test typeof(transpose(d)) <: LightGraphs.DefaultCapacity
+          @test typeof(ctranspose(d)) <: LightGraphs.DefaultCapacity
 
-        # Test all algorithms
-        for ALGO in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
-          @test maximum_flow(flow_graph,s,t,algorithm=ALGO())[1] == fdefault
-          @test maximum_flow(flow_graph,s,t,capacity_matrix,algorithm=ALGO())[1] == fcustom
-          @test maximum_flow(flow_graph,s,t,capacity_matrix,algorithm=ALGO(),restriction=caprestrict)[1] == frestrict
+          # Test all algorithms
+          for ALGO in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
+            @test maximum_flow(g,s,t,algorithm=ALGO())[1] == fdefault
+            @test maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO())[1] == fcustom
+            @test maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO(),restriction=caprestrict)[1] == frestrict
+          end
         end
     end
 end

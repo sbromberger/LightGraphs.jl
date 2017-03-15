@@ -31,13 +31,15 @@ end
 Type that returns 1 if a forward edge exists, and 0 otherwise
 """
 
-type DefaultCapacity <: AbstractArray{Int, 2}
-    flow_graph::DiGraph
-    nv::Int
-    DefaultCapacity(flow_graph::DiGraph) = new(flow_graph, nv(flow_graph))
+type DefaultCapacity{T<:Integer} <: AbstractArray{T, 2}
+    flow_graph::DiGraph{T}
+    nv::T
 end
 
-getindex(d::DefaultCapacity, s::Int, t::Int) = if has_edge(d.flow_graph, s , t) 1 else 0 end
+DefaultCapacity{T<:Integer}(flow_graph::DiGraph{T}) = DefaultCapacity(flow_graph, nv(flow_graph))
+
+getindex{T<:Integer}(d::DefaultCapacity{T}, s::Integer, t::Integer) = if has_edge(d.flow_graph, s , t) one(T) else zero(T) end
+isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in one(T):d.nv) && (v in one(T):d.nv)
 size(d::DefaultCapacity) = (d.nv, d.nv)
 transpose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 ctranspose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
@@ -66,8 +68,8 @@ residual(flow_graph::DiGraph) = DiGraph(Graph(flow_graph))
 
 function maximum_flow{T<:Number}(
     flow_graph::DiGraph,                   # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     algorithm::EdmondsKarpAlgorithm        # keyword argument for algorithm
     )
@@ -79,8 +81,8 @@ end
 
 function maximum_flow{T<:Number}(
     flow_graph::DiGraph,                   # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     algorithm::DinicAlgorithm              # keyword argument for algorithm
     )
@@ -92,8 +94,8 @@ end
 
 function maximum_flow{T<:Number}(
     flow_graph::DiGraph,                   # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     algorithm::BoykovKolmogorovAlgorithm   # keyword argument for algorithm
     )
@@ -105,8 +107,8 @@ end
 
 function maximum_flow{T<:Number}(
     flow_graph::DiGraph,                   # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     algorithm::PushRelabelAlgorithm        # keyword argument for algorithm
     )
@@ -118,8 +120,8 @@ end
 Generic maximum_flow function. Requires arguments:
 
 - flow_graph::DiGraph                   # the input graph
-- source::Int                           # the source vertex
-- target::Int                           # the target vertex
+- source::Integer                       # the source vertex
+- target::Integer                       # the target vertex
 - capacity_matrix::AbstractArray{T,2}   # edge flow capacities
 - algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 - restriction::T                        # keyword argument for a restriction
@@ -170,8 +172,8 @@ f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmo
 
 function maximum_flow{T<:Number}(
     flow_graph::DiGraph,                   # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2} =  # edge flow capacities
         DefaultCapacity(flow_graph);
     algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm

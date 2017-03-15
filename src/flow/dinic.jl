@@ -14,14 +14,14 @@ capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 
 function dinic_impl{T<:Number, U<:Integer}(
     residual_graph::DiGraph{U},               # the input graph
-    source::U,                       # the source vertex
-    target::U,                       # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
     n = nv(residual_graph)                     # number of vertexes
 
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
-    P = zeros(U, n)                      # Sharable parent vector
+    P = zeros(Int, n)                      # Sharable parent vector
 
     flow = 0
 
@@ -47,12 +47,12 @@ flow_matrix::AbstractArray{T,2}        # the current flow matrix
 """
 function blocking_flow!{T<:Number, U<:Integer}(
     residual_graph::DiGraph{U},               # the input graph
-    source::U,                       # the source vertex
-    target::U,                       # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     )
-    P = zeros(T, nv(residual_graph))
+    P = zeros(Int, nv(residual_graph))
     return blocking_flow!(residual_graph,
                           source,
                           target,
@@ -72,16 +72,16 @@ source::Integer                        # the source vertex
 target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 flow_matrix::AbstractArray{T,2}        # the current flow matrix
-P::AbstractArray{Int, 1}               # Parent vector to store Level Graph
+P::AbstractVector{Int}                 # Parent vector to store Level Graph
 """
 
 function blocking_flow!{T<:Number, U<:Integer}(
     residual_graph::DiGraph{U},               # the input graph
-    source::U,                           # the source vertex
-    target::U,                           # the target vertex
+    source::Integer,                           # the source vertex
+    target::Integer,                           # the target vertex
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    P::AbstractArray{Int, 1}               # Parent vector to store Level Graph
+    P::AbstractVector{Int}                 # Parent vector to store Level Graph
     )
     n = nv(residual_graph)                     # number of vertexes
 

@@ -12,15 +12,15 @@ Maintains the following auxillary arrays:
 Requires arguments:
 
 - residual_graph::DiGraph                # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
+- source::Integer                        # the source vertex
+- target::Integer                        # the target vertex
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function push_relabel{T<:Number}(
     residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
 
@@ -65,14 +65,14 @@ Pushes inactive nodes into the queue and activates them.
 Requires arguments:
 
 - Q::AbstractArray{Int,1}
-- v::Int
+- v::Integer
 - active::AbstractArray{Bool,1}
 - excess::AbstractArray{T,1}
 """
 
-function enqueue_vertex!{T<:Number}(
-    Q::AbstractArray{Int,1},
-    v::Int,                                # input vertex
+function enqueue_vertex!{T<:Number, U<:Integer}(
+    Q::AbstractArray{U,1},
+    v::Integer,                                # input vertex
     active::AbstractArray{Bool,1},
     excess::AbstractArray{T,1}
     )
@@ -89,26 +89,26 @@ Pushes as much flow as possible through the given edge.
 Requires arguements:
 
 - residual_graph::DiGraph              # the input graph
-- u::Int                               # input from-vertex
-- v::Int                               # input to-vetex
+- u::Integer                           # input from-vertex
+- v::Integer                           # input to-vetex
 - capacity_matrix::AbstractArray{T,2}
 - flow_matrix::AbstractArray{T,2}
 - excess::AbstractArray{T,1}
 - height::AbstractArray{Int,1}
 - active::AbstractArray{Bool,1}
-- Q::AbstractArray{Int,1}
+- Q::AbstractArray{Integer,1}
 """
 
-function push_flow!{T<:Number}(
+function push_flow!{T<:Number, U<:Integer}(
     residual_graph::DiGraph,             # the input graph
-    u::Int,                              # input from-vertex
-    v::Int,                              # input to-vetex
+    u::Integer,                              # input from-vertex
+    v::Integer,                              # input to-vetex
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
     active::AbstractArray{Bool,1},
-    Q::AbstractArray{Int,1}
+    Q::AbstractArray{U,1}
     )
     flow = min(excess[u], capacity_matrix[u,v] - flow_matrix[u,v])
 
@@ -137,17 +137,17 @@ Requires arguments:
 - height::AbstractArray{Int,1}
 - active::AbstractArray{Bool,1}
 - count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
+- Q::AbstractArray{Integer,1}
 """
 
-function gap!{T<:Number}(
+function gap!{T<:Number, U<:Integer}(
     residual_graph::DiGraph,               # the input graph
     h::Int,                                # cutoff height
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
     active::AbstractArray{Bool,1},
     count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}                # FIFO queue
+    Q::AbstractArray{U,1}                # FIFO queue
     )
     n = nv(residual_graph)
     for v in vertices(residual_graph)
@@ -167,26 +167,26 @@ edge.
 Requires arguments:
 
 - residual_graph::DiGraph                 # the input graph
-- v::Int                                  # input vertex to be relabeled
+- v::Integer                               # input vertex to be relabeled
 - capacity_matrix::AbstractArray{T,2}
 - flow_matrix::AbstractArray{T,2}
 - excess::AbstractArray{T,1}
 - height::AbstractArray{Int,1}
 - active::AbstractArray{Bool,1}
 - count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
+- Q::AbstractArray{Integer,1}
 """
 
-function relabel!{T<:Number}(
+function relabel!{T<:Number, U<:Integer}(
     residual_graph::DiGraph,                # the input graph
-    v::Int,                                 # input vertex to be relabeled
+    v::U,                                 # input vertex to be relabeled
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
     active::AbstractArray{Bool,1},
     count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}
+    Q::AbstractArray{U,1}
     )
     n = nv(residual_graph)
     count[height[v]+1] -= 1
@@ -209,25 +209,25 @@ vertex if the excess remains non-zero.
 Requires arguments:
 
 - residual_graph::DiGraph                 # the input graph
-- v::Int                                  # vertex to be discharged
+- v::Integer                              # vertex to be discharged
 - capacity_matrix::AbstractArray{T,2}
 - flow_matrix::AbstractArray{T,2}
 - excess::AbstractArray{T,1}
 - height::AbstractArray{Int,1}
 - active::AbstractArray{Bool,1}
 - count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
+- Q::AbstractArray{Integer,1}
 """
-function discharge!{T<:Number}(
+function discharge!{T<:Number, U<:Integer}(
     residual_graph::DiGraph,                # the input graph
-    v::Int,                                 # vertex to be discharged
+    v::U,                                 # vertex to be discharged
     capacity_matrix::AbstractArray{T,2},
     flow_matrix::AbstractArray{T,2},
     excess::AbstractArray{T,1},
     height::AbstractArray{Int,1},
     active::AbstractArray{Bool,1},
     count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}                 # FIFO queue
+    Q::AbstractArray{U,1}                 # FIFO queue
     )
     for to in out_neighbors(residual_graph, v)
         excess[v] == 0 && break

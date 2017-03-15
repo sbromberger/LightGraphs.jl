@@ -16,19 +16,20 @@
     end
 
 
-    g = load(joinpath(testdir,"testdata","graph-50-500.jgz"), "graph-50-500")
+    gint = load(joinpath(testdir,"testdata","graph-50-500.jgz"), "graph-50-500")
 
     c = readcentrality(joinpath(testdir,"testdata","graph-50-500-bc.txt"))
-    z = betweenness_centrality(g)
+    for g in (gint, DiGraph{UInt8}(gint), DiGraph{Int16}(gint))
+        z = betweenness_centrality(g)
+        @test map(Float32, z) == map(Float32, c)
 
-    @test map(Float32, z) == map(Float32, c)
+        y = betweenness_centrality(g, endpoints=true, normalize=false)
+        @test round(y[1:3],4) ==
+            round([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
 
-    y = betweenness_centrality(g, endpoints=true, normalize=false)
-    @test round(y[1:3],4) ==
-        round([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
-
-    x = betweenness_centrality(g,3)
-    @test length(x) == 50
+        x = betweenness_centrality(g,3)
+        @test length(x) == 50
+    end
 
     @test betweenness_centrality(s1) == [0, 1, 0]
     @test betweenness_centrality(s2) == [0, 0.5, 0]

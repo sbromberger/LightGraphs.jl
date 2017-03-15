@@ -10,8 +10,8 @@ using StatsBase: fit, Histogram
 using SimpleTraits
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
-            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, transpose,
+            reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
+            print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
             Pair, Tuple
 export

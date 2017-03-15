@@ -7,23 +7,20 @@
     # source and sink terminals
     source, target = 1, 3
 
+
+    for g in (G, DiGraph{UInt8}(G), DiGraph{Int16}(G))
     # default capacity
-    capacity_matrix = LightGraphs.DefaultCapacity(G)
+      capacity_matrix = LightGraphs.DefaultCapacity(g)
+      residual_graph = LightGraphs.residual(g)
+      T = eltype(g)
+      flow_matrix = zeros(T, 3, 3)
+      TREE = zeros(T, 3)
+      TREE[source] = T(1)
+      TREE[target] = T(2)
+      PARENT = zeros(T, 3)
+      A = [T(source),T(target)]
+      path = LightGraphs.find_path!(residual_graph, source, target, flow_matrix, capacity_matrix, PARENT, TREE, A)
 
-    # state variables
-    flow_matrix = zeros(Int, 3, 3)
-
-    TREE = zeros(Int, 3)
-    TREE[source] = 1
-    TREE[target] = 2
-
-    PARENT = zeros(Int, 3)
-
-    A = [source,target]
-
-    residual_graph = LightGraphs.residual(G)
-
-    path = LightGraphs.find_path!(residual_graph, source, target, flow_matrix, capacity_matrix, PARENT, TREE, A)
-
-    @test path == [1,2,3]
+      @test path == [1,2,3]
+    end
 end

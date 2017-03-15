@@ -19,7 +19,6 @@ function edmonds_karp_impl{T<:Number}(
     n = nv(residual_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
-##============== STOPPED HERE 14 MAR
     P = zeros(Int, n)
     S = zeros(Int, n)
     while true
@@ -30,7 +29,7 @@ function edmonds_karp_impl{T<:Number}(
         if flag != 0                       # no more valid paths
             break
         else
-            path = [v]                     # initialize path
+            path = [Int(v)]                     # initialize path
             sizehint!(path, n)
 
             u = v
@@ -43,7 +42,7 @@ function edmonds_karp_impl{T<:Number}(
             u = v                          # trace path from v to target
             while u!=target
                 u = S[u]
-                push!(path, u)
+                push!(path, Int(u))
             end
                                            # augment flow along path
             flow += augment_path!(path, flow_matrix, capacity_matrix)
@@ -93,10 +92,10 @@ Flag Values:
 1 => No Path to target
 2 => No Path to source
 """
-function fetch_path{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+function fetch_path{T<:Number, U<:Integer}(
+    residual_graph::DiGraph{U},               # the input graph
+    source::Integer,                           # the source vertex
+    target::Integer,                           # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2}    # edge flow capacities
     )
@@ -132,8 +131,8 @@ Requires arguments:
 """
 function fetch_path!{T<:Number}(
     residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
     flow_matrix::AbstractArray{T,2},       # the current flow matrix
     capacity_matrix::AbstractArray{T,2},   # edge flow capacities
     P::Vector{Int},                        # parent table of path init to -1s

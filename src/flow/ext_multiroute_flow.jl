@@ -20,8 +20,8 @@ Requires arguments:
 # EMRF (Extended Multiroute Flow) algorithms
 function emrf{T<:AbstractFloat, R<:Real}(
   flow_graph::DiGraph,                   # the input graph
-  source::Int,                           # the source vertex
-  target::Int,                           # the target vertex
+  source::Integer,                       # the source vertex
+  target::Integer,                       # the target vertex
   capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
   routes::R = 0
@@ -47,8 +47,8 @@ Requires arguments:
 
 function auxiliaryPoints{T<:AbstractFloat}(
   flow_graph::DiGraph,                   # the input graph
-  source::Int,                           # the source vertex
-  target::Int,                           # the target vertex
+  source::Integer,                           # the source vertex
+  target::Integer,                           # the target vertex
   capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
   )
   # Problem descriptors
@@ -112,8 +112,8 @@ Requires arguments:
 
 function breakingPoints{T<:AbstractFloat}(
   flow_graph::DiGraph,                   # the input graph
-  source::Int,                           # the source vertex
-  target::Int,                           # the target vertex
+  source::Integer,                           # the source vertex
+  target::Integer,                           # the target vertex
   capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
   )
   auxpoints = auxiliaryPoints(flow_graph, source, target, capacity_matrix)
@@ -173,10 +173,10 @@ Requires argument:
   restriction::T                         # value of the restriction
 """
 # Function to get the slope of the restricted flow
-function slope{T<:AbstractFloat}(
-  flow_graph::DiGraph,                   # the input graph
+function slope{T<:AbstractFloat, U<:Integer}(
+  flow_graph::DiGraph{U},                   # the input graph
   capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
-  cut::Vector{Int},                      # cut information for vertices
+  cut::Vector,                      # cut information for vertices
   restriction::T                         # value of the restriction
   )
   slope = 0
@@ -209,7 +209,7 @@ Requires argument:
 function intersection{T<:AbstractFloat, R<:Real}(
   x1::T,          # x coordinate of point 1
   y1::T,          # y coordinate of point 1
-  a1::Int,        # slope passing by point 1
+  a1::Integer,        # slope passing by point 1
   x2::T,          # x coordinate of point 2
   y2::T,          # y coordinate of point 2
   a2::R           # slope passing by point 2
@@ -223,8 +223,8 @@ function intersection{T<:AbstractFloat, R<:Real}(
   return x, y
 end
 # Compute the intersection between a set of segment and a line of slope k passing by the origin
-function intersection{T<:AbstractFloat, R<:Real}(
-  points::Vector{Tuple{T, T, Int}},  # vector of breaking points
+function intersection{T<:AbstractFloat, I<:Integer, R<:Real}(
+  points::Vector{Tuple{T, T, I}},  # vector of breaking points
   k::R                               # number of routes (slope of the line)
   )
   λ = points[1][1] # Connectivity

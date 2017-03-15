@@ -6,7 +6,7 @@ end
 
 immutable SimpleEdgeIterState{T<:Integer}
     s::T  # src vertex
-    di::T # index into adj of dest vertex
+    di::Int # index into adj of dest vertex
     fin::Bool
 end
 
@@ -16,7 +16,7 @@ eltype{T}(::Type{SimpleEdgeIter{T}}) = SimpleEdge
 SimpleEdgeIter(g::SimpleGraph) = SimpleEdgeIter(ne(g), g.fadjlist, false)
 SimpleEdgeIter(g::SimpleDiGraph) = SimpleEdgeIter(ne(g), g.fadjlist, true)
 
-function _next(eit::SimpleEdgeIter, state::SimpleEdgeIterState = SimpleEdgeIterState(1,1,false), first::Bool = true)
+function _next{T<:Integer}(eit::SimpleEdgeIter{T}, state::SimpleEdgeIterState{T} = SimpleEdgeIterState(one(T),1,false), first::Bool = true)
     s = state.s
     di = state.di
     if !first
@@ -31,7 +31,7 @@ function _next(eit::SimpleEdgeIter, state::SimpleEdgeIterState = SimpleEdgeIterS
             end
             di += 1
         end
-        s += 1
+        s += one(T)
         di = 1
     end
     fin = true

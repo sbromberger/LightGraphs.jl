@@ -51,7 +51,10 @@ fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 badj(x...) = _NI("badj")
 
 has_edge(g::AbstractSimpleGraph, u::Integer, v::Integer) = has_edge(g, edgetype(g)(u,v))
-add_edge!{T<:Integer}(g::AbstractSimpleGraph, u::T, v::T) = add_edge!(g, edgetype(g)(u,v))
+function add_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
+  T = eltype(g)
+  add_edge!(g, edgetype(g)(T(u),T(v)))
+end
 
 in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g,v)
 out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g,v)
@@ -68,7 +71,10 @@ out_edges(g::AbstractSimpleGraph, v::Integer) = [edgetype(g)(v,x) for x in out_n
 has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
-rem_edge!{T<:Integer}(g::AbstractSimpleGraph, u::T, v::T) = rem_edge!(g, edgetype(g)(u, v))
+function rem_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
+  T = eltype(g)
+  rem_edge!(g, edgetype(g)(T(u), T(v)))
+end
 
 """
 Remove the vertex `v` from graph `g`.

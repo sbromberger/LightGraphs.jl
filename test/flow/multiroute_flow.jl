@@ -56,29 +56,31 @@
 
     for (nvertices, flow_edges, s, t, froutes, breakpts, ffloat) in graphs
         flow_graph = DiGraph(nvertices)
-        capacity_matrix = zeros(Int, nvertices, nvertices)
-        for e in flow_edges
-            u, v, f = e
-            add_edge!(flow_graph, u, v)
-            capacity_matrix[u, v] = f
-        end
+        for g in (flow_graph, DiGraph{UInt8}(flow_graph)) #, DiGraph{Int16}(flow_graph))
+          capacity_matrix = zeros(Int, nvertices, nvertices)
+          for e in flow_edges
+              u, v, f = e
+              add_edge!(g, u, v)
+              capacity_matrix[u, v] = f
+          end
 
 
-        # Test ExtendedMultirouteFlowAlgorithm when the number of routes is either
-        # Noninteger or 0 (the algorithm returns the breaking points)
-        @test multiroute_flow(flow_graph, s, t, capacity_matrix) == breakpts
-        @test multiroute_flow(flow_graph, s, t, capacity_matrix, routes=1.5)[1] ≈ ffloat
-        @test multiroute_flow(breakpts, 1.5)[2] ≈ ffloat
+          # Test ExtendedMultirouteFlowAlgorithm when the number of routes is either
+          # Noninteger or 0 (the algorithm returns the breaking points)
+          @test multiroute_flow(g, s, t, capacity_matrix) == breakpts
+          @test multiroute_flow(g, s, t, capacity_matrix, routes=1.5)[1] ≈ ffloat
+          @test multiroute_flow(breakpts, 1.5)[2] ≈ ffloat
 
-        # Test all other algorithms
-        for AlgoFlow in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
-          # When the input are breaking points and routes number
-          @test multiroute_flow(breakpts, 1.5, flow_graph, s, t, capacity_matrix)[1] ≈ ffloat
-          for AlgoMrf in [ExtendedMultirouteFlowAlgorithm, KishimotoAlgorithm]
-            for (k, val) in enumerate(froutes)
-              @test multiroute_flow(flow_graph, s, t, capacity_matrix,
-                flow_algorithm = AlgoFlow(), mrf_algorithm = AlgoMrf(),
-                routes = k)[1] ≈ val
+          # Test all other algorithms
+          for AlgoFlow in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
+            # When the input are breaking points and routes number
+            @test multiroute_flow(breakpts, 1.5, g, s, t, capacity_matrix)[1] ≈ ffloat
+            for AlgoMrf in [ExtendedMultirouteFlowAlgorithm, KishimotoAlgorithm]
+              for (k, val) in enumerate(froutes)
+                @test multiroute_flow(g, s, t, capacity_matrix,
+                  flow_algorithm = AlgoFlow(), mrf_algorithm = AlgoMrf(),
+                  routes = k)[1] ≈ val
+              end
             end
           end
         end

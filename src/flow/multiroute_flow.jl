@@ -37,8 +37,8 @@ end
 # Method for Kishimoto algorithm
 function multiroute_flow{T<:Real}(
   flow_graph::DiGraph,                   # the input graph
-  source::Int,                           # the source vertex
-  target::Int,                           # the target vertex
+  source::Integer,                       # the source vertex
+  target::Integer,                       # the target vertex
   capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
   mrf_algorithm::KishimotoAlgorithm,     # keyword argument for algorithm
@@ -51,8 +51,8 @@ end
 #1 When the breaking points are not already known
 function multiroute_flow{T<:Real, R<:Real}(
   flow_graph::DiGraph,                            # the input graph
-  source::Int,                                    # the source vertex
-  target::Int,                                    # the target vertex
+  source::Integer,                                # the source vertex
+  target::Integer,                                # the target vertex
   capacity_matrix::AbstractArray{T, 2},           # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm,          # keyword argument for algorithm
   mrf_algorithm::ExtendedMultirouteFlowAlgorithm, # keyword argument for algorithm
@@ -73,9 +73,9 @@ function multiroute_flow{T1<:Real, T2<:Real, R<:Real}(
   breakingpoints::Vector{Tuple{T1, T1, Int}}, # vector of breaking points
   routes::R,                                # keyword argument for routes
   flow_graph::DiGraph,                      # the input graph
-  source::Int,                              # the source vertex
-  target::Int,                              # the target vertex
-  capacity_matrix::AbstractArray{T2, 2} =    # edge flow capacities
+  source::Integer,                          # the source vertex
+  target::Integer,                          # the target vertex
+  capacity_matrix::AbstractArray{T2, 2} =   # edge flow capacities
     DefaultCapacity(flow_graph);
   flow_algorithm::AbstractFlowAlgorithm  =  # keyword argument for algorithm
     PushRelabelAlgorithm()
@@ -105,8 +105,8 @@ returned as a third output.
 When the input is a network, it requires the following arguments:
 
 - flow_graph::DiGraph                   # the input graph
-- source::Int                           # the source vertex
-- target::Int                           # the target vertex
+- source::Integer                       # the source vertex
+- target::Integer                       # the target vertex
 - capacity_matrix::AbstractArray{T, 2}  # edge flow capacities with T<:Real
 - flow_algorithm::AbstractFlowAlgorithm # keyword argument for flow algorithm
 - mrf_algorithm::AbstractFlowAlgorithm  # keyword argument for multiroute flow algorithm
@@ -124,8 +124,8 @@ and the network descriptors, it requires the following arguments:
 - breakingpoints::Vector{Tuple{T1, T1, Int}} # vector of breaking points (T1<:Real)
 - routes::R<:Real                            # number of routes
 - flow_graph::DiGraph                        # the input graph
-- source::Int                                # the source vertex
-- target::Int                                # the target vertex
+- source::Integer                            # the source vertex
+- target::Integer                            # the target vertex
 - capacity_matrix::AbstractArray{T2, 2}      # optional edge flow capacities (T2<:Real)
 - flow_algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 
@@ -181,8 +181,8 @@ f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix,
 
 function multiroute_flow{T<:Real, R<:Real}(
   flow_graph::DiGraph,                    # the input graph
-  source::Int,                            # the source vertex
-  target::Int,                            # the target vertex
+  source::Integer,                        # the source vertex
+  target::Integer,                        # the target vertex
   capacity_matrix::AbstractArray{T, 2} =  # edge flow capacities
     DefaultCapacity(flow_graph);
   flow_algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm

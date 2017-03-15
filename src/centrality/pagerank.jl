@@ -13,7 +13,7 @@ function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
     S[find(S .== Inf)]=0.0
     M = A' # need a separate line due to bug #17456 in julia
     M = (Diagonal(S) * M)'
-    N = nv(g)
+    N = Int(nv(g))
     x = repmat([1.0/N], N)
     p = repmat([1.0/N], N)
     dangling_weights = p

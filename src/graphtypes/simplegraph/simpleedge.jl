@@ -8,17 +8,22 @@ immutable SimpleEdge{T<:Integer} <: AbstractSimpleEdge
     dst::T
 end
 
+SimpleEdge(t::Tuple) = SimpleEdge(t[1], t[2])
+SimpleEdge(p::Pair) = SimpleEdge(p.first, p.second)
+
+eltype{T<:AbstractSimpleEdge}(e::T) = T
+
 # Accessors
-src{T<:AbstractSimpleEdge}(e::T) = e.src
-dst{T<:AbstractSimpleEdge}(e::T) = e.dst
+src(e::AbstractSimpleEdge) = e.src
+dst(e::AbstractSimpleEdge) = e.dst
 
 # I/O
-show{T<:AbstractSimpleEdge}(io::IO, e::T) = print(io, "Edge $(e.src) => $(e.dst)")
+show(io::IO, e::AbstractSimpleEdge) = print(io, "Edge $(e.src) => $(e.dst)")
 
 # Conversions
-Pair{T<:AbstractSimpleEdge}(e::T) = Pair(src(e), dst(e))
-Tuple{T<:AbstractSimpleEdge}(e::T) = (src(e), dst(e))
+Pair(e::AbstractSimpleEdge) = Pair(src(e), dst(e))
+Tuple(e::AbstractSimpleEdge) = (src(e), dst(e))
 
 # Convenience functions
 reverse{T<:AbstractSimpleEdge}(e::T) = T(dst(e), src(e))
-=={T<:AbstractSimpleEdge}(e1::T, e2::T) = (src(e1) == src(e2) && dst(e1) == dst(e2))
+==(e1::AbstractSimpleEdge, e2::AbstractSimpleEdge) = (src(e1) == src(e2) && dst(e1) == dst(e2))

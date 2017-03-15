@@ -2,8 +2,8 @@
 # Kishimoto algorithm
 function kishimoto{T<:AbstractFloat}(
   flow_graph::DiGraph,                       # the input graph
-  source::Int,                               # the source vertex
-  target::Int,                               # the target vertex
+  source::Integer,                           # the source vertex
+  target::Integer,                           # the target vertex
   capacity_matrix::AbstractArray{T, 2},      # edge flow capacities
   flow_algorithm::BoykovKolmogorovAlgorithm, # keyword argument for algorithm
   routes::Int                                # keyword argument for routes
@@ -38,8 +38,8 @@ along with a multiroute cut if Boykov-Kolmogorov is used as a subroutine.
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 Requires arguments:
 - flow_graph::DiGraph                    # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
+- source::Integer                        # the source vertex
+- target::Integer                        # the target vertex
 - capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
 - flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
 - routes::Int                            # keyword argument for routes
@@ -47,8 +47,8 @@ Requires arguments:
 
 function kishimoto{T<:AbstractFloat}(
   flow_graph::DiGraph,                   # the input graph
-  source::Int,                           # the source vertex
-  target::Int,                           # the target vertex
+  source::Integer,                       # the source vertex
+  target::Integer,                       # the target vertex
   capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
   routes::Int                            # keyword argument for routes

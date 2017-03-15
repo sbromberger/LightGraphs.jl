@@ -13,7 +13,7 @@ function Graph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
     return g
 end
 
-function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
+function DiGraph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
     maxe = nv * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
@@ -21,8 +21,8 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     rng = getRNG(seed)
     g = DiGraph(nv)
     while g.ne < ne
-        source = rand(rng, 1:nv)
-        dest = rand(rng, 1:nv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g,source,dest)
     end
     return g
@@ -93,7 +93,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
+function _suitable{T<:Integer}(edges::Set{Edge}, potential_edges::Dict{T, T})
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -103,14 +103,14 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     return false
 end
 
-_try_creation(n::Int, k::Int, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
+_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
 
-function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
+function _try_creation{T<:Integer}(n::T, k::Vector{T}, rng::AbstractRNG)
     edges = Set{Edge}()
     m = 0
-    stubs = zeros(Int, sum(k))
-    for i=1:n
-        for j = 1:k[i]
+    stubs = zeros(T, sum(k))
+    for i=one(T):n
+        for j = one(T):k[i]
             m += 1
             stubs[m] = i
         end
@@ -118,7 +118,7 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     # stubs = vcat([fill(i, k[i]) for i=1:n]...) # slower
 
     while !isempty(stubs)
-        potential_edges =  Dict{Int,Int}()
+        potential_edges =  Dict{T,T}()
         shuffle!(rng, stubs)
         for i in 1:2:length(stubs)
             s1,s2 = stubs[i:i+1]
@@ -145,7 +145,7 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     end
     return edges
 end
-
+#   ================= STOPPED HERE SAB
 """
     barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
 
