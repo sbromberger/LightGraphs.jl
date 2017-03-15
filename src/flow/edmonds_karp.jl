@@ -9,13 +9,14 @@ Requires arguments:
 - target::Integer                        # the target vertex
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
-
-function edmonds_karp_impl{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
+function edmonds_karp_impl end
+@traitfn function edmonds_karp_impl{G<:AbstractGraph; IsDirected{G}}(
+    residual_graph::G,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
+    T = eltype(capacity_matrix)
     n = nv(residual_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
@@ -61,11 +62,12 @@ Requires arguments:
 - capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
-function augment_path!{T<:Number}(
+function augment_path!(
     path::Vector{Int},                     # input path
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
+    T = eltype(flow_matrix)
     augment = typemax(T)                   # initialize augment
     for i in 1:length(path)-1              # calculate min capacity along path
         u = path[i]
@@ -92,12 +94,13 @@ Flag Values:
 1 => No Path to target
 2 => No Path to source
 """
-function fetch_path{T<:Number, U<:Integer}(
-    residual_graph::DiGraph{U},               # the input graph
+function fetch_path end
+@traitfn function fetch_path{G<:AbstractGraph; IsDirected{G}}(
+    residual_graph::G,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
     n = nv(residual_graph)
     P = -1 * ones(Int, n)
@@ -129,12 +132,13 @@ Requires arguments:
     P::Vector{Int}                         # parent table of path init to -1s
     S::Vector{Int}                         # successor table of path init to -1s
 """
-function fetch_path!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
+function fetch_path! end
+@traitfn function fetch_path!{G<:AbstractGraph; IsDirected{G}}(
+    residual_graph::G,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     P::Vector{Int},                        # parent table of path init to -1s
     S::Vector{Int}                         # successor table of path init to -1s
     )

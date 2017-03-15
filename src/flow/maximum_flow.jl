@@ -1,3 +1,4 @@
+import LightGraphs.SimpleGraphs.SimpleDiGraph
 """
 Abstract type that allows users to pass in their preferred Algorithm
 """
@@ -30,17 +31,16 @@ end
 """
 Type that returns 1 if a forward edge exists, and 0 otherwise
 """
-
-type DefaultCapacity{T<:Integer} <: AbstractArray{T, 2}
-    flow_graph::DiGraph{T}
+type DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
+    flow_graph::SimpleDiGraph
     nv::T
 end
 
-DefaultCapacity{T<:Integer}(flow_graph::DiGraph{T}) = DefaultCapacity(flow_graph, nv(flow_graph))
+@traitfn DefaultCapacity{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DefaultCapacity(SimpleDiGraph(flow_graph), nv(flow_graph))
 
 getindex{T<:Integer}(d::DefaultCapacity{T}, s::Integer, t::Integer) = if has_edge(d.flow_graph, s , t) one(T) else zero(T) end
-isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in one(T):d.nv) && (v in one(T):d.nv)
-size(d::DefaultCapacity) = (d.nv, d.nv)
+# isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in 1:d.nv) && (v in 1:d.nv)
+size(d::DefaultCapacity) = (Int(d.nv), Int(d.nv))
 transpose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 ctranspose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 
@@ -61,16 +61,16 @@ Requires arguments:
 - flow_graph::DiGraph,                    # the input graph
 - capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
-
-residual(flow_graph::DiGraph) = DiGraph(Graph(flow_graph))
+function residual end
+@traitfn residual{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DiGraph(Graph(flow_graph))
 
 # Method for Edmonds–Karp algorithm
 
-function maximum_flow{T<:Number}(
-    flow_graph::DiGraph,                   # the input graph
+@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
+    flow_graph::G,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     algorithm::EdmondsKarpAlgorithm        # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
@@ -79,11 +79,11 @@ end
 
 # Method for Dinic's algorithm
 
-function maximum_flow{T<:Number}(
-    flow_graph::DiGraph,                   # the input graph
+@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
+    flow_graph::G,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     algorithm::DinicAlgorithm              # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
@@ -92,11 +92,11 @@ end
 
 # Method for Boykov-Kolmogorov algorithm
 
-function maximum_flow{T<:Number}(
-    flow_graph::DiGraph,                   # the input graph
+@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
+    flow_graph::G,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     algorithm::BoykovKolmogorovAlgorithm   # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
@@ -105,11 +105,11 @@ end
 
 # Method for Push-relabel algorithm
 
-function maximum_flow{T<:Number}(
-    flow_graph::DiGraph,                   # the input graph
+@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
+    flow_graph::G,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     algorithm::PushRelabelAlgorithm        # keyword argument for algorithm
     )
     residual_graph = residual(flow_graph)
@@ -169,18 +169,17 @@ f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmo
 
 ```
 """
-
-function maximum_flow{T<:Number}(
-    flow_graph::DiGraph,                   # the input graph
+function maximum_flow(
+    flow_graph::AbstractGraph,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2} =  # edge flow capacities
+    capacity_matrix::AbstractMatrix =  # edge flow capacities
         DefaultCapacity(flow_graph);
     algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
         PushRelabelAlgorithm(),
-    restriction::T = zero(T)               # keyword argument for restriction max-flow
+    restriction::Real = 0               # keyword argument for restriction max-flow
     )
-    if restriction > zero(T)
+    if restriction > 0
       return maximum_flow(flow_graph, source, target, min(restriction, capacity_matrix), algorithm)
     end
     return maximum_flow(flow_graph, source, target, capacity_matrix, algorithm)

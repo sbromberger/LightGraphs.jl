@@ -1,10 +1,11 @@
 # Method when using Boykov-Kolmogorov as a subroutine
 # Kishimoto algorithm
-function kishimoto{T<:AbstractFloat}(
-  flow_graph::DiGraph,                       # the input graph
+
+@traitfn function kishimoto{G<:AbstractGraph; IsDirected{G}}(
+  flow_graph::G,                       # the input graph
   source::Integer,                           # the source vertex
   target::Integer,                           # the target vertex
-  capacity_matrix::AbstractArray{T, 2},      # edge flow capacities
+  capacity_matrix::AbstractMatrix,      # edge flow capacities
   flow_algorithm::BoykovKolmogorovAlgorithm, # keyword argument for algorithm
   routes::Int                                # keyword argument for routes
   )
@@ -44,12 +45,12 @@ Requires arguments:
 - flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
 - routes::Int                            # keyword argument for routes
 """
-
-function kishimoto{T<:AbstractFloat}(
-  flow_graph::DiGraph,                   # the input graph
+function kishimoto end
+@traitfn function kishimoto{G<:AbstractGraph; IsDirected{G}}(
+  flow_graph::G,                   # the input graph
   source::Integer,                       # the source vertex
   target::Integer,                       # the target vertex
-  capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
+  capacity_matrix::AbstractMatrix,  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
   routes::Int                            # keyword argument for routes
   )

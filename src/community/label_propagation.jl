@@ -60,7 +60,7 @@ function range_shuffle!(r::UnitRange, a::AbstractVector)
 end
 
 """Return the most frequency label."""
-function vote!{T<:Integer}(g::AbstractGraph, m::Vector{T}, c::NeighComm, u::T)
+function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -90,7 +90,7 @@ function vote!{T<:Integer}(g::AbstractGraph, m::Vector{T}, c::NeighComm, u::T)
     end
 end
 
-function renumber_labels!{T<:Integer}(membership::Vector{T}, label_counters::Vector{Int})
+function renumber_labels!(membership::Vector, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     j = 1

@@ -4,7 +4,8 @@
 Computes Newman's modularity `Q`
 for graph `g` given the partitioning `c`.
 """
-function modularity(g::Graph, c::Vector)
+function modularity end
+@traitfn function modularity{G<:AbstractGraph; !IsDirected{G}}(g::G, c::Vector)
     m = 2*ne(g)
     m == 0 && return 0.
     nc = maximum(c)

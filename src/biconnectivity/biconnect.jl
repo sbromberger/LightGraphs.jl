@@ -37,7 +37,7 @@ end
 """
 Does a DFS visit and stores the depth and low-points of each vertex
 """
-function visit!{T<:Integer}(g::Graph, state::Biconnections, u::T, v::T)
+function visit!(g::Graph, state::Biconnections, u::Integer, v::Integer)
     children = 0
     state.id += 1
     state.depth[v] = state.id
@@ -52,7 +52,7 @@ function visit!{T<:Integer}(g::Graph, state::Biconnections, u::T, v::T)
 
             #Checking the root, and then the non-roots if they are articulation points
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = Edge(zero(T), zero(T))  #Invalid Edge, used for comparison only
+                e = Edge(0, 0)  #Invalid Edge, used for comparison only
                 st = Vector{Edge}()
                 while e != Edge(min(v, w),max(v, w))
                     e = pop!(state.stack)

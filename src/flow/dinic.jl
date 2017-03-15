@@ -11,15 +11,15 @@ source::Integer                        # the source vertex
 target::Integer                        # the target vertex
 capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
-
-function dinic_impl{T<:Number, U<:Integer}(
-    residual_graph::DiGraph{U},               # the input graph
+function dinic_impl end
+@traitfn function dinic_impl{G<:AbstractGraph; IsDirected{G}}(
+    residual_graph::G,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
     n = nv(residual_graph)                     # number of vertexes
-
+    T = eltype(capacity_matrix)
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
     P = zeros(Int, n)                      # Sharable parent vector
 
@@ -33,36 +33,10 @@ function dinic_impl{T<:Number, U<:Integer}(
     return flow, flow_matrix
 end
 
+
+
 """
 Uses BFS to identify a blocking flow in
-the input graph and then backtracks from the targetto the source, aumenting flow
-along all possible paths.
-
-Requires arguments:
-residual_graph::DiGraph                # the input graph
-source::Integer                        # the source vertex
-target::Integer                        # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-flow_matrix::AbstractArray{T,2}        # the current flow matrix
-"""
-function blocking_flow!{T<:Number, U<:Integer}(
-    residual_graph::DiGraph{U},               # the input graph
-    source::Integer,                       # the source vertex
-    target::Integer,                       # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    )
-    P = zeros(Int, nv(residual_graph))
-    return blocking_flow!(residual_graph,
-                          source,
-                          target,
-                          capacity_matrix,
-                          flow_matrix,
-                          P)
-end
-
-"""blocking_flow!
-Preallocated version of blocking_flow.Uses BFS to identify a blocking flow in
 the input graph and then backtracks from the target to the source, aumenting flow
 along all possible paths.
 
@@ -74,17 +48,17 @@ capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 flow_matrix::AbstractArray{T,2}        # the current flow matrix
 P::AbstractVector{Int}                 # Parent vector to store Level Graph
 """
-
-function blocking_flow!{T<:Number, U<:Integer}(
-    residual_graph::DiGraph{U},               # the input graph
+function blocking_flow! end
+@traitfn function blocking_flow!{G<:AbstractGraph; IsDirected{G}}(
+    residual_graph::G,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
     P::AbstractVector{Int}                 # Parent vector to store Level Graph
     )
     n = nv(residual_graph)                     # number of vertexes
-
+    T = eltype(capacity_matrix)
     fill!(P, -1)
     P[source] = -2
 
@@ -135,3 +109,17 @@ function blocking_flow!{T<:Number, U<:Integer}(
     end
     return total_flow
 end
+
+blocking_flow!(
+    residual_graph::AbstractGraph,               # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    ) =
+    blocking_flow!(residual_graph,
+                  source,
+                  target,
+                  capacity_matrix,
+                  flow_matrix,
+                  zeros(Int, nv(residual_graph)))

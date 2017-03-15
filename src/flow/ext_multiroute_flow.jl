@@ -16,18 +16,17 @@ Requires arguments:
 - flow_algorithm::AbstractFlowAlgorithm  # keyword argument for algorithm
 - routes::Int                            # keyword argument for routes
 """
-
 # EMRF (Extended Multiroute Flow) algorithms
-function emrf{T<:AbstractFloat, R<:Real}(
-  flow_graph::DiGraph,                   # the input graph
+function emrf(
+  flow_graph::AbstractGraph,                   # the input graph
   source::Integer,                       # the source vertex
   target::Integer,                       # the target vertex
-  capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
+  capacity_matrix::AbstractMatrix,  # edge flow capacities
   flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
-  routes::R = 0
+  routes::Real = 0
   )
   breakingpoints = breakingPoints(flow_graph, source, target, capacity_matrix)
-  if routes > zero(R)
+  if routes > 0
     x, f = intersection(breakingpoints, routes)
     return maximum_flow(flow_graph, source, target, capacity_matrix,
                         algorithm = flow_algorithm, restriction = x)
@@ -44,12 +43,12 @@ Requires arguments:
 - target::Int                            # the target vertex
 - capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
 """
-
-function auxiliaryPoints{T<:AbstractFloat}(
-  flow_graph::DiGraph,                   # the input graph
+function auxiliaryPoints end
+@traitfn function auxiliaryPoints{G<:AbstractGraph; IsDirected{G}}(
+  flow_graph::G,                   # the input graph
   source::Integer,                           # the source vertex
   target::Integer,                           # the target vertex
-  capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+  capacity_matrix::AbstractMatrix   # edge flow capacities
   )
   # Problem descriptors
   λ = maximum_flow(flow_graph, source, target)[1] # Connectivity
@@ -109,16 +108,17 @@ Requires arguments:
 - target::Int                            # the target vertex
 - capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
 """
-
-function breakingPoints{T<:AbstractFloat}(
-  flow_graph::DiGraph,                   # the input graph
+function breakingPoints end
+@traitfn function breakingPoints{G<:AbstractGraph; IsDirected{G}}(
+  flow_graph::G,                   # the input graph
   source::Integer,                           # the source vertex
   target::Integer,                           # the target vertex
-  capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+  capacity_matrix::AbstractMatrix   # edge flow capacities
   )
   auxpoints = auxiliaryPoints(flow_graph, source, target, capacity_matrix)
   λ = length(auxpoints) - 1
   left_index = 1
+  T = eltype(capacity_matrix)
   breakingpoints = Vector{Tuple{T, T, Int}}()
 
   for (id, point) in enumerate(auxpoints)
@@ -150,9 +150,10 @@ Requires argument:
 # Function to get the nonzero min and max function of a Matrix
 # note: this is more efficient than maximum() / minimum() / extrema()
 #       since we have to ignore zero values.
-function minmaxCapacity{T<:AbstractFloat}(
-  capacity_matrix::AbstractArray{T, 2}    # edge flow capacities
+function minmaxCapacity(
+  capacity_matrix::AbstractMatrix    # edge flow capacities
   )
+  T = eltype(capacity_matrix)
   cmin, cmax = typemax(T), typemin(T)
   for c in capacity_matrix
     if c > zero(T)
@@ -172,12 +173,13 @@ Requires argument:
   cut::Vector{Int},                      # cut information for vertices
   restriction::T                         # value of the restriction
 """
+function slope end
 # Function to get the slope of the restricted flow
-function slope{T<:AbstractFloat, U<:Integer}(
-  flow_graph::DiGraph{U},                   # the input graph
-  capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
+@traitfn function slope{G<:AbstractGraph; IsDirected{G}}(
+  flow_graph::G,                   # the input graph
+  capacity_matrix::AbstractMatrix,  # edge flow capacities
   cut::Vector,                      # cut information for vertices
-  restriction::T                         # value of the restriction
+  restriction::Number                 # value of the restriction
   )
   slope = 0
   for e in edges(flow_graph)

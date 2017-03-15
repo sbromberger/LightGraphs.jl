@@ -32,7 +32,7 @@ end
 Does a depth first search storing the depth (in `depth`) and low-points (in `low`) of each vertex.
 Call this function repeatedly to complete the DFS see `articulation` for usage.
 """
-function visit!{T<:Integer}(state::Articulations, g::AbstractGraph, u::T, v::T)
+function visit!(state::Articulations, g::AbstractGraph, u::Integer, v::Integer)
     children = 0
     state.id += 1
     state.depth[v] = state.id
