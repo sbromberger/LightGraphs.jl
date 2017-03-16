@@ -6,7 +6,10 @@
 iterations (`n`), and convergence threshold (`ϵ`). If convergence is not
 reached within `n` iterations, an error will be returned.
 """
-function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
+function pagerank end
+
+#TODO: re-roll this to @traitfn function pagerank{G<:AbstractGraph; IsDirected{G}}(g::G, α=0.85, n=100, ϵ = 1.0e-6)
+@traitfn function pagerank{G<:AbstractGraph; IsDirected{G}}(g::G, α, n, ϵ)
     A = adjacency_matrix(g,:in,Float64)
     S = vec(sum(A,1))
     S = 1./S
@@ -29,3 +32,8 @@ function pagerank(g::DiGraph, α=0.85, n=100, ϵ = 1.0e-6)
     end
     error("Pagerank did not converge after $n iterations.")
 end
+
+### TODO: remove these when re-rolled.
+@traitfn pagerank{G<:AbstractGraph; IsDirected{G}}(g::G, α, n) = pagerank(g, α, n, 1e-6)
+@traitfn pagerank{G<:AbstractGraph; IsDirected{G}}(g::G, α) = pagerank(g, α, 100, 1e-6)
+@traitfn pagerank{G<:AbstractGraph; IsDirected{G}}(g::G) = pagerank(g, 0.85, 100, 1e-6)

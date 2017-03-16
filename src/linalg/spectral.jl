@@ -59,23 +59,25 @@ function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     return spmx
 end
 
-adjacency_matrix(g::Graph, T::DataType=Int) = adjacency_matrix(g, :out, T)
+adjacency_matrix(g::AbstractGraph, T::DataType) = adjacency_matrix(g, :out, T)
+
+### TODO: re-roll this to be
+# function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
+# @traitfn adjacency_matrix{G<:AbstractGraph; !IsDirected{G}}(g::G, T::DataType) = adjacency_matrix(g, :out, T)
+# @traitfn adjacency_matrix{G<:AbstractGraph; !IsDirected{G}}(g::G) = adjacency_matrix(g, :out, Int)
 
 """Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
 defaults to `Int` for both graph types.
 """
-function laplacian_matrix(g::Graph, dir::Symbol=:out, T::DataType=Int)
-    A = adjacency_matrix(g, dir, T)
-    D = spdiagm(sum(A,2)[:])
-    return D - A
-end
-
-function laplacian_matrix(g::DiGraph, dir::Symbol=:both, T::DataType=Int)
-    A = adjacency_matrix(g, dir, T)
-    D = spdiagm(sum(A,2)[:])
-    return D - A
+function laplacian_matrix(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
+  if dir == :unspec
+    dir = is_directed(g)? :both : :out
+  end
+  A = adjacency_matrix(g, dir, T)
+  D = spdiagm(sum(A,2)[:])
+  return D - A
 end
 
 doc"""Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed
@@ -84,8 +86,7 @@ by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
 eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
 `laplacian_matrix`.
 """
-laplacian_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(laplacian_matrix(g, dir, T)))
-laplacian_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(laplacian_matrix(g, dir, T)))
+laplacian_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int) = eigvals(full(laplacian_matrix(g, dir, T)))
 
 doc"""Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed
 by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
@@ -93,15 +94,23 @@ by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
 eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
 `adjacency_matrix`.
 """
-adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
-adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
+function adjacency_spectrum end
 
+#TODO: Re-roll this to adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
+@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G, dir::Symbol, T::DataType) = eigvals(full(adjacency_matrix(g, dir, T)))
+@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G, dir::Symbol) = adjacency_spectrum(g, dir, Int)
+@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G) = adjacency_spectrum(g, :out, Int)
+
+#TODO: Re-roll this to adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
+@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G, dir::Symbol, T::DataType) = eigvals(full(adjacency_matrix(g, dir, T)))
+@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G, dir::Symbol) = adjacency_spectrum(g, dir, Int)
+@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G,) = adjacency_spectrum(g, :both, Int)
 
 """Returns a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
 value of `1` indicates that `dst(e) == v`. Otherwise, the value is
-`0`. For undirected graphs, if the optional keyword `oriented` is `false`, 
+`0`. For undirected graphs, if the optional keyword `oriented` is `false`,
 both entries are `1`, otherwise, an arbitrary orientation is chosen.
 """
 function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
@@ -141,7 +150,9 @@ For further details, please refer to:
 JOVANOVIC, I.; STANIC, Z., 2014. Spectral Distances of
 Graphs Based on their Different Matrix Representations
 """
-function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
+function spectral_distance end
+
+@traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G, k::Integer)
   A₁ = adjacency_matrix(G₁)
   A₂ = adjacency_matrix(G₂)
 
@@ -151,7 +162,7 @@ function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
   sumabs(λ₁ - λ₂)
 end
 
-function spectral_distance(G₁::Graph, G₂::Graph)
+@traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
   @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
   spectral_distance(G₁, G₂, nv(G₁))
 end
