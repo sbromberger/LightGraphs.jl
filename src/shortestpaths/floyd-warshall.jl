@@ -2,9 +2,9 @@
 # licensing details.
 
 
-type FloydWarshallState{T}<:AbstractPathState
+type FloydWarshallState{T, U<:Integer}<:AbstractPathState
     dists::Matrix{T}
-    parents::Matrix{Int}
+    parents::Matrix{U}
 end
 
 doc"""Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
@@ -18,12 +18,12 @@ on the order of $\mathcal{O}(nv^2)$).
 """
 function floyd_warshall_shortest_paths{T}(
     g::AbstractGraph,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::AbstractMatrix{T} = DefaultDistance()
 )
-
+    U = eltype(g)
     n_v = nv(g)
     dists = fill(typemax(T), (n_v,n_v))
-    parents = zeros(Int, (n_v,n_v))
+    parents = zeros(U, (n_v,n_v))
 
     # fws = FloydWarshallState(Matrix{T}(), Matrix{Int}())
     for v in 1:n_v
@@ -55,24 +55,17 @@ function floyd_warshall_shortest_paths{T}(
         end
     end
     fws = FloydWarshallState(dists, parents)
-    # for r in 1:size(parents,1)    # row by row
-    #     push!(fws.parents, vec(parents[r,:]))
-    # end
-    # for r in 1:size(dists,1)
-    #     push!(fws.dists, vec(dists[r,:]))
-    # end
-
     return fws
 end
 
-function enumerate_paths(s::FloydWarshallState, v::Integer)
+function enumerate_paths{T, U<:Integer}(s::FloydWarshallState{T, U}, v::Integer)
     pathinfo = s.parents[v,:]
-    paths = Vector{Int}[]
+    paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
         if i == v
-            push!(paths, Vector{Int}())
+            push!(paths, Vector{U}())
         else
-            path = Vector{Int}()
+            path = Vector{U}()
             currpathindex = i
             while currpathindex != 0
                 push!(path,currpathindex)

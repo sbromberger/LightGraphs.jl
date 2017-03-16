@@ -5,7 +5,7 @@
 
 function a_star_impl!{T<:Number}(
     graph::AbstractGraph,# the graph
-    t::Int, # the end vertex
+    t::Integer, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
     distmx::AbstractArray{T, 2},

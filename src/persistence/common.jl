@@ -1,7 +1,5 @@
 NI(x...) = error("This function is not implemented.")
 
-@deprecate readgraph load
-
 # filemap is filled in the format specific source files
 const filemap = Dict{Symbol, Tuple{Function, Function, Function, Function}}()
         # :gml        => (loadgml, loadgml_mult, savegml, savegml_mult)
@@ -89,8 +87,8 @@ function save{T<:AbstractGraph}(io::IO, g::T, gname::String, t::Symbol=:lg)
 end
 
 # save a single graph without name
-save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
-save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
+save(io::IO, g::AbstractGraph, t::Symbol=:lg) =
+  save(io, g, is_directed(g)? "digraph" : "graph", t)
 
 # save a dictionary of graphs {"name" => graph}
 function save{T<:String, U<:AbstractGraph}(io::IO, d::Dict{T, U}, t::Symbol=:lg)
