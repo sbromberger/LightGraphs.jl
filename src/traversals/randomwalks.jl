@@ -2,8 +2,9 @@
 a maximum of `niter` steps. Returns a vector of vertices visited in order.
 """
 function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
+  T = eltype(g)
   s in vertices(g) || throw(BoundsError())
-  visited = Vector{Int}()
+  visited = Vector{T}()
   sizehint!(visited, niter)
   currs = s
   i = 1
@@ -20,9 +21,13 @@ end
 """Performs a non-backtracking random walk on graph `g` starting at vertex `s` and continuing for
 a maximum of `niter` steps. Returns a vector of vertices visited in order.
 """
-function non_backtracking_randomwalk(g::Graph, s::Integer, niter::Integer)
+function non_backtracking_randomwalk end
+@traitfn function non_backtracking_randomwalk{G<:AbstractGraph; !IsDirected{G}}(
+  g::G, s::Integer, niter::Integer
+  )
+    T = eltype(g)
     s in vertices(g) || throw(BoundsError())
-    visited = Vector{Int}()
+    visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
     prev = -1
@@ -51,9 +56,12 @@ function non_backtracking_randomwalk(g::Graph, s::Integer, niter::Integer)
     return visited[1:i-1]
 end
 
-function non_backtracking_randomwalk(g::DiGraph, s::Integer, niter::Integer)
+@traitfn function non_backtracking_randomwalk{G<:AbstractGraph; IsDirected{G}}(
+  g::G, s::Integer, niter::Integer
+  )
+    T = eltype(g)
     s in vertices(g) || throw(BoundsError())
-    visited = Vector{Int}()
+    visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
     prev = -1
@@ -84,9 +92,10 @@ on graph `g` starting at vertex `s` and continuing for a maximum of `niter` step
 Returns a vector of vertices visited in order.
 """
 function saw(g::AbstractGraph, s::Integer, niter::Integer)
+  T = eltype(g)
   s in vertices(g) || throw(BoundsError())
-  visited = Vector{Int}()
-  svisited = Set{Int}()
+  visited = Vector{T}()
+  svisited = Set{T}()
   sizehint!(visited, niter)
   sizehint!(svisited, niter)
   currs = s

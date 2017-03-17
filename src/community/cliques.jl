@@ -33,7 +33,7 @@ function maximal_cliques end
     pivotdonenbrs = Set{T}()  # initialize
 
     for n in vertices(g)
-        nbrs = Set{Int}()
+        nbrs = Set{T}()
         union!(nbrs, out_neighbors(g, n))
         delete!(nbrs, n) # ignore edges between n and itself
         conn = length(nbrs)
@@ -47,13 +47,13 @@ function maximal_cliques end
     end
 
     # Initial setup
-    cand = Set{Int}(vertices(g))
+    cand = Set{T}(vertices(g))
     # union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
-    done = Set{Int}()
-    stack = Vector{Tuple{Set{Int}, Set{Int}, Set{Int}}}()
-    clique_so_far = Vector{Int}()
-    cliques = Vector{Array{Int}}()
+    done = Set{T}()
+    stack = Vector{Tuple{Set{T}, Set{T}, Set{T}}}()
+    clique_so_far = Vector{T}()
+    cliques = Vector{Array{T}}()
 
     # Start main loop
     while !isempty(smallcand) || !isempty(stack)

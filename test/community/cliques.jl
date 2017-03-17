@@ -15,12 +15,15 @@
         setofsets(maximal_cliques(graph)) == setofsets(expected)
     end
 
-    g = Graph(3)
-    add_edge!(g, 1, 2)
-    @test test_cliques(g, Array[[1,2], [3]])
-    add_edge!(g, 2, 3)
-    @test test_cliques(g, Array[[1,2], [2,3]])
-
+    gx = Graph(3)
+    add_edge!(gx, 1, 2)
+    for g in testgraphs(gx)
+      @test test_cliques(g, Array[[1,2], [3]])
+    end
+    add_edge!(gx, 2, 3)
+    for g in testgraphs(gx)
+      @test test_cliques(g, Array[[1,2], [2,3]])
+    end
     # Test for "pivotdonenbrs not defined" bug
     h = Graph(6)
     add_edge!(h, 1, 2)
@@ -32,7 +35,9 @@
     add_edge!(h, 3, 6)
     add_edge!(h, 5, 6)
 
-    @test maximal_cliques(h) != []
+    for g in testgraphs(h)
+      @test maximal_cliques(g) != []
+    end
 
     # test for extra cliques bug
 
@@ -44,5 +49,7 @@
     add_edge!(h,4,5)
     add_edge!(h,4,7)
     add_edge!(h,5,7)
-    @test test_cliques(h, Array[[7,4,5], [2,6], [3,5], [3,6], [3,1]])
+    for g in testgraphs(h)
+      @test test_cliques(h, Array[[7,4,5], [2,6], [3,5], [3,6], [3,1]])
+    end
 end

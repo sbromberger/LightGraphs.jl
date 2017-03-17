@@ -10,16 +10,17 @@ end
 
 eltype{T<:Integer}(x::SimpleDiGraph{T}) = T
 
+
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 function (::Type{SimpleDiGraph{T}}){T<:Integer}(n::Integer = 0)
   fadjlist = Vector{Vector{T}}()
   badjlist = Vector{Vector{T}}()
-  for i = one(T):n
+  for _ = one(T):n
       push!(badjlist, Vector{T}())
       push!(fadjlist, Vector{T}())
   end
-  vertices = one(T):n
-  return SimpleDiGraph(vertices, 0, badjlist, fadjlist)
+  vertices = one(T):T(n)
+  return SimpleDiGraph(vertices, 0, fadjlist, badjlist)
 end
 
 # DiGraph()

@@ -66,21 +66,22 @@ function depth_first_visit_impl!(
 end
 
 function traverse_graph!(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     alg::DepthFirst,
-    s::Int,
+    s::Integer,
     visitor::AbstractGraphVisitor;
-    vertexcolormap = Dict{Int, Int}(),
+    vertexcolormap = Dict{eltype(g), Int}(),
     edgecolormap = DummyEdgeMap())
 
+    T = eltype(g)
     vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
 
-    sdsts = out_neighbors(graph, s)
+    sdsts = out_neighbors(g, s)
     sstate = start(sdsts)
-    stack = [(s, sdsts, sstate)]
+    stack = [(T(s), sdsts, sstate)]
 
-    depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
+    depth_first_visit_impl!(g, stack, vertexcolormap, edgecolormap, visitor)
 end
 
 #################################################
@@ -99,8 +100,8 @@ end
 
 function examine_neighbor!(
     vis::DFSCyclicTestVisitor,
-    u::Int,
-    v::Int,
+    u::Integer,
+    v::Integer,
     ucolor::Int,
     vcolor::Int,
     ecolor::Int)
@@ -133,22 +134,22 @@ end
 
 # Topological sort using DFS
 
-type TopologicalSortVisitor <: AbstractGraphVisitor
-    vertices::Vector{Int}
+type TopologicalSortVisitor{T} <: AbstractGraphVisitor
+    vertices::Vector{T}
 
-    function TopologicalSortVisitor(n::Int)
-        vs = Array(Int, 0)
-        sizehint!(vs, n)
-        new(vs)
-    end
 end
 
+function TopologicalSortVisitor{T<:Integer}(n::T)
+  vs = Vector{T}()
+  sizehint!(vs, n)
+  return TopologicalSortVisitor(vs)
+end
 
-function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TopologicalSortVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
-function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
+function close_vertex!(visitor::TopologicalSortVisitor, v::Integer)
     push!(visitor.vertices, v)
 end
 
@@ -167,14 +168,14 @@ function topological_sort_by_dfs(graph::AbstractGraph)
 end
 
 
-type TreeDFSVisitor <:AbstractGraphVisitor
+type TreeDFSVisitor{T} <:AbstractGraphVisitor
     tree::DiGraph
-    predecessor::Vector{Int}
+    predecessor::Vector{T}
 end
 
-TreeDFSVisitor(n::Int) = TreeDFSVisitor(DiGraph(n), zeros(Int,n))
+TreeDFSVisitor{T<:Integer}(n::T) = TreeDFSVisitor(DiGraph(n), zeros(T,n))
 
-function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TreeDFSVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     if (vcolor == 0)
         visitor.predecessor[v] = u
     end
@@ -182,12 +183,12 @@ function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, ucolor::Int,
 end
 
 """
-    dfs_tree(g, s::Int)
+    dfs_tree(g, s::Integer)
 
 Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
 and returns a directed acyclic graph of vertices in the order they were discovered.
 """
-function dfs_tree(g::AbstractGraph, s::Int)
+function dfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)
     traverse_graph!(g, DepthFirst(), s, visitor)

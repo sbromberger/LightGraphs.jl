@@ -40,6 +40,9 @@ reverse(e::AbstractEdge) = _NI("reverse")
 """Return the type of a graph's edge"""
 edgetype(g::AbstractGraph) = _NI("edgetype")
 
+"""Return the type of the graph's vertices"""
+eltype(g::AbstractGraph) = _NI("eltype")
+
 """Return the number of vertices in `g`."""
 nv(g::AbstractGraph) = _NI("nv")
 

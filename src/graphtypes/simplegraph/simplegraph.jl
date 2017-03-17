@@ -9,7 +9,7 @@ end
 
 eltype{T<:Integer}(x::SimpleGraph{T}) = T
 
-# Graph{UInt8}(6), Graph{Int16}(7)
+# Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 function (::Type{SimpleGraph{T}}){T<:Integer}(n::Integer = 0)
     fadjlist = Vector{Vector{T}}()
     sizehint!(fadjlist, n)
@@ -151,5 +151,3 @@ function add_vertex!{T<:Integer}(g::SimpleGraph{T})
 
     return true
 end
-
-empty{T<:Integer}(g::SimpleGraph{T}) = SimpleGraph{T}()

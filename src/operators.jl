@@ -20,12 +20,10 @@ end
 function complement(g::DiGraph)
     gnv = nv(g)
     h = DiGraph(gnv)
-    for i=1:gnv
-        for j=1:gnv
-            if i != j && !has_edge(g,i,j)
-                add_edge!(h,i,j)
-            end
-        end
+    for i in vertices(g), j in vertices(g)
+      if i != j && !has_edge(g,i,j)
+        add_edge!(h,i,j)
+      end
     end
     return h
 end
@@ -147,7 +145,7 @@ function union{T<:AbstractGraph}(g::T, h::T)
 
     r = T(max(gnv, hnv))
     r.ne = ne(g)
-    for i = 1:gnv
+    for i in vertices(g)
         r.fadjlist[i] = deepcopy(g.fadjlist[i])
         if is_directed(g)
             r.badjlist[i] = deepcopy(g.badjlist[i])
@@ -168,7 +166,7 @@ Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
 """
 function join(g::Graph, h::Graph)
     r = blkdiag(g, h)
-    for i=1:nv(g)
+    for i in vertices(g)
         for j=nv(g)+1:nv(g)+nv(h)
             add_edge!(r, i, j)
         end
@@ -253,7 +251,7 @@ function cartesian_product{G<:AbstractGraph}(g::G, h::G)
 
     for e in edges(h)
         j1, j2 = Tuple(e)
-        for i=1:nv(g)
+        for i in vertices(g)
             add_edge!(z, id(i,j1), id(i,j2))
         end
     end
@@ -378,4 +376,4 @@ Returns the subgraph of `g` induced by the neighbors of `v` up to distance
 the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
 to be considered. This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
 """
-egonet(g::AbstractGraph, v::Int, d::Int; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]

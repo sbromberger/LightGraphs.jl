@@ -29,7 +29,7 @@ end
 abstract AbstractGraphVisitAlgorithm
 
 typealias AbstractEdgeMap{T} Associative{Edge,T}
-typealias AbstractVertexMap{T} Union{AbstractVector{T},Associative{Int, T}}
+typealias AbstractVertexMap{T<:Integer, U} Union{AbstractVector{T},Associative{T, U}}
 
 type DummyEdgeMap <: AbstractEdgeMap{Int}
 end
@@ -47,29 +47,29 @@ get(d::DummyEdgeMap, e::Edge, x::Int) = x
 
 # List vertices by the order of being discovered
 
-type VertexListVisitor <: AbstractGraphVisitor
-    vertices::Vector{Int}
-
-    function VertexListVisitor(n::Integer=0)
-        vs = Vector{Int}()
-        sizehint!(vs, n)
-        new(vs)
-    end
+type VertexListVisitor{T<:Integer} <: AbstractGraphVisitor
+    vertices::Vector{T}
 end
 
-function discover_vertex!(visitor::VertexListVisitor, v::Int)
+function VertexListVisitor{T<:Integer}(n::T=0)
+    vs = Vector{T}()
+    sizehint!(vs, n)
+    return VertexListVisitor(vs)
+end
+
+function discover_vertex!(visitor::VertexListVisitor, v::Integer)
     push!(visitor.vertices, v)
     return true
 end
 
 function visited_vertices(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     alg::AbstractGraphVisitAlgorithm,
     sources)
-
-    visitor = VertexListVisitor(nv(graph))
-    traverse_graph!(graph, alg, sources, visitor)
-    visitor.vertices::Vector{Int}
+    T = eltype(g)
+    visitor = VertexListVisitor(nv(g))
+    traverse_graph!(g, alg, sources, visitor)
+    visitor.vertices::Vector{T}
 end
 
 
@@ -79,22 +79,22 @@ type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
 end
 
-function discover_vertex!(vis::LogGraphVisitor, v::Int)
+function discover_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "discover vertex: $v")
     return true
 end
 
-function open_vertex!(vis::LogGraphVisitor, v::Int)
+function open_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "open vertex: $v")
     return true
 end
 
-function close_vertex!(vis::LogGraphVisitor, v::Int)
+function close_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "close vertex: $v")
     return true
 end
 
-function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(vis::LogGraphVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     println(vis.io, "examine neighbor: $u -> $v (ucolor = $ucolor, vcolor = $vcolor, edgecolor= $ecolor)")
     return true
 end

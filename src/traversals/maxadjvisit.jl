@@ -16,7 +16,7 @@ end
 abstract AbstractMASVisitor <: AbstractGraphVisitor
 
 function maximum_adjacency_visit_impl!{T}(
-    graph::AbstractGraph,                               # the graph
+    g::AbstractGraph,                               # the graph
     pq::DataStructures.PriorityQueue{Int, T},         # priority queue
     visitor::AbstractMASVisitor,                      # the visitor
     colormap::Vector{Int})                            # traversal status
@@ -24,7 +24,7 @@ function maximum_adjacency_visit_impl!{T}(
     while !isempty(pq)
         u = DataStructures.dequeue!(pq)
         discover_vertex!(visitor, u)
-        for v in out_neighbors(graph, u)
+        for v in out_neighbors(g, u)
             examine_neighbor!(visitor, u, v, 0, 0, 0)
 
             if haskey(pq,v)
@@ -38,10 +38,10 @@ function maximum_adjacency_visit_impl!{T}(
 end
 
 function traverse_graph!(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     T::DataType,
     alg::MaximumAdjacency,
-    s::Int,
+    s::Integer,
     visitor::AbstractMASVisitor,
     colormap::Vector{Int})
 
@@ -49,18 +49,18 @@ function traverse_graph!(
     pq = DataStructures.PriorityQueue(Int,T,Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
-    for v in vertices(graph)
+    for v in vertices(g)
         pq[v] = zero(T)
     end
 
     @assert haskey(pq,s)
-    @assert nv(graph) >= 2
+    @assert nv(g) >= 2
 
     #Give the starting vertex high priority
     pq[s] = one(T)
 
     #start traversing the graph
-    maximum_adjacency_visit_impl!(graph, pq, visitor, colormap)
+    maximum_adjacency_visit_impl!(g, pq, visitor, colormap)
 end
 
 
@@ -77,40 +77,41 @@ end
 #
 #################################################
 
-type MinCutVisitor{T} <: AbstractMASVisitor
+type MinCutVisitor{T, U<:Integer} <: AbstractMASVisitor
     graph::AbstractGraph
-    parities::AbstractArray{Bool,1}
+    parities::BitVector
     colormap::Vector{Int}
     bestweight::T
     cutweight::T
-    visited::Integer
-    distmx::AbstractArray{T, 2}
-    vertices::Vector{Int}
+    visited::Int
+    distmx::AbstractMatrix{T}
+    vertices::Vector{U}
 end
 
-function MinCutVisitor{T}(graph::AbstractGraph, distmx::AbstractArray{T, 2})
-    n = nv(graph)
+function MinCutVisitor{T}(g::AbstractGraph, distmx::AbstractMatrix{T})
+    U = eltype(g)
+    n = nv(g)
     parities = falses(n)
     return MinCutVisitor(
-        graph,
+        g,
         falses(n),
         zeros(Int,n),
         typemax(T),
         zero(T),
         zero(Int),
         distmx,
-        Vector{Int}()
+        Vector{U}()
     )
 end
 
-function discover_vertex!(vis::MinCutVisitor, v::Int)
+function discover_vertex!(vis::MinCutVisitor, v::Integer)
     vis.parities[v] = false
     vis.colormap[v] = 1
     push!(vis.vertices,v)
     return true
 end
 
-function examine_neighbor!(vis::MinCutVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(vis::MinCutVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     ew = vis.distmx[u, v]
 
     # if the target of e is already marked then decrease cutweight
@@ -124,7 +125,7 @@ function examine_neighbor!(vis::MinCutVisitor, u::Int, v::Int, ucolor::Int, vcol
     return true
 end
 
-function close_vertex!(vis::MinCutVisitor, v::Int)
+function close_vertex!(vis::MinCutVisitor, v::Integer)
     vis.colormap[v] = 2
     vis.visited += 1
 
@@ -143,25 +144,25 @@ end
 #
 #################################################
 
-type MASVisitor{T} <: AbstractMASVisitor
+type MASVisitor{T, U<:Integer} <: AbstractMASVisitor
     io::IO
-    vertices::Vector{Int}
-    distmx::AbstractArray{T, 2}
+    vertices::Vector{U}
+    distmx::AbstractMatrix{T}
     log::Bool
 end
 
-function discover_vertex!{T}(visitor::MASVisitor{T}, v::Int)
+function discover_vertex!{T}(visitor::MASVisitor{T}, v::Integer)
     push!(visitor.vertices,v)
     visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
     return true
 end
 
-function examine_neighbor!(visitor::MASVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::MASVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     visitor.log ? println(visitor.io, " -- examine neighbor from $u to $v") : nothing
     return true
 end
 
-function close_vertex!(visitor::MASVisitor, v::Int)
+function close_vertex!(visitor::MASVisitor, v::Integer)
     visitor.log ? println(visitor.io, "close vertex: $v") : nothing
     return true
 end
@@ -179,16 +180,16 @@ weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
 function mincut{T}(
-    graph::AbstractGraph,
-    distmx::AbstractArray{T, 2}
+    g::AbstractGraph,
+    distmx::AbstractMatrix{T}
 )
-    visitor = MinCutVisitor(graph, distmx)
-    colormap = zeros(Int, nv(graph))
-    traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, colormap)
+    visitor = MinCutVisitor(g, distmx)
+    colormap = zeros(Int, nv(g))
+    traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, colormap)
     return(visitor.parities + 1, visitor.bestweight)
 end
 
-mincut(graph::AbstractGraph) = mincut(graph,DefaultDistance())
+mincut(g::AbstractGraph) = mincut(g,DefaultDistance())
 
 """Returns the vertices in `g` traversed by maximum adjacency search. An optional
 `distmx` matrix may be specified; if omitted, edge distances are assumed to
@@ -197,18 +198,18 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 displayed.
 """
 function maximum_adjacency_visit{T}(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     distmx::AbstractArray{T, 2},
     log::Bool,
     io::IO
 )
     visitor = MASVisitor(io, Vector{Int}(), distmx, log)
-    traverse_graph!(graph, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(graph)))
+    traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(g)))
     return visitor.vertices
 end
 
-maximum_adjacency_visit(graph::AbstractGraph) = maximum_adjacency_visit(
-    graph,
+maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
+    g,
     DefaultDistance(),
     false,
     STDOUT

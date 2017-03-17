@@ -23,9 +23,9 @@ EdgeColorMap :
 type BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
-function breadth_first_visit_impl!(
+function breadth_first_visit_impl!{T<:Integer}(
     graph::AbstractGraph,                 # the graph
-    queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
+    queue::Vector{T},                 # an (initialized) queue that stores the active vertices
     vertexcolormap::AbstractVertexMap,   # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
     edgecolormap::AbstractEdgeMap,        # an (initialized) color-map to indicate status of edges
     visitor::AbstractGraphVisitor,            # the visitor
@@ -59,9 +59,9 @@ function traverse_graph!(
     alg::BreadthFirst,
     source,
     visitor::AbstractGraphVisitor;
-    vertexcolormap::AbstractVertexMap = Dict{Int, Int}(),
+    vertexcolormap::AbstractVertexMap = Dict{eltype(graph), Int}(),
     edgecolormap::AbstractEdgeMap = DummyEdgeMap(),
-    queue = Vector{Int}(),
+    queue = Vector{eltype(graph)}(),
     dir = :out)
 
     for s in source
@@ -89,21 +89,21 @@ end
 """TreeBFSVisitorVector is a type for representing a BFS traversal
 of the graph as a parents array. This type allows for a more performant implementation.
 """
-type TreeBFSVisitorVector <: AbstractGraphVisitor
-    tree::Vector{Int}
+type TreeBFSVisitorVector{T<:Integer} <: AbstractGraphVisitor
+    tree::Vector{T}
 end
 
-function TreeBFSVisitorVector(n::Int)
-    return TreeBFSVisitorVector(fill(0, n))
+function TreeBFSVisitorVector{T<:Integer}(n::T)
+    return TreeBFSVisitorVector(fill(zero(T), n))
 end
 
 """tree converts a parents array into a DiGraph"""
-function tree(parents::AbstractVector)
-    n = length(parents)
-    t = DiGraph(n)
-    for i in 1:n
+function tree{T<:Integer}(parents::AbstractVector{T})
+    n = T(length(parents))
+    t = DiGraph{T}(n)
+    for i in one(T):n
         parent = parents[i]
-        if parent > 0  && parent != i
+        if parent > zero(T)  && parent != i
             add_edge!(t, parent, i)
         end
     end
@@ -112,7 +112,7 @@ end
 
 tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
 
-function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Integer, v::Integer,
                             ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor == 0
         visitor.tree[v] = u
@@ -120,11 +120,11 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
     return true
 end
 
-function bfs_tree!(visitor::TreeBFSVisitorVector,
+function bfs_tree!{T<:Integer}(visitor::TreeBFSVisitorVector{T},
         g::AbstractGraph,
-        s::Int;
-        vertexcolormap = Dict{Int,Int}(),
-        queue = Vector{Int}())
+        s::Integer;
+        vertexcolormap = Dict{T,Int}(),
+        queue = Vector{T}())
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
     # parent of the index. This function checks if the scratch space is too small for the graph.
@@ -143,7 +143,7 @@ and returns a directed acyclic graph of vertices in the order they were discover
 
 This function is a high level wrapper around bfs_tree!, use that function for more performance.
 """
-function bfs_tree(g::AbstractGraph, s::Int)
+function bfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)
     visitor = TreeBFSVisitorVector(nvg)
     bfs_tree!(visitor, g, s)
@@ -154,12 +154,12 @@ end
 # Connected Components with BFS            #
 ############################################
 """Performing connected components with BFS starting from seed"""
-type ComponentVisitorVector <: AbstractGraphVisitor
-    labels::Vector{Int}
-    seed::Int
+type ComponentVisitorVector{T<:Integer} <: AbstractGraphVisitor
+    labels::Vector{T}
+    seed::T
 end
 
-function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int,
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Integer, v::Integer,
                             ucolor::Int, vcolor::Int, ecolor::Int)
     if u != v && vcolor == 0
         visitor.labels[v] = visitor.seed
@@ -175,9 +175,9 @@ type BipartiteVisitor <: AbstractGraphVisitor
     is_bipartite::Bool
 end
 
-BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
+BipartiteVisitor(n::Integer) = BipartiteVisitor(zeros(UInt8,n), true)
 
-function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
+function examine_neighbor!(visitor::BipartiteVisitor, u::Integer, v::Integer,
         ucolor::Int, vcolor::Int, ecolor::Int)
     if vcolor == 0
         visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
@@ -197,19 +197,20 @@ Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bip
 If a node `v` is specified, only the connected component to which it belongs is considered.
 """
 function is_bipartite(g::AbstractGraph)
+    T = eltype(g)
     cc = filter(x->length(x)>2, connected_components(g))
-    vmap = Dict{Int,Int}()
+    vmap = Dict{T,Int}()
     for c in cc
         _is_bipartite(g,c[1], vmap=vmap) || return false
     end
     return true
 end
 
-is_bipartite(g::AbstractGraph, v::Int) = _is_bipartite(g, v)
+is_bipartite(g::AbstractGraph, v::Integer) = _is_bipartite(g, v)
 
-_is_bipartite(g::AbstractGraph, v::Int; vmap = Dict{Int,Int}()) = _bipartite_visitor(g, v, vmap=vmap).is_bipartite
+_is_bipartite(g::AbstractGraph, v::Integer; vmap = Dict{eltype(g),Int}()) = _bipartite_visitor(g, v, vmap=vmap).is_bipartite
 
-function _bipartite_visitor(g::AbstractGraph, s::Int; vmap=Dict{Int,Int}())
+function _bipartite_visitor(g::AbstractGraph, s::Integer; vmap=Dict{eltype(g),Int}())
     nvg = nv(g)
     visitor = BipartiteVisitor(nvg)
     for v in keys(vmap) #have to reset vmap, otherway problems with digraphs
@@ -229,7 +230,7 @@ function bipartite_map(g::AbstractGraph)
     visitors = [_bipartite_visitor(g, x[1]) for x in cc]
     !all([v.is_bipartite for v in visitors]) && return zeros(Int, 0)
     m = zeros(Int, nv(g))
-    for i=1:nv(g)
+    for i in vertices(g)
         m[i] = any(v->v.bipartitemap[i] == 1, visitors) ? 2 : 1
     end
     m
@@ -246,9 +247,10 @@ Fills `dists` with the geodesic distances of vertices in `g` from vertex/vertice
 `dists` should be a vector of length `nv(g)`.
 """
 function gdistances!(g::AbstractGraph, source, dists)
+    T = eltype(g)
     n = nv(g)
     fill!(dists, -1)
-    queue = Vector{Int}(n)
+    queue = Vector{T}(n)
     for i in 1:length(source)
         queue[i] = source[i]
         dists[source[i]] = 0
