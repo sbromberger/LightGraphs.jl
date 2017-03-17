@@ -1,7 +1,7 @@
 @testset "Label propagation" begin
     n=10
     g10 = CompleteGraph(n)
-    for g in (g10, Graph{UInt16}(g10), Graph{Int32}(g10))
+    for g in testgraphs(g10)
       z = copy(g)
       for k=2:5
           z = blkdiag(z, g)

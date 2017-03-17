@@ -12,28 +12,28 @@
 type NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
-type BellmanFordState{T<:Number}<:AbstractPathState
-    parents::Vector{Int}
+type BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
+    parents::Vector{U}
     dists::Vector{T}
 end
 
-function bellman_ford_shortest_paths!{R<:Real}(
+function bellman_ford_shortest_paths!{R<:Real, T<:Integer}(
     graph::AbstractGraph,
-    sources::AbstractVector{Int},
-    distmx::AbstractArray{R, 2},
+    sources::AbstractVector{T},
+    distmx::AbstractMatrix{R},
     state::BellmanFordState
 )
 
-    active = Set{Int}()
+    active = Set{T}()
     for v in sources
         state.dists[v] = 0
         state.parents[v] = 0
         push!(active, v)
     end
     no_changes = false
-    for i in 1:nv(graph)
+    for i in one(T):nv(graph)
         no_changes = true
-        new_active = Set{Int}()
+        new_active = Set{T}()
         for u in active
             for v in out_neighbors(graph, u)
                 edist = distmx[u, v]
@@ -59,21 +59,21 @@ to compute shortest paths between a source vertex `s` or a set of source
 vertices `ss`. Returns a `BellmanFordState` with relevant traversal information
 (see below).
 """
-function bellman_ford_shortest_paths{T}(
+function bellman_ford_shortest_paths{T, U<:Integer}(
     graph::AbstractGraph,
 
-    sources::AbstractVector{Int},
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    sources::AbstractVector{U},
+    distmx::AbstractMatrix{T} = DefaultDistance()
     )
     nvg = nv(graph)
-    state = BellmanFordState(zeros(Int,nvg), fill(typemax(T), nvg))
+    state = BellmanFordState(zeros(U,nvg), fill(typemax(T), nvg))
     bellman_ford_shortest_paths!(graph, sources, distmx, state)
 end
 
 bellman_ford_shortest_paths{T}(
     graph::AbstractGraph,
-    v::Int,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    v::Integer,
+    distmx::AbstractMatrix{T} = DefaultDistance()
 ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 function has_negative_edge_cycle(graph::AbstractGraph)
@@ -85,13 +85,13 @@ function has_negative_edge_cycle(graph::AbstractGraph)
     return false
 end
 
-function enumerate_paths(state::AbstractPathState, dest::Vector{Int})
+function enumerate_paths{T<:Integer}(state::AbstractPathState, dest::Vector{T})
     parents = state.parents
 
     num_dest = length(dest)
-    all_paths = Array(Vector{Int},num_dest)
+    all_paths = Array(Vector{T},num_dest)
     for i=1:num_dest
-        all_paths[i] = Vector{Int}()
+        all_paths[i] = Vector{T}()
         index = dest[i]
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0

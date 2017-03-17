@@ -49,6 +49,9 @@ testdir = dirname(@__FILE__)
 # a1 = Graph(adjmx1)
 # a2 = DiGraph(adjmx2)
 
+testgraphs(g) = (g, Graph{UInt8}(g), Graph{Int16}(g))
+testdigraphs(g) = (g, DiGraph{UInt8}(g), DiGraph{Int16}(g))
+
 tests = [
     "interface",
     "core",

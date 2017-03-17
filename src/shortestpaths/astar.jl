@@ -8,7 +8,7 @@ function a_star_impl!{T<:Number}(
     t::Integer, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
-    distmx::AbstractArray{T, 2},
+    distmx::AbstractMatrix{T},
     heuristic::Function    # heuristic fn (under)estimating distance to target
     )
 
@@ -43,13 +43,14 @@ optional heuristic function and edge distance matrix may be supplied.
 function a_star{T<:Number}(
     graph::AbstractGraph,  # the graph
 
-    s::Int,                       # the start vertex
-    t::Int,                       # the end vertex
-    distmx::AbstractArray{T, 2} = LightGraphs.DefaultDistance(),
+    s::Integer,                       # the start vertex
+    t::Integer,                       # the end vertex
+    distmx::AbstractMatrix{T} = LightGraphs.DefaultDistance(),
     heuristic::Function = n -> 0
     )
             # heuristic (under)estimating distance to target
-    frontier = PriorityQueue(Tuple{T,Array{Edge,1},Int},T)
+    U = eltype(graph)
+    frontier = PriorityQueue(Tuple{T,Vector{Edge},U},T)
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1

@@ -26,12 +26,13 @@ that contains the containing edges and its weights.
 """
 function kruskal_mst{T<:Real}(
     g::AbstractGraph,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::AbstractMatrix{T} = DefaultDistance()
 )
 
+    U = eltype(g)
     edge_list = Vector{KruskalHeapEntry{T}}()
     mst = Vector{Edge}()
-    connected_nodes = Vector{Int}(1:nv(g))
+    connected_nodes = collect(one(U):nv(g))
 
     sizehint!(edge_list, ne(g))
     sizehint!(mst, ne(g))

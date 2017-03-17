@@ -22,8 +22,8 @@ function floyd_warshall_shortest_paths{T}(
 )
     U = eltype(g)
     n_v = nv(g)
-    dists = fill(typemax(T), (n_v,n_v))
-    parents = zeros(U, (n_v,n_v))
+    dists = fill(typemax(T), (Int(n_v),Int(n_v)))
+    parents = zeros(U, (Int(n_v),Int(n_v)))
 
     # fws = FloydWarshallState(Matrix{T}(), Matrix{Int}())
     for v in 1:n_v

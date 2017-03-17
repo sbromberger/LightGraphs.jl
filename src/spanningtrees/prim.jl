@@ -12,7 +12,7 @@ that contains the edges.
 """
 function prim_mst{T<:Real}(
     g::AbstractGraph,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
+    distmx::AbstractMatrix{T} = DefaultDistance()
     ) :: Vector{Edge}
 
     pq = Vector{PrimHeapEntry{T}}()
@@ -44,10 +44,10 @@ and enters all its edges into priority queue `pq` with its `distmx` values as a 
 """
 function visit!{T<:Real}(
     g::AbstractGraph,
-    v::Int,
+    v::Integer,
     marked::AbstractArray{Bool, 1},
     pq::Vector{PrimHeapEntry{T}},
-    distmx::AbstractArray{T, 2}
+    distmx::AbstractMatrix{T}
 )
     marked[v] = true
     for w in out_neighbors(g, v)

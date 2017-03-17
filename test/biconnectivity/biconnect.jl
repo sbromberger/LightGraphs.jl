@@ -21,7 +21,7 @@
          [Edge(1, 7), Edge(6, 7), Edge(2, 6), Edge(1, 2)],
          [Edge(11, 12)]]
 
-    for g in (gint, Graph{UInt8}(gint), Graph{Int16}(gint))
+    for g in testgraphs(gint)
       bcc = biconnected_components(g)
       @test bcc == a
     end
@@ -43,7 +43,7 @@
 
     a = [[Edge(5, 8),Edge(7, 8),Edge(6, 7),Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4),Edge(3, 4),Edge(2, 3),Edge(1, 2)]]
 
-    for g in (gint, Graph{UInt8}(gint), Graph{Int16}(gint))
+    for g in testgraphs(gint)
       bcc = biconnected_components(g)
       @test bcc == a
     end

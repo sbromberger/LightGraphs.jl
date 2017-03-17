@@ -18,7 +18,7 @@
     add_edge!(gint, 7, 10)
     add_edge!(gint, 7, 12)
 
-    for g in (gint, Graph{UInt8}(gint), Graph{Int16}(gint))
+    for g in testgraphs(gint)
       art = articulation(g)
       ans = [1, 7, 8, 12]
       @test art == ans

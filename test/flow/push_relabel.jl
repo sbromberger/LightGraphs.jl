@@ -16,7 +16,7 @@
         add_edge!(flow_graph,u,v)
         capacity_matrix[u,v] = f
     end
-    for g in (flow_graph, DiGraph{UInt8}(flow_graph), DiGraph{Int16}(flow_graph))
+    for g in testdigraphs(flow_graph)
       residual_graph = LightGraphs.residual(g)
 
       # Test enqueue_vertex

@@ -8,7 +8,7 @@
     source, target = 1, 3
 
 
-    for g in (G, DiGraph{UInt8}(G), DiGraph{Int16}(G))
+    for g in testdigraphs(G)
     # default capacity
       capacity_matrix = LightGraphs.DefaultCapacity(g)
       residual_graph = LightGraphs.residual(g)

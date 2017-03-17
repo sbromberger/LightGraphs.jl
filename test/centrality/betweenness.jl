@@ -19,7 +19,7 @@
     gint = load(joinpath(testdir,"testdata","graph-50-500.jgz"), "graph-50-500")
 
     c = readcentrality(joinpath(testdir,"testdata","graph-50-500-bc.txt"))
-    for g in (gint, DiGraph{UInt8}(gint), DiGraph{Int16}(gint))
+    for g in testdigraphs(gint)
         z = betweenness_centrality(g)
         @test map(Float32, z) == map(Float32, c)
 
