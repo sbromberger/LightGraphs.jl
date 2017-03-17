@@ -26,7 +26,6 @@ function local_clustering(g::AbstractGraph, v::Integer)
         if has_edge(g, i, j)
           c += 1
         end
-      end
     end
     return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
 end
