@@ -1,4 +1,3 @@
-import LightGraphs.SimpleGraphs.SimpleDiGraph
 """
 Abstract type that allows users to pass in their preferred Algorithm
 """
@@ -32,11 +31,11 @@ end
 Type that returns 1 if a forward edge exists, and 0 otherwise
 """
 type DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
-    flow_graph::SimpleDiGraph
+    flow_graph::DiGraph
     nv::T
 end
 
-@traitfn DefaultCapacity{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DefaultCapacity(SimpleDiGraph(flow_graph), nv(flow_graph))
+@traitfn DefaultCapacity{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DefaultCapacity(DiGraph(flow_graph), nv(flow_graph))
 
 getindex{T<:Integer}(d::DefaultCapacity{T}, s::Integer, t::Integer) = if has_edge(d.flow_graph, s , t) one(T) else zero(T) end
 # isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in 1:d.nv) && (v in 1:d.nv)

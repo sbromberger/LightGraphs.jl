@@ -73,7 +73,7 @@ NOTE: returns a reference, not a copy. Do not modify result.
 neighbors(g::AbstractGraph, v::Integer) = out_neighbors(g, v)
 
 """
-Return a list of all inbound and outbount neighbors of `v` in `g`.
+Return a list of all inbound and outbound neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to `out_neighbors` and
 `in_neighbors`.
 """
