@@ -1,12 +1,13 @@
 import Base: *
 
 export adjacency_matrix,
-    laplacian_matrix,
-    incidence_matrix,
-    coo_sparse,
-    spectral_distance
+laplacian_matrix,
+incidence_matrix,
+coo_sparse,
+spectral_distance
 
-"""Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]`
+"""
+Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]`
 vertices. `true` values indicate an edge between `u` and `v`. Users may
 specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out`
 is default for both directed and undirected graphs) and a data type for the
@@ -61,23 +62,19 @@ end
 
 adjacency_matrix(g::AbstractGraph, T::DataType) = adjacency_matrix(g, :out, T)
 
-### TODO: re-roll this to be
-# function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
-# @traitfn adjacency_matrix{G<:AbstractGraph; !IsDirected{G}}(g::G, T::DataType) = adjacency_matrix(g, :out, T)
-# @traitfn adjacency_matrix{G<:AbstractGraph; !IsDirected{G}}(g::G) = adjacency_matrix(g, :out, Int)
-
-"""Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
+"""
+Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
 defaults to `Int` for both graph types.
 """
 function laplacian_matrix(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
-  if dir == :unspec
-    dir = is_directed(g)? :both : :out
-  end
-  A = adjacency_matrix(g, dir, T)
-  D = spdiagm(sum(A,2)[:])
-  return D - A
+    if dir == :unspec
+        dir = is_directed(g)? :both : :out
+    end
+    A = adjacency_matrix(g, dir, T)
+    D = spdiagm(sum(A,2)[:])
+    return D - A
 end
 
 doc"""Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed
@@ -94,17 +91,12 @@ by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
 eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
 `adjacency_matrix`.
 """
-function adjacency_spectrum end
-
-#TODO: Re-roll this to adjacency_spectrum(g::Graph, dir::Symbol=:out, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
-@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G, dir::Symbol, T::DataType) = eigvals(full(adjacency_matrix(g, dir, T)))
-@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G, dir::Symbol) = adjacency_spectrum(g, dir, Int)
-@traitfn adjacency_spectrum{G<:AbstractGraph; !IsDirected{G}}(g::G) = adjacency_spectrum(g, :out, Int)
-
-#TODO: Re-roll this to adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(full(adjacency_matrix(g, dir, T)))
-@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G, dir::Symbol, T::DataType) = eigvals(full(adjacency_matrix(g, dir, T)))
-@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G, dir::Symbol) = adjacency_spectrum(g, dir, Int)
-@traitfn adjacency_spectrum{G<:AbstractGraph; IsDirected{G}}(g::G,) = adjacency_spectrum(g, :both, Int)
+function adjacency_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
+    if dir == :unspec
+        dir = is_directed(g)?  :both : :out
+    end
+    return eigvals(full(adjacency_matrix(g, dir, T)))
+end
 
 """Returns a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
@@ -140,7 +132,8 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     return spmx
 end
 
-"""spectral_distance(G₁, G₂ [, k])
+"""
+spectral_distance(G₁, G₂ [, k])
 Compute the spectral distance between undirected n-vertex
 graphs G₁ and G₂ using the top k ≤ n greatest eigenvalues.
 If k is ommitted, uses full spectrum.
@@ -153,16 +146,16 @@ Graphs Based on their Different Matrix Representations
 function spectral_distance end
 
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G, k::Integer)
-  A₁ = adjacency_matrix(G₁)
-  A₂ = adjacency_matrix(G₂)
+    A₁ = adjacency_matrix(G₁)
+    A₂ = adjacency_matrix(G₂)
 
-  λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
-  λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
+    λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
+    λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
 
-  sumabs(λ₁ - λ₂)
+    sumabs(λ₁ - λ₂)
 end
 
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
-  @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
-  spectral_distance(G₁, G₂, nv(G₁))
+    @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
+    spectral_distance(G₁, G₂, nv(G₁))
 end

@@ -3,6 +3,7 @@
 
 Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
 of a graph.
+Preserves the eltype of the input graph.
 """
 function complement(g::Graph)
     gnv = nv(g)
@@ -33,6 +34,7 @@ end
 
 Produces a graph where all edges are reversed from the
 original.
+Preserves the eltype of the input graph.
 """
 function reverse(g::DiGraph)
     gnv = nv(g)
@@ -63,6 +65,8 @@ Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$
 edges.
 
 Put simply, the vertices and edges from graph `h` are appended to graph `g`.
+Preserves the eltype of the input graph. Will error if the
+number of vertices in the generated graph exceeds the eltype.
 """
 function blkdiag{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
@@ -82,6 +86,7 @@ end
 Produces a graph with edges that are only in both graph `g` and graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
+Preserves the eltype of the input graph.
 """
 function intersect{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
@@ -100,6 +105,7 @@ end
 Produces a graph with edges in graph `g` that are not in graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
+Preserves the eltype of the input graph.
 """
 function difference{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
@@ -119,6 +125,8 @@ Produces a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
 
 Note that this function may produce a graph with 0-degree vertices.
+Preserves the eltype of the input graph. Will error if the
+number of vertices in the generated graph exceeds the eltype.
 """
 function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
@@ -138,6 +146,8 @@ end
     union(g, h)
 
 Merges graphs `g` and `h` by taking the set union of all vertices and edges.
+Preserves the eltype of the input graph. Will error if the
+number of vertices in the generated graph exceeds the eltype.
 """
 function union{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
@@ -162,9 +172,11 @@ end
     join(g, h)
 
 Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
- the vertices in `g` and those in `h`.
+the vertices in `g` and those in `h`.
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
 """
-function join(g::Graph, h::Graph)
+function join{T<:AbstractGraph}(g::T, h::T)
     r = blkdiag(g, h)
     for i in vertices(g)
         for j=nv(g)+1:nv(g)+nv(h)
@@ -178,10 +190,17 @@ end
 """
     crosspath(len::Integer, g::Graph)
 
-Replicate `len` times `h` and connect each vertex with its copies in a path
+Replicate `len` times `g` and connect each vertex with its copies in a path.
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
 """
-crosspath(len::Integer, g::Graph) = cartesian_product(PathGraph(len), g)
-
+function crosspath end
+@traitfn function crosspath{G<:AbstractGraph; !IsDirected{G}}(len::Integer, g::G)
+    T = eltype(g)
+    p = PathGraph(len)
+    h = Graph{T}(p)
+    return cartesian_product(h, g)
+end
 
 # The following operators allow one to use a LightGraphs.Graph as a matrix in eigensolvers for spectral ranking and partitioning.
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
@@ -238,6 +257,8 @@ issymmetric(g::AbstractGraph) = !is_directed(g)
     cartesian_product(g, h)
 
 Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
 """
 function cartesian_product{G<:AbstractGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))
@@ -262,6 +283,8 @@ end
     tensor_product(g, h)
 
 Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
 """
 function tensor_product{G<:AbstractGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))

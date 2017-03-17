@@ -116,10 +116,10 @@ blocking_flow!(
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities
     flow_matrix::AbstractMatrix,       # the current flow matrix
-    ) =
-    blocking_flow!(residual_graph,
-                  source,
-                  target,
-                  capacity_matrix,
-                  flow_matrix,
-                  zeros(Int, nv(residual_graph)))
+    ) = blocking_flow!(
+            residual_graph,
+            source,
+            target,
+            capacity_matrix,
+            flow_matrix,
+            zeros(Int, nv(residual_graph)))

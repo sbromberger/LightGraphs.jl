@@ -1,7 +1,8 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
-"""Creates a complete graph with `n` vertices. A complete graph has edges
+"""
+Creates a complete graph with `n` vertices. A complete graph has edges
 connecting each pair of vertices.
 """
 function CompleteGraph(n::Integer)
@@ -133,7 +134,7 @@ function WheelDiGraph(n::Integer)
 end
 
 """
-    Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
+Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
 
 Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`.
 If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.
@@ -159,8 +160,10 @@ function BinaryTree(levels::Int)
     return g
 end
 
-"""create a double complete binary tree with k-levels
-used as an example for spectral clustering by Guattery and Miller 1998."""
+"""
+Create a double complete binary tree with k-levels
+used as an example for spectral clustering by Guattery and Miller 1998.
+"""
 function DoubleBinaryTree(levels::Int)
     gl = BinaryTree(levels)
     gr = BinaryTree(levels)

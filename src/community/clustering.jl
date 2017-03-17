@@ -1,5 +1,5 @@
 """
-    local_clustering_coefficient(g, v)
+local_clustering_coefficient(g, v)
 
 Computes the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient) for node `v`.
 """
@@ -10,7 +10,7 @@ function local_clustering_coefficient(g::AbstractGraph, v::Integer)
 end
 
 """
-    local_clustering(g, v)
+local_clustering(g, v)
 
 Returns a tuple `(a,b)`, where `a` is the number of triangles in the neighborhood of
 `v` and `b` is the maximum number of possible triangles.
@@ -22,16 +22,16 @@ function local_clustering(g::AbstractGraph, v::Integer)
     neighs = neighbors(g, v)
     c = 0
     for i in neighs, j in neighs
-      i == j && continue
+        i == j && continue
         if has_edge(g, i, j)
-          c += 1
+            c += 1
         end
     end
     return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
 end
 
 """
-    triangles(g, v)
+triangles(g, v)
 
 Returns the number of triangles in the neighborhood for node `v`.
 """
@@ -39,14 +39,14 @@ triangles(g::AbstractGraph, v::Integer) = local_clustering(g, v)[1]
 
 
 """
-    local_clustering_coefficient(g, vlist = vertices(g))
+local_clustering_coefficient(g, vlist = vertices(g))
 
 Returns a vector containing  the [local clustering coefficients](https://en.wikipedia.org/wiki/Clustering_coefficient) for vertices `vlist`.
 """
 local_clustering_coefficient(g::AbstractGraph, vlist = vertices(g)) = Float64[local_clustering_coefficient(g, v) for v in vlist]
 
 """
-    local_clustering(g, vlist = vertices(g))
+local_clustering(g, vlist = vertices(g))
 
 Returns two vectors, respectively containing  the first and second result of `local_clustering_coefficients(g, v)`
 for each `v` in `vlist`.
@@ -63,7 +63,7 @@ function local_clustering(g::AbstractGraph, vlist = vertices(g))
 end
 
 """
-    triangles(g, vlist = vertices(g))
+triangles(g, vlist = vertices(g))
 
 Returns a vector containing the number of triangles for vertices `vlist`.
 """
@@ -71,7 +71,7 @@ triangles(g::AbstractGraph, vlist = vertices(g)) = local_clustering(g, vlist)[1]
 
 
 """
-    global_clustering_coefficient(g)
+global_clustering_coefficient(g)
 
 Computes the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient).
 """
@@ -81,10 +81,10 @@ function global_clustering_coefficient(g::AbstractGraph)
     for v in vertices(g)
         neighs = neighbors(g, v)
         for i in neighs, j in neighs
-          i == j && continue
-          if has_edge(g, i, j)
-            c += 1
-          end
+            i == j && continue
+            if has_edge(g, i, j)
+                c += 1
+            end
         end
         k = degree(g, v)
         ntriangles += k*(k-1)

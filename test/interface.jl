@@ -16,7 +16,8 @@ type DummyEdge <: AbstractEdge end
      end
 
     for graphfunbasic in [
-      nv, ne, vertices, edges, is_directed, add_vertex!, edgetype
+      nv, ne, vertices, edges, is_directed,
+      add_vertex!, edgetype, eltype, empty
       ]
       @test_throws ErrorException graphfunbasic(dummygraph)
     end

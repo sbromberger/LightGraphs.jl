@@ -94,7 +94,6 @@ end
 
 type DFSCyclicTestVisitor <: AbstractGraphVisitor
     found_cycle::Bool
-
     DFSCyclicTestVisitor() = new(false)
 end
 
@@ -136,13 +135,12 @@ end
 
 type TopologicalSortVisitor{T} <: AbstractGraphVisitor
     vertices::Vector{T}
-
 end
 
 function TopologicalSortVisitor{T<:Integer}(n::T)
-  vs = Vector{T}()
-  sizehint!(vs, n)
-  return TopologicalSortVisitor(vs)
+    vs = Vector{T}()
+    sizehint!(vs, n)
+    return TopologicalSortVisitor(vs)
 end
 
 function examine_neighbor!(visitor::TopologicalSortVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)

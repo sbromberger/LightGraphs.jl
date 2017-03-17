@@ -8,7 +8,7 @@ function closeness_centrality(
     n_v = nv(g)
     closeness = zeros(n_v)
 
-    for u = 1:n_v
+    for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
@@ -18,7 +18,6 @@ function closeness_centrality(
             l = length(δ) - 1
             if σ > 0
                 closeness[u] = l / σ
-
                 if normalize
                     n = l / (n_v-1)
                     closeness[u] *= n

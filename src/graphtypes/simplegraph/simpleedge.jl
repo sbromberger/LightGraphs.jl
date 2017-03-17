@@ -11,7 +11,7 @@ end
 SimpleEdge(t::Tuple) = SimpleEdge(t[1], t[2])
 SimpleEdge(p::Pair) = SimpleEdge(p.first, p.second)
 
-eltype{T<:AbstractSimpleEdge}(e::T) = T
+eltype{T<:AbstractSimpleEdge}(e::T) = eltype(src(e))
 
 # Accessors
 src(e::AbstractSimpleEdge) = e.src
@@ -23,6 +23,8 @@ show(io::IO, e::AbstractSimpleEdge) = print(io, "Edge $(e.src) => $(e.dst)")
 # Conversions
 Pair(e::AbstractSimpleEdge) = Pair(src(e), dst(e))
 Tuple(e::AbstractSimpleEdge) = (src(e), dst(e))
+
+(::Type{SimpleEdge{T}}){T<:Integer}(e::AbstractSimpleEdge) = SimpleEdge{T}(T(e.src), T(e.dst))
 
 # Convenience functions
 reverse{T<:AbstractSimpleEdge}(e::T) = T(dst(e), src(e))

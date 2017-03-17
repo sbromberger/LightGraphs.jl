@@ -13,14 +13,14 @@ eltype{T<:Integer}(x::SimpleDiGraph{T}) = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 function (::Type{SimpleDiGraph{T}}){T<:Integer}(n::Integer = 0)
-  fadjlist = Vector{Vector{T}}()
-  badjlist = Vector{Vector{T}}()
-  for _ = one(T):n
-      push!(badjlist, Vector{T}())
-      push!(fadjlist, Vector{T}())
-  end
-  vertices = one(T):T(n)
-  return SimpleDiGraph(vertices, 0, fadjlist, badjlist)
+    fadjlist = Vector{Vector{T}}()
+    badjlist = Vector{Vector{T}}()
+    for _ = one(T):n
+        push!(badjlist, Vector{T}())
+        push!(fadjlist, Vector{T}())
+    end
+    vertices = one(T):T(n)
+    return SimpleDiGraph(vertices, 0, fadjlist, badjlist)
 end
 
 # DiGraph()
@@ -69,10 +69,10 @@ SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # converts DiGraph{Int} to DiGraph{Int32}
 function (::Type{SimpleDiGraph{T}}){T<:Integer}(g::SimpleDiGraph)
-  h_vertices = one(T):T(nv(g))
-  h_fadj = [Vector{T}(x) for x in fadj(g)]
-  h_badj = [Vector{T}(x) for x in badj(g)]
-  return SimpleDiGraph(h_vertices, ne(g), h_fadj, h_badj)
+    h_vertices = one(T):T(nv(g))
+    h_fadj = [Vector{T}(x) for x in fadj(g)]
+    h_badj = [Vector{T}(x) for x in badj(g)]
+    return SimpleDiGraph(h_vertices, ne(g), h_fadj, h_badj)
 end
 
 
@@ -93,21 +93,22 @@ badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
 copy{T<:Integer}(g::SimpleDiGraph{T}) =
-  SimpleDiGraph{T}(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+SimpleDiGraph{T}(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
-    vertices(g) == vertices(h) &&
-    ne(g) == ne(h) &&
-    fadj(g) == fadj(h) &&
-    badj(g) == badj(h)
+vertices(g) == vertices(h) &&
+ne(g) == ne(h) &&
+fadj(g) == fadj(h) &&
+badj(g) == badj(h)
 
 is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
 is_directed{T}(::Type{SimpleDiGraph{T}}) = true
 
-function add_edge!{T<:Integer}(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge)
-    s, d = Tuple(e)
+function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
+    T = eltype(g)
+    s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
     if inserted

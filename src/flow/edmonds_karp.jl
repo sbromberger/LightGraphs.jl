@@ -45,7 +45,7 @@ function edmonds_karp_impl end
                 u = S[u]
                 push!(path, Int(u))
             end
-                                           # augment flow along path
+            # augment flow along path
             flow += augment_path!(path, flow_matrix, capacity_matrix)
         end
     end
@@ -106,12 +106,12 @@ function fetch_path end
     P = -1 * ones(Int, n)
     S = -1 * ones(Int, n)
     return fetch_path!(residual_graph,
-                       source,
-                       target,
-                       flow_matrix,
-                       capacity_matrix,
-                       P,
-                       S)
+    source,
+    target,
+    flow_matrix,
+    capacity_matrix,
+    P,
+    S)
 end
 
 """
@@ -124,13 +124,13 @@ Flag Values:
 1 => No Path to target
 2 => No Path to source
 Requires arguments:
-    residual_graph::DiGraph                # the input graph
-    source::Int                            # the source vertex
-    target::Int                            # the target vertex
-    flow_matrix::AbstractArray{T,2}        # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-    P::Vector{Int}                         # parent table of path init to -1s
-    S::Vector{Int}                         # successor table of path init to -1s
+residual_graph::DiGraph                # the input graph
+source::Int                            # the source vertex
+target::Int                            # the target vertex
+flow_matrix::AbstractArray{T,2}        # the current flow matrix
+capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+P::Vector{Int}                         # parent table of path init to -1s
+S::Vector{Int}                         # successor table of path init to -1s
 """
 function fetch_path! end
 @traitfn function fetch_path!{G<:AbstractGraph; IsDirected{G}}(
@@ -154,7 +154,6 @@ function fetch_path! end
     sizehint!(Q_r, n)
 
     while true
-
         if length(Q_f) <= length(Q_r)
             u = pop!(Q_f)
             for v in out_neighbors(residual_graph, u)

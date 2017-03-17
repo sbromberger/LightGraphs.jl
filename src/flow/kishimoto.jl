@@ -2,31 +2,31 @@
 # Kishimoto algorithm
 
 @traitfn function kishimoto{G<:AbstractGraph; IsDirected{G}}(
-  flow_graph::G,                       # the input graph
-  source::Integer,                           # the source vertex
-  target::Integer,                           # the target vertex
-  capacity_matrix::AbstractMatrix,      # edge flow capacities
-  flow_algorithm::BoykovKolmogorovAlgorithm, # keyword argument for algorithm
-  routes::Int                                # keyword argument for routes
-  )
-  # Initialisation
-  flow, F, labels = maximum_flow(flow_graph, source, target,
-         capacity_matrix, algorithm = flow_algorithm)
-  restriction = flow / routes
-  flow, F, labels = maximum_flow(flow_graph, source, target, capacity_matrix,
-                       algorithm = flow_algorithm, restriction = restriction)
-
-  # Loop condition : approximatively not equal is enforced by floating precision
-  i = 1
-  while flow < routes * restriction && flow ≉ routes * restriction
-    restriction = (flow - i * restriction) / (routes - i)
-    i += 1
+    flow_graph::G,                       # the input graph
+    source::Integer,                           # the source vertex
+    target::Integer,                           # the target vertex
+    capacity_matrix::AbstractMatrix,      # edge flow capacities
+    flow_algorithm::BoykovKolmogorovAlgorithm, # keyword argument for algorithm
+    routes::Int                                # keyword argument for routes
+    )
+    # Initialisation
+    flow, F, labels = maximum_flow(flow_graph, source, target,
+    capacity_matrix, algorithm = flow_algorithm)
+    restriction = flow / routes
     flow, F, labels = maximum_flow(flow_graph, source, target, capacity_matrix,
-                         algorithm = flow_algorithm, restriction = restriction)
-  end
+    algorithm = flow_algorithm, restriction = restriction)
 
-  # End
-  return flow, F, labels
+    # Loop condition : approximatively not equal is enforced by floating precision
+    i = 1
+    while flow < routes * restriction && flow ≉ routes * restriction
+        restriction = (flow - i * restriction) / (routes - i)
+        i += 1
+        flow, F, labels = maximum_flow(flow_graph, source, target, capacity_matrix,
+        algorithm = flow_algorithm, restriction = restriction)
+    end
+
+    # End
+    return flow, F, labels
 end
 
 
@@ -47,30 +47,30 @@ Requires arguments:
 """
 function kishimoto end
 @traitfn function kishimoto{G<:AbstractGraph; IsDirected{G}}(
-  flow_graph::G,                   # the input graph
-  source::Integer,                       # the source vertex
-  target::Integer,                       # the target vertex
-  capacity_matrix::AbstractMatrix,  # edge flow capacities
-  flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
-  routes::Int                            # keyword argument for routes
-  )
-  # Initialisation
-  flow, F = maximum_flow(flow_graph, source, target,
-         capacity_matrix, algorithm = flow_algorithm)
-  restriction = flow / routes
+    flow_graph::G,                   # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    capacity_matrix::AbstractMatrix,  # edge flow capacities
+    flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
+    routes::Int                            # keyword argument for routes
+    )
+    # Initialisation
+    flow, F = maximum_flow(flow_graph, source, target,
+    capacity_matrix, algorithm = flow_algorithm)
+    restriction = flow / routes
 
-  flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,
-          algorithm = flow_algorithm, restriction = restriction)
-
-  # Loop condition : approximatively not equal is enforced by floating precision
-  i = 1
-  while flow < routes * restriction && flow ≉ routes * restriction
-    restriction = (flow - i * restriction) / (routes - i)
-    i += 1
     flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,
-              algorithm = flow_algorithm, restriction = restriction)
-  end
+    algorithm = flow_algorithm, restriction = restriction)
 
-  # End
-  return flow, F
+    # Loop condition : approximatively not equal is enforced by floating precision
+    i = 1
+    while flow < routes * restriction && flow ≉ routes * restriction
+        restriction = (flow - i * restriction) / (routes - i)
+        i += 1
+        flow, F = maximum_flow(flow_graph, source, target, capacity_matrix,
+        algorithm = flow_algorithm, restriction = restriction)
+    end
+
+    # End
+    return flow, F
 end

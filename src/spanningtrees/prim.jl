@@ -5,7 +5,8 @@ end
 
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 
-"""Performs [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm)
+"""
+Performs [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm)
 on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
 and computes minimum spanning tree. Returns a `Vector{Edge}`,
 that contains the edges.

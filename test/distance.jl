@@ -7,21 +7,26 @@
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
-    @test_throws ErrorException eccentricity(g4)
-    z = eccentricity(a1, distmx1)
-    @test z == [6.2, 4.2, 6.2]
-    @test diameter(z) == diameter(a1, distmx1) == 6.2
-    @test periphery(z) == periphery(a1, distmx1) == [1,3]
-    @test radius(z) == radius(a1, distmx1) == 4.2
-    @test center(z) == center(a1, distmx1) == [2]
+    for g in testdigraphs(g4)
+        @test_throws ErrorException eccentricity(g)
+    end
+    for g in testgraphs(a1)
+        z = eccentricity(g, distmx1)
+        @test z == [6.2, 4.2, 6.2]
+        @test diameter(z) == diameter(g, distmx1) == 6.2
+        @test periphery(z) == periphery(g, distmx1) == [1,3]
+        @test radius(z) == radius(g, distmx1) == 4.2
+        @test center(z) == center(g, distmx1) == [2]
+    end
 
-    z = eccentricity(a2, distmx2)
-    @test z == [6.2, 4.2, 6.1]
-    @test diameter(z) == diameter(a2, distmx2) == 6.2
-    @test periphery(z) == periphery(a2, distmx2) == [1]
-    @test radius(z) == radius(a2, distmx2) == 4.2
-    @test center(z) == center(a2, distmx2) == [2]
-
+    for g in testdigraphs(a2)
+        z = eccentricity(g, distmx2)
+        @test z == [6.2, 4.2, 6.1]
+        @test diameter(z) == diameter(g, distmx2) == 6.2
+        @test periphery(z) == periphery(g, distmx2) == [1]
+        @test radius(z) == radius(g, distmx2) == 4.2
+        @test center(z) == center(g, distmx2) == [2]
+    end
     @test size(LightGraphs.DefaultDistance()) == (typemax(Int), typemax(Int))
     d = LightGraphs.DefaultDistance(3)
     @test size(d) == (3, 3)

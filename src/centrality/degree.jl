@@ -1,18 +1,18 @@
 function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
-   n_v = nv(g)
-   c = zeros(n_v)
-   for v in 1:n_v
-       if gtype == 0    # count both in and out degree if appropriate
-           deg = is_directed(g)? outdegree(g, v) + indegree(g, v) : outdegree(g, v)
-       elseif gtype == 1    # count only in degree
-           deg = indegree(g, v)
-       else                 # count only out degree
-           deg = outdegree(g, v)
-       end
-       s = normalize? (1.0 / (n_v - 1.0)) : 1.0
-       c[v] = deg*s
-   end
-   return c
+    n_v = nv(g)
+    c = zeros(n_v)
+    for v in vertices(g)
+        if gtype == 0    # count both in and out degree if appropriate
+            deg = is_directed(g)? outdegree(g, v) + indegree(g, v) : outdegree(g, v)
+        elseif gtype == 1    # count only in degree
+            deg = indegree(g, v)
+        else                 # count only out degree
+            deg = outdegree(g, v)
+        end
+        s = normalize? (1.0 / (n_v - 1.0)) : 1.0
+        c[v] = deg*s
+    end
+    return c
 end
 
 # TODO avoid repetition of this docstring

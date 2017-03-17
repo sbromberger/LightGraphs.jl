@@ -51,7 +51,7 @@ function visit!(state::Articulations, g::AbstractGraph, u::Integer, v::Integer)
         elseif w != u
             state.low[v] = min(state.low[v], state.depth[w])
         end
-	  end
+    end
     if u == v && children > 1
         state.articulation_points[v] = true
     end

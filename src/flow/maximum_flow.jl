@@ -140,9 +140,9 @@ For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a thir
 # Create a flow-graph and a capacity matrix
 flow_graph = DiGraph(8)
 flow_edges = [
-    (1,2,10),(1,3,5),(1,4,15),(2,3,4),(2,5,9),
-    (2,6,15),(3,4,4),(3,6,8),(4,7,16),(5,6,15),
-    (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
+(1,2,10),(1,3,5),(1,4,15),(2,3,4),(2,5,9),
+(2,6,15),(3,4,4),(3,6,8),(4,7,16),(5,6,15),
+(5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
 ]
 capacity_matrix = zeros(Int, 8, 8)
 for e in flow_edges
@@ -173,13 +173,13 @@ function maximum_flow(
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix =  # edge flow capacities
-        DefaultCapacity(flow_graph);
+    DefaultCapacity(flow_graph);
     algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
-        PushRelabelAlgorithm(),
+    PushRelabelAlgorithm(),
     restriction::Real = 0               # keyword argument for restriction max-flow
     )
     if restriction > 0
-      return maximum_flow(flow_graph, source, target, min(restriction, capacity_matrix), algorithm)
+        return maximum_flow(flow_graph, source, target, min(restriction, capacity_matrix), algorithm)
     end
     return maximum_flow(flow_graph, source, target, capacity_matrix, algorithm)
 end

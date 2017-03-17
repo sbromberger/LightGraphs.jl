@@ -27,7 +27,7 @@ function dijkstra_shortest_paths{T, U<:Integer}(
     srcs::Vector{U},
     distmx::AbstractArray{T, 2}=DefaultDistance();
     allpaths=false
-)
+    )
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -47,7 +47,7 @@ function dijkstra_shortest_paths{T, U<:Integer}(
 
     while !isempty(H)
         hentry = heappop!(H)
-        # info("Popped H - got $(hentry.vertex)")
+            # info("Popped H - got $(hentry.vertex)")
         u = hentry.vertex
         for v in out_neighbors(g,u)
             alt = (dists[u] == typemax(T))? typemax(T) : dists[u] + distmx[u,v]
@@ -88,4 +88,4 @@ function dijkstra_shortest_paths{T, U<:Integer}(
 end
 
 dijkstra_shortest_paths{T, U}(g::AbstractGraph, src::U, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
-  dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)
+dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)

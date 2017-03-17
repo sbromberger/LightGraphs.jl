@@ -5,7 +5,8 @@ end
 
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
 
-""" Performs [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
+"""
+Performs [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
 on a given pair of nodes `p`and `q`, and makes a connection between them
 in the vector `nodes`.
 """

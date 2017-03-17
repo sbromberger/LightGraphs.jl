@@ -58,7 +58,7 @@ function noallocextreme(f, comparison, initial, g)
 end
 
 """
-    degree_histogram(g)
+degree_histogram(g)
 
 Returns a `StatsBase.Histogram` of the degrees of vertices in `g`.
 """
@@ -79,14 +79,14 @@ For undirected graphs, this is equivalent to `out_neighbors` and
 """
 all_neighbors(x...) = _NI("all_neighbors")
 @traitfn all_neighbors{G<:AbstractGraph; IsDirected{G}}(g::G, v::Integer) =
-  union(out_neighbors(g, v), in_neighbors(g, v))
+    union(out_neighbors(g, v), in_neighbors(g, v))
 @traitfn all_neighbors{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Integer) =
-  neighbors(g, v)
+    neighbors(g, v)
 
 
 "Returns the neighbors common to vertices `u` and `v` in `g`."
 common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
-  intersect(neighbors(g, u), neighbors(g, v))
+    intersect(neighbors(g, u), neighbors(g, v))
 
 "Returns true if `g` has any self loops."
 has_self_loops(g::AbstractGraph) = nv(g) == 0? false : any(v->has_edge(g, v, v), vertices(g))
@@ -102,6 +102,6 @@ number of possible edges ( |v| |v-1| for directed graphs and
 """
 density(G::AbstractGraph) = _NI("density")
 @traitfn density{G<:AbstractGraph; IsDirected{G}}(g::G) =
-  ne(g) / (nv(g) * (nv(g)-1))
+ne(g) / (nv(g) * (nv(g)-1))
 @traitfn density{G<:AbstractGraph; !IsDirected{G}}(g::G) =
-  (2*ne(g)) / (nv(g) * (nv(g)-1))
+(2*ne(g)) / (nv(g) * (nv(g)-1))

@@ -45,9 +45,9 @@ end
 
 # converts Graph{Int} to Graph{Int32}
 function (::Type{SimpleGraph{T}}){T<:Integer}(g::SimpleGraph)
-  h_vertices = one(T):T(nv(g))
-  h_fadj = [Vector{T}(x) for x in fadj(g)]
-  return SimpleGraph(h_vertices, ne(g), h_fadj)
+    h_vertices = one(T):T(nv(g))
+    h_fadj = [Vector{T}(x) for x in fadj(g)]
+    return SimpleGraph(h_vertices, ne(g), h_fadj)
 end
 
 
@@ -77,7 +77,8 @@ end
 
 edgetype{T<:Integer}(::SimpleGraph{T}) = SimpleGraphEdge{T}
 
-"""Returns the backwards adjacency list of a graph.
+"""
+Returns the backwards adjacency list of a graph.
 For each vertex the Array of `dst` for each edge eminating from that vertex.
 
 NOTE: returns a reference, not a copy. Do not modify result.
@@ -97,9 +98,9 @@ adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 copy(g::SimpleGraph) =  SimpleGraph(g.vertices, g.ne, deepcopy(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
-    vertices(g) == vertices(h) &&
-    ne(g) == ne(h) &&
-    fadj(g) == fadj(h)
+vertices(g) == vertices(h) &&
+ne(g) == ne(h) &&
+fadj(g) == fadj(h)
 
 
 """Return `true` if `g` is a directed graph."""
@@ -117,8 +118,8 @@ function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
 end
 
 function add_edge!(g::SimpleGraph, e::SimpleGraphEdge)
-
-    s, d = Tuple(e)
+    T = eltype(g)
+    s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
     if inserted

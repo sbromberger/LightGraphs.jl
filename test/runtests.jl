@@ -36,21 +36,13 @@ using Base.Test
 
 testdir = dirname(@__FILE__)
 
-# pdict = load(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
-# p1 = pdict["Tutte"]
-# p2 = pdict["pathdigraph"]
-#
-#
-# adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
-# adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
-# distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
-# distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
-#
-# a1 = Graph(adjmx1)
-# a2 = DiGraph(adjmx2)
-
 testgraphs(g) = (g, Graph{UInt8}(g), Graph{Int16}(g))
 testdigraphs(g) = (g, DiGraph{UInt8}(g), DiGraph{Int16}(g))
+
+# some operations will create a large graph from two smaller graphs. We
+# might error out on very small eltypes.
+testlargegraphs(g) = (g, Graph{UInt16}(g), Graph{Int32}(g))
+testlargedigraphs(g) = (g, DiGraph{UInt16}(g), DiGraph{Int32}(g))
 
 tests = [
     "interface",

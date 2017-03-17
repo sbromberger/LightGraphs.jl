@@ -7,7 +7,8 @@ type FloydWarshallState{T, U<:Integer}<:AbstractPathState
     parents::Matrix{U}
 end
 
-doc"""Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
+doc"""
+Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute shortest paths between all pairs of vertices in graph `g`. Returns a
 `FloydWarshallState` with relevant traversal information, each is a
 vertex-indexed vector of vectors containing the metric for each vertex in the

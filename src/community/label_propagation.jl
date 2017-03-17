@@ -43,9 +43,9 @@ end
 
 """Type to record neighbor labels and their counts."""
 type NeighComm{T<:Integer}
-  neigh_pos::Vector{T}
-  neigh_cnt::Vector{Int}
-  neigh_last::T
+    neigh_pos::Vector{T}
+    neigh_cnt::Vector{Int}
+    neigh_last::T
 end
 
 """Fast shuffle Array `a` in UnitRange `r` inplace."""
@@ -78,15 +78,15 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
         c.neigh_cnt[neigh_comm] += 1
         if c.neigh_cnt[neigh_comm] > max_cnt
-          max_cnt = c.neigh_cnt[neigh_comm]
+            max_cnt = c.neigh_cnt[neigh_comm]
         end
     end
     # ties breaking randomly
     range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
     for lbl in c.neigh_pos
-      if c.neigh_cnt[lbl] == max_cnt
-        return lbl
-      end
+        if c.neigh_cnt[lbl] == max_cnt
+            return lbl
+        end
     end
 end
 

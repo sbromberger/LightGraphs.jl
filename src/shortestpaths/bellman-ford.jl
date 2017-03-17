@@ -22,7 +22,7 @@ function bellman_ford_shortest_paths!{R<:Real, T<:Integer}(
     sources::AbstractVector{T},
     distmx::AbstractMatrix{R},
     state::BellmanFordState
-)
+    )
 
     active = Set{T}()
     for v in sources
@@ -71,9 +71,9 @@ function bellman_ford_shortest_paths{T, U<:Integer}(
 end
 
 bellman_ford_shortest_paths{T}(
-    graph::AbstractGraph,
-    v::Integer,
-    distmx::AbstractMatrix{T} = DefaultDistance()
+graph::AbstractGraph,
+v::Integer,
+distmx::AbstractMatrix{T} = DefaultDistance()
 ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 function has_negative_edge_cycle(graph::AbstractGraph)
@@ -108,7 +108,8 @@ end
 enumerate_paths(state::AbstractPathState, dest) = enumerate_paths(state, [dest])[1]
 enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
 
-"""Given a path state `state` of type `AbstractPathState` (see below), returns a
+"""
+Given a path state `state` of type `AbstractPathState` (see below), returns a
 vector (indexed by vertex) of the paths between the source vertex used to
 compute the path state and a destination vertex `v`, a set of destination
 vertices `vs`, or the entire graph. For multiple destination vertices, each

@@ -27,8 +27,8 @@ function a_star_impl!{T<:Number}(
                 new_path = cat(1, path, Edge(u,v))
                 path_cost = cost_so_far + dist
                 enqueue!(frontier,
-                        (path_cost, new_path, v),
-                        path_cost + heuristic(v))
+                (path_cost, new_path, v),
+                path_cost + heuristic(v))
             end
         end
         colormap[u] = 2
@@ -36,7 +36,8 @@ function a_star_impl!{T<:Number}(
     nothing
 end
 
-"""Computes the shortest path between vertices `s` and `t` using the
+"""
+Computes the shortest path between vertices `s` and `t` using the
 [A\* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm). An
 optional heuristic function and edge distance matrix may be supplied.
 """
@@ -48,7 +49,7 @@ function a_star{T<:Number}(
     distmx::AbstractMatrix{T} = LightGraphs.DefaultDistance(),
     heuristic::Function = n -> 0
     )
-            # heuristic (under)estimating distance to target
+    # heuristic (under)estimating distance to target
     U = eltype(graph)
     frontier = PriorityQueue(Tuple{T,Vector{Edge},U},T)
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)

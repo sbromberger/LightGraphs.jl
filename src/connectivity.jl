@@ -1,7 +1,5 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
-
-
 """
     connected_components!(label::Vector{Int}, g::AbstractGraph)
 
