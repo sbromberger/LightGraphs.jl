@@ -15,18 +15,18 @@ add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i=1:n])
 
 """Return the number of edges which end at vertex `v`."""
 indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
-indegree{T<:Integer}(g::AbstractGraph, v::AbstractArray{T,1} = vertices(g)) = [indegree(g,x) for x in v]
+indegree{T<:Integer}(g::AbstractGraph, v::AbstractVector{T} = vertices(g)) = [indegree(g,x) for x in v]
 
 """Return the number of edges which start at vertex `v`."""
 outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
-outdegree{T<:Integer}(g::AbstractGraph, v::AbstractArray{T,1} = vertices(g)) = [outdegree(g,x) for x in v]
+outdegree{T<:Integer}(g::AbstractGraph, v::AbstractVector{T} = vertices(g)) = [outdegree(g,x) for x in v]
 
 """
 Return the number of edges from the vertex `v`.
 For directed graphs, this value equals the incoming plus outgoing edges.
 For undirected graphs, it equals the connected edges.
 """
-degree(G::AbstractGraph, x...) = _NI("degree")
+function degree end
 @traitfn degree{G<:AbstractGraph; IsDirected{G}}(g::G, v::Integer) = indegree(g, v) + outdegree(g, v)
 @traitfn degree{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Integer) = indegree(g, v)
 
@@ -77,7 +77,7 @@ Return a list of all inbound and outbound neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to `out_neighbors` and
 `in_neighbors`.
 """
-all_neighbors(x...) = _NI("all_neighbors")
+function all_neighbors end
 @traitfn all_neighbors{G<:AbstractGraph; IsDirected{G}}(g::G, v::Integer) =
     union(out_neighbors(g, v), in_neighbors(g, v))
 @traitfn all_neighbors{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Integer) =
@@ -105,3 +105,17 @@ function density end
 ne(g) / (nv(g) * (nv(g)-1))
 @traitfn density{G<:AbstractGraph; !IsDirected{G}}(g::G) =
 (2*ne(g)) / (nv(g) * (nv(g)-1))
+
+
+"""
+Returns a copy of a graph with the smallest practical type that
+can accommodate all vertices.
+"""
+function squash(g::AbstractGraph)
+    gtype = is_directed(g)? DiGraph : Graph
+    validtypes = [UInt8, UInt16, UInt32, UInt64, Int]
+    nvg = nv(g)
+    for T in validtypes
+        nvg < typemax(T) && return gtype{T}(g)
+    end
+end

@@ -1,9 +1,4 @@
 @testset "Core" begin
-    d = DummyGraph()
-    for fn in [ degree, density, all_neighbors ]
-        @test_throws ErrorException fn(d)
-    end
-
     e2 = Edge(1,3)
     e3 = Edge(1,4)
     @test is_ordered(e2)
@@ -39,6 +34,8 @@
         @test num_self_loops(gsl) == 2
 
         @test density(g) == 0.8
+
+        @test eltype(squash(g)) == UInt8
     end
 
     g5wd = WheelDiGraph(5)
@@ -73,5 +70,6 @@
         @test num_self_loops(gsl) == 2
 
         @test density(g) == 0.4
+        @test eltype(squash(g)) == UInt8
     end
 end

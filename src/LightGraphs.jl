@@ -25,7 +25,7 @@ has_vertex, has_edge, in_neighbors, out_neighbors, empty,
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
-has_self_loops, num_self_loops, density,
+has_self_loops, num_self_loops, density, squash,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
