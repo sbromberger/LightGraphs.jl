@@ -4,7 +4,7 @@ type SimpleEdgeIter{T<:Integer} <: AbstractEdgeIter
     directed::Bool
 end
 
-immutable SimpleEdgeIterState{T<:Integer}
+struct SimpleEdgeIterState{T<:Integer}
     s::T  # src vertex
     di::Int # index into adj of dest vertex
     fin::Bool

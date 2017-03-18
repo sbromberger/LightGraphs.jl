@@ -1,6 +1,7 @@
 __precompile__(true)
-@doc "A package for using the type system to check types of graph matrices." -> LinAlg
-import Base: convert, sparse, size, scale, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
+
+
+import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
 export  convert,
 		SparseMatrix,
 		GraphMatrix,
@@ -25,13 +26,14 @@ export  convert,
 
 
 
-typealias SparseMatrix{T} SparseMatrixCSC{T,Int64}
+const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
-@doc "An abstract type to allow opertions on any type of graph matrix" ->
-abstract GraphMatrix{T}
+"""An abstract type to allow opertions on any type of graph matrix"""
+abstract type GraphMatrix{T} end
 
 
-@doc "The core Adjacency matrix structure. Keeps the vertex degrees around.
+"""
+The core Adjacency matrix structure. Keeps the vertex degrees around.
 Subtypes are used to represent the different normalizations of the adjacency matrix.
 Laplacian and its subtypes are used for the different Laplacian matrices.
 
@@ -39,11 +41,12 @@ Adjacency(lapl::Laplacian) provide a generic function for getting the
 adjacency matrix of a Laplacian matrix. If your subtype of Laplacian does not provide
 an field A for the Adjacency instance, then attach another method to this function to provide
 an Adjacency{T} representation of the Laplacian. The Adjacency matrix here
-is the final subtype that corresponds to this type of Laplacian" ->
-abstract Adjacency{T} <: GraphMatrix{T}
-abstract Laplacian{T} <: GraphMatrix
+is the final subtype that corresponds to this type of Laplacian
+"""
+abstract type Adjacency{T} <: GraphMatrix{T} end
+abstract type Laplacian{T} <: GraphMatrix{T} end
 
-@doc "Combinatorial Adjacency matrix is the standard adjacency matrix from math" ->
+"""Combinatorial Adjacency matrix is the standard adjacency matrix from math"""
 type CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 	A::S
 	D::V
@@ -55,150 +58,107 @@ function CombinatorialAdjacency{T}(A::SparseMatrix{T})
 end
 
 
-@doc "Normalized Adjacency matrix is \$\\hat{A} = D^{-1/2} A D^{-1/2}\$.
+"""
+Normalized Adjacency matrix is \$\\hat{A} = D^{-1/2} A D^{-1/2}\$.
 If A is symmetric, then the normalized adjacency is also symmetric
-with real eigenvalues bounded by [-1, 1]." ->
+with real eigenvalues bounded by [-1, 1].
+"""
 type NormalizedAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
-
-	function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1/2)
-		return new(adjmat, sf)
-	end
 end
-function NormalizedAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return NormalizedAdjacency{T}(adjmat)
+function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
+	sf = adjmat.D.^(-1/2)
+	return NormalizedAdjacency(adjmat, sf)
 end
 
-@doc "Transition matrix for the random walk." ->
+"""Transition matrix for the random walk."""
 type StochasticAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
 
-	function StochasticAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1)
-		return new(adjmat, sf)
-	end
 end
-function StochasticAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return StochasticAdjacency{T}(adjmat)
+function StochasticAdjacency(adjmat::CombinatorialAdjacency)
+	sf = adjmat.D.^(-1)
+	return StochasticAdjacency(adjmat, sf)
 end
-@doc "The matrix whos action is to average over each neighborhood." ->
+
+"""The matrix whos action is to average over each neighborhood."""
 type AveragingAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
-
-	function AveragingAdjacency(adjmat::CombinatorialAdjacency)
-		sf = adjmat.D.^(-1)
-		return new(adjmat, sf)
-	end
 end
-function AveragingAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-	return AveragingAdjacency{T}(adjmat)
+function AveragingAdjacency(adjmat::CombinatorialAdjacency)
+	sf = adjmat.D.^(-1)
+	return AveragingAdjacency(adjmat, sf)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt(adjmat.A.D)/norm(sqrt(adjmat.A.D))
+perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
 
 type PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
-
-	function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-                perron=sqrt(adjmat.D)/norm(sqrt(adjmat.D))
-                return new(NormalizedAdjacency(adjmat), perron)
-	end
+end
+function PunchedAdjacency(adjmat::CombinatorialAdjacency)
+            perron=sqrt.(adjmat.D)/norm(sqrt.(adjmat.D))
+            return PunchedAdjacency(NormalizedAdjacency(adjmat), perron)
 end
 
-function PunchedAdjacency{T}(adjmat::CombinatorialAdjacency{T})
-    return PunchedAdjacency{T}(adjmat)
-end
 perron(m::PunchedAdjacency) = m.perron
 
-@doc "Noop: a type to represent don't do anything.
-The purpose is to help write more general code for the different scaled GraphMatrix types." ->
-type Noop
+"""
+Noop: a type to represent don't do anything.
+The purpose is to help write more general code for the different scaled GraphMatrix types.
+"""
+immutable Noop
 end
 
-function .*(::Noop, x::Any)
-	return x
-end
+Base.broadcast(::typeof(*), ::Noop, x) = x
 
-function Diagonal(::Noop)
-    return Noop()
-end
+Diagonal(::Noop) = Noop()
+
+A_mul_B!(Y, A::Noop, B) = copy!(Y, B)
 
 
-function A_mul_B!(Y, A::Noop, B)
-    return copy!(Y, B)
-end
+
+==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
+
+postscalefactor(::Adjacency)= Noop()
+
+postscalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
+
+postscalefactor(adjmat::AveragingAdjacency) = adjmat.scalefactor
+
+prescalefactor(::Adjacency) = Noop()
+
+prescalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
+
+prescalefactor(adjmat::StochasticAdjacency) = adjmat.scalefactor
 
 
-function ==(g::GraphMatrix, h::GraphMatrix)
-	if typeof(g) != typeof(h)
-		return false
-	end
-	if g.A == h.A
-		return true
-	end
-end
-
-@doc "postscalefactor(M)*M.A*prescalefactor(M) == M " ->
-function postscalefactor(::Adjacency)
-	return Noop()
-end
-function postscalefactor(adjmat::NormalizedAdjacency)
-	return adjmat.scalefactor
-end
-function postscalefactor(adjmat::AveragingAdjacency)
-	return adjmat.scalefactor
-end
-
-
-@doc "postscalefactor(M)*M.A*prescalefactor(M) == M " ->
-function prescalefactor(::Adjacency)
-	return Noop()
-end
-function prescalefactor(adjmat::NormalizedAdjacency)
-	return adjmat.scalefactor
-end
-function prescalefactor(adjmat::StochasticAdjacency)
-	return adjmat.scalefactor
-end
-
-
-@doc "Combinatorial Laplacian L = D-A" ->
 type CombinatorialLaplacian{T} <: Laplacian{T}
 	A::CombinatorialAdjacency{T}
 end
 
-@doc "Normalized Laplacian is \$\\hat{L} = I - D^{-1/2} A D^{-1/2}\$.
+doc"""
+Normalized Laplacian is \$\\hat{L} = I - D^{-1/2} A D^{-1/2}\$.
 If A is symmetric, then the normalized Laplacian is also symmetric
-with positive eigenvalues bounded by 2." ->
+with positive eigenvalues bounded by 2.
+"""
 type NormalizedLaplacian{T} <: Laplacian{T}
 	A::NormalizedAdjacency{T}
 end
 
-@doc "Laplacian version of the StochasticAdjacency matrix." ->
+"""Laplacian version of the StochasticAdjacency matrix."""
 type StochasticLaplacian{T} <: Laplacian{T}
 	A::StochasticAdjacency{T}
 end
 
-@doc "Laplacian version of the AveragingAdjacency matrix." ->
+"""Laplacian version of the AveragingAdjacency matrix."""
 type AveragingLaplacian{T} <: Laplacian{T}
 	A::AveragingAdjacency{T}
 end
 
-# function passthrough{T:<GraphMatrix}(f::Function, Type{T})
-# 	f(x::Type{T}) = f(x.A)
-# end
-# eltype(A)	the type of the elements contained in A
-# length(A)	the number of elements in A
-# ndims(A)	the number of dimensions of A
-# size(A)	a tuple containing the dimensions of A
-# size(A,n)	the size of A in a particular dimension
-# stride(A,k)	the stride (linear index distance between adjacent elements) along dimension k
-# strides(A)	a tuple of the strides in each dimension
 arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
 for f in arrayfunctions
 	@eval $f(a::GraphMatrix) = $f(a.A)
@@ -207,37 +167,19 @@ end
 size(a::GraphMatrix, i::Integer) = size(a.A, i)
 issymmetric(::StochasticAdjacency) = false
 issymmetric(::AveragingAdjacency) = false
-@doc "degrees of a graph as a Vector." ->
-function degrees(adjmat::CombinatorialAdjacency)
-	return adjmat.D
-end
-function degrees(mat::GraphMatrix)
-	return degrees(adjacency(mat))
-end
 
-# function degrees(lapl::Laplacian)
-# 	return degrees(adjacency(lapl))
-# end
+"""degrees of a graph as a Vector."""
+degrees(adjmat::CombinatorialAdjacency) = adjmat.D
+degrees(mat::GraphMatrix) = degrees(adjacency(mat))
 
-function adjacency(lapl::Laplacian)
-	return lapl.A
-end
+adjacency(lapl::Laplacian) = lapl.A
+adjacency(lapl::GraphMatrix) = lapl.A
 
-function adjacency(lapl::GraphMatrix)
-	return lapl.A
-end
 
-function convert(::Type{Adjacency}, lapl::Laplacian)
-	return lapl.A
-end
+convert(::Type{Adjacency}, lapl::Laplacian) = lapl.A
+convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
+convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) = adjmat.A
 
-function convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency)
-	return adjmat.A
-end
-
-function convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency)
-	return adjmat.A
-end
 
 function sparse{M <: Laplacian}(lapl::M)
 	adjmat = adjacency(lapl)
@@ -264,35 +206,21 @@ function convert{T}(::Type{SparseMatrix{T}}, lapl::Laplacian{T})
 	return L
 end
 
-function diag(lapl::CombinatorialLaplacian)
-	d = lapl.A.D
-	return d
-end
+diag(lapl::CombinatorialLaplacian) = lapl.A.D
+diag(lapl::Laplacian) = ones(size(lapl)[2])
 
-function diag(lapl::Laplacian)
-	return ones(size(lapl)[2])
-end
+*(x::AbstractArray, ::Noop) = x
+*(::Noop, x) = x
+*{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T}) =
+	postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
 
-function *(x::AbstractArray, ::Noop)
-	  return x
-end
-function *(::Noop, x::Any)
-	  return x
-end
 
-function *{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T})
-	return  postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
-end
+*{T<:Number}(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) =
+	adjmat.A * x
 
-function *{T<:Number}(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T})
-	return  adjmat.A * x
-end
+*{T<:Number}(lapl::Laplacian{T}, x::AbstractVector{T}) =
+	(diag(lapl) .* x) - (adjacency(lapl)*x)
 
-function *{T<:Number}(lapl::Laplacian{T}, x::AbstractVector{T})
-	y = adjacency(lapl)*x
-	z = diag(lapl) .* x
-	return z - y
-end
 
 function *{T<:Number}(adjmat::PunchedAdjacency{T}, x::AbstractVector{T})
     y=adjmat.A*x
@@ -311,9 +239,7 @@ function A_mul_B!(Y, A::Adjacency, B)
     return A_mul_B!(Y, Diagonal(postscalefactor(A)), tmp)
 end
 
-function A_mul_B!(Y, A::CombinatorialAdjacency, B)
-    return A_mul_B!(Y, A.A, B)
-end
+A_mul_B!(Y, A::CombinatorialAdjacency, B) = A_mul_B!(Y, A.A, B)
 
 # You can compute the StochasticAdjacency product without allocating a similar of Y.
 # This is true for all Adjacency where the postscalefactor is a Noop
@@ -338,9 +264,11 @@ function A_mul_B!(Y, lapl::Laplacian, B)
 end
 
 
-@doc "Symmetrize the matrix.
+"""
+Symmetrize the matrix.
 :triu, :tril, :sum, :or.
-use :sum for weighted graphs."->
+use :sum for weighted graphs.
+"""
 function symmetrize(A::SparseMatrix, which=:or)
 	  if which==:or
 	      M = A + A'
@@ -361,14 +289,11 @@ function symmetrize(A::SparseMatrix, which=:or)
 	  return M
 end
 
-@doc "Only works on Adjacency because the normalizations don't commute with symmetrization"->
-function symmetrize(adjmat::CombinatorialAdjacency, which=:or)
-	# T = typeof(adjmat)
-	# @show T
-	# if T <: StochasticAdjacency || T <: AveragingAdjacency
-	# 	TypeError("StochasticAdjacency and AveragingAdjacency matrices are nonsymmetric.
-	# 		Use NormalizedAdjacency for this purpose")
-	# end
-	Aprime = symmetrize(adjmat.A, which)
-	return CombinatorialAdjacency(Aprime)
-end
+"""
+Only works on Adjacency because the normalizations don't commute with symmetrization.
+"""
+symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
+	CombinatorialAdjacency(symmetrize(adjmat.A, which))
+
+"""A package for using the type system to check types of graph matrices."""
+LinAlg

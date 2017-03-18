@@ -78,7 +78,7 @@ function auxiliaryPoints end
             r, expectedflow = intersection(r1, f1, s1, r2, f2, s2)
             f, F, cut = maximum_flow(flow_graph, source, target, capacity_matrix,
             algorithm = BoykovKolmogorovAlgorithm(), restriction = r)
-            s = slope(flow_graph, capacity_matrix, max(cut, 1), r) # current slope
+            s = slope(flow_graph, capacity_matrix, max.(cut, 1), r) # current slope
             auxpoints[λ + 1 - s] = (r, f)
             # If the flow at the intersection (middle) is as expected
             if expectedflow ≉ f # approximatively not equal (enforced by floating precision)

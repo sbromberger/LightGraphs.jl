@@ -10,10 +10,10 @@
 #
 #################################################
 
-type MaximumAdjacency <: AbstractGraphVisitAlgorithm
+struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: AbstractGraphVisitor
+abstract type AbstractMASVisitor <: AbstractGraphVisitor end
 
 function maximum_adjacency_visit_impl!{T}(
     g::AbstractGraph,                               # the graph

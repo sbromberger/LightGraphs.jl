@@ -1,4 +1,4 @@
-typealias SimpleGraphEdge SimpleEdge
+const SimpleGraphEdge = SimpleEdge
 
 """A type representing an undirected graph."""
 type SimpleGraph{T<:Integer} <: AbstractSimpleGraph

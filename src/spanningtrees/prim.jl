@@ -1,4 +1,4 @@
-immutable PrimHeapEntry{T<:Real}
+struct PrimHeapEntry{T<:Real}
     edge::Edge
     dist::T
 end

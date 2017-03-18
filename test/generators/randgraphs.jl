@@ -213,7 +213,7 @@
     bc = blockcounts(sbm, g)
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(ratios) < 0.25
+    @test norm(Array(ratios)) < 0.25
 
     sizes = [200, 200, 100]
     internaldeg = 15
@@ -229,7 +229,7 @@
     bc = blockcounts(sbm, g)
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(ratios) < 0.25
+    @test norm(Array(ratios)) < 0.25
 
     # check that average degree is not too high
     # factor of two is cushion for random process

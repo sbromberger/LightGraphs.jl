@@ -24,7 +24,7 @@ function pagerank end
     for _ in 1:n
         xlast = x
         x = α * (M * x + sum(x[is_dangling]) * dangling_weights) + (1 - α) * p
-        err = sum(abs(x - xlast))
+        err = sum(abs, (x - xlast))
         if (err < N * ϵ)
             return x
         end

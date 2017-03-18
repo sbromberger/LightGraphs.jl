@@ -1,9 +1,9 @@
 import Base: Pair, Tuple, show, ==
 import LightGraphs: AbstractEdge, src, dst, reverse
 
-abstract AbstractSimpleEdge <: AbstractEdge
+abstract type AbstractSimpleEdge <: AbstractEdge end
 
-immutable SimpleEdge{T<:Integer} <: AbstractSimpleEdge
+struct SimpleEdge{T<:Integer} <: AbstractSimpleEdge
     src::T
     dst::T
 end

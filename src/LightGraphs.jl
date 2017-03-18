@@ -137,9 +137,9 @@ include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
     include("graphtypes/simplegraph/SimpleGraphs.jl")
-    typealias Graph SimpleGraphs.SimpleGraph
-    typealias DiGraph SimpleGraphs.SimpleDiGraph
-    typealias Edge SimpleGraphs.SimpleEdge
+    const Graph = SimpleGraphs.SimpleGraph
+    const DiGraph = SimpleGraphs.SimpleDiGraph
+    const Edge = SimpleGraphs.SimpleEdge
 
     include("digraph-transitivity.jl")
         include("traversals/graphvisit.jl")

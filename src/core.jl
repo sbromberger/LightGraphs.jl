@@ -1,4 +1,4 @@
-abstract AbstractPathState
+abstract type AbstractPathState end
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
 _insert_and_dedup!{T<:Integer}(v::Vector{T}, x::T) = isempty(splice!(v, searchsorted(v,x), x))
@@ -100,7 +100,7 @@ Density is defined as the ratio of the number of actual edges to the
 number of possible edges ( |v| |v-1| for directed graphs and
 (|v| |v-1|) / 2 for undirected graphs).
 """
-density(G::AbstractGraph) = _NI("density")
+function density end
 @traitfn density{G<:AbstractGraph; IsDirected{G}}(g::G) =
 ne(g) / (nv(g) * (nv(g)-1))
 @traitfn density{G<:AbstractGraph; !IsDirected{G}}(g::G) =

@@ -1,4 +1,4 @@
-immutable KruskalHeapEntry{T<:Real}
+struct KruskalHeapEntry{T<:Real}
     edge::Edge
     dist::T
 end

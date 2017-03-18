@@ -1,6 +1,6 @@
-abstract AbstractDijkstraState<:AbstractPathState
+abstract type AbstractDijkstraState<:AbstractPathState end
 
-immutable DijkstraHeapEntry{T, U<:Integer}
+struct DijkstraHeapEntry{T, U<:Integer}
     vertex::U
     dist::T
 end

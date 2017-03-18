@@ -1,5 +1,5 @@
 import Base: convert
-typealias P Pair{Int, Int}
+const P = Pair{Int, Int}
 
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 

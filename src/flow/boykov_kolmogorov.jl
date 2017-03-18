@@ -31,7 +31,7 @@ function boykov_kolmogorov_impl end
     )
 
     T = eltype(capacity_matrix)
-U = eltype(residual_graph)
+    U = eltype(residual_graph)
 
     n = nv(residual_graph)
 

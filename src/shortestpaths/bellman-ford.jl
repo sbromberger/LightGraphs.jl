@@ -89,7 +89,7 @@ function enumerate_paths{T<:Integer}(state::AbstractPathState, dest::Vector{T})
     parents = state.parents
 
     num_dest = length(dest)
-    all_paths = Array(Vector{T},num_dest)
+    all_paths = Vector{Vector{T}}(num_dest)
     for i=1:num_dest
         all_paths[i] = Vector{T}()
         index = dest[i]

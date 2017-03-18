@@ -45,7 +45,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n*(n-1) : div(n*(n-1),2)
     if seed >= 0
         # init dsfmt generator without altering GLOBAL_RNG
-        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
+        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+0x01)
     end
     ne = rand(Binomial(m, p)) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
@@ -477,8 +477,8 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Array(Int, n*k)
-    J = Array(Int, n*k)
+    I = Vector{Int}(n*k)
+    J = Vector{Int}(n*k)
     V = fill(true, n*k)
     for r in 1:n
         l = (r-1)*k+1 : r*k

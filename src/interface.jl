@@ -3,13 +3,13 @@
 _NI(m) = error("Not implemented: $m")
 
 """A type representing a single edge between two vertices of a graph."""
-abstract AbstractEdge
+abstract type AbstractEdge end
 
 """A type representing an edge iterator"""
-abstract AbstractEdgeIter
+abstract type AbstractEdgeIter end
 
 """An abstract type representing a graph."""
-abstract AbstractGraph
+abstract type AbstractGraph end
 
 
 @traitdef IsDirected{AbstractGraph}

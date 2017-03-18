@@ -21,16 +21,18 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     gx = SimpleGraph()
 
     for g in testgraphs(gx)
-        @test sprint(show, g) == "empty undirected simple graph"
+        T = eltype(g)
+        @test sprint(show, g) == "empty undirected simple $T graph"
         add_vertices!(g, 5)
-        @test sprint(show, g) == "{5, 0} undirected simple graph"
+        @test sprint(show, g) == "{5, 0} undirected simple $T graph"
 
     end
     gx = SimpleDiGraph()
     for g in testdigraphs(gx)
-        @test sprint(show, g) == "empty directed simple graph"
+        T = eltype(g)
+        @test sprint(show, g) == "empty directed simple $T graph"
         add_vertices!(g, 5)
-        @test sprint(show, g) == "{5, 0} directed simple graph"
+        @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
     gx = PathGraph(4)

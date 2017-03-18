@@ -3,7 +3,7 @@
 
 # The concept and trivial implementation of graph visitors
 
-abstract AbstractGraphVisitor
+abstract type AbstractGraphVisitor end
 
 # trivial implementation
 
@@ -21,17 +21,17 @@ examine_neighbor!(vis::AbstractGraphVisitor, u, v, ucolor::Int, vcolor::Int, eco
 close_vertex!(vis::AbstractGraphVisitor, v) = true
 
 
-type TrivialGraphVisitor <: AbstractGraphVisitor
+struct TrivialGraphVisitor <: AbstractGraphVisitor
 end
 
 
 # This is the common base for BreadthFirst and DepthFirst
-abstract AbstractGraphVisitAlgorithm
+abstract type AbstractGraphVisitAlgorithm end
 
-typealias AbstractEdgeMap{T} Associative{Edge,T}
-typealias AbstractVertexMap{T<:Integer, U} Union{AbstractVector{T},Associative{T, U}}
+const AbstractEdgeMap{T} = Associative{Edge,T}
+const AbstractVertexMap{T<:Integer, U} = Union{AbstractVector{T},Associative{T, U}}
 
-type DummyEdgeMap <: AbstractEdgeMap{Int}
+struct DummyEdgeMap <: AbstractEdgeMap{Int}
 end
 
 getindex(d::DummyEdgeMap, e::Edge) = 0

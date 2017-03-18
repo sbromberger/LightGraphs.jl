@@ -152,10 +152,10 @@ function spectral_distance end
     λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
     λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
 
-    sumabs(λ₁ - λ₂)
+    return sum(abs, (λ₁ - λ₂))
 end
 
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
     @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
-    spectral_distance(G₁, G₂, nv(G₁))
+    return spectral_distance(G₁, G₂, nv(G₁))
 end

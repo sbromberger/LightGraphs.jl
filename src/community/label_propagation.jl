@@ -11,7 +11,7 @@ function label_propagation(g::AbstractGraph; maxiter=1000)
     active_nodes = IntSet(vertices(g))
     c = NeighComm(collect(one(T):n), fill(-1,n), one(T))
     convergence_hist = Vector{Int}()
-    random_order = Array(T, n)
+    random_order = Vector{T}(n)
     i = 0
     while !isempty(active_nodes) && i < maxiter
         num_active = length(active_nodes)

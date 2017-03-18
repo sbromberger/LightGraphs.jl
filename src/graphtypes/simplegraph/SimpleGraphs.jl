@@ -22,9 +22,7 @@ AbstractSimpleGraphs must have the following elements:
 - fadjlist::Vector{Vector{Integer}}
 - ne::Integer
 """
-abstract AbstractSimpleGraph <: AbstractGraph
-
-
+abstract type AbstractSimpleGraph <: AbstractGraph end
 
 function show(io::IO, g::AbstractSimpleGraph)
     if is_directed(g)
@@ -33,9 +31,9 @@ function show(io::IO, g::AbstractSimpleGraph)
         dir = "undirected"
     end
     if nv(g) == 0
-        print(io, "empty $dir simple graph")
+        print(io, "empty $dir simple $(eltype(g)) graph")
     else
-        print(io, "{$(nv(g)), $(ne(g))} $dir simple graph")
+        print(io, "{$(nv(g)), $(ne(g))} $dir simple $(eltype(g)) graph")
     end
 end
 
@@ -50,6 +48,7 @@ fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 badj(x...) = _NI("badj")
 
 has_edge(g::AbstractSimpleGraph, u::Integer, v::Integer) = has_edge(g, edgetype(g)(u,v))
+
 function add_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
     T = eltype(g)
     add_edge!(g, edgetype(g)(T(u),T(v)))
@@ -57,7 +56,6 @@ end
 
 in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g,v)
 out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g,v)
-
 
 function issubset{T<:AbstractSimpleGraph}(g::T, h::T)
     (gmin, gmax) = extrema(vertices(g))
