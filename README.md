@@ -30,7 +30,8 @@ Additional functionality may be found in the companion package [LightGraphsExtra
 
 ## Documentation
 Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
-Documentation for methods is also available via the Julia REPL help system.
+Documentation for methods is also available via the Julia REPL help system. Additional IJulia tutorials can be
+found at the [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials) repository.
 
 ## Core Concepts
 A graph *G* is described by a set of vertices *V* and edges *E*:
