@@ -15,7 +15,7 @@ end
 """
 Articulations: a state type for the Depth first search that finds the articulation points in a graph.
 """
-type Articulations{T<:Integer}
+mutable struct Articulations{T<:Integer}
     low::Vector{T}
     depth::Vector{T}
     articulation_points::BitArray

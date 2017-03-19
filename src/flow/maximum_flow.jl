@@ -30,7 +30,7 @@ end
 """
 Type that returns 1 if a forward edge exists, and 0 otherwise
 """
-type DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
+struct DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
     flow_graph::DiGraph
     nv::T
 end

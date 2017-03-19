@@ -147,6 +147,7 @@ end
 
 """Add a new vertex to the graph `g`."""
 function add_vertex!{T<:Integer}(g::SimpleGraph{T})
+    (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     g.vertices = one(T):nv(g)+one(T)
     push!(g.fadjlist, Vector{T}())
 

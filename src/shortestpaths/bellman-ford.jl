@@ -9,10 +9,10 @@
 #
 ###################################################################
 
-type NegativeCycleError <: Exception end
+struct NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
-type BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
+struct BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end

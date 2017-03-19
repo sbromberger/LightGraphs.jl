@@ -77,7 +77,7 @@ end
 #
 #################################################
 
-type MinCutVisitor{T, U<:Integer} <: AbstractMASVisitor
+mutable struct MinCutVisitor{T, U<:Integer} <: AbstractMASVisitor
     graph::AbstractGraph
     parities::BitVector
     colormap::Vector{Int}
@@ -144,7 +144,7 @@ end
 #
 #################################################
 
-type MASVisitor{T, U<:Integer} <: AbstractMASVisitor
+struct MASVisitor{T, U<:Integer} <: AbstractMASVisitor
     io::IO
     vertices::Vector{U}
     distmx::AbstractMatrix{T}

@@ -572,7 +572,7 @@ block k and any vertex in block `l`.
 We are generating the graphs by taking random `i,j in vertices(g)` and
 flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
-type StochasticBlockModel{T<:Integer,P<:Real}
+mutable struct StochasticBlockModel{T<:Integer,P<:Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}

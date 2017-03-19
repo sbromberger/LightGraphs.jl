@@ -47,7 +47,7 @@ get(d::DummyEdgeMap, e::Edge, x::Int) = x
 
 # List vertices by the order of being discovered
 
-type VertexListVisitor{T<:Integer} <: AbstractGraphVisitor
+struct VertexListVisitor{T<:Integer} <: AbstractGraphVisitor
     vertices::Vector{T}
 end
 
@@ -75,7 +75,7 @@ end
 
 # Print visit log
 
-type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
+struct LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
 end
 

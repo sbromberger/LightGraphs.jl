@@ -47,7 +47,7 @@ abstract type Adjacency{T} <: GraphMatrix{T} end
 abstract type Laplacian{T} <: GraphMatrix{T} end
 
 """Combinatorial Adjacency matrix is the standard adjacency matrix from math"""
-type CombinatorialAdjacency{T,S,V} <: Adjacency{T}
+struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 	A::S
 	D::V
 end
@@ -63,7 +63,7 @@ Normalized Adjacency matrix is \$\\hat{A} = D^{-1/2} A D^{-1/2}\$.
 If A is symmetric, then the normalized adjacency is also symmetric
 with real eigenvalues bounded by [-1, 1].
 """
-type NormalizedAdjacency{T} <: Adjacency{T}
+struct NormalizedAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
 end
@@ -73,7 +73,7 @@ function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
 end
 
 """Transition matrix for the random walk."""
-type StochasticAdjacency{T} <: Adjacency{T}
+struct StochasticAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
 
@@ -84,7 +84,7 @@ function StochasticAdjacency(adjmat::CombinatorialAdjacency)
 end
 
 """The matrix whos action is to average over each neighborhood."""
-type AveragingAdjacency{T} <: Adjacency{T}
+struct AveragingAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
 end
@@ -95,7 +95,7 @@ end
 
 perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
 
-type PunchedAdjacency{T} <: Adjacency{T}
+struct PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
 end
@@ -110,8 +110,7 @@ perron(m::PunchedAdjacency) = m.perron
 Noop: a type to represent don't do anything.
 The purpose is to help write more general code for the different scaled GraphMatrix types.
 """
-immutable Noop
-end
+struct Noop end
 
 Base.broadcast(::typeof(*), ::Noop, x) = x
 
@@ -136,7 +135,7 @@ prescalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
 prescalefactor(adjmat::StochasticAdjacency) = adjmat.scalefactor
 
 
-type CombinatorialLaplacian{T} <: Laplacian{T}
+struct CombinatorialLaplacian{T} <: Laplacian{T}
 	A::CombinatorialAdjacency{T}
 end
 
@@ -145,17 +144,17 @@ Normalized Laplacian is \$\\hat{L} = I - D^{-1/2} A D^{-1/2}\$.
 If A is symmetric, then the normalized Laplacian is also symmetric
 with positive eigenvalues bounded by 2.
 """
-type NormalizedLaplacian{T} <: Laplacian{T}
+struct NormalizedLaplacian{T} <: Laplacian{T}
 	A::NormalizedAdjacency{T}
 end
 
 """Laplacian version of the StochasticAdjacency matrix."""
-type StochasticLaplacian{T} <: Laplacian{T}
+struct StochasticLaplacian{T} <: Laplacian{T}
 	A::StochasticAdjacency{T}
 end
 
 """Laplacian version of the AveragingAdjacency matrix."""
-type AveragingLaplacian{T} <: Laplacian{T}
+struct AveragingLaplacian{T} <: Laplacian{T}
 	A::AveragingAdjacency{T}
 end
 

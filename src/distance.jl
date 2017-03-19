@@ -2,7 +2,7 @@
 # has_distances{T}(distmx::AbstractArray{T,2}) =
 #     issparse(distmx)? (nnz(distmx) > 0) : !isempty(distmx)
 
-type DefaultDistance<:AbstractArray{Int, 2}
+struct DefaultDistance<:AbstractArray{Int, 2}
     nv::Int
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end

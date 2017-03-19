@@ -2,7 +2,7 @@
 # licensing details.
 
 
-type FloydWarshallState{T, U<:Integer}<:AbstractPathState
+struct FloydWarshallState{T, U<:Integer}<:AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end

@@ -1,6 +1,6 @@
 importall LightGraphs.SimpleGraphs
 import LightGraphs.SimpleGraphs: fadj, badj, adj
-type DummySimpleGraph <: AbstractSimpleGraph end
+struct DummySimpleGraph <: AbstractSimpleGraph end
 @testset "SimpleGraphs" begin
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
@@ -17,15 +17,19 @@ type DummySimpleGraph <: AbstractSimpleGraph end
     @test ne(SimpleDiGraph(PathGraph(5))) == 8
     @test is_directed(SimpleDiGraph)
 
+
+    for gbig in [Graph(0xff), DiGraph(0xff)]
+        @test !add_vertex!(gbig)    # overflow
+        @test !add_vertices!(gbig, 10)
+    end
+
     gdx = PathDiGraph(4)
     gx = SimpleGraph()
-
     for g in testgraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "empty undirected simple $T graph"
         add_vertices!(g, 5)
         @test sprint(show, g) == "{5, 0} undirected simple $T graph"
-
     end
     gx = SimpleDiGraph()
     for g in testdigraphs(gx)

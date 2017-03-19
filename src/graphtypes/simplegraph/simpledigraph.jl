@@ -1,7 +1,7 @@
 const SimpleDiGraphEdge = SimpleEdge
 
 """A type representing a directed graph."""
-type SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
+mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
     vertices::UnitRange{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
@@ -130,6 +130,7 @@ end
 
 
 function add_vertex!{T<:Integer}(g::SimpleDiGraph{T})
+    (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     g.vertices = 1:nv(g)+1
     push!(g.badjlist, Vector{T}())
     push!(g.fadjlist, Vector{T}())

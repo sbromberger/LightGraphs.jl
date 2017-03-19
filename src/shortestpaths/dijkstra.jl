@@ -7,7 +7,7 @@ end
 
 isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
-type DijkstraState{T, U<:Integer}<: AbstractDijkstraState
+struct DijkstraState{T, U<:Integer}<: AbstractDijkstraState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}

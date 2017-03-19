@@ -61,7 +61,7 @@ for computed eigenvectors and conducting linear solves.
 Additionally the contract!(vertexspace, nbt, edgespace) method takes vectors represented in
 the domain of B and represents them in the domain of the adjacency matrix of g.
 """
-type Nonbacktracking{G}
+struct Nonbacktracking{G}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int

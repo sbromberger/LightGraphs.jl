@@ -21,7 +21,7 @@ repeatedly in an attempt to improve performance.
 
 This type has not been tested with mmaped files or compression in JLD.
 """
-type GraphSerializer
+mutable struct GraphSerializer
     vertices::UnitRange{Int}
     ne::Int
     packed_adjlist::Vector{Int}
@@ -68,7 +68,7 @@ function JLD.readas(gs::GraphSerializer)
     return g
 end
 
-type Network{G,V,E}
+mutable struct Network{G,V,E}
     graph::G
     vprop::Vector{V}
     eprop::Dict{Edge,E}
