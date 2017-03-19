@@ -20,7 +20,7 @@ EdgeColorMap :
 - color == 1     => examined
 """
 
-type BreadthFirst <: AbstractGraphVisitAlgorithm
+mutable struct BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!{T<:Integer}(
@@ -89,7 +89,7 @@ end
 """TreeBFSVisitorVector is a type for representing a BFS traversal
 of the graph as a parents array. This type allows for a more performant implementation.
 """
-type TreeBFSVisitorVector{T<:Integer} <: AbstractGraphVisitor
+mutable struct TreeBFSVisitorVector{T<:Integer} <: AbstractGraphVisitor
     tree::Vector{T}
 end
 
@@ -154,7 +154,7 @@ end
 # Connected Components with BFS            #
 ############################################
 """Performing connected components with BFS starting from seed"""
-type ComponentVisitorVector{T<:Integer} <: AbstractGraphVisitor
+mutable struct ComponentVisitorVector{T<:Integer} <: AbstractGraphVisitor
     labels::Vector{T}
     seed::T
 end
@@ -170,7 +170,7 @@ end
 ############################################
 # Test graph for bipartiteness             #
 ############################################
-type BipartiteVisitor <: AbstractGraphVisitor
+mutable struct BipartiteVisitor <: AbstractGraphVisitor
     bipartitemap::Vector{UInt8}
     is_bipartite::Bool
 end

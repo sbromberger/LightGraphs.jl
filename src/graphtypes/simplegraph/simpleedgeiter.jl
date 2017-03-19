@@ -1,4 +1,4 @@
-type SimpleEdgeIter{T<:Integer} <: AbstractEdgeIter
+mutable struct SimpleEdgeIter{T<:Integer} <: AbstractEdgeIter
     m::Int
     adj::Vector{Vector{T}}
     directed::Bool

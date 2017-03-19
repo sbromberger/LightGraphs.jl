@@ -1,7 +1,7 @@
 const SimpleGraphEdge = SimpleEdge
 
 """A type representing an undirected graph."""
-type SimpleGraph{T<:Integer} <: AbstractSimpleGraph
+mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph
     vertices::UnitRange{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)

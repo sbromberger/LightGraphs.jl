@@ -1,4 +1,4 @@
-type DummyGraph <: AbstractGraph end
+mutable struct DummyGraph <: AbstractGraph end
 type DummyDiGraph <: AbstractGraph end
 type DummyEdge <: AbstractEdge end
 

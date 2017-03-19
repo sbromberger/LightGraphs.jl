@@ -1,7 +1,7 @@
 """
 Biconnections: A state type for Depth First Search that finds the biconnected components
 """
-type Biconnections
+mutable struct Biconnections
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{Edge}

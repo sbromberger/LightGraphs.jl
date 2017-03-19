@@ -113,7 +113,7 @@ function is_weakly_connected end
 @traitfn is_weakly_connected{G<:AbstractGraph; IsDirected{G}}(g::G) = length(weakly_connected_components(g)) == 1
 
 # Adapated from Graphs.jl
-type TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
+mutable struct TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
     stack::Vector{T}
     onstack::BitVector
     lowlink::Vector{T}
@@ -251,7 +251,7 @@ function attracting_components end
     return scc[attracting]
 end
 
-type NeighborhoodVisitor{T<:Integer} <: AbstractGraphVisitor
+mutable struct NeighborhoodVisitor{T<:Integer} <: AbstractGraphVisitor
     d::T
     neigs::Vector{T}
 end
