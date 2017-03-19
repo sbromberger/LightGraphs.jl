@@ -1,4 +1,5 @@
 import Base: convert
+
 const P = Pair{Int, Int}
 
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
