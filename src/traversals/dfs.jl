@@ -25,7 +25,7 @@ type DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function depth_first_visit_impl!(
-    graph::AbstractGraph,      # the graph
+    g::AbstractGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
     edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
@@ -53,7 +53,7 @@ function depth_first_visit_impl!(
                 push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
-                vdsts = out_neighbors(graph, v)
+                vdsts = out_neighbors(g, v)
                 push!(stack, (v, vdsts, start(vdsts)))
             end
         end
@@ -151,14 +151,14 @@ function close_vertex!(visitor::TopologicalSortVisitor, v::Integer)
     push!(visitor.vertices, v)
 end
 
-function topological_sort_by_dfs(graph::AbstractGraph)
-    nvg = nv(graph)
+function topological_sort_by_dfs(g::AbstractGraph)
+    nvg = nv(g)
     cmap = zeros(Int, nvg)
     visitor = TopologicalSortVisitor(nvg)
 
-    for s in vertices(graph)
+    for s in vertices(g)
         if cmap[s] == 0
-            traverse_graph!(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(g, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
     end
 

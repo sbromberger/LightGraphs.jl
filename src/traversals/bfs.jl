@@ -24,7 +24,7 @@ type BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!{T<:Integer}(
-    graph::AbstractGraph,                 # the graph
+    g::AbstractGraph,                 # the graph
     queue::Vector{T},                 # an (initialized) queue that stores the active vertices
     vertexcolormap::AbstractVertexMap,   # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
     edgecolormap::AbstractEdgeMap,        # an (initialized) color-map to indicate status of edges
@@ -37,7 +37,7 @@ function breadth_first_visit_impl!{T<:Integer}(
         open_vertex!(visitor, u)
         u_color = vertexcolormap[u]
 
-        for v in fneig(graph, u)
+        for v in fneig(g, u)
             v_color = get(vertexcolormap, v, 0)
             v_edge = Edge(u,v)
             e_color = get(edgecolormap, v_edge, 0)
@@ -55,13 +55,13 @@ function breadth_first_visit_impl!{T<:Integer}(
 end
 
 function traverse_graph!(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     alg::BreadthFirst,
     source,
     visitor::AbstractGraphVisitor;
-    vertexcolormap::AbstractVertexMap = Dict{eltype(graph), Int}(),
+    vertexcolormap::AbstractVertexMap = Dict{eltype(g), Int}(),
     edgecolormap::AbstractEdgeMap = DummyEdgeMap(),
-    queue = Vector{eltype(graph)}(),
+    queue = Vector{eltype(g)}(),
     dir = :out)
 
     for s in source
@@ -70,7 +70,7 @@ function traverse_graph!(
         push!(queue, s)
     end
 
-    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap
+    breadth_first_visit_impl!(g, queue, vertexcolormap, edgecolormap
             , visitor, dir)
 end
 
@@ -100,7 +100,7 @@ end
 """tree converts a parents array into a DiGraph"""
 function tree{T<:Integer}(parents::AbstractVector{T})
     n = T(length(parents))
-    t = DiGraph{T}(n)
+    t = DiGraph(n)
     for i in one(T):n
         parent = parents[i]
         if parent > zero(T)  && parent != i

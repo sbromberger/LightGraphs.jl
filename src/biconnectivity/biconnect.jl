@@ -9,7 +9,7 @@ type Biconnections
     id::Int
 end
 
-function Biconnections(g::AbstractGraph)
+@traitfn function Biconnections{G<:AbstractGraph; !IsDirected{G}}(g::G)
     n = nv(g)
     return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
 end
@@ -19,7 +19,8 @@ Computes the biconnected components of an undirected graph `g`
 and returns a Vector of vectors containing each biconnected component.
 (https://en.wikipedia.org/wiki/Biconnected_component).It's a DFS based linear time algorithm.
 """
-function biconnected_components(g::Graph)
+function biconnected_components end
+@traitfn function biconnected_components{G<:AbstractGraph; !IsDirected{G}}(g::G)
     state = Biconnections(g)
     for u in vertices(g)
         if state.depth[u] == 0
@@ -37,7 +38,7 @@ end
 """
 Does a DFS visit and stores the depth and low-points of each vertex
 """
-function visit!(g::Graph, state::Biconnections, u::Integer, v::Integer)
+function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     children = 0
     state.id += 1
     state.depth[v] = state.id
