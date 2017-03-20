@@ -15,8 +15,19 @@
       @test z.dists == [typemax(Int), 0, 1, 2, 3]
     end
 
+    # Negative Cycle
     gx = CompleteGraph(3)
-    d = [1 -3 1; -3 1 1; 1 1 1]
+    for g in testgraphs(gx)
+        d = [1 -3 1; -3 1 1; 1 1 1]
+        @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(g, 1, d)
+
+        d = [1 -1 1; -1 1 1; 1 1 1]
+        @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(g, 1, d)
+    end
+
+    # Negative cycle of length 3 in graph of diameter 4
+    gx = CompleteGraph(4)
+    d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
     for g in testgraphs(gx)
         @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(g, 1, d)
     end
