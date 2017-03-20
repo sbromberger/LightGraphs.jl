@@ -17,12 +17,12 @@ struct BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
     dists::Vector{T}
 end
 
-function bellman_ford_shortest_paths!{R<:Real, T<:Integer}(
+function bellman_ford_shortest_paths!(
     graph::AbstractGraph,
     sources::AbstractVector{T},
     distmx::AbstractMatrix{R},
     state::BellmanFordState
-    )
+    ) where R<:Real where T<:Integer
 
     active = Set{T}()
     for v in sources
@@ -59,22 +59,21 @@ to compute shortest paths between a source vertex `s` or a set of source
 vertices `ss`. Returns a `BellmanFordState` with relevant traversal information
 (see below).
 """
-function bellman_ford_shortest_paths{T, U<:Integer}(
+function bellman_ford_shortest_paths(
     graph::AbstractGraph,
-
     sources::AbstractVector{U},
     distmx::AbstractMatrix{T} = DefaultDistance()
-    )
+    ) where T where U<:Integer
     nvg = nv(graph)
     state = BellmanFordState(zeros(U,nvg), fill(typemax(T), nvg))
     bellman_ford_shortest_paths!(graph, sources, distmx, state)
 end
 
-bellman_ford_shortest_paths{T}(
-graph::AbstractGraph,
-v::Integer,
-distmx::AbstractMatrix{T} = DefaultDistance()
-) = bellman_ford_shortest_paths(graph, [v], distmx)
+bellman_ford_shortest_paths(
+    graph::AbstractGraph,
+    v::Integer,
+    distmx::AbstractMatrix = DefaultDistance()
+    ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 function has_negative_edge_cycle(graph::AbstractGraph)
     try
@@ -85,7 +84,7 @@ function has_negative_edge_cycle(graph::AbstractGraph)
     return false
 end
 
-function enumerate_paths{T<:Integer}(state::AbstractPathState, dest::Vector{T})
+function enumerate_paths(state::AbstractPathState, dest::Vector{T}) where T<:Integer
     parents = state.parents
 
     num_dest = length(dest)

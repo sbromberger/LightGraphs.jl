@@ -59,7 +59,7 @@ function floyd_warshall_shortest_paths{T}(
     return fws
 end
 
-function enumerate_paths{T, U<:Integer}(s::FloydWarshallState{T, U}, v::Integer)
+function enumerate_paths(s::FloydWarshallState{T, U}, v::Integer) where T where U<:Integer
     pathinfo = s.parents[v,:]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

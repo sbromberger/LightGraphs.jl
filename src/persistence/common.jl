@@ -81,7 +81,7 @@ For some graph formats, multiple graphs in a  `dict` `"name"=>g` can be saved in
 
 Returns the number of graphs written.
 """
-function save{T<:AbstractGraph}(io::IO, g::T, gname::String, t::Symbol=:lg)
+function save(io::IO, g::AbstractGraph, gname::String, t::Symbol=:lg)
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][3](io, g, gname)
 end
@@ -91,7 +91,7 @@ save(io::IO, g::AbstractGraph, t::Symbol=:lg) =
   save(io, g, is_directed(g)? "digraph" : "graph", t)
 
 # save a dictionary of graphs {"name" => graph}
-function save{T<:String, U<:AbstractGraph}(io::IO, d::Dict{T, U}, t::Symbol=:lg)
+function save(io::IO, d::Dict{T, U}, t::Symbol=:lg) where T<:AbstractString where U<:AbstractGraph
     t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
     return filemap[t][4](io, d)
 end

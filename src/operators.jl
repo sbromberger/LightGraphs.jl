@@ -68,7 +68,7 @@ Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function blkdiag{T<:AbstractGraph}(g::T, h::T)
+function blkdiag(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -88,7 +88,7 @@ Produces a graph with edges that are only in both graph `g` and graph `h`.
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
-function intersect{T<:AbstractGraph}(g::T, h::T)
+function intersect(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -107,7 +107,7 @@ Produces a graph with edges in graph `g` that are not in graph `h`.
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
-function difference{T<:AbstractGraph}(g::T, h::T)
+function difference(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -128,7 +128,7 @@ Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
+function symmetric_difference(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -149,7 +149,7 @@ Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function union{T<:AbstractGraph}(g::T, h::T)
+function union(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -176,7 +176,7 @@ the vertices in `g` and those in `h`.
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function join{T<:AbstractGraph}(g::T, h::T)
+function join(g::T, h::T) where T<:AbstractGraph
     r = blkdiag(g, h)
     for i in vertices(g)
         for j=nv(g)+1:nv(g)+nv(h)
@@ -195,7 +195,7 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function crosspath end
-@traitfn function crosspath{G<:AbstractGraph; !IsDirected{G}}(len::Integer, g::G)
+@traitfn function crosspath(len::Integer, g::::(!IsDirected))
     T = eltype(g)
     p = PathGraph(len)
     h = Graph{T}(p)
@@ -206,7 +206,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
 # """
-function *{T<:Real}(g::Graph, v::Vector{T})
+function *(g::Graph, v::Vector{T}) where T<:Real
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -218,7 +218,7 @@ function *{T<:Real}(g::Graph, v::Vector{T})
     return y
 end
 
-function *{T<:Real}(g::DiGraph, v::Vector{T})
+function *(g::DiGraph, v::Vector{T}) where T<:Real
     length(v) == nv(g) || error("Vector size must equal number of vertices")
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -260,7 +260,7 @@ Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function cartesian_product{G<:AbstractGraph}(g::G, h::G)
+function cartesian_product(g::G, h::G) where G<:AbstractGraph
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
     for e in edges(g)
@@ -286,7 +286,7 @@ Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_gra
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function tensor_product{G<:AbstractGraph}(g::G, h::G)
+function tensor_product(g::G, h::G) where G<:AbstractGraph
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
     for e1 in edges(g)
@@ -338,7 +338,7 @@ sg, vmap = subgraph(g, elist)
 @assert sg == g[elist]
 ```
 """
-function induced_subgraph{T<:AbstractGraph, U<:Integer}(g::T, vlist::AbstractVector{U})
+function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph where U<:Integer
     allunique(vlist) || error("Vertices in subgraph list must be unique")
     h = T(length(vlist))
     newvid = Dict{U, U}()
@@ -362,7 +362,7 @@ function induced_subgraph{T<:AbstractGraph, U<:Integer}(g::T, vlist::AbstractVec
 end
 
 
-function induced_subgraph{T<:AbstractGraph, U<:AbstractEdge}(g::T, elist::AbstractVector{U})
+function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
     h = empty(g)
     et = eltype(h)
     newvid = Dict{et, et}()

@@ -23,8 +23,8 @@ capacity_matrix::AbstractMatrix        # edge flow capacities
 Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function boykov_kolmogorov_impl end
-@traitfn function boykov_kolmogorov_impl{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,          # the input graph
+@traitfn function boykov_kolmogorov_impl(
+    residual_graph::::IsDirected,          # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix    # edge flow capacities
@@ -63,8 +63,8 @@ function boykov_kolmogorov_impl end
     return flow, flow_matrix, TREE
 end
 
-@traitfn function find_path!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,            # the input graph
+@traitfn function find_path!(
+    residual_graph::::IsDirected,            # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix
@@ -157,8 +157,8 @@ function augment!(
     return Δ
 end
 
-@traitfn function adopt!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function adopt!(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                             # the source vertex
     target::Integer,                             # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix

@@ -3,12 +3,12 @@
 
 # A* shortest-path algorithm
 
-function a_star_impl!{T<:Number}(
+function a_star_impl!(
     graph::AbstractGraph,# the graph
     t::Integer, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
-    distmx::AbstractMatrix{T},
+    distmx::AbstractMatrix,
     heuristic::Function    # heuristic fn (under)estimating distance to target
     )
 
@@ -41,14 +41,14 @@ Computes the shortest path between vertices `s` and `t` using the
 [A\* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm). An
 optional heuristic function and edge distance matrix may be supplied.
 """
-function a_star{T<:Number}(
+function a_star(
     graph::AbstractGraph,  # the graph
 
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
     distmx::AbstractMatrix{T} = LightGraphs.DefaultDistance(),
     heuristic::Function = n -> 0
-    )
+    ) where T
     # heuristic (under)estimating distance to target
     U = eltype(graph)
     frontier = PriorityQueue(Tuple{T,Vector{Edge},U},T)

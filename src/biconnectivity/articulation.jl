@@ -2,7 +2,7 @@
 Computes the articulation points(https://en.wikipedia.org/wiki/Biconnected_component)
 of a connected graph `g` and returns an array containing all cut vertices.
 """
-function articulation(g::AbstractGraph) :: AbstractArray
+function articulation(g::AbstractGraph)
     state = Articulations(g)
     for u in vertices(g)
         if state.depth[u] == 0

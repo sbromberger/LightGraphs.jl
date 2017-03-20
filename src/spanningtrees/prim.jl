@@ -11,12 +11,11 @@ on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
 and computes minimum spanning tree. Returns a `Vector{Edge}`,
 that contains the edges.
 """
-function prim_mst{T<:Real}(
+function prim_mst(
     g::AbstractGraph,
-    distmx::AbstractMatrix{T} = DefaultDistance()
-    ) :: Vector{Edge}
-
-    pq = Vector{PrimHeapEntry{T}}()
+    distmx::AbstractMatrix = DefaultDistance()
+    )
+    pq = Vector{PrimHeapEntry}()
     mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
@@ -43,12 +42,12 @@ end
 Used to mark the visited vertices. Marks the vertex `v` of graph `g` true in the array `marked`
 and enters all its edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
-function visit!{T<:Real}(
+function visit!(
     g::AbstractGraph,
     v::Integer,
-    marked::AbstractArray{Bool, 1},
-    pq::Vector{PrimHeapEntry{T}},
-    distmx::AbstractMatrix{T}
+    marked::AbstractVector{Bool},
+    pq::AbstractVector,
+    distmx::AbstractMatrix
 )
     marked[v] = true
     for w in out_neighbors(g, v)

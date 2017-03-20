@@ -27,10 +27,10 @@ For directed graphs, this value equals the incoming plus outgoing edges.
 For undirected graphs, it equals the connected edges.
 """
 function degree end
-@traitfn degree{G<:AbstractGraph; IsDirected{G}}(g::G, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Integer) = indegree(g, v)
+@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
+@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
 
-degree{T<:Integer}(g::AbstractGraph, v::AbstractArray{T,1} = vertices(g)) = [degree(g, x) for x in v]
+degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
 
 "Return the maximum `outdegree` of vertices in `g`."
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
@@ -78,9 +78,9 @@ For undirected graphs, this is equivalent to `out_neighbors` and
 `in_neighbors`.
 """
 function all_neighbors end
-@traitfn all_neighbors{G<:AbstractGraph; IsDirected{G}}(g::G, v::Integer) =
+@traitfn all_neighbors(g::::IsDirected, v::Integer) =
     union(out_neighbors(g, v), in_neighbors(g, v))
-@traitfn all_neighbors{G<:AbstractGraph; !IsDirected{G}}(g::G, v::Integer) =
+@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
     neighbors(g, v)
 
 
@@ -101,9 +101,9 @@ number of possible edges ( |v| |v-1| for directed graphs and
 (|v| |v-1|) / 2 for undirected graphs).
 """
 function density end
-@traitfn density{G<:AbstractGraph; IsDirected{G}}(g::G) =
+@traitfn density(g::::IsDirected) =
 ne(g) / (nv(g) * (nv(g)-1))
-@traitfn density{G<:AbstractGraph; !IsDirected{G}}(g::G) =
+@traitfn density(g::::(!IsDirected)) =
 (2*ne(g)) / (nv(g) * (nv(g)-1))
 
 

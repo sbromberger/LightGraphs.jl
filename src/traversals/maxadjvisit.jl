@@ -199,7 +199,7 @@ displayed.
 """
 function maximum_adjacency_visit{T}(
     g::AbstractGraph,
-    distmx::AbstractArray{T, 2},
+    distmx::AbstractMatrix{T},
     log::Bool,
     io::IO
 )

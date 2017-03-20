@@ -2,7 +2,7 @@
 # STATIC SMALL GRAPHS
 #####################
 
-function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
+function _make_simple_undirected_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
     g = Graph(n)
     for (s,d) in edgelist
         add_edge!(g, Edge(s,d))
@@ -10,7 +10,7 @@ function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{
     return g
 end
 
-function _make_simple_directed_graph{T<:Integer}(n::T, edgelist::Vector{Tuple{T,T}})
+function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
     g = DiGraph(n)
     for (s,d) in edgelist
         add_edge!(g, Edge(s,d))

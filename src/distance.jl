@@ -1,8 +1,6 @@
 # used in shortest path calculations
-# has_distances{T}(distmx::AbstractArray{T,2}) =
-#     issparse(distmx)? (nnz(distmx) > 0) : !isempty(distmx)
 
-struct DefaultDistance<:AbstractArray{Int, 2}
+struct DefaultDistance<:AbstractMatrix{Int}
     nv::Int
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end
@@ -33,47 +31,45 @@ provided, it will be used. Otherwise, an eccentricity vector will be calculated
 for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
 """
-function eccentricity{T, U<:Integer}(
+function eccentricity(
     g::AbstractGraph,
-    v::U,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
-)
+    v::Integer,
+    distmx::AbstractMatrix{T} = DefaultDistance()
+) where T
     e = maximum(dijkstra_shortest_paths(g,v,distmx).dists)
     e == typemax(T) && error("Infinite path length detected")
 
     return e
 end
 
-eccentricity{T, U<:Integer}(
+eccentricity(
     g::AbstractGraph,
-    vs::AbstractArray{U, 1}=vertices(g),
-    distmx::AbstractArray{T, 2} = DefaultDistance()
-) =
-    [eccentricity(g,v,distmx) for v in vs]
+    vs::AbstractVector = vertices(g),
+    distmx::AbstractMatrix = DefaultDistance()
+) = [eccentricity(g,v,distmx) for v in vs]
 
-eccentricity{T}(g::AbstractGraph, distmx::AbstractArray{T, 2}) =
+eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
 
 """Returns the maximum eccentricity of the graph."""
-diameter{T}(all_e::Vector{T}) = maximum(all_e)
-diameter{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+diameter(all_e::Vector{T}) where T = maximum(all_e)
+diameter(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) where T =
     maximum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
 diameter (that is, the set of vertices with the largest eccentricity).
 """
-function periphery{T}(all_e::Vector{T})
-
+function periphery(all_e::Vector{T}) where T
     diam = maximum(all_e)
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
 
-periphery{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+periphery(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
     periphery(eccentricity(g, distmx))
 
 """Returns the minimum eccentricity of the graph."""
 radius{T}(all_e::Vector{T}) = minimum(all_e)
-radius{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+radius{T}(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) =
     minimum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
@@ -84,5 +80,5 @@ function center{T}(all_e::Vector{T})
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center{T}(g::AbstractGraph, distmx::AbstractArray{T, 2} = DefaultDistance()) =
+center{T}(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) =
     center(eccentricity(g, distmx))

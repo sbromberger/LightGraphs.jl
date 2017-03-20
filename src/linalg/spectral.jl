@@ -145,6 +145,7 @@ Graphs Based on their Different Matrix Representations
 """
 function spectral_distance end
 
+# can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G, k::Integer)
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
@@ -155,6 +156,7 @@ function spectral_distance end
     return sum(abs, (λ₁ - λ₂))
 end
 
+# can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
     @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
     return spectral_distance(G₁, G₂, nv(G₁))

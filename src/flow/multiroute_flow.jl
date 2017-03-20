@@ -18,25 +18,25 @@ end
 # Methods when the number of routes is more than the connectivity
 # 1) When using Boykov-Kolmogorov as a flow subroutine
 # 2) Other flow algorithm
-function empty_flow{T<:Real}(
+function empty_flow(
     capacity_matrix::AbstractMatrix{T},     # edge flow capacities
     flow_algorithm::BoykovKolmogorovAlgorithm # keyword argument for algorithm
-    )
+    ) where T<:Real
     n = size(capacity_matrix, 1)
     return zero(T), zeros(T, n, n), zeros(T, n)
 end
 # 2) Other flow algorithm
-function empty_flow{T<:Real}(
+function empty_flow(
     capacity_matrix::AbstractMatrix{T},     # edge flow capacities
     flow_algorithm::AbstractFlowAlgorithm     # keyword argument for algorithm
-    )
+    ) where T<:Real
     n = size(capacity_matrix, 1)
     return zero(T), zeros(T, n, n)
 end
 
 # Method for Kishimoto algorithm
-@traitfn function multiroute_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function multiroute_flow(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,  # edge flow capacities
@@ -49,8 +49,8 @@ end
 
 ## Methods for Extended Multiroute Flow Algorithm
 #1 When the breaking points are not already known
-@traitfn function multiroute_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                            # the input graph
+@traitfn function multiroute_flow(
+    flow_graph::::IsDirected,                            # the input graph
     source::Integer,                                # the source vertex
     target::Integer,                                # the target vertex
     capacity_matrix::AbstractMatrix,           # edge flow capacities
@@ -62,14 +62,14 @@ end
 end
 #2 When the breaking points are already known
 #2-a Output: flow value (paired with the associated restriction)
-function multiroute_flow{T<:Real, R<:Real}(
+multiroute_flow(
     breakingpoints::Vector{Tuple{T, T, Int}},       # vector of breaking points
     routes::R                                       # keyword argument for routes
-    )
-    return intersection(breakingpoints, routes)
-end
+    ) where T<:Real where R<:Real =
+    intersection(breakingpoints, routes)
+
 #2-b Output: flow value, flows(, labels)
-function multiroute_flow{T1<:Real, R<:Real}(
+function multiroute_flow(
     breakingpoints::AbstractVector{Tuple{T1, T1, Int}}, # vector of breaking points
     routes::R,                                # keyword argument for routes
     flow_graph::AbstractGraph,                      # the input graph
@@ -79,12 +79,12 @@ function multiroute_flow{T1<:Real, R<:Real}(
     DefaultCapacity(flow_graph);
     flow_algorithm::AbstractFlowAlgorithm  =  # keyword argument for algorithm
     PushRelabelAlgorithm()
-    )
+    ) where T1<:Real where R<:Real
     x, f = intersection(breakingpoints, routes)
     T2 = eltype(capacity_matrix)
     # For other cases, capacities need to be Floats
     if !(T2<:AbstractFloat)
-        capacity_matrix = convert(AbstractArray{Float64, 2}, capacity_matrix)
+        capacity_matrix = convert(AbstractMatrix{Float64}, capacity_matrix)
     end
 
     return maximum_flow(flow_graph, source, target, capacity_matrix,
@@ -107,7 +107,7 @@ When the input is a network, it requires the following arguments:
 - flow_graph::DiGraph                   # the input graph
 - source::Integer                       # the source vertex
 - target::Integer                       # the target vertex
-- capacity_matrix::AbstractArray{T, 2}  # edge flow capacities with T<:Real
+- capacity_matrix::AbstractMatrix{T}  # edge flow capacities with T<:Real
 - flow_algorithm::AbstractFlowAlgorithm # keyword argument for flow algorithm
 - mrf_algorithm::AbstractFlowAlgorithm  # keyword argument for multiroute flow algorithm
 - routes::R<:Real                       # keyword argument for the number of routes
@@ -126,7 +126,7 @@ and the network descriptors, it requires the following arguments:
 - flow_graph::DiGraph                        # the input graph
 - source::Integer                            # the source vertex
 - target::Integer                            # the target vertex
-- capacity_matrix::AbstractArray{T2, 2}      # optional edge flow capacities (T2<:Real)
+- capacity_matrix::AbstractMatrix            # optional edge flow capacities (T2<:Real)
 - flow_algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 
 The function defaults to the Push-relabel (classical flow) and Kishimoto
@@ -178,18 +178,18 @@ algorithm = BoykovKolmogorovAlgorithm(), routes = 2)
 
 ```
 """
-function multiroute_flow{R<:Real}(
+function multiroute_flow(
     flow_graph::AbstractGraph,                    # the input graph
     source::Integer,                        # the source vertex
     target::Integer,                        # the target vertex
     capacity_matrix::AbstractMatrix =  # edge flow capacities
-    DefaultCapacity(flow_graph);
+        DefaultCapacity(flow_graph);
     flow_algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
     PushRelabelAlgorithm(),
     mrf_algorithm::AbstractMultirouteFlowAlgorithm  =    # keyword argument for algorithm
     KishimotoAlgorithm(),
     routes::R = 0              # keyword argument for number of routes (0 = all values)
-    )
+    ) where R <: Real
 
     # a flow with a set of 1-disjoint pathes is a classical max-flow
     (routes == 1) &&

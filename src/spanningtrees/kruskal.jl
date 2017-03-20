@@ -25,10 +25,10 @@ on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
 and computes minimum spanning tree. Returns a `Vector{KruskalHeapEntry}`,
 that contains the containing edges and its weights.
 """
-function kruskal_mst{T<:Real}(
+function kruskal_mst(
     g::AbstractGraph,
     distmx::AbstractMatrix{T} = DefaultDistance()
-)
+) where T<:Real
 
     U = eltype(g)
     edge_list = Vector{KruskalHeapEntry{T}}()

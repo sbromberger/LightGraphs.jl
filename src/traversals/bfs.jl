@@ -23,13 +23,14 @@ EdgeColorMap :
 mutable struct BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
-function breadth_first_visit_impl!{T<:Integer}(
-    g::AbstractGraph,                 # the graph
-    queue::Vector{T},                 # an (initialized) queue that stores the active vertices
-    vertexcolormap::AbstractVertexMap,   # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
-    edgecolormap::AbstractEdgeMap,        # an (initialized) color-map to indicate status of edges
-    visitor::AbstractGraphVisitor,            # the visitor
-    dir::Symbol)                        # direction [:in,:out]
+function breadth_first_visit_impl!(
+    g::AbstractGraph,                       # the graph
+    queue::Vector,                       # an (initialized) queue that stores the active vertices
+    vertexcolormap::AbstractVertexMap,      # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
+    edgecolormap::AbstractEdgeMap,          # an (initialized) color-map to indicate status of edges
+    visitor::AbstractGraphVisitor,          # the visitor
+    dir::Symbol                             # direction [:in,:out]
+    )
 
     fneig = dir == :out ? out_neighbors : in_neighbors
     while !isempty(queue)
@@ -93,12 +94,12 @@ mutable struct TreeBFSVisitorVector{T<:Integer} <: AbstractGraphVisitor
     tree::Vector{T}
 end
 
-function TreeBFSVisitorVector{T<:Integer}(n::T)
-    return TreeBFSVisitorVector(fill(zero(T), n))
+function TreeBFSVisitorVector(n::Integer)
+    return TreeBFSVisitorVector(fill(zero(n), n))
 end
 
 """tree converts a parents array into a DiGraph"""
-function tree{T<:Integer}(parents::AbstractVector{T})
+function tree(parents::AbstractVector{T}) where T<:Integer
     n = T(length(parents))
     t = DiGraph(n)
     for i in one(T):n
@@ -120,11 +121,11 @@ function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Integer, v::Integer
     return true
 end
 
-function bfs_tree!{T<:Integer}(visitor::TreeBFSVisitorVector{T},
+function bfs_tree!(visitor::TreeBFSVisitorVector{T},
         g::AbstractGraph,
         s::Integer;
         vertexcolormap = Dict{T,Int}(),
-        queue = Vector{T}())
+        queue = Vector{T}()) where T<:Integer
     # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
     # the output is stored in the visitor.tree array whose entries are the vertex id of the
     # parent of the index. This function checks if the scratch space is too small for the graph.

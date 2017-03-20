@@ -1,10 +1,12 @@
-function Graph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
-    maxe = div(nv * (nv-1), 2)
+function Graph(nv::Integer, ne::Integer; seed::Int = -1)
+    T = eltype(nv)
+    maxe = div(Int(nv) * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
 
     rng = getRNG(seed)
     g = Graph(nv)
+
     while g.ne < ne
         source = rand(rng, one(T):nv)
         dest = rand(rng, one(T):nv)
@@ -13,8 +15,9 @@ function Graph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
     return g
 end
 
-function DiGraph{T<:Integer}(nv::T, ne::Integer; seed::Int = -1)
-    maxe = nv * (nv-1)
+function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
+    T = eltype(nv)
+    maxe = Int(nv) * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
 
@@ -93,7 +96,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable{T<:Integer}(edges::Set{Edge}, potential_edges::Dict{T, T})
+function _suitable(edges::Set{Edge}, potential_edges::Dict{T, T}) where T<:Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -105,7 +108,7 @@ end
 
 _try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
 
-function _try_creation{T<:Integer}(n::T, k::Vector{T}, rng::AbstractRNG)
+function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T<:Integer
     edges = Set{Edge}()
     m = 0
     stubs = zeros(T, sum(k))
@@ -268,7 +271,7 @@ Reference:
 * Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution
 in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
-function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+function static_fitness_model(m::Int, fitness::Vector{T}; seed::Int=-1) where T<:Real
     @assert(m >= 0, "invalid number of edges")
     n = length(fitness)
     m == 0 && return Graph(n)
@@ -288,7 +291,7 @@ function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
     return g
 end
 
-function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1)
+function static_fitness_model(m::Int, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T<:Real where S<:Real
     @assert(m >= 0, "invalid number of edges")
     n = length(fitness_out)
     @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
@@ -312,7 +315,7 @@ function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, f
     return g
 end
 
-function _create_static_fitness_graph!{T<:Real,S<:Real}(g::AbstractGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+function _create_static_fitness_graph!(g::AbstractGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int) where T<:Real where S<:Real
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -429,7 +432,7 @@ approximately $nc^2$ time.
 
 If `check_graphical=true` makes sure that `k` is a graphical sequence (see `isgraphical`).
 """
-function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1, check_graphical::Bool=false)
+function random_configuration_model(n::Integer, k::Array{Int}; seed::Int=-1, check_graphical::Bool=false)
     @assert(n == length(k), "a degree sequence of length n has to be provided")
     m = sum(k)
     @assert(iseven(m), "sum(k) must be even")
@@ -453,7 +456,7 @@ function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1, check_g
 end
 
 doc"""
-random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed=-1)
+random_regular_digraph(n::Integer, k::Int; dir::Symbol=:out, seed=-1)
 
 Creates a random directed
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
@@ -509,7 +512,7 @@ The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
 For a dynamic version of the SBM see the `StochasticBlockModel` type and
 related functions.
 """
-function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int = -1)
+function stochastic_block_model(c::Matrix{T}, n::Vector{Int}; seed::Int = -1) where T<:Real
     @assert size(c,1) == length(n)
     @assert size(c,2) == length(n)
     # init dsfmt generator without altering GLOBAL_RNG
@@ -545,7 +548,7 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
     return g
 end
 
-function stochastic_block_model{T<:Real}(cint::T, cext::T, n::Vector{Int}; seed::Int=-1)
+function stochastic_block_model(cint::T, cext::T, n::Vector{Int}; seed::Int=-1) where T<:Real
     K = length(n)
     c = [ifelse(a==b, cint, cext) for a=1:K,b=1:K]
     stochastic_block_model(c, n, seed=seed)
@@ -586,7 +589,7 @@ end
 and the affinity matrix. This construction implies that consecutive
 vertices will be in the same blocks, except for the block boundaries.
 """
-function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P}; seed::Int = -1)
+function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; seed::Int = -1)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])

@@ -35,7 +35,8 @@ struct DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
     nv::T
 end
 
-@traitfn DefaultCapacity{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DefaultCapacity(DiGraph(flow_graph), nv(flow_graph))
+@traitfn DefaultCapacity(flow_graph::::IsDirected) =
+    DefaultCapacity(DiGraph(flow_graph), nv(flow_graph))
 
 getindex{T<:Integer}(d::DefaultCapacity{T}, s::Integer, t::Integer) = if has_edge(d.flow_graph, s , t) one(T) else zero(T) end
 # isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in 1:d.nv) && (v in 1:d.nv)
@@ -58,15 +59,17 @@ residual graph and the modified capacity_matrix (when DefaultDistance is used.)
 Requires arguments:
 
 - flow_graph::DiGraph,                    # the input graph
-- capacity_matrix::AbstractArray{T,2}     # input capacity matrix
+- source::Integer                         # the source vertex
+- target::Integer                         # the target vertex
+- capacity_matrix::AbstractMatrix         # input capacity matrix
 """
 function residual end
-@traitfn residual{G<:AbstractGraph; IsDirected{G}}(flow_graph::G) = DiGraph(Graph(flow_graph))
+@traitfn residual(flow_graph::::IsDirected) = DiGraph(Graph(flow_graph))
 
 # Method for Edmonds–Karp algorithm
 
-@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function maximum_flow(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities
@@ -78,8 +81,8 @@ end
 
 # Method for Dinic's algorithm
 
-@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function maximum_flow(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities
@@ -91,8 +94,8 @@ end
 
 # Method for Boykov-Kolmogorov algorithm
 
-@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function maximum_flow(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities
@@ -104,8 +107,8 @@ end
 
 # Method for Push-relabel algorithm
 
-@traitfn function maximum_flow{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function maximum_flow(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities
@@ -121,9 +124,9 @@ Generic maximum_flow function. Requires arguments:
 - flow_graph::DiGraph                   # the input graph
 - source::Integer                       # the source vertex
 - target::Integer                       # the target vertex
-- capacity_matrix::AbstractArray{T,2}   # edge flow capacities
+- capacity_matrix::AbstractMatrix       # edge flow capacities
 - algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
-- restriction::T                        # keyword argument for a restriction
+- restriction::Real                     # keyword argument for a restriction
 
 The function defaults to the Push-relabel algorithm. Alternatively, the algorithm
 to be used can also be specified through a keyword argument. A default capacity of 1

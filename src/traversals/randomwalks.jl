@@ -22,9 +22,7 @@ end
 a maximum of `niter` steps. Returns a vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
-@traitfn function non_backtracking_randomwalk{G<:AbstractGraph; !IsDirected{G}}(
-  g::G, s::Integer, niter::Integer
-  )
+@traitfn function non_backtracking_randomwalk(g::::(!IsDirected), s::Integer, niter::Integer)
     T = eltype(g)
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
@@ -56,9 +54,7 @@ function non_backtracking_randomwalk end
     return visited[1:i-1]
 end
 
-@traitfn function non_backtracking_randomwalk{G<:AbstractGraph; IsDirected{G}}(
-  g::G, s::Integer, niter::Integer
-  )
+@traitfn function non_backtracking_randomwalk(g::::IsDirected, s::Integer, niter::Integer)
     T = eltype(g)
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()

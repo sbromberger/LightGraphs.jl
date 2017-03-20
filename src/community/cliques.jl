@@ -20,7 +20,7 @@ julia> maximal_cliques(g)
 ```
 """
 function maximal_cliques end
-@traitfn function maximal_cliques{G<:AbstractGraph; !IsDirected{G}}(g::G)
+@traitfn function maximal_cliques(g::::(!IsDirected))
     T = eltype(g)
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
@@ -44,7 +44,7 @@ function maximal_cliques end
             nnbrs[n] = nbrs
         end
     end
-        
+
     # Initial setup
     cand = Set{T}(vertices(g))
     # union!(cand, keys(nnbrs))

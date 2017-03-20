@@ -9,7 +9,7 @@ mutable struct Biconnections
     id::Int
 end
 
-@traitfn function Biconnections{G<:AbstractGraph; !IsDirected{G}}(g::G)
+@traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
 end
@@ -20,7 +20,7 @@ and returns a Vector of vectors containing each biconnected component.
 (https://en.wikipedia.org/wiki/Biconnected_component).It's a DFS based linear time algorithm.
 """
 function biconnected_components end
-@traitfn function biconnected_components{G<:AbstractGraph; !IsDirected{G}}(g::G)
+@traitfn function biconnected_components(g::::(!IsDirected))
     state = Biconnections(g)
     for u in vertices(g)
         if state.depth[u] == 0

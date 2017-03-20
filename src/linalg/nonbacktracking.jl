@@ -87,7 +87,7 @@ size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
+function *(nbt::Nonbacktracking{G}, x::Vector{T}) where G where T<:Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e,u) in nbt.edgeidmap
@@ -128,7 +128,7 @@ end
 
 sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m,nbt.m)
 
-function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
+function *(nbt::Nonbacktracking{G}, x::AbstractMatrix{T}) where G where T<:Number
     y = zeros(x)
     for i in 1:nbt.m
         y[:,i] = nbt * x[:,i]

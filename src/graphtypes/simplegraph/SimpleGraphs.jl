@@ -57,7 +57,7 @@ end
 in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g,v)
 out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g,v)
 
-function issubset{T<:AbstractSimpleGraph}(g::T, h::T)
+function issubset(g::T, h::T) where T<:AbstractSimpleGraph
     (gmin, gmax) = extrema(vertices(g))
     (hmin, hmax) = extrema(vertices(h))
     return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))

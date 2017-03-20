@@ -7,11 +7,11 @@ Requires arguments:
 - residual_graph::DiGraph                # the input graph
 - source::Integer                        # the source vertex
 - target::Integer                        # the target vertex
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- capacity_matrix::AbstracMatrix    # edge flow capacities
 """
 function edmonds_karp_impl end
-@traitfn function edmonds_karp_impl{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function edmonds_karp_impl(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix    # edge flow capacities
@@ -57,9 +57,9 @@ end
 Calculates the amount by which flow can be augmented in the given path.
 Augments the flow and returns the augment value.
 Requires arguments:
-- path::Vector{Int}                      # input path
-- flow_matrix::AbstractArray{T,2}        # the current flow matrix
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- path::Vector{Int}                  # input path
+- flow_matrix::AbstractMatrix        # the current flow matrix
+- capacity_matrix::AbstractMatrix    # edge flow capacities
 """
 
 function augment_path!(
@@ -95,8 +95,8 @@ Flag Values:
 2 => No Path to source
 """
 function fetch_path end
-@traitfn function fetch_path{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function fetch_path(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix
@@ -127,14 +127,14 @@ Requires arguments:
 residual_graph::DiGraph                # the input graph
 source::Int                            # the source vertex
 target::Int                            # the target vertex
-flow_matrix::AbstractArray{T,2}        # the current flow matrix
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+flow_matrix::AbstractMatrix            # the current flow matrix
+capacity_matrix::AbstractMatrix        # edge flow capacities
 P::Vector{Int}                         # parent table of path init to -1s
 S::Vector{Int}                         # successor table of path init to -1s
 """
 function fetch_path! end
-@traitfn function fetch_path!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function fetch_path!(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix

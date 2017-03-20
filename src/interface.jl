@@ -12,7 +12,7 @@ abstract type AbstractEdgeIter end
 abstract type AbstractGraph end
 
 
-@traitdef IsDirected{AbstractGraph}
+@traitdef IsDirected{G<:AbstractGraph}
 @traitimpl IsDirected{G} <- is_directed(G)
 
 

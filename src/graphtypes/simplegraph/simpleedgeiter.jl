@@ -11,12 +11,15 @@ struct SimpleEdgeIterState{T<:Integer}
 end
 
 
-eltype{T}(::Type{SimpleEdgeIter{T}}) = SimpleEdge
+eltype(::Type{SimpleEdgeIter{T}}) where T<:Integer = SimpleEdge
 
 SimpleEdgeIter(g::SimpleGraph) = SimpleEdgeIter(ne(g), g.fadjlist, false)
 SimpleEdgeIter(g::SimpleDiGraph) = SimpleEdgeIter(ne(g), g.fadjlist, true)
 
-function _next{T<:Integer}(eit::SimpleEdgeIter{T}, state::SimpleEdgeIterState{T} = SimpleEdgeIterState(one(T),1,false), first::Bool = true)
+function _next(
+    eit::SimpleEdgeIter{T},
+    state::SimpleEdgeIterState{T} = SimpleEdgeIterState(one(T),1,false),
+    first::Bool = true) where T <: Integer
     s = state.s
     di = state.di
     if !first
@@ -58,8 +61,8 @@ function _isequal(e1::SimpleEdgeIter, e2)
     end
     return true
 end
-==(e1::SimpleEdgeIter, e2::AbstractArray{SimpleEdge,1}) = _isequal(e1, e2)
-==(e1::AbstractArray{SimpleEdge,1}, e2::SimpleEdgeIter) = _isequal(e2, e1)
+==(e1::SimpleEdgeIter, e2::AbstractVector{SimpleEdge}) = _isequal(e1, e2)
+==(e1::AbstractVector{SimpleEdge}, e2::SimpleEdgeIter) = _isequal(e2, e1)
 ==(e1::SimpleEdgeIter, e2::Set{SimpleEdge}) = _isequal(e1, e2)
 ==(e1::Set{SimpleEdge}, e2::SimpleEdgeIter) = _isequal(e2, e1)
 

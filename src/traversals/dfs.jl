@@ -137,7 +137,7 @@ mutable struct TopologicalSortVisitor{T} <: AbstractGraphVisitor
     vertices::Vector{T}
 end
 
-function TopologicalSortVisitor{T<:Integer}(n::T)
+function TopologicalSortVisitor(n::T) where T<:Integer
     vs = Vector{T}()
     sizehint!(vs, n)
     return TopologicalSortVisitor(vs)

@@ -7,10 +7,10 @@ mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
 
-eltype{T<:Integer}(x::SimpleGraph{T}) = T
+eltype(x::SimpleGraph{T}) where T<:Integer = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
-function (::Type{SimpleGraph{T}}){T<:Integer}(n::Integer = 0)
+function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
     fadjlist = Vector{Vector{T}}()
     sizehint!(fadjlist, n)
     for _ = one(T):n
@@ -24,13 +24,13 @@ end
 SimpleGraph() = SimpleGraph{Int}()
 
 # Graph(6), Graph(0x5)
-SimpleGraph{T<:Integer}(n::T) = SimpleGraph{T}(n)
+SimpleGraph(n::T) where T<:Integer = SimpleGraph{T}(n)
 
 # SimpleGraph(UInt8)
-SimpleGraph{T<:Integer}(::Type{T}) = SimpleGraph{T}(zero(T))
+SimpleGraph(::Type{T}) where T<:Integer = SimpleGraph{T}(zero(T))
 
 # Graph{UInt8}(adjmx)
-function (::Type{SimpleGraph{T}}){T<:Integer}(adjmx::AbstractMatrix)
+function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
     issymmetric(adjmx) || error("Adjacency / distance matrices must be symmetric")
@@ -44,7 +44,7 @@ function (::Type{SimpleGraph{T}}){T<:Integer}(adjmx::AbstractMatrix)
 end
 
 # converts Graph{Int} to Graph{Int32}
-function (::Type{SimpleGraph{T}}){T<:Integer}(g::SimpleGraph)
+function (::Type{SimpleGraph{T}})(g::SimpleGraph) where T<:Integer
     h_vertices = one(T):T(nv(g))
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     return SimpleGraph(h_vertices, ne(g), h_fadj)
@@ -75,7 +75,7 @@ function SimpleGraph(g::SimpleDiGraph)
     return SimpleGraph(vertices(g), edgect ÷ 2, newfadj)
 end
 
-edgetype{T<:Integer}(::SimpleGraph{T}) = SimpleGraphEdge{T}
+edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T} 
 
 """
 Returns the backwards adjacency list of a graph.
@@ -105,7 +105,7 @@ fadj(g) == fadj(h)
 
 """Return `true` if `g` is a directed graph."""
 is_directed(::Type{SimpleGraph}) = false
-is_directed{T}(::Type{SimpleGraph{T}}) = false
+is_directed(::Type{SimpleGraph{T}}) where T = false
 is_directed(g::SimpleGraph) = false
 
 function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
@@ -146,7 +146,8 @@ end
 
 
 """Add a new vertex to the graph `g`."""
-function add_vertex!{T<:Integer}(g::SimpleGraph{T})
+function add_vertex!(g::SimpleGraph)
+    T = eltype(g)
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     g.vertices = one(T):nv(g)+one(T)
     push!(g.fadjlist, Vector{T}())

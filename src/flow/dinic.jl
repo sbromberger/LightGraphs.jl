@@ -9,11 +9,11 @@ Requires arguments:
 residual_graph::DiGraph                # the input graph
 source::Integer                        # the source vertex
 target::Integer                        # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+capacity_matrix::AbstractMatrix    # edge flow capacities
 """
 function dinic_impl end
-@traitfn function dinic_impl{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function dinic_impl(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix    # edge flow capacities
@@ -44,13 +44,13 @@ Requires arguments:
 residual_graph::DiGraph                # the input graph
 source::Integer                        # the source vertex
 target::Integer                        # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-flow_matrix::AbstractArray{T,2}        # the current flow matrix
+capacity_matrix::AbstractMatrix    # edge flow capacities
+flow_matrix::AbstractMatrix        # the current flow matrix
 P::AbstractVector{Int}                 # Parent vector to store Level Graph
 """
 function blocking_flow! end
-@traitfn function blocking_flow!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function blocking_flow!(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix,   # edge flow capacities

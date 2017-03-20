@@ -12,7 +12,7 @@ eltype{T<:Integer}(x::SimpleDiGraph{T}) = T
 
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
-function (::Type{SimpleDiGraph{T}}){T<:Integer}(n::Integer = 0)
+function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
     fadjlist = Vector{Vector{T}}()
     badjlist = Vector{Vector{T}}()
     for _ = one(T):n
@@ -27,13 +27,13 @@ end
 SimpleDiGraph() = SimpleDiGraph{Int}()
 
 # DiGraph(6), DiGraph(0x5)
-SimpleDiGraph{T<:Integer}(n::T) = SimpleDiGraph{T}(n)
+SimpleDiGraph(n::T) where T<:Integer = SimpleDiGraph{T}(n)
 
 # SimpleDiGraph(UInt8)
-SimpleDiGraph{T<:Integer}(::Type{T}) = SimpleDiGraph{T}(zero(T))
+SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 
 # sparse adjacency matrix constructor: DiGraph(adjmx)
-function (::Type{SimpleDiGraph{T}}){T<:Integer, U}(adjmx::SparseMatrixCSC{U})
+function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
@@ -52,7 +52,7 @@ function (::Type{SimpleDiGraph{T}}){T<:Integer, U}(adjmx::SparseMatrixCSC{U})
 end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
-function (::Type{SimpleDiGraph{T}}){T<:Integer}(adjmx::AbstractMatrix)
+function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     dima,dimb = size(adjmx)
     isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
 
@@ -68,7 +68,7 @@ end
 SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # converts DiGraph{Int} to DiGraph{Int32}
-function (::Type{SimpleDiGraph{T}}){T<:Integer}(g::SimpleDiGraph)
+function (::Type{SimpleDiGraph{T}})(g::SimpleDiGraph) where T<:Integer
     h_vertices = one(T):T(nv(g))
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
@@ -85,14 +85,14 @@ function SimpleDiGraph(g::AbstractSimpleGraph)
     return h
 end
 
-edgetype{T<:Integer}(::SimpleDiGraph{T}) = SimpleGraphEdge{T}
+edgetype(::SimpleDiGraph{T}) where T<: Integer = SimpleGraphEdge{T}
 
 
 badj(g::SimpleDiGraph) = g.badjlist
 badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
-copy{T<:Integer}(g::SimpleDiGraph{T}) =
+copy(g::SimpleDiGraph{T}) where T<:Integer =
 SimpleDiGraph{T}(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 
 
@@ -129,7 +129,8 @@ function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
 end
 
 
-function add_vertex!{T<:Integer}(g::SimpleDiGraph{T})
+function add_vertex!(g::SimpleDiGraph)
+    T = eltype(g)
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     g.vertices = 1:nv(g)+1
     push!(g.badjlist, Vector{T}())
@@ -148,5 +149,3 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
         return length(searchsorted(badj(g,v), u)) > 0
     end
 end
-
-empty{T<:Integer}(g::SimpleDiGraph{T}) = SimpleDiGraph{T}()

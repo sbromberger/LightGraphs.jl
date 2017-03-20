@@ -12,7 +12,7 @@ Output:
     c = labels[i] => vertex i belongs to component c.
     c is the smallest vertex id in the component.
 """
-function connected_components!{T<:Integer}(label::Vector{T}, g::AbstractGraph)
+function connected_components!(label::Vector{T}, g::AbstractGraph) where T<:Integer
     # this version of connected components uses Breadth First Traversal
     # with custom visitor type in order to improve performance.
     # one BFS is performed for each component.
@@ -42,7 +42,7 @@ Arguments:
 Output:
     vs = d[c] => vertices in vs belong to component c.
 """
-function components_dict{T<:Integer}(labels::Vector{T})
+function components_dict(labels::Vector{T}) where T<:Integer
     d = Dict{T,Vector{T}}()
     for (v,l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
@@ -63,7 +63,7 @@ Output:
     vs = c[i] => vertices in vs belong to component i.
     a = d[i] => if labels[v]==i then v in c[a] end
 """
-function components{T<:Integer}(labels::Vector{T})
+function components(labels::Vector{T}) where T<:Integer
     d = Dict{T, T}()
     c = Vector{Vector{T}}()
     i = one(T)
@@ -101,16 +101,16 @@ Returns `true` if `g` is connected.
 For DiGraphs, this is equivalent to a test of weak connectivity.
 """
 function is_connected end
-@traitfn is_connected{G<:AbstractGraph; !IsDirected{G}}(g::G) = length(connected_components(g)) == 1
-@traitfn is_connected{G<:AbstractGraph; IsDirected{G}}(g::G) = is_weakly_connected(g)
+@traitfn is_connected(g::::(!IsDirected)) = length(connected_components(g)) == 1
+@traitfn is_connected(g::::IsDirected) = is_weakly_connected(g)
 
 """Returns connected components of the undirected graph of `g`."""
 function weakly_connected_components end
-@traitfn weakly_connected_components{G<:AbstractGraph; IsDirected{G}}(g::G) = connected_components(Graph(g))
+@traitfn weakly_connected_components(g::::IsDirected) = connected_components(Graph(g))
 
 """Returns `true` if the undirected graph of `g` is connected."""
 function is_weakly_connected end
-@traitfn is_weakly_connected{G<:AbstractGraph; IsDirected{G}}(g::G) = length(weakly_connected_components(g)) == 1
+@traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
 
 # Adapated from Graphs.jl
 mutable struct TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
@@ -158,7 +158,7 @@ end
 
 """Computes the (strongly) connected components of a directed graph."""
 function strongly_connected_components end
-@traitfn function strongly_connected_components{G<:AbstractGraph; IsDirected{G}}(g::G)
+@traitfn function strongly_connected_components(g::::IsDirected)
     T = eltype(g)
     nvg = nv(g)
     cmap = zeros(Int, nvg)
@@ -178,11 +178,11 @@ end
 
 """Returns `true` if `g` is (strongly) connected."""
 function is_strongly_connected end
-@traitfn is_strongly_connected{G<:AbstractGraph; IsDirected{G}}(g::G) = length(strongly_connected_components(g)) == 1
+@traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
 
 """Computes the (common) period for all nodes in a strongly connected graph."""
 function period end
-@traitfn function period{G<:AbstractGraph; IsDirected{G}}(g::G)
+@traitfn function period(g::::IsDirected)
     T = eltype(g)
     !is_strongly_connected(g) && error("Graph must be strongly connected")
 
@@ -206,7 +206,7 @@ end
 
 """Computes the condensation graph of the strongly connected components."""
 function condensation end
-@traitfn function condensation{T<:Integer, G<:AbstractGraph; IsDirected{G}}(g::G, scc::Vector{Vector{T}})
+@traitfn function condensation{T<:Integer}(g::::IsDirected, scc::Vector{Vector{T}})
     h = DiGraph{T}(length(scc))
 
     component = Vector{T}(nv(g))
@@ -236,7 +236,7 @@ condensation(g) = condensation(g,strongly_connected_components(g))
 components in `g`. The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges."""
 function attracting_components end
-@traitfn function attracting_components{G<:AbstractGraph; IsDirected{G}}(g::G)
+@traitfn function attracting_components(g::::IsDirected)
     T = eltype(g)
     scc  = strongly_connected_components(g)
     cond = condensation(g,scc)
@@ -256,7 +256,7 @@ mutable struct NeighborhoodVisitor{T<:Integer} <: AbstractGraphVisitor
     neigs::Vector{T}
 end
 
-NeighborhoodVisitor{T<:Integer}(d::T) = NeighborhoodVisitor(d, Vector{T}())
+NeighborhoodVisitor(d::T) where T<:Integer = NeighborhoodVisitor(d, Vector{T}())
 
 function examine_neighbor!(visitor::NeighborhoodVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     -ucolor > visitor.d && return false # color is negative for not-closed vertices

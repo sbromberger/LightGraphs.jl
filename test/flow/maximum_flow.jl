@@ -40,7 +40,7 @@
           # Test DefaultCapacity
           d = LightGraphs.DefaultCapacity(g)
           T = eltype(d)
-          @test typeof(d) <: AbstractArray{T, 2}
+          @test typeof(d) <: AbstractMatrix{T}
           @test d[s,t] == 0
           @test size(d) == (nvertices,nvertices)
           @test typeof(transpose(d)) <: LightGraphs.DefaultCapacity

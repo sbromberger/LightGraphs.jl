@@ -134,12 +134,12 @@ function WheelDiGraph(n::Integer)
 end
 
 """
-Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
+Grid(dims::AbstractVector; periodic=false)
 
 Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`.
 If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.
 """
-function Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
+function Grid(dims::AbstractVector; periodic=false)
     func = periodic ? CycleGraph : PathGraph
     g = func(dims[1])
     for d in dims[2:end]
@@ -149,8 +149,8 @@ function Grid{T<:Integer}(dims::AbstractVector{T}; periodic=false)
 end
 
 """create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
-function BinaryTree(levels::Int)
-    g = Graph(2^levels-1)
+function BinaryTree(levels::Integer)
+    g = Graph(Int(2^levels-1))
     for i in 0:levels-2
         for j in 2^i:2^(i+1)-1
             add_edge!(g, j, 2j)
@@ -164,7 +164,7 @@ end
 Create a double complete binary tree with k-levels
 used as an example for spectral clustering by Guattery and Miller 1998.
 """
-function DoubleBinaryTree(levels::Int)
+function DoubleBinaryTree(levels::Integer)
     gl = BinaryTree(levels)
     gr = BinaryTree(levels)
     g = blkdiag(gl, gr)
@@ -174,7 +174,7 @@ end
 
 
 """The Roach Graph from Guattery and Miller 1998"""
-function RoachGraph(k::Int)
+function RoachGraph(k::Integer)
     dipole = CompleteGraph(2)
     nopole = Graph(2)
     antannae = crosspath(k, nopole)

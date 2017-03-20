@@ -51,7 +51,7 @@ struct VertexListVisitor{T<:Integer} <: AbstractGraphVisitor
     vertices::Vector{T}
 end
 
-function VertexListVisitor{T<:Integer}(n::T=0)
+function VertexListVisitor(n::T=0) where T<:Integer
     vs = Vector{T}()
     sizehint!(vs, n)
     return VertexListVisitor(vs)

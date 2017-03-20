@@ -5,7 +5,7 @@ A simple degree-based core-periphery detection algorithm (see [Lip](http://arxiv
 Returns the vertex assignments (1 for core and 2 for periphery).
 """
 function core_periphery_deg end
-@traitfn function core_periphery_deg{G<:AbstractGraph; !IsDirected{G}}(g::G)
+@traitfn function core_periphery_deg(g::::(!IsDirected))
     degs = degree(g)
     p = sortperm(degs, rev=true)
     s = sum(degs) / 2.

@@ -14,11 +14,11 @@ Requires arguments:
 - residual_graph::DiGraph                # the input graph
 - source::Integer                        # the source vertex
 - target::Integer                        # the target vertex
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+- capacity_matrix::AbstractMatrix        # edge flow capacities
 """
 function push_relabel end
-@traitfn function push_relabel{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function push_relabel(
+    residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix    # edge flow capacities
@@ -64,10 +64,10 @@ Pushes inactive nodes into the queue and activates them.
 
 Requires arguments:
 
-- Q::AbstractArray{Int,1}
+- Q::AbstractVector
 - v::Integer
-- active::AbstractArray{Bool,1}
-- excess::AbstractArray{T,1}
+- active::AbstractVector{Bool}
+- excess::AbstractVector
 """
 
 function enqueue_vertex!(
@@ -91,16 +91,16 @@ Requires arguements:
 - residual_graph::DiGraph              # the input graph
 - u::Integer                           # input from-vertex
 - v::Integer                           # input to-vetex
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- Q::AbstractArray{Integer,1}
+- capacity_matrix::AbstractMatrix
+- flow_matrix::AbstractMatrix
+- excess::AbstractVector
+- height::AbstractVector{Int}
+- active::AbstractVector{Bool}
+- Q::AbstractVector
 """
 function push_flow! end
-@traitfn function push_flow!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,             # the input graph
+@traitfn function push_flow!(
+    residual_graph::::IsDirected,             # the input graph
     u::Integer,                              # input from-vertex
     v::Integer,                              # input to-vetex
     capacity_matrix::AbstractMatrix,
@@ -133,15 +133,15 @@ Requires arguments:
 
 - residual_graph::DiGraph                # the input graph
 - h::Int                                 # cutoff height
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Integer,1}
+- excess::AbstractVector
+- height::AbstractVector{Int}
+- active::AbstractVector{Bool}
+- count::AbstractVector{Int}
+- Q::AbstractVector
 """
 function gap! end
-@traitfn function gap!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,               # the input graph
+@traitfn function gap!(
+    residual_graph::::IsDirected,               # the input graph
     h::Int,                                # cutoff height
     excess::AbstractVector,
     height::AbstractVector{Int},
@@ -168,17 +168,17 @@ Requires arguments:
 
 - residual_graph::DiGraph                 # the input graph
 - v::Integer                               # input vertex to be relabeled
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Integer,1}
+- capacity_matrix::AbstractMatrix
+- flow_matrix::AbstractMatrix
+- excess::AbstractVector
+- height::AbstractVector{Int}
+- active::AbstractVector{Bool}
+- count::AbstractVector{Int}
+- Q::AbstractVector
 """
 function relabel! end
-@traitfn function relabel!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,                # the input graph
+@traitfn function relabel!(
+    residual_graph::::IsDirected,                # the input graph
     v::Integer,                                 # input vertex to be relabeled
     capacity_matrix::AbstractMatrix,
     flow_matrix::AbstractMatrix,
@@ -210,17 +210,17 @@ Requires arguments:
 
 - residual_graph::DiGraph                 # the input graph
 - v::Integer                              # vertex to be discharged
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Integer,1}
+- capacity_matrix::AbstractMatrix
+- flow_matrix::AbstractMatrix
+- excess::AbstractVector
+- height::AbstractVector{Int}
+- active::AbstractVector{Bool}
+- count::AbstractVector{Int}
+- Q::AbstractVector
 """
 function discharge! end
-@traitfn function discharge!{G<:AbstractGraph; IsDirected{G}}(
-    residual_graph::G,                # the input graph
+@traitfn function discharge!(
+    residual_graph::::IsDirected,                # the input graph
     v::Integer,                                 # vertex to be discharged
     capacity_matrix::AbstractMatrix,
     flow_matrix::AbstractMatrix,
@@ -228,7 +228,7 @@ function discharge! end
     height::AbstractVector{Int},
     active::AbstractVector{Bool},
     count::AbstractVector{Int},
-    Q::AbstractArray                 # FIFO queue
+    Q::AbstractVector                 # FIFO queue
     )
     for to in out_neighbors(residual_graph, v)
         excess[v] == 0 && break

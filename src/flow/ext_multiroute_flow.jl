@@ -12,7 +12,7 @@ Requires arguments:
 - flow_graph::DiGraph                    # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
 - flow_algorithm::AbstractFlowAlgorithm  # keyword argument for algorithm
 - routes::Int                            # keyword argument for routes
 """
@@ -41,11 +41,11 @@ Requires arguments:
 - flow_graph::DiGraph                    # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
 """
 function auxiliaryPoints end
-@traitfn function auxiliaryPoints{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function auxiliaryPoints(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix   # edge flow capacities
@@ -106,11 +106,11 @@ Requires arguments:
 - flow_graph::DiGraph                    # the input graph
 - source::Int                            # the source vertex
 - target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
 """
 function breakingPoints end
-@traitfn function breakingPoints{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function breakingPoints(
+    flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix   # edge flow capacities
@@ -144,7 +144,7 @@ Note: this is more efficient than maximum() / minimum() / extrema()
 since we have to ignore zero values.since we have to ignore zero values.
 
 Requires argument:
-- capacity_matrix::AbstractArray{T, 2}   # edge flow capacities
+- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
 """
 
 # Function to get the nonzero min and max function of a Matrix
@@ -169,14 +169,14 @@ Function to get the slope of the restricted flow. The slope is initialized at 0
 and is incremented for each non saturated edge in the restricted min-cut.
 Requires argument:
 flow_graph::DiGraph,                   # the input graph
-capacity_matrix::AbstractArray{T, 2},  # edge flow capacities
+capacity_matrix::AbstractMatrix{T},  # edge flow capacities
 cut::Vector{Int},                      # cut information for vertices
 restriction::T                         # value of the restriction
 """
 function slope end
 # Function to get the slope of the restricted flow
-@traitfn function slope{G<:AbstractGraph; IsDirected{G}}(
-    flow_graph::G,                   # the input graph
+@traitfn function slope(
+    flow_graph::::IsDirected,                   # the input graph
     capacity_matrix::AbstractMatrix,  # edge flow capacities
     cut::Vector,                      # cut information for vertices
     restriction::Number                 # value of the restriction
@@ -208,14 +208,14 @@ Requires argument:
 """
 
 # Compute the (expected) intersection of two lines
-function intersection{T<:AbstractFloat, R<:Real}(
+function intersection(
     x1::T,          # x coordinate of point 1
     y1::T,          # y coordinate of point 1
     a1::Integer,        # slope passing by point 1
     x2::T,          # x coordinate of point 2
     y2::T,          # y coordinate of point 2
     a2::R           # slope passing by point 2
-    )
+    ) where T<:AbstractFloat where R<:Real
 
     (a1 == a2) && return -1., -1. # result will be ignored in other intersection method
     b1 = y1 - a1 * x1
@@ -225,10 +225,10 @@ function intersection{T<:AbstractFloat, R<:Real}(
     return x, y
 end
 # Compute the intersection between a set of segment and a line of slope k passing by the origin
-function intersection{T<:AbstractFloat, I<:Integer, R<:Real}(
+function intersection(
     points::Vector{Tuple{T, T, I}},  # vector of breaking points
     k::R                               # number of routes (slope of the line)
-    )
+    ) where T<:AbstractFloat where I<:Integer where R<:Real
     λ = points[1][1] # Connectivity
 
     # Loop over the segments (pair of breaking points)
@@ -250,4 +250,5 @@ Requires argument:
 a::Tuple{T, T},         # Point A with floating coordinates
 b::Tuple{T, T}          # Point B with floating coordinates
 """
-≈{T<:AbstractFloat}(a::Tuple{T, T}, b::Tuple{T, T}) = a[1] ≈ b[1] && a[2] ≈ b[2]
+≈(a::Tuple{T, T}, b::Tuple{T, T}) where T <: AbstractFloat =
+    a[1] ≈ b[1] && a[2] ≈ b[2]
