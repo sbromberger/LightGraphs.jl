@@ -11,7 +11,19 @@
     z = bellman_ford_shortest_paths(g4, 2)
     @test z.dists == [typemax(Int), 0, 1, 2, 3]
 
+    # Negative Cycle
     gx = CompleteGraph(3)
     d = [1 -3 1; -3 1 1; 1 1 1]
     @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(gx, 1, d)
+    
+    # Negative Cycle
+    gx = CompleteGraph(3)
+    d = [1 -1 1; -1 1 1; 1 1 1]
+    @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(gx, 1, d)
+    
+    # Cycle summing to 0 should not error
+    gx = CompleteGraph(4)
+    d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
+    @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(gx, 1, d)
+
 end
