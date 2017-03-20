@@ -21,7 +21,7 @@
     d = [1 -1 1; -1 1 1; 1 1 1]
     @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(gx, 1, d)
     
-    # Cycle summing to 0 should not error
+    # Negative cycle of length 3 in graph of diameter 4
     gx = CompleteGraph(4)
     d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
     @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(gx, 1, d)
