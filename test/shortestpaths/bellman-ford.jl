@@ -14,4 +14,10 @@
       z = bellman_ford_shortest_paths(g, 2)
       @test z.dists == [typemax(Int), 0, 1, 2, 3]
     end
+
+    gx = CompleteGraph(3)
+    d = [1 -3 1; -3 1 1; 1 1 1]
+    for g in testgraphs(gx)
+        @test_throws LightGraphs.NegativeCycleError bellman_ford_shortest_paths(g, 1, d)
+    end
 end
