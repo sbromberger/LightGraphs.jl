@@ -101,8 +101,8 @@ end
 Returns `true` if `g` is connected.
 For DiGraphs, this is equivalent to a test of weak connectivity.
 """
-is_connected(g::Graph) = length(connected_components(g)) == 1
-is_connected(g::DiGraph) = is_weakly_connected(g)
+is_connected(g::Graph) = ne(g)+1 >= nv(g) && length(connected_components(g)) == 1
+is_connected(g::DiGraph) = ne(g)+1 >= nv(g) && is_weakly_connected(g)
 
 """Returns connected components of the undirected graph of `g`."""
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
