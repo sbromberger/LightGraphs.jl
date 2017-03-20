@@ -181,6 +181,16 @@
         @test degree(rr, v) == 8
     end
 
+    rd = random_regular_digraph(10, 8, dir=:out, seed=4)
+    @test nv(rd) == 10
+    @test ne(rd) == 80
+    @test is_directed(rd)
+
+    g = stochastic_block_model(2., 3., [100,100])
+    @test  4.5 < mean(degree(g)) < 5.5
+    g = stochastic_block_model(3., 4., [100,100,100])
+    @test  10.5 < mean(degree(g)) < 11.5
+
     function generate_nbp_sbm(numedges, sizes)
         density = 1
         # print(STDERR, "Generating communites with sizes: $sizes\n")
