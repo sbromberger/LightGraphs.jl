@@ -65,7 +65,7 @@ end
 """
 Save a graph to file. See [`save`](@ref).
 """
-savegraph{T<:AbstractGraph}(f, g::T, x...; kws...) = save(f, g::T, x...; kws...)
+savegraph(f, g::AbstractGraph, x...; kws...) = save(f, g, x...; kws...)
 
 """
     save(file, g, t=:lg)

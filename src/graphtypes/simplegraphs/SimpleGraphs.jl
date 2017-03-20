@@ -127,7 +127,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     end
     return true
 end
-empty{T<:AbstractSimpleGraph}(g::T) = T()
+
+empty(g::T) where T<:AbstractSimpleGraph = T()
 
 include("simpleedge.jl")
 include("simpledigraph.jl")

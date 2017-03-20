@@ -171,7 +171,7 @@ mutable struct TreeDFSVisitor{T} <:AbstractGraphVisitor
     predecessor::Vector{T}
 end
 
-TreeDFSVisitor{T<:Integer}(n::T) = TreeDFSVisitor(DiGraph(n), zeros(T,n))
+TreeDFSVisitor(n::T) where T<:Integer = TreeDFSVisitor(DiGraph(n), zeros(T,n))
 
 function examine_neighbor!(visitor::TreeDFSVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     if (vcolor == 0)

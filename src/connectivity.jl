@@ -101,8 +101,8 @@ Returns `true` if `g` is connected.
 For DiGraphs, this is equivalent to a test of weak connectivity.
 """
 function is_connected end
-@traitfn is_connected(g::::(!IsDirected)) = length(connected_components(g)) == 1
-@traitfn is_connected(g::::IsDirected) = is_weakly_connected(g)
+@traitfn is_connected(g::::(!IsDirected)) = ne(g)+1 >= nv(g) && length(connected_components(g)) == 1
+@traitfn is_connected(g::::IsDirected) = ne(g)+1 >= nv(g) && is_weakly_connected(g)
 
 """Returns connected components of the undirected graph of `g`."""
 function weakly_connected_components end
@@ -121,7 +121,7 @@ mutable struct TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
     components::Vector{Vector{T}}
 end
 
-TarjanVisitor{T<:Integer}(n::T) = TarjanVisitor(
+TarjanVisitor(n::T) where T<:Integer = TarjanVisitor(
     Vector{T}(),
     falses(n),
     Vector{T}(),

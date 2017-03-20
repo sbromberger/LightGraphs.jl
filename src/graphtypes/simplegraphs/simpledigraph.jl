@@ -8,7 +8,7 @@ mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
 end
 
-eltype{T<:Integer}(x::SimpleDiGraph{T}) = T
+eltype(x::SimpleDiGraph{T}) where T = T
 
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
@@ -104,7 +104,7 @@ badj(g) == badj(h)
 
 is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
-is_directed{T}(::Type{SimpleDiGraph{T}}) = true
+is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
 function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     T = eltype(g)

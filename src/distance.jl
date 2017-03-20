@@ -52,14 +52,14 @@ eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
 
 """Returns the maximum eccentricity of the graph."""
-diameter(all_e::Vector{T}) where T = maximum(all_e)
-diameter(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) where T =
+diameter(all_e::Vector) = maximum(all_e)
+diameter(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance())=
     maximum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
 diameter (that is, the set of vertices with the largest eccentricity).
 """
-function periphery(all_e::Vector{T}) where T
+function periphery(all_e::Vector)
     diam = maximum(all_e)
     return filter((x)->all_e[x] == diam, 1:length(all_e))
 end
@@ -68,17 +68,17 @@ periphery(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
     periphery(eccentricity(g, distmx))
 
 """Returns the minimum eccentricity of the graph."""
-radius{T}(all_e::Vector{T}) = minimum(all_e)
-radius{T}(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) =
+radius(all_e::Vector) = minimum(all_e)
+radius(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
     minimum(eccentricity(g, distmx))
 
 """Returns the set of all vertices whose eccentricity is equal to the graph's
 radius (that is, the set of vertices with the smallest eccentricity).
 """
-function center{T}(all_e::Vector{T})
+function center(all_e::Vector)
     rad = radius(all_e)
     return filter((x)->all_e[x] == rad, 1:length(all_e))
 end
 
-center{T}(g::AbstractGraph, distmx::AbstractMatrix{T} = DefaultDistance()) =
+center(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
     center(eccentricity(g, distmx))

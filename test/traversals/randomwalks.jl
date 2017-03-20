@@ -77,8 +77,8 @@
     add_edge!(gx, 1, 1)
     for g in testgraphs(gx)
       for len = 1:3*n
-          @test test_nbw(g,1,len) == true
-          @test test_nbw(g,2,len) == true
+          @test test_nbw(g,1,len)
+          @test test_nbw(g,2,len)
       end
     end
 end

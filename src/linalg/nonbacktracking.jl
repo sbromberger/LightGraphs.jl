@@ -61,7 +61,7 @@ for computed eigenvectors and conducting linear solves.
 Additionally the contract!(vertexspace, nbt, edgespace) method takes vectors represented in
 the domain of B and represents them in the domain of the adjacency matrix of g.
 """
-struct Nonbacktracking{G}
+struct Nonbacktracking{G<:AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -87,7 +87,7 @@ size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking{G}, x::Vector{T}) where G where T<:Number
+function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e,u) in nbt.edgeidmap
@@ -128,7 +128,7 @@ end
 
 sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m,nbt.m)
 
-function *(nbt::Nonbacktracking{G}, x::AbstractMatrix{T}) where G where T<:Number
+function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zeros(x)
     for i in 1:nbt.m
         y[:,i] = nbt * x[:,i]

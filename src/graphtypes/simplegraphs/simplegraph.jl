@@ -75,7 +75,7 @@ function SimpleGraph(g::SimpleDiGraph)
     return SimpleGraph(vertices(g), edgect ÷ 2, newfadj)
 end
 
-edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T} 
+edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T}
 
 """
 Returns the backwards adjacency list of a graph.

@@ -136,7 +136,7 @@ LightGraphs
 include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
-    include("graphtypes/simplegraph/SimpleGraphs.jl")
+    include("graphtypes/simplegraphs/SimpleGraphs.jl")
     const Graph = SimpleGraphs.SimpleGraph
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge

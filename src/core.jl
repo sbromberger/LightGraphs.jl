@@ -15,11 +15,11 @@ add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i=1:n])
 
 """Return the number of edges which end at vertex `v`."""
 indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
-indegree{T<:Integer}(g::AbstractGraph, v::AbstractVector{T} = vertices(g)) = [indegree(g,x) for x in v]
+indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g,x) for x in v]
 
 """Return the number of edges which start at vertex `v`."""
 outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
-outdegree{T<:Integer}(g::AbstractGraph, v::AbstractVector{T} = vertices(g)) = [outdegree(g,x) for x in v]
+outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g,x) for x in v]
 
 """
 Return the number of edges from the vertex `v`.
