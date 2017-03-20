@@ -6,19 +6,19 @@
     for g in testdigraphs(g4)
         y = bellman_ford_shortest_paths(g, 2, d1)
         z = bellman_ford_shortest_paths(g, 2, d2)
-        @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-        @test enumerate_paths(z)[2] == []
-        @test enumerate_paths(z)[4] == enumerate_paths(z,4) == [2,3,4]
+        @test @inferred(y.dists) == z.dists == [Inf, 0, 6, 17, 33]
+        @test @inferred(enumerate_paths(z)[2]) == []
+        @test @inferred(enumerate_paths(z)[4]) == enumerate_paths(z,4) == [2,3,4]
         @test !has_negative_edge_cycle(g)
 
         y = bellman_ford_shortest_paths(g, 2, d1)
         z = bellman_ford_shortest_paths(g, 2, d2)
-        @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-        @test enumerate_paths(z)[2] == []
-        @test enumerate_paths(z)[4] == enumerate_paths(z,4) == [2,3,4]
+        @test @inferred(y.dists) == z.dists == [Inf, 0, 6, 17, 33]
+        @test @inferred(enumerate_paths(z)[2]) == []
+        @test @inferred(enumerate_paths(z)[4]) == enumerate_paths(z,4) == [2,3,4]
         @test !has_negative_edge_cycle(g)
         z = bellman_ford_shortest_paths(g, 2)
-        @test z.dists == [typemax(Int), 0, 1, 2, 3]
+        @test @inferred(z.dists) == [typemax(Int), 0, 1, 2, 3]
     end
 
     # Negative Cycle

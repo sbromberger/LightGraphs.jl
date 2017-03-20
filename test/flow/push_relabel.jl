@@ -26,9 +26,9 @@
       @test LightGraphs.enqueue_vertex!(Q, 1, active, excess) == nothing
       @test LightGraphs.enqueue_vertex!(Q, 3, active, excess) == nothing
       @test LightGraphs.enqueue_vertex!(Q, 4, active, excess) == nothing
-      @test length(Q) == 0
+      @test @inferred(length(Q)) == 0
       @test LightGraphs.enqueue_vertex!(Q, 2, active, excess) == nothing
-      @test length(Q) == 1
+      @test @inferred(length(Q)) == 1
 
       # Test push_flow
       Q = Array{Int,1}()
@@ -37,11 +37,11 @@
       active = [true, false, false, false, false, false, false, true]
       flow_matrix = zeros(Int, 8, 8)
       @test LightGraphs.push_flow!(residual_graph, 1, 2, capacity_matrix, flow_matrix, excess, height, active, Q) == nothing
-      @test length(Q) == 1
-      @test flow_matrix[1,2] == 10
+      @test @inferred(length(Q)) == 1
+      @test @inferred(flow_matrix[1,2]) == 10
       @test LightGraphs.push_flow!(residual_graph, 2, 3, capacity_matrix, flow_matrix, excess, height, active, Q) == nothing
-      @test length(Q) == 1
-      @test flow_matrix[2,3] == 0
+      @test @inferred(length(Q)) == 1
+      @test @inferred(flow_matrix[2,3]) == 0
 
       # Test gap
       Q = Array{Int,1}()
@@ -52,7 +52,7 @@
       flow_matrix = zeros(Int, 8, 8)
 
       @test LightGraphs.gap!(residual_graph, 1, excess, height, active, count, Q) == nothing
-      @test length(Q) == 2
+      @test @inferred(length(Q)) == 2
 
       # Test relabel
       Q = Array{Int,1}()
@@ -63,7 +63,7 @@
       flow_matrix = zeros(Int, 8, 8)
 
       @test LightGraphs.relabel!(residual_graph, 2, capacity_matrix, flow_matrix, excess, height, active, count, Q) == nothing
-      @test length(Q) == 1
+      @test @inferred(length(Q)) == 1
 
       # Test discharge
       Q = Array{Int,1}()
@@ -74,7 +74,7 @@
       flow_matrix = zeros(Int, 8, 8)
 
       @test LightGraphs.discharge!(residual_graph, 1, capacity_matrix, flow_matrix, excess, height, active, count, Q) == nothing
-      @test length(Q) == 3
+      @test @inferred(length(Q)) == 3
 
       # Test with default distances
       @test LightGraphs.push_relabel(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3

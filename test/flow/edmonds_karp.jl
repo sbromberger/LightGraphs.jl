@@ -25,15 +25,15 @@
       @test LightGraphs.edmonds_karp_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
 
       # Test with capacity matrix
-      @test LightGraphs.edmonds_karp_impl(residual_graph,1,8,capacity_matrix)[1] == 28
+      @test @inferred(LightGraphs.edmonds_karp_impl(residual_graph,1,8,capacity_matrix)[1]) == 28
 
       # Test the types of the values returned by fetch_path
       function test_find_path_types(residual_graph, s, t, flow_matrix, capacity_matrix)
           v, P, S, flag = LightGraphs.fetch_path(residual_graph, s, t, flow_matrix, capacity_matrix)
-          @test typeof(P) == Vector{Int}
-          @test typeof(S) == Vector{Int}
-          @test typeof(flag) == Int
-          @test typeof(v) == eltype(residual_graph)
+          @test @inferred(typeof(P)) == Vector{Int}
+          @test @inferred(typeof(S)) == Vector{Int}
+          @test @inferred(typeof(flag)) == Int
+          @test @inferred(typeof(v)) == eltype(residual_graph)
       end
 
       # Test the value of the flags returned.
@@ -43,17 +43,17 @@
               rem_edge!(residual_graph, s, dst)
           end
           v, P, S, flag = LightGraphs.fetch_path(residual_graph, s, t, flow_matrix, capacity_matrix)
-          @test flag == 1
+          @test @inferred(flag) == 1
           for dst in collect(neighbors(h, t))
               rem_edge!(h, t, dst)
           end
           v, P, S, flag = LightGraphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
-          @test flag == 0
+          @test @inferred(flag) == 0
           for i in collect(in_neighbors(h, t))
               rem_edge!(h, i, t)
           end
           v, P, S, flag = LightGraphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
-          @test flag == 2
+          @test @inferred(flag) == 2
       end
 
       flow_matrix = zeros(Int, nv(residual_graph), nv(residual_graph))

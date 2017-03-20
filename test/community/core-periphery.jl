@@ -3,9 +3,9 @@
     for g in testgraphs(g10)
       c = core_periphery_deg(g)
       @test degree(g, 1) == 9
-      @test c[1] == 1
+      @test @inferred(c[1]) == 1
       for i=2:10
-          @test c[i] == 2
+          @test @inferred(c[i]) == 2
       end
     end
 
@@ -14,13 +14,13 @@
     add_edge!(g10, 1, 11)
     for g in testgraphs(g10)
       c = core_periphery_deg(g)
-      @test c[1] == 1
-      @test c[11] == 1
+      @test @inferred(c[1]) == 1
+      @test @inferred(c[11]) == 1
       for i=2:10
-          @test c[i] == 2
+          @test @inferred(c[i]) == 2
       end
       for i=12:20
-          @test c[i] == 2
+          @test @inferred(c[i]) == 2
       end
     end
 end

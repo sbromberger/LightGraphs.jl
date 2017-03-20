@@ -41,16 +41,16 @@
           d = LightGraphs.DefaultCapacity(g)
           T = eltype(d)
           @test typeof(d) <: AbstractMatrix{T}
-          @test d[s,t] == 0
-          @test size(d) == (nvertices,nvertices)
+          @test @inferred(d[s,t]) == 0
+          @test @inferred(size(d)) == (nvertices,nvertices)
           @test typeof(transpose(d)) <: LightGraphs.DefaultCapacity
           @test typeof(ctranspose(d)) <: LightGraphs.DefaultCapacity
 
           # Test all algorithms
           for ALGO in [EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm]
-            @test maximum_flow(g,s,t,algorithm=ALGO())[1] == fdefault
-            @test maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO())[1] == fcustom
-            @test maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO(),restriction=caprestrict)[1] == frestrict
+            @test @inferred(maximum_flow(g,s,t,algorithm=ALGO())[1]) == fdefault
+            @test @inferred(maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO())[1]) == fcustom
+            @test @inferred(maximum_flow(g,s,t,capacity_matrix,algorithm=ALGO(),restriction=caprestrict)[1]) == frestrict
           end
         end
     end

@@ -9,45 +9,45 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     g4 = PathDiGraph(5)
     g5 = DiGraph(4)
     for g in testgraphs(g3)
-      @test adjacency_matrix(g)[3,2] == 1
-      @test adjacency_matrix(g)[2,4] == 0
-      @test laplacian_matrix(g)[3,2] == -1
-      @test laplacian_matrix(g)[1,3] == 0
-      @test laplacian_spectrum(g)[5] == 3.6180339887498945
-      @test adjacency_spectrum(g)[1] == -1.732050807568878
+      @test @inferred(adjacency_matrix(g)[3,2]) == 1
+      @test @inferred(adjacency_matrix(g)[2,4]) == 0
+      @test @inferred(laplacian_matrix(g)[3,2]) == -1
+      @test @inferred(laplacian_matrix(g)[1,3]) == 0
+      @test @inferred(laplacian_spectrum(g)[5]) == 3.6180339887498945
+      @test @inferred(adjacency_spectrum(g)[1]) == -1.732050807568878
     end
 
 
     add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
     for g in testdigraphs(g5)
-      @test laplacian_spectrum(g)[3] == laplacian_spectrum(g,:both)[3] == 3.0
-      @test laplacian_spectrum(g,:in)[3] == 1.0
-      @test laplacian_spectrum(g,:out)[3] == 1.0
+      @test @inferred(laplacian_spectrum(g)[3]) == laplacian_spectrum(g,:both)[3] == 3.0
+      @test @inferred(laplacian_spectrum(g,:in)[3]) == 1.0
+      @test @inferred(laplacian_spectrum(g,:out)[3]) == 1.0
     end
 
     # check adjacency matrices with self loops
     gx = copy(g3)
     add_edge!(gx,1,1)
     for g in testgraphs(gx)
-      @test adjacency_matrix(g)[1,1] == 2
+      @test @inferred(adjacency_matrix(g)[1,1]) == 2
     end
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
       B, em = non_backtracking_matrix(g)
-      @test length(em) == 2*ne(g)
-      @test size(B) == (2*ne(g),2*ne(g))
+      @test @inferred(length(em)) == 2*ne(g)
+      @test @inferred(size(B)) == (2*ne(g),2*ne(g))
       for i=1:10
-          @test sum(B[:,i]) == 8
-          @test sum(B[i,:]) == 8
+          @test @inferred(sum(B[:,i])) == 8
+          @test @inferred(sum(B[i,:])) == 8
       end
       @test !issymmetric(B)
 
       v = ones(Float64, ne(g))
       z = zeros(Float64, nv(g))
       n10 = Nonbacktracking(g)
-      @test size(n10) == (2*ne(g), 2*ne(g))
-      @test eltype(n10) == Float64
+      @test @inferred(size(n10)) == (2*ne(g), 2*ne(g))
+      @test @inferred(eltype(n10)) == Float64
       @test !issymmetric(n10)
 
       LightGraphs.contract!(z, n10, v)
@@ -62,7 +62,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     end
 
     for g in testgraphs(g3)
-      @test adjacency_matrix(g) ==
+      @test @inferred(adjacency_matrix(g)) ==
         adjacency_matrix(g, :out) ==
         adjacency_matrix(g, :in) ==
         adjacency_matrix(g, :both)
@@ -77,7 +77,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
       bothmat = adjacency_matrix(g, :both, Int)
 
     #relations that should be true
-      @test inmat' == outmat
+      @test @inferred(inmat') == outmat
       @test all((bothmat - outmat) .>= 0)
       @test all((bothmat - inmat)  .>= 0)
 
@@ -96,18 +96,18 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
 
     for g in testdigraphs(g4)
     # testing incidence_matrix, first directed graph
-      @test size(incidence_matrix(g)) == (5,4)
-      @test incidence_matrix(g)[1,1] == -1
-      @test incidence_matrix(g)[2,1] == 1
-      @test incidence_matrix(g)[3,1] == 0
+      @test @inferred(size(incidence_matrix(g))) == (5,4)
+      @test @inferred(incidence_matrix(g)[1,1]) == -1
+      @test @inferred(incidence_matrix(g)[2,1]) == 1
+      @test @inferred(incidence_matrix(g)[3,1]) == 0
     end
 
     for g in testgraphs(g3)
     # now undirected graph
-      @test size(incidence_matrix(g)) == (5,4)
-      @test incidence_matrix(g)[1,1] == 1
-      @test incidence_matrix(g)[2,1] == 1
-      @test incidence_matrix(g)[3,1] == 0
+      @test @inferred(size(incidence_matrix(g))) == (5,4)
+      @test @inferred(incidence_matrix(g)[1,1]) == 1
+      @test @inferred(incidence_matrix(g)[2,1]) == 1
+      @test @inferred(incidence_matrix(g)[3,1]) == 0
 
     # undirected graph with orientation
       @test size(incidence_matrix(g; oriented=true)) == (5,4)
@@ -124,7 +124,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
       nbt = Nonbacktracking(g)
       B, emap = non_backtracking_matrix(g)
       Bs = sparse(nbt)
-      @test sparse(B) == Bs
+      @test @inferred(sparse(B)) == Bs
       @test eigs(nbt, nev=1)[1] ≈ eigs(B, nev=1)[1] atol=1e-5
 
       # check that matvec works
@@ -140,16 +140,16 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
       @test norm(nbt*eye(nbt.m) - B) < 1e-8
 
       #check that we can use the implicit matvec in nonbacktrack_embedding
-      @test size(y) == size(x)
+      @test @inferred(size(y)) == size(x)
 
       B₁ = Nonbacktracking(g10)
 
-      @test full(B₁) == full(B)
+      @test @inferred(full(B₁)) == full(B)
       @test  B₁ * ones(size(B₁)[2]) == B*ones(size(B)[2])
-      @test size(B₁) == size(B)
+      @test @inferred(size(B₁)) == size(B)
     #   @test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8
       @test !issymmetric(B₁)
-      @test eltype(B₁) == Float64
+      @test @inferred(eltype(B₁)) == Float64
     end
     # END tests for Nonbacktracking
 

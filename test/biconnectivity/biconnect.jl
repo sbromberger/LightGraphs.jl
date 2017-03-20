@@ -23,7 +23,7 @@
 
     for g in testgraphs(gint)
       bcc = biconnected_components(g)
-      @test bcc == a
+      @test @inferred(bcc) == a
     end
 
     g = Graph(4)
@@ -45,6 +45,6 @@
 
     for g in testgraphs(gint)
       bcc = biconnected_components(g)
-      @test bcc == a
+      @test @inferred(bcc) == a
     end
 end

@@ -10,7 +10,7 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
       LightGraphs.bfs_tree!(visitor, g, 1)
       t = visitor.tree
       @test t == [1,1,1,3]
-      @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
+      @test @inferred(nv(z)) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
     end
     for g in testgraphs(g6)
       @test gdistances(g, 2) == [1, 0, 2, 1, 2]
@@ -52,7 +52,7 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
     for g in testgraphs(g6)
       n = nv(g)
       visitor = TreeBFSVisitorVector(n)
-      @test length(visitor.tree) == n
+      @test @inferred(length(visitor.tree)) == n
       parents = visitor.tree
       bfs_tree!(visitor, g, 1)
 
@@ -65,7 +65,7 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
     # test Dict{Int,Int}() colormap
 
       visitor = TreeBFSVisitorVector(n)
-      @test length(visitor.tree) == n
+      @test @inferred(length(visitor.tree)) == n
       parents = visitor.tree
       bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
 
@@ -78,15 +78,15 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
-      @test bipartite_map(g) == Vector{eltype(g)}()
+      @test @inferred(bipartite_map(g)) == Vector{eltype(g)}()
     end
 
     g10 = CompleteBipartiteGraph(10,10)
     for g in testgraphs(g10)
       T = eltype(g)
-      @test bipartite_map(g10) == Vector{T}([ones(T, 10); 2*ones(T, 10)])
+      @test @inferred(bipartite_map(g10)) == Vector{T}([ones(T, 10); 2*ones(T, 10)])
 
       h = blkdiag(g,g)
-      @test bipartite_map(h) == Vector{T}([ones(T, 10); 2*ones(T, 10); ones(T, 10); 2*ones(T, 10)])
+      @test @inferred(bipartite_map(h)) == Vector{T}([ones(T, 10); 2*ones(T, 10); ones(T, 10); 2*ones(T, 10)])
     end
 end

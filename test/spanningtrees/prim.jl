@@ -12,7 +12,7 @@
     for g in testgraphs(g4)
       # Testing Prim's algorithm
       mst = prim_mst(g, distmx)
-      @test mst == vec_mst
+      @test @inferred(mst) == vec_mst
     end
 
     #second test
@@ -31,6 +31,6 @@
     gx = Graph(distmx_sec)
     for g in testgraphs(gx)
       mst2 = prim_mst(g, distmx_sec)
-      @test mst2 == vec2
+      @test @inferred(mst2) == vec2
     end
 end

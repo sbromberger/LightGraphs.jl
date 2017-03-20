@@ -2,9 +2,9 @@
     N = 10
     d = 2
     g, weights, points = euclidean_graph(N, d)
-    @test nv(g) == N
-    @test ne(g) == N*(N-1) ÷ 2
-    @test (d,N) == size(points)
+    @test @inferred(nv(g)) == N
+    @test @inferred(ne(g)) == N*(N-1) ÷ 2
+    @test @inferred((d,N)) == size(points)
     @test maximum(x->x[2], weights) <= sqrt(d)
     @test minimum(x->x[2], weights) >= 0
     @test maximum(points) <= 1

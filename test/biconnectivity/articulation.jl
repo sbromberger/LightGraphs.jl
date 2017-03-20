@@ -21,19 +21,19 @@
     for g in testgraphs(gint)
       art = articulation(g)
       ans = [1, 7, 8, 12]
-      @test art == ans
+      @test @inferred(art) == ans
     end
     for level in 1:6
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
           artpts = articulation(tree)
-          @test artpts == collect(1:(2^(level-1)-1))
+          @test @inferred(artpts) == collect(1:(2^(level-1)-1))
         end
     end
 
     hint = LightGraphs.blkdiag(WheelGraph(5), WheelGraph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
-      @test articulation(h) == [5, 6]
+      @test @inferred(articulation(h)) == [5, 6]
     end
 end

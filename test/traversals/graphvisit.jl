@@ -27,5 +27,5 @@
     # dummy edge map test
     d = LightGraphs.DummyEdgeMap()
     e = Edge(1,2)
-    @test d[e] == 0
+    @test @inferred(d[e]) == 0
 end

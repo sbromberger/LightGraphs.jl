@@ -6,10 +6,10 @@
         T = eltype(circle)
         complete = DiGraph{T}(completedg)
         newcircle = transitiveclosure(circle)
-        @test newcircle == complete
-        @test ne(circle) == 4
-        @test newcircle == transitiveclosure!(circle)
-        @test ne(circle) == 12
+        @test @inferred(newcircle) == complete
+        @test @inferred(ne(circle)) == 4
+        @test @inferred(newcircle) == transitiveclosure!(circle)
+        @test @inferred(ne(circle)) == 12
     end
 
     loopedcompletedg = copy(completedg)
@@ -22,9 +22,9 @@
         T = eltype(circle)
         loopedcomplete = DiGraph{T}(loopedcompletedg)
         newcircle = transitiveclosure(circle, true)
-        @test newcircle == loopedcomplete
-        @test ne(circle) == 4
-        @test newcircle == transitiveclosure!(circle, true)
-        @test ne(circle) == 16
+        @test @inferred(newcircle) == loopedcomplete
+        @test @inferred(ne(circle)) == 4
+        @test @inferred(newcircle) == transitiveclosure!(circle, true)
+        @test @inferred(ne(circle)) == 16
     end
 end

@@ -12,7 +12,7 @@
     add_edge!(g5,1,2)
     for g in testgraphs(g5)
       z = closeness_centrality(g)
-      @test z[1] == z[2] == 0.25
-      @test z[3] == z[4] == z[5] == 0.0
+      @test @inferred(z[1]) == z[2] == 0.25
+      @test @inferred(z[3]) == z[4] == z[5] == 0.0
     end
 end

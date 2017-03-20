@@ -24,8 +24,8 @@
     cost = MinkowskiCost(1:3,1:3)
     bcost = BoundedMinkowskiCost(1:3,1:3)
     for i=1:3
-      @test cost(i,i) == 0.
-      @test bcost(i,i) == 2/3
+      @test @inferred(cost(i,i)) == 0.
+      @test @inferred(bcost(i,i)) == 2/3
     end
 
     g1c = CompleteGraph(4)

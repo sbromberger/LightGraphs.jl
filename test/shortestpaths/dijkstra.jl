@@ -7,15 +7,15 @@
       y = dijkstra_shortest_paths(g, 2, d1)
       z = dijkstra_shortest_paths(g, 2, d2)
 
-      @test y.parents == z.parents == [0, 0, 2, 3, 4]
-      @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
+      @test @inferred(y.parents) == z.parents == [0, 0, 2, 3, 4]
+      @test @inferred(y.dists) == z.dists == [Inf, 0, 6, 17, 33]
 
       y = dijkstra_shortest_paths(g, 2, d1; allpaths=true)
       z = dijkstra_shortest_paths(g, 2, d2; allpaths=true)
-      @test z.predecessors[3] == y.predecessors[3] == [2]
+      @test @inferred(z.predecessors[3]) == y.predecessors[3] == [2]
 
-      @test enumerate_paths(z) == enumerate_paths(y)
-      @test enumerate_paths(z)[4] ==
+      @test @inferred(enumerate_paths(z)) == enumerate_paths(y)
+      @test @inferred(enumerate_paths(z)[4]) ==
           enumerate_paths(z,4) ==
           enumerate_paths(y,4) == [2,3,4]
     end
@@ -26,8 +26,8 @@
     d[2,3] = 100
     for g in testgraphs(gx)
       z = dijkstra_shortest_paths(g,1,d)
-      @test z.dists == [0, 1, 3, 2, 3]
-      @test z.parents == [0, 1, 4, 2, 4]
+      @test @inferred(z.dists) == [0, 1, 3, 2, 3]
+      @test @inferred(z.parents) == [0, 1, 4, 2, 4]
     end
 
     # small function to reconstruct the shortest path; I copied it from somewhere, can't find the original source to give the credits

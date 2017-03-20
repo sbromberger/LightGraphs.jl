@@ -53,7 +53,7 @@
     gx = CycleGraph(10)
     for g in testgraphs(gx)
       visited = non_backtracking_randomwalk(g, 1, 20)
-      @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
+      @test @inferred(visited) == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
     end
 
     gx = CycleDiGraph(10)

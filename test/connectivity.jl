@@ -13,12 +13,12 @@
       cc = connected_components(g)
       label = zeros(eltype(g), nv(g))
       LightGraphs.connected_components!(label, g)
-      @test label[1:10] == [1,1,1,1,5,5,5,8,8,8]
+      @test @inferred(label[1:10]) == [1,1,1,1,5,5,5,8,8,8]
       import LightGraphs: components, components_dict
       cclab = components_dict(label)
-      @test cclab[1] == [1,2,3,4]
-      @test cclab[5] == [5,6,7]
-      @test cclab[8] == [8,9,10]
+      @test @inferred(cclab[1]) == [1,2,3,4]
+      @test @inferred(cclab[5]) == [5,6,7]
+      @test @inferred(cclab[8]) == [8,9,10]
       @test length(cc) >= 3 && sort(cc[3]) == [8,9,10]
     end
     for g in testgraphs(g6)
@@ -64,8 +64,8 @@
       scc = strongly_connected_components(g)
       wcc = weakly_connected_components(g)
 
-      @test length(scc) == 3 && sort(scc[3]) == [1,2,5]
-      @test length(wcc) == 1 && length(wcc[1]) == nv(g)
+      @test @inferred(length(scc)) == 3 && sort(scc[3]) == [1,2,5]
+      @test @inferred(length(wcc)) == 1 && length(wcc[1]) == nv(g)
 
     end
 
@@ -93,14 +93,14 @@
     add_edge!(h,3,5); add_edge!(h,5,6); add_edge!(h,6,4)
     for g in testdigraphs(h)
       scc = strongly_connected_components(g)
-      @test length(scc) == 1 && sort(scc[1]) == [1:6;]
+      @test @inferred(length(scc)) == 1 && sort(scc[1]) == [1:6;]
     end
     # tests from Graphs.jl
     h = DiGraph(4)
     add_edge!(h,1,2); add_edge!(h,2,3); add_edge!(h,3,1); add_edge!(h,4,1)
     for g in testdigraphs(h)
       scc = strongly_connected_components(g)
-      @test length(scc) == 2 && sort(scc[1]) == [1:3;] && sort(scc[2]) == [4]
+      @test @inferred(length(scc)) == 2 && sort(scc[1]) == [1:3;] && sort(scc[2]) == [4]
     end
 
     h = DiGraph(12)
@@ -112,11 +112,11 @@
 
     for g in testdigraphs(h)
       scc = strongly_connected_components(g)
-      @test length(scc) == 4
-      @test sort(scc[1]) == [7,8,9,10,11,12]
-      @test sort(scc[2]) == [3, 6]
-      @test sort(scc[3]) == [2, 4, 5]
-      @test scc[4] == [1]
+      @test @inferred(length(scc)) == 4
+      @test @inferred(sort(scc[1])) == [7,8,9,10,11,12]
+      @test @inferred(sort(scc[2])) == [3, 6]
+      @test @inferred(sort(scc[3])) == [2, 4, 5]
+      @test @inferred(scc[4]) == [1]
     end
     # Test examples with self-loops from
     # Graph-Theoretic Analysis of Finite Markov Chains by J.P. Jarvis & D. R. Shier
@@ -155,16 +155,16 @@
     fig8[[2,10,13,21,24,27,35]] = 1
     fig8 = DiGraph(fig8)
 
-    @test Set(strongly_connected_components(fig1)) == Set(scc_fig1)
-    @test Set(strongly_connected_components(fig3)) == Set(scc_fig3)
+    @test @inferred(Set(strongly_connected_components(fig1))) == Set(scc_fig1)
+    @test @inferred(Set(strongly_connected_components(fig3))) == Set(scc_fig3)
 
-    @test period(n_ring) == n
-    @test period(n_ring_shortcut) == 2
+    @test @inferred(period(n_ring)) == n
+    @test @inferred(period(n_ring_shortcut)) == 2
 
-    @test condensation(fig3) == fig3_cond
+    @test @inferred(condensation(fig3)) == fig3_cond
 
-    @test attracting_components(fig1) == Vector[[2,5]]
-    @test attracting_components(fig3) == Vector[[3,4],[8]]
+    @test @inferred(attracting_components(fig1)) == Vector[[2,5]]
+    @test @inferred(attracting_components(fig3)) == Vector[[3,4],[8]]
 
     g10 = StarGraph(10)
     for g in testgraphs(g10)

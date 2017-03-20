@@ -29,20 +29,20 @@
         eweights[d, s] = w
     end
     for g in testgraphs(gx)
-      @test nv(g) == 8
-      @test ne(g) == m
+      @test @inferred(nv(g)) == 8
+      @test @inferred(ne(g)) == m
 
       parity, bestcut = mincut(g, eweights)
 
-      @test length(parity) == 8
-      @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
-      @test bestcut == 4.0
+      @test @inferred(length(parity)) == 8
+      @test @inferred(parity) == [2, 2, 1, 1, 2, 2, 1, 1]
+      @test @inferred(bestcut) == 4.0
 
       parity, bestcut = mincut(g)
 
-      @test length(parity) == 8
-      @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
-      @test bestcut == 2.0
+      @test @inferred(length(parity)) == 8
+      @test @inferred(parity) == [2, 1, 1, 1, 1, 1, 1, 1]
+      @test @inferred(bestcut) == 2.0
 
       v = maximum_adjacency_visit(g)
 

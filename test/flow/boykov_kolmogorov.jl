@@ -25,6 +25,6 @@
         residual_graph, source, target, flow_matrix,
         capacity_matrix, PARENT, TREE, A)
 
-      @test path == [1,2,3]
+      @test @inferred(path) == [1,2,3]
   end
 end
