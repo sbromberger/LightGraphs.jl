@@ -64,7 +64,7 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(rem_vertex!(ga, 2)) && ne(ga) == 1
         @test @inferred(!rem_vertex!(ga, 10))
 
-        @test @inferred(empty(g)) == SimpleGraph{eltype(g)}()
+        @test @inferred(zero(g)) == SimpleGraph{eltype(g)}()
 
         # concrete tests below
 
@@ -120,7 +120,7 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(rem_vertex!(ga, 2)) && ne(ga) == 1
         @test @inferred(!rem_vertex!(ga, 10))
 
-        @test @inferred(empty(g)) == SimpleDiGraph{eltype(g)}()
+        @test @inferred(zero(g)) == SimpleDiGraph{eltype(g)}()
 
         # concrete tests below
 

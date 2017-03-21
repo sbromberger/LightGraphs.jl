@@ -17,7 +17,7 @@ mutable struct DummyEdge <: AbstractEdge end
 
     for graphfunbasic in [
       nv, ne, vertices, edges, is_directed,
-      add_vertex!, edgetype, eltype, empty
+      add_vertex!, edgetype, eltype, zero
       ]
       @test_throws ErrorException graphfunbasic(dummygraph)
     end

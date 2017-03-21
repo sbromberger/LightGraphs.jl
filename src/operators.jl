@@ -363,7 +363,7 @@ end
 
 
 function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
-    h = empty(g)
+    h = zero(g)
     et = eltype(h)
     newvid = Dict{et, et}()
     vmap = Vector{et}()
