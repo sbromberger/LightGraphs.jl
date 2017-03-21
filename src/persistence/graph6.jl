@@ -84,7 +84,7 @@ function _graphToG6String(g::Graph)
   return join([">>graph6<<", String(_g6_N(n)), String(_g6_R(x))])
 end
 
-function _g6StringToGraph(s::String)
+function _g6StringToGraph(s::AbstractString)
   if startswith(s, ">>graph6<<")
     s = s[11:end]
   end

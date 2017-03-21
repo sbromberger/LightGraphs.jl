@@ -45,7 +45,7 @@ function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n*(n-1) : div(n*(n-1),2)
     if seed >= 0
         # init dsfmt generator without altering GLOBAL_RNG
-        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
+        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+0x01)
     end
     ne = rand(Binomial(m, p)) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
@@ -478,8 +478,8 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Array(Int, n*k)
-    J = Array(Int, n*k)
+    I = Vector{Int}(n*k)
+    J = Vector{Int}(n*k)
     V = fill(true, n*k)
     for r in 1:n
         l = (r-1)*k+1 : r*k
@@ -657,9 +657,12 @@ end
 
 """Generates a stream of random pairs in 1:n"""
 function random_pair(rng::AbstractRNG, n::Int)
-    while true
-        produce( rand(rng, 1:n), rand(rng, 1:n) )
+    f(ch) = begin
+        while true
+            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+        end
     end
+    return f
 end
 
 
@@ -670,24 +673,28 @@ Take an infinite sample from the sbm.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = @task random_pair(sbm.rng, sbm.n)
-    for (i,j) in pairs
-    	if i == j
-            continue
-        end
-        p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-        if rand(sbm.rng) < p
-            produce(i, j)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    edges(ch) = begin
+        for e in pairs
+            i, j = Tuple(e)
+    	      if i == j
+                continue
+            end
+            p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
+            if rand(sbm.rng) < p
+                put!(ch, e)
+            end
         end
     end
+    return Channel(edges, ctype=Edge, csize=32)
 end
 
-function Graph(nvg::Int, neg::Int, edgestream::Task)
+function Graph(nvg::Int, neg::Int, edgestream::Channel)
     g = Graph(nvg)
     # println(g)
-    for (i,j) in edgestream
+    for e in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g, Edge(i, j))
+        add_edge!(g, e)
         ne(g) >= neg && break
     end
     # println(g)
@@ -695,7 +702,7 @@ function Graph(nvg::Int, neg::Int, edgestream::Task)
 end
 
 Graph(nvg::Int, neg::Int, sbm::StochasticBlockModel) =
-    Graph(nvg, neg, @task make_edgestream(sbm))
+    Graph(nvg, neg, make_edgestream(sbm))
 
 """counts the number of edges that go between each block"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)

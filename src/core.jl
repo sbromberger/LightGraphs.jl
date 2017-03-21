@@ -1,11 +1,12 @@
-abstract AbstractPathState
+abstract type AbstractPathState end
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
 _insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
 
 """A type representing a single edge between two vertices of a graph."""
-abstract AbstractEdge
-immutable Edge <: AbstractEdge
+abstract type AbstractEdge end
+
+struct Edge <: AbstractEdge
     src::Int
     dst::Int
 end
@@ -17,16 +18,17 @@ src(e::Edge) = e.src
 """Return destination of an edge."""
 dst(e::Edge) = e.dst
 
-convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
-convert(::Type{Tuple}, e::Edge) = (src(e), dst(e))
+Pair(e::AbstractEdge) = Pair(src(e), dst(e))
+Tuple(e::AbstractEdge) = (src(e), dst(e))
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 reverse(e::Edge) = Edge(dst(e), src(e))
-is_ordered(e::Edge) = src(e) <= dst(e)
+
 
 ==(e1::Edge, e2::Edge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
 
 """An abstract type representing a graph."""
-abstract AbstractGraph
+abstract type AbstractGraph end
 
 """A type representing an undirected graph."""
 type Graph <: AbstractGraph

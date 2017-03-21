@@ -101,7 +101,7 @@ adjacency_spectrum(g::DiGraph, dir::Symbol=:both, T::DataType=Int) = eigvals(ful
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
 value of `1` indicates that `dst(e) == v`. Otherwise, the value is
-`0`. For undirected graphs, if the optional keyword `oriented` is `false`, 
+`0`. For undirected graphs, if the optional keyword `oriented` is `false`,
 both entries are `1`, otherwise, an arbitrary orientation is chosen.
 """
 function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
@@ -148,7 +148,7 @@ function spectral_distance(G₁::Graph, G₂::Graph, k::Integer)
   λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
   λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
 
-  sumabs(λ₁ - λ₂)
+  sum(abs, (λ₁ - λ₂))
 end
 
 function spectral_distance(G₁::Graph, G₂::Graph)

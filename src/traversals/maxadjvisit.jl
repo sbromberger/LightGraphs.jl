@@ -13,7 +13,7 @@
 type MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: AbstractGraphVisitor
+abstract type AbstractMASVisitor<:AbstractGraphVisitor end
 
 function maximum_adjacency_visit_impl!{T}(
     graph::AbstractGraph,                               # the graph

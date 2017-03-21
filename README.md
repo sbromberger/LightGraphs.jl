@@ -7,7 +7,7 @@
 
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.5)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.6.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 
 An optimized graphs package.
@@ -202,7 +202,8 @@ This can be computed from neighbors by default `degree(g,v) = length(neighbors(g
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
-* Julia 0.6: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem on 0.6, please file an issue.
+* Julia 0.6: LightGraphs versions in the 0.8 series are designed to work with Julia 0.6
+* Other versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)

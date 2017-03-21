@@ -1,7 +1,7 @@
 """
 Abstract type that allows users to pass in their preferred Algorithm
 """
-abstract AbstractFlowAlgorithm
+abstract type AbstractFlowAlgorithm end
 
 """
 Forces the maximum_flow function to use the Edmonds–Karp algorithm.
@@ -179,7 +179,7 @@ function maximum_flow{T<:Number}(
     restriction::T = zero(T)               # keyword argument for restriction max-flow
     )
     if restriction > zero(T)
-      return maximum_flow(flow_graph, source, target, min(restriction, capacity_matrix), algorithm)
+      return maximum_flow(flow_graph, source, target, min.(restriction, capacity_matrix), algorithm)
     end
     return maximum_flow(flow_graph, source, target, capacity_matrix, algorithm)
 end

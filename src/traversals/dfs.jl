@@ -135,14 +135,13 @@ end
 
 type TopologicalSortVisitor <: AbstractGraphVisitor
     vertices::Vector{Int}
-
-    function TopologicalSortVisitor(n::Int)
-        vs = Array(Int, 0)
-        sizehint!(vs, n)
-        new(vs)
-    end
 end
 
+function TopologicalSortVisitor(n::Int)
+    vs = Vector{Int}()
+    sizehint!(vs, n)
+    return TopologicalSortVisitor(vs)
+end
 
 function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
     (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
