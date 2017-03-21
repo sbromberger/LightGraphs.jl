@@ -221,6 +221,10 @@ function convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency)
 	return adjmat.A
 end
 
+function convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency)
+	return adjmat
+end
+
 function convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency)
 	return adjmat.A
 end
