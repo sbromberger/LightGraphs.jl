@@ -5,7 +5,7 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
     g6 = smallgraph(:house)
 
     for g in testdigraphs(g5)
-      z = bfs_tree(g, 1)
+      z = @inferred(bfs_tree(g, 1))
       visitor = LightGraphs.TreeBFSVisitorVector(zeros(eltype(g),nv(g)))
       LightGraphs.bfs_tree!(visitor, g, 1)
       t = visitor.tree
@@ -13,11 +13,11 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
       @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
     end
     for g in testgraphs(g6)
-      @test gdistances(g, 2) == [1, 0, 2, 1, 2]
-      @test gdistances(g, [1,2]) == [0, 0, 1, 1, 2]
-      @test gdistances(g, []) == [-1, -1, -1, -1, -1]
-      @test !is_bipartite(g)
-      @test !is_bipartite(g, 2)
+      @test @inferred(gdistances(g, 2)) == [1, 0, 2, 1, 2]
+      @test @inferred(gdistances(g, [1,2])) == [0, 0, 1, 1, 2]
+      @test @inferred(gdistances(g, [])) == [-1, -1, -1, -1, -1]
+      @test @inferred(!is_bipartite(g))
+      @test @inferred(!is_bipartite(g, 2))
     end
 
     gx = Graph(5)
@@ -26,8 +26,8 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
     add_edge!(gx,3,4)
 
     for g in testgraphs(gx)
-      @test is_bipartite(g)
-      @test is_bipartite(g, 2)
+      @test @inferred(is_bipartite(g))
+      @test @inferred(is_bipartite(g, 2))
     end
 
 
@@ -51,10 +51,10 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
     for g in testgraphs(g6)
       n = nv(g)
-      visitor = TreeBFSVisitorVector(n)
+      visitor = @inferred(TreeBFSVisitorVector(n))
       @test length(visitor.tree) == n
       parents = visitor.tree
-      bfs_tree!(visitor, g, 1)
+      @inferred(bfs_tree!(visitor, g, 1))
 
       @test istree(parents, n, n)
       t = tree(parents)
@@ -64,12 +64,12 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
     # test Dict{Int,Int}() colormap
 
-      visitor = TreeBFSVisitorVector(n)
+      visitor = @inferred(TreeBFSVisitorVector(n))
       @test length(visitor.tree) == n
       parents = visitor.tree
-      bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}())
+      @inferred(bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}()))
 
-      @test istree(parents, n, n)
+      @test @inferred(istree(parents, n, n))
       t = tree(parents)
       @test is_directed(t)
       @test typeof(t) <: AbstractGraph
@@ -78,15 +78,15 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
-      @test bipartite_map(g) == Vector{eltype(g)}()
+      @test @inferred(bipartite_map(g)) == Vector{eltype(g)}()
     end
 
     g10 = CompleteBipartiteGraph(10,10)
     for g in testgraphs(g10)
       T = eltype(g)
-      @test bipartite_map(g10) == Vector{T}([ones(T, 10); 2*ones(T, 10)])
+      @test @inferred(bipartite_map(g10)) == Vector{T}([ones(T, 10); 2*ones(T, 10)])
 
       h = blkdiag(g,g)
-      @test bipartite_map(h) == Vector{T}([ones(T, 10); 2*ones(T, 10); ones(T, 10); 2*ones(T, 10)])
+      @test @inferred(bipartite_map(h)) == Vector{T}([ones(T, 10); 2*ones(T, 10); ones(T, 10); 2*ones(T, 10)])
     end
 end

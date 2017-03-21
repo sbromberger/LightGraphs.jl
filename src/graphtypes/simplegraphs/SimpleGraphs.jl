@@ -1,7 +1,7 @@
 module SimpleGraphs
 
 import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset
+    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero
 
 import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
@@ -9,7 +9,7 @@ import LightGraphs:
     add_vertex!, add_edge!, rem_vertex!, rem_edge!,
     has_vertex, has_edge, in_neighbors, out_neighbors,
 
-    indegree, outdegree, degree, has_self_loops, num_self_loops, empty
+    indegree, outdegree, degree, has_self_loops, num_self_loops
 
 export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphEdge,
@@ -128,7 +128,7 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     return true
 end
 
-empty(g::T) where T<:AbstractSimpleGraph = T()
+zero(g::T) where T<:AbstractSimpleGraph = T()
 
 include("simpleedge.jl")
 include("simpledigraph.jl")

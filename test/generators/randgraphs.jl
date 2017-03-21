@@ -211,10 +211,10 @@
         @test all(bp .>= 0)
         @test all(bp .!= NaN)
     end
-    
+
     numedges = 100
     sizes = [10, 10, 10, 10]
-    
+
     n = sum(sizes)
     sbm, g = generate_nbp_sbm(numedges, sizes)
     @test ne(g) >= 0.9numedges
@@ -223,7 +223,7 @@
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
     test_sbm(sbm, bp)
     @test norm(collect(ratios)) < 0.25
-    
+
     sizes = [200, 200, 100]
     internaldeg = 15
     externaldeg = 6
@@ -241,19 +241,19 @@
     test_sbm(sbm, bp)
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
     @test norm(collect(ratios)) < 0.25
-    
+
     # check that average degree is not too high
     # factor of two is cushion for random process
     @test mean(degree(g)) <= 4//2*numedges/sum(sizes)
     # check that the internal degrees are higher than the external degrees
     # 5//4 is cushion for random process.
     @test all(sum(bc-diagm(diag(bc)), 1) .<= 5//4 .* diag(bc))
-    
-    
+
+
     sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
     sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
     @test sbm == sbm2
     sbm.affinities[1,1] = 0
     @test sbm != sbm2
-    
+
 end

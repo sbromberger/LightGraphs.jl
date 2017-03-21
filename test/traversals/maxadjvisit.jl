@@ -32,20 +32,19 @@
       @test nv(g) == 8
       @test ne(g) == m
 
-      parity, bestcut = mincut(g, eweights)
+      parity, bestcut = @inferred(mincut(g, eweights))
 
       @test length(parity) == 8
       @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
       @test bestcut == 4.0
 
-      parity, bestcut = mincut(g)
+      parity, bestcut = @inferred(mincut(g))
 
       @test length(parity) == 8
       @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
       @test bestcut == 2.0
 
-      v = maximum_adjacency_visit(g)
-
+      v = @inferred(maximum_adjacency_visit(g))
       @test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])
     end
 end

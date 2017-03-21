@@ -1,45 +1,52 @@
 @testset "Static graphs" begin
-    g = CompleteDiGraph(5)
+    g = @inferred(CompleteDiGraph(5))
     @test nv(g) == 5 && ne(g) == 20
-    g = CompleteGraph(5)
+    g = @inferred(CompleteGraph(5))
     @test nv(g) == 5 && ne(g) == 10
 
-    g = CompleteBipartiteGraph(5, 8)
+    g = @inferred(CompleteBipartiteGraph(5, 8))
     @test nv(g) == 13 && ne(g) == 40
 
-    g = StarDiGraph(5)
+    g = @inferred(StarDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
-    g = StarGraph(5)
+    g = @inferred(StarGraph(5))
     @test nv(g) == 5 && ne(g) == 4
-    g = StarGraph(1)
+    g = @inferred(StarGraph(1))
     @test nv(g) == 1 && ne(g) == 0
 
-    g = PathDiGraph(5)
+    g = @inferred(PathDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
-    g = PathGraph(5)
+    g = @inferred(PathGraph(5))
     @test nv(g) == 5 && ne(g) == 4
 
-    g = CycleDiGraph(5)
+    g = @inferred(CycleDiGraph(5))
     @test nv(g) == 5 && ne(g) == 5
-    g = CycleGraph(5)
+    g = @inferred(CycleGraph(5))
     @test nv(g) == 5 && ne(g) == 5
 
-    g = WheelDiGraph(5)
+    g = @inferred(WheelDiGraph(5))
     @test nv(g) == 5 && ne(g) == 8
-    g = WheelGraph(5)
+    g = @inferred(WheelGraph(5))
     @test nv(g) == 5 && ne(g) == 8
 
-    g = Grid([3,3,4])
+    g = @inferred(Grid([3,3,4]))
     @test nv(g) == 3*3*4
     @test ne(g) == 75
-    @test maximum(degree(g)) == 6
-    @test minimum(degree(g)) == 3
+    @test Δ(g) == 6
+    @test δ(g) == 3
 
-    g = CliqueGraph(3,5)
+    g = @inferred(Grid([3,3,4], periodic=true))
+    @test nv(g) == 3*3*4
+    @test ne(g) == 108
+    @test Δ(g) == 6
+    @test δ(g) == 6
+
+
+    g = @inferred(CliqueGraph(3,5))
     @test nv(g) == 15 && ne(g) == 20
     @test g[1:3] == CompleteGraph(3)
 
-    g = crosspath(3, BinaryTree(2))
+    g = @inferred(crosspath(3, BinaryTree(2)))
     # f = Vector{Vector{Int}}[[2 3 4];
     # [1 5];
     # [1 6];
@@ -56,7 +63,7 @@
     Adj = sparse(I,J,V)
     @test Adj == sparse(g)
 
-    g = DoubleBinaryTree(3)
+    g = @inferred(DoubleBinaryTree(3))
     # [[3,2,8]
     # [4,1,5]
     # [1,6,7]
@@ -77,7 +84,7 @@
     Adj = sparse(I,J,V)
     @test Adj == sparse(g)
 
-    rg3 = RoachGraph(3)
+    rg3 = @inferred(RoachGraph(3))
     # [3]
     # [4]
     # [1,5]

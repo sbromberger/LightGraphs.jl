@@ -13,13 +13,13 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
-            Pair, Tuple
+            Pair, Tuple, zero
 export
 # Interface
 AbstractGraph, AbstractDiGraph, AbstractEdge, AbstractEdgeInter,
 Edge, Graph, DiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
-has_vertex, has_edge, in_neighbors, out_neighbors, empty,
+has_vertex, has_edge, in_neighbors, out_neighbors,
 
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,

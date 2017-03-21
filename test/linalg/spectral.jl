@@ -58,7 +58,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     end
 
     for g in testdigraphs(g5)
-        @test (adjacency_spectrum(g))[3] ≈ 0.311 atol=0.001
+        @test adjacency_spectrum(g)[3] ≈ 0.311 atol=0.001
     end
 
     for g in testgraphs(g3)

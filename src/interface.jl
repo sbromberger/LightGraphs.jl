@@ -102,6 +102,6 @@ NOTE: returns a reference, not a copy. Do not modify result.
 out_neighbors(x...) = _NI("out_neighbors")
 
 """
-Return an empty version of the same type of graph.
+Return a zero-vertex, zero-edge version of the same type of graph.
 """
-empty(x...) = _NI("empty")
+zero(x...) = _NI("zero")

@@ -140,10 +140,16 @@ Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims
 If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.
 """
 function Grid(dims::AbstractVector; periodic=false)
-    func = periodic ? CycleGraph : PathGraph
-    g = func(dims[1])
-    for d in dims[2:end]
-        g = cartesian_product(func(d), g)
+    if periodic
+        g = CycleGraph(dims[1])
+        for d in dims[2:end]
+            g = cartesian_product(CycleGraph(d), g)
+        end
+    else
+        g = PathGraph(dims[1])
+        for d in dims[2:end]
+            g = cartesian_product(PathGraph(d), g)
+        end
     end
     return g
 end

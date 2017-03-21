@@ -5,10 +5,10 @@
     for circle in testdigraphs(circledg)
         T = eltype(circle)
         complete = DiGraph{T}(completedg)
-        newcircle = transitiveclosure(circle)
+        newcircle = @inferred(transitiveclosure(circle))
         @test newcircle == complete
         @test ne(circle) == 4
-        @test newcircle == transitiveclosure!(circle)
+        @test newcircle == @inferred(transitiveclosure!(circle))
         @test ne(circle) == 12
     end
 
@@ -21,10 +21,10 @@
     for circle in testdigraphs(circledg)
         T = eltype(circle)
         loopedcomplete = DiGraph{T}(loopedcompletedg)
-        newcircle = transitiveclosure(circle, true)
+        newcircle = @inferred(transitiveclosure(circle, true))
         @test newcircle == loopedcomplete
         @test ne(circle) == 4
-        @test newcircle == transitiveclosure!(circle, true)
+        @test newcircle == @inferred(transitiveclosure!(circle, true))
         @test ne(circle) == 16
     end
 end

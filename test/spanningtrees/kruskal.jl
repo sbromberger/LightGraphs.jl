@@ -11,7 +11,7 @@
     vec_mst = Vector{Edge}([Edge(1, 2), Edge(3, 4), Edge(2, 3)])
     for g in testgraphs(g4)
     # Testing Kruskal's algorithm
-      mst = kruskal_mst(g, distmx)
+      mst = @inferred(kruskal_mst(g, distmx))
       @test mst == vec_mst
     end
       #second test
@@ -29,7 +29,7 @@
     gx = Graph(distmx_sec)
     vec2 = Vector{Edge}([Edge(1, 8),Edge(3, 4),Edge(2, 8),Edge(1, 3),Edge(6, 8),Edge(5, 6),Edge(3, 7)])
     for g in testgraphs(gx)
-      mst2 = kruskal_mst(g, distmx_sec)
+      mst2 = @inferred(kruskal_mst(g, distmx_sec))
       @test mst2 == vec2
     end
 end
