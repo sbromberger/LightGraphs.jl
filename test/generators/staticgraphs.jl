@@ -32,8 +32,15 @@
     g = @inferred(Grid([3,3,4]))
     @test nv(g) == 3*3*4
     @test ne(g) == 75
-    @test maximum(degree(g)) == 6
-    @test minimum(degree(g)) == 3
+    @test Δ(g) == 6
+    @test δ(g) == 3
+
+    g = @inferred(Grid([3,3,4], periodic=true))
+    @test nv(g) == 3*3*4
+    @test ne(g) == 75
+    @test Δ(g) == 6
+    @test δ(g) == 6
+
 
     g = @inferred(CliqueGraph(3,5))
     @test nv(g) == 15 && ne(g) == 20
