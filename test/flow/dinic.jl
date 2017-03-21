@@ -19,13 +19,13 @@
 
     # Construct the residual graph
     for fg in (flow_graph, DiGraph{UInt8}(flow_graph), DiGraph{Int16}(flow_graph))
-      residual_graph = LightGraphs.residual(fg)
+      residual_graph = @inferred(LightGraphs.residual(fg))
 
       # Test with default distances
-      @test LightGraphs.dinic_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph))[1] == 3
+      @test @inferred(LightGraphs.dinic_impl(residual_graph, 1, 8, LightGraphs.DefaultCapacity(residual_graph)))[1] == 3
 
       # Test with capacity matrix
-      @test LightGraphs.dinic_impl(residual_graph, 1, 8, capacity_matrix)[1] == 28
+      @test @inferred(LightGraphs.dinic_impl(residual_graph, 1, 8, capacity_matrix))[1] == 28
 
       # Test on disconnected graphs
       function test_blocking_flow(residual_graph, source, target, capacity_matrix, flow_matrix)
@@ -34,14 +34,14 @@
           for dst in collect(neighbors(residual_graph, source))
               rem_edge!(h, source, dst)
           end
-          @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix) == 0
+          @test @inferred(LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix)) == 0
 
           #disconnect target and add unreachable vertex
           h = copy(residual_graph)
           for src in collect(in_neighbors(residual_graph, target))
               rem_edge!(h, src, target)
           end
-          @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix) == 0
+          @test @inferred(LightGraphs.blocking_flow!(h, source, target, capacity_matrix, flow_matrix)) == 0
 
           # unreachable vertex (covers the case where a vertex isn't reachable from the source)
           h = copy(residual_graph)
@@ -50,10 +50,10 @@
           capacity_matrix_ = vcat(hcat(capacity_matrix, zeros(Int, nv(residual_graph))), zeros(Int, 1, nv(residual_graph)+1))
           flow_graph_  = vcat(hcat(flow_matrix, zeros(Int, nv(residual_graph))), zeros(Int, 1, nv(residual_graph)+1))
 
-          @test LightGraphs.blocking_flow!(h, source, target, capacity_matrix_, flow_graph_ ) > 0
+          @test @inferred(LightGraphs.blocking_flow!(h, source, target, capacity_matrix_, flow_graph_ )) > 0
 
           #test with connected graph
-          @test LightGraphs.blocking_flow!(residual_graph, source, target, capacity_matrix, flow_matrix) > 0
+          @test @inferred(LightGraphs.blocking_flow!(residual_graph, source, target, capacity_matrix, flow_matrix)) > 0
       end
 
       flow_matrix = zeros(Int, nv(residual_graph), nv(residual_graph))

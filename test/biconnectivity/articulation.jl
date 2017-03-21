@@ -19,15 +19,15 @@
     add_edge!(gint, 7, 12)
 
     for g in testgraphs(gint)
-      art = articulation(g)
+      art = @inferred(articulation(g))
       ans = [1, 7, 8, 12]
-      @test @inferred(art) == ans
+      @test art == ans
     end
     for level in 1:6
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
-          artpts = articulation(tree)
-          @test @inferred(artpts) == collect(1:(2^(level-1)-1))
+          artpts = @inferred(articulation(tree))
+          @test artpts == collect(1:(2^(level-1)-1))
         end
     end
 

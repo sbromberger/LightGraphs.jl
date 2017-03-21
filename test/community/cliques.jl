@@ -12,7 +12,7 @@
 
     function test_cliques(graph, expected)
         # Make test results insensitive to ordering
-        setofsets(maximal_cliques(graph)) == setofsets(expected)
+        setofsets(@inferred(maximal_cliques(graph))) == setofsets(expected)
     end
 
     gx = Graph(3)
@@ -36,7 +36,7 @@
     add_edge!(h, 5, 6)
 
     for g in testgraphs(h)
-      @test maximal_cliques(g) != []
+      @test !isempty(@inferred(maximal_cliques(g)))
     end
 
     # test for extra cliques bug

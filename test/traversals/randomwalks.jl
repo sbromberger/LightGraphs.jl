@@ -19,7 +19,7 @@
         Used only for testing and debugging.
     """
     function test_nbw(g, start, len)
-        w = non_backtracking_randomwalk(g, start, len)
+        w = @inferred(non_backtracking_randomwalk(g, start, len))
         if is_nonbacktracking(w)
             return true
         else
@@ -29,36 +29,36 @@
     end
     gx = PathDiGraph(10)
     for g in testdigraphs(gx)
-      @test randomwalk(g, 1, 5) == [1:5;]
-      @test randomwalk(g, 2, 100) == [2:10;]
+      @test @inferred(randomwalk(g, 1, 5)) == [1:5;]
+      @test @inferred(randomwalk(g, 2, 100)) == [2:10;]
       @test_throws BoundsError randomwalk(g, 20, 20)
-      @test non_backtracking_randomwalk(g, 10, 20) == [10]
-      @test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
+      @test @inferred(non_backtracking_randomwalk(g, 10, 20)) == [10]
+      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
     end
 
     gx = PathGraph(10)
     for g in testgraphs(gx)
-      @test saw(g, 1, 20) == [1:10;]
+      @test @inferred(saw(g, 1, 20)) == [1:10;]
       @test_throws BoundsError saw(g, 20, 20)
-      @test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
+      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
     end
 
     gx = DiGraph(PathGraph(10))
     for g in testdigraphs(gx)
-      @test non_backtracking_randomwalk(g, 1, 20) == [1:10;]
+      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
     end
 
     gx = CycleGraph(10)
     for g in testgraphs(gx)
-      visited = non_backtracking_randomwalk(g, 1, 20)
-      @test @inferred(visited) == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
+      visited = @inferred(non_backtracking_randomwalk(g, 1, 20))
+      @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
     end
 
     gx = CycleDiGraph(10)
     for g in testdigraphs(gx)
-      @test non_backtracking_randomwalk(g, 1, 20) == [1:10; 1:10;]
+      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10; 1:10;]
     end
 
     n = 10

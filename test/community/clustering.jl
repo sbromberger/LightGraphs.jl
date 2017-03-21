@@ -5,6 +5,6 @@
       @test @inferred(global_clustering_coefficient(g)) == 1
       @test @inferred(local_clustering(g)) == (fill(36, 10), fill(36, 10))
       @test @inferred(triangles(g)) == fill(36, 10)
-      @test triangles(g, 1) == 36
+      @test @inferred(triangles(g, 1)) == 36
     end
 end

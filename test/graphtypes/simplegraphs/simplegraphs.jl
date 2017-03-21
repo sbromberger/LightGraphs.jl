@@ -10,17 +10,17 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
     @test_throws ErrorException SimpleGraph(adjmx2)
 
     @test @inferred(ne(SimpleGraph(PathDiGraph(5)))) == 4
-    @test !is_directed(SimpleGraph)
+    @test @inferred(!is_directed(SimpleGraph))
 
     @test @inferred(eltype(SimpleDiGraph())) == Int
     @test @inferred(eltype(SimpleDiGraph(adjmx2))) == Int
     @test @inferred(ne(SimpleDiGraph(PathGraph(5)))) == 8
-    @test is_directed(SimpleDiGraph)
+    @test @inferred(is_directed(SimpleDiGraph))
 
 
     for gbig in [Graph(0xff), DiGraph(0xff)]
-        @test !add_vertex!(gbig)    # overflow
-        @test !add_vertices!(gbig, 10)
+        @test @inferred(!add_vertex!(gbig))    # overflow
+        @test @inferred(!add_vertices!(gbig, 10))
     end
 
     gdx = PathDiGraph(4)
@@ -28,14 +28,14 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
     for g in testgraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "empty undirected simple $T graph"
-        add_vertices!(g, 5)
+        @inferred(add_vertices!(g, 5))
         @test sprint(show, g) == "{5, 0} undirected simple $T graph"
     end
     gx = SimpleDiGraph()
     for g in testdigraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "empty directed simple $T graph"
-        add_vertices!(g, 5)
+        @inferred(add_vertices!(g, 5))
         @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
@@ -47,29 +47,29 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(fadj(g)) == badj(g) == adj(g) == g.fadjlist
         @test @inferred(fadj(g,2)) == badj(g,2) == adj(g,2) == g.fadjlist[2]
 
-        @test has_edge(g, 2, 3)
-        @test has_edge(g, 3, 2)
+        @test @inferred(has_edge(g, 2, 3))
+        @test @inferred(has_edge(g, 3, 2))
         gc = copy(g)
         @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
 
-        @test in_neighbors(g, 2) == out_neighbors(g, 2) == neighbors(g,2) == [1,3]
-        @test add_vertex!(gc)   # out of order, but we want it for issubset
-        @test g ⊆ gc
-        @test has_vertex(gc, 5)
+        @test @inferred(in_neighbors(g, 2)) == @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g,2)) == [1,3]
+        @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
+        @test @inferred(g ⊆ gc)
+        @test @inferred(has_vertex(gc, 5))
 
         @test @inferred(ne(g)) == 3
 
-        @test rem_edge!(gc, 1, 2) && !has_edge(gc, 1, 2)
-        ga = copy(g)
-        @test rem_vertex!(ga, 2) && ne(ga) == 1
-        @test !rem_vertex!(ga, 10)
+        @test @inferred(rem_edge!(gc, 1, 2)) && @inferred(!has_edge(gc, 1, 2))
+        ga = @inferred(copy(g))
+        @test @inferred(rem_vertex!(ga, 2)) && ne(ga) == 1
+        @test @inferred(!rem_vertex!(ga, 10))
 
         @test @inferred(empty(g)) == SimpleGraph{eltype(g)}()
 
         # concrete tests below
 
         @test @inferred(eltype(g)) == eltype(fadj(g,1)) == eltype(nv(g))
-        T = eltype(g)
+        T = @inferred(eltype(g))
         @test @inferred(nv(SimpleGraph{T}(6))) == 6
 
         @test @inferred(eltype(SimpleGraph(T))) == T
@@ -85,10 +85,10 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         @test @inferred(edgetype(g)) == SimpleGraphEdge{T}
         @test @inferred(copy(g)) == g
-        @test !is_directed(g)
+        @test @inferred(!is_directed(g))
 
         e = first(edges(g))
-        @test has_edge(g, e)
+        @test @inferred(has_edge(g, e))
     end
 
     gdx = PathDiGraph(4)
@@ -101,31 +101,31 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(badj(g)[2]) == badj(g, 2) == [1]
         @test_throws MethodError adj(g)
 
-        @test has_edge(g, 2, 3)
-        @test !has_edge(g, 3, 2)
-        gc = copy(g)
-        @test add_edge!(gc, 4, 1) && gc == CycleDiGraph(4)
+        @test @inferred(has_edge(g, 2, 3))
+        @test @inferred(!has_edge(g, 3, 2))
+        gc = @inferred(copy(g))
+        @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
 
-        @test in_neighbors(g, 2) == [1]
-        @test out_neighbors(g, 2) == neighbors(g,2) == [3]
-        @test add_vertex!(gc)   # out of order, but we want it for issubset
-        @test g ⊆ gc
-        @test has_vertex(gc, 5)
+        @test @inferred(in_neighbors(g, 2)) == [1]
+        @test @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g,2)) == [3]
+        @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
+        @test @inferred(g ⊆ gc)
+        @test @inferred(has_vertex(gc, 5))
 
         @test @inferred(ne(g)) == 3
 
-        @test !rem_edge!(gc, 2, 1)
-        @test rem_edge!(gc, 1, 2) && !has_edge(gc, 1, 2)
-        ga = copy(g)
-        @test rem_vertex!(ga, 2) && ne(ga) == 1
-        @test !rem_vertex!(ga, 10)
+        @test @inferred(!rem_edge!(gc, 2, 1))
+        @test @inferred(rem_edge!(gc, 1, 2)) && @inferred(!has_edge(gc, 1, 2))
+        ga = @inferred(copy(g))
+        @test @inferred(rem_vertex!(ga, 2)) && ne(ga) == 1
+        @test @inferred(!rem_vertex!(ga, 10))
 
         @test @inferred(empty(g)) == SimpleDiGraph{eltype(g)}()
 
         # concrete tests below
 
-        @test @inferred(eltype(g)) == eltype(fadj(g,1)) == eltype(nv(g))
-        T = eltype(g)
+        @test @inferred(eltype(g)) == eltype(@inferred(fadj(g,1))) == eltype(nv(g))
+        T = @inferred(eltype(g))
         @test @inferred(nv(SimpleDiGraph{T}(6))) == 6
 
         @test @inferred(eltype(SimpleDiGraph(T))) == T
@@ -135,15 +135,15 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(eltype(SimpleDiGraph{T}(ga))) == T
 
         for gu in testgraphs(gx)
-            U = eltype(gu)
+            U = @inferred(eltype(gu))
             @test @inferred(eltype(SimpleDiGraph(gu))) == U
         end
 
         @test @inferred(edgetype(g)) == SimpleDiGraphEdge{T}
         @test @inferred(copy(g)) == g
-        @test is_directed(g)
+        @test @inferred(is_directed(g))
 
-        e = first(edges(g))
-        @test has_edge(g, e)
+        e = first(@inferred(edges(g)))
+        @test @inferred(has_edge(g, e))
     end
 end

@@ -5,8 +5,8 @@
 
       f = IOBuffer()
 
-      @test traverse_graph_withlog(g, BreadthFirst(), [1;], f) == nothing
-      @test visited_vertices(g, BreadthFirst(), [1;]) == [1, 2, 3, 4, 5]
+      @test @inferred(traverse_graph_withlog(g, BreadthFirst(), [1;], f)) == nothing
+      @test @inferred(visited_vertices(g, BreadthFirst(), [1;])) == [1, 2, 3, 4, 5]
 
 
       function trivialgraphvisit(
@@ -15,17 +15,17 @@
           sources
       )
           visitor = TrivialGraphVisitor()
-          traverse_graph!(g, alg, sources, visitor)
+          @inferred(traverse_graph!(g, alg, sources, visitor))
       end
 
       @test trivialgraphvisit(g, BreadthFirst(), 1) == nothing
 
       # this just exercises some graph visitors
-      @test traverse_graph!(g, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
-      @test traverse_graph!(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing
+      @test @inferred(traverse_graph!(g, BreadthFirst(), 1, TrivialGraphVisitor())) == nothing
+      @test @inferred(traverse_graph!(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer()))) == nothing
     end
     # dummy edge map test
-    d = LightGraphs.DummyEdgeMap()
+    d = @inferred(LightGraphs.DummyEdgeMap())
     e = Edge(1,2)
-    @test @inferred(d[e]) == 0
+    @test d[e] == 0
 end

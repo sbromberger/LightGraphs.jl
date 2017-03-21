@@ -22,23 +22,23 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
 
     function test_adjacency(mat)
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
-        @test @inferred(adjmat.D) == vec(sum(mat, 1))
-        @test @inferred(adjmat.A) == mat
+        @test adjmat.D == vec(sum(mat, 1))
+        @test adjmat.A == mat
         @test convert(SparseMatrix{Float64}, adjmat) == sparse(mat)
         converttest(SparseMatrix{Float64},stochmat)
         converttest(SparseMatrix{Float64},adjhat)
         converttest(SparseMatrix{Float64},avgmat)
-        @test @inferred(prescalefactor(adjhat)) == postscalefactor(adjhat)
-        @test @inferred(postscalefactor(stochmat)) == prescalefactor(avgmat)
-        @test @inferred(prescalefactor(adjhat)) == postscalefactor(adjhat)
-        @test @inferred(prescalefactor(avgmat)) == Noop()
+        @test prescalefactor(adjhat) == postscalefactor(adjhat)
+        @test postscalefactor(stochmat) == prescalefactor(avgmat)
+        @test prescalefactor(adjhat) == postscalefactor(adjhat)
+        @test prescalefactor(avgmat) == Noop()
     end
 
     function test_laplacian(mat)
         lapl = CombinatorialLaplacian(CombinatorialAdjacency(mat))
         @test typeof(lapl) <: Laplacian
         #constructors that work.
-        @test @inferred(adjacency(lapl).A) == mat
+        @test adjacency(lapl).A == mat
         adj = adjacency(lapl)
         @test typeof(StochasticAdjacency(adj)) <: StochasticAdjacency
         @test typeof(NormalizedAdjacency(adj)) <: NormalizedAdjacency
@@ -71,14 +71,14 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     function test_accessors(mat, n)
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         dv = degrees(adjmat)
-        @test @inferred(degrees(StochasticLaplacian(stochmat))) == dv
-        @test @inferred(degrees(NormalizedLaplacian(adjhat))) == dv
-        @test @inferred(degrees(AveragingLaplacian(avgmat))) == dv
+        @test degrees(StochasticLaplacian(stochmat)) == dv
+        @test degrees(NormalizedLaplacian(adjhat)) == dv
+        @test degrees(AveragingLaplacian(avgmat)) == dv
 
         for m in (adjmat, stochmat, adjhat, avgmat)
-            @test @inferred(degrees(m)) == dv
-            @test @inferred(eltype(m)) == eltype(m.A)
-            @test @inferred(size(m)) == (n,n)
+            @test degrees(m) == dv
+            @test eltype(m) == eltype(m.A)
+            @test size(m) == (n,n)
             #@fact length(m) --> length(adjmat.A)
         end
     end
@@ -92,7 +92,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
         @test sum(abs, (lapl*onevec)) == 0
         g(a) = sum(abs, (sum(sparse(a),1)))
-        @test @inferred(g(lapl)) == 0
+        @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
 
@@ -119,11 +119,11 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 
         begin
-            @test @inferred(CombinatorialAdjacency(mat)) == CombinatorialAdjacency(mat)
+            @test CombinatorialAdjacency(mat) == CombinatorialAdjacency(mat)
             S = StochasticAdjacency(CombinatorialAdjacency(mat))
-            @test @inferred(S.A) == S.A
+            @test S.A == S.A
             @test sparse(S) != S.A
-            @test @inferred(adjacency(S)) == S.A
+            @test adjacency(S) == S.A
             @test NormalizedAdjacency(adjmat) != adjmat
             @test StochasticLaplacian(S) != adjmat
             @test_throws MethodError StochasticLaplacian(adjmat) # --> not(adjmat)
@@ -141,7 +141,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test_throws MethodError symmetrize(StochasticAdjacency(adjmat))
         @test_throws MethodError symmetrize(AveragingAdjacency(adjmat))
         @test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
-        @test @inferred(symmetrize(adjmat).A) == adjmat.A
+        @test symmetrize(adjmat).A == adjmat.A
         # these tests are basically the code
         @test symmetrize(adjmat, :triu).A == triu(adjmat.A) + triu(adjmat.A)'
         @test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'

@@ -22,7 +22,6 @@ function a_star_impl!(
 
             if colormap[v] < 2
                 dist = distmx[u, v]
-
                 colormap[v] = 1
                 new_path = cat(1, path, Edge(u,v))
                 path_cost = cost_so_far + dist
@@ -33,7 +32,7 @@ function a_star_impl!(
         end
         colormap[u] = 2
     end
-    nothing
+    Vector{Edge}()
 end
 
 """

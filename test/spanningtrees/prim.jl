@@ -11,8 +11,8 @@
     vec_mst = Vector{Edge}([Edge(1, 2), Edge(2, 3), Edge(3, 4)])
     for g in testgraphs(g4)
       # Testing Prim's algorithm
-      mst = prim_mst(g, distmx)
-      @test @inferred(mst) == vec_mst
+      mst = @inferred(prim_mst(g, distmx))
+      @test mst == vec_mst
     end
 
     #second test
@@ -30,7 +30,7 @@
     vec2 = Vector{Edge}([Edge(1, 8),Edge(2, 8),Edge(1, 3),Edge(3, 4),Edge(6, 8),Edge(5, 6),Edge(3, 7)])
     gx = Graph(distmx_sec)
     for g in testgraphs(gx)
-      mst2 = prim_mst(g, distmx_sec)
-      @test @inferred(mst2) == vec2
+      mst2 = @inferred(prim_mst(g, distmx_sec))
+      @test mst2 == vec2
     end
 end

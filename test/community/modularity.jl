@@ -4,11 +4,11 @@
     c = ones(Int, n)
     gint = CompleteGraph(n)
     for g in testgraphs(gint)
-      @test  modularity(g, c) == 0
+      @test @inferred(modularity(g, c)) == 0
     end
 
     gint = Graph(n)
     for g in testgraphs(gint)
-      @test modularity(g, c) == 0
+      @test @inferred(modularity(g, c)) == 0
     end
 end
