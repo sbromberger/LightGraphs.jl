@@ -166,36 +166,20 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test norm(z) ≈ 0.0 atol=1e-8
     end
 
-    begin
-        n = 10
-        mat = sparse(spones(sprand(n,n,0.3)))
-        begin
-            test_adjacency(mat)
-        end
 
-        begin
-            test_laplacian(mat)
-        end
+    n = 10
+    mat = sparse(spones(sprand(n,n,0.3)))
 
-        begin
-            test_accessors(mat, n)
-        end
-    end
+    test_adjacency(mat)
+    test_laplacian(mat)
+    test_accessors(mat, n)
 
+    mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
+    test_arithmetic(mat, n)
+    test_other(mat, n)
+    test_symmetry(mat, n)
+    test_punchedmatrix(mat, n)
 
-    begin
-        n = 10
-        mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
-        test_arithmetic(mat, n)
-    end
-
-    begin
-        n = 10
-        mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
-        test_other(mat, n)
-        test_symmetry(mat, n)
-        test_punchedmatrix(mat, n)
-    end
 
 
     """Computes the stationary distribution of a random walk"""
@@ -218,14 +202,11 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     end
 
     # Random walk demo
-    begin
-        n = 100
-        p = 16/n
-        M = sprand(n,n, p)
-        M.nzval[:] = 1.0
-        A = CombinatorialAdjacency(M)
-        sd = stationarydistribution(A; ncv=10)
-        @test all(sd.>=0)
-    end
-    end
+    n = 100
+    p = 16/n
+    M = sprand(n,n, p)
+    M.nzval[:] = 1.0
+    A = CombinatorialAdjacency(M)
+    sd = stationarydistribution(A; ncv=10)
+    @test all(sd.>=0)
 end
