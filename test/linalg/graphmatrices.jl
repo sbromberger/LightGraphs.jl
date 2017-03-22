@@ -210,3 +210,4 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     sd = stationarydistribution(A; ncv=10)
     @test all(sd.>=0)
 end
+end
