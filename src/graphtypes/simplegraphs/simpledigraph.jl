@@ -2,14 +2,13 @@ const SimpleDiGraphEdge = SimpleEdge
 
 """A type representing a directed graph."""
 mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
-    vertices::UnitRange{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
 end
 
-eltype(x::SimpleDiGraph{T}) where T = T
 
+eltype(x::SimpleDiGraph{T}) where T = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
@@ -19,8 +18,7 @@ function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
         push!(badjlist, Vector{T}())
         push!(fadjlist, Vector{T}())
     end
-    vertices = one(T):T(n)
-    return SimpleDiGraph(vertices, 0, fadjlist, badjlist)
+    return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
 # DiGraph()
@@ -69,10 +67,9 @@ SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # converts DiGraph{Int} to DiGraph{Int32}
 function (::Type{SimpleDiGraph{T}})(g::SimpleDiGraph) where T<:Integer
-    h_vertices = one(T):T(nv(g))
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
-    return SimpleDiGraph(h_vertices, ne(g), h_fadj, h_badj)
+    return SimpleDiGraph(ne(g), h_fadj, h_badj)
 end
 
 
@@ -93,7 +90,7 @@ badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
 copy(g::SimpleDiGraph{T}) where T<:Integer =
-SimpleDiGraph{T}(g.vertices, g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+SimpleDiGraph{T}(g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -132,7 +129,6 @@ end
 function add_vertex!(g::SimpleDiGraph)
     T = eltype(g)
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
-    g.vertices = 1:nv(g)+1
     push!(g.badjlist, Vector{T}())
     push!(g.fadjlist, Vector{T}())
 

@@ -125,7 +125,7 @@ function _accumulate_endpoints!(
     v1 = [1:n_v;]
     v2 = state.dists
     S = sortperm(state.dists, rev=true)
-    s = g.vertices[si]
+    s = vertices(g)[si]
     betweenness[s] += length(S) - 1    # 289
 
     for w in S

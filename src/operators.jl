@@ -43,8 +43,6 @@ function reverse(g::DiGraph)
     h.fadjlist = deepcopy(g.badjlist)
     h.badjlist = deepcopy(g.fadjlist)
     h.ne = gne
-    h.vertices = g.vertices
-
     return h
 end
 
