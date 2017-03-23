@@ -35,7 +35,7 @@ end
 erdos_renyi(n::Integer, p::Real; is_directed=false, seed=-1)
 erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed=-1)
 
-Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
+Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
 probability `p`. Undirected graphs are created by default; use
 `is_directed=true` to override.
@@ -59,7 +59,8 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
 end
 
 
-"""Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+"""
+Create a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
 small model random graph with `n` vertices, each with degree `k`. Edges are
 randomized per the model based on probability `β`. Undirected graphs are
 created by default; use `is_directed=true` to override.
@@ -152,7 +153,7 @@ end
 """
 barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph with `k` vertices. Each new vertex is attached with `k` edges to `k`
 different vertices already present in the system by preferential attachment.
@@ -186,7 +187,7 @@ end
 """
 barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = -1)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph `g`. Each new vertex is attached with `k` edges to `k` different vertices
 already present in the system by preferential attachment.
@@ -262,7 +263,7 @@ end
 """
 static_fitness_model{T<:Real}(m::Integer, fitness::Vector{T}; seed::Int=-1)
 
-Generates a random graph with `length(fitness)` nodes and `m` edges,
+Generate a random graph with `length(fitness)` nodes and `m` edges,
 in which the probability of the existence of edge `(i, j)` is proportional
 to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
 
@@ -334,7 +335,7 @@ end
 """
 function static_scale_free(n::Integer, m::Integer, α::Real; seed::Int=-1, finite_size_correction::Bool=true)
 
-Generates a random graph with `n` vertices, `m` edges and expected power-law
+Generate a random graph with `n` vertices, `m` edges and expected power-law
 degree distribution with exponent `α`. `finite_size_correction` determines
 whether to use the finite size correction proposed by Cho et al.
 This generator calls internally the `static_fitness_model function`.
@@ -386,7 +387,7 @@ end
 doc"""
 random_regular_graph(n::Int, k::Int; seed=-1)
 
-Creates a random undirected
+Create a random undirected
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
 each with degree `k`.
 
@@ -422,7 +423,7 @@ end
 doc"""
 random_configuration_model(n::Integer, k::Array{Integer}; seed=-1, check_graphical=false)
 
-Creates a random undirected graph according to the [configuration model]
+Create a random undirected graph according to the [configuration model]
 (http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
 It contains `n` vertices, the vertex `i` having degree `k[i]`.
 
@@ -458,7 +459,7 @@ end
 doc"""
 random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed=-1)
 
-Creates a random directed
+Create a random directed
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
 each with degree `k`. The degree (in or out) can be
 specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
@@ -500,7 +501,7 @@ doc"""
 stochastic_block_model(c::Matrix{Real}, n::Vector{Integer}; seed::Int = -1)
 stochastic_block_model(cin::Real, coff::Float64, n::Vector{Integer}; seed::Int = -1)
 
-Returns a Graph generated according to the Stochastic Block Model (SBM).
+Return a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
            Only the upper triangular part is considered, since the lower traingular is
@@ -603,7 +604,8 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix;
 end
 
 
-"""Produce the sbm affinity matrix where the external probabilities are the same
+"""
+Produce the sbm affinity matrix where the external probabilities are the same
 the internal probabilities and sizes differ by blocks.
 """
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
@@ -632,7 +634,8 @@ end
 
 const biclique = ones(2,2) - eye(2)
 
-"""Construct the affinity matrix for a near bipartite SBM.
+"""
+Construct the affinity matrix for a near bipartite SBM.
 between is the affinity between the two parts of each bipartite community
 intra is the probability of an edge within the parts of the partitions.
 
@@ -645,7 +648,7 @@ function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) whe
     return kron(between*eye(numblocks), biclique) + eye(2numblocks)*intra
 end
 
-"""Return a generator for edges from a stochastic block model near-bipartite graph."""
+#Return a generator for edges from a stochastic block model near-bipartite graph.
 function nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer
     B = nearbipartiteaffinity(sizes, between, inter) + noise
     # info("Affinities are:\n$B")#, file=stderr)
@@ -657,7 +660,7 @@ function nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1)
 end
 
 
-"""Generates a stream of random pairs in 1:n"""
+"""Generate a stream of random pairs in 1:n"""
 function random_pair(rng::AbstractRNG, n::Integer)
     f(ch) = begin
         while true
@@ -706,7 +709,7 @@ end
 Graph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
     Graph(nvg, neg, make_edgestream(sbm))
 
-"""counts the number of edges that go between each block"""
+"""count the number of edges that go between each block"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     # info("making Q")
     I = collect(1:sbm.n)
