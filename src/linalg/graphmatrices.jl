@@ -116,9 +116,6 @@ Base.broadcast(::typeof(*), ::Noop, x) = x
 
 Diagonal(::Noop) = Noop()
 
-A_mul_B!(Y, A::Noop, B) = copy!(Y, B)
-
-
 
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
 
@@ -175,9 +172,8 @@ adjacency(lapl::Laplacian) = lapl.A
 adjacency(lapl::GraphMatrix) = lapl.A
 
 
-convert(::Type{Adjacency}, lapl::Laplacian) = lapl.A
+
 convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
-convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) = adjmat.A
 convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
 
@@ -294,6 +290,14 @@ Only works on Adjacency because the normalizations don't commute with symmetriza
 """
 symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 	CombinatorialAdjacency(symmetrize(adjmat.A, which))
+
+
+# per #564
+@deprecate A_mul_B!(Y, A::Noop, B) None
+@deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
+@deprecate convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) sparse(adjmat)
+
+
 
 """A package for using the type system to check types of graph matrices."""
 LinAlg
