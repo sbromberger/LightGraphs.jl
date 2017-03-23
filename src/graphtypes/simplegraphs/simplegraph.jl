@@ -2,7 +2,6 @@ const SimpleGraphEdge = SimpleEdge
 
 """A type representing an undirected graph."""
 mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph
-    vertices::UnitRange{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
@@ -17,7 +16,7 @@ function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
         push!(fadjlist, Vector{T}())
     end
     vertices = one(T):T(n)
-    return SimpleGraph{T}(vertices, 0, fadjlist)
+    return SimpleGraph{T}(0, fadjlist)
 end
 
 # Graph()
@@ -45,9 +44,8 @@ end
 
 # converts Graph{Int} to Graph{Int32}
 function (::Type{SimpleGraph{T}})(g::SimpleGraph) where T<:Integer
-    h_vertices = one(T):T(nv(g))
     h_fadj = [Vector{T}(x) for x in fadj(g)]
-    return SimpleGraph(h_vertices, ne(g), h_fadj)
+    return SimpleGraph(ne(g), h_fadj)
 end
 
 
@@ -72,7 +70,7 @@ function SimpleGraph(g::SimpleDiGraph)
         end
     end
     iseven(edgect) || throw(AssertionError("invalid edgect in graph creation - please file bug report"))
-    return SimpleGraph(vertices(g), edgect ÷ 2, newfadj)
+    return SimpleGraph(edgect ÷ 2, newfadj)
 end
 
 edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T}
@@ -95,7 +93,7 @@ NOTE: returns a reference, not a copy. Do not modify result.
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
-copy(g::SimpleGraph) =  SimpleGraph(g.vertices, g.ne, deepcopy(g.fadjlist))
+copy(g::SimpleGraph) =  SimpleGraph(g.ne, deepcopy(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
 vertices(g) == vertices(h) &&
@@ -149,8 +147,6 @@ end
 function add_vertex!(g::SimpleGraph)
     T = eltype(g)
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
-    g.vertices = one(T):nv(g)+one(T)
     push!(g.fadjlist, Vector{T}())
-
     return true
 end

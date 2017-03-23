@@ -37,9 +37,12 @@ function show(io::IO, g::AbstractSimpleGraph)
     end
 end
 
-vertices(g::AbstractSimpleGraph) = g.vertices
+nv(g::AbstractSimpleGraph) = eltype(g)(length(fadj(g)))
+vertices(g::AbstractSimpleGraph) = one(eltype(g)):nv(g)
+
+
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
-nv(g::AbstractSimpleGraph) = last(vertices(g))
+
 
 fadj(g::AbstractSimpleGraph) = g.fadjlist
 fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
@@ -66,6 +69,7 @@ end
 has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
+
 function rem_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
     T = eltype(g)
     rem_edge!(g, edgetype(g)(T(u), T(v)))
@@ -120,7 +124,6 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
         end
     end
 
-    g.vertices = 1:n-1
     pop!(g.fadjlist)
     if is_directed(g)
         pop!(g.badjlist)
