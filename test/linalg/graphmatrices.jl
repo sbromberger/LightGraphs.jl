@@ -28,6 +28,8 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         converttest(SparseMatrix{Float64},stochmat)
         converttest(SparseMatrix{Float64},adjhat)
         converttest(SparseMatrix{Float64},avgmat)
+        @test isa(CombinatorialAdjacency(adjmat), CombinatorialAdjacency)
+        @test isa(CombinatorialAdjacency(avgmat), CombinatorialAdjacency)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
         @test postscalefactor(stochmat) == prescalefactor(avgmat)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)

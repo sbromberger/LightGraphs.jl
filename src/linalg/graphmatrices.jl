@@ -178,6 +178,7 @@ adjacency(lapl::GraphMatrix) = lapl.A
 convert(::Type{Adjacency}, lapl::Laplacian) = lapl.A
 convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
 convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) = adjmat.A
+convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
 
 function sparse(lapl::M) where M<:Laplacian
