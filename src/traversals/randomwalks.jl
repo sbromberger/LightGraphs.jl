@@ -1,5 +1,8 @@
-"""Performs a random walk on graph `g` starting at vertex `s` and continuing for
-a maximum of `niter` steps. Returns a vector of vertices visited in order.
+"""
+    randomwalk(g, s, niter)
+
+Perform a random walk on graph `g` starting at vertex `s` and continuing for
+a maximum of `niter` steps. Return a vector of vertices visited in order.
 """
 function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
     T = eltype(g)
@@ -18,8 +21,12 @@ function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
     return visited[1:i-1]
 end
 
-"""Performs a non-backtracking random walk on graph `g` starting at vertex `s` and continuing for
-a maximum of `niter` steps. Returns a vector of vertices visited in order.
+"""
+    non_backtracking_randomwalk(g, s, niter)
+
+Perform a non-backtracking random walk on directed graph `g` starting at
+vertex `s` and continuing for a maximum of `niter` steps. Return a
+vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
 @traitfn function non_backtracking_randomwalk(g::::(!IsDirected), s::Integer, niter::Integer)
@@ -83,9 +90,11 @@ end
     return visited[1:i-1]
 end
 
-"""Performs a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
+"""
+    saw(g, s, niter)
+Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
-Returns a vector of vertices visited in order.
+Return a vector of vertices visited in order.
 """
 function saw(g::AbstractGraph, s::Integer, niter::Integer)
     T = eltype(g)

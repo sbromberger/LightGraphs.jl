@@ -1,20 +1,17 @@
 """
-Computes the maximum multiroute flow (for any real number of routes)
-between the source and target vertexes in a flow graph using the
-[Extended Multiroute Flow algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002).
-If a number of routes is given, returns the value of the multiroute flow as
-well as the final flow matrix, along with a multiroute cut if
+    emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes=0)
+
+Compute the maximum multiroute flow (for any number of `route`s)
+between `source` and `target` in `flow_graph` via flow algorithm `flow_algorithm`.
+
+If a number of routes is given, return the value of the multiroute flow as
+well as the final flow matrix, along with a multiroute cut if the
 Boykov-Kolmogorov max-flow algorithm is used as a subroutine.
-Otherwise, it returns the vector of breaking points of the parametric
+Otherwise, return the vector of breaking points of the parametric
 multiroute flow function.
-Use a default capacity of 1 when the capacity matrix isn\'t specified.
-Requires arguments:
-- flow_graph::DiGraph                    # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
-- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
-- flow_algorithm::AbstractFlowAlgorithm  # keyword argument for algorithm
-- routes::Int                            # keyword argument for routes
+
+### Reference:
+* [Extended Multiroute Flow algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002)
 """
 # EMRF (Extended Multiroute Flow) algorithms
 function emrf(
@@ -34,14 +31,14 @@ function emrf(
     return breakingpoints
 end
 
-"""
-Output a set of (point,slope) that compose the restricted max-flow function.
-One point by possible slope is enough (hence O(λ×max_flow) complexity).
-Requires arguments:
-- flow_graph::DiGraph                    # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
-- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
+@doc_str """
+    auxiliaryPoints(flow_graph, source, target, capacity_matrix)
+
+Output a set of (point, slope) that compose the restricted max-flow function
+of `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
+
+### Performance
+One point by possible slope is enough (hence \mathcal{O}(λ×max_flow) complexity).
 """
 function auxiliaryPoints end
 @traitfn function auxiliaryPoints(
@@ -101,12 +98,10 @@ function auxiliaryPoints end
 end
 
 """
-Calculates the breaking of the restricted max-flow from a set of auxiliary points.
-Requires arguments:
-- flow_graph::DiGraph                    # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
-- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
+    breakingPoints(flow_graph::::IsDirected, source, target, capacity_matrix)
+
+Calculates the breaking of the restricted max-flow from a set of auxiliary points
+for `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 """
 function breakingPoints end
 @traitfn function breakingPoints(
@@ -138,13 +133,12 @@ function breakingPoints end
 end
 
 """
-Function to get the nonzero min and max function of a Matrix.
+    minmaxCapacity(capacity_matrix)
+
+Return the nonzero min and max function of `capacity_matrix`.
 
 Note: this is more efficient than maximum() / minimum() / extrema()
-since we have to ignore zero values.since we have to ignore zero values.
-
-Requires argument:
-- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
+since we have to ignore zero values.
 """
 
 # Function to get the nonzero min and max function of a Matrix
@@ -165,13 +159,11 @@ function minmaxCapacity(
 end
 
 """
-Function to get the slope of the restricted flow. The slope is initialized at 0
-and is incremented for each non saturated edge in the restricted min-cut.
-Requires argument:
-flow_graph::DiGraph,                   # the input graph
-capacity_matrix::AbstractMatrix{T},  # edge flow capacities
-cut::Vector{Int},                      # cut information for vertices
-restriction::T                         # value of the restriction
+    slope(flow_graph, capacity_matrix, cut, restriction)
+
+Return the slope of `flow_graph` using capacities in `capacity_matrix` and
+a cut vector `cut`. The slope is initialized at 0 and is incremented for
+each edge whose capacity does not exceed `restriction`.
 """
 function slope end
 # Function to get the slope of the restricted flow
@@ -198,8 +190,9 @@ function slope end
 end
 
 """
-Computes the intersection between:
-1) Two lines
+        intersection(x1, y1, a1, x2, y2, a2)
+
+Return the intersection of two lines defined by `x` and `y` with slopes `a`.
 2) A set of segments and a linear function of slope k passing by the origin.
 Requires argument:
 1) - x1, y1, a1, x2, y2, a2::T<:AbstractFloat # Coordinates/slopes
@@ -225,6 +218,13 @@ function intersection(
     return x, y
 end
 # Compute the intersection between a set of segment and a line of slope k passing by the origin
+
+"""
+    intersection(points, k)
+
+Return the intersection of a set of line segments and a line of slope `k`
+passing by the origin. Segments are defined as a triple (x, y, slope).
+"""
 function intersection(
     points::Vector{Tuple{T, T, I}},  # vector of breaking points
     k::R                               # number of routes (slope of the line)
@@ -245,10 +245,9 @@ function intersection(
 end
 
 """
-Redefinition of ≈ (isapprox) for a pair of points
-Requires argument:
-a::Tuple{T, T},         # Point A with floating coordinates
-b::Tuple{T, T}          # Point B with floating coordinates
+    ≈(a, b)
+
+Redefinition of ≈ (isapprox) for a pair of points `a` and `b`.
 """
 ≈(a::Tuple{T, T}, b::Tuple{T, T}) where T <: AbstractFloat =
     a[1] ≈ b[1] && a[2] ≈ b[2]

@@ -15,13 +15,17 @@ function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
     return c
 end
 
-# TODO avoid repetition of this docstring
-"""Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality)
-of the graph `g`, with optional (default) normalization."""
+"""
+    degree_centrality(g)
+    indegree_centrality(g)
+    outdegree_centrality(g)
+
+Calculate the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality)
+of graph `g`. Return a vector representing the centrality calculated for each node in `g`.
+
+### Optional arguments:
+* `normalize=true`: If true, normalize each centrality measure by ``\frac{1}{|V|-1}``.
+"""
 degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
-"""Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality)
-of the graph `g`, with optional (default) normalization."""
 indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
-"""Calculates the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degree_centrality)
-of the graph `g`, with optional (default) normalization."""
 outdegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 2; all...)

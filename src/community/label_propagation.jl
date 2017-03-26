@@ -1,10 +1,15 @@
 """
-Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
-`g`: input Graph
-`maxiter`: maximum number of iterations
-return : vertex assignments and the convergence history
+    label_propagation(g, maxiter=1000)
+
+Community detection using the label propagation algorithm. Return two vectors:
+the first is the label number assigned to each node, and the second is the
+convergence history for each node. Will return after `maxiter` iterations
+if convergence has not completed.
+
+References:
+    [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph; maxiter=1000)
+function label_propagation(g::AbstractGraph, maxiter=1000)
     T = eltype(g)
     n = nv(g)
     label = collect(one(T):n)
@@ -41,14 +46,22 @@ function label_propagation(g::AbstractGraph; maxiter=1000)
     label, convergence_hist
 end
 
-"""Type to record neighbor labels and their counts."""
+"""
+    NeighComm{T}
+
+Type to record neighbor labels and their counts.
+"""
 mutable struct NeighComm{T<:Integer}
     neigh_pos::Vector{T}
     neigh_cnt::Vector{Int}
     neigh_last::T
 end
 
-"""Fast shuffle Array `a` in UnitRange `r` inplace."""
+"""
+    range_shuffle!(r, a)
+
+Fast shuffle Array `a` in UnitRange `r`.
+"""
 function range_shuffle!(r::UnitRange, a::AbstractVector)
     (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
     @inbounds for i=length(r):-1:2
@@ -59,7 +72,11 @@ function range_shuffle!(r::UnitRange, a::AbstractVector)
     end
 end
 
-"""Return the most frequency label."""
+"""
+    vote!(g, m, c, u)
+
+Return the label with greatest frequency.
+"""
 function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1

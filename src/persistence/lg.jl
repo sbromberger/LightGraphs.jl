@@ -35,7 +35,11 @@ function _lg_skip_one_graph(f::IO, n_e::Integer)
     end
 end
 
-"""Returns a dictionary of (name=>graph) loaded from file `fn`."""
+"""
+    loadlg_mult(io)
+
+Return a dictionary of (name=>graph) loaded from IO stream `io`.
+"""
 function loadlg_mult(io::IO)
     graphs = Dict{String, AbstractGraph}()
     while !eof(io)
@@ -76,10 +80,11 @@ function loadlg(io::IO, gname::String)
     error("Graph $gname not found")
 end
 
-"""Writes a graph `g` with name `graphname` in a proprietary format
-to the IO stream designated by `io`.
+"""
+    savelg(io, g, gname)
 
-Returns 1 (number of graphs written).
+Write a graph `g` with name `gname` in a proprietary format
+to the IO stream designated by `io`. Return 1 (number of graphs written).
 """
 function savelg(io::IO, g::AbstractGraph, gname::String)
     # write header line
@@ -93,10 +98,11 @@ function savelg(io::IO, g::AbstractGraph, gname::String)
     return 1
 end
 
-"""Writes a dictionary of (name=>graph) to a file `fn`,
-with default `GZip` compression.
+"""
+    savelg_mult(io, graphs)
 
-Returns number of graphs written.
+Write a dictionary of (name=>graph) to an IO stream `io`,
+with default `GZip` compression. Return number of graphs written.
 """
 function savelg_mult(io::IO, graphs::Dict)
     ng = 0

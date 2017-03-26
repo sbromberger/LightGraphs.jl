@@ -38,11 +38,10 @@ function loadgml_mult(io::IO)
 end
 
 """
-savegml(f, g, gname = "graph")
+    savegml(f, g, gname="graph")
 
-Writes a graph `g` with name `gname`
-to a file `f` in the
-[GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
+Write a graph `g` with name `gname` to an IO stream `io` in the
+[GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format. Return 1.
 """
 function savegml(io::IO, g::AbstractGraph, gname::String = "")
     println(io, "graph")
@@ -68,9 +67,9 @@ function savegml(io::IO, g::AbstractGraph, gname::String = "")
 end
 
 
-"""Writes a dictionary of (name=>graph) to a file `fn`
-
-Returns number of graphs written.
+"""
+    savegml_mult(io, graphs)
+Write a dictionary of (name=>graph) to an IO stream `io` Return number of graphs written.
 """
 function savegml_mult(io::IO, graphs::Dict)
     ng = 0

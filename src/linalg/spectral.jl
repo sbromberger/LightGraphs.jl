@@ -7,13 +7,16 @@ coo_sparse,
 spectral_distance
 
 """
-Returns a sparse boolean adjacency matrix for a graph, indexed by `[u, v]`
-vertices. `true` values indicate an edge between `u` and `v`. Users may
+    adjacency_matrix(g, dir=:out, T=Int)
+
+Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
+vertices. Non-zero values indicate an edge between `u` and `v`. Users may
 specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out`
 is default for both directed and undirected graphs) and a data type for the
 matrix (defaults to `Int`).
 
-Note: This function is optimized for speed.
+### Implementation Notes
+This function is optimized for speed and directly manipulates CSC sparse matrix fields.
 """
 function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     n_v = nv(g)
@@ -63,7 +66,9 @@ end
 adjacency_matrix(g::AbstractGraph, T::DataType) = adjacency_matrix(g, :out, T)
 
 """
-Returns a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
+    laplacian_matrix(g, dir=:unspec, T=Int)
+
+Return a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
 for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
 defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
 defaults to `Int` for both graph types.
@@ -77,19 +82,33 @@ function laplacian_matrix(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int
     return D - A
 end
 
-doc"""Returns the eigenvalues of the Laplacian matrix for a graph `g`, indexed
-by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
-`eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
-eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
+@doc_str """
+    laplacian_spectrum(g, dir=:unspec, T=Int)
+
+Return the eigenvalues of the Laplacian matrix for a graph `g`, indexed
+by vertex. Default values for `dir` and `T` are the same as those in
 `laplacian_matrix`.
+
+### Performance
+Converts the matrix to dense with ``nv^2`` memory usage.
+
+### Implementation Notes
+Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
+eigenvalues/eigenvectors.
 """
 laplacian_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int) = eigvals(full(laplacian_matrix(g, dir, T)))
 
-doc"""Returns the eigenvalues of the adjacency matrix for a graph `g`, indexed
-by vertex. Warning: Converts the matrix to dense with $nv^2$ memory usage. Use
-`eigs(adjacency_matrix(g);kwargs...)` to compute some of the
-eigenvalues/eigenvectors. Default values for `dir` and `T` are the same as
+@doc_str """
+Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
+by vertex. Default values for `dir` and `T` are the same as those in
 `adjacency_matrix`.
+
+### Performance
+Converts the matrix to dense with ``nv^2`` memory usage.
+
+### Implementation Notes
+Use `eigs(adjacency_matrix(g);  kwargs...)` to compute some of the
+eigenvalues/eigenvectors.
 """
 function adjacency_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
     if dir == :unspec
@@ -98,12 +117,19 @@ function adjacency_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=I
     return eigvals(full(adjacency_matrix(g, dir, T)))
 end
 
-"""Returns a sparse node-arc incidence matrix for a graph, indexed by
+"""
+    incidence_matrix(g, T=Int)
+
+Return a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
 directed graphs, a value of `-1` indicates that `src(e) == v`, while a
 value of `1` indicates that `dst(e) == v`. Otherwise, the value is
-`0`. For undirected graphs, if the optional keyword `oriented` is `false`,
-both entries are `1`, otherwise, an arbitrary orientation is chosen.
+`0`. For undirected graphs, both entries are `1` by default (this behavior
+can be overridden by the `oriented` optional argument).
+
+### Optional Arguments
+- `oriented=false`: If true, for an undirected graph `g`, the matrix will
+contain arbitrary non-zero values representing connectivity between `v` and `i`.
 """
 function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     isdir = is_directed(g)
@@ -132,16 +158,15 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     return spmx
 end
 
-"""
-spectral_distance(G₁, G₂ [, k])
+@doc_str """
+    spectral_distance(G₁, G₂ [, k])
+
 Compute the spectral distance between undirected n-vertex
-graphs G₁ and G₂ using the top k ≤ n greatest eigenvalues.
-If k is ommitted, uses full spectrum.
+graphs `G₁` and `G₂` using the top `k` greatest eigenvalues.
+If `k` is ommitted, uses full spectrum.
 
-For further details, please refer to:
-
-JOVANOVIC, I.; STANIC, Z., 2014. Spectral Distances of
-Graphs Based on their Different Matrix Representations
+### References
+- JOVANOVIC, I.; STANIC, Z., 2014. Spectral Distances of Graphs Based on their Different Matrix Representations
 """
 function spectral_distance end
 

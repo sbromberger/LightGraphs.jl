@@ -10,19 +10,18 @@
 #
 #################################################
 """
-**Conventions in Breadth First Search and Depth First Search**
-VertexColorMap :
+    DepthFirst
+## Conventions in Breadth First Search and Depth First Search
+### VertexColorMap
 - color == 0    => unseen
 - color < 0     => examined but not closed
 - color > 0     => examined and closed
 
-EdgeColorMap :
+### EdgeColorMap
 - color == 0    => unseen
 - color == 1     => examined
 """
-
-mutable struct DepthFirst <: AbstractGraphVisitAlgorithm
-end
+mutable struct DepthFirst <: AbstractGraphVisitAlgorithm end
 
 function depth_first_visit_impl!(
     g::AbstractGraph,      # the graph
@@ -115,8 +114,10 @@ discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 """
     is_cyclic(g)
 
-Tests whether a graph contains a cycle through depth-first search. It
-returns `true` when it finds a cycle, otherwise `false`.
+Returns `true` if graph `g` contains a cycle.
+
+### Implementation Notes
+Uses DFS.
 """
 function is_cyclic(g::AbstractGraph)
     cmap = zeros(Int, nv(g))
@@ -181,10 +182,10 @@ function examine_neighbor!(visitor::TreeDFSVisitor, u::Integer, v::Integer, ucol
 end
 
 """
-    dfs_tree(g, s::Integer)
+    dfs_tree(g, s)
 
-Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
-and returns a directed acyclic graph of vertices in the order they were discovered.
+Returns an ordered vector of vertices representing a directed acylic graph based on
+depth-first traversal of the graph `g` starting with source vertex `s`.
 """
 function dfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)

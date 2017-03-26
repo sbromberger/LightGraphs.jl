@@ -1,6 +1,10 @@
 const SimpleDiGraphEdge = SimpleEdge
 
-"""A type representing a directed graph."""
+"""
+    SimpleDiGraph{T}
+
+A type representing a directed graph.
+"""
 mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)

@@ -1,15 +1,10 @@
 """
-Computes the maximum flow between the source and target vertexes in a flow
-graph using [Dinic\'s Algorithm](https://en.wikipedia.org/wiki/Dinic%27s_algorithm)
-Returns the value of the maximum flow as well as the final flow matrix.
+    function dinic_impl(residual_graph, source, target, capacity_matrix)
 
-Use a default capacity of 1 when the capacity matrix isn\'t specified.
-
-Requires arguments:
-residual_graph::DiGraph                # the input graph
-source::Integer                        # the source vertex
-target::Integer                        # the target vertex
-capacity_matrix::AbstractMatrix    # edge flow capacities
+Compute the maximum flow between the `source` and `target` for `residual_graph`
+with edge flow capacities in `capacity_matrix` using
+[Dinic\'s Algorithm](https://en.wikipedia.org/wiki/Dinic%27s_algorithm).
+Return the value of the maximum flow as well as the final flow matrix.
 """
 function dinic_impl end
 @traitfn function dinic_impl(
@@ -35,18 +30,11 @@ end
 
 
 
-"""
-Uses BFS to identify a blocking flow in
-the input graph and then backtracks from the target to the source, aumenting flow
-along all possible paths.
 
-Requires arguments:
-residual_graph::DiGraph                # the input graph
-source::Integer                        # the source vertex
-target::Integer                        # the target vertex
-capacity_matrix::AbstractMatrix    # edge flow capacities
-flow_matrix::AbstractMatrix        # the current flow matrix
-P::AbstractVector{Int}                 # Parent vector to store Level Graph
+"""
+    blocking_flow!(residual_graph, source, target, capacity_matrix, flow-matrix, P)
+
+Like `blocking_flow`, but requires a preallocated parent vector `P`.
 """
 function blocking_flow! end
 @traitfn function blocking_flow!(
@@ -110,7 +98,14 @@ function blocking_flow! end
     return total_flow
 end
 
-blocking_flow!(
+"""
+    blocking_flow(residual_graph, source, target, capacity_matrix, flow-matrix)
+
+Use BFS to identify a blocking flow in the `residual_graph` with current flow
+matrix `flow_matrix`and then backtrack from `target` to `source`,
+augmenting flow along all possible paths.
+"""
+blocking_flow(
     residual_graph::AbstractGraph,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex

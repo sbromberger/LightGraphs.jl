@@ -2,15 +2,12 @@
 # TODO: implement readgexf
 
 """
-savegexf(f::IO, g::AbstractGraph, gname::String)
+    savegexf(f, g, gname)
 
-Writes a graph `g` with name `gname`
-to a file `f` in the
-[Gexf](http://gexf.net/format/) format.
-
-Returns 1 (number of graphs written).
+Write a graph `g` with name `gname` to an IO stream `io` in the
+[Gexf](http://gexf.net/format/) format. Return 1 (number of graphs written).
 """
-function savegexf(f::IO, g::AbstractGraph, gname::String)
+function savegexf(io::IO, g::AbstractGraph, gname::String)
     xdoc = XMLDocument()
     xroot = setroot!(xdoc, ElementNode("gexf"))
     xroot["xmlns"] = "http://www.gexf.net/1.2draft"
@@ -40,7 +37,7 @@ function savegexf(f::IO, g::AbstractGraph, gname::String)
         m += 1
     end
 
-    prettyprint(f, xdoc)
+    prettyprint(io, xdoc)
     return 1
 end
 

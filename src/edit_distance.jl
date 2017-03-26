@@ -1,14 +1,20 @@
-"""
-Computes the edit distance between graphs G₁ and G₂.
+@doc_str """
+edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)
 
-Returns the minimum edit cost and edit path to transform graph
-G₁ into graph G₂. An edit path consists of a sequence of pairs
-of vertices (u,v) ∈ [0,|G₁|] × [0,|G₂|] representing vertex
-operations:
+Compute the edit distance between graphs `G₁` and `G₂`. Return the minimum
+edit cost and edit path to transform graph `G₁` into graph `G₂``.
+An edit path consists of a sequence of pairs of vertices ``(u,v) ∈ [0,|G₁|] × [0,|G₂|]``
+representing vertex operations:
 
-- (0,v): insertion of vertex v ∈ G₂
-- (u,0): deletion of vertex u ∈ G₁
-- (u>0,v>0): substitution of vertex u ∈ G₁ by vertex v ∈ G₂
+- ``(0,v)``: insertion of vertex ``v ∈ G₂``
+- ``(u,0)``: deletion of vertex ``u ∈ G₁``
+- ``(u>0,v>0)``: substitution of vertex ``u ∈ G₁`` by vertex ``v ∈ G₂``
+
+
+### Optional arguments
+- `insert_cost::Function=v->1.0`
+- `delete_cost::Function=u->1.0`
+- `subst_cost::Function=(u,v)->0.5`
 
 By default, the algorithm uses constant operation costs. The
 user can provide classical Minkowski costs computed from vertex
@@ -19,23 +25,21 @@ search, for example:
 edit_distance(G₁, G₂, subst_cost=MinkowskiCost(μ₁, μ₂))
 ```
 
-A custom heuristic can be provided to the A* search in case the
-default heuristic is not satisfactory.
+- `heuristic::Function=DefaultEditHeuristic`: a custom heuristic provided to the A*
+search in case the default heuristic is not satisfactory.
 
-Performance tips:
------------------
-- Given two graphs |G₁| < |G₂|, `edit_distance(G₁, G₂)` is faster to
+### Performance
+- Given two graphs ``|G₁| < |G₂|``, `edit_distance(G₁, G₂)` is faster to
 compute than `edit_distance(G₂, G₁)`. Consider swapping the arguments
-if involved costs are ``symmetric''.
+if involved costs are equivalent.
 - The use of simple Minkowski costs can improve performance considerably.
 - Exploit vertex attributes when designing operation costs.
 
-For further details, please refer to:
+### References
+- RIESEN, K., 2015. Structural Pattern Recognition with Graph Edit Distance: Approximation Algorithms and Applications. (Chapter 2)
 
-RIESEN, K., 2015. Structural Pattern Recognition with Graph Edit
-Distance: Approximation Algorithms and Applications. (Chapter 2)
-
-Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
+### Author
+- Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                        insert_cost::Function=v->1.0,
@@ -100,21 +104,33 @@ function DefaultEditHeuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
   return nv(G₂) - length(vs)
 end
 
+
 #-------------------------
 # Edit path cost functions
 #-------------------------
 
 """
+    MinkowskiCost(μ₁, μ₂; p::Real=1)
+
 For labels μ₁ on the vertices of graph G₁ and labels μ₂ on the vertices
 of graph G₂, compute the p-norm cost of substituting vertex u ∈ G₁ by
 vertex v ∈ G₂.
+
+### Optional arguments
+`p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
   (u,v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
 """
-Similar to MinkowskiCost, but ensures costs smaller than 2τ.
+    BoundedMinkowskiCost(μ₁, μ₂)
+
+Return value similar to `MinkowskiCost`, but ensure costs smaller than 2τ.
+
+### Optional arguments
+`p=1`: the p value for p-norm calculation.
+`τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
   (u,v) -> 1 / (1/(2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))

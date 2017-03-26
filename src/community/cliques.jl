@@ -6,9 +6,12 @@
 ##################################################################
 
 """
-Finds all maximal cliques of an undirected graph.
+    maximal_cliques(g)
+    
+Return a vector of vectors representing the node indices in each of the maximal
+cliques found in the undirected graph `g`.
 
-```
+```jldoctest
 julia> using LightGraphs
 julia> g = Graph(3)
 julia> add_edge!(g, 1, 2)

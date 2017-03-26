@@ -6,13 +6,15 @@ end
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 
 """
-Performs [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm)
-on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
-and computes minimum spanning tree. Returns a `Vector{Edge}`,
-that contains the edges.
+    prim_mst(g, distmx=DefaultDistance())
+
+Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
+distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm).
+Return a vector of edges.
 """
-function prim_mst(
-    g::AbstractGraph,
+function prim_mst end
+@traitfn function prim_mst(
+    g::::(!IsDirected),
     distmx::AbstractMatrix = DefaultDistance()
     )
     pq = Vector{PrimHeapEntry}()
@@ -39,8 +41,10 @@ function prim_mst(
 end
 
 """
-Used to mark the visited vertices. Marks the vertex `v` of graph `g` true in the array `marked`
-and enters all its edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
+    visit!(g, v, marked, pq, distmx)
+
+Mark the vertex `v` of graph `g` true in the array `marked` and enter all its
+edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
 function visit!(
     g::AbstractGraph,

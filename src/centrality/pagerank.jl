@@ -1,14 +1,18 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
-"""Calculates the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the graph
-`g`. Can optionally specify a different damping factor (`α`), number of
-iterations (`n`), and convergence threshold (`ϵ`). If convergence is not
-reached within `n` iterations, an error will be returned.
+"""
+    pagerank(g, α=0.85, n=100, ϵ=1.0e-6)
+
+Calculate the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the
+directed graph `g` parameterized by damping factor `α`, number of
+iterations `n`, and convergence threshold `ϵ` (default 1.0e-6). Return a
+vector representing the centrality calculated for each node in `g`, or an
+error if convergence is not reached within `n` iterations.
 """
 function pagerank end
 
-@traitfn function pagerank(g::::IsDirected, α=0.85, n=100, ϵ = 1.0e-6)
+@traitfn function pagerank(g::::IsDirected, α=0.85, n=100, ϵ=1.0e-6)
     A = adjacency_matrix(g,:in,Float64)
     S = vec(sum(A,1))
     S = 1./S

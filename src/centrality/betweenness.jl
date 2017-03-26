@@ -2,47 +2,30 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-doc"""
-betweenness_centrality(g, k=0; normalize=true, endpoints=false)
+@doc_str """
+    betweenness_centrality(g[, nodes])
+    betweenness_centrality(g, k)
 
+Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
+of a graph `g` across all nodes, a specified subset of nodes `nodes`, or a random subset of `k`
+nodes. Return a vector representing the centrality calculated for each node in `g`.
 
-Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
-the graph `g`, or, optionally, of a random subset of `k` vertices. Can
-optionally include endpoints in the calculations. Normalization is enabled by
-default.
+### Optional arguments
+* `normalize=true`: If true, normalize the betweenness values by the
+    total number of possible distinct paths between all pairsin the graphs.
+    For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
+    and for a directed graph, ``\\frac{(|V|-1)(|V|-2)}``.
+* `endpoints=false`: If true, include endpoints in the shortest path count.
+
 
 Betweenness centrality is defined as:
+``
+bc(v) = \\frac{1}{\\mathcal{N}} \sum_{s \\neq t \\neq v}
+\\frac{\\sigma_{st}(v)}{\\sigma_{st}}
+``.
 
-$bc(v) = \frac{1}{\mathcal{N}} \sum_{s \neq t \neq v}
-\frac{\sigma_{st}(v)}{\sigma_{st}}$.
-
-**Parameters**
-
-g: AbstractGraph
-A Graph, directed or undirected.
-
-k: Integer, optional
-Use `k` nodes sample to estimate the betweenness centrality. If none,
-betweenness centrality is computed using the `n` nodes in the graph.
-
-normalize: bool, optional
-If true, the betweenness values are normalized by the total number
-of possible distinct paths between all pairs in the graphs. For an undirected graph,
-this number if `((n-1)*(n-2))/2` and for a directed graph, `(n-1)*(n-2)`
-where `n` is the number of nodes in the graph.
-
-endpoints: bool, optional
-If true, endpoints are included in the shortest path count.
-
-**Returns**
-
-betweenness: Array{Float64}
-Betweenness centrality value per node id.
-
-
-**References**
-
-[1] Brandes 2001 & Brandes 2008
+### References
+* Brandes 2001 & Brandes 2008
 """
 function betweenness_centrality(
     g::AbstractGraph,
@@ -108,8 +91,6 @@ function _accumulate_basic!(
         end
     end
 end
-
-
 
 function _accumulate_endpoints!(
     betweenness::Vector{Float64},

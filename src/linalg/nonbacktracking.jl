@@ -3,13 +3,16 @@ export non_backtracking_matrix,
         contract!,
         contract
 
-"""
-Given two oriented edges i->j and k->l in g, the
-non-backtraking matrix B is defined as
+@doc_str """
+    non_backtracking_matrix(g)
 
-B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+Return a non-backtracking matrix B and an edgemap storing the oriented
+edges' positions in B.
 
-returns a matrix B, and an edgemap storing the oriented edges' positions in B
+Given two arcs ``A_{i,j}` and `A_{k,l}` in `g`, the
+non-backtraking matrix ``B`` is defined as
+
+``B_{A_{i,j}, A_{k,l}} = δ_{j, k} * (1 - δ_{i, l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
     # idedgemap = Dict{Int, Edge}()
@@ -41,25 +44,26 @@ function non_backtracking_matrix(g::AbstractGraph)
     return B, edgeidmap
 end
 
-"""Nonbacktracking: a compact representation of the nonbacktracking operator
-
-    g: the underlying graph
-    edgeidmap: the association between oriented edges and index into the NBT matrix
+@doc_str """
+    Nonbacktracking{G}
+    
+A compact representation of the nonbacktracking operator.
 
 The Nonbacktracking operator can be used for community detection.
 This representation is compact in that it uses only ne(g) additional storage
 and provides an implicit representation of the matrix B_g defined below.
 
-Given two oriented edges i->j and k->l in g, the
-non-backtraking matrix B is defined as
+Given two arcs ``A_{i,j}` and `A_{k,l}` in `g`, the
+non-backtraking matrix ``B`` is defined as
 
-B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+``B_{A_{i,j}, A_{k,l}} = δ_{j, k} * (1 - δ_{i, l})``
 
 This type is in the style of GraphMatrices.jl and supports the necessary operations
 for computed eigenvectors and conducting linear solves.
 
-Additionally the contract!(vertexspace, nbt, edgespace) method takes vectors represented in
-the domain of B and represents them in the domain of the adjacency matrix of g.
+Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
+represented in the domain of ``B`` and represents them in the domain of the
+adjacency matrix of `g`.
 """
 struct Nonbacktracking{G<:AbstractGraph}
     g::G
@@ -136,8 +140,10 @@ function *(nbt::Nonbacktracking, x::AbstractMatrix)
     return y
 end
 
-"""contract!(vertexspace, nbt, edgespace) in place version of
-contract(nbt, edgespace). modifies first argument
+"""
+    contract!(vertexspace, nbt, edgespace)
+
+The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 """
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     T = eltype(nbt.g)
@@ -147,8 +153,11 @@ function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     end
 end
 
-"""contract(nbt, edgespace)
-Integrates out the edges by summing over the edges incident to each vertex.
+#TODO: documentation needs work. sbromberger 20170326
+"""
+    contract(nbt, edgespace)
+
+Integrate out the edges by summing over the edges incident to each vertex.
 """
 function contract(nbt::Nonbacktracking, edgespace::Vector)
     y = zeros(eltype(edgespace), nv(nbt.g))

@@ -1,34 +1,40 @@
 """
-Abstract type that allows users to pass in their preferred Algorithm
+    AbstractFlowAlgorithm
+
+Abstract type that allows users to pass in their preferred algorithm
 """
 abstract type AbstractFlowAlgorithm end
 
 """
+    EdmondsKarpAlgorithm <: AbstractFlowAlgorithm
+
 Forces the maximum_flow function to use the Edmonds–Karp algorithm.
 """
-struct EdmondsKarpAlgorithm <: AbstractFlowAlgorithm
-end
+struct EdmondsKarpAlgorithm <: AbstractFlowAlgorithm end
 
 """
+    DinicAlgorithm <: AbstractFlowAlgorithm
+
 Forces the maximum_flow function to use Dinic\'s algorithm.
 """
-struct DinicAlgorithm <: AbstractFlowAlgorithm
-end
+struct DinicAlgorithm <: AbstractFlowAlgorithm end
 
 """
+    BoykovKolmogorovAlgorithm <: AbstractFlowAlgorithm
+
 Forces the maximum_flow function to use the Boykov-Kolmogorov algorithm.
 """
-struct BoykovKolmogorovAlgorithm <: AbstractFlowAlgorithm
-end
+struct BoykovKolmogorovAlgorithm <: AbstractFlowAlgorithm end
 
 """
 Forces the maximum_flow function to use the Push-Relabel algorithm.
 """
-struct PushRelabelAlgorithm <: AbstractFlowAlgorithm
-end
+struct PushRelabelAlgorithm <: AbstractFlowAlgorithm end
 
 """
-Type that returns 1 if a forward edge exists, and 0 otherwise
+    DefaultCapacity{T}
+
+Structure that returns 1 if a forward edge exists in `flow_graph`, and 0 otherwise.
 """
 struct DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
     flow_graph::DiGraph
@@ -45,23 +51,18 @@ transpose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 ctranspose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 
 """
-Constructs a residual graph for the input flow graph. Creates a new graph instead
-of modifying the input flow graph.
+    residual(flow_graph)
 
-The residual graph comprises of the same Vertex list, but ensures that for each
-edge (u,v), (v,u) also exists in the graph. (to allow flow in the reverse direction).
+Returns a directed residual graph for a directed `flow_graph`.
 
-If only the forward edge exists, a reverse edge is created with capacity 0. If both
-forward and reverse edges exist, their capacities are left unchanged. Since the capacities
-in DefaultDistance cannot be changed, an array of ones is created. Returns the
-residual graph and the modified capacity_matrix (when DefaultDistance is used.)
+The residual graph comprises the same node list as the orginal flow graph, but
+ensures that for each edge (u,v), (v,u) also exists in the graph. This allows
+flow in the reverse direction.
 
-Requires arguments:
-
-- flow_graph::DiGraph,                    # the input graph
-- source::Integer                         # the source vertex
-- target::Integer                         # the target vertex
-- capacity_matrix::AbstractMatrix         # input capacity matrix
+If only the forward edge exists, a reverse edge is created with capacity 0.
+If both forward and reverse edges exist, their capacities are left unchanged.
+Since the capacities in `DefaultDistance` cannot be changed, an array of ones
+is created.
 """
 function residual end
 @traitfn residual(flow_graph::::IsDirected) = DiGraph(Graph(flow_graph))
@@ -119,55 +120,46 @@ end
 end
 
 """
-Generic maximum_flow function. Requires arguments:
+maximum_flow(flow_graph, source, target[, capacity_matrix][, algorithm][, restriction])
 
-- flow_graph::DiGraph                   # the input graph
-- source::Integer                       # the source vertex
-- target::Integer                       # the target vertex
-- capacity_matrix::AbstractMatrix       # edge flow capacities
-- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
-- restriction::Real                     # keyword argument for a restriction
+Generic maximum_flow function for `flow_graph` from `source` to `target` with
+capacities in `capacity_matrix`. Uses flow algorithm `algorithm` and cutoff restriction
+`restriction`.
 
-The function defaults to the Push-relabel algorithm. Alternatively, the algorithm
-to be used can also be specified through a keyword argument. A default capacity of 1
-is assumed for each link if no capacity matrix is provided.
-If the restriction is bigger than 0, it is applied to capacity_matrix.
+- If `capacity_matrix` is not specified, `DefaultCapacity(flow_graph)` will be used.
+- If `algorithm` is not specified, it will default to `PushRelabelAlgorithm`.
+- If `restriction` is not specified, it will default to `0`.
 
-All algorithms return a tuple with 1) the maximum flow and 2) the flow matrix.
-For the Boykov-Kolmogorov algorithm, the associated mincut is returned as a third output.
+Return a tuple of (maximum flow, flow matrix). For the Boykov-Kolmogorov
+algorithm, the associated mincut is returned as a third output.
 
 ### Usage Example:
 
-```julia
-
-# Create a flow-graph and a capacity matrix
-flow_graph = DiGraph(8)
-flow_edges = [
+```jldoctest
+julia> flow_graph = DiGraph(8) # Create a flow-graph
+julia> flow_edges = [
 (1,2,10),(1,3,5),(1,4,15),(2,3,4),(2,5,9),
 (2,6,15),(3,4,4),(3,6,8),(4,7,16),(5,6,15),
 (5,8,10),(6,7,15),(6,8,10),(7,3,6),(7,8,10)
 ]
-capacity_matrix = zeros(Int, 8, 8)
-for e in flow_edges
+
+julia> capacity_matrix = zeros(Int, 8, 8)  # Create a capacity matrix
+
+julia> for e in flow_edges
     u, v, f = e
     add_edge!(flow_graph, u, v)
     capacity_matrix[u,v] = f
 end
 
-# Run default maximum_flow without the capacity_matrix
-f, F = maximum_flow(flow_graph, 1, 8)
+julia> f, F = maximum_flow(flow_graph, 1, 8) # Run default maximum_flow without the capacity_matrix
 
-# Run default maximum_flow with the capacity_matrix
-f, F = maximum_flow(flow_graph, 1, 8)
+julia> f, F = maximum_flow(flow_graph, 1, 8) # Run default maximum_flow with the capacity_matrix
 
-# Run Endmonds-Karp algorithm
-f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorithm())
+julia> f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=EdmondsKarpAlgorithm()) # Run Edmonds-Karp algorithm
 
-# Run Dinic's algorithm
-f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm())
+julia> f, F = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=DinicAlgorithm()) # Run Dinic's algorithm
 
-# Run Boykov-Kolmogorov algorithm
-f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmogorovAlgorithm())
+julia> f, F, labels = maximum_flow(flow_graph,1,8,capacity_matrix,algorithm=BoykovKolmogorovAlgorithm()) # Run Boykov-Kolmogorov algorithm
 
 ```
 """

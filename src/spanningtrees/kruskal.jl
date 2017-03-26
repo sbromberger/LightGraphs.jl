@@ -6,9 +6,10 @@ end
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
 
 """
-Performs [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
-on a given pair of nodes `p`and `q`, and makes a connection between them
-in the vector `nodes`.
+    quick_find!(nodes, p, q)
+
+Perform [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
+on a given pair of nodes `p`and `q`, and make a connection between them in the vector `nodes`.
 """
 function quick_find!(nodes, p, q)
     pid = nodes[p]
@@ -20,15 +21,17 @@ function quick_find!(nodes, p, q)
     end
 end
 
-"""Performs [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
-on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
-and computes minimum spanning tree. Returns a `Vector{KruskalHeapEntry}`,
-that contains the containing edges and its weights.
 """
-function kruskal_mst(
-    g::AbstractGraph,
+    kruskal_mst(g, distmx=DefaultDistance())
+
+Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
+distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm).
+"""
+function kruskal_mst end
+@traitfn function kruskal_mst{T}(
+    g::::(!IsDirected),
     distmx::AbstractMatrix{T} = DefaultDistance()
-) where T<:Real
+)
 
     U = eltype(g)
     edge_list = Vector{KruskalHeapEntry{T}}()

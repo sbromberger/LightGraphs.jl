@@ -9,19 +9,19 @@
 #
 #################################################
 """
-**Conventions in Breadth First Search and Depth First Search**
-VertexColorMap :
+    BreadthFirst
+
+## Conventions in Breadth First Search and Depth First Search
+### VertexColorMap
 - color == 0    => unseen
 - color < 0     => examined but not closed
 - color > 0     => examined and closed
 
-EdgeColorMap :
+### EdgeColorMap
 - color == 0    => unseen
-- color == 1     => examined
+- color == 1    => examined
 """
-
-mutable struct BreadthFirst <: AbstractGraphVisitAlgorithm
-end
+mutable struct BreadthFirst <: AbstractGraphVisitAlgorithm end
 
 function breadth_first_visit_impl!(
     g::AbstractGraph,                       # the graph
@@ -87,8 +87,10 @@ end
 # Constructing BFS trees                  #
 ###########################################
 
-"""TreeBFSVisitorVector is a type for representing a BFS traversal
-of the graph as a parents array. This type allows for a more performant implementation.
+"""
+    TreeBFSVisitorVector{T}
+
+A type for representing a BFS traversal of the graph as a parents array.
 """
 mutable struct TreeBFSVisitorVector{T<:Integer} <: AbstractGraphVisitor
     tree::Vector{T}
@@ -98,7 +100,11 @@ function TreeBFSVisitorVector(n::Integer)
     return TreeBFSVisitorVector(fill(zero(n), n))
 end
 
-"""tree converts a parents array into a DiGraph"""
+"""
+    tree(parents)
+
+Convert a parents array into a `DiGraph`
+"""
 function tree(parents::AbstractVector{T}) where T<:Integer
     n = T(length(parents))
     t = DiGraph(n)
@@ -139,10 +145,13 @@ function bfs_tree!(visitor::TreeBFSVisitorVector{T},
     traverse_graph!(g, BreadthFirst(), s, visitor; vertexcolormap=vertexcolormap, queue=queue)
 end
 
-"""Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
-and returns a directed acyclic graph of vertices in the order they were discovered.
+"""
+    bfs_tree(g, s)
+Provide a breadth-first traversal of the graph `g` starting with source vertex `s`,
+and return a directed acyclic graph of vertices in the order they were discovered.
 
-This function is a high level wrapper around bfs_tree!, use that function for more performance.
+### Implementation Notes
+This function is a high level wrapper around bfs_tree!; use that function for more performance.
 """
 function bfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)
@@ -154,7 +163,12 @@ end
 ############################################
 # Connected Components with BFS            #
 ############################################
-"""Performing connected components with BFS starting from seed"""
+"""
+    ComponentVisitorVector{T}
+
+A type of `AbstractGraphVisitor` that represents connected components with
+BFS starting from a given seed.
+"""
 mutable struct ComponentVisitorVector{T<:Integer} <: AbstractGraphVisitor
     labels::Vector{T}
     seed::T
@@ -191,10 +205,9 @@ function examine_neighbor!(visitor::BipartiteVisitor, u::Integer, v::Integer,
 end
 
 """
-    is_bipartite(g)
-    is_bipartite(g, v)
+    is_bipartite(g[, v])
 
-Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+Return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
 If a node `v` is specified, only the connected component to which it belongs is considered.
 """
 function is_bipartite(g::AbstractGraph)
@@ -221,10 +234,11 @@ function _bipartite_visitor(g::AbstractGraph, s::Integer; vmap=Dict{eltype(g),In
     return visitor
 end
 
-"""
-If the graph is bipartite returns a vector `c`  of size `nv(g)` containing
-the assignment of each vertex to one of the two sets (`c[i] == 1` or `c[i]==2`).
-If `g` is not bipartite returns an empty vector.
+@doc_str """
+    bipartite_map(g)
+For a bipartite graph `g`, return a vector `c` of size ``|V|`` containing
+the assignment of each vertex to one of the two sets (``c_i == 1`` or c_i ==2``).
+If `g` is not bipartite, return an empty vector.
 """
 function bipartite_map(g::AbstractGraph)
     cc = connected_components(g)
@@ -242,10 +256,11 @@ end
 ###########################################
 
 """
-    gdistances!(g, source, dists) -> dists
+    gdistances!(g, source, dists)
 
-Fills `dists` with the geodesic distances of vertices in `g` from vertex/vertices `source`.
-`dists` should be a vector of length `nv(g)`.
+Fill `dists` with the geodesic distances of vertices in `g` from `source`.
+`dists` should be a vector of length `nv(g)`. Return `dists`.
+For vertices in disconnected components the default distance is -1.
 """
 function gdistances!(g::AbstractGraph, source, dists)
     T = eltype(g)
@@ -275,10 +290,10 @@ end
 
 
 """
-    gdistances(g, source) -> dists
+    gdistances(g, source)
 
-Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
-If `source` is a collection of vertices they should be unique (not checked).
+Return a vector filled with the geodesic distances of vertices in  `g` from
+`source`. If `source` is a collection of vertices each element should be unique.
 For vertices in disconnected components the default distance is -1.
 """
 gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))

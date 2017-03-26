@@ -31,19 +31,13 @@ end
 
 
 """
-Computes the maximum multiroute flow (for an integer number of routes)
-between the source and target vertexes in a flow graph using the
-[Kishimoto algorithm](http://dx.doi.org/10.1109/ICCS.1992.255031).
-Returns the value of the multiroute flow as well as the final flow matrix,
+    kishimoto(flow_graph, source, target, capacity_matrix, flow_algorithm, routes)
+
+Compute the maximum multiroute flow (for an integer number of `route`s)
+between `source` and `target` in `flow_graph` with capacities in `capacity_matrix`
+using the [Kishimoto algorithm](http://dx.doi.org/10.1109/ICCS.1992.255031).
+Return the value of the multiroute flow as well as the final flow matrix,
 along with a multiroute cut if Boykov-Kolmogorov is used as a subroutine.
-Use a default capacity of 1 when the capacity matrix isn\'t specified.
-Requires arguments:
-- flow_graph::DiGraph                    # the input graph
-- source::Integer                        # the source vertex
-- target::Integer                        # the target vertex
-- capacity_matrix::AbstractMatrix{T}   # edge flow capacities
-- flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
-- routes::Int                            # keyword argument for routes
 """
 function kishimoto end
 @traitfn function kishimoto(

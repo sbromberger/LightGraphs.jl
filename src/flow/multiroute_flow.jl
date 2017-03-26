@@ -1,19 +1,23 @@
 """
-Abstract type that allows users to pass in their preferred Algorithm
+    AbstractMultirouteFlowAlgorithm
+
+Abstract type that allows users to pass in their preferred algorithm.
 """
 abstract type AbstractMultirouteFlowAlgorithm end
 
 """
+    KishimotoAlgorithm
+
 Forces the multiroute_flow function to use the Kishimoto algorithm.
 """
-struct KishimotoAlgorithm <: AbstractMultirouteFlowAlgorithm
-end
+struct KishimotoAlgorithm <: AbstractMultirouteFlowAlgorithm end
 
 """
+    ExtendedMultirouteFlowAlgorithm
+
 Forces the multiroute_flow function to use the Extended Multiroute Flow algorithm.
 """
-struct ExtendedMultirouteFlowAlgorithm <: AbstractMultirouteFlowAlgorithm
-end
+struct ExtendedMultirouteFlowAlgorithm <: AbstractMultirouteFlowAlgorithm end
 
 # Methods when the number of routes is more than the connectivity
 # 1) When using Boykov-Kolmogorov as a flow subroutine
@@ -91,13 +95,21 @@ function multiroute_flow(
     algorithm = flow_algorithm, restriction = x)
 end
 
+### TODO: CLEAN UP THIS FUNCTION AND DOCUMENTATION. THERE SHOULD BE NO NEED TO
+### HAVE A TYPE-UNSTABLE FUNCTION HERE. (sbromberger 2017-03-26)
 """
-The generic multiroute_flow function will output three kinds of results:
+multiroute_flow(flow_graph, source, target[, DefaultCapacity][, flow_algorithm][, mrf_algorithm][, routes])
 
-- When the number of routes is 0 or non-specified, the set of breaking points of
-the multiroute flow is returned.
-- When the input is limited to a set of breaking points and a route value k,
-only the value of the k-route flow is returned
+The generic multiroute_flow function.
+
+The output will vary depending on the input:
+
+- When the number of `route`s is `0`, return the set of breaking points of
+the multiroute flow.
+- When the number of `route`s is `1`, return a flow with a set of 1-disjoint paths
+(this is the classical max-flow implementation).
+- When the input is limited to a set of breaking points and a route value `k`,
+return only the k-route flow.
 - Otherwise, a tuple with 1) the maximum flow and 2) the flow matrix. When the
 max-flow subroutine is the Boykov-Kolmogorov algorithm, the associated mincut is
 returned as a third output.
@@ -144,37 +156,34 @@ in the following cases:
 (please consult the  max_flow section for options about flow_algorithm
 and capacity_matrix)
 
-```julia
+```jldoctest
+julia> flow_graph = DiGraph(8) # Create a flow graph
 
-# Create a flow-graph and a capacity matrix
-flow_graph = DiGraph(8)
-flow_edges = [
+julia> flow_edges = [
 (1, 2, 10), (1, 3, 5),  (1, 4, 15), (2, 3, 4),  (2, 5, 9),
 (2, 6, 15), (3, 4, 4),  (3, 6, 8),  (4, 7, 16), (5, 6, 15),
 (5, 8, 10), (6, 7, 15), (6, 8, 10), (7, 3, 6),  (7, 8, 10)
 ]
-capacity_matrix = zeros(Int, 8, 8)
-for e in flow_edges
+
+julia> capacity_matrix = zeros(Int, 8, 8) # Create a capacity matrix
+
+julia> for e in flow_edges
     u, v, f = e
     add_edge!(flow_graph, u, v)
     capacity_matrix[u, v] = f
 end
 
-# Run default multiroute_flow with an integer number of routes = 2
-f, F = multiroute_flow(flow_graph, 1, 8, capacity_matrix, routes = 2)
+julia> f, F = multiroute_flow(flow_graph, 1, 8, capacity_matrix, routes = 2) # Run default multiroute_flow with an integer number of routes = 2
 
-# Run default multiroute_flow with a noninteger number of routes = 1.5
-f, F = multiroute_flow(flow_graph, 1, 8, capacity_matrix, routes = 1.5)
+julia> f, F = multiroute_flow(flow_graph, 1, 8, capacity_matrix, routes = 1.5) # Run default multiroute_flow with a noninteger number of routes = 1.5
 
-# Run default multiroute_flow for all the breaking points values
-points = multiroute_flow(flow_graph, 1, 8, capacity_matrix)
-# Then run multiroute flow algorithm for any positive number of routes
-f, F = multiroute_flow(points, 1.5)
-f = multiroute_flow(points, 1.5, valueonly = true)
+julia> points = multiroute_flow(flow_graph, 1, 8, capacity_matrix) # Run default multiroute_flow for all the breaking points values
 
-# Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as max_flow routine
-f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix,
-algorithm = BoykovKolmogorovAlgorithm(), routes = 2)
+julia> f, F = multiroute_flow(points, 1.5) # Then run multiroute flow algorithm for any positive number of routes
+
+julia> f = multiroute_flow(points, 1.5, valueonly = true)
+
+julia> f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix, algorithm = BoykovKolmogorovAlgorithm(), routes = 2) # Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as max_flow routine
 
 ```
 """
@@ -191,7 +200,7 @@ function multiroute_flow(
     routes::R = 0              # keyword argument for number of routes (0 = all values)
     ) where R <: Real
 
-    # a flow with a set of 1-disjoint pathes is a classical max-flow
+    # a flow with a set of 1-disjoint paths is a classical max-flow
     (routes == 1) &&
     return maximum_flow(flow_graph, source, target, capacity_matrix, flow_algorithm)
 

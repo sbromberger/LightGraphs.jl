@@ -4,7 +4,7 @@
 # A* shortest-path algorithm
 
 function a_star_impl!(
-    graph::AbstractGraph,# the graph
+    g::AbstractGraph,# the graph
     t::Integer, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
@@ -18,7 +18,7 @@ function a_star_impl!(
             return path
         end
 
-        for v in LightGraphs.out_neighbors(graph, u)
+        for v in LightGraphs.out_neighbors(g, u)
 
             if colormap[v] < 2
                 dist = distmx[u, v]
@@ -36,12 +36,16 @@ function a_star_impl!(
 end
 
 """
-Computes the shortest path between vertices `s` and `t` using the
-[A\* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm). An
-optional heuristic function and edge distance matrix may be supplied.
+    a_star(g, s, t[, distmx][, heuristic])
+
+Return a vector of edges comprising the shortest path between vertices `s` and `t`
+using the [A\* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
+An optional heuristic function and edge distance matrix may be supplied. If missing,
+the distance matrix is set to `DefaultDistance` and the heuristic is set to
+`n -> 0`.
 """
 function a_star(
-    graph::AbstractGraph,  # the graph
+    g::AbstractGraph,  # the g
 
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
@@ -49,10 +53,10 @@ function a_star(
     heuristic::Function = n -> 0
     ) where T
     # heuristic (under)estimating distance to target
-    U = eltype(graph)
+    U = eltype(g)
     frontier = PriorityQueue(Tuple{T,Vector{Edge},U},T)
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
-    colormap = zeros(Int, nv(graph))
+    colormap = zeros(Int, nv(g))
     colormap[s] = 1
-    a_star_impl!(graph, t, frontier, colormap, distmx, heuristic)
+    a_star_impl!(g, t, frontier, colormap, distmx, heuristic)
 end
