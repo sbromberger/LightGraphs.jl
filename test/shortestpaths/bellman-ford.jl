@@ -10,6 +10,7 @@
         @test @inferred(enumerate_paths(z))[2] == []
         @test @inferred(enumerate_paths(z))[4] == enumerate_paths(z,4) == [2,3,4]
         @test @inferred(!has_negative_edge_cycle(g))
+        @test @inferred(!has_negative_edge_cycle(g, d1))
 
 
         y = @inferred(bellman_ford_shortest_paths(g, 2, d1))
