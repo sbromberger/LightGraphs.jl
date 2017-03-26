@@ -48,6 +48,7 @@ tests = [
     "interface",
     "core",
     "graphtypes/simplegraphs/simplegraphs",
+    "graphtypes/simplegraphs/simpleedge",
     "graphtypes/simplegraphs/simpleedgeiter",
     "operators",
     # "graphdigraph",
