@@ -9,6 +9,12 @@
       @test @inferred(visited_vertices(g, BreadthFirst(), [1;])) == [1, 2, 3, 4, 5]
 
 
+      vis = TrivialGraphVisitor()
+      @test discover_vertex!(vis, 1)
+      @test open_vertex!(vis, 1)
+      @test examine_neighbor!(vis, 1, 1, 0, 0, 0)
+      @test close_vertex!(vis, 1)
+
       function trivialgraphvisit(
           g::AbstractGraph,
           alg::LightGraphs.AbstractGraphVisitAlgorithm,
@@ -26,6 +32,8 @@
     end
     # dummy edge map test
     d = @inferred(LightGraphs.DummyEdgeMap())
+
     e = Edge(1,2)
     @test d[e] == 0
+    @test getindex(d, e) == 0
 end
