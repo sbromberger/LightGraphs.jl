@@ -19,6 +19,8 @@ import LightGraphs.SimpleGraphs.SimpleEdge
         @test SimpleEdge(p) == e
         @test SimpleEdge(t1) == SimpleEdge(t2) == e
 
+        @test SimpleEdge{Int64}(ep) == e
+
         @test Pair(e) == p
         @test Tuple(e) == t1
         @test reverse(ep) == re

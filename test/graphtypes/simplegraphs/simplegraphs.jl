@@ -9,6 +9,8 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ErrorException SimpleGraph(adjmx2)
 
+    @test_throws ErrorException badj(DummySimpleGraph())
+
     @test @inferred(ne(SimpleGraph(PathDiGraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
 
@@ -146,4 +148,12 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         e = first(@inferred(edges(g)))
         @test @inferred(has_edge(g, e))
     end
+
+    gdx = CompleteDiGraph(4)
+    for g in testdigraphs(gdx)
+        @test rem_vertex!(g, 2)
+        @test nv(g) == 3 && ne(g) == 6
+    end
+
+
 end
