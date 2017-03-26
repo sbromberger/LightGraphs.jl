@@ -75,9 +75,11 @@ bellman_ford_shortest_paths(
     distmx::AbstractMatrix = DefaultDistance()
     ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
-function has_negative_edge_cycle(graph::AbstractGraph)
+has_negative_edge_cycle(g::AbstractGraph) = false
+
+function has_negative_edge_cycle(g::AbstractGraph, distmx::AbstractMatrix)
     try
-        bellman_ford_shortest_paths(graph, vertices(graph))
+        bellman_ford_shortest_paths(g, vertices(g), distmx)
     catch e
         isa(e, NegativeCycleError) && return true
     end
