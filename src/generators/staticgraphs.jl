@@ -22,7 +22,7 @@ end
     CompleteBipartiteGraph(n1, n2)
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
-with ``n1+n2`` vertices.
+with `n1 + n2` vertices.
 """
 function CompleteBipartiteGraph(n1::Integer, n2::Integer)
     g = Graph(n1+n2)
@@ -175,7 +175,7 @@ end
 Create a ``|dims|``-dimensional cubic lattice, with length `dims[i]`
 in dimension `i`.
 
-### Optional arguments
+### Optional Arguments
 - `periodic=false`: If true, the resulting lattice will have periodic boundary
 condition in each dimension.
 """

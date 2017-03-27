@@ -87,7 +87,7 @@ end
 
 Return the eigenvalues of the Laplacian matrix for a graph `g`, indexed
 by vertex. Default values for `dir` and `T` are the same as those in
-`laplacian_matrix`.
+[`laplacian_matrix`](@ref).
 
 ### Performance
 Converts the matrix to dense with ``nv^2`` memory usage.
@@ -101,7 +101,7 @@ laplacian_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int) = eig
 @doc_str """
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
 by vertex. Default values for `dir` and `T` are the same as those in
-`adjacency_matrix`.
+[`adjacency_matrix`](@ref).
 
 ### Performance
 Converts the matrix to dense with ``nv^2`` memory usage.

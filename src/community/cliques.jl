@@ -7,7 +7,7 @@
 
 """
     maximal_cliques(g)
-    
+
 Return a vector of vectors representing the node indices in each of the maximal
 cliques found in the undirected graph `g`.
 
@@ -59,7 +59,7 @@ function maximal_cliques end
 
     # Start main loop
     while !isempty(smallcand) || !isempty(stack)
-        if !isempty(smallcand) # Any nodes left to check?
+        if !isempty(smallcand) # Any vertices left to check?
             n = pop!(smallcand)
         else
             # back out clique_so_far
@@ -90,7 +90,7 @@ function maximal_cliques end
             continue
         end
         # find pivot node (max connected in cand)
-        # look in done nodes first
+        # look in done vertices first
         numb_cand = length(new_cand)
         maxconndone = -1
         for n in new_done
@@ -110,7 +110,7 @@ function maximal_cliques end
             continue
         end
         # still finding pivot node
-        # look in cand nodes second
+        # look in cand vertices second
         maxconn = -1
         for n in new_cand
             cn = intersect(new_cand, nnbrs[n])

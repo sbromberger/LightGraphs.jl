@@ -73,8 +73,9 @@ end
 """
     push_flow!(residual_graph, u, v, capacity_matrix, flow_matrix, excess, height, active, Q)
 
-Using `residual_graph` with capacities in `capacity_matrix`, push as much flow as possible through the given edge(`u`, `v`).
-Requires preallocated `flow_matrix` matrix, and `excess`, `height, `active`, and `Q` vectors.
+Using `residual_graph` with capacities in `capacity_matrix`, push as much flow
+as possible through the given edge(`u`, `v`). Requires preallocated `flow_matrix`
+matrix, and `excess`, `height, `active`, and `Q` vectors.
 """
 function push_flow! end
 @traitfn function push_flow!(
@@ -106,7 +107,7 @@ end
 """
     gap!(residual_graph, h, excess, height, active, count, Q)
 
-Implement the push-relabel gap heuristic. Relabel all nodes above a cutoff height.
+Implement the push-relabel gap heuristic. Relabel all vertices above a cutoff height.
 Reduce the number of relabels required.
 
 Requires arguments:

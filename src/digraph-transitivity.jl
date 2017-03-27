@@ -4,10 +4,11 @@
 Compute the transitive closure of a directed graph, using the Floyd-Warshall
 algorithm. If `selflooped` is true, add self loops to the graph.
 
-This version of the function modifies the original graph.
-
 ### Performance
 Time complexity is \\mathcal{O}(|V|^3).
+
+### Implementation Notes
+This version of the function modifies the original graph.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
@@ -31,8 +32,8 @@ end
     transitiveclosure(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm. Return a graph represetning the transitive closure. If `selflooped`
-is true, add self loops to the graph.
+algorithm. Return a graph representing the transitive closure. If `selflooped`
+is `true`, add self loops to the graph.
 
 ### Performance
 Time complexity is \\mathcal{O}(|V|^3).

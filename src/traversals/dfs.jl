@@ -114,7 +114,7 @@ discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 """
     is_cyclic(g)
 
-Returns `true` if graph `g` contains a cycle.
+Return `true` if graph `g` contains a cycle.
 
 ### Implementation Notes
 Uses DFS.
@@ -184,7 +184,7 @@ end
 """
     dfs_tree(g, s)
 
-Returns an ordered vector of vertices representing a directed acylic graph based on
+Return an ordered vector of vertices representing a directed acylic graph based on
 depth-first traversal of the graph `g` starting with source vertex `s`.
 """
 function dfs_tree(g::AbstractGraph, s::Integer)

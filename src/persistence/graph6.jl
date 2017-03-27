@@ -72,7 +72,7 @@ end
 """
     _graphToG6String(g)
 
-Given a graph `g`, create the corresponding Graph6 string
+Given a graph `g`, create the corresponding Graph6 string.
 """
 function _graphToG6String(g::Graph)
   A = adjacency_matrix(g, Bool)

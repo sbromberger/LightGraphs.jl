@@ -7,11 +7,12 @@ using the Boykov-Kolmogorov algorithm.
 Return the maximum flow in the network, the flow matrix and the partition
 `{S,T}` in the form of a vector of 0's, 1's and 2's.
 
-References:
-    BOYKOV, Y.; KOLMOGOROV, V., 2004. An Experimental Comparison of
-    Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
+### References
+- BOYKOV, Y.; KOLMOGOROV, V., 2004. An Experimental Comparison of
+Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 
-Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
+### Author
+- Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function boykov_kolmogorov_impl end
 @traitfn function boykov_kolmogorov_impl(

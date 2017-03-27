@@ -6,13 +6,13 @@ export non_backtracking_matrix,
 @doc_str """
     non_backtracking_matrix(g)
 
-Return a non-backtracking matrix B and an edgemap storing the oriented
-edges' positions in B.
+Return a non-backtracking matrix `B` and an edgemap storing the oriented
+edges' positions in `B`.
 
-Given two arcs ``A_{i,j}` and `A_{k,l}` in `g`, the
+Given two arcs ``A_{i j}` and `A_{k l}` in `g`, the
 non-backtraking matrix ``B`` is defined as
 
-``B_{A_{i,j}, A_{k,l}} = δ_{j, k} * (1 - δ_{i, l})``
+``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
     # idedgemap = Dict{Int, Edge}()
@@ -46,17 +46,17 @@ end
 
 @doc_str """
     Nonbacktracking{G}
-    
+
 A compact representation of the nonbacktracking operator.
 
 The Nonbacktracking operator can be used for community detection.
 This representation is compact in that it uses only ne(g) additional storage
 and provides an implicit representation of the matrix B_g defined below.
 
-Given two arcs ``A_{i,j}` and `A_{k,l}` in `g`, the
+Given two arcs ``A_{i j}` and `A_{k l}` in `g`, the
 non-backtraking matrix ``B`` is defined as
 
-``B_{A_{i,j}, A_{k,l}} = δ_{j, k} * (1 - δ_{i, l})``
+``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 
 This type is in the style of GraphMatrices.jl and supports the necessary operations
 for computed eigenvectors and conducting linear solves.

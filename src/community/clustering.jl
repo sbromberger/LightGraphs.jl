@@ -3,7 +3,7 @@
     local_clustering_coefficient(g, vs)
 
 Return the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
-for node `v` in graph `g`. If a list of nodes `vs` is specified, return a vector
+for node `v` in graph `g`. If a list of vertices `vs` is specified, return a vector
 of coefficients for each node in the list.
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
@@ -15,12 +15,12 @@ local_clustering_coefficient(g::AbstractGraph, vs = vertices(g)) =
     [local_clustering_coefficient(g, v) for v in vs]
 
 
-"""
+@doc_str """
     local_clustering(g, v)
     local_clustering(g, vs)
 
-Return a tuple `(a,b)`, where `a` is the number of triangles in the neighborhood
-of `v` and `b` is the maximum number of possible triangles. If a list of nodes
+Return a tuple `(a, b)`, where `a` is the number of triangles in the neighborhood
+of `v` and `b` is the maximum number of possible triangles. If a list of vertices
 `vs` is specified, return two vectors representing the number of triangles and
 the maximum number of possible triangles, respectively, for each node in the list.
 
@@ -55,7 +55,7 @@ end
     triangles(g, vs)
 
 Return the number of triangles in the neighborhood of node `v` in graph `g`.
-If a list of nodes `vs` is specified, return a vector of number of triangles
+If a list of vertices `vs` is specified, return a vector of number of triangles
 for each node in the list. If no vertices are specified, return the number
 of triangles for each node in the graph.
 """
@@ -65,6 +65,7 @@ triangles(g::AbstractGraph, vs = vertices(g)) = local_clustering(g, vs)[1]
 
 """
     global_clustering_coefficient(g)
+
 Return the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
 of graph `g`.
 """

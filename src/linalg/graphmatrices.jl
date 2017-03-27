@@ -202,7 +202,7 @@ issymmetric(::AveragingAdjacency) = false
 """
 	degrees(adjmat)
 
-Retun the degrees of a graph represented by the CombinatorialAdjacency `adjmat`.
+Return the degrees of a graph represented by the [CombinatorialAdjacency](@ref) `adjmat`.
 """
 degrees(adjmat::CombinatorialAdjacency) = adjmat.D
 
@@ -308,7 +308,7 @@ end
 """
 	symmetrize(A::SparseMatrix, which=:or)
 
-Returns a symmetric version of graph (represented by sparse matrix `A`) as a sparse matrix.
+Return a symmetric version of graph (represented by sparse matrix `A`) as a sparse matrix.
 `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`. Use `:sum` for weighted graphs.
 """
 function symmetrize(A::SparseMatrix, which=:or)
@@ -334,12 +334,12 @@ end
 """
 	symmetrize(adjmat, which=:or)
 
-Returns a symmetric version of graph (represented by `CombinatorialAdjacency` `adjmat`)
-as a `CombinatorialAdjacency`. `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`.
+Return a symmetric version of graph (represented by [`CombinatorialAdjacency`](@ref) `adjmat`)
+as a [`CombinatorialAdjacency`](@ref). `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`.
 Use `:sum` for weighted graphs.
 
 ### Implementation Notes
-Only works on Adjacency because the normalizations don't commute with symmetrization.
+Only works on [Adjacency](@ref) because the normalizations don't commute with symmetrization.
 """
 symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 	CombinatorialAdjacency(symmetrize(adjmat.A, which))
@@ -355,6 +355,6 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 """
 	LinAlg
 
-A package for using the type system to check types of graph matrices
+A package for using the type system to check types of graph matrices.
 """
 LinAlg

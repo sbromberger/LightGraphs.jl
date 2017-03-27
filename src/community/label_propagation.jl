@@ -1,30 +1,30 @@
 """
     label_propagation(g, maxiter=1000)
 
-Community detection using the label propagation algorithm. Return two vectors:
-the first is the label number assigned to each node, and the second is the
-convergence history for each node. Will return after `maxiter` iterations
-if convergence has not completed.
+Community detection using the label propagation algorithm.
+Return two vectors: the first is the label number assigned to each node, and
+the second is the convergence history for each node. Will return after
+`maxiter` iterations if convergence has not completed.
 
-References:
-    [Raghavan et al.](http://arxiv.org/abs/0709.2938)
+### References
+- [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
 function label_propagation(g::AbstractGraph, maxiter=1000)
     T = eltype(g)
     n = nv(g)
     label = collect(one(T):n)
-    active_nodes = IntSet(vertices(g))
+    active_vs = IntSet(vertices(g))
     c = NeighComm(collect(one(T):n), fill(-1,n), one(T))
     convergence_hist = Vector{Int}()
     random_order = Vector{T}(n)
     i = 0
-    while !isempty(active_nodes) && i < maxiter
-        num_active = length(active_nodes)
+    while !isempty(active_vs) && i < maxiter
+        num_active = length(active_vs)
         push!(convergence_hist, num_active)
         i += 1
 
-        # processing nodes in random order
-        for (j,node) in enumerate(active_nodes)
+        # processing vertices in random order
+        for (j,node) in enumerate(active_vs)
             random_order[j] = node
         end
         range_shuffle!(1:num_active, random_order)
@@ -34,10 +34,10 @@ function label_propagation(g::AbstractGraph, maxiter=1000)
             label[u] = vote!(g, label, c, u)
             if old_comm != label[u]
                 for v in out_neighbors(g, u)
-                    push!(active_nodes, v)
+                    push!(active_vs, v)
                 end
             else
-                delete!(active_nodes, u)
+                delete!(active_vs, u)
             end
         end
     end

@@ -3,20 +3,19 @@
 
 
 @doc_str """
-    betweenness_centrality(g[, nodes])
+    betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
 
 Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
-of a graph `g` across all nodes, a specified subset of nodes `nodes`, or a random subset of `k`
-nodes. Return a vector representing the centrality calculated for each node in `g`.
+of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
+vertices. Return a vector representing the centrality calculated for each node in `g`.
 
-### Optional arguments
-* `normalize=true`: If true, normalize the betweenness values by the
-    total number of possible distinct paths between all pairsin the graphs.
-    For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
-    and for a directed graph, ``\\frac{(|V|-1)(|V|-2)}``.
-* `endpoints=false`: If true, include endpoints in the shortest path count.
-
+### Optional Arguments
+- `normalize=true`: If true, normalize the betweenness values by the
+total number of possible distinct paths between all pairsin the graphs.
+For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
+and for a directed graph, ``\\frac{(|V|-1)(|V|-2)}``.
+- `endpoints=false`: If true, include endpoints in the shortest path count.
 
 Betweenness centrality is defined as:
 ``
@@ -25,20 +24,20 @@ bc(v) = \\frac{1}{\\mathcal{N}} \sum_{s \\neq t \\neq v}
 ``.
 
 ### References
-* Brandes 2001 & Brandes 2008
+- Brandes 2001 & Brandes 2008
 """
 function betweenness_centrality(
     g::AbstractGraph,
-    nodes::AbstractVector = vertices(g);
+    vs::AbstractVector = vertices(g);
     normalize=true,
     endpoints=false)
 
     n_v = nv(g)
-    k = length(nodes)
+    k = length(vs)
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
-    for s in nodes
+    for s in vs
         if degree(g,s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true)
             if endpoints
@@ -77,7 +76,7 @@ function _accumulate_basic!(
 
     # make sure the source index has no parents.
     P[si] = []
-    # we need to order the source nodes by decreasing distance for this to work.
+    # we need to order the source vertices by decreasing distance for this to work.
     S = sortperm(state.dists, rev=true)
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]

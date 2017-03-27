@@ -22,7 +22,7 @@ doc"""
     smallgraph(s)
     smallgraph(s)
 
-Creates a small graph of type `s`. Admissible values for `s` are:
+Create a small graph of type `s`. Admissible values for `s` are:
 
 | `s`                       | graph type                       |
 |:------------------------|:---------------------------------|

@@ -56,7 +56,7 @@
 
     for g in testgraphs(G)
       ds = @inferred(dijkstra_shortest_paths(g,2,w))
-      # this loop reconstructs the shortest path for nodes 1, 3 and 4
+      # this loop reconstructs the shortest path for vertices 1, 3 and 4
       @test spaths(ds, [1,3,4], 2) == Array[[2 1],
                                             [2 3],
                                             [2 1 4]]
@@ -65,7 +65,7 @@
       w[2,2] = 10.0
       ds = @inferred(dijkstra_shortest_paths(g,2,w))
       shortest_paths = []
-      # this loop reconstructs the shortest path for nodes 1, 3 and 4
+      # this loop reconstructs the shortest path for vertices 1, 3 and 4
       @test spaths(ds, [1,3,4], 2) == Array[[2 1],
                                             [2 3],
                                             [2 1 4]]

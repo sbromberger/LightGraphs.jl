@@ -15,7 +15,7 @@ struct EdmondsKarpAlgorithm <: AbstractFlowAlgorithm end
 """
     DinicAlgorithm <: AbstractFlowAlgorithm
 
-Forces the maximum_flow function to use Dinic\'s algorithm.
+Forces the maximum_flow function to use Dinic's algorithm.
 """
 struct DinicAlgorithm <: AbstractFlowAlgorithm end
 
@@ -34,7 +34,7 @@ struct PushRelabelAlgorithm <: AbstractFlowAlgorithm end
 """
     DefaultCapacity{T}
 
-Structure that returns 1 if a forward edge exists in `flow_graph`, and 0 otherwise.
+Structure that returns `1` if a forward edge exists in `flow_graph`, and `0` otherwise.
 """
 struct DefaultCapacity{T<:Integer} <: AbstractMatrix{T}
     flow_graph::DiGraph
@@ -53,7 +53,7 @@ ctranspose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))
 """
     residual(flow_graph)
 
-Returns a directed residual graph for a directed `flow_graph`.
+Return a directed residual graph for a directed `flow_graph`.
 
 The residual graph comprises the same node list as the orginal flow graph, but
 ensures that for each edge (u,v), (v,u) also exists in the graph. This allows
@@ -61,7 +61,7 @@ flow in the reverse direction.
 
 If only the forward edge exists, a reverse edge is created with capacity 0.
 If both forward and reverse edges exist, their capacities are left unchanged.
-Since the capacities in `DefaultDistance` cannot be changed, an array of ones
+Since the capacities in [`DefaultDistance`](@ref) cannot be changed, an array of ones
 is created.
 """
 function residual end
@@ -120,14 +120,14 @@ end
 end
 
 """
-maximum_flow(flow_graph, source, target[, capacity_matrix][, algorithm][, restriction])
+    maximum_flow(flow_graph, source, target[, capacity_matrix][, algorithm][, restriction])
 
 Generic maximum_flow function for `flow_graph` from `source` to `target` with
-capacities in `capacity_matrix`. Uses flow algorithm `algorithm` and cutoff restriction
-`restriction`.
+capacities in `capacity_matrix`.
+Uses flow algorithm `algorithm` and cutoff restriction `restriction`.
 
 - If `capacity_matrix` is not specified, `DefaultCapacity(flow_graph)` will be used.
-- If `algorithm` is not specified, it will default to `PushRelabelAlgorithm`.
+- If `algorithm` is not specified, it will default to [`PushRelabelAlgorithm`](@ref).
 - If `restriction` is not specified, it will default to `0`.
 
 Return a tuple of (maximum flow, flow matrix). For the Boykov-Kolmogorov

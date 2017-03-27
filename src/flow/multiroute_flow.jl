@@ -8,14 +8,14 @@ abstract type AbstractMultirouteFlowAlgorithm end
 """
     KishimotoAlgorithm
 
-Forces the multiroute_flow function to use the Kishimoto algorithm.
+Used to specify the Kishimoto algorithm.
 """
 struct KishimotoAlgorithm <: AbstractMultirouteFlowAlgorithm end
 
 """
     ExtendedMultirouteFlowAlgorithm
 
-Forces the multiroute_flow function to use the Extended Multiroute Flow algorithm.
+Used to specify the Extended Multiroute Flow algorithm.
 """
 struct ExtendedMultirouteFlowAlgorithm <: AbstractMultirouteFlowAlgorithm end
 
@@ -98,7 +98,7 @@ end
 ### TODO: CLEAN UP THIS FUNCTION AND DOCUMENTATION. THERE SHOULD BE NO NEED TO
 ### HAVE A TYPE-UNSTABLE FUNCTION HERE. (sbromberger 2017-03-26)
 """
-multiroute_flow(flow_graph, source, target[, DefaultCapacity][, flow_algorithm][, mrf_algorithm][, routes])
+    multiroute_flow(flow_graph, source, target[, DefaultCapacity][, flow_algorithm][, mrf_algorithm][, routes])
 
 The generic multiroute_flow function.
 
@@ -116,44 +116,44 @@ returned as a third output.
 
 When the input is a network, it requires the following arguments:
 
-- flow_graph::DiGraph                   # the input graph
-- source::Integer                       # the source vertex
-- target::Integer                       # the target vertex
-- capacity_matrix::AbstractMatrix{T}  # edge flow capacities with T<:Real
-- flow_algorithm::AbstractFlowAlgorithm # keyword argument for flow algorithm
-- mrf_algorithm::AbstractFlowAlgorithm  # keyword argument for multiroute flow algorithm
-- routes::R<:Real                       # keyword argument for the number of routes
+- `flow_graph`: the input graph
+- `source`: the source vertex
+- `target`: the target vertex
+- `capacity_matrix`: matrix of edge flow capacities
+- `flow_algorithm`: keyword argument for flow algorithm
+- `mrf_algorithm`: keyword argument for multiroute flow algorithm
+- `routes`: keyword argument for the number of routes
 
 When the input is only the set of (breaking) points and the number of route,
 it requires the following arguments:
 
-- breakingpoints::Vector{Tuple{T, T, Int}},    # vector of breaking points
-- routes::R<:Real,                             # number of routes
+- `breakingpoints`: vector of breaking points
+- `routes`: number of routes
 
 When the input is the set of (breaking) points, the number of routes,
 and the network descriptors, it requires the following arguments:
 
-- breakingpoints::Vector{Tuple{T1, T1, Int}} # vector of breaking points (T1<:Real)
-- routes::R<:Real                            # number of routes
-- flow_graph::DiGraph                        # the input graph
-- source::Integer                            # the source vertex
-- target::Integer                            # the target vertex
-- capacity_matrix::AbstractMatrix            # optional edge flow capacities (T2<:Real)
-- flow_algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
+- `breakingpoints`: vector of breaking points
+- `routes`: number of routes
+- `flow_graph`: the input graph
+- `source`: the source vertex
+- `target`: the target vertex
+- `capacity_matrix`: matrix of edge flow capacities
+- `flow_algorithm`: keyword argument for flow algorithm
 
 The function defaults to the Push-relabel (classical flow) and Kishimoto
 (multiroute) algorithms. Alternatively, the algorithms to be used can also
-be specified through  keyword arguments. A default capacity of 1 is assumed
+be specified through  keyword arguments. A default capacity of `1` is assumed
 for each link if no capacity matrix is provided.
 
-The mrf_algorithm keyword is inforced to Extended Multiroute Flow
+The `mrf_algorithm` keyword is inforced to Extended Multiroute Flow
 in the following cases:
 
 - The number of routes is non-integer
 - The number of routes is 0 or non-specified
 
 ### Usage Example :
-(please consult the  max_flow section for options about flow_algorithm
+(please consult the  [`max_flow`](@ref) section for options about flow_algorithm
 and capacity_matrix)
 
 ```jldoctest

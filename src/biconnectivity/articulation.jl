@@ -21,7 +21,7 @@ end
 
 Perform a depth first search storing the depth (in `depth`) and low-points
 (in `low`) of each vertex.
-Call this function repeatedly to complete the DFS (see `articulation` for usage).
+Call this function repeatedly to complete the DFS (see [`articulation`](@ref) for usage).
 """
 function visit!(state::Articulations, g::AbstractGraph, u::Integer, v::Integer)
     children = 0

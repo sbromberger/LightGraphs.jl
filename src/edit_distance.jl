@@ -1,5 +1,5 @@
 @doc_str """
-edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)
+    edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)
 
 Compute the edit distance between graphs `G₁` and `G₂`. Return the minimum
 edit cost and edit path to transform graph `G₁` into graph `G₂``.
@@ -11,7 +11,7 @@ representing vertex operations:
 - ``(u>0,v>0)``: substitution of vertex ``u ∈ G₁`` by vertex ``v ∈ G₂``
 
 
-### Optional arguments
+### Optional Arguments
 - `insert_cost::Function=v->1.0`
 - `delete_cost::Function=u->1.0`
 - `subst_cost::Function=(u,v)->0.5`
@@ -24,7 +24,6 @@ search, for example:
 ```
 edit_distance(G₁, G₂, subst_cost=MinkowskiCost(μ₁, μ₂))
 ```
-
 - `heuristic::Function=DefaultEditHeuristic`: a custom heuristic provided to the A*
 search in case the default heuristic is not satisfactory.
 
@@ -116,7 +115,7 @@ For labels μ₁ on the vertices of graph G₁ and labels μ₂ on the vertices
 of graph G₂, compute the p-norm cost of substituting vertex u ∈ G₁ by
 vertex v ∈ G₂.
 
-### Optional arguments
+### Optional Arguments
 `p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
@@ -128,7 +127,7 @@ end
 
 Return value similar to `MinkowskiCost`, but ensure costs smaller than 2τ.
 
-### Optional arguments
+### Optional Arguments
 `p=1`: the p value for p-norm calculation.
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """

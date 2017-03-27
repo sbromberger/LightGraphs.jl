@@ -51,40 +51,40 @@ degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x 
 """
     Δout(g)
 
-Return the maximum `outdegree` of vertices in `g`.
+Return the maximum [`outdegree`](@ref) of vertices in `g`.
 """
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
 """
     δout(g)
 
-Return the minimum `outdegree` of vertices in `g`.
+Return the minimum [`outdegree`](@ref) of vertices in `g`.
 """
 δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
 
 """
     Δin(g)
 
-Return the maximum `indegree` of vertices in `g`.
+Return the maximum [`indegree`](@ref) of vertices in `g`.
 """
 Δin(g) = noallocextreme(indegree,(>), typemin(Int), g)
 
 """
     δin(g)
 
-Return the minimum `indegree` of vertices in `g`.
+Return the minimum [`indegree`](ref) of vertices in `g`.
 """
 δin(g) = noallocextreme(indegree,(<), typemax(Int), g)
 
 """
     Δ(g)
 
-Return the maximum `degree` of vertices in `g`.
+Return the maximum [`degree`](@ref) of vertices in `g`.
 """
 Δ(g) = noallocextreme(degree,(>), typemin(Int), g)
 
 """
     δ(g)
-Return the minimum `degree` of vertices in `g`.
+Return the minimum [`degree`](@ref) of vertices in `g`.
 """
 δ(g) = noallocextreme(degree,(<), typemax(Int), g)
 
@@ -115,8 +115,8 @@ degree_histogram(g::AbstractGraph) = fit(Histogram, degree(g))
     neighbors(g, v)
 
 Return a list of all neighbors reachable from vertex `v` in `g`.
-For DiGraphs, the default is equivalent to `out_neighbors(g, v)`;
-use `all_neighbors` to list inbound and outbound neighbors.
+For directed graphs, the default is equivalent to [`out_neighbors`](@ref);
+use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
@@ -126,8 +126,8 @@ neighbors(g::AbstractGraph, v::Integer) = out_neighbors(g, v)
 """
     all_neighbors(g, v)
 Return a list of all inbound and outbound neighbors of `v` in `g`.
-For undirected graphs, this is equivalent to `out_neighbors` and
-`in_neighbors`.
+For undirected graphs, this is equivalent to both [`out_neighbors`](@ref)
+and [`in_neighbors`](@ref).
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.

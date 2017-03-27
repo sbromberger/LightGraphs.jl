@@ -6,17 +6,17 @@ end
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
 
 """
-    quick_find!(nodes, p, q)
+    quick_find!(vs, p, q)
 
 Perform [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
-on a given pair of nodes `p`and `q`, and make a connection between them in the vector `nodes`.
+on a given pair of vertices `p`and `q`, and make a connection between them in the vector `vs`.
 """
-function quick_find!(nodes, p, q)
-    pid = nodes[p]
-    qid = nodes[q]
-    for i in 1:length(nodes)
-        if nodes[i] == pid
-            nodes[i] = qid
+function quick_find!(vs, p, q)
+    pid = vs[p]
+    qid = vs[q]
+    for i in 1:length(vs)
+        if vs[i] == pid
+            vs[i] = qid
         end
     end
 end
@@ -36,7 +36,7 @@ function kruskal_mst end
     U = eltype(g)
     edge_list = Vector{KruskalHeapEntry{T}}()
     mst = Vector{Edge}()
-    connected_nodes = collect(one(U):nv(g))
+    connected_vs = collect(one(U):nv(g))
 
     sizehint!(edge_list, ne(g))
     sizehint!(mst, ne(g))
@@ -50,8 +50,8 @@ function kruskal_mst end
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
-        if connected_nodes[v] != connected_nodes[w]
-            quick_find!(connected_nodes, v, w)
+        if connected_vs[v] != connected_vs[w]
+            quick_find!(connected_vs, v, w)
             push!(mst, heap_entry.edge)
         end
     end

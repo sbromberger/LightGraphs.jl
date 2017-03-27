@@ -98,7 +98,6 @@ badj(g::SimpleGraph, v::Integer) = fadj(g, v)
 Return the adjacency list of a graph. If `v` is specified, return only the
 adjacency list for that vertex.
 
-
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
@@ -162,7 +161,7 @@ end
 """
     add_vertex!(g)
 
-Add a new vertex to the graph `g`. Return true if addition was successful.
+Add a new vertex to the graph `g`. Return `true` if addition was successful.
 """
 function add_vertex!(g::SimpleGraph)
     T = eltype(g)

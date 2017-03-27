@@ -8,7 +8,7 @@ isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 """
     struct DijkstraState{T, U}
 
-An `AbstractPathState` designed for Dijkstra shortest-paths calculations.
+An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
 struct DijkstraState{T, U<:Integer}<: AbstractPathState
     parents::Vector{U}
@@ -22,11 +22,11 @@ dijkstra_shortest_paths(g, srcs, distmx=DefaultDistance());
     allpaths=false
     )
 Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between `srcs` and all other nodes.
-Return a `DijkstraState` that contains various traversal information.
+on a graph, computing shortest distances between `srcs` and all other vertices.
+Return a [`DijkstraState`](@ref) that contains various traversal information.
 
-### Optional arguments
-- `allpaths=false`: If true, returns a `DijkstraState` that keeps track of all
+### Optional Arguments
+- `allpaths=false`: If true, returns a [`DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
 """
 function dijkstra_shortest_paths(

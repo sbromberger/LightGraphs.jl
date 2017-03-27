@@ -103,7 +103,7 @@ end
 """
     tree(parents)
 
-Convert a parents array into a `DiGraph`
+Convert a parents array into a directed graph.
 """
 function tree(parents::AbstractVector{T}) where T<:Integer
     n = T(length(parents))
@@ -147,11 +147,12 @@ end
 
 """
     bfs_tree(g, s)
+
 Provide a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and return a directed acyclic graph of vertices in the order they were discovered.
 
 ### Implementation Notes
-This function is a high level wrapper around bfs_tree!; use that function for more performance.
+This function is a high level wrapper around [`bfs_tree!`](@ref); use that function for more performance.
 """
 function bfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)
@@ -236,8 +237,9 @@ end
 
 @doc_str """
     bipartite_map(g)
+
 For a bipartite graph `g`, return a vector `c` of size ``|V|`` containing
-the assignment of each vertex to one of the two sets (``c_i == 1`` or c_i ==2``).
+the assignment of each vertex to one of the two sets (``c_i == 1`` or c_i == 2``).
 If `g` is not bipartite, return an empty vector.
 """
 function bipartite_map(g::AbstractGraph)

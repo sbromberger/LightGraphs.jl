@@ -34,7 +34,7 @@ end
     components_dict(labels)
 
 Convert an array of labels to a map of component id to vertices, and return
-a `Dict{Integer,Vector{Int}}` with each key corresponding to a given component id
+a map with each key corresponding to a given component id
 and each value containing the vertices associated with that component.
 """
 function components_dict(labels::Vector{T}) where T<:Integer
@@ -157,7 +157,7 @@ end
 """
     strongly_connected_components(g)
 
-Computes the strongly connected components of a directed graph `g`.
+Compute the strongly connected components of a directed graph `g`.
 """
 function strongly_connected_components end
 @traitfn function strongly_connected_components(g::::IsDirected)
@@ -189,7 +189,7 @@ function is_strongly_connected end
 """
     period(g)
 
-Return the (common) period for all nodes in a strongly connected directed graph.
+Return the (common) period for all vertices in a strongly connected directed graph.
 Will throw an error if the graph is not strongly connected.
 """
 function period end
@@ -246,7 +246,7 @@ Return the condensation graph associated with `g`.
 
 The condensation `h` of a graph `g` is the directed graph where every node
 in `h` represents a strongly connected component in `g`, and the presence
-of an edge between between nodes in `h` indicates that there is at least one
+of an edge between between vertices in `h` indicates that there is at least one
 edge between the associated strongly connected components in `g`. The node
 numbering in `h` corresponds to the ordering of the components output from
 `strongly_connected_components`.
@@ -299,7 +299,7 @@ end
 Return a vector of the vertices in `g` at a geodesic distance less or equal to `d`
 from `v`.
 
-### Optional arguments
+### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
@@ -316,7 +316,7 @@ end
 """
     isgraphical(degs)
 
-Check whether the degree sequence `degs` is graphical, according to
+Return true if the degree sequence `degs` is graphical, according to
 [Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
 
 ### Performance

@@ -10,8 +10,8 @@ Boykov-Kolmogorov max-flow algorithm is used as a subroutine.
 Otherwise, return the vector of breaking points of the parametric
 multiroute flow function.
 
-### Reference:
-* [Extended Multiroute Flow algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002)
+### References
+- [Extended Multiroute Flow algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002)
 """
 # EMRF (Extended Multiroute Flow) algorithms
 function emrf(
@@ -49,7 +49,7 @@ function auxiliaryPoints end
     )
     # Problem descriptors
     λ = maximum_flow(flow_graph, source, target)[1] # Connectivity
-    n = nv(flow_graph) # number of nodes
+    n = nv(flow_graph) # number of vertices
     r1, r2 = minmaxCapacity(capacity_matrix) # restriction left (1) and right (2)
     auxpoints = fill((0., 0.), λ + 1)
 
