@@ -28,16 +28,22 @@ export  convert,
 
 const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
-"""An abstract type to allow opertions on any type of graph matrix"""
+"""
+	GraphMatrix{T}
+
+An abstract type to allow opertions on any type of graph matrix
+"""
 abstract type GraphMatrix{T} end
 
 
 """
+	Adjacency{T}
+
 The core Adjacency matrix structure. Keeps the vertex degrees around.
 Subtypes are used to represent the different normalizations of the adjacency matrix.
 Laplacian and its subtypes are used for the different Laplacian matrices.
 
-Adjacency(lapl::Laplacian) provide a generic function for getting the
+Adjacency(lapl::Laplacian) provides a generic function for getting the
 adjacency matrix of a Laplacian matrix. If your subtype of Laplacian does not provide
 an field A for the Adjacency instance, then attach another method to this function to provide
 an Adjacency{T} representation of the Laplacian. The Adjacency matrix here
@@ -46,7 +52,11 @@ is the final subtype that corresponds to this type of Laplacian
 abstract type Adjacency{T} <: GraphMatrix{T} end
 abstract type Laplacian{T} <: GraphMatrix{T} end
 
-"""Combinatorial Adjacency matrix is the standard adjacency matrix from math"""
+"""
+	CombinatorialAdjacency{T,S,V}
+
+The standard adjacency matrix.
+"""
 struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 	A::S
 	D::V
@@ -58,8 +68,10 @@ function CombinatorialAdjacency(A::SparseMatrix{T}) where T
 end
 
 
-"""
-Normalized Adjacency matrix is \$\\hat{A} = D^{-1/2} A D^{-1/2}\$.
+@doc_str """
+	NormalizedAdjacency{T}
+
+The normalized adjacency matrix is ``\\hat{A} = D^{-1/2} A D^{-1/2}``.
 If A is symmetric, then the normalized adjacency is also symmetric
 with real eigenvalues bounded by [-1, 1].
 """
@@ -72,7 +84,11 @@ function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
 	return NormalizedAdjacency(adjmat, sf)
 end
 
-"""Transition matrix for the random walk."""
+"""
+	StochasticAdjacency{T}
+
+A transition matrix for the random walk.
+"""
 struct StochasticAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
@@ -83,7 +99,11 @@ function StochasticAdjacency(adjmat::CombinatorialAdjacency)
 	return StochasticAdjacency(adjmat, sf)
 end
 
-"""The matrix whos action is to average over each neighborhood."""
+"""
+	AveragingAdjacency{T}
+
+The matrix whose action is to average over each neighborhood.
+"""
 struct AveragingAdjacency{T} <: Adjacency{T}
 	A::CombinatorialAdjacency{T}
 	scalefactor::Vector{T}
@@ -107,8 +127,13 @@ end
 perron(m::PunchedAdjacency) = m.perron
 
 """
-Noop: a type to represent don't do anything.
-The purpose is to help write more general code for the different scaled GraphMatrix types.
+	Noop
+
+A type that represents no action.
+
+### Implementation Notes
+- The purpose of `Noop` is to help write more general code for the
+different scaled GraphMatrix types.
 """
 struct Noop end
 
@@ -136,8 +161,10 @@ struct CombinatorialLaplacian{T} <: Laplacian{T}
 	A::CombinatorialAdjacency{T}
 end
 
-doc"""
-Normalized Laplacian is \$\\hat{L} = I - D^{-1/2} A D^{-1/2}\$.
+@doc_str """
+	NormalizedLaplacian{T}
+
+The normalized Laplacian is ``\\hat{L} = I - D^{-1/2} A D^{-1/2}``.
 If A is symmetric, then the normalized Laplacian is also symmetric
 with positive eigenvalues bounded by 2.
 """
@@ -145,12 +172,20 @@ struct NormalizedLaplacian{T} <: Laplacian{T}
 	A::NormalizedAdjacency{T}
 end
 
-"""Laplacian version of the StochasticAdjacency matrix."""
+"""
+	StochasticLaplacian{T}
+
+Laplacian version of the StochasticAdjacency matrix.
+"""
 struct StochasticLaplacian{T} <: Laplacian{T}
 	A::StochasticAdjacency{T}
 end
 
-"""Laplacian version of the AveragingAdjacency matrix."""
+"""
+	AveragingLaplacian{T}
+
+Laplacian version of the AveragingAdjacency matrix.
+"""
 struct AveragingLaplacian{T} <: Laplacian{T}
 	A::AveragingAdjacency{T}
 end
@@ -164,8 +199,18 @@ size(a::GraphMatrix, i::Integer) = size(a.A, i)
 issymmetric(::StochasticAdjacency) = false
 issymmetric(::AveragingAdjacency) = false
 
-"""degrees of a graph as a Vector."""
+"""
+	degrees(adjmat)
+
+Return the degrees of a graph represented by the [CombinatorialAdjacency](@ref) `adjmat`.
+"""
 degrees(adjmat::CombinatorialAdjacency) = adjmat.D
+
+"""
+	degrees(graphmx)
+
+Return the degrees of a graph represented by the graph matrix `graphmx`.
+"""
 degrees(mat::GraphMatrix) = degrees(adjacency(mat))
 
 adjacency(lapl::Laplacian) = lapl.A
@@ -261,9 +306,10 @@ end
 
 
 """
-Symmetrize the matrix.
-:triu, :tril, :sum, :or.
-use :sum for weighted graphs.
+	symmetrize(A::SparseMatrix, which=:or)
+
+Return a symmetric version of graph (represented by sparse matrix `A`) as a sparse matrix.
+`which` may be one of `:triu`, `:tril`, `:sum`, or `:or`. Use `:sum` for weighted graphs.
 """
 function symmetrize(A::SparseMatrix, which=:or)
 	  if which==:or
@@ -286,7 +332,14 @@ function symmetrize(A::SparseMatrix, which=:or)
 end
 
 """
-Only works on Adjacency because the normalizations don't commute with symmetrization.
+	symmetrize(adjmat, which=:or)
+
+Return a symmetric version of graph (represented by [`CombinatorialAdjacency`](@ref) `adjmat`)
+as a [`CombinatorialAdjacency`](@ref). `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`.
+Use `:sum` for weighted graphs.
+
+### Implementation Notes
+Only works on [Adjacency](@ref) because the normalizations don't commute with symmetrization.
 """
 symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 	CombinatorialAdjacency(symmetrize(adjmat.A, which))
@@ -299,5 +352,9 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 
 
 
-"""A package for using the type system to check types of graph matrices."""
+"""
+	LinAlg
+
+A package for using the type system to check types of graph matrices.
+"""
 LinAlg

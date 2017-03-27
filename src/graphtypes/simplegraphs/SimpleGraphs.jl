@@ -17,6 +17,9 @@ export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
 
 
 """
+    AbstractSimpleGraph
+
+An abstract type representing a simple graph structure.
 AbstractSimpleGraphs must have the following elements:
 - vertices::UnitRange{Integer}
 - fadjlist::Vector{Vector{Integer}}
@@ -75,14 +78,22 @@ function rem_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
     rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 
-"""
-Remove the vertex `v` from graph `g`.
+@doc_str """
+    rem_vertex!(g, v)
+
+Remove the vertex `v` from graph `g`. Return false if removal fails
+(e.g., if vertex is not in the graph); true otherwise.
+
+### Performance
+Time complexity is ``\\mathcal{O}(k^2)``, where ``k`` is the max of the degrees
+of vertex ``v`` and vertex ``|V|``.
+
+### Implementation Notes
 This operation has to be performed carefully if one keeps external
 data structures indexed by edges or vertices in the graph, since
-internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
-and removing the vertex `n` from the graph. After removal the vertices in the ` g` will be indexed by 1:n-1.
-This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
-Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
+internally the removal is performed swapping the vertices `v`  and ``|V|``,
+and removing the last vertex ``|V|`` from the graph. After removal the
+vertices in `g` will be indexed by ``1:|V|-1``.
 """
 function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     v in vertices(g) || return false

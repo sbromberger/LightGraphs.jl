@@ -2,20 +2,25 @@
 # licensing details.
 
 
+"""
+    struct FloydWarshallState{T, U}
+
+An [`AbstractPathState`](@ref) designed for Floyd-Warshall shortest-paths calculations.
+"""
 struct FloydWarshallState{T, U<:Integer}<:AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-doc"""
-Uses the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
-to compute shortest paths between all pairs of vertices in graph `g`. Returns a
-`FloydWarshallState` with relevant traversal information, each is a
-vertex-indexed vector of vectors containing the metric for each vertex in the
-graph.
+@doc_str """
+floyd_warshall_shortest_paths(g, distmx=DefaultDistance())
+Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
+to compute the shortest paths between all pairs of vertices in graph `g` using an
+optional distance matrix `distmx`. Return a [`FloydWarshallState`](@ref) with relevant
+traversal information.
 
-Note that this algorithm may return a large amount of data (it will allocate
-on the order of $\mathcal{O}(nv^2)$).
+### Performance
+Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
 function floyd_warshall_shortest_paths{T}(
     g::AbstractGraph,

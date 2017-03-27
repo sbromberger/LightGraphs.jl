@@ -1,5 +1,3 @@
-abstract type AbstractDijkstraState<:AbstractPathState end
-
 struct DijkstraHeapEntry{T, U<:Integer}
     vertex::U
     dist::T
@@ -7,20 +5,29 @@ end
 
 isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
-struct DijkstraState{T, U<:Integer}<: AbstractDijkstraState
+"""
+    struct DijkstraState{T, U}
+
+An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
+"""
+struct DijkstraState{T, U<:Integer}<: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
     pathcounts::Vector{U}
 end
 
-"""Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between a source vertex `s` and all
-other nodes. Returns a `DijkstraState` that contains various traversal
-information (see below).
+"""
+dijkstra_shortest_paths(g, srcs, distmx=DefaultDistance());
+    allpaths=false
+    )
+Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+on a graph, computing shortest distances between `srcs` and all other vertices.
+Return a [`DijkstraState`](@ref) that contains various traversal information.
 
-With `allpaths=true`, returns a `DijkstraState` that keeps track of all
-predecessors of a given vertex (see below).
+### Optional Arguments
+- `allpaths=false`: If true, returns a [`DijkstraState`](@ref) that keeps track of all
+predecessors of a given vertex.
 """
 function dijkstra_shortest_paths(
     g::AbstractGraph,

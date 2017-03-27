@@ -1,6 +1,10 @@
 const SimpleGraphEdge = SimpleEdge
 
-"""A type representing an undirected graph."""
+"""
+    SimpleGraph{T}
+
+A type representing an undirected graph.
+"""
 mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
@@ -76,19 +80,26 @@ end
 edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T}
 
 """
-Returns the backwards adjacency list of a graph.
-For each vertex the Array of `dst` for each edge eminating from that vertex.
+    badj(g::SimpleGraph[, v::Integer])
 
-NOTE: returns a reference, not a copy. Do not modify result.
+Return the backwards adjacency list of a graph. If `v` is specified,
+return only the adjacency list for that vertex.
+
+###Implementation Notes
+Returns a reference, not a copy. Do not modify result.
 """
 badj(g::SimpleGraph) = fadj(g)
 badj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
 
-"""Returns the adjacency list of a graph.
-For each vertex the Array of `dst` for each edge eminating from that vertex.
+"""
+    adj(g[, v])
 
-NOTE: returns a reference, not a copy. Do not modify result.
+Return the adjacency list of a graph. If `v` is specified, return only the
+adjacency list for that vertex.
+
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
 """
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
@@ -101,7 +112,11 @@ ne(g) == ne(h) &&
 fadj(g) == fadj(h)
 
 
-"""Return `true` if `g` is a directed graph."""
+"""
+    is_directed(g)
+
+Return `true` if `g` is a directed graph.
+"""
 is_directed(::Type{SimpleGraph}) = false
 is_directed(::Type{SimpleGraph{T}}) where T = false
 is_directed(g::SimpleGraph) = false
@@ -143,7 +158,11 @@ function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
 end
 
 
-"""Add a new vertex to the graph `g`."""
+"""
+    add_vertex!(g)
+
+Add a new vertex to the graph `g`. Return `true` if addition was successful.
+"""
 function add_vertex!(g::SimpleGraph)
     T = eltype(g)
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow

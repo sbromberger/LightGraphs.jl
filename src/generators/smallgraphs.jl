@@ -19,10 +19,10 @@ function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T
 end
 
 doc"""
-smallgraph(s::Symbol)
-smallgraph(s::AbstractString)
+    smallgraph(s)
+    smallgraph(s)
 
-Creates a small graph of type `s`. Admissible values for `s` are:
+Create a small graph of type `s`. Admissible values for `s` are:
 
 | `s`                       | graph type                       |
 |:------------------------|:---------------------------------|

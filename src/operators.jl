@@ -1,8 +1,10 @@
 """
     complement(g)
 
-Produces the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
-of a graph.
+Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
+of a graph
+
+### Implementation Notes
 Preserves the eltype of the input graph.
 """
 function complement(g::Graph)
@@ -30,13 +32,16 @@ function complement(g::DiGraph)
 end
 
 """
-    reverse(g::DiGraph)
+    reverse(g)
 
-Produces a graph where all edges are reversed from the
-original.
+Return a directed graph where all edges are reversed from the
+original directed graph.
+
+### Implementation Notes
 Preserves the eltype of the input graph.
 """
-function reverse(g::DiGraph)
+function reverse end
+@traitfn function reverse(g::::IsDirected)
     gnv = nv(g)
     gne = ne(g)
     h = DiGraph(gnv)
@@ -47,11 +52,12 @@ function reverse(g::DiGraph)
 end
 
 """
-    reverse!(g::DiGraph)
+    reverse!(g)
 
-In-place reverse (modifies the original graph).
+In-place reverse of a directed graph (modifies the original graph).
 """
-function reverse!(g::DiGraph)
+function reverse! end
+@traitfn function reverse!(g::::IsDirected)
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
@@ -59,10 +65,10 @@ end
 doc"""
     blkdiag(g, h)
 
-Produces a graph with $|V(g)| + |V(h)|$ vertices and $|E(g)| + |E(h)|$
-edges.
+Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
+edges where the vertices an edges from graph `h` are appended to graph `g`.
 
-Put simply, the vertices and edges from graph `h` are appended to graph `g`.
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
@@ -81,9 +87,10 @@ end
 """
     intersect(g, h)
 
-Produces a graph with edges that are only in both graph `g` and graph `h`.
+Return a graph with edges that are only in both graph `g` and graph `h`.
 
-Note that this function may produce a graph with 0-degree vertices.
+### Implementation Notes
+This function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
 function intersect(g::T, h::T) where T<:AbstractGraph
@@ -100,8 +107,9 @@ end
 """
     difference(g, h)
 
-Produces a graph with edges in graph `g` that are not in graph `h`.
+Return a graph with edges in graph `g` that are not in graph `h`.
 
+### Implementation Notes
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
@@ -119,9 +127,10 @@ end
 """
     symmetric_difference(g, h)
 
-Produces a graph with edges from graph `g` that do not exist in graph `h`,
+Return a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
 
+### Implementation Notes
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
@@ -143,7 +152,10 @@ end
 """
     union(g, h)
 
-Merges graphs `g` and `h` by taking the set union of all vertices and edges.
+Return a graph that combines graphs `g` and `h` by taking the set union
+of all vertices and edges.
+
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
@@ -169,8 +181,10 @@ end
 """
     join(g, h)
 
-Merges graphs `g` and `h` using `blkdiag` and then adds all the edges between
-the vertices in `g` and those in `h`.
+Return a graph that combines graphs `g` and `h` using `blkdiag` and then
+adds all the edges between the vertices in `g` and those in `h`.
+
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
@@ -188,7 +202,10 @@ end
 """
     crosspath(len::Integer, g::Graph)
 
-Replicate `len` times `g` and connect each vertex with its copies in a path.
+Return a graph that duplicates `g` `len` times and connects each vertex
+with its copies in a path.
+
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
@@ -227,7 +244,11 @@ function *(g::DiGraph, v::Vector{T}) where T<:Real
     return y
 end
 
-"""sum(g,i) provides 1:indegree or 2:outdegree vectors"""
+"""
+    sum(g, i)
+
+Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
+"""
 function sum(g::AbstractGraph, dim::Int)
     dim == 1 && return indegree(g, vertices(g))
     dim == 2 && return outdegree(g, vertices(g))
@@ -236,13 +257,25 @@ end
 
 
 size(g::AbstractGraph) = (nv(g), nv(g))
-"""size(g,i) provides 1:nv or 2:nv else 1 """
+"""
+    size(g, i)
+
+Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
+"""
 size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
 
-"""sum(g) provides the number of edges in the graph"""
+"""
+    sum(g)
+
+Return the number of edges in `g`
+"""
 sum(g::AbstractGraph) = ne(g)
 
-"""sparse(g) is the adjacency_matrix of g"""
+"""
+    sparse(g)
+
+Return the default adjacency matrix of `g`.
+"""
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
@@ -254,7 +287,10 @@ issymmetric(g::AbstractGraph) = !is_directed(g)
 """
     cartesian_product(g, h)
 
-Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+Return the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+of `g` and `h`.
+
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
@@ -280,7 +316,10 @@ end
 """
     tensor_product(g, h)
 
-Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
+Return the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+of `g` and `h`.
+
+### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
@@ -302,38 +341,39 @@ end
 
 """
     induced_subgraph(g, vlist)
+    induced_subgraph(g, elist)
 
-Returns the subgraph of `g` induced by the vertices in  `vlist`.
+Return the subgraph of `g` induced by the vertices in  `vlist` or edges in `elist`
+along with a vector mapping the new vertices to the old ones
+(the  vertex `i` in the subgraph corresponds to the vertex `vmap[i]` in `g`.)
 
 The returned graph has `length(vlist)` vertices, with the new vertex `i`
 corresponding to the vertex of the original graph in the `i`-th position
 of `vlist`.
 
-Returns  also a vector `vmap` mapping the new vertices to the
-old ones: the  vertex `i` in the subgraph corresponds to
-the vertex `vmap[i]` in `g`.
+### Usage Examples
+```doctestjl
+julia> g = CompleteGraph(10)
 
-    induced_subgraph(g, elist)
+julia> sg, vmap = subgraph(g, 5:8)
 
-Returns the subgraph of `g` induced by the edges in `elist`, along with
-the associated vector `vmap` mapping new vertices to the old ones.
+julia> @assert g[5:8] == sg
 
+julia> @assert nv(sg) == 4
 
-### Usage Examples:
-```julia
-g = CompleteGraph(10)
-sg, vmap = subgraph(g, 5:8)
-@assert g[5:8] == sg
-@assert nv(sg) == 4
-@assert ne(sg) == 6
-@assert vm[4] == 8
+julia> @assert ne(sg) == 6
 
-sg, vmap = subgraph(g, [2,8,3,4])
-@assert sg == g[[2,8,3,4]]
+julia> @assert vm[4] == 8
 
-elist = [Edge(1,2), Edge(3,4), Edge(4,8)]
-sg, vmap = subgraph(g, elist)
-@assert sg == g[elist]
+julia> sg, vmap = subgraph(g, [2,8,3,4])
+
+julia> @assert sg == g[[2,8,3,4]]
+
+julia> elist = [Edge(1,2), Edge(3,4), Edge(4,8)]
+
+julia> sg, vmap = subgraph(g, elist)
+
+julia> @assert sg == g[elist]
 ```
 """
 function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph where U<:Integer
@@ -384,17 +424,21 @@ end
 """
     g[iter]
 
-Returns the subgraph induced by `iter`. Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
+Return the subgraph induced by `iter`.
+Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 """
 getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 
 """
-    egonet(g, v::Int, d::Int; dir=:out)
+    egonet(g, v:, d)
 
-Returns the subgraph of `g` induced by the neighbors of `v` up to distance
-`d`. If `g` is a `DiGraph` the `dir` optional argument specifies
-the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
-to be considered. This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
+Return the subgraph of `g` induced by the neighbors of `v` up to distance
+`d`.
+This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
+
+### Optional Arguments
+- `dir=:out`: if `g` is directed, this argument specifies the edge direction
+with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]

@@ -2,8 +2,10 @@
 # licensing details.
 
 """
-Creates a complete graph with `n` vertices. A complete graph has edges
-connecting each pair of vertices.
+    CompleteGraph(n)
+
+Create an undirected [complete graph](https://en.wikipedia.org/wiki/Complete_graph)
+with `n` vertices.
 """
 function CompleteGraph(n::Integer)
     g = Graph(n)
@@ -16,8 +18,11 @@ function CompleteGraph(n::Integer)
 end
 
 
-"""Creates a complete bipartite graph with `n1+n2` vertices. It has edges
-connecting each pair of vertices in the two sets.
+@doc_str """
+    CompleteBipartiteGraph(n1, n2)
+
+Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
+with `n1 + n2` vertices.
 """
 function CompleteBipartiteGraph(n1::Integer, n2::Integer)
     g = Graph(n1+n2)
@@ -27,8 +32,11 @@ function CompleteBipartiteGraph(n1::Integer, n2::Integer)
     return g
 end
 
-"""Creates a complete digraph with `n` vertices. A complete digraph has edges
-connecting each pair of vertices (both an ingoing and outgoing edge).
+"""
+    CompleteDiGraph(n)
+
+Create a directed [complete graph](https://en.wikipedia.org/wiki/Complete_graph)
+with `n` vertices.
 """
 function CompleteDiGraph(n::Integer)
     g = DiGraph(n)
@@ -40,8 +48,11 @@ function CompleteDiGraph(n::Integer)
     return g
 end
 
-"""Creates a star graph with `n` vertices. A star graph has a central vertex
-with edges to each other vertex.
+"""
+    StarGraph(n)
+
+Create an undirected [star graph](https://en.wikipedia.org/wiki/Star_(graph_theory))
+with `n` vertices.
 """
 function StarGraph(n::Integer)
     g = Graph(n)
@@ -51,8 +62,11 @@ function StarGraph(n::Integer)
     return g
 end
 
-"""Creates a star digraph with `n` vertices. A star digraph has a central
-vertex with directed edges to every other vertex.
+"""
+    StarDiGraph(n)
+
+Create a directed [star graph](https://en.wikipedia.org/wiki/Star_(graph_theory))
+with `n` vertices.
 """
 function StarDiGraph(n::Integer)
     g = DiGraph(n)
@@ -62,8 +76,12 @@ function StarDiGraph(n::Integer)
     return g
 end
 
-"""Creates a path graph with `n` vertices. A path graph connects each
-successive vertex by a single edge."""
+"""
+    PathGraph(n)
+
+Create an undirected [path graph](https://en.wikipedia.org/wiki/Path_graph)
+with `n` vertices.
+"""
 function PathGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
@@ -72,8 +90,12 @@ function PathGraph(n::Integer)
     return g
 end
 
-"""Creates a path digraph with `n` vertices. A path graph connects each
-successive vertex by a single directed edge."""
+"""
+    PathDiGraph(n)
+
+Creates a directed [path graph](https://en.wikipedia.org/wiki/Path_graph)
+with `n` vertices.
+"""
 function PathDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
@@ -82,7 +104,11 @@ function PathDiGraph(n::Integer)
     return g
 end
 
-"""Creates a cycle graph with `n` vertices. A cycle graph is a closed path graph.
+"""
+    CycleGraph(n)
+
+Create an undirected [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
+with `n` vertices.
 """
 function CycleGraph(n::Integer)
     g = Graph(n)
@@ -93,7 +119,11 @@ function CycleGraph(n::Integer)
     return g
 end
 
-"""Creates a cycle digraph with `n` vertices. A cycle digraph is a closed path digraph.
+"""
+    CycleDiGraph(n)
+
+Create a directed [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
+with `n` vertices.
 """
 function CycleDiGraph(n::Integer)
     g = DiGraph(n)
@@ -105,8 +135,11 @@ function CycleDiGraph(n::Integer)
 end
 
 
-"""Creates a wheel graph with `n` vertices. A wheel graph is a star graph with
-the outer vertices connected via a closed path graph.
+"""
+    WheelGraph(n)
+
+Create an undirected [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph)
+with `n` vertices.
 """
 function WheelGraph(n::Integer)
     g = StarGraph(n)
@@ -119,8 +152,11 @@ function WheelGraph(n::Integer)
     return g
 end
 
-"""Creates a wheel digraph with `n` vertices. A wheel graph is a star digraph
-with the outer vertices connected via a closed path graph.
+"""
+    WheelDiGraph(n)
+
+Create a directed [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph)
+with `n` vertices.
 """
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
@@ -133,11 +169,15 @@ function WheelDiGraph(n::Integer)
     return g
 end
 
-"""
-Grid(dims::AbstractVector; periodic=false)
+@doc_str """
+    Grid(dims; periodic=false)
 
-Creates a `d`-dimensional cubic lattice, with `d=length(dims)` and length  `dims[i]` in dimension `i`.
-If `periodic=true` the resulting lattice will have periodic boundary condition in each dimension.
+Create a ``|dims|``-dimensional cubic lattice, with length `dims[i]`
+in dimension `i`.
+
+### Optional Arguments
+- `periodic=false`: If true, the resulting lattice will have periodic boundary
+condition in each dimension.
 """
 function Grid(dims::AbstractVector; periodic=false)
     if periodic
@@ -154,10 +194,16 @@ function Grid(dims::AbstractVector; periodic=false)
     return g
 end
 
-"""create a binary tree with k-levels vertices are numbered 1:2^levels-1"""
-function BinaryTree(levels::Integer)
-    g = Graph(Int(2^levels-1))
-    for i in 0:levels-2
+"""
+    BinaryTree(k::Integer)
+
+Create a [binary tree](https://en.wikipedia.org/wiki/Binary_tree)
+of depth `k`.
+"""
+
+function BinaryTree(k::Integer)
+    g = Graph(Int(2^k-1))
+    for i in 0:k-2
         for j in 2^i:2^(i+1)-1
             add_edge!(g, j, 2j)
             add_edge!(g, j, 2j+1)
@@ -167,19 +213,30 @@ function BinaryTree(levels::Integer)
 end
 
 """
-Create a double complete binary tree with k-levels
-used as an example for spectral clustering by Guattery and Miller 1998.
+    BinaryTree(k::Integer)
+
+Create a double complete binary tree with `k` levels.
+
+### References
+- Used as an example for spectral clustering by Guattery and Miller 1998.
 """
-function DoubleBinaryTree(levels::Integer)
-    gl = BinaryTree(levels)
-    gr = BinaryTree(levels)
+function DoubleBinaryTree(k::Integer)
+    gl = BinaryTree(k)
+    gr = BinaryTree(k)
     g = blkdiag(gl, gr)
     add_edge!(g,1, nv(gl)+1)
     return g
 end
 
 
-"""The Roach Graph from Guattery and Miller 1998"""
+"""
+    RoachGraph(k)
+
+Create a Roach Graph of size `k`.
+
+### References
+- Guattery and Miller 1998
+"""
 function RoachGraph(k::Integer)
     dipole = CompleteGraph(2)
     nopole = Graph(2)
@@ -192,7 +249,11 @@ function RoachGraph(k::Integer)
 end
 
 
-"""This function generates `n` connected k-cliques """
+"""
+    CliqueGraph(k, n)
+
+Create a graph consisting of `n` connected `k`-cliques.
+"""
 function CliqueGraph(k::Integer, n::Integer)
     g = Graph(k*n)
     for c=1:n

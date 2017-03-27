@@ -12,6 +12,11 @@
 struct NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
+"""
+    BellmanFordState{T, U}
+
+An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
+"""
 struct BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
@@ -54,10 +59,13 @@ function bellman_ford_shortest_paths!(
     return state
 end
 
-"""Uses the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm)
-to compute shortest paths between a source vertex `s` or a set of source
-vertices `ss`. Returns a `BellmanFordState` with relevant traversal information
-(see below).
+"""
+    bellman_ford_shortest_paths(g, s, distmx=DefaultDistance())
+    bellman_ford_shortest_paths(g, ss, distmx=DefaultDistance())
+
+Compute shortest paths between a source `s` (or list of sources `ss`) and all
+other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
+Return a [`BellmanFordState`](@ref) with relevant traversal information.
 """
 function bellman_ford_shortest_paths(
     graph::AbstractGraph,
@@ -86,14 +94,14 @@ function has_negative_edge_cycle(g::AbstractGraph, distmx::AbstractMatrix)
     return false
 end
 
-function enumerate_paths(state::AbstractPathState, dest::Vector{T}) where T<:Integer
+function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integer
     parents = state.parents
 
-    num_dest = length(dest)
-    all_paths = Vector{Vector{T}}(num_dest)
-    for i=1:num_dest
+    num_vs = length(vs)
+    all_paths = Vector{Vector{T}}(num_vs)
+    for i=1:num_vs
         all_paths[i] = Vector{T}()
-        index = dest[i]
+        index = vs[i]
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0
                 push!(all_paths[i], index)
@@ -106,19 +114,21 @@ function enumerate_paths(state::AbstractPathState, dest::Vector{T}) where T<:Int
     all_paths
 end
 
-enumerate_paths(state::AbstractPathState, dest) = enumerate_paths(state, [dest])[1]
+enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
 enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
 
 """
-Given a path state `state` of type `AbstractPathState` (see below), returns a
+    enumerate_paths(state[, vs])
+Given a path state `state` of type `AbstractPathState`, return a
 vector (indexed by vertex) of the paths between the source vertex used to
-compute the path state and a destination vertex `v`, a set of destination
-vertices `vs`, or the entire graph. For multiple destination vertices, each
+compute the path state and a single destination vertex, a list of destination
+vertices, or the entire graph. For multiple destination vertices, each
 path is represented by a vector of vertices on the path between the source and
 the destination. Nonexistent paths will be indicated by an empty vector. For
 single destinations, the path is represented by a single vector of vertices,
 and will be length 0 if the path does not exist.
 
+### Implementation Notes
 For Floyd-Warshall path states, please note that the output is a bit different,
 since this algorithm calculates all shortest paths for all pairs of vertices:
 `enumerate_paths(state)` will return a vector (indexed by source vertex) of

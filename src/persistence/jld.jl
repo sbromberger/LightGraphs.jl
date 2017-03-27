@@ -1,5 +1,7 @@
 using JLD
 """
+    GraphSerializer
+
 GraphSerializer is a type for custom serialization into JLD files.
 It has no use except on disk. This type supports JLD.writeas(g::Graph)
 and JLD.readas(gs::GraphSerializer). It is a form of Compressed Sparse Column format

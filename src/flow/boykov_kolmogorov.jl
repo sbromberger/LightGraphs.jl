@@ -1,26 +1,18 @@
 """
-Computes the max-flow/min-cut between source and target using
-Boykov-Kolmogorov algorithm.
+    boykov_kolmogorov_impl(residual_graph, source, target, capacity_matrix)
 
-Returns the maximum flow in the network, the flow matrix and
-the partition {S,T} in the form of a vector of 1's and 2's.
-The partition vector may also contain 0's. These can be
-assigned any label (1 or 2), it is a user choice.
+Compute the max-flow/min-cut between `source` and `target` for `residual_graph`
+using the Boykov-Kolmogorov algorithm.
 
-For further details, please refer to the paper:
+Return the maximum flow in the network, the flow matrix and the partition
+`{S,T}` in the form of a vector of 0's, 1's and 2's.
 
-BOYKOV, Y.; KOLMOGOROV, V., 2004. An Experimental Comparison of
+### References
+- BOYKOV, Y.; KOLMOGOROV, V., 2004. An Experimental Comparison of
 Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 
-Uses a default capacity of 1 when the capacity matrix isn\'t specified.
-
-Requires arguments:
-residual_graph::DiGraph                # the input graph
-source::Integer                        # the source vertex
-target::Integer                        # the target vertex
-capacity_matrix::AbstractMatrix        # edge flow capacities
-
-Author: Júlio Hoffimann Mendes (juliohm@stanford.edu)
+### Author
+- Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function boykov_kolmogorov_impl end
 @traitfn function boykov_kolmogorov_impl(
