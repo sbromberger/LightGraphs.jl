@@ -133,8 +133,8 @@ These functions are defined as the public contract of the `LightGraphs.AbstractG
 ### Non-Core APIs
 These functions can be constructed from the Core API functions but can be given specialized implementations in order to improve performance.
 
-- adjacency_matrix
-- degree
+- `adjacency_matrix`
+- `degree`
 
 This can be computed from neighbors by default `degree(g,v) = length(neighbors(g,v))` so you don't need to implement this unless your type can compute degree faster than this method.
 

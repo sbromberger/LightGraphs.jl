@@ -18,9 +18,8 @@ struct DijkstraState{T, U<:Integer}<: AbstractPathState
 end
 
 """
-dijkstra_shortest_paths(g, srcs, distmx=DefaultDistance());
-    allpaths=false
-    )
+    dijkstra_shortest_paths(g, srcs, distmx=DefaultDistance());
+
 Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 on a graph, computing shortest distances between `srcs` and all other vertices.
 Return a [`DijkstraState`](@ref) that contains various traversal information.
