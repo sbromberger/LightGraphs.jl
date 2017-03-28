@@ -631,12 +631,8 @@ end
 @doc_str """
     stochastic_block_model(cint, cext, n)
 
-Return a Graph generated according to the Stochastic Block Model (SBM).
-
-Samples from a SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
-
-### Optional Arguments
-- `seed=-1`: set the RNG seed.
+Return a Graph generated according to the Stochastic Block Model (SBM), sampling
+from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
 """
 function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T<:Real where U<:Integer
     K = length(n)
