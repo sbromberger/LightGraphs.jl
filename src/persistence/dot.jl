@@ -33,7 +33,7 @@ end
 function loaddot_mult(io::IO)
     p = DOT.parse_dot(readall(io))
 
-    graphs = Dict{String, AbstractGraph}()
+    graphs = Dict{String, SimpleGraph}()
 
     for pg in p
         isdir = pg.directed

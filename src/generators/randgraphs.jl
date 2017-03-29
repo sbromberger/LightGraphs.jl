@@ -181,14 +181,14 @@ function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool 
 end
 
 """
-    barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = -1)
+    barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int = -1)
 
 Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph `g`. Each new vertex is attached with `k` edges to `k` different vertices
 already present in the system by preferential attachment.
 """
-function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1)
+function barabasi_albert!(g::SimpleGraph, n::Integer, k::Integer; seed::Int=-1)
     n0 = nv(g)
     1 <= k <= n0 <= n ||
         throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
@@ -312,7 +312,7 @@ function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, f
     return g
 end
 
-function _create_static_fitness_graph!{T<:Real,S<:Real}(g::AbstractGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+function _create_static_fitness_graph!{T<:Real,S<:Real}(g::SimpleGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -710,11 +710,11 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
 end
 
 
-function blockcounts(sbm::StochasticBlockModel, g::AbstractGraph)
+function blockcounts(sbm::StochasticBlockModel, g::SimpleGraph)
     return blockcounts(sbm, adjacency_matrix(g))
 end
 
-function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph, AbstractMatrix})
+function blockfractions(sbm::StochasticBlockModel, g::Union{SimpleGraph, AbstractMatrix})
     bc = blockcounts(sbm, g)
     bp = bc ./ sum(bc)
     return bp

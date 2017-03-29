@@ -2,7 +2,7 @@
 Computes the articulation points(https://en.wikipedia.org/wiki/Biconnected_component)
 of a connected graph `g` and returns an array containing all cut vertices.
 """
-function articulation(g::AbstractGraph) :: AbstractArray{Int}
+function articulation(g::SimpleGraph) :: AbstractArray{Int}
     state = Articulations(g)
     for u in vertices(g)
         if state.depth[u] == 0
@@ -22,7 +22,7 @@ type Articulations
     id::Int
 end
 
-function Articulations(g::AbstractGraph)
+function Articulations(g::SimpleGraph)
     n = nv(g)
     return Articulations(zeros(Int, n), zeros(Int, n),zeros(Int, n), 0)
 end
@@ -31,7 +31,7 @@ end
 Does a depth first search storing the depth (in `depth`) and low-points (in `low`) of each vertex.
 Call this function repeatedly to complete the DFS see `articulation` for usage.
 """
-function visit!(state::Articulations, g::AbstractGraph, u::Int, v::Int)
+function visit!(state::Articulations, g::SimpleGraph, u::Int, v::Int)
     children = 0
     state.id += 1
     state.depth[v] = state.id

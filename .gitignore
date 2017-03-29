@@ -3,5 +3,3 @@
 *.jl.mem
 docs/build/
 docs/site/
-benchmark/.results/*
-benchmark/.tune.jld

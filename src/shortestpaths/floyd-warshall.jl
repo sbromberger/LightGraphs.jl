@@ -17,7 +17,7 @@ Note that this algorithm may return a large amount of data (it will allocate
 on the order of $\mathcal{O}(nv^2)$).
 """
 function floyd_warshall_shortest_paths{T}(
-    g::AbstractGraph,
+    g::SimpleGraph,
     distmx::AbstractArray{T, 2} = DefaultDistance()
 )
 

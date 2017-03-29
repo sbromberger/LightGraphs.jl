@@ -8,14 +8,14 @@ using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 
-import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
+import Base: write, ==, <, *, ≈, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
             sum, size, sparse, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!
 
 
 # core
-export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
@@ -39,7 +39,7 @@ join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet,
 
 # graph visit
-AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
+SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
 discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 
