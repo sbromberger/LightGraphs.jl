@@ -3,11 +3,12 @@
 """
     connected_components!(label, g)
 
-Fill `label` with the `id` of the connected component in `g` to which it belongs.
-Return a vector representing the component assigned to each vertex. The component
-value is the smallest vertex ID in the component.
+Fill `label` with the `id` of the connected component in the undirected graph
+`g` to which it belongs. Return a vector representing the component assigned
+to each vertex. The component value is the smallest vertex ID in the component.
 """
-function connected_components!(label::Vector{T}, g::AbstractGraph) where T<:Integer
+function connected_components! end
+@traitfn function connected_components!(label::AbstractVector, g::::(!IsDirected))
     # this version of connected components uses Breadth First Traversal
     # with custom visitor type in order to improve performance.
     # one BFS is performed for each component.
@@ -15,7 +16,9 @@ function connected_components!(label::Vector{T}, g::AbstractGraph) where T<:Inte
     # each edge is touched once. memory performance is a single allocation.
     # the return type is a vector of labels which can be used directly or
     # passed to components(a)
+    T = eltype(g)
     nvg = nv(g)
+
     visitor = LightGraphs.ComponentVisitorVector(label, zero(T))
     colormap = fill(0, nvg)
     queue = Vector{T}()
@@ -73,10 +76,14 @@ end
     connected_components(g)
 
 Return the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
-of `g` as a vector of components, with each element a vector of vertices
+of an undirected graph `g` as a vector of components, with each element a vector of vertices
 belonging to the component.
+
+For directed graphs, see [`strongly_connected_components`](@ref) and
+[`weakly_connected_components`](@ref).
 """
-function connected_components(g::AbstractGraph)
+function connected_components end
+@traitfn function connected_components(g::::(!IsDirected))
     T = eltype(g)
     label = zeros(T, nv(g))
     connected_components!(label, g)
@@ -87,15 +94,15 @@ end
 """
     is_connected(g)
 
-Return `true` if `g` is connected. For directed graphs, this is equivalent to
-a test of weak connectivity.
+Return `true` if graph `g` is connected. For directed graphs, use
+[`is_weakly_connected`](@ref) or [`is_strongly_connected`](@ref).
 """
 function is_connected end
 @traitfn is_connected(g::::(!IsDirected)) = ne(g)+1 >= nv(g) && length(connected_components(g)) == 1
-@traitfn is_connected(g::::IsDirected) = ne(g)+1 >= nv(g) && is_weakly_connected(g)
 
 """
     weakly_connected_components(g)
+
 Return the weakly connected components of the directed graph `g`. This
 is equivalent to the connected components of the undirected equivalent of `g`.
 """
@@ -216,9 +223,11 @@ function period end
 end
 
 """
-    condensation(g, scc)
+    condensation(g[, scc])
+
 Return the condensation graph of the strongly connected components `scc`
-in graph `g`.
+in the directed graph `g`. If `scc` is missing, generate the strongly
+connected components first.
 """
 function condensation end
 @traitfn function condensation{T<:Integer}(g::::IsDirected, scc::Vector{Vector{T}})
@@ -238,25 +247,13 @@ function condensation end
     end
     return h
 end
+@traitfn condensation(g::::IsDirected) = condensation(g,strongly_connected_components(g))
 
 """
     attracting_components(g)
 
-Return the condensation graph associated with `g`.
-
-The condensation `h` of a graph `g` is the directed graph where every node
-in `h` represents a strongly connected component in `g`, and the presence
-of an edge between between vertices in `h` indicates that there is at least one
-edge between the associated strongly connected components in `g`. The node
-numbering in `h` corresponds to the ordering of the components output from
-`strongly_connected_components`.
-"""
-condensation(g) = condensation(g,strongly_connected_components(g))
-
-"""
-    attracting_components(g)
 Return a vector of vectors of integers representing lists of attracting
-components in `g`.
+components in the directed graph `g`.
 
 The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges.

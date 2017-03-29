@@ -60,7 +60,7 @@
     add_edge!(h,5,6); add_edge!(h,6,7); add_edge!(h,7,6);
     add_edge!(h,8,4); add_edge!(h,8,7)
     for g in testdigraphs(h)
-      @test @inferred(is_connected(g))
+      @test @inferred(is_weakly_connected(g))
       scc = @inferred(strongly_connected_components(g))
       wcc = @inferred(weakly_connected_components(g))
 
