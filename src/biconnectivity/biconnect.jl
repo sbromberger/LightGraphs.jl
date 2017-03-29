@@ -1,7 +1,9 @@
 """
-Biconnections: A state type for Depth First Search that finds the biconnected components
+    Biconnections
+
+A state type for depth-first search that finds the biconnected components.
 """
-type Biconnections
+mutable struct Biconnections
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{Edge}
@@ -9,36 +11,18 @@ type Biconnections
     id::Int
 end
 
-function Biconnections(g::AbstractGraph)
+@traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
 end
 
-"""
-Computes the biconnected components of an undirected graph `g`
-and returns a Vector of vectors containing each biconnected component.
-(https://en.wikipedia.org/wiki/Biconnected_component).It's a DFS based linear time algorithm.
-"""
-function biconnected_components(g::Graph)
-    state = Biconnections(g)
-    for u in vertices(g)
-        if state.depth[u] == 0
-            visit!(g, state, u, u)
-        end
-
-        if !isempty(state.stack)
-            push!(state.biconnected_comps, reverse(state.stack))
-            empty!(state.stack)
-        end
-    end
-
-    return state.biconnected_comps
-end
 
 """
-Does a DFS visit and stores the depth and low-points of each vertex
+    visit!(g, state, u, v)
+
+Perform a DFS visit storing the depth and low-points of each vertex.
 """
-function visit!(g::Graph, state::Biconnections, u::Int, v::Int)
+function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     children = 0
     state.id += 1
     state.depth[v] = state.id
@@ -67,4 +51,30 @@ function visit!(g::Graph, state::Biconnections, u::Int, v::Int)
             state.low[v] = state.depth[w]
         end
     end
+end
+
+@doc_str """
+    biconnected_components(g)
+
+Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)
+of an undirected graph `g`and return a vector of vectors containing each
+biconnected component.
+
+Performance:
+Time complexity is ``\\mathcal{O}(|V|)``.
+"""
+function biconnected_components end
+@traitfn function biconnected_components(g::::(!IsDirected))
+    state = Biconnections(g)
+    for u in vertices(g)
+        if state.depth[u] == 0
+            visit!(g, state, u, u)
+        end
+
+        if !isempty(state.stack)
+            push!(state.biconnected_comps, reverse(state.stack))
+            empty!(state.stack)
+        end
+    end
+    return state.biconnected_comps
 end

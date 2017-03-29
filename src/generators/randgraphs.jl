@@ -1,65 +1,82 @@
 function Graph(nv::Integer, ne::Integer; seed::Int = -1)
-    maxe = div(nv * (nv-1), 2)
+    T = eltype(nv)
+    maxe = div(Int(nv) * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
 
     rng = getRNG(seed)
     g = Graph(nv)
+
     while g.ne < ne
-        source = rand(rng, 1:nv)
-        dest = rand(rng, 1:nv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g,source,dest)
     end
     return g
 end
 
 function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
-    maxe = nv * (nv-1)
+    T = eltype(nv)
+    maxe = Int(nv) * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
 
     rng = getRNG(seed)
     g = DiGraph(nv)
     while g.ne < ne
-        source = rand(rng, 1:nv)
-        dest = rand(rng, 1:nv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g,source,dest)
     end
     return g
 end
 
 """
-    erdos_renyi(n::Integer, p::Real; is_directed=false, seed=-1)
-    erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed=-1)
+    erdos_renyi(n, p)
 
-Creates an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
+Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
-probability `p`. Undirected graphs are created by default; use
-`is_directed=true` to override.
+probability `p`.
 
-Note also that Erdős–Rényi graphs may be generated quickly using `erdos_renyi(n, ne)`
-or the  `Graph(nv, ne)` constructor, which randomly select `ne` edges among all the potential
-edges.
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `seed=-1`: set the RNG seed.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n*(n-1) : div(n*(n-1),2)
     if seed >= 0
         # init dsfmt generator without altering GLOBAL_RNG
-        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
+        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+0x01)
     end
     ne = rand(Binomial(m, p)) # sadly StatsBase doesn't support non-global RNG
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
+"""
+    erdos_renyi(n, ne)
+
+Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
+graph with `n` vertices and `ne` edges.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `seed=-1`: set the RNG seed.
+"""
 function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-1)
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
 
-"""Creates a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
+"""
+    watts_strogatz(n, k, β)
+
+Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
 small model random graph with `n` vertices, each with degree `k`. Edges are
-randomized per the model based on probability `β`. Undirected graphs are
-created by default; use `is_directed=true` to override.
+randomized per the model based on probability `β`.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `seed=-1`: set the RNG seed.
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int = -1)
     @assert k < n/2
@@ -93,7 +110,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
+function _suitable(edges::Set{Edge}, potential_edges::Dict{T, T}) where T<:Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -103,14 +120,14 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{Int, Int})
     return false
 end
 
-_try_creation(n::Int, k::Int, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
+_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
 
-function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
+function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T<:Integer
     edges = Set{Edge}()
     m = 0
-    stubs = zeros(Int, sum(k))
-    for i=1:n
-        for j = 1:k[i]
+    stubs = zeros(T, sum(k))
+    for i=one(T):n
+        for j = one(T):k[i]
             m += 1
             stubs[m] = i
         end
@@ -118,7 +135,7 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
     # stubs = vcat([fill(i, k[i]) for i=1:n]...) # slower
 
     while !isempty(stubs)
-        potential_edges =  Dict{Int,Int}()
+        potential_edges =  Dict{T,T}()
         shuffle!(rng, stubs)
         for i in 1:2:length(stubs)
             s1,s2 = stubs[i:i+1]
@@ -147,27 +164,35 @@ function _try_creation(n::Int, k::Vector{Int}, rng::AbstractRNG)
 end
 
 """
-    barabasi_albert(n::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+    barabasi_albert(n, k)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph with `k` vertices. Each new vertex is attached with `k` edges to `k`
 different vertices already present in the system by preferential attachment.
-Initial graphs are undirected and consist of isolated vertices by default;
-use `is_directed=true` and `complete=true` for directed and complete initial graphs.
+Initial graphs are undirected and consist of isolated vertices by default.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `complete=false`: if true, use a complete graph for the initial graph.
+- `seed=-1`: set the RNG seed.
 """
 barabasi_albert(n::Integer, k::Integer; keyargs...) =
-    barabasi_albert(n, k, k; keyargs...)
+barabasi_albert(n, k, k; keyargs...)
 
 """
-    barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+    barabasi_albert(n::Integer, n0::Integer, k::Integer)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph with `n0` vertices. Each new vertex is attached with `k` edges to `k`
 different vertices already present in the system by preferential attachment.
-Initial graphs are undirected and consist of isolated vertices by default;
-use `is_directed=true` and `complete=true` for directed and complete initial graphs.
+Initial graphs are undirected and consist of isolated vertices by default.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `complete=false`: if true, use a complete graph for the initial graph.
+- `seed=-1`: set the RNG seed.
 """
 function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
     if complete
@@ -181,18 +206,21 @@ function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool 
 end
 
 """
-    barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = -1)
+    barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer)
 
-Creates a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
+Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
 graph `g`. Each new vertex is attached with `k` edges to `k` different vertices
 already present in the system by preferential attachment.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
 """
 function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1)
     n0 = nv(g)
     1 <= k <= n0 <= n ||
-        throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
-			    "where n0 is the number of nodes in graph g"))
+    throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
+    "where n0 is the number of vertices in graph g"))
     n0 == n && return g
 
     # seed random number generator
@@ -208,20 +236,20 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         # expand initial graph
         n0 += 1
 
-        # add edges to k existing nodes
+        # add edges to k existing vertices
         for target in sample!(collect(1:n0-1), k)
             add_edge!(g, n0, target)
         end
     end
 
-    # vector of weighted nodes (each node is repeated once for each adjacent edge)
-    weightedNodes = Vector{Int}(2*(n-n0)*k + 2*ne(g))
+    # vector of weighted vertices (each node is repeated once for each adjacent edge)
+    weightedVs = Vector{Int}(2*(n-n0)*k + 2*ne(g))
 
-    # initialize vector of weighted nodes
+    # initialize vector of weighted vertices
     offset = 0
     for e in edges(g)
-        weightedNodes[offset+=1] = src(e)
-        weightedNodes[offset+=1] = dst(e)
+        weightedVs[offset+=1] = src(e)
+        weightedVs[offset+=1] = dst(e)
     end
 
     # array to record if a node is picked
@@ -231,11 +259,11 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     targets = Vector{Int}(k)
 
     for source in n0+1:n
-        # choose k targets from the existing nodes
-        # pick uniformly from weightedNodes (preferential attachement)
+        # choose k targets from the existing vertices
+        # pick uniformly from weightedVs (preferential attachement)
         i = 0
         while i < k
-            target = weightedNodes[rand(1:offset)]
+            target = weightedVs[rand(1:offset)]
             if !picked[target]
                 targets[i+=1] = target
                 picked[target] = true
@@ -246,8 +274,8 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         for target in targets
             add_edge!(g, source, target)
 
-            weightedNodes[offset+=1] = source
-            weightedNodes[offset+=1] = target
+            weightedVs[offset+=1] = source
+            weightedVs[offset+=1] = target
             picked[target] = false
         end
     end
@@ -256,30 +284,34 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
 end
 
 
+@doc_str """
+    static_fitness_model(m, fitness)
+
+Generate a random graph with ``|fitness|`` vertices and `m` edges,
+in which the probability of the existence of ``Edge_{ij}`` is proportional
+to ``fitness_i  × fitness_j`.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+
+### Performance
+Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
+
+### References
+- Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
-    static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
-
-Generates a random graph with `length(fitness)` nodes and `m` edges,
-in which the probability of the existence of edge `(i, j)` is proportional
-to `fitness[i]*fitness[j]`. Time complexity is O(|V| + |E| log |E|).
-
-Reference:
-
-* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution
-in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
-"""
-function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
+function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T<:Real
     @assert(m >= 0, "invalid number of edges")
     n = length(fitness)
     m == 0 && return Graph(n)
-    nodes = 0
+    nvs = 0
     for f in fitness
         # sanity check for the fitness
         f < zero(T) && error("fitness scores must be non-negative")
-        f > zero(T) && (nodes += 1)
+        f > zero(T) && (nvs += 1)
     end
     # avoid getting into an infinite loop when too many edges are requested
-    max_no_of_edges = div(nodes*(nodes-1), 2)
+    max_no_of_edges = div(nvs*(nvs-1), 2)
     @assert(m <= max_no_of_edges, "too many edges requested")
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
@@ -288,21 +320,37 @@ function static_fitness_model{T<:Real}(m::Int, fitness::Vector{T}; seed::Int=-1)
     return g
 end
 
-function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1)
+@doc_str """
+    static_fitness_model(m, fitness_out, fitness_in)
+
+Generate a random graph with ``|fitness_out + fitness_in|`` vertices and `m` edges,
+in which the probability of the existence of ``Edge_{ij}`` is proportional with
+respect to ``i ∝ fitness_out`` and ``j ∝ fitness_in``.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+
+### Performance
+Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
+
+### References
+- Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+"""
+function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T<:Real where S<:Real
     @assert(m >= 0, "invalid number of edges")
     n = length(fitness_out)
     @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
     m == 0 && return DiGraph(n)
     # avoid getting into an infinite loop when too many edges are requested
-    outnodes = innodes = nodes = 0
+    noutvs = ninvs = nvs = 0
     @inbounds for i=1:n
         # sanity check for the fitness
         (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
-        fitness_out[i] > zero(T) && (outnodes += 1)
-        fitness_in[i] > zero(S) && (innodes += 1)
-        (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nodes += 1)
+        fitness_out[i] > zero(T) && (noutvs += 1)
+        fitness_in[i] > zero(S) && (ninvs += 1)
+        (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nvs += 1)
     end
-    max_no_of_edges = outnodes*innodes - nodes
+    max_no_of_edges = noutvs*ninvs - nvs
     @assert(m <= max_no_of_edges, "too many edges requested")
     # calculate the cumulative fitness scores
     cum_fitness_out = cumsum(fitness_out)
@@ -312,7 +360,7 @@ function static_fitness_model{T<:Real,S<:Real}(m::Int, fitness_out::Vector{T}, f
     return g
 end
 
-function _create_static_fitness_graph!{T<:Real,S<:Real}(g::AbstractGraph, m::Int, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int)
+function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int) where T<:Real where S<:Real
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -328,32 +376,54 @@ function _create_static_fitness_graph!{T<:Real,S<:Real}(g::AbstractGraph, m::Int
     end
 end
 
+@doc_str """
+    static_scale_free(n, m, α)
+
+Generate a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α`.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+- `finite_size_correction=true`: determines whether to use the finite size correction
+proposed by Cho et al.
+
+### Performance
+Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
+
+### References
+- Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+- Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
+- Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
-    function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
-
-Generates a random graph with `n` vertices, `m` edges and expected power-law
-degree distribution with exponent `α`. `finite_size_correction` determines
-whether to use the finite size correction proposed by Cho et al.
-This generator calls internally the `static_fitness_model function`.
-Time complexity is O(|V| + |E| log |E|).
-
-References:
-
-* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
-
-* Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
-
-* Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
-"""
-function static_scale_free(n::Int, m::Int, α::Float64; seed::Int=-1, finite_size_correction::Bool=true)
-    @assert(n >= 0, "Invalid number of nodes")
+function static_scale_free(n::Integer, m::Integer, α::Real; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of vertices")
     @assert(α >= 2, "out-degree exponent must be >= 2")
     fitness = _construct_fitness(n, α, finite_size_correction)
     static_fitness_model(m, fitness, seed=seed)
 end
 
-function static_scale_free(n::Int, m::Int, α_out::Float64, α_in::Float64; seed::Int=-1, finite_size_correction::Bool=true)
-    @assert(n >= 0, "Invalid number of nodes")
+@doc_str """
+    static_scale_free(n, m, α_out, α_in)
+
+Generate a random graph with `n` vertices, `m` edges and expected power-law
+degree distribution with exponent `α_out` for outbound edges and `α_in` for
+inbound edges.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+- `finite_size_correction=true`: determines whether to use the finite size correction
+proposed by Cho et al.
+
+### Performance
+Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
+
+### References
+- Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+- Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
+- Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
+"""
+function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64; seed::Int=-1, finite_size_correction::Bool=true)
+    @assert(n >= 0, "Invalid number of vertices")
     @assert(α_out >= 2, "out-degree exponent must be >= 2")
     @assert(α_in >= 2, "in-degree exponent must be >= 2")
     # construct the fitness
@@ -364,7 +434,7 @@ function static_scale_free(n::Int, m::Int, α_out::Float64, α_in::Float64; seed
     static_fitness_model(m, fitness_out, fitness_in, seed=seed)
 end
 
-function _construct_fitness(n::Int, α::Float64, finite_size_correction::Bool)
+function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
     α = -1/(α-1)
     fitness = zeros(n)
     j = float(n)
@@ -380,18 +450,24 @@ function _construct_fitness(n::Int, α::Float64, finite_size_correction::Bool)
     return fitness
 end
 
-doc"""
-    random_regular_graph(n::Int, k::Int; seed=-1)
+@doc_str """
+    random_regular_graph(n, k)
 
-Creates a random undirected
+Create a random undirected
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
 each with degree `k`.
 
-For undirected graphs, allocates an array of `nk` `Int`s, and takes
-approximately $nk^2$ time. For $k > n/2$, generates a graph of degree
-`n-k-1` and returns its complement.
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+
+### Performance
+Time complexity is approximately ``nk^2``.
+
+### Implementation Notes
+Allocates an array of `nk` `Int`s, and . For ``k > \\frac{n}{2}``, generates a graph of degree
+``n-k-1`` and returns its complement.
 """
-function random_regular_graph(n::Int, k::Int; seed::Int=-1)
+function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
     @assert(iseven(n*k), "n * k must be even")
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
     if k == 0
@@ -416,21 +492,24 @@ function random_regular_graph(n::Int, k::Int; seed::Int=-1)
     return g
 end
 
+@doc_str """
+    random_configuration_model(n, ks)
 
-doc"""
-    random_configuration_model(n::Int, k::Array{Int}; seed=-1, check_graphical=false)
+Create a random undirected graph according to the [configuration model]
+(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
+containing `n` vertices, with each node `i` having degree `k[i]`.
 
-Creates a random undirected graph according to the [configuration model]
-(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf).
-It contains `n` vertices, the vertex `i` having degree `k[i]`.
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+- `check_graphical=false`: if true, ensure that `k` is a graphical sequence
+(see [`isgraphical`](@ref)).
 
-Defining `c = mean(k)`, it allocates an array of `nc` `Int`s, and takes
-approximately $nc^2$ time.
-
-
-If `check_graphical=true` makes sure that `k` is a graphical sequence (see `isgraphical`).
+### Performance
+Time complexity is approximately ``n \\bar{k}^2``.
+### Implementation Notes
+Allocates an array of ``n \\bar{k}`` `Int`s.
 """
-function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1, check_graphical::Bool=false)
+function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check_graphical::Bool=false) where T<:Integer
     @assert(n == length(k), "a degree sequence of length n has to be provided")
     m = sum(k)
     @assert(iseven(m), "sum(k) must be even")
@@ -453,18 +532,21 @@ function random_configuration_model(n::Int, k::Array{Int}; seed::Int=-1, check_g
     return g
 end
 
-doc"""
-    random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed=-1)
+@doc_str """
+    random_regular_digraph(n, k)
 
-Creates a random directed
-[regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
-each with degree `k`. The degree (in or out) can be
-specified using `dir=:in` or `dir=:out`. The default is `dir=:out`.
+Create a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph)
+with `n` vertices, each with degree `k`.
 
-For directed graphs, allocates an $n \times n$ sparse matrix of boolean as an
-adjacency matrix and uses that to generate the directed graph.
+### Optional Arguments
+- `dir=:out`: the direction of the edges for degree parameter.
+- `seed=-1`: set the RNG seed.
+
+### Implementation Notes
+Allocates an ``n × n`` sparse matrix of boolean as an adjacency matrix and
+uses that to generate the directed graph.
 """
-function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
+function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::Int=-1)
     #TODO remove the function sample from StatsBase for one allowing the use
     # of a local rng
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
@@ -478,8 +560,8 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Array(Int, n*k)
-    J = Array(Int, n*k)
+    I = Vector{Int}(n*k)
+    J = Vector{Int}(n*k)
     V = fill(true, n*k)
     for r in 1:n
         l = (r-1)*k+1 : r*k
@@ -494,23 +576,23 @@ function random_regular_digraph(n::Int, k::Int; dir::Symbol=:out, seed::Int=-1)
     end
 end
 
-doc"""
-    stochastic_block_model(c::Matrix{Float64}, n::Vector{Int}; seed::Int = -1)
-    stochastic_block_model(cin::Float64, coff::Float64, n::Vector{Int}; seed::Int = -1)
+@doc_str """
+    stochastic_block_model(c, n)
 
-Returns a Graph generated according to the Stochastic Block Model (SBM).
+Return a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
            Only the upper triangular part is considered, since the lower traingular is
-           determined by $c[b,a] = c[a,b] * n[a]/n[b]$.
+           determined by ``c[b,a] = c[a,b] * \\frac{n[a]}{n[b]}``.
 `n[a]` : Number of vertices in block `a`
 
-The second form samples from a SBM with `c[a,a]=cin`, and `c[a,b]=coff`.
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
 
-For a dynamic version of the SBM see the `StochasticBlockModel` type and
+For a dynamic version of the SBM see the [`StochasticBlockModel`](@ref) type and
 related functions.
 """
-function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int = -1)
+function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
     @assert size(c,1) == length(n)
     @assert size(c,2) == length(n)
     # init dsfmt generator without altering GLOBAL_RNG
@@ -546,19 +628,20 @@ function stochastic_block_model{T<:Real}(c::Matrix{T}, n::Vector{Int}; seed::Int
     return g
 end
 
-function stochastic_block_model{T<:Real}(cint::T, cext::T, n::Vector{Int}; seed::Int=-1)
+@doc_str """
+    stochastic_block_model(cint, cext, n)
+
+Return a Graph generated according to the Stochastic Block Model (SBM), sampling
+from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
+"""
+function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T<:Real where U<:Integer
     K = length(n)
     c = [ifelse(a==b, cint, cext) for a=1:K,b=1:K]
     stochastic_block_model(c, n, seed=seed)
 end
 
 """
-    type StochasticBlockModel{T<:Integer,P<:Real}
-        n::T
-        nodemap::Array{T}
-        affinities::Matrix{P}
-        rng::MersenneTwister
-    end
+    StochasticBlockModel{T,P}
 
 A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge `(i,j)`
@@ -568,12 +651,13 @@ The assignement is stored in nodemap and the block affinities a `k` by `k`
 matrix is stored in affinities.
 
 `affinities[k,l]` is the probability of an edge between any vertex in
-block k and any vertex in block `l`.
+block `k` and any vertex in block `l`.
 
-We are generating the graphs by taking random `i,j in vertices(g)` and
+### Implementation Notes
+Graphs are generated by taking random ``i,j ∈ V`` and
 flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
-type StochasticBlockModel{T<:Integer,P<:Real}
+mutable struct StochasticBlockModel{T<:Integer,P<:Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
@@ -583,11 +667,11 @@ end
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
     (sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
 
-"""A constructor for StochasticBlockModel that uses the sizes of the blocks
-and the affinity matrix. This construction implies that consecutive
-vertices will be in the same blocks, except for the block boundaries.
-"""
-function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P}; seed::Int = -1)
+
+# A constructor for StochasticBlockModel that uses the sizes of the blocks
+# and the affinity matrix. This construction implies that consecutive
+# vertices will be in the same blocks, except for the block boundaries.
+function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; seed::Int = -1)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
@@ -601,28 +685,32 @@ function StochasticBlockModel{T,P}(sizes::Vector{T}, affinities::Matrix{P}; seed
 end
 
 
-"""Produce the sbm affinity matrix where the external probabilities are the same
-the internal probabilities and sizes differ by blocks.
+### TODO: This documentation needs work. sbromberger 20170326
 """
-function sbmaffinity(internalp::Vector{Float64}, externalp::Float64, sizes::Vector{Int})
+    sbmaffinity(internalp, externalp, sizes)
+
+Produce the sbm affinity matrix with internal probabilities `internalp`
+and external probabilities `externalp`.
+"""
+function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || error("Inconsistent input dimensions: internalp, sizes")
     B = diagm(internalp) + externalp*(ones(numblocks, numblocks)-I)
     return B
 end
 
-function StochasticBlockModel(internalp::Float64,
-                              externalp::Float64,
-                              size::Int,
-                              numblocks::Int;
+function StochasticBlockModel(internalp::Real,
+                              externalp::Real,
+                              size::Integer,
+                              numblocks::Integer;
                               seed::Int = -1)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
     StochasticBlockModel(sizes, B, seed=seed)
 end
 
-function StochasticBlockModel(internalp::Vector{Float64}, externalp::Float64
-        , sizes::Vector{Int}; seed::Int = -1)
+function StochasticBlockModel(internalp::Vector{T}, externalp::Real
+        , sizes::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
     B = sbmaffinity(internalp, externalp, sizes)
     return StochasticBlockModel(sizes, B, seed=seed)
 end
@@ -630,21 +718,25 @@ end
 
 const biclique = ones(2,2) - eye(2)
 
-"""Construct the affinity matrix for a near bipartite SBM.
-between is the affinity between the two parts of each bipartite community
-intra is the probability of an edge within the parts of the partitions.
+#TODO: this documentation needs work. sbromberger 20170326
+@doc_str """
+    nearbipartiteaffinity(sizes, between, intra)
 
-This is a specific type of SBM with k/2 blocks each with two halves.
+Construct the affinity matrix for a near bipartite SBM.
+`between` is the affinity between the two parts of each bipartite community.
+`intra` is the probability of an edge within the parts of the partitions.
+
+This is a specific type of SBM with ``\\frac{k}{2} blocks each with two halves.
 Each half is connected as a random bipartite graph with probability `intra`
 The blocks are connected with probability `between`.
 """
-function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, intra::Float64)
+function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T<:Integer
     numblocks = div(length(sizes), 2)
     return kron(between*eye(numblocks), biclique) + eye(2numblocks)*intra
 end
 
-"""Return a generator for edges from a stochastic block model near-bipartite graph."""
-function nearbipartiteaffinity(sizes::Vector{Int}, between::Float64, inter::Float64, noise::Real)
+#Return a generator for edges from a stochastic block model near-bipartite graph.
+function nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer
     B = nearbipartiteaffinity(sizes, between, inter) + noise
     # info("Affinities are:\n$B")#, file=stderr)
     return B
@@ -655,49 +747,65 @@ function nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1)
 end
 
 
-"""Generates a stream of random pairs in 1:n"""
-function random_pair(rng::AbstractRNG, n::Int)
-    while true
-        produce( rand(rng, 1:n), rand(rng, 1:n) )
+"""
+    random_pair(rng, n)
+
+Generate a stream of random pairs in `1:n` using random number generator `RNG`.
+"""
+function random_pair(rng::AbstractRNG, n::Integer)
+    f(ch) = begin
+        while true
+            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+        end
     end
+    return f
 end
 
 
 """
-    make_edgestream(sbm::StochasticBlockModel)
+    make_edgestream(sbm)
 
-Take an infinite sample from the sbm.
-Pass to `Graph(nvg, neg, edgestream)` to get a Graph object.
+Take an infinite sample from the Stochastic Block Model `sbm`.
+Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = @task random_pair(sbm.rng, sbm.n)
-    for (i,j) in pairs
-    	if i == j
-            continue
-        end
-        p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-        if rand(sbm.rng) < p
-            produce(i, j)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    edges(ch) = begin
+        for e in pairs
+            i, j = Tuple(e)
+    	      if i == j
+                continue
+            end
+            p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
+            if rand(sbm.rng) < p
+                put!(ch, e)
+            end
         end
     end
+    return Channel(edges, ctype=Edge, csize=32)
 end
 
-function Graph(nvg::Int, neg::Int, edgestream::Task)
+function Graph(nvg::Integer, neg::Integer, edgestream::Channel)
     g = Graph(nvg)
     # println(g)
-    for (i,j) in edgestream
+    for e in edgestream
         # print("$count, $i,$j\n")
-        add_edge!(g, Edge(i, j))
+        add_edge!(g, e)
         ne(g) >= neg && break
     end
     # println(g)
     return g
 end
 
-Graph(nvg::Int, neg::Int, sbm::StochasticBlockModel) =
-    Graph(nvg, neg, @task make_edgestream(sbm))
+Graph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
+    Graph(nvg, neg, make_edgestream(sbm))
 
-"""counts the number of edges that go between each block"""
+#TODO: this documentation needs work. sbromberger 20170326
+"""
+    blockcounts(sbm, A)
+
+Count the number of edges that go between each block.
+"""
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     # info("making Q")
     I = collect(1:sbm.n)

@@ -16,7 +16,7 @@ function _gml_read_one_graph(gs, dir)
     return g
 end
 function loadgml(io::IO, gname::String)
-    p = GML.parse_dict(readall(io))
+    p = GML.parse_dict(readstring(io))
     for gs in p[:graph]
         dir = Bool(get(gs, :directed, 0))
         graphname = get(gs, :label, dir ? "digraph" : "graph")
@@ -27,7 +27,7 @@ function loadgml(io::IO, gname::String)
 end
 
 function loadgml_mult(io::IO)
-    p = GML.parse_dict(readall(io))
+    p = GML.parse_dict(readstring(io))
     graphs = Dict{String, AbstractGraph}()
     for gs in p[:graph]
         dir = Bool(get(gs, :directed, 0))
@@ -38,11 +38,10 @@ function loadgml_mult(io::IO)
 end
 
 """
-savegml(f, g, gname = "graph")
+    savegml(f, g, gname="graph")
 
-Writes a graph `g` with name `gname`
-to a file `f` in the
-[GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
+Write a graph `g` with name `gname` to an IO stream `io` in the
+[GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format. Return 1.
 """
 function savegml(io::IO, g::AbstractGraph, gname::String = "")
     println(io, "graph")
@@ -68,9 +67,9 @@ function savegml(io::IO, g::AbstractGraph, gname::String = "")
 end
 
 
-"""Writes a dictionary of (name=>graph) to a file `fn`
-
-Returns number of graphs written.
+"""
+    savegml_mult(io, graphs)
+Write a dictionary of (name=>graph) to an IO stream `io` Return number of graphs written.
 """
 function savegml_mult(io::IO, graphs::Dict)
     ng = 0

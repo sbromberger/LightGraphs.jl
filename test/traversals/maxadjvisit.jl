@@ -1,6 +1,6 @@
 
 @testset "Max adj visit" begin
-    g = Graph(8)
+    gx = Graph(8)
 
     # Test of Min-Cut and maximum adjacency visit
     # Original example by Stoer
@@ -21,30 +21,30 @@
 
 
     m = length(wedges)
-    eweights = spzeros(nv(g),nv(g))
+    eweights = spzeros(nv(gx),nv(gx))
 
     for (s, d, w) in wedges
-        add_edge!(g, s, d)
+        add_edge!(gx, s, d)
         eweights[s, d] = w
         eweights[d, s] = w
     end
+    for g in testgraphs(gx)
+      @test nv(g) == 8
+      @test ne(g) == m
 
-    @test nv(g) == 8
-    @test ne(g) == m
+      parity, bestcut = @inferred(mincut(g, eweights))
 
-    parity, bestcut = mincut(g, eweights)
+      @test length(parity) == 8
+      @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
+      @test bestcut == 4.0
 
-    @test length(parity) == 8
-    @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
-    @test bestcut == 4.0
+      parity, bestcut = @inferred(mincut(g))
 
-    parity, bestcut = mincut(g)
+      @test length(parity) == 8
+      @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
+      @test bestcut == 2.0
 
-    @test length(parity) == 8
-    @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
-    @test bestcut == 2.0
-
-    v = maximum_adjacency_visit(g)
-
-    @test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])
+      v = @inferred(maximum_adjacency_visit(g))
+      @test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])
+    end
 end

@@ -1,25 +1,22 @@
 """
-Computes the maximum flow between the source and target vertexes in a flow
-graph using the [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm).
-Returns the value of the maximum flow as well as the final flow matrix.
-Use a default capacity of 1 when the capacity matrix isn\'t specified.
-Requires arguments:
-- residual_graph::DiGraph                # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-"""
+    edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
 
-function edmonds_karp_impl{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+Compute the maximum flow in flow graph `residual_graph` between `source` and
+`target` and capacities defined in `capacity_matrix` using the
+[Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm).
+Return the value of the maximum flow as well as the final flow matrix.
+"""
+function edmonds_karp_impl end
+@traitfn function edmonds_karp_impl(
+    residual_graph::::IsDirected,               # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
+    T = eltype(capacity_matrix)
     n = nv(residual_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
-
     P = zeros(Int, n)
     S = zeros(Int, n)
     while true
@@ -30,7 +27,7 @@ function edmonds_karp_impl{T<:Number}(
         if flag != 0                       # no more valid paths
             break
         else
-            path = [v]                     # initialize path
+            path = [Int(v)]                     # initialize path
             sizehint!(path, n)
 
             u = v
@@ -43,9 +40,9 @@ function edmonds_karp_impl{T<:Number}(
             u = v                          # trace path from v to target
             while u!=target
                 u = S[u]
-                push!(path, u)
+                push!(path, Int(u))
             end
-                                           # augment flow along path
+            # augment flow along path
             flow += augment_path!(path, flow_matrix, capacity_matrix)
         end
     end
@@ -54,19 +51,17 @@ function edmonds_karp_impl{T<:Number}(
 end
 
 """
-Calculates the amount by which flow can be augmented in the given path.
-Augments the flow and returns the augment value.
-Requires arguments:
-- path::Vector{Int}                      # input path
-- flow_matrix::AbstractArray{T,2}        # the current flow matrix
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-"""
+    augment_path!(path, flow_matrix, capacity_matrix)
 
-function augment_path!{T<:Number}(
+Calculate the amount by which flow can be augmented in the given path.
+Augment the flow and returns the augment value.
+"""
+function augment_path!(
     path::Vector{Int},                     # input path
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
+    T = eltype(flow_matrix)
     augment = typemax(T)                   # initialize augment
     for i in 1:length(path)-1              # calculate min capacity along path
         u = path[i]
@@ -85,57 +80,18 @@ function augment_path!{T<:Number}(
 end
 
 """
-Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
-the two BFS searches intersect, the Parent table of the path, the
-Successor table of the path found, and a flag indicating success
-Flag Values:
-0 => success
-1 => No Path to target
-2 => No Path to source
-"""
-function fetch_path{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-    )
-    n = nv(residual_graph)
-    P = -1 * ones(Int, n)
-    S = -1 * ones(Int, n)
-    return fetch_path!(residual_graph,
-                       source,
-                       target,
-                       flow_matrix,
-                       capacity_matrix,
-                       P,
-                       S)
-end
+    fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P, S)
 
+Like `fetch_path`, but requires preallocated parent vector `P` and successor
+vector `S`.
 """
-A preallocated version of fetch_paths. The parent and successor tables are pre-allocated.
-Uses Bidirectional BFS to look for augmentable-paths. Returns the vertex where
-the two BFS searches intersect, the Parent table of the path, the
-Successor table of the path found, and a flag indicating success
-Flag Values:
-0 => success
-1 => No Path to target
-2 => No Path to source
-Requires arguments:
-    residual_graph::DiGraph                # the input graph
-    source::Int                            # the source vertex
-    target::Int                            # the target vertex
-    flow_matrix::AbstractArray{T,2}        # the current flow matrix
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-    P::Vector{Int}                         # parent table of path init to -1s
-    S::Vector{Int}                         # successor table of path init to -1s
-"""
-function fetch_path!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    flow_matrix::AbstractArray{T,2},       # the current flow matrix
-    capacity_matrix::AbstractArray{T,2},   # edge flow capacities
+function fetch_path! end
+@traitfn function fetch_path!(
+    residual_graph::::IsDirected,               # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix,   # edge flow capacities
     P::Vector{Int},                        # parent table of path init to -1s
     S::Vector{Int}                         # successor table of path init to -1s
     )
@@ -151,10 +107,9 @@ function fetch_path!{T<:Number}(
     sizehint!(Q_r, n)
 
     while true
-
         if length(Q_f) <= length(Q_r)
             u = pop!(Q_f)
-            for v in fadj(residual_graph, u)
+            for v in out_neighbors(residual_graph, u)
                 if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && P[v] == -1
                     P[v] = u
                     if S[v] == -1
@@ -168,7 +123,7 @@ function fetch_path!{T<:Number}(
             length(Q_f) == 0 && return 0, P, S, 1 # No paths to target
         else
             v = pop!(Q_r)
-            for u in badj(residual_graph, v)
+            for u in in_neighbors(residual_graph, v)
                 if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
                     S[u] = v
                     P[u] != -1 && return  u, P, S, 0 # 0 indicates success
@@ -181,4 +136,35 @@ function fetch_path!{T<:Number}(
             length(Q_r) == 0 && return 0, P, S, 2 # No paths to source
         end
     end
+end
+
+
+"""
+    fetch_path(residual_graph, source, target, flow_matrix, capacity_matrix)
+
+
+Use bidirectional BFS to look for augmentable paths from `source` to `target` in
+`residual_graph`. Return the vertex where the two BFS searches intersect,
+the parent table of the path, the successor table of the path found, and a
+flag indicating success (0 => success; 1 => no path to target, 2 => no path
+to source).
+"""
+function fetch_path end
+@traitfn function fetch_path(
+    residual_graph::::IsDirected,               # the input graph
+    source::Integer,                           # the source vertex
+    target::Integer,                           # the target vertex
+    flow_matrix::AbstractMatrix,       # the current flow matrix
+    capacity_matrix::AbstractMatrix    # edge flow capacities
+    )
+    n = nv(residual_graph)
+    P = fill(-1, n)
+    S = fill(-1, n)
+    return fetch_path!(residual_graph,
+    source,
+    target,
+    flow_matrix,
+    capacity_matrix,
+    P,
+    S)
 end

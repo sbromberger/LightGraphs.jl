@@ -6,9 +6,12 @@
 ##################################################################
 
 """
-Finds all maximal cliques of an undirected graph.
+    maximal_cliques(g)
 
-```
+Return a vector of vectors representing the node indices in each of the maximal
+cliques found in the undirected graph `g`.
+
+```jldoctest
 julia> using LightGraphs
 julia> g = Graph(3)
 julia> add_edge!(g, 1, 2)
@@ -19,20 +22,20 @@ julia> maximal_cliques(g)
  [2,1]
 ```
 """
-function maximal_cliques(g::Graph)
-
-
+function maximal_cliques end
+@traitfn function maximal_cliques(g::::(!IsDirected))
+    T = eltype(g)
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
-    nnbrs = Vector{Set{Int}}()
+    nnbrs = Vector{Set{T}}()
     for n in vertices(g)
-        push!(nnbrs, Set{Int}())
+        push!(nnbrs, Set{T}())
     end
-    pivotnbrs = Set{Int}() # handle empty graph
-    pivotdonenbrs = Set{Int}()  # initialize
+    pivotnbrs = Set{T}() # handle empty graph
+    pivotdonenbrs = Set{T}()  # initialize
 
     for n in vertices(g)
-        nbrs = Set{Int}()
+        nbrs = Set{T}()
         union!(nbrs, out_neighbors(g, n))
         delete!(nbrs, n) # ignore edges between n and itself
         conn = length(nbrs)
@@ -46,17 +49,17 @@ function maximal_cliques(g::Graph)
     end
 
     # Initial setup
-    cand = Set{Int}(vertices(g))
+    cand = Set{T}(vertices(g))
     # union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
-    done = Set{Int}()
-    stack = Vector{Tuple{Set{Int}, Set{Int}, Set{Int}}}()
-    clique_so_far = Vector{Int}()
-    cliques = Vector{Array{Int}}()
+    done = Set{T}()
+    stack = Vector{Tuple{Set{T}, Set{T}, Set{T}}}()
+    clique_so_far = Vector{T}()
+    cliques = Vector{Array{T}}()
 
     # Start main loop
     while !isempty(smallcand) || !isempty(stack)
-        if !isempty(smallcand) # Any nodes left to check?
+        if !isempty(smallcand) # Any vertices left to check?
             n = pop!(smallcand)
         else
             # back out clique_so_far
@@ -87,7 +90,7 @@ function maximal_cliques(g::Graph)
             continue
         end
         # find pivot node (max connected in cand)
-        # look in done nodes first
+        # look in done vertices first
         numb_cand = length(new_cand)
         maxconndone = -1
         for n in new_done
@@ -107,7 +110,7 @@ function maximal_cliques(g::Graph)
             continue
         end
         # still finding pivot node
-        # look in cand nodes second
+        # look in cand vertices second
         maxconn = -1
         for n in new_cand
             cn = intersect(new_cand, nnbrs[n])

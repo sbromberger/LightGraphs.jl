@@ -1,11 +1,11 @@
 """
     modularity(g, c)
 
-Computes Newman's modularity `Q`
-for graph `g` given the partitioning `c`.
+Return a value representing Newman's modularity `Q` for the undirected graph
+`g` given the partitioning vector `c`.
 """
-function modularity(g::Graph, c)
-    n = nv(g)
+function modularity end
+@traitfn function modularity(g::::(!IsDirected), c::Vector)
     m = 2*ne(g)
     m == 0 && return 0.
     nc = maximum(c)

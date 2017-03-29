@@ -69,7 +69,11 @@ function _g6_Np(N::Vector{UInt8})
 end
 
 
-"""Given a graph, create the corresponding Graph6 string"""
+"""
+    _graphToG6String(g)
+
+Given a graph `g`, create the corresponding Graph6 string.
+"""
 function _graphToG6String(g::Graph)
   A = adjacency_matrix(g, Bool)
   n = nv(g)
@@ -84,7 +88,7 @@ function _graphToG6String(g::Graph)
   return join([">>graph6<<", String(_g6_N(n)), String(_g6_R(x))])
 end
 
-function _g6StringToGraph(s::String)
+function _g6StringToGraph(s::AbstractString)
   if startswith(s, ">>graph6<<")
     s = s[11:end]
   end
@@ -120,15 +124,20 @@ function loadgraph6_mult(io::IO)
   return graphdict
 end
 
-"""Reads a graph from file `fname` in the [Graph6](http://users.cecs.anu.edu.au/%7Ebdm/data/formats.txt) format.
- Returns the graph.
+"""
+    loadgraph6(io, gname="g1")
+
+Read a graph from IO stream `io` in the [Graph6](http://users.cecs.anu.edu.au/%7Ebdm/data/formats.txt)
+format. Return the graph.
 """
 loadgraph6(io::IO, gname::String="g1") = loadgraph6_mult(io)[gname]
 
 
 """
-Writes a graph `g` to a file `f` in the [Graph6](http://users.cecs.anu.edu.au/%7Ebdm/data/formats.txt) format.
-Returns 1 (number of graphs written).
+    savegraph6(io, g, gname="g")
+
+Write a graph `g` to IO stream `io` in the [Graph6](http://users.cecs.anu.edu.au/%7Ebdm/data/formats.txt)
+format. Return 1 (number of graphs written).
 """
 function savegraph6(io::IO, g::AbstractGraph, gname::String = "g")
   str = _graphToG6String(g)

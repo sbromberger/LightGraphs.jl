@@ -1,0 +1,29 @@
+import LightGraphs.SimpleGraphs.SimpleEdge
+@testset "SimpleEdge" begin
+    e = SimpleEdge(1,2)
+    re = SimpleEdge(2,1)
+
+    for s in [0x01, UInt16(1), 1]
+        T = typeof(s)
+        d = s+one(T)
+        p = Pair(s, d)
+
+        ep = SimpleEdge(p)
+        t1 = (s, d)
+        t2 = (s, d, "foo")
+
+        @test src(ep) == s
+        @test dst(ep) == s + one(T)
+
+        @test eltype(p) == typeof(s)
+        @test SimpleEdge(p) == e
+        @test SimpleEdge(t1) == SimpleEdge(t2) == e
+
+        @test SimpleEdge{Int64}(ep) == e
+
+        @test Pair(e) == p
+        @test Tuple(e) == t1
+        @test reverse(ep) == re
+        @test sprint(show, ep) == "Edge 1 => 2"
+    end
+end

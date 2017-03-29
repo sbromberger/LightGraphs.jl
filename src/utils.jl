@@ -1,8 +1,13 @@
 """
-sample!([rng,] a, k; exclude = ())
+sample!([rng, ]a, k)
 
 Sample `k` element from array `a` without repetition and eventually excluding elements in `exclude`.
-Pay attention, it changes the order of the elements in `a`.
+
+### Optional Arguments
+- `exclude=()`: elements in `a` to exclude from sampling.
+
+### Implementation Notes
+Changes the order of the elements in `a`. For a non-mutating version, see [`sample`](@ref).
 """
 function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = ())
     length(a) < k + length(exclude) && error("Array too short.")
@@ -24,9 +29,15 @@ end
 sample!(a::AbstractArray, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
 
 """
-sample([rng,] r, k; exclude = ())
+    sample([rng,] r, k)
+
 Sample `k` element from unit range `r` without repetition and eventually excluding elements in `exclude`.
-Unlike `sample!`, does not produce side effects.
+
+### Optional Arguments
+- `exclude=()`: elements in `a` to exclude from sampling.
+
+### Implementation Notes
+Unlike [`sample!`](@ref), does not produce side effects.
 """
 sample(a::UnitRange, k::Integer; exclude = ()) = sample!(getRNG(), collect(a), k; exclude = exclude)
 

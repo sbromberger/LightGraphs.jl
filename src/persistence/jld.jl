@@ -1,5 +1,8 @@
 using JLD
-"""GraphSerializer is a type for custom serialization into JLD files.
+"""
+    GraphSerializer
+
+GraphSerializer is a type for custom serialization into JLD files.
 It has no use except on disk. This type supports JLD.writeas(g::Graph)
 and JLD.readas(gs::GraphSerializer). It is a form of Compressed Sparse Column format
 of the adjacency matrix of a graph g.
@@ -19,9 +22,9 @@ This format is fine for storage on disk because the data is not changing.
 JLD.readas(gs::GraphSerializer) creates the adjacency list representation directly instead of calling add_edge!
 repeatedly in an attempt to improve performance.
 
-This type has not been tested with mmaped files or compression in JLD. 
+This type has not been tested with mmaped files or compression in JLD.
 """
-type GraphSerializer
+mutable struct GraphSerializer
     vertices::UnitRange{Int}
     ne::Int
     packed_adjlist::Vector{Int}
@@ -31,7 +34,7 @@ end
 function JLD.writeas(g::Graph)
     n_adjlist = zeros(Int,nv(g))
     @assert sum(degree(g))/2 == ne(g)
-    packed_adjlist = Array(Int, 2*ne(g))
+    packed_adjlist = Vector{Int}(2*ne(g))
     k = 0
     degree(g), sum(degree(g))
     for (i,lst) in enumerate(g.fadjlist)
@@ -47,7 +50,7 @@ function JLD.writeas(g::Graph)
             packed_adjlist[k+=1] = v
         end
     end
-    GraphSerializer(g.vertices, g.ne, packed_adjlist, n_adjlist)
+    GraphSerializer(vertices(g), ne(g), packed_adjlist, n_adjlist)
 end
 
 function JLD.readas(gs::GraphSerializer)
@@ -64,11 +67,11 @@ function JLD.readas(gs::GraphSerializer)
         adj[i] = gs.packed_adjlist[posbegin:posend]
     end
     @assert sum(map(length, adj)) == 2gs.ne
-    g = Graph(1:n, gs.ne, adj)
+    g = Graph(gs.ne, adj)
     return g
 end
 
-type Network{G,V,E}
+mutable struct Network{G,V,E}
     graph::G
     vprop::Vector{V}
     eprop::Dict{Edge,E}

@@ -1,33 +1,41 @@
+import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 @testset "BFS" begin
     g5 = DiGraph(4)
     add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
+    g6 = smallgraph(:house)
 
-    z = bfs_tree(g5, 1)
-    visitor = LightGraphs.TreeBFSVisitorVector(zeros(Int,nv(g5)))
-    LightGraphs.bfs_tree!(visitor, g5, 1)
-    t = visitor.tree
-    @test t == [1,1,1,3]
-    @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
+    for g in testdigraphs(g5)
+      z = @inferred(bfs_tree(g, 1))
+      visitor = LightGraphs.TreeBFSVisitorVector(zeros(eltype(g),nv(g)))
+      LightGraphs.bfs_tree!(visitor, g, 1)
+      t = visitor.tree
+      @test t == [1,1,1,3]
+      @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
+    end
+    for g in testgraphs(g6)
+      @test @inferred(gdistances(g, 2)) == [1, 0, 2, 1, 2]
+      @test @inferred(gdistances(g, [1,2])) == [0, 0, 1, 1, 2]
+      @test @inferred(gdistances(g, [])) == [-1, -1, -1, -1, -1]
+      @test @inferred(!is_bipartite(g))
+      @test @inferred(!is_bipartite(g, 2))
+    end
 
-    @test gdistances(g6, 2) == [1, 0, 2, 1, 2]
-    @test gdistances(g6, [1,2]) == [0, 0, 1, 1, 2]
-    @test gdistances(g6, []) == [-1, -1, -1, -1, -1]
-    @test !is_bipartite(g6)
-    @test !is_bipartite(g6, 2)
+    gx = Graph(5)
+    add_edge!(gx,1,2); add_edge!(gx,1,4)
+    add_edge!(gx,2,3); add_edge!(gx,2,5)
+    add_edge!(gx,3,4)
 
-    g = Graph(5)
-    add_edge!(g,1,2); add_edge!(g,1,4)
-    add_edge!(g,2,3); add_edge!(g,2,5)
-    add_edge!(g,3,4)
-    @test is_bipartite(g)
-    @test is_bipartite(g, 2)
+    for g in testgraphs(gx)
+      @test @inferred(is_bipartite(g))
+      @test @inferred(is_bipartite(g, 2))
+    end
 
 
-    import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
+    # import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
-    function istree(parents::Vector{Int}, maxdepth)
+    function istree{T<:Integer}(parents::Vector{T}, maxdepth, n::T)
         flag = true
-        for i in 1:n
+        for i in one(T):n
             s = i
             depth = 0
             while parents[s] > 0 && parents[s] != s
@@ -41,35 +49,44 @@
         return flag
     end
 
-    n = nv(g6)
-    visitor = TreeBFSVisitorVector(n)
-    @test length(visitor.tree) == n
-    parents = visitor.tree
-    bfs_tree!(visitor, g6, 1)
+    for g in testgraphs(g6)
+      n = nv(g)
+      visitor = @inferred(TreeBFSVisitorVector(n))
+      @test length(visitor.tree) == n
+      parents = visitor.tree
+      @inferred(bfs_tree!(visitor, g, 1))
 
-    @test istree(parents, n) == true
-    t = tree(parents)
-    @test typeof(t) <: DiGraph
-    @test ne(t) < nv(t)
+      @test istree(parents, n, n)
+      t = tree(parents)
+      @test is_directed(t)
+      @test typeof(t) <: AbstractGraph
+      @test ne(t) < nv(t)
 
     # test Dict{Int,Int}() colormap
-    n = nv(g6)
-    visitor = TreeBFSVisitorVector(n)
-    @test length(visitor.tree) == n
-    parents = visitor.tree
-    bfs_tree!(visitor, g6, 1, vertexcolormap = Dict{Int,Int}())
 
-    @test istree(parents, n) == true
-    t = tree(parents)
-    @test typeof(t) <: DiGraph
-    @test ne(t) < nv(t)
+      visitor = @inferred(TreeBFSVisitorVector(n))
+      @test length(visitor.tree) == n
+      parents = visitor.tree
+      @inferred(bfs_tree!(visitor, g, 1, vertexcolormap = Dict{Int,Int}()))
+
+      @test @inferred(istree(parents, n, n))
+      t = tree(parents)
+      @test is_directed(t)
+      @test typeof(t) <: AbstractGraph
+      @test ne(t) < nv(t)
+    end
 
     g10 = CompleteGraph(10)
-    @test bipartite_map(g10) == Vector{Int}()
+    for g in testgraphs(g10)
+      @test @inferred(bipartite_map(g)) == Vector{eltype(g)}()
+    end
 
     g10 = CompleteBipartiteGraph(10,10)
-    @test bipartite_map(g10) == Vector{Int}([ones(10); 2*ones(10)])
+    for g in testgraphs(g10)
+      T = eltype(g)
+      @test @inferred(bipartite_map(g10)) == Vector{T}([ones(T, 10); 2*ones(T, 10)])
 
-    h10 = blkdiag(g10,g10)
-    @test bipartite_map(h10) == Vector{Int}([ones(10); 2*ones(10); ones(10); 2*ones(10)])
+      h = blkdiag(g,g)
+      @test @inferred(bipartite_map(h)) == Vector{T}([ones(T, 10); 2*ones(T, 10); ones(T, 10); 2*ones(T, 10)])
+    end
 end

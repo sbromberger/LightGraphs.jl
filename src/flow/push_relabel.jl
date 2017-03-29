@@ -1,31 +1,22 @@
+@doc_str """
+    push_relabel(residual_graph, source, target, capacity_matrix)
+
+Return the maximum flow of `residual_graph` from `source` to `target` using the
+FIFO push relabel algorithm with gap heuristic.
+
+### Performance
+Takes approximately ``\\mathcal{O}(|V|^{3})`` time.
 """
-Implementation of the FIFO push relabel algorithm with gap heuristic. Takes
-approximately O(V^3) time.
-
-Maintains the following auxillary arrays:
-- height -> Stores the labels of all vertices
-- count  -> Stores the number of vertices at each height
-- excess -> Stores the difference between incoming and outgoing flow for all vertices
-- active -> Stores the status of all vertices. (e(v)>0 => active[v] = true)
-- Q      -> The FIFO queue that stores active vertices waiting to be discharged.
-
-Requires arguments:
-
-- residual_graph::DiGraph                # the input graph
-- source::Int                            # the source vertex
-- target::Int                            # the target vertex
-- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
-"""
-
-function push_relabel{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
-    source::Int,                           # the source vertex
-    target::Int,                           # the target vertex
-    capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+function push_relabel end
+@traitfn function push_relabel(
+    residual_graph::::IsDirected,               # the input graph
+    source::Integer,                       # the source vertex
+    target::Integer,                       # the target vertex
+    capacity_matrix::AbstractMatrix    # edge flow capacities
     )
 
     n = nv(residual_graph)
-
+    T = eltype(capacity_matrix)
     flow_matrix = zeros(T, n, n)
 
     height = zeros(Int, n)
@@ -46,7 +37,7 @@ function push_relabel{T<:Number}(
     sizehint!(Q, n)
 
 
-    for v in fadj(residual_graph, source)
+    for v in out_neighbors(residual_graph, source)
         push_flow!(residual_graph, source, v, capacity_matrix, flow_matrix, excess, height, active, Q)
     end
 
@@ -56,25 +47,21 @@ function push_relabel{T<:Number}(
         discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
     end
 
-    return sum([flow_matrix[v,target] for v in badj(residual_graph, target) ]), flow_matrix
+    return sum([flow_matrix[v,target] for v in in_neighbors(residual_graph, target) ]), flow_matrix
 end
 
 """
-Pushes inactive nodes into the queue and activates them.
+    enqueue_vertex!(Q, v, active, excess)
 
-Requires arguments:
-
-- Q::AbstractArray{Int,1}
-- v::Int
-- active::AbstractArray{Bool,1}
-- excess::AbstractArray{T,1}
+Push inactive node `v` into queue `Q` and activates it. Requires preallocated
+`active` and `excess` vectors.
 """
 
-function enqueue_vertex!{T<:Number}(
-    Q::AbstractArray{Int,1},
-    v::Int,                                # input vertex
-    active::AbstractArray{Bool,1},
-    excess::AbstractArray{T,1}
+function enqueue_vertex!(
+    Q::AbstractVector,
+    v::Integer,                                # input vertex
+    active::AbstractVector{Bool},
+    excess::AbstractVector
     )
     if !active[v] && excess[v] > 0
         active[v] = true
@@ -84,31 +71,23 @@ function enqueue_vertex!{T<:Number}(
 end
 
 """
-Pushes as much flow as possible through the given edge.
+    push_flow!(residual_graph, u, v, capacity_matrix, flow_matrix, excess, height, active, Q)
 
-Requires arguements:
-
-- residual_graph::DiGraph              # the input graph
-- u::Int                               # input from-vertex
-- v::Int                               # input to-vetex
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- Q::AbstractArray{Int,1}
+Using `residual_graph` with capacities in `capacity_matrix`, push as much flow
+as possible through the given edge(`u`, `v`). Requires preallocated `flow_matrix`
+matrix, and `excess`, `height, `active`, and `Q` vectors.
 """
-
-function push_flow!{T<:Number}(
-    residual_graph::DiGraph,             # the input graph
-    u::Int,                              # input from-vertex
-    v::Int,                              # input to-vetex
-    capacity_matrix::AbstractArray{T,2},
-    flow_matrix::AbstractArray{T,2},
-    excess::AbstractArray{T,1},
-    height::AbstractArray{Int,1},
-    active::AbstractArray{Bool,1},
-    Q::AbstractArray{Int,1}
+function push_flow! end
+@traitfn function push_flow!(
+    residual_graph::::IsDirected,             # the input graph
+    u::Integer,                              # input from-vertex
+    v::Integer,                              # input to-vetex
+    capacity_matrix::AbstractMatrix,
+    flow_matrix::AbstractMatrix,
+    excess::AbstractVector,
+    height::AbstractVector{Int},
+    active::AbstractVector{Bool},
+    Q::AbstractVector
     )
     flow = min(excess[u], capacity_matrix[u,v] - flow_matrix[u,v])
 
@@ -126,28 +105,30 @@ function push_flow!{T<:Number}(
 end
 
 """
-Implements the gap heuristic. Relabels all vertices above a cutoff height.
-Reduces the number of relabels required.
+    gap!(residual_graph, h, excess, height, active, count, Q)
+
+Implement the push-relabel gap heuristic. Relabel all vertices above a cutoff height.
+Reduce the number of relabels required.
 
 Requires arguments:
 
 - residual_graph::DiGraph                # the input graph
 - h::Int                                 # cutoff height
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
+- excess::AbstractVector
+- height::AbstractVector{Int}
+- active::AbstractVector{Bool}
+- count::AbstractVector{Int}
+- Q::AbstractVector
 """
-
-function gap!{T<:Number}(
-    residual_graph::DiGraph,               # the input graph
+function gap! end
+@traitfn function gap!(
+    residual_graph::::IsDirected,               # the input graph
     h::Int,                                # cutoff height
-    excess::AbstractArray{T,1},
-    height::AbstractArray{Int,1},
-    active::AbstractArray{Bool,1},
-    count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}                # FIFO queue
+    excess::AbstractVector,
+    height::AbstractVector{Int},
+    active::AbstractVector{Bool},
+    count::AbstractVector{Int},
+    Q::AbstractVector                # FIFO queue
     )
     n = nv(residual_graph)
     for v in vertices(residual_graph)
@@ -161,37 +142,26 @@ function gap!{T<:Number}(
 end
 
 """
-Relabels a vertex with respect to its neighbors, to produce an admissable
-edge.
+    relabel!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
 
-Requires arguments:
-
-- residual_graph::DiGraph                 # the input graph
-- v::Int                                  # input vertex to be relabeled
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
+Relabel a node `v` with respect to its neighbors to produce an admissable edge.
 """
-
-function relabel!{T<:Number}(
-    residual_graph::DiGraph,                # the input graph
-    v::Int,                                 # input vertex to be relabeled
-    capacity_matrix::AbstractArray{T,2},
-    flow_matrix::AbstractArray{T,2},
-    excess::AbstractArray{T,1},
-    height::AbstractArray{Int,1},
-    active::AbstractArray{Bool,1},
-    count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}
+function relabel! end
+@traitfn function relabel!(
+    residual_graph::::IsDirected,                # the input graph
+    v::Integer,                                 # input vertex to be relabeled
+    capacity_matrix::AbstractMatrix,
+    flow_matrix::AbstractMatrix,
+    excess::AbstractVector,
+    height::AbstractVector{Int},
+    active::AbstractVector{Bool},
+    count::AbstractVector{Int},
+    Q::AbstractVector
     )
     n = nv(residual_graph)
     count[height[v]+1] -= 1
     height[v] = 2*n
-    for to in fadj(residual_graph, v)
+    for to in out_neighbors(residual_graph, v)
         if capacity_matrix[v,to] > flow_matrix[v,to]
             height[v] = min(height[v], height[to]+1)
         end
@@ -203,33 +173,24 @@ end
 
 
 """
-Drains the excess flow out of a vertex. Runs the gap heuristic or relabels the
+    discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
+
+Drain the excess flow out of node `v`. Run the gap heuristic or relabel the
 vertex if the excess remains non-zero.
-
-Requires arguments:
-
-- residual_graph::DiGraph                 # the input graph
-- v::Int                                  # vertex to be discharged
-- capacity_matrix::AbstractArray{T,2}
-- flow_matrix::AbstractArray{T,2}
-- excess::AbstractArray{T,1}
-- height::AbstractArray{Int,1}
-- active::AbstractArray{Bool,1}
-- count::AbstractArray{Int,1}
-- Q::AbstractArray{Int,1}
 """
-function discharge!{T<:Number}(
-    residual_graph::DiGraph,                # the input graph
-    v::Int,                                 # vertex to be discharged
-    capacity_matrix::AbstractArray{T,2},
-    flow_matrix::AbstractArray{T,2},
-    excess::AbstractArray{T,1},
-    height::AbstractArray{Int,1},
-    active::AbstractArray{Bool,1},
-    count::AbstractArray{Int,1},
-    Q::AbstractArray{Int,1}                 # FIFO queue
+function discharge! end
+@traitfn function discharge!(
+    residual_graph::::IsDirected,                # the input graph
+    v::Integer,                                 # vertex to be discharged
+    capacity_matrix::AbstractMatrix,
+    flow_matrix::AbstractMatrix,
+    excess::AbstractVector,
+    height::AbstractVector{Int},
+    active::AbstractVector{Bool},
+    count::AbstractVector{Int},
+    Q::AbstractVector                 # FIFO queue
     )
-    for to in fadj(residual_graph, v)
+    for to in out_neighbors(residual_graph, v)
         excess[v] == 0 && break
         push_flow!(residual_graph, v, to, capacity_matrix, flow_matrix, excess, height, active, Q)
     end

@@ -10,22 +10,21 @@
 #
 #################################################
 """
-**Conventions in Breadth First Search and Depth First Search**
-VertexColorMap :
+    DepthFirst
+## Conventions in Breadth First Search and Depth First Search
+### VertexColorMap
 - color == 0    => unseen
 - color < 0     => examined but not closed
 - color > 0     => examined and closed
 
-EdgeColorMap :
+### EdgeColorMap
 - color == 0    => unseen
 - color == 1     => examined
 """
-
-type DepthFirst <: AbstractGraphVisitAlgorithm
-end
+mutable struct DepthFirst <: AbstractGraphVisitAlgorithm end
 
 function depth_first_visit_impl!(
-    graph::AbstractGraph,      # the graph
+    g::AbstractGraph,      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::AbstractVertexMap,    # an (initialized) color-map to indicate status of vertices
     edgecolormap::AbstractEdgeMap,      # an (initialized) color-map to indicate status of edges
@@ -53,7 +52,7 @@ function depth_first_visit_impl!(
                 push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
-                vdsts = fadj(graph, v)
+                vdsts = out_neighbors(g, v)
                 push!(stack, (v, vdsts, start(vdsts)))
             end
         end
@@ -66,21 +65,22 @@ function depth_first_visit_impl!(
 end
 
 function traverse_graph!(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     alg::DepthFirst,
-    s::Int,
+    s::Integer,
     visitor::AbstractGraphVisitor;
-    vertexcolormap = Dict{Int, Int}(),
+    vertexcolormap = Dict{eltype(g), Int}(),
     edgecolormap = DummyEdgeMap())
 
+    T = eltype(g)
     vertexcolormap[s] = -1
     discover_vertex!(visitor, s) || return
 
-    sdsts = fadj(graph, s)
+    sdsts = out_neighbors(g, s)
     sstate = start(sdsts)
-    stack = [(s, sdsts, sstate)]
+    stack = [(T(s), sdsts, sstate)]
 
-    depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
+    depth_first_visit_impl!(g, stack, vertexcolormap, edgecolormap, visitor)
 end
 
 #################################################
@@ -91,16 +91,15 @@ end
 
 # Test whether a graph is cyclic
 
-type DFSCyclicTestVisitor <: AbstractGraphVisitor
+mutable struct DFSCyclicTestVisitor <: AbstractGraphVisitor
     found_cycle::Bool
-
     DFSCyclicTestVisitor() = new(false)
 end
 
 function examine_neighbor!(
     vis::DFSCyclicTestVisitor,
-    u::Int,
-    v::Int,
+    u::Integer,
+    v::Integer,
     ucolor::Int,
     vcolor::Int,
     ecolor::Int)
@@ -115,8 +114,10 @@ discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 """
     is_cyclic(g)
 
-Tests whether a graph contains a cycle through depth-first search. It
-returns `true` when it finds a cycle, otherwise `false`.
+Return `true` if graph `g` contains a cycle.
+
+### Implementation Notes
+Uses DFS.
 """
 function is_cyclic(g::AbstractGraph)
     cmap = zeros(Int, nv(g))
@@ -133,33 +134,32 @@ end
 
 # Topological sort using DFS
 
-type TopologicalSortVisitor <: AbstractGraphVisitor
-    vertices::Vector{Int}
-
-    function TopologicalSortVisitor(n::Int)
-        vs = Array(Int, 0)
-        sizehint!(vs, n)
-        new(vs)
-    end
+mutable struct TopologicalSortVisitor{T} <: AbstractGraphVisitor
+    vertices::Vector{T}
 end
 
+function TopologicalSortVisitor(n::T) where T<:Integer
+    vs = Vector{T}()
+    sizehint!(vs, n)
+    return TopologicalSortVisitor(vs)
+end
 
-function examine_neighbor!(visitor::TopologicalSortVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TopologicalSortVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     (vcolor < 0 && ecolor == 0) && error("The input graph contains at least one loop.")
 end
 
-function close_vertex!(visitor::TopologicalSortVisitor, v::Int)
+function close_vertex!(visitor::TopologicalSortVisitor, v::Integer)
     push!(visitor.vertices, v)
 end
 
-function topological_sort_by_dfs(graph::AbstractGraph)
-    nvg = nv(graph)
+function topological_sort_by_dfs(g::AbstractGraph)
+    nvg = nv(g)
     cmap = zeros(Int, nvg)
     visitor = TopologicalSortVisitor(nvg)
 
-    for s in vertices(graph)
+    for s in vertices(g)
         if cmap[s] == 0
-            traverse_graph!(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
+            traverse_graph!(g, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
     end
 
@@ -167,14 +167,14 @@ function topological_sort_by_dfs(graph::AbstractGraph)
 end
 
 
-type TreeDFSVisitor <:AbstractGraphVisitor
+mutable struct TreeDFSVisitor{T} <:AbstractGraphVisitor
     tree::DiGraph
-    predecessor::Vector{Int}
+    predecessor::Vector{T}
 end
 
-TreeDFSVisitor(n::Int) = TreeDFSVisitor(DiGraph(n), zeros(Int,n))
+TreeDFSVisitor(n::T) where T<:Integer = TreeDFSVisitor(DiGraph(n), zeros(T,n))
 
-function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TreeDFSVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     if (vcolor == 0)
         visitor.predecessor[v] = u
     end
@@ -182,12 +182,12 @@ function examine_neighbor!(visitor::TreeDFSVisitor, u::Int, v::Int, ucolor::Int,
 end
 
 """
-    dfs_tree(g, s::Int)
+    dfs_tree(g, s)
 
-Provides a depth-first traversal of the graph `g` starting with source vertex `s`,
-and returns a directed acyclic graph of vertices in the order they were discovered.
+Return an ordered vector of vertices representing a directed acylic graph based on
+depth-first traversal of the graph `g` starting with source vertex `s`.
 """
-function dfs_tree(g::AbstractGraph, s::Int)
+function dfs_tree(g::AbstractGraph, s::Integer)
     nvg = nv(g)
     visitor = TreeDFSVisitor(nvg)
     traverse_graph!(g, DepthFirst(), s, visitor)

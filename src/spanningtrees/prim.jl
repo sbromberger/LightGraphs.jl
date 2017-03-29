@@ -1,21 +1,23 @@
-immutable PrimHeapEntry{T<:Real}
+struct PrimHeapEntry{T<:Real}
     edge::Edge
     dist::T
 end
 
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 
-"""Performs [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm)
-on a connected, non-directional graph `g`, having adjacency matrix `distmx`,
-and computes minimum spanning tree. Returns a `Vector{Edge}`,
-that contains the edges.
 """
-function prim_mst{T<:Real}(
-    g::AbstractGraph,
-    distmx::AbstractArray{T, 2} = DefaultDistance()
-    ) :: Vector{Edge}
+    prim_mst(g, distmx=DefaultDistance())
 
-    pq = Vector{PrimHeapEntry{T}}()
+Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
+distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm).
+Return a vector of edges.
+"""
+function prim_mst end
+@traitfn function prim_mst(
+    g::::(!IsDirected),
+    distmx::AbstractMatrix = DefaultDistance()
+    )
+    pq = Vector{PrimHeapEntry}()
     mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
@@ -39,18 +41,20 @@ function prim_mst{T<:Real}(
 end
 
 """
-Used to mark the visited vertices. Marks the vertex `v` of graph `g` true in the array `marked`
-and enters all its edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
+    visit!(g, v, marked, pq, distmx)
+
+Mark the vertex `v` of graph `g` true in the array `marked` and enter all its
+edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
-function visit!{T<:Real}(
+function visit!(
     g::AbstractGraph,
-    v::Int,
-    marked::AbstractArray{Bool, 1},
-    pq::Vector{PrimHeapEntry{T}},
-    distmx::AbstractArray{T, 2}
+    v::Integer,
+    marked::AbstractVector{Bool},
+    pq::AbstractVector,
+    distmx::AbstractMatrix
 )
     marked[v] = true
-    for w in fadj(g)[v]
+    for w in out_neighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
