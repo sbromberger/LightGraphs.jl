@@ -3,7 +3,7 @@
 
 
 """
-    connected_components!(label::Vector{Int}, g::AbstractGraph)
+    connected_components!(label::Vector{Int}, g::SimpleGraph)
 
 Fills `label` with the `id` of the connected component to which it belongs.
 
@@ -14,7 +14,7 @@ Output:
     c = labels[i] => vertex i belongs to component c.
     c is the smallest vertex id in the component.
 """
-function connected_components!(label::Vector{Int}, g::AbstractGraph)
+function connected_components!(label::Vector{Int}, g::SimpleGraph)
     # this version of connected components uses Breadth First Traversal
     # with custom visitor type in order to improve performance.
     # one BFS is performed for each component.
@@ -88,7 +88,7 @@ Returns the [connected components](https://en.wikipedia.org/wiki/Connectivity_(g
 of `g` as a vector of components, each represented by a
 vector of vertices belonging to the component.
 """
-function connected_components(g::AbstractGraph)
+function connected_components(g::SimpleGraph)
     label = zeros(Int, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -101,8 +101,8 @@ end
 Returns `true` if `g` is connected.
 For DiGraphs, this is equivalent to a test of weak connectivity.
 """
-is_connected(g::Graph) = ne(g)+1 >= nv(g) && length(connected_components(g)) == 1
-is_connected(g::DiGraph) = ne(g)+1 >= nv(g) && is_weakly_connected(g)
+is_connected(g::Graph) = length(connected_components(g)) == 1
+is_connected(g::DiGraph) = is_weakly_connected(g)
 
 """Returns connected components of the undirected graph of `g`."""
 weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
@@ -111,7 +111,7 @@ weakly_connected_components(g::DiGraph) = connected_components(Graph(g))
 is_weakly_connected(g::DiGraph) = length(weakly_connected_components(g)) == 1
 
 # Adapated from Graphs.jl
-type TarjanVisitor <: AbstractGraphVisitor
+type TarjanVisitor <: SimpleGraphVisitor
     stack::Vector{Int}
     onstack::BitVector
     lowlink::Vector{Int}
@@ -241,7 +241,7 @@ function attracting_components(g::DiGraph)
     return scc[attracting]
 end
 
-type NeighborhoodVisitor <: AbstractGraphVisitor
+type NeighborhoodVisitor <: SimpleGraphVisitor
     d::Int
     neigs::Vector{Int}
 end
@@ -264,7 +264,7 @@ Returns a vector of the vertices in `g` at distance less or equal to `d`
 from `v`. If `g` is a `DiGraph` the `dir` optional argument specifies the edge direction
 the edge direction with respect to `v` (i.e. `:in` or `:out`) to be considered.
 """
-function neighborhood(g::AbstractGraph, v::Int, d::Int; dir=:out)
+function neighborhood(g::SimpleGraph, v::Int, d::Int; dir=:out)
     @assert d >= 0 "Distance has to be greater then zero."
     visitor = NeighborhoodVisitor(d)
     push!(visitor.neigs, v)

@@ -73,7 +73,7 @@ end
 is_directed(g::DiGraph) = true
 
 function add_edge!(g::DiGraph, e::Edge)
-    s, d = Tuple(e)
+    s, d = e
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
     if inserted
@@ -104,7 +104,7 @@ end
 
 
 function has_edge(g::DiGraph, e::Edge)
-    u, v = Tuple(e)
+    u, v = e
     u > nv(g) || v > nv(g) && return false
     if degree(g,u) < degree(g,v)
         return length(searchsorted(fadj(g,u), v)) > 0

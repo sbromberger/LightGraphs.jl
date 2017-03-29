@@ -24,7 +24,7 @@
 """Calculates the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
 of the graph `g`.
 """
-function katz_centrality(g::AbstractGraph, α::Real = 0.3)
+function katz_centrality(g::SimpleGraph, α::Real = 0.3)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = speye(Float64, nvg)

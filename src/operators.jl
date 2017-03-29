@@ -66,7 +66,7 @@ edges.
 
 Put simply, the vertices and edges from graph `h` are appended to graph `g`.
 """
-function blkdiag{T<:AbstractGraph}(g::T, h::T)
+function blkdiag{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -85,7 +85,7 @@ Produces a graph with edges that are only in both graph `g` and graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
 """
-function intersect{T<:AbstractGraph}(g::T, h::T)
+function intersect{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -103,7 +103,7 @@ Produces a graph with edges in graph `g` that are not in graph `h`.
 
 Note that this function may produce a graph with 0-degree vertices.
 """
-function difference{T<:AbstractGraph}(g::T, h::T)
+function difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -122,7 +122,7 @@ and vice versa.
 
 Note that this function may produce a graph with 0-degree vertices.
 """
-function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
+function symmetric_difference{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -141,7 +141,7 @@ end
 
 Merges graphs `g` and `h` by taking the set union of all vertices and edges.
 """
-function union{T<:AbstractGraph}(g::T, h::T)
+function union{T<:SimpleGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 
@@ -213,46 +213,45 @@ function *{T<:Real}(g::DiGraph, v::Vector{T})
 end
 
 """sum(g,i) provides 1:indegree or 2:outdegree vectors"""
-function sum(g::AbstractGraph, dim::Int)
+function sum(g::SimpleGraph, dim::Int)
     dim == 1 && return indegree(g, vertices(g))
     dim == 2 && return outdegree(g, vertices(g))
     error("Graphs are only two dimensional")
 end
 
 
-size(g::AbstractGraph) = (nv(g), nv(g))
+size(g::SimpleGraph) = (nv(g), nv(g))
 """size(g,i) provides 1:nv or 2:nv else 1 """
 size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
 
 """sum(g) provides the number of edges in the graph"""
-sum(g::AbstractGraph) = ne(g)
+sum(g::SimpleGraph) = ne(g)
 
 """sparse(g) is the adjacency_matrix of g"""
-sparse(g::AbstractGraph) = adjacency_matrix(g)
+sparse(g::SimpleGraph) = adjacency_matrix(g)
 
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
-eltype(g::AbstractGraph) = Float64
-length(g::AbstractGraph) = nv(g)*nv(g)
-ndims(g::AbstractGraph) = 2
-issymmetric(g::AbstractGraph) = !is_directed(g)
+eltype(g::SimpleGraph) = Float64
+length(g::SimpleGraph) = nv(g)*nv(g)
+ndims(g::SimpleGraph) = 2
+issymmetric(g::SimpleGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)
 
 Returns the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
-function cartesian_product{G<:AbstractGraph}(g::G, h::G)
+function cartesian_product{G<:SimpleGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
-    for e in edges(g)
-        i1, i2 = Tuple(e)
+    for (i1, i2) in edges(g)
         for j=1:nv(h)
             add_edge!(z, id(i1,j), id(i2,j))
         end
     end
 
     for e in edges(h)
-        j1, j2 = Tuple(e)
+        j1, j2 = src(e), dst(e)
         for i=1:nv(g)
             add_edge!(z, id(i,j1), id(i,j2))
         end
@@ -265,13 +264,11 @@ end
 
 Returns the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs] of `g` and `h`
 """
-function tensor_product{G<:AbstractGraph}(g::G, h::G)
+function tensor_product{G<:SimpleGraph}(g::G, h::G)
     z = G(nv(g)*nv(h))
     id(i, j) = (i-1)*nv(h) + j
-    for e1 in edges(g)
-        i1, i2 = Tuple(e1)
-        for e2 in edges(h)
-            j1, j2 = Tuple(e2)
+    for (i1, i2) in edges(g)
+        for (j1, j2) in edges(h)
             add_edge!(z, id(i1, j1), id(i2, j2))
         end
     end
@@ -317,7 +314,7 @@ sg, vmap = subgraph(g, elist)
 @asssert sg == g[elist]
 ```
 """
-function induced_subgraph{T<:AbstractGraph}(g::T, vlist::AbstractVector{Int})
+function induced_subgraph{T<:SimpleGraph}(g::T, vlist::AbstractVector{Int})
     allunique(vlist) || error("Vertices in subgraph list must be unique")
     h = T(length(vlist))
     newvid = Dict{Int, Int}()
@@ -341,13 +338,13 @@ function induced_subgraph{T<:AbstractGraph}(g::T, vlist::AbstractVector{Int})
 end
 
 
-function induced_subgraph{T<:AbstractGraph}(g::T, elist::AbstractVector{Edge})
+function induced_subgraph{T<:SimpleGraph}(g::T, elist::AbstractVector{Edge})
     h = T()
     newvid = Dict{Int, Int}()
     vmap = Vector{Int}()
 
     for e in elist
-        u, v = Tuple(e)
+        u, v = e
         for i in (u,v)
             if !haskey(newvid, i)
                 add_vertex!(h)
@@ -366,7 +363,7 @@ end
 
 Returns the subgraph induced by `iter`. Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 """
-getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
+getindex(g::SimpleGraph, iter) = induced_subgraph(g, iter)[1]
 
 
 """
@@ -377,4 +374,4 @@ Returns the subgraph of `g` induced by the neighbors of `v` up to distance
 the edge direction the edge direction with respect to `v` (i.e. `:in` or `:out`)
 to be considered. This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
 """
-egonet(g::AbstractGraph, v::Int, d::Int; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+egonet(g::SimpleGraph, v::Int, d::Int; dir=:out) = g[neighborhood(g, v, d, dir=dir)]

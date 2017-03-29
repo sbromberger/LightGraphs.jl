@@ -28,7 +28,7 @@ end
 
 function loadgml_mult(io::IO)
     p = GML.parse_dict(readall(io))
-    graphs = Dict{String, AbstractGraph}()
+    graphs = Dict{String, SimpleGraph}()
     for gs in p[:graph]
         dir = Bool(get(gs, :directed, 0))
         graphname = get(gs, :label, dir ? "digraph" : "graph")
@@ -44,7 +44,7 @@ Writes a graph `g` with name `gname`
 to a file `f` in the
 [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language) format.
 """
-function savegml(io::IO, g::AbstractGraph, gname::String = "")
+function savegml(io::IO, g::SimpleGraph, gname::String = "")
     println(io, "graph")
     println(io, "[")
     length(gname) > 0 && println(io, "label \"$gname\"")
@@ -55,8 +55,7 @@ function savegml(io::IO, g::AbstractGraph, gname::String = "")
         println(io,"\t\tid $i")
         println(io,"\t]")
     end
-    for e in edges(g)
-        s, t = Tuple(e)
+    for (s,t) in edges(g)
         println(io,"\tedge")
         println(io,"\t[")
         println(io,"\t\tsource $s")

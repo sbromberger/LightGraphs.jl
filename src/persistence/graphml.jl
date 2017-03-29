@@ -56,7 +56,7 @@ function loadgraphml_mult(io::IO)
     name(xroot) == "graphml" || error("Not a GraphML file")
 
     # traverse all its child nodes and print element names
-    graphs = Dict{String, AbstractGraph}()
+    graphs = Dict{String, SimpleGraph}()
     for el in eachelement(xroot)
         if name(el) == "graph"
             edgedefault = el["edgedefault"]
@@ -106,7 +106,7 @@ function savegraphml_mult(io::IO, graphs::Dict)
     return length(graphs)
 end
 
-savegraphml(io::IO, g::AbstractGraph, gname::String) =
+savegraphml(io::IO, g::SimpleGraph, gname::String) =
     savegraphml_mult(io, Dict(gname=>g))
 
 filemap[:graphml] = (loadgraphml, loadgraphml_mult, savegraphml, savegraphml_mult)

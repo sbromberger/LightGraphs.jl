@@ -130,7 +130,7 @@ loadgraph6(io::IO, gname::String="g1") = loadgraph6_mult(io)[gname]
 Writes a graph `g` to a file `f` in the [Graph6](http://users.cecs.anu.edu.au/%7Ebdm/data/formats.txt) format.
 Returns 1 (number of graphs written).
 """
-function savegraph6(io::IO, g::AbstractGraph, gname::String = "g")
+function savegraph6(io::IO, g::SimpleGraph, gname::String = "g")
   str = _graphToG6String(g)
   println(io, str)
   return 1

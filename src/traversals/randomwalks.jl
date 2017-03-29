@@ -1,7 +1,7 @@
 """Performs a random walk on graph `g` starting at vertex `s` and continuing for
 a maximum of `niter` steps. Returns a vector of vertices visited in order.
 """
-function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
+function randomwalk(g::SimpleGraph, s::Integer, niter::Integer)
   s in vertices(g) || throw(BoundsError())
   visited = Vector{Int}()
   sizehint!(visited, niter)
@@ -83,7 +83,7 @@ end
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
 Returns a vector of vertices visited in order.
 """
-function saw(g::AbstractGraph, s::Integer, niter::Integer)
+function saw(g::SimpleGraph, s::Integer, niter::Integer)
   s in vertices(g) || throw(BoundsError())
   visited = Vector{Int}()
   svisited = Set{Int}()
