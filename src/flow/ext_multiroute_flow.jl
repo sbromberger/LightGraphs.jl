@@ -199,8 +199,6 @@ Requires argument:
 2) - points::Vector{Tuple{T, T, Int}}         # vector of points with T<:AbstractFloat
 - k::R<:Real                             # number of routes (slope of the line)
 """
-
-# Compute the (expected) intersection of two lines
 function intersection(
     x1::T,          # x coordinate of point 1
     y1::T,          # y coordinate of point 1
@@ -217,7 +215,7 @@ function intersection(
     y = a1 * x + b1
     return x, y
 end
-# Compute the intersection between a set of segment and a line of slope k passing by the origin
+
 
 """
     intersection(points, k)

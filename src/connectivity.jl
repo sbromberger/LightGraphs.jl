@@ -82,7 +82,7 @@ belonging to the component.
 For directed graphs, see [`strongly_connected_components`](@ref) and
 [`weakly_connected_components`](@ref).
 """
-function connected_compoenents end
+function connected_components end
 @traitfn function connected_components(g::::(!IsDirected))
     T = eltype(g)
     label = zeros(T, nv(g))

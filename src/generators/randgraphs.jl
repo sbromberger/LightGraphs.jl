@@ -285,7 +285,7 @@ end
 
 
 @doc_str """
-static_fitness_model(m, fitness)
+    static_fitness_model(m, fitness)
 
 Generate a random graph with ``|fitness|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional
@@ -391,9 +391,9 @@ proposed by Cho et al.
 Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ### References
-* Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
-* Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
-* Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
+- Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+- Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
+- Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
 function static_scale_free(n::Integer, m::Integer, α::Real; seed::Int=-1, finite_size_correction::Bool=true)
     @assert(n >= 0, "Invalid number of vertices")
@@ -631,12 +631,8 @@ end
 @doc_str """
     stochastic_block_model(cint, cext, n)
 
-Return a Graph generated according to the Stochastic Block Model (SBM).
-
-Samples from a SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
-
-### Optional Arguments
-- `seed=-1`: set the RNG seed.
+Return a Graph generated according to the Stochastic Block Model (SBM), sampling
+from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
 """
 function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T<:Real where U<:Integer
     K = length(n)
