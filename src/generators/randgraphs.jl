@@ -597,7 +597,7 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
     @assert size(c,2) == length(n)
     # init dsfmt generator without altering GLOBAL_RNG
     seed > 0 && Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
-    rng =  seed > 0 ? MersenneTwister(seed) : MersenneTwister()
+    rng =  MersenneTwister(max(0, seed))
 
     N = sum(n)
     K = length(n)
