@@ -53,12 +53,13 @@ fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 
 badj(x...) = _NI("badj")
 
-has_edge(g::AbstractSimpleGraph, u::Integer, v::Integer) = has_edge(g, edgetype(g)(u,v))
+# handles single-argument edge constructors such as pairs and tuples
+has_edge(g::AbstractSimpleGraph, x) = has_edge(g, edgetype(g)(x))
+add_edge!(g::AbstractSimpleGraph, x) = add_edge!(g, edgetype(g)(x))
 
-function add_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
-    T = eltype(g)
-    add_edge!(g, edgetype(g)(T(u),T(v)))
-end
+# handles two-argument edge constructors like src,dst
+has_edge(g::AbstractSimpleGraph, x, y) = has_edge(g, edgetype(g)(x, y))
+add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
 in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g,v)
 out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g,v)
