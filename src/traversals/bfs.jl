@@ -213,7 +213,11 @@ If a node `v` is specified, only the connected component to which it belongs is 
 """
 function is_bipartite(g::AbstractGraph)
     T = eltype(g)
-    cc = filter(x->length(x)>2, connected_components(g))
+    if !is_directed(g)
+        cc = filter(x->length(x)>2, connected_components(g))
+    else
+        cc = filter(x->length(x)>2, weakly_connected_components(g))
+    end
     vmap = Dict{T,Int}()
     for c in cc
         _is_bipartite(g,c[1], vmap=vmap) || return false
