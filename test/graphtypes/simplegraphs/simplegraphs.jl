@@ -51,6 +51,13 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         @test @inferred(has_edge(g, 2, 3))
         @test @inferred(has_edge(g, 3, 2))
+
+        gc = copy(g)
+        @test @inferred(add_edge!(gc, 4=>1)) && gc == CycleGraph(4)
+        @test @inferred(has_edge(gc, 4=>1)) && has_edge(gc, 0x04=>0x01)
+        gc = copy(g)
+        @test @inferred(add_edge!(gc, (4,1))) && gc == CycleGraph(4)
+        @test @inferred(has_edge(gc, (4,1))) && has_edge(gc, (0x04, 0x01))
         gc = copy(g)
         @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
 
@@ -105,6 +112,13 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         @test @inferred(has_edge(g, 2, 3))
         @test @inferred(!has_edge(g, 3, 2))
+
+        gc = copy(g)
+        @test @inferred(add_edge!(gc, 4=>1)) && gc == CycleDiGraph(4)
+        @test @inferred(has_edge(gc, 4=>1)) && has_edge(gc, 0x04=>0x01)
+        gc = copy(g)
+        @test @inferred(add_edge!(gc, (4,1))) && gc == CycleDiGraph(4)
+        @test @inferred(has_edge(gc, (4,1))) && has_edge(gc, (0x04, 0x01))
         gc = @inferred(copy(g))
         @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
 

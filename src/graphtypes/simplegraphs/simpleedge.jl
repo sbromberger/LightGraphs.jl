@@ -10,6 +10,8 @@ end
 
 SimpleEdge(t::Tuple) = SimpleEdge(t[1], t[2])
 SimpleEdge(p::Pair) = SimpleEdge(p.first, p.second)
+SimpleEdge{T}(p::Pair) where T<:Integer = SimpleEdge(T(p.first), T(p.second))
+SimpleEdge{T}(t::Tuple) where T<:Integer = SimpleEdge(T(t[1]), T(t[2]))
 
 eltype(e::T) where T<:AbstractSimpleEdge= eltype(src(e))
 
