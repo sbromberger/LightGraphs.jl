@@ -27,6 +27,7 @@ GRAPHS = Dict{String, Graph}(
 
 @benchgroup "LightGraphsBenchmarks" begin
   include("core.jl")
+  include("parallel/egonets.jl")
   include("insertions.jl")
   include("edges.jl")
   include("centrality.jl")
