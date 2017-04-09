@@ -81,13 +81,13 @@ function auxiliaryPoints end
             if expectedflow ≉ f # approximatively not equal (enforced by floating precision)
                 # if the slope difference between (middle) and left is at least 2
                 # push (left),(middle)
-                if s1 > s + 1 && (r2, f2) ≉ (r, f)
+                if s1 > s + 1 && !approximately_equal((r2, f2), (r, f))
                     q = (f1, s1, r1), (f, s, r)
                     push!(queue, q)
                 end
                 # if the slope difference between (middle) and right is at least 2
                 # push (middle),(right)
-                if s > s2 + 1 && (r1, f1) ≉ (r, f)
+                if s > s2 + 1 && !approximately_equal((r1, f1), (r, f))
                     q = (f, s, r), (f2, s2, r2)
                     push!(queue, q)
                 end
@@ -232,7 +232,7 @@ function intersection(
     # Loop over the segments (pair of breaking points)
     for (id, p) in enumerate(points[1:(end - 1)])
         if id == 1
-            (k ≈ λ) && return points[2]
+            k ≈ λ && return points[2]
         else
             x, y = intersection(p[1], p[2], p[3], 0., 0., k)
             (p[1] ≤ x ≤ points[id + 1][1]) && return x, y
@@ -243,9 +243,12 @@ function intersection(
 end
 
 """
-    ≈(a, b)
+    approximately_equal(a, b)
 
-Redefinition of ≈ (isapprox) for a pair of points `a` and `b`.
+Return true if each element in the tuple is approximately equal to its counterpart.
+
+### Implementation Notes:
+This is a separate function because we don't want to hijack isapprox for tuples.
 """
-≈(a::Tuple{T, T}, b::Tuple{T, T}) where T <: AbstractFloat =
+approximately_equal(a::Tuple{T, T}, b::Tuple{T, T}) where T <: AbstractFloat =
     a[1] ≈ b[1] && a[2] ≈ b[2]
