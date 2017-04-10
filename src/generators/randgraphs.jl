@@ -289,7 +289,7 @@ end
 
 Generate a random graph with ``|fitness|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional
-to ``fitness_i  × fitness_j`.
+to ``fitness_i  × fitness_j``.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
@@ -323,9 +323,9 @@ end
 @doc_str """
     static_fitness_model(m, fitness_out, fitness_in)
 
-Generate a random graph with ``|fitness_out + fitness_in|`` vertices and `m` edges,
+Generate a random graph with ``|fitness\_out + fitness\_in|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional with
-respect to ``i ∝ fitness_out`` and ``j ∝ fitness_in``.
+respect to ``i ∝ fitness\_out`` and ``j ∝ fitness\_in``.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
@@ -461,7 +461,7 @@ each with degree `k`.
 - `seed=-1`: set the RNG seed.
 
 ### Performance
-Time complexity is approximately ``nk^2``.
+Time complexity is approximately ``\\mathcal{O}(nk^2)``.
 
 ### Implementation Notes
 Allocates an array of `nk` `Int`s, and . For ``k > \\frac{n}{2}``, generates a graph of degree
@@ -505,7 +505,7 @@ containing `n` vertices, with each node `i` having degree `k[i]`.
 (see [`isgraphical`](@ref)).
 
 ### Performance
-Time complexity is approximately ``n \\bar{k}^2``.
+Time complexity is approximately ``\\mathcal{O}(n \\bar{k}^2)``.
 ### Implementation Notes
 Allocates an array of ``n \\bar{k}`` `Int`s.
 """
