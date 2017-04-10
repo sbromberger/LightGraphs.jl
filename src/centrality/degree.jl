@@ -24,7 +24,7 @@ Calculate the [degree centrality](https://en.wikipedia.org/wiki/Centrality#Degre
 of graph `g`. Return a vector representing the centrality calculated for each node in `g`.
 
 ### Optional Arguments
-- `normalize=true`: If true, normalize each centrality measure by ``\frac{1}{|V|-1}``.
+- `normalize=true`: If true, normalize each centrality measure by ``\\frac{1}{|V|-1}``.
 """
 degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
 indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
