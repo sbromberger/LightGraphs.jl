@@ -605,6 +605,8 @@ related functions.
 function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
     @assert size(c,1) == length(n)
     @assert size(c,2) == length(n)
+    # init dsfmt generator without altering GLOBAL_RNG
+    rng = getRNG(seed)
     N = sum(n)
     K = length(n)
     nedg = zeros(Int,K, K)
