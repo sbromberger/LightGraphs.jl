@@ -185,4 +185,4 @@ out_neighbors(x...) = _NI("out_neighbors")
 
 Return a zero-vertex, zero-edge version of the same type of graph as `g`.
 """
-zero(x...) = _NI("zero")
+zero(g::AbstractGraph) = _NI("zero")

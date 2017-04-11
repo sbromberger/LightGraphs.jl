@@ -14,7 +14,7 @@ vertices. Return a vector representing the centrality calculated for each node i
 - `normalize=true`: If true, normalize the betweenness values by the
 total number of possible distinct paths between all pairsin the graphs.
 For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
-and for a directed graph, ``\\frac{(|V|-1)(|V|-2)}``.
+and for a directed graph, ``{(|V|-1)(|V|-2)}``.
 - `endpoints=false`: If true, include endpoints in the shortest path count.
 
 Betweenness centrality is defined as:

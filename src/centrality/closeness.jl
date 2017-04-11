@@ -6,7 +6,7 @@ of the graph `g`. Return a vector representing the centrality calculated for eac
 
 ### Optional Arguments
 - `normalize=true`: If true, normalize the centrality value of each
-node `n` by ``\\frac{|δ_n|}{|V|-1}, where ``δ_n`` is the set of vertices reachable
+node `n` by ``\\frac{|δ_n|}{|V|-1}``, where ``δ_n`` is the set of vertices reachable
 from node `n`.
 """
 function closeness_centrality(
