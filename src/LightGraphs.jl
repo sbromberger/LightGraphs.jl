@@ -2,7 +2,6 @@ __precompile__(true)
 module LightGraphs
 
 using GZip
-using Distributions: Binomial
 using DataStructures
 using StatsBase: fit, Histogram
 using SimpleTraits
