@@ -8,7 +8,7 @@ Read a graph named `gname` from `file` in the format `format`.
 ### Implementation Notes
 `gname` is graph-format dependent and is only used if the file contains
 multiple graphs; if the file format does not support multiple graphs, this
-value is ignored.
+value is ignored. The default value may change in the future.
 """
 function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGraphFormat)
     GZip.open(fn,"r") do io
@@ -25,7 +25,8 @@ Load multiple graphs from `file` in the format `format`.
 Return a dictionary mapping graph name to graph.
 
 ### Implementation Notes
-For unnamed graphs the default name \"graph\" will be used.
+For unnamed graphs the default name \"graph\" will be used. This default
+may change in the future.
 """
 function loadgraphs(fn::AbstractString, format::AbstractGraphFormat)
     GZip.open(fn, "r") do io
@@ -42,6 +43,9 @@ loadgraphs(fn::AbstractString) = loadgraphs(fn, LGFormat())
 Saves a graph `g` with name `gname` to `file` in the format `format`.
 If `compress = true`, use GZip compression when writing the file.
 Return the number of graphs written.
+
+### Implementation Notes
+The default graph name assigned to `gname` may change in the future.
 """
 function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
         format::AbstractGraphFormat; compress=true
