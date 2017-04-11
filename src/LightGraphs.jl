@@ -81,7 +81,7 @@ contract,
 a_star,
 
 # persistence
-readgraph, load, save, savegraph, loadgraph,
+loadgraph, loadgraphs, savegraph, LGFormat,
 
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
