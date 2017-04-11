@@ -32,7 +32,7 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
 end
 
 # taken from http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
-function _getBinomial(n::Integer, p::Real, seed::Integer=-1)
+function randbn(n::Integer, p::Real, seed::Integer=-1)
     rng = getRNG(seed)
     log_q = log(1.0 - p)
     x = 0
@@ -58,7 +58,7 @@ probability `p`.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n*(n-1) : div(n*(n-1),2)
-    ne = _getBinomial(m, p)
+    ne = randbn(m, p, seed)
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -617,7 +617,7 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
 
             m = a==b ? div(n[a]*(n[a]-1),2) : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-            nedg = _getBinomial(m, p, seed)
+            nedg = randbn(m, p, seed)
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg
