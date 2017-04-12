@@ -31,7 +31,13 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
     return g
 end
 
-# taken from http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
+Return a binomally-distribted random number with parameters `n` and `p`.
+
+### References
+- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
+- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
 function randbn(n::Integer, p::Real, seed::Integer=-1)
     rng = getRNG(seed)
     log_q = log(1.0 - p)
