@@ -3,25 +3,29 @@ module LightGraphs
 
 using GZip
 using Distributions: Binomial
-using Base.Collections
+using DataStructures
 using EzXML
 using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
+using SimpleTraits
 
-import Base: write, ==, <, *, ≈, isless, issubset, union, intersect,
-            reverse, reverse!, blkdiag, getindex, setindex!, show, print, copy, in,
-            sum, size, sparse, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!
-
+import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
+            reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
+            print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
+            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
+            Pair, Tuple, zero
+export
+# Interface
+AbstractGraph, AbstractDiGraph, AbstractEdge, AbstractEdgeInter,
+Edge, Graph, DiGraph, vertices, edges, edgetype, nv, ne, src, dst,
+is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+has_vertex, has_edge, in_neighbors, out_neighbors,
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
-nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
-indegree, outdegree, degree, degree_histogram, density, Δ, δ,
-Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
-common_neighbors, all_neighbors, has_self_loops, num_self_loops,
-rem_vertex!,
+is_ordered, add_vertices!, indegree, outdegree, degree,
+Δout, Δin, δout, δin, Δ, δ, degree_histogram,
+neighbors, all_neighbors, common_neighbors,
+has_self_loops, num_self_loops, density, squash,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -39,7 +43,7 @@ join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet,
 
 # graph visit
-SimpleGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
+AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
 discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 
@@ -57,8 +61,9 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
-# cyclicity
-maxsimplecycles, simplecycles, simplecycles_iter, simplecyclescount, simplecycleslength,
+# cycles
+maxsimplecycles, simplecycles, simplecyclescount, simplecycles_iter,
+simplecycleslength,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -114,9 +119,12 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation
+articulation, biconnected_components
 
-"""An optimized graphs package.
+"""
+    LightGraphs
+
+An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs) are represented in a memory- and
 time-efficient manner with adjacency lists and edge sets. Both directed and
@@ -130,21 +138,27 @@ explicit design decision that any data not required for graph manipulation
 (attributes and other information, for example) is expected to be stored
 outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
+
+[Full documentation](http://codecov.io/github/JuliaGraphs/LightGraphs.jl) is available,
+and tutorials are available at the
+[JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
 LightGraphs
-
+include("interface.jl")
+include("deprecations.jl")
 include("core.jl")
-    include("digraph.jl")
+    include("graphtypes/simplegraphs/SimpleGraphs.jl")
+    const Graph = SimpleGraphs.SimpleGraph
+    const DiGraph = SimpleGraphs.SimpleDiGraph
+    const Edge = SimpleGraphs.SimpleEdge
+    include("digraph-cyclicity.jl")
     include("digraph-transitivity.jl")
-    include("graph.jl")
-        include("edgeiter.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
-	include("digraph-cyclicity.jl")
         include("distance.jl")
         include("edit_distance.jl")
         include("shortestpaths/astar.jl")
@@ -160,6 +174,7 @@ include("core.jl")
             include("persistence/gml.jl")
             include("persistence/graphml.jl")
             include("persistence/net.jl")
+            include("persistence/graph6.jl")
             include("persistence/jld.jl")
         include("generators/staticgraphs.jl")
             include("generators/randgraphs.jl")
@@ -187,5 +202,6 @@ include("core.jl")
         include("spanningtrees/kruskal.jl")
         include("spanningtrees/prim.jl")
         include("biconnectivity/articulation.jl")
+        include("biconnectivity/biconnect.jl")
 
 end # module
