@@ -1,4 +1,4 @@
-abstract Visitor
+abstract type Visitor end
 
 """
 ```ncycles_n_i(n::Integer, i::Integer)```
@@ -138,7 +138,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, allcycles::Vector{Vec
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in fadj(dg,v)
+    for w in out_neighbors(dg,v)
         if w == startnode
             push!(allcycles, vmap[vis.stack])
             done = true
@@ -149,7 +149,7 @@ function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, allcycles::Vector{Vec
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
     else
-        for w in fadj(dg, v)
+        for w in out_neighbors(dg, v)
             if !in(vis.blockedmap[w], v)
                 push!(vis.blockedmap[w], v)
             end
@@ -196,7 +196,7 @@ end
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
 """
-```circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, startnode = v)```
+```circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, cycle::Channel, startnode::Int = v)```
 
 One step of the recursive version of simple cycle detection, using a DFS algorithm.
 
@@ -212,28 +212,29 @@ The CIRCUIT function from [Johnson's algorithm](http://epubs.siam.org/doi/abs/10
     * blocked: tells whether a vertex has already been explored or not
     * blockedmap: mapping of the blocking / unblocking consequences
 * `vmap`: vector map containing the link from the old to the new nodes of the directed graph
+* `cycle`: storage of the channel
 * startnode = v: optional argument giving the starting node. In the first iteration,
 the same as v, otherwise it should be passed.
 
 # Returns
 * done: tells whether a circuit has been found in the current exploration.
 """
-function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, startnode = v)
+function circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor, vmap::Vector{Int}, cycle::Channel, startnode::Int = v)
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in fadj(dg, v)
+    for w in out_neighbors(dg, v)
         if w == startnode
-            produce(vmap[vis.stack])
+            put!(cycle, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            circuit(w, dg, vis, vmap, startnode) && (done = true)
+            circuit(w, dg, vis, vmap, cycle, startnode) && (done = true)
         end
     end
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
     else
-        for w in fadj(dg, v)
+        for w in out_neighbors(dg, v)
             if !in(vis.blockedmap[w], v)
                 push!(vis.blockedmap[w], v)
             end
@@ -245,7 +246,7 @@ end
 
 
 """
-```itercycles(dg::DiGraph)```
+```itercycles(dg::DiGraph, cycle::Channel)```
 
 Compute all cycles of the given directed graph, using
 [Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007).
@@ -255,8 +256,9 @@ after a given number of cycles.
 
 # Arguments:
 * `dg`: the directed graph we want to explore
+* `cycle`: the channel that will be loaded/unloaded
 """
-function itercycles(dg::DiGraph)
+function itercycles(dg::DiGraph, cycle::Channel)
     sccs = strongly_connected_components(dg)
     for scc in sccs
         while length(scc) > 1
@@ -264,7 +266,7 @@ function itercycles(dg::DiGraph)
             #startnode = 1
             shift!(scc)
             visitor = JohnsonVisitor(wdg)
-            circuit(1, wdg, visitor, vmap)
+            circuit(1, wdg, visitor, vmap, cycle)
         end
     end
 end
@@ -288,9 +290,9 @@ theoretical maximum number or cycles.
 * `len`: the number of cycles if below the ceiling, the ceiling otherwise
 """
 function simplecyclescount(dg::DiGraph, ceiling = 10^6)
-    t = Task(() -> itercycles(dg))
+    #t = Task(() -> itercycles(dg))
     len = 0
-    for cycle in take(t, ceiling)
+    for cycle in Iterators.take(Channel(c->itercycles(dg,c)), ceiling)
         len += 1
     end
     return len
@@ -318,8 +320,8 @@ To get an idea of the possible number of cycles, using function
 * all the cycles of the directed graph.
 """
 function simplecycles_iter(dg::DiGraph, ceiling = 10^6)
-    t = Task(() -> itercycles(dg))
-    return collect(take(t, ceiling))
+    #t = Task(() -> itercycles(dg))
+    return collect(Iterators.take(Channel(c->itercycles(dg,c)), ceiling))
 end
 
 """
@@ -340,10 +342,10 @@ To get an idea of the possible number of cycles, using function
 * `ncycles`: the number of cycles in the directed graph, up to the ceiling
 """
 function simplecycleslength(dg::DiGraph, ceiling = 10^6)
-    t = Task(() -> itercycles(dg))
+    #t = Task(() -> itercycles(dg))
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in take(t, ceiling)
+    for cycle in Iterators.take(Channel(c->itercycles(dg,c)), ceiling)
           cyclelength[length(cycle)] +=1
           ncycles += 1
     end
