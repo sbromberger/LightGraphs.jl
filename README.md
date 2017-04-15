@@ -123,8 +123,6 @@ These functions are defined as the public contract of the `LightGraphs.AbstractG
 - `vertices` (Iterable)
 - `edges` (Iterable)
 - `neighbors`, `in_neighbors`, `out_neighbors`
-- `in_edges`
-- `out_edges`
 - `has_vertex`
 - `has_edge`
 - `has_self_loops` (though this might be a trait or an abstract graph type)
