@@ -1,3 +1,6 @@
+# NOTE: These tests are not part of the active test suite, because they require Distributions.jl.
+# DO NOT INCORPORATE INTO runtests.jl.
+
 using Distributions
 using LightGraphs
 using StatsBase
