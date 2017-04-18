@@ -1,51 +1,44 @@
-"""
-```transitiveclosure!(dg::DiGraph, selflooped = false)```
+@doc_str """
+    transitiveclosure!(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm.
+algorithm. If `selflooped` is true, add self loops to the graph.
 
-Version of the function that modifies the original graph.
+### Performance
+Time complexity is \\mathcal{O}(|V|^3).
 
-Note: This is an O(V^3) algorithm.
-
-# Arguments
-* `dg`: the directed graph on which the transitive closure is computed.
-* `selflooped`: whether self loop should be added to the directed graph,
-default to `false`.
+### Implementation Notes
+This version of the function modifies the original graph.
 """
-function transitiveclosure!(dg::DiGraph, selflooped = false)
-    for k in vertices(dg)
-        for i in vertices(dg)
+function transitiveclosure! end
+@traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
+    for k in vertices(g)
+        for i in vertices(g)
             i == k && continue
-            for j in vertices(dg)
+            for j in vertices(g)
                 j == k && continue
-                if (has_edge(dg, i, k) && has_edge(dg, k, j))
+                if (has_edge(g, i, k) && has_edge(g, k, j))
                     if ( i != j || selflooped )
-                        add_edge!(dg, i, j)
+                        add_edge!(g, i, j)
                     end
                 end
             end
         end
     end
-    return dg
+    return g
 end
 
 """
-```transitiveclosure(dg::DiGraph, selflooped = false)```
+    transitiveclosure(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm.
+algorithm. Return a graph representing the transitive closure. If `selflooped`
+is `true`, add self loops to the graph.
 
-Version of the function that does not modify the original graph.
-
-Note: This is an O(V^3) algorithm.
-
-# Arguments
-* `dg`: the directed graph on which the transitive closure is computed.
-* `selflooped`: whether self loop should be added to the directed graph,
-default to `false`.
+### Performance
+Time complexity is \\mathcal{O}(|V|^3).
 """
-function transitiveclosure(dg::DiGraph, selflooped = false)
-    copydg = copy(dg)
-    return transitiveclosure!(copydg, selflooped)
+function transitiveclosure(g::DiGraph, selflooped = false)
+    copyg = copy(g)
+    return transitiveclosure!(copyg, selflooped)
 end

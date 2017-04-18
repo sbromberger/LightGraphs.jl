@@ -26,7 +26,7 @@ function _graphml_read_one_graph(el::EzXML.Node, isdirected::Bool)
 end
 
 function loadgraphml(io::IO, gname::String)
-    xdoc = parsexml(readall(io))
+    xdoc = parsexml(readstring(io))
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
 
@@ -51,7 +51,7 @@ function loadgraphml(io::IO, gname::String)
 end
 
 function loadgraphml_mult(io::IO)
-    xdoc = parsexml(readall(io))
+    xdoc = parsexml(readstring(io))
     xroot = root(xdoc)  # an instance of XMLElement
     name(xroot) == "graphml" || error("Not a GraphML file")
 

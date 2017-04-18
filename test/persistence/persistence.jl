@@ -1,4 +1,9 @@
 @testset "Persistence" begin
+    pdict = load(joinpath(testdir,"testdata","tutte-pathdigraph.jgz"))
+    p1 = pdict["Tutte"]
+    p2 = pdict["pathdigraph"]
+    g3 = PathGraph(5)
+
     function readback_test(format::Symbol, g::Graph, gname="g",
                            remove=true, fnamefio=mktemp())
         fname,fio = fnamefio

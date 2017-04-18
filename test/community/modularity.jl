@@ -2,9 +2,13 @@
     n = 10
     m = n*(n-1)/2
     c = ones(Int, n)
-    g = CompleteGraph(n)
-    @test  modularity(g, c) == 0
-    #
-    g = Graph(n)
-    @test modularity(g, c) == 0
+    gint = CompleteGraph(n)
+    for g in testgraphs(gint)
+      @test @inferred(modularity(g, c)) == 0
+    end
+
+    gint = Graph(n)
+    for g in testgraphs(gint)
+      @test @inferred(modularity(g, c)) == 0
+    end
 end

@@ -3,13 +3,16 @@ export non_backtracking_matrix,
         contract!,
         contract
 
-"""
-Given two oriented edges i->j and k->l in g, the
-non-backtraking matrix B is defined as
+@doc_str """
+    non_backtracking_matrix(g)
 
-B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+Return a non-backtracking matrix `B` and an edgemap storing the oriented
+edges' positions in `B`.
 
-returns a matrix B, and an edgemap storing the oriented edges' positions in B
+Given two arcs ``A_{i j}` and `A_{k l}` in `g`, the
+non-backtraking matrix ``B`` is defined as
+
+``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
     # idedgemap = Dict{Int, Edge}()
@@ -41,27 +44,28 @@ function non_backtracking_matrix(g::AbstractGraph)
     return B, edgeidmap
 end
 
-"""Nonbacktracking: a compact representation of the nonbacktracking operator
+@doc_str """
+    Nonbacktracking{G}
 
-    g: the underlying graph
-    edgeidmap: the association between oriented edges and index into the NBT matrix
+A compact representation of the nonbacktracking operator.
 
 The Nonbacktracking operator can be used for community detection.
 This representation is compact in that it uses only ne(g) additional storage
 and provides an implicit representation of the matrix B_g defined below.
 
-Given two oriented edges i->j and k->l in g, the
-non-backtraking matrix B is defined as
+Given two arcs ``A_{i j}` and `A_{k l}` in `g`, the
+non-backtraking matrix ``B`` is defined as
 
-B[i->j, k->l] = δ(j,k)* (1 - δ(i,l))
+``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 
 This type is in the style of GraphMatrices.jl and supports the necessary operations
 for computed eigenvectors and conducting linear solves.
 
-Additionally the contract!(vertexspace, nbt, edgespace) method takes vectors represented in
-the domain of B and represents them in the domain of the adjacency matrix of g.
+Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
+represented in the domain of ``B`` and represents them in the domain of the
+adjacency matrix of `g`.
 """
-type Nonbacktracking{G}
+struct Nonbacktracking{G<:AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -87,7 +91,7 @@ size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::Vector{T})
+function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e,u) in nbt.edgeidmap
@@ -128,7 +132,7 @@ end
 
 sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m,nbt.m)
 
-function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
+function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zeros(x)
     for i in 1:nbt.m
         y[:,i] = nbt * x[:,i]
@@ -136,20 +140,24 @@ function *{G, T<:Number}(nbt::Nonbacktracking{G}, x::AbstractMatrix{T})
     return y
 end
 
-"""contract!(vertexspace, nbt, edgespace) in place version of
-contract(nbt, edgespace). modifies first argument
+"""
+    contract!(vertexspace, nbt, edgespace)
+
+The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 """
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
-    for i=1:nv(nbt.g)
-        for j in neighbors(nbt.g, i)
-            u = nbt.edgeidmap[i > j ? Edge(j,i) : Edge(i,j)]
-            vertexspace[i] += edgespace[u]
-        end
+    T = eltype(nbt.g)
+    for i = one(T):nv(nbt.g), j in neighbors(nbt.g, i)
+        u = nbt.edgeidmap[i > j ? Edge(j,i) : Edge(i,j)]
+        vertexspace[i] += edgespace[u]
     end
 end
 
-"""contract(nbt, edgespace)
-Integrates out the edges by summing over the edges incident to each vertex.
+#TODO: documentation needs work. sbromberger 20170326
+"""
+    contract(nbt, edgespace)
+
+Integrate out the edges by summing over the edges incident to each vertex.
 """
 function contract(nbt::Nonbacktracking, edgespace::Vector)
     y = zeros(eltype(edgespace), nv(nbt.g))

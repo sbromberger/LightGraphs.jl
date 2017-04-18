@@ -1,24 +1,30 @@
 """
-Community detection using the label propagation algorithm (see [Raghavan et al.](http://arxiv.org/abs/0709.2938)).
-`g`: input Graph
-`maxiter`: maximum number of iterations
-return : vertex assignments and the convergence history
+    label_propagation(g, maxiter=1000)
+
+Community detection using the label propagation algorithm.
+Return two vectors: the first is the label number assigned to each node, and
+the second is the convergence history for each node. Will return after
+`maxiter` iterations if convergence has not completed.
+
+### References
+- [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph; maxiter=1000)
+function label_propagation(g::AbstractGraph, maxiter=1000)
+    T = eltype(g)
     n = nv(g)
-    label = collect(1:n)
-    active_nodes = IntSet(vertices(g))
-    c = NeighComm(collect(1:n), fill(-1,n), 1)
+    label = collect(one(T):n)
+    active_vs = IntSet(vertices(g))
+    c = NeighComm(collect(one(T):n), fill(-1,n), one(T))
     convergence_hist = Vector{Int}()
-    random_order = Array(Int, n)
+    random_order = Vector{T}(n)
     i = 0
-    while !isempty(active_nodes) && i < maxiter
-        num_active = length(active_nodes)
+    while !isempty(active_vs) && i < maxiter
+        num_active = length(active_vs)
         push!(convergence_hist, num_active)
         i += 1
 
-        # processing nodes in random order
-        for (j,node) in enumerate(active_nodes)
+        # processing vertices in random order
+        for (j,node) in enumerate(active_vs)
             random_order[j] = node
         end
         range_shuffle!(1:num_active, random_order)
@@ -28,10 +34,10 @@ function label_propagation(g::AbstractGraph; maxiter=1000)
             label[u] = vote!(g, label, c, u)
             if old_comm != label[u]
                 for v in out_neighbors(g, u)
-                    push!(active_nodes, v)
+                    push!(active_vs, v)
                 end
             else
-                delete!(active_nodes, u)
+                delete!(active_vs, u)
             end
         end
     end
@@ -40,14 +46,22 @@ function label_propagation(g::AbstractGraph; maxiter=1000)
     label, convergence_hist
 end
 
-"""Type to record neighbor labels and their counts."""
-type NeighComm
-  neigh_pos::Vector{Int}
-  neigh_cnt::Vector{Int}
-  neigh_last::Int
+"""
+    NeighComm{T}
+
+Type to record neighbor labels and their counts.
+"""
+mutable struct NeighComm{T<:Integer}
+    neigh_pos::Vector{T}
+    neigh_cnt::Vector{Int}
+    neigh_last::T
 end
 
-"""Fast shuffle Array `a` in UnitRange `r` inplace."""
+"""
+    range_shuffle!(r, a)
+
+Fast shuffle Array `a` in UnitRange `r`.
+"""
 function range_shuffle!(r::UnitRange, a::AbstractVector)
     (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
     @inbounds for i=length(r):-1:2
@@ -58,8 +72,12 @@ function range_shuffle!(r::UnitRange, a::AbstractVector)
     end
 end
 
-"""Return the most frequency label."""
-function vote!(g::AbstractGraph, m::Vector{Int}, c::NeighComm, u::Int)
+"""
+    vote!(g, m, c, u)
+
+Return the label with greatest frequency.
+"""
+function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     @inbounds for i=1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -77,19 +95,19 @@ function vote!(g::AbstractGraph, m::Vector{Int}, c::NeighComm, u::Int)
         end
         c.neigh_cnt[neigh_comm] += 1
         if c.neigh_cnt[neigh_comm] > max_cnt
-          max_cnt = c.neigh_cnt[neigh_comm]
+            max_cnt = c.neigh_cnt[neigh_comm]
         end
     end
     # ties breaking randomly
     range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
     for lbl in c.neigh_pos
-      if c.neigh_cnt[lbl] == max_cnt
-        return lbl
-      end
+        if c.neigh_cnt[lbl] == max_cnt
+            return lbl
+        end
     end
 end
 
-function renumber_labels!(membership::Vector{Int}, label_counters::Vector{Int})
+function renumber_labels!(membership::Vector, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     j = 1

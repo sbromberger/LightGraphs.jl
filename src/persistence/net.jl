@@ -1,37 +1,40 @@
 
 """
-Writes a graph `g` to a file `f` in the [Pajek
-NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
-Returns 1 (number of graphs written).
+    savenet(io, g, gname="g")
+
+Write a graph `g` to an IO stream `io` in the [Pajek NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/)
+format. Return 1 (number of graphs written).
 """
-function savenet(f::IO, g::AbstractGraph, gname::String = "g")
-    println(f, "*Vertices $(nv(g))")
+function savenet(io::IO, g::AbstractGraph, gname::String = "g")
+    println(io, "*Vertices $(nv(g))")
     # write edges
     if is_directed(g)
-        println(f, "*Arcs")
+        println(io, "*Arcs")
     else
-        println(f, "*Edges")
+        println(io, "*Edges")
     end
     for e in edges(g)
-        println(f, "$(src(e)) $(dst(e))")
+        println(io, "$(src(e)) $(dst(e))")
     end
     return 1
 end
 
 
-"""Reads a graph from file `fname` in the [Pajek
- NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/) format.
- Returns the graph.
 """
-function loadnet(f::IO, gname::String = "g")
-    line =readline(f)
+    loadnet(io::IO, gname="g")
+
+Read a graph from IO stream `io` in the [Pajek NET](http://gephi.github.io/users/supported-graph-formats/pajek-net-format/)
+format. Return the graph.
+"""
+function loadnet(io::IO, gname::String = "g")
+    line =readline(io)
     # skip comments
     while startswith(line, "%")
-        line =readline(f)
+        line =readline(io)
     end
     n = parse(Int, matchall(r"\d+",line)[1])
-    for fline in eachline(f)
-        line = fline
+    for ioline in eachline(io)
+        line = ioline
         (ismatch(r"^\*Arcs",line) || ismatch(r"^\*Edges",line)) && break
     end
     if ismatch(r"^\*Arcs",line)
@@ -40,16 +43,16 @@ function loadnet(f::IO, gname::String = "g")
         g = Graph(n)
     end
     while ismatch(r"^\*Arcs",line)
-        for fline in eachline(f)
-            line = fline
+        for ioline in eachline(io)
+            line = ioline
             m = matchall(r"\d+",line)
             length(m) < 2 && break
             add_edge!(g, parse(Int, m[1]), parse(Int, m[2]))
         end
     end
     while ismatch(r"^\*Edges",line) # add edges in both directions
-        for fline in eachline(f)
-            line = fline
+        for ioline in eachline(io)
+            line = ioline
             m = matchall(r"\d+",line)
             length(m) < 2 && break
             i1,i2 = parse(Int, m[1]), parse(Int, m[2])

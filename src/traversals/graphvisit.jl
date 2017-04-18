@@ -3,7 +3,7 @@
 
 # The concept and trivial implementation of graph visitors
 
-abstract AbstractGraphVisitor
+abstract type AbstractGraphVisitor end
 
 # trivial implementation
 
@@ -21,17 +21,17 @@ examine_neighbor!(vis::AbstractGraphVisitor, u, v, ucolor::Int, vcolor::Int, eco
 close_vertex!(vis::AbstractGraphVisitor, v) = true
 
 
-type TrivialGraphVisitor <: AbstractGraphVisitor
+struct TrivialGraphVisitor <: AbstractGraphVisitor
 end
 
 
 # This is the common base for BreadthFirst and DepthFirst
-abstract AbstractGraphVisitAlgorithm
+abstract type AbstractGraphVisitAlgorithm end
 
-typealias AbstractEdgeMap{T} Associative{Edge,T}
-typealias AbstractVertexMap{T} Union{AbstractVector{T},Associative{Int, T}}
+const AbstractEdgeMap{T} = Associative{Edge,T}
+const AbstractVertexMap{T<:Integer, U} = Union{AbstractVector{T},Associative{T, U}}
 
-type DummyEdgeMap <: AbstractEdgeMap{Int}
+struct DummyEdgeMap <: AbstractEdgeMap{Int}
 end
 
 getindex(d::DummyEdgeMap, e::Edge) = 0
@@ -47,54 +47,54 @@ get(d::DummyEdgeMap, e::Edge, x::Int) = x
 
 # List vertices by the order of being discovered
 
-type VertexListVisitor <: AbstractGraphVisitor
-    vertices::Vector{Int}
-
-    function VertexListVisitor(n::Integer=0)
-        vs = Vector{Int}()
-        sizehint!(vs, n)
-        new(vs)
-    end
+struct VertexListVisitor{T<:Integer} <: AbstractGraphVisitor
+    vertices::Vector{T}
 end
 
-function discover_vertex!(visitor::VertexListVisitor, v::Int)
+function VertexListVisitor(n::T=0) where T<:Integer
+    vs = Vector{T}()
+    sizehint!(vs, n)
+    return VertexListVisitor(vs)
+end
+
+function discover_vertex!(visitor::VertexListVisitor, v::Integer)
     push!(visitor.vertices, v)
     return true
 end
 
 function visited_vertices(
-    graph::AbstractGraph,
+    g::AbstractGraph,
     alg::AbstractGraphVisitAlgorithm,
     sources)
-
-    visitor = VertexListVisitor(nv(graph))
-    traverse_graph!(graph, alg, sources, visitor)
-    visitor.vertices::Vector{Int}
+    T = eltype(g)
+    visitor = VertexListVisitor(nv(g))
+    traverse_graph!(g, alg, sources, visitor)
+    visitor.vertices::Vector{T}
 end
 
 
 # Print visit log
 
-type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
+struct LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
 end
 
-function discover_vertex!(vis::LogGraphVisitor, v::Int)
+function discover_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "discover vertex: $v")
     return true
 end
 
-function open_vertex!(vis::LogGraphVisitor, v::Int)
+function open_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "open vertex: $v")
     return true
 end
 
-function close_vertex!(vis::LogGraphVisitor, v::Int)
+function close_vertex!(vis::LogGraphVisitor, v::Integer)
     println(vis.io, "close vertex: $v")
     return true
 end
 
-function examine_neighbor!(vis::LogGraphVisitor, u::Int, v::Int, ucolor::Int, vcolor::Int, ecolor::Int)
+function examine_neighbor!(vis::LogGraphVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     println(vis.io, "examine neighbor: $u -> $v (ucolor = $ucolor, vcolor = $vcolor, edgecolor= $ecolor)")
     return true
 end

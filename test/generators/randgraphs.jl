@@ -1,4 +1,7 @@
-@testset "Rand graphs" begin
+@testset "Randgraphs" begin
+    r1 = Graph(10,20)
+    r2 = DiGraph(5,10)
+
     @test nv(r1) == 10
     @test ne(r1) == 20
     @test nv(r2) == 5
@@ -195,21 +198,31 @@
         intra = density * -0.005
         noise = density * 0.00501
         sbm = nearbipartiteSBM(sizes, between, intra, noise)
-        edgestream = @task make_edgestream(sbm)
+        edgestream = make_edgestream(sbm)
         g = Graph(sum(sizes), numedges, edgestream)
         return sbm, g
     end
 
+
+    function test_sbm(sbm, bp)
+        @test sum(sbm.affinities) != NaN
+        @test all(sbm.affinities .> 0)
+        @test sum(sbm.affinities) != 0
+        @test all(bp .>= 0)
+        @test all(bp .!= NaN)
+    end
 
     numedges = 100
     sizes = [10, 10, 10, 10]
 
     n = sum(sizes)
     sbm, g = generate_nbp_sbm(numedges, sizes)
+    @test ne(g) >= 0.9numedges
     bc = blockcounts(sbm, g)
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(ratios) < 0.25
+    test_sbm(sbm, bp)
+    @test norm(collect(ratios)) < 0.25
 
     sizes = [200, 200, 100]
     internaldeg = 15
@@ -220,12 +233,14 @@
     numedges *= div(sum(sizes), 2)
     sbm = StochasticBlockModel(internalp, externalp, sizes)
     g = Graph(sum(sizes), numedges, sbm)
+    @test ne(g) >= 0.9numedges
     @test ne(g) <= numedges
     @test nv(g) == sum(sizes)
     bc = blockcounts(sbm, g)
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
+    test_sbm(sbm, bp)
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(ratios) < 0.25
+    @test norm(collect(ratios)) < 0.25
 
     # check that average degree is not too high
     # factor of two is cushion for random process
@@ -240,4 +255,5 @@
     @test sbm == sbm2
     sbm.affinities[1,1] = 0
     @test sbm != sbm2
+
 end

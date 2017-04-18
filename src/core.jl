@@ -1,229 +1,101 @@
-abstract AbstractPathState
+abstract type AbstractPathState end
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
-_insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
-
-"""A type representing a single edge between two vertices of a graph."""
-abstract AbstractEdge
-immutable Edge <: AbstractEdge
-    src::Int
-    dst::Int
-end
-
-show(io::IO, e::Edge) = print(io, "Edge $(e.src) => $(e.dst)")
-
-"""Return source of an edge."""
-src(e::Edge) = e.src
-"""Return destination of an edge."""
-dst(e::Edge) = e.dst
-
-convert(::Type{Pair}, e::Edge) = Pair(src(e), dst(e))
-convert(::Type{Tuple}, e::Edge) = (src(e), dst(e))
-
-reverse(e::Edge) = Edge(dst(e), src(e))
-is_ordered(e::Edge) = src(e) <= dst(e)
-
-==(e1::Edge, e2::Edge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
-
-"""An abstract type representing a graph."""
-abstract AbstractGraph
-
-"""A type representing an undirected graph."""
-type Graph <: AbstractGraph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-end
-
-"""A type representing a directed graph."""
-type DiGraph <: AbstractGraph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
-end
-
-"""Return the vertices of a graph."""
-vertices(g::AbstractGraph) = g.vertices
-
-"""Return an iterator to the edges of a graph.
-The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
-"""
-edges(g::AbstractGraph) = EdgeIter(g)
-
-"""Returns the forward adjacency list of a graph.
-
-The Array, where each vertex the Array of destinations for each of the edges eminating from that vertex.
-This is equivalent to:
-
-    fadj = [Vector{Int}() for _ in vertices(g)]
-    for e in edges(g)
-        push!(fadj[src(e)], dst(e))
-    end
-    fadj
-
-For most graphs types this is pre-calculated.
-
-The optional second argument take the `v`th vertex adjacency list, that is:
-
-    fadj(g, v::Int) == fadj(g)[v]
-
-NOTE: returns a reference, not a copy. Do not modify result.
-"""
-fadj(g::AbstractGraph) = g.fadjlist
-fadj(g::AbstractGraph, v::Int) = g.fadjlist[v]
-
-"""Returns true if all of the vertices and edges of `g` are contained in `h`."""
-function issubset{T<:AbstractGraph}(g::T, h::T)
-    (gmin, gmax) = extrema(vertices(g))
-    (hmin, hmax) = extrema(vertices(h))
-    return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
-end
-
-
-"""Add `n` new vertices to the graph `g`. Returns true if all vertices
-were added successfully, false otherwise."""
-function add_vertices!(g::AbstractGraph, n::Integer)
-    added = true
-    for i = 1:n
-        added &= add_vertex!(g)
-    end
-    return added
-end
-
-"""Return true if the graph `g` has an edge from `u` to `v`."""
-has_edge(g::AbstractGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
+_insert_and_dedup!{T<:Integer}(v::Vector{T}, x::T) = isempty(splice!(v, searchsorted(v,x), x))
 
 """
-    in_edges(g, v)
-
-Returns an Array of the edges in `g` that arrive at vertex `v`.
-`v=dst(e)` for each returned edge `e`.
+    is_ordered(e)
+Return true if the source vertex of edge `e` is less than or equal to
+the destination vertex.
 """
-in_edges(g::AbstractGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
-
-"""
-    out_edges(g, v)
-
-Returns an Array of the edges in `g` that depart from vertex `v`.
-`v = src(e)` for each returned edge `e`.
-"""
-out_edges(g::AbstractGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
-
-
-"""Return true if `v` is a vertex of `g`."""
-has_vertex(g::AbstractGraph, v::Int) = v in vertices(g)
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
-    nv(g)
-
-The number of vertices in `g`.
+    add_vertices!(g, n)
+Add `n` new vertices to the graph `g`.
+Return `true` if all vertices were added successfully, `false` otherwise.
 """
-nv(g::AbstractGraph) = length(vertices(g))
-"""
-    ne(g)
-
-The number of edges in `g`.
-"""
-ne(g::AbstractGraph) = g.ne
+add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i=1:n])
 
 """
-    add_edge!(g, u, v)
+    indegree(g[, v])
 
-Add a new edge to `g` from `u` to `v`.
-Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
+Return a vector corresponding to the number of edges which end at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-add_edge!(g::AbstractGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
-
-"""
-    rem_edge!(g, u, v)
-
-Remove the edge from `u` to `v`.
-
-Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
-"""
-rem_edge!(g::AbstractGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
+indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
+indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g,x) for x in v]
 
 """
-    rem_vertex!(g, v)
+    outdegree(g[, v])
 
-Remove the vertex `v` from graph `g`.
-This operation has to be performed carefully if one keeps external data structures indexed by
-edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
-and removing the vertex `n` from the graph.
-After removal the vertices in the ` g` will be indexed by 1:n-1.
-This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
-Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
+Return a vector corresponding to the number of edges which start at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-function rem_vertex!(g::AbstractGraph, v::Int)
-    v in vertices(g) || return false
-    n = nv(g)
+outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
+outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g,x) for x in v]
 
-    edgs = in_edges(g, v)
-    for e in edgs
-        rem_edge!(g, e)
-    end
-    neigs = copy(in_neighbors(g, n))
-    for i in neigs
-        rem_edge!(g, Edge(i, n))
-    end
-    if v != n
-        for i in neigs
-            add_edge!(g, Edge(i, v))
-        end
-    end
+"""
+    degree(g[, v])
+Return a vector corresponding to the number of edges which start or end at each
+vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+For directed graphs, this value equals the incoming plus outgoing edges.
+For undirected graphs, it equals the connected edges.
+"""
+function degree end
+@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
+@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
 
-    if is_directed(g)
-        edgs = out_edges(g, v)
-        for e in edgs
-            rem_edge!(g, e)
-        end
-        neigs = copy(out_neighbors(g, n))
-        for i in neigs
-            rem_edge!(g, Edge(n, i))
-        end
-        if v != n
-            for i in neigs
-                add_edge!(g, Edge(v, i))
-            end
-        end
-    end
+degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
 
-    g.vertices = 1:n-1
-    pop!(g.fadjlist)
-    if is_directed(g)
-        pop!(g.badjlist)
-    end
-    return true
-end
+"""
+    Δout(g)
 
-"""Return the number of edges which end at vertex `v`."""
-indegree(g::AbstractGraph, v::Int) = length(badj(g,v))
-"""Return the number of edges which start at vertex `v`."""
-outdegree(g::AbstractGraph, v::Int) = length(fadj(g,v))
-
-
-indegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
-outdegree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
-degree(g::AbstractGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
-
-"Return the maximum `outdegree` of vertices in `g`."
+Return the maximum [`outdegree`](@ref) of vertices in `g`.
+"""
 Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
-"Return the minimum `outdegree` of vertices in `g`."
-δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
-"Return the maximum `indegree` of vertices in `g`."
-Δin(g)  = noallocextreme(indegree,(>), typemin(Int), g)
-"Return the minimum `indegree` of vertices in `g`."
-δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
-"Return the maximum `degree` of vertices in `g`."
-Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
-"Return the minimum `degree` of vertices in `g`."
-δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
+"""
+    δout(g)
 
-"Computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
+Return the minimum [`outdegree`](@ref) of vertices in `g`.
+"""
+δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
+
+"""
+    Δin(g)
+
+Return the maximum [`indegree`](@ref) of vertices in `g`.
+"""
+Δin(g) = noallocextreme(indegree,(>), typemin(Int), g)
+
+"""
+    δin(g)
+
+Return the minimum [`indegree`](ref) of vertices in `g`.
+"""
+δin(g) = noallocextreme(indegree,(<), typemax(Int), g)
+
+"""
+    Δ(g)
+
+Return the maximum [`degree`](@ref) of vertices in `g`.
+"""
+Δ(g) = noallocextreme(degree,(>), typemin(Int), g)
+
+"""
+    δ(g)
+Return the minimum [`degree`](@ref) of vertices in `g`.
+"""
+δ(g) = noallocextreme(degree,(<), typemax(Int), g)
+
+
+"""
+    noallocextreme(f, comparison, initial, g)
+Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
+"""
 function noallocextreme(f, comparison, initial, g)
     value = initial
-    for i in 1:nv(g)
+    for i in vertices(g)
         funci = f(g, i)
         if comparison(funci, value)
             value = funci
@@ -235,37 +107,88 @@ end
 """
     degree_histogram(g)
 
-Returns a `StatsBase.Histogram` of the degrees of vertices in `g`.
+Return a `StatsBase.Histogram` of the degrees of vertices in `g`.
 """
 degree_histogram(g::AbstractGraph) = fit(Histogram, degree(g))
 
-"""Returns a list of all neighbors connected to vertex `v` by an incoming edge.
-
-NOTE: returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(g::AbstractGraph, v::Int) = badj(g,v)
-"""Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
+    neighbors(g, v)
 
-NOTE: returns a reference, not a copy. Do not modify result.
+Return a list of all neighbors reachable from vertex `v` in `g`.
+For directed graphs, the default is equivalent to [`out_neighbors`](@ref);
+use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
+
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(g::AbstractGraph, v::Int) = fadj(g,v)
+neighbors(g::AbstractGraph, v::Integer) = out_neighbors(g, v)
 
-"""Returns a list of all neighbors of vertex `v` in `g`.
-
-For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
-
-NOTE: returns a reference, not a copy. Do not modify result.
 """
-neighbors(g::AbstractGraph, v::Int) = out_neighbors(g, v)
+    all_neighbors(g, v)
+Return a list of all inbound and outbound neighbors of `v` in `g`.
+For undirected graphs, this is equivalent to both [`out_neighbors`](@ref)
+and [`in_neighbors`](@ref).
 
-"Returns the neighbors common to vertices `u` and `v` in `g`."
-common_neighbors(g::AbstractGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
+"""
+function all_neighbors end
+@traitfn all_neighbors(g::::IsDirected, v::Integer) =
+    union(out_neighbors(g, v), in_neighbors(g, v))
+@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
+    neighbors(g, v)
 
-@deprecate has_self_loop has_self_loops
 
-"Returns true if `g` has any self loops."
+"""
+    common_neighbors(g, u, v)
 
-has_self_loops(g::AbstractGraph) = any(v->has_edge(g, v, v), vertices(g))
+Return the neighbors common to vertices `u` and `v` in `g`.
 
-"Returns the number of self loops in `g`."
-num_self_loops(g::AbstractGraph) = sum(v->has_edge(g, v, v), vertices(g))
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
+"""
+common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
+    intersect(neighbors(g, u), neighbors(g, v))
+
+"""
+    has_self_loops(g)
+
+Return true if `g` has any self loops.
+"""
+has_self_loops(g::AbstractGraph) = nv(g) == 0? false : any(v->has_edge(g, v, v), vertices(g))
+
+"""
+    num_self_loops(g)
+
+Return the number of self loops in `g`.
+"""
+num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v->has_edge(g, v, v), vertices(g))
+
+@doc_str """
+    density(g)
+Return the density of `g`.
+Density is defined as the ratio of the number of actual edges to the
+number of possible edges (``|V|×(|V|-1)`` for directed graphs and
+``\\frac{|V|×(|V|-1)}{2}`` for undirected graphs).
+"""
+function density end
+@traitfn density(g::::IsDirected) =
+ne(g) / (nv(g) * (nv(g)-1))
+@traitfn density(g::::(!IsDirected)) =
+(2*ne(g)) / (nv(g) * (nv(g)-1))
+
+
+"""
+    squash(g)
+
+Return a copy of a graph with the smallest practical type that
+can accommodate all vertices.
+"""
+function squash(g::AbstractGraph)
+    gtype = is_directed(g)? DiGraph : Graph
+    validtypes = [UInt8, UInt16, UInt32, UInt64, Int]
+    nvg = nv(g)
+    for T in validtypes
+        nvg < typemax(T) && return gtype{T}(g)
+    end
+end

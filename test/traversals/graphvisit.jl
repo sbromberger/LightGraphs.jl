@@ -1,30 +1,39 @@
 @testset "Graph visit" begin
-    # stub tests for coverage; disregards output.
+    g6 = smallgraph(:house)
+    for g in testgraphs(g6)
+      # stub tests for coverage; disregards output.
 
-    f = IOBuffer()
+      f = IOBuffer()
 
-    @test traverse_graph_withlog(g6, BreadthFirst(), [1;], f) == nothing
+      @test @inferred(traverse_graph_withlog(g, BreadthFirst(), [1;], f)) == nothing
+      @test @inferred(visited_vertices(g, BreadthFirst(), [1;])) == [1, 2, 3, 4, 5]
 
-    @test visited_vertices(g6, BreadthFirst(), [1;]) == [1, 2, 3, 4, 5]
 
+      vis = TrivialGraphVisitor()
+      @test discover_vertex!(vis, 1)
+      @test open_vertex!(vis, 1)
+      @test examine_neighbor!(vis, 1, 1, 0, 0, 0)
+      @test close_vertex!(vis, 1)
 
-    function trivialgraphvisit(
-        g::AbstractGraph,
-        alg::LightGraphs.AbstractGraphVisitAlgorithm,
-        sources
-    )
-        visitor = TrivialGraphVisitor()
-        traverse_graph!(g, alg, sources, visitor)
+      function trivialgraphvisit(
+          g::AbstractGraph,
+          alg::LightGraphs.AbstractGraphVisitAlgorithm,
+          sources
+      )
+          visitor = TrivialGraphVisitor()
+          @inferred(traverse_graph!(g, alg, sources, visitor))
+      end
+
+      @test trivialgraphvisit(g, BreadthFirst(), 1) == nothing
+
+      # this just exercises some graph visitors
+      @test @inferred(traverse_graph!(g, BreadthFirst(), 1, TrivialGraphVisitor())) == nothing
+      @test @inferred(traverse_graph!(g, BreadthFirst(), 1, LogGraphVisitor(IOBuffer()))) == nothing
     end
-
-    @test trivialgraphvisit(g6, BreadthFirst(), 1) == nothing
-
-    # this just exercises some graph visitors
-    @test traverse_graph!(g6, BreadthFirst(), 1, TrivialGraphVisitor()) == nothing
-    @test traverse_graph!(g6, BreadthFirst(), 1, LogGraphVisitor(IOBuffer())) == nothing
-
     # dummy edge map test
-    d = LightGraphs.DummyEdgeMap()
+    d = @inferred(LightGraphs.DummyEdgeMap())
+
     e = Edge(1,2)
     @test d[e] == 0
+    @test getindex(d, e) == 0
 end
