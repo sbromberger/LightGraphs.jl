@@ -21,6 +21,11 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     g = copy(g3)
     add_edge!(g,1,1)
     @test adjacency_matrix(g)[1,1] == 2
+    g = copy(g5)
+    add_edge!(g,1,1)
+    @test adjacency_matrix(g)[1,1] == 1
+    @test indegree(g) == sum(adjacency_matrix(g), 1)[1,:]
+    @test outdegree(g) == sum(adjacency_matrix(g), 2)[:,1]
 
     g10 = CompleteGraph(10)
     B, em = non_backtracking_matrix(g10)
