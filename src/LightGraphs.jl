@@ -60,6 +60,9 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
+# cyclicity
+maxsimplecycles, simplecycles, simplecycles_iter, simplecyclescount, simplecycleslength,
+
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
@@ -154,6 +157,7 @@ include("core.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
         include("connectivity.jl")
+		include("digraph-cyclicity.jl")
         include("distance.jl")
         include("edit_distance.jl")
         include("shortestpaths/astar.jl")
