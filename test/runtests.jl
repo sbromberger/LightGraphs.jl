@@ -53,6 +53,7 @@ tests = [
     "operators",
     # "graphdigraph",
     "distance",
+    "digraph-cyclicity-hadwick-james",
     "edit_distance",
     "linalg/spectral",
     "linalg/graphmatrices",
