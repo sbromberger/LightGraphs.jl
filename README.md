@@ -91,7 +91,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **community:** modularity, community detection, core-periphery, clustering coefficients
 
-- **persistence formats:** proprietary compressed, [GraphML](http://en.wikipedia.org/wiki/GraphML), [GML](https://en.wikipedia.org/wiki/Graph_Modelling_Language), [Gexf](http://gexf.net/format), [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)), [Pajek NET](http://gephi.org/users/supported-graph-formats/pajek-net-format/), [Graph6](http://users.cecs.anu.edu.au/~bdm/data/formats.html)
+- **persistence formats:** LightGraphs natively supports a proprietary compressed format. For other formats, please see the [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl) package.
 
 - **visualization:** integration with
 [GraphPlot](https://github.com/JuliaGraphs/GraphPlot.jl),
