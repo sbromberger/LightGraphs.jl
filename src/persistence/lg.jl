@@ -10,6 +10,8 @@
 # Multiple graphs may be present in one file.
 
 
+struct LGFormat <: AbstractGraphFormat end
+
 
 function _lg_read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     if directed
@@ -112,10 +114,9 @@ function savelg_mult(io::IO, graphs::Dict)
     return ng
 end
 
-# savelg(io::IO, g::AbstractGraph, n::String) =
-#     savelg_mult(io, Dict(n=>g))
 
-# write(g::Graph, fn::String; compress::Bool=true) = write(g, "graph", fn; compress=compress)
-# write(g::DiGraph, fn::String; compress::Bool=true) = write(g, "digraph", fn; compress=compress)
-
-filemap[:lg] = (loadlg, loadlg_mult, savelg, savelg_mult)
+loadgraph(io::IO, gname::String, ::LGFormat) = loadlg(io, gname)
+loadgraphs(io::IO, ::LGFormat) = loadlg_mult(io)
+savegraph(io::IO, g::AbstractGraph, gname::String, ::LGFormat) = savelg(io, g, gname)
+savegraph(io::IO, g::AbstractGraph, ::LGFormat) = savelg(io, g, "graph")
+savegraph(io::IO, d::Dict, ::LGFormat) = savelg_mult(io, d)
