@@ -3,8 +3,6 @@ module LightGraphs
 
 using GZip
 using DataStructures
-using EzXML
-using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 using SimpleTraits
 
@@ -85,8 +83,7 @@ contract,
 a_star,
 
 # persistence
-# readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-load, save, savegraph, loadgraph,
+loadgraph, loadgraphs, savegraph, LGFormat,
 
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
@@ -168,13 +165,6 @@ include("core.jl")
         include("operators.jl")
         include("persistence/common.jl")
             include("persistence/lg.jl")
-            include("persistence/dot.jl")
-            include("persistence/gexf.jl")
-            include("persistence/gml.jl")
-            include("persistence/graphml.jl")
-            include("persistence/net.jl")
-            include("persistence/graph6.jl")
-            include("persistence/jld.jl")
         include("generators/staticgraphs.jl")
             include("generators/randgraphs.jl")
             include("generators/euclideangraphs.jl")

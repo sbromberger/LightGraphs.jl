@@ -16,7 +16,7 @@
     end
 
 
-    gint = load(joinpath(testdir,"testdata","graph-50-500.jgz"), "graph-50-500")
+    gint = loadgraph(joinpath(testdir,"testdata","graph-50-500.jgz"), "graph-50-500")
 
     c = readcentrality(joinpath(testdir,"testdata","graph-50-500-bc.txt"))
     for g in testdigraphs(gint)
