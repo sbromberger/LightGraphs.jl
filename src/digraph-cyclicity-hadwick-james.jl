@@ -1,6 +1,8 @@
-@doc_str """
+"""
 Find circuits (including self-loops) using the algorithm of Hadwick & James
-("Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008)
+
+### References
+- Hadwick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
 """
 function simplecycles_hadwick_james end
 @traitfn function simplecycles_hadwick_james(g::::IsDirected)
@@ -31,7 +33,7 @@ Reset vector of "blocked" vertices.
 """
 resetblocked!(blocked) = fill!(blocked, false)
 
-@doc_str """
+"""
 Find circuits starting from v1 recursively.
 """
 function circuit_recursive! end
