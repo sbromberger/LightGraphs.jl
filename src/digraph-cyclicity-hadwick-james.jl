@@ -1,5 +1,8 @@
 """
-Find circuits (including self-loops) using the algorithm of Hadwick & James
+    simplecycles_hadwick_james(g)
+
+Find circuits (including self-loops) in `g` using the algorithm
+of Hadwick & James.
 
 ### References
 - Hadwick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
@@ -24,20 +27,26 @@ function simplecycles_hadwick_james end
 end
 
 """
+    resetB!(B)
+
 Reset B work structure.
 """
 resetB!(B) = map!(empty!, B, B)
 
 """
-Reset vector of "blocked" vertices.
+    resetblocked!(blocked)
+
+Reset vector of `blocked` vertices.
 """
 resetblocked!(blocked) = fill!(blocked, false)
 
 """
-Find circuits starting from v1 recursively.
+    circuit_recursive!(g, v1, v2, blocked, B, stack, cycles)
+
+Find circuits in `g` recursively starting from v1.
 """
 function circuit_recursive! end
-@traitfn function circuit_recursive!{T <: Integer}(g::::IsDirected, v1::T, v2::T, blocked::BitArray, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}})
+@traitfn function circuit_recursive!{T<:Integer}(g::::IsDirected, v1::T, v2::T, blocked::BitArray, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}})
     f = false
     push!(stack, v2)
     blocked[v2] = true
@@ -67,22 +76,17 @@ function circuit_recursive! end
 end
 
 """
-Simultaneously count and remove occurences of a value `val` in the array `list`.
-"""
-function countAndFilter!(val::T, list::AbstractArray{T}) where {T <: Integer}
-    length(list) - length(filter!(v->v != val, list))
-end
+    unblock!(v, blocked, B)
 
+Unblock the value `v` from the `blocked` list and remove from `B`.
 """
-Unblock the value `v` from the blocked list and remove from `B`.
-"""
-function unblock!(v::T, blocked::BitArray, B::Vector{Vector{T}}) where {T <: Integer}
+function unblock!(v::T, blocked::BitArray, B::Vector{Vector{T}}) where T
     blocked[v] = false
     wPos = 1
     Bv = B[v]
     while wPos <= length(Bv)
         w = Bv[wPos]
-        wPos += 1 - countAndFilter!(w, Bv)
+        wPos += 1 - (length(Bv) - length(filter!(v->v == w, Bv)))
         if blocked[w]
             unblock!(w, blocked, B)
         end
