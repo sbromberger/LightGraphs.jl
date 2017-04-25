@@ -13,7 +13,7 @@ function simplecycles_hadwick_james end
         push!(B, Vector{T}())
     end
     blocked = falses(nvg)
-    stack = T[]
+    stack = Vector{T}()
     cycles = Vector{Vector{T}}()
     for v in vertices(g)
         circuit_recursive!(g, v, v, blocked, B, stack, cycles)
@@ -37,7 +37,7 @@ resetblocked!(blocked) = fill!(blocked, false)
 Find circuits starting from v1 recursively.
 """
 function circuit_recursive! end
-@traitfn function circuit_recursive!{T}(g::::IsDirected, v1::T, v2::T, blocked::BitArray, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}})
+@traitfn function circuit_recursive!{T <: Integer}(g::::IsDirected, v1::T, v2::T, blocked::BitArray, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}})
     f = false
     push!(stack, v2)
     blocked[v2] = true
@@ -69,24 +69,14 @@ end
 """
 Simultaneously count and remove occurences of a value `val` in the array `list`.
 """
-function countAndFilter!(val::T, list::AbstractArray{T}) where T
-    nocc = 0
-    function doFilter(v)
-        if v == val
-            nocc += 1
-            false
-        else
-            true
-        end
-    end
-    filter!(doFilter, list)
-    return nocc
+function countAndFilter!(val::T, list::AbstractArray{T}) where {T <: Integer}
+    length(list) - length(filter!(v->v != val, list))
 end
 
 """
 Unblock the value `v` from the blocked list and remove from `B`.
 """
-function unblock!(v::T, blocked::BitArray, B::Vector{Vector{T}}) where T
+function unblock!(v::T, blocked::BitArray, B::Vector{Vector{T}}) where {T <: Integer}
     blocked[v] = false
     wPos = 1
     Bv = B[v]
