@@ -355,7 +355,7 @@ of `vlist`.
 ```doctestjl
 julia> g = CompleteGraph(10)
 
-julia> sg, vmap = subgraph(g, 5:8)
+julia> sg, vmap = induced_subgraph(g, 5:8)
 
 julia> @assert g[5:8] == sg
 
@@ -365,13 +365,13 @@ julia> @assert ne(sg) == 6
 
 julia> @assert vm[4] == 8
 
-julia> sg, vmap = subgraph(g, [2,8,3,4])
+julia> sg, vmap = induced_subgraph(g, [2,8,3,4])
 
 julia> @assert sg == g[[2,8,3,4]]
 
 julia> elist = [Edge(1,2), Edge(3,4), Edge(4,8)]
 
-julia> sg, vmap = subgraph(g, elist)
+julia> sg, vmap = induced_subgraph(g, elist)
 
 julia> @assert sg == g[elist]
 ```
