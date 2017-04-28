@@ -119,7 +119,9 @@ Return `true` if graph `g` contains a cycle.
 ### Implementation Notes
 Uses DFS.
 """
-function is_cyclic(g::AbstractGraph)
+function is_cyclic end
+@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
+@traitfn function is_cyclic(g::::IsDirected)
     cmap = zeros(Int, nv(g))
     visitor = DFSCyclicTestVisitor()
 
