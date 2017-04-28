@@ -32,7 +32,9 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
 end
 
 """
-Return a binomally-distribted random number with parameters `n` and `p`.
+    randbn(n, p, seed=-1)
+
+Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
 
 ### References
 - "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
