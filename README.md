@@ -142,7 +142,7 @@ This can be computed from neighbors by default `degree(g,v) = length(neighbors(g
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
-* Julia 0.6: LightGraphs versions in the 0.8 series are designed to work with Julia 0.6.
+* Julia 0.6: LightGraphs versions in the 0.8 and 0.9 series are designed to work with Julia 0.6.
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs
