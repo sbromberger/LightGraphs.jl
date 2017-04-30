@@ -21,5 +21,4 @@ eigenvector of the adjacency matrix `A`.
 - Mark E. J. Newman: Networks: An Introduction.
        Oxford University Press, USA, 2010, pp. 169.
 """
-eigenvector_centrality(g::AbstractGraph) =
-    vec(norm.(eigs(adjacency_matrix(g), nev=1)[2]))::Vector{Float64}
+eigenvector_centrality(g::AbstractGraph) = abs(vec(eigs(adjacency_matrix(g), nev=1)[2]))::Vector{Float64}
