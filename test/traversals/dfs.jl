@@ -14,4 +14,9 @@
     for g in testdigraphs(gx)
       @test @inferred(is_cyclic(g))
     end
+
+    for g in testgraphs(PathGraph(2))
+        @test @inferred(is_cyclic(g))
+        @test @inferred(!is_cyclic(zero(g)))
+    end
 end

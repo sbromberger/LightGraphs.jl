@@ -9,4 +9,12 @@
       @test @inferred(enumerate_paths(z))[2][2] == []
       @test @inferred(enumerate_paths(z))[2][4] == enumerate_paths(z,2)[4] == enumerate_paths(z,2,4) == [2,3,4]
     end
+    g4 = PathDiGraph(4)
+    d = ones(4,4)
+    for g in testdigraphs(g4)
+      z = @inferred(floyd_warshall_shortest_paths(g, d))
+      @test length(enumerate_paths(z,4,3)) == 0
+      @test length(enumerate_paths(z,4,1)) == 0
+      @test length(enumerate_paths(z,2,3)) == 2
+    end 
 end

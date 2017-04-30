@@ -68,7 +68,7 @@ function enumerate_paths(s::FloydWarshallState{T, U}, v::Integer) where T where 
     pathinfo = s.parents[v,:]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
-        if i == v
+        if (i == v) || (s.dists[v,i] == typemax(T))
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
