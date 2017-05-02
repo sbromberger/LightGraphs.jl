@@ -55,9 +55,11 @@ function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
     # not one(T).
-    for i in selfloops
-        if !(T <: Bool)
-            spmx[i,i] += one(T)
+    if !is_directed(g)
+        for i in selfloops
+            if !(T <: Bool)
+                spmx[i,i] += one(T)
+            end
         end
     end
     return spmx

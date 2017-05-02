@@ -53,6 +53,7 @@ tests = [
     "operators",
     # "graphdigraph",
     "distance",
+    "digraph-cyclicity-hadwick-james",
     "edit_distance",
     "linalg/spectral",
     "linalg/graphmatrices",
@@ -95,8 +96,9 @@ tests = [
     "biconnectivity/biconnect"
 ]
 
-
-for t in tests
-    tp = joinpath(testdir,"$(t).jl")
-    include(tp)
+@testset begin
+    for t in tests
+        tp = joinpath(testdir,"$(t).jl")
+        include(tp)
+    end
 end

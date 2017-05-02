@@ -187,9 +187,9 @@
     @test is_directed(rd)
 
     g = stochastic_block_model(2., 3., [100,100])
-    @test  4.5 < mean(degree(g)) < 5.5
+    @test  4.3 < mean(degree(g)) < 5.8
     g = stochastic_block_model(3., 4., [100,100,100])
-    @test  10.5 < mean(degree(g)) < 11.5
+    @test  10.3 < mean(degree(g)) < 11.8
 
     function generate_nbp_sbm(numedges, sizes)
         density = 1

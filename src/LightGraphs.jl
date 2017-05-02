@@ -2,10 +2,7 @@ __precompile__(true)
 module LightGraphs
 
 using GZip
-using Distributions: Binomial
 using DataStructures
-using EzXML
-using ParserCombinator: Parsers.DOT, Parsers.GML
 using StatsBase: fit, Histogram
 using SimpleTraits
 
@@ -61,6 +58,9 @@ connected_components, strongly_connected_components, weakly_connected_components
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
+# cycles
+simplecycles_hadwick_james,
+
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
@@ -83,8 +83,7 @@ contract,
 a_star,
 
 # persistence
-# readgraph, readgraphml, readgml, writegraphml, writegexf, readdot,
-load, save, savegraph, loadgraph,
+loadgraph, loadgraphs, savegraph, LGFormat,
 
 # flow
 maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
@@ -149,6 +148,7 @@ include("core.jl")
     const Edge = SimpleGraphs.SimpleEdge
 
     include("digraph-transitivity.jl")
+    include("digraph-cyclicity-hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/dfs.jl")
@@ -165,13 +165,6 @@ include("core.jl")
         include("operators.jl")
         include("persistence/common.jl")
             include("persistence/lg.jl")
-            include("persistence/dot.jl")
-            include("persistence/gexf.jl")
-            include("persistence/gml.jl")
-            include("persistence/graphml.jl")
-            include("persistence/net.jl")
-            include("persistence/graph6.jl")
-            include("persistence/jld.jl")
         include("generators/staticgraphs.jl")
             include("generators/randgraphs.jl")
             include("generators/euclideangraphs.jl")

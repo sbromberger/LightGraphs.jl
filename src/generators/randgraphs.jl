@@ -32,6 +32,28 @@ function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
 end
 
 """
+    randbn(n, p, seed=-1)
+
+Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
+
+### References
+- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
+- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
+function randbn(n::Integer, p::Real, seed::Integer=-1)
+    rng = getRNG(seed)
+    log_q = log(1.0 - p)
+    x = 0
+    sum = 0.0
+    while true
+        sum += log(rand(rng)) / (n - x)
+        sum < log_q && break
+        x += 1
+    end
+    return x
+end
+
+"""
     erdos_renyi(n, p)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
@@ -44,11 +66,7 @@ probability `p`.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n*(n-1) : div(n*(n-1),2)
-    if seed >= 0
-        # init dsfmt generator without altering GLOBAL_RNG
-        Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+0x01)
-    end
-    ne = rand(Binomial(m, p)) # sadly StatsBase doesn't support non-global RNG
+    ne = randbn(m, p, seed)
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
 
@@ -596,9 +614,7 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
     @assert size(c,1) == length(n)
     @assert size(c,2) == length(n)
     # init dsfmt generator without altering GLOBAL_RNG
-    seed > 0 && Base.dSFMT.dsfmt_gv_init_by_array(MersenneTwister(seed).seed+1)
-    rng =  MersenneTwister(max(0, seed))
-
+    rng = getRNG(seed)
     N = sum(n)
     K = length(n)
     nedg = zeros(Int,K, K)
@@ -611,7 +627,7 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
 
             m = a==b ? div(n[a]*(n[a]-1),2) : n[a]*n[b]
             p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
-            nedg = rand(Binomial(m, p))
+            nedg = randbn(m, p, seed)
             rb = cum[b]+1:cum[b+1]
             i=0
             while i < nedg
