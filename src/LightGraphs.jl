@@ -72,6 +72,7 @@ floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
+eigenvector_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -174,6 +175,7 @@ include("core.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
+        include("centrality/eigenvector.jl")
         include("community/modularity.jl")
         include("community/label_propagation.jl")
         include("community/core-periphery.jl")
