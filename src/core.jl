@@ -110,7 +110,7 @@ end
 Return a Dict with values representing the number of vertices that have degree
 represented by the key.
 
-Degree function (for example, `in_degree` or `out_degree`) can be specified by
+Degree function (for example, `indegree` or `outdegree`) may be specified by
 overriding `degfn`.
 """
 function degree_histogram(g::AbstractGraph, degfn=degree)
