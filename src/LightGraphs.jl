@@ -3,7 +3,6 @@ module LightGraphs
 
 using GZip
 using DataStructures
-using StatsBase: fit, Histogram
 using SimpleTraits
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
