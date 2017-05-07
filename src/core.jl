@@ -107,9 +107,18 @@ end
 """
     degree_histogram(g)
 
-Return a `StatsBase.Histogram` of the degrees of vertices in `g`.
+Return a Dict with values representing the number of vertices that have degree
+represented by the key.
 """
-degree_histogram(g::AbstractGraph) = fit(Histogram, degree(g))
+function degree_histogram(g::AbstractGraph)
+    hist = Dict{eltype(g), Int}()
+    for d in degree(g)
+        hist[d] = get(hist, d, 0) + 1
+    end
+    return hist
+end
+
+
 
 """
     neighbors(g, v)
