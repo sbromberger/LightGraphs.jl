@@ -110,19 +110,18 @@ end
 Return a Dict with values representing the number of vertices that have degree
 represented by the key.
 
-Other degree function (e.g., `in_degree`, `out_degree`) may be specified by
-overriding `degfn`
+Degree function (for example, `in_degree` or `out_degree`) can be specified by
+overriding `degfn`.
 """
-function degree_histogram(g::AbstractGraph)
+function degree_histogram(g::AbstractGraph, degfn=degree)
     hist = Dict{eltype(g), Int}()
-    for v in vertices(g)
-        for d in degfn(g, v)
+    for v in vertices(g)        # minimize allocations by
+        for d in degfn(g, v)    # iterating over vertices
             hist[d] = get(hist, d, 0) + 1
         end
     end
     return hist
 end
-
 
 
 """
