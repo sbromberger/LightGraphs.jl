@@ -105,19 +105,23 @@ function noallocextreme(f, comparison, initial, g)
 end
 
 """
-    degree_histogram(g)
+    degree_histogram(g, degfn=degree)
 
 Return a Dict with values representing the number of vertices that have degree
 represented by the key.
+
+Degree function (for example, `indegree` or `outdegree`) may be specified by
+overriding `degfn`.
 """
-function degree_histogram(g::AbstractGraph)
+function degree_histogram(g::AbstractGraph, degfn=degree)
     hist = Dict{eltype(g), Int}()
-    for d in degree(g)
-        hist[d] = get(hist, d, 0) + 1
+    for v in vertices(g)        # minimize allocations by
+        for d in degfn(g, v)    # iterating over vertices
+            hist[d] = get(hist, d, 0) + 1
+        end
     end
     return hist
 end
-
 
 
 """
