@@ -18,8 +18,11 @@ for g in testgraphs(g5w)
     @test @inferred(Δout(g)) == @inferred(Δin(g)) == @inferred(Δ(g)) == 4
     @test @inferred(δout(g)) == @inferred(δin(g)) == @inferred(δ(g)) == 3
 
-    z = @inferred(degree_histogram(g))
-    @test z == Dict(4=>1, 3=>4)
+    z1 = @inferred(degree_histogram(g))
+    z2 = @inferred(degree_histogram(g, indegree))
+    z3 = @inferred(degree_histogram(g, outdegree))
+
+    @test z1 == z2 == z3 == Dict(4=>1, 3=>4)
 
     @test @inferred(neighbors(g, 2)) == @inferred(all_neighbors(g, 2)) == [1,3,5]
     @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
@@ -53,8 +56,12 @@ for g in testgraphs(g5w)
         @test @inferred(δin(g)) == 0
         @test @inferred(δ(g)) == 3
 
-        z = @inferred(degree_histogram(g))
-        @test z == Dict(4=>1, 3=>4)
+        z1 = @inferred(degree_histogram(g))
+        z2 = @inferred(degree_histogram(g, indegree))
+        z3 = @inferred(degree_histogram(g, outdegree))
+        @test z1 == Dict(4=>1, 3=>4)
+        @test z2 == Dict(0=>1, 2=>4)
+        @test z3 == Dict(4=>1, 1=>4)
 
         @test @inferred(neighbors(g, 2)) == [3]
         @test Set(@inferred(all_neighbors(g, 2))) == Set([1,3,5])
