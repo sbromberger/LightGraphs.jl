@@ -1,7 +1,21 @@
 import LightGraphs: LevelSynchronousBFS, bfs_tree
-import Base.Threads: Atomic
+import Base.Threads: Atomic, @threads
 
 @testset "Parallel_BFS" begin
+
+    @testset "Thread Queue " begin
+        next = @inferred(LightGraphs.ThreadQueue(Int, 5)) # Initialize threadqueue
+        @test isempty(next) == true
+        push!(next, 1)
+        @test next[1][] == 1
+        @threads for i=2:5
+            push!(next, i)
+        end
+        @test Set([i[] for i in next[1:5]]) == Set([1,2,3,4,5])
+        first = shift!(next)
+        @test first == 1
+    end
+
     g5 = DiGraph(4)
     add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
     g6 = smallgraph(:house)
