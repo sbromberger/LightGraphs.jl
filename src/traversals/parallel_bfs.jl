@@ -13,7 +13,7 @@ using Base.Threads
 
 import Base: push!, shift!, isempty, getindex
 
-export bfs, LevelSynchronousBFS
+export bfs_tree, LevelSynchronousBFS
 
 mutable struct LevelSynchronousBFS <: AbstractGraphVisitAlgorithm end
 
@@ -67,7 +67,7 @@ function bfskernel{T <: Integer}(
         vertexneighbors = neighbors(g, src) # Get the neighbors of the vertex
         for vertex in vertexneighbors
             # Atomically check and set parent value if not set yet.
-            parent = atomic_cas!(parents[vertex], 0, src)
+            parent = atomic_cas!(parents[vertex], zero(T), src)
             if parent==0
                 push!(next, vertex) #Push onto queue if newly found
             end
