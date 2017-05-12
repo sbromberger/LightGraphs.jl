@@ -40,7 +40,7 @@ function yen_k_shortest_paths(
     push!(dists,dj.dists[target])
     A = [path]
     B = PriorityQueue()
-    gc = deepcopy(g)
+    gcopy = deepcopy(g)
 
     for k = 1:(K-1)
         for j = 1:length(A[k])
@@ -56,8 +56,8 @@ function yen_k_shortest_paths(
                 if length(ppath) > j && rootpath == ppath[1:j]
                     u = ppath[j]
                     v = ppath[j + 1]
-                    if has_edge(gc, u, v)
-                        rem_edge!(gc, u, v)
+                    if has_edge(gcopy, u, v)
+                        rem_edge!(gcopy, u, v)
                         push!(edgesremoved,(u, v))
                     end
                 end
@@ -66,15 +66,15 @@ function yen_k_shortest_paths(
             # Remove node of root path
             for n = 1:(length(rootpath)-1)
                 u = rootpath[n]
-                nei = copy(neighbors(gc,u))
+                nei = copy(neighbors(gcopy,u))
                 for v in nei
-                    rem_edge!(gc, u, v)
+                    rem_edge!(gcopy, u, v)
                     push!(edgesremoved,(u, v))
                 end
             end
 
             # Calculate the spur path from the spur node to the sink
-            djspur = dijkstra_shortest_paths(gc, spurnode, distmx)
+            djspur = dijkstra_shortest_paths(gcopy, spurnode, distmx)
             spurpath = enumerate_paths(djspur)[target]
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path
@@ -87,7 +87,7 @@ function yen_k_shortest_paths(
             end
 
             for (u, v) in edgesremoved
-                add_edge!(gc, u, v)
+                add_edge!(gcopy, u, v)
             end
         end
         if !isempty(B)
