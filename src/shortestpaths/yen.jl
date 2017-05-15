@@ -9,15 +9,11 @@ end
 
 
 """
-  yen_k_shortest_paths(g, source, target, distmx=DefaultDistance(), K);
+    yen_k_shortest_paths(g, source, target, distmx=DefaultDistance(), K=1);
 
-  Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
-  on a graph, computing k-shortest distances between `source` and `target` other vertices.
-  Return a [`YenState`](@ref) that contains distances and paths.
-
-  ### Optional Arguments
-  - `k=1`: The number of paths to find.
-
+    Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
+    on a graph, computing k-shortest distances between `source` and `target` other vertices.
+    Return a [`YenState`](@ref) that contains distances and paths.
 """
 function yen_k_shortest_paths(
     g::AbstractGraph,
