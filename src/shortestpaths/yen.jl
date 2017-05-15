@@ -20,7 +20,7 @@ function yen_k_shortest_paths(
     source::U,
     target::U,
     distmx::AbstractMatrix{T}=DefaultDistance(),
-    K::Int=1) where T where U<:Integer
+    K::Int=1) where T <: Real where U<:Integer
 
     if source == target
         return YenState{T, U}([U(0)], [[source]])
