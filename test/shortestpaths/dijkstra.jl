@@ -84,5 +84,11 @@
       ds = @inferred(dijkstra_shortest_paths(g,1,m;allpaths=true))
       @test ds.pathcounts   == [1, 1, 1, 1, 2]
       @test ds.predecessors == [[], [1], [1], [3], [3,4]]
+      @test ds.predecessors == [[], [1], [1], [3], [3,4]]
+
+      dm = @inferred(dijkstra_shortest_paths(g,1;allpaths=true,parallel=true))
+      @test dm.pathcounts       == [1, 1, 1, 1, 2]
+      @test dm.predecessors     == [[], [1], [1], [3], [2,3]]
+      @test dm.closest_vertices == [1,2,3,5,4]
     end
 end
