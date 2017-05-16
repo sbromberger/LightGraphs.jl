@@ -15,6 +15,7 @@ struct DijkstraState{T, U<:Integer}<: AbstractPathState
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
     pathcounts::Vector{U}
+    closest_vertices::Vector{U}
 end
 
 """
@@ -32,8 +33,10 @@ function dijkstra_shortest_paths(
     g::AbstractGraph,
     srcs::Vector{U},
     distmx::AbstractMatrix{T}=DefaultDistance();
-    allpaths=false
+    allpaths=false,
+    parallel=false
     ) where T where U<:Integer
+
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -43,8 +46,10 @@ function dijkstra_shortest_paths(
     H = Vector{DijkstraHeapEntry{T, U}}()  # this should be Vector{T}() in 0.4, I think.
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
+    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
 
     sizehint!(H, nvg)
+    sizehint!(closest_vertices, nvg)
 
     for v in srcs
         heappush!(H, DijkstraHeapEntry{T, U}(v, dists[v]))
@@ -55,6 +60,11 @@ function dijkstra_shortest_paths(
         hentry = heappop!(H)
             # info("Popped H - got $(hentry.vertex)")
         u = hentry.vertex
+
+        if parallel
+          push!(closest_vertices, u)
+        end
+
         for v in out_neighbors(g,u)
             alt = (dists[u] == typemax(T))? typemax(T) : dists[u] + distmx[u,v]
 
@@ -72,6 +82,9 @@ function dijkstra_shortest_paths(
                 if alt < dists[v]
                     dists[v] = alt
                     parents[v] = u
+                    ####Bug fix
+                    pathcounts[v] = 0
+                    preds[v] = []
                     heappush!(H, DijkstraHeapEntry{T, U}(v, alt))
                 end
                 if alt == dists[v]
@@ -84,14 +97,22 @@ function dijkstra_shortest_paths(
         end
     end
 
+    if parallel
+      for s in vertices(g)
+        if !visited[s]
+          push!(closest_vertices,s)
+        end
+      end
+    end
+
     pathcounts[srcs] = 1
     parents[srcs] = 0
     for src in srcs
         preds[src] = []
     end
 
-    return DijkstraState{T, U}(parents, dists, preds, pathcounts)
+    return DijkstraState{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false) =
-dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false, parallel=false) =
+dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, parallel=parallel)
