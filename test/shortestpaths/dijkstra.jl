@@ -91,4 +91,13 @@
       @test dm.predecessors     == [[], [1], [1], [3], [2,3]]
       @test dm.closest_vertices == [1,2,3,5,4]
     end
+
+    G = Graph(5)
+    add_edge!(G,1,2)
+    add_edge!(G,1,3)
+    add_edge!(G,4,5)
+    for g in testgraphs(G)
+      dm = @inferred(dijkstra_shortest_paths(g,1;allpaths=true,parallel=true))
+      @test dm.closest_vertices == [1,2,3,4,5]
+    end
 end
