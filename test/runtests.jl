@@ -69,6 +69,7 @@ tests = [
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
     "traversals/bfs",
+    "traversals/parallel_bfs",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",
