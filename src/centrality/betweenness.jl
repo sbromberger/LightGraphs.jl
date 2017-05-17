@@ -73,7 +73,6 @@ function parallel_betweenness_centrality(
     isdir = is_directed(g)
 
     # Parallel reduction
-    ret = zeros(n_v)
     betweenness = @parallel (+) for s in vs
         if degree(g,s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
@@ -94,8 +93,7 @@ function parallel_betweenness_centrality(
     isdir,
     k)
 
-    ret = betweenness
-    return ret
+    return betweenness
 end
 
 parallel_betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
