@@ -5,6 +5,8 @@
 @doc_str """
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
+    parallel_betweenness_centrality(g[, vs])
+    parallel_betweenness_centrality(g, k)
 
 Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
 of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
@@ -39,7 +41,7 @@ function betweenness_centrality(
     betweenness = zeros(n_v)
     for s in vs
         if degree(g,s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s; allpaths=true)
+            state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -60,7 +62,41 @@ end
 betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
 betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
+function parallel_betweenness_centrality(
+    g::AbstractGraph,
+    vs::AbstractVector = vertices(g);
+    normalize=true,
+    endpoints=false,verbose=false)
 
+    n_v = nv(g)
+    k = length(vs)
+    isdir = is_directed(g)
+
+    # Parallel reduction
+    betweenness = @parallel (+) for s in vs
+        if degree(g,s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
+            if endpoints
+                parallel_accumulate_endpoints!(state, g, s)
+            else
+                parallel_accumulate_basic!(state, g, s)
+            end
+        else
+            zeros(Float64,n_v)
+        end
+    end
+
+    _rescale!(betweenness,
+    n_v,
+    normalize,
+    isdir,
+    k)
+
+    return betweenness
+end
+
+parallel_betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
+parallel_betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
@@ -77,7 +113,7 @@ function _accumulate_basic!(
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source vertices by decreasing distance for this to work.
-    S = sortperm(state.dists, rev=true)
+    S = reverse(state.closest_vertices) #Replaced sortperm with this
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
         for v in P[w]
@@ -104,7 +140,7 @@ function _accumulate_endpoints!(
     P = state.predecessors
     v1 = [1:n_v;]
     v2 = state.dists
-    S = sortperm(state.dists, rev=true)
+    S = reverse(state.closest_vertices)
     s = vertices(g)[si]
     betweenness[s] += length(S) - 1    # 289
 
@@ -117,6 +153,68 @@ function _accumulate_endpoints!(
             betweenness[w] += (δ[w] + 1)
         end
     end
+end
+
+function parallel_accumulate_basic!(
+    state::DijkstraState,
+    g::AbstractGraph,
+    si::Integer
+    )
+
+    n_v = length(state.parents) # this is the ttl number of vertices
+    δ = zeros(n_v)
+    σ = state.pathcounts
+    P = state.predecessors
+
+    betweenness = zeros(Float64,n_v)
+
+    # make sure the source index has no parents.
+    P[si] = []
+    # we need to order the source vertices by decreasing distance for this to work.
+    S = reverse(state.closest_vertices) #Replaced sortperm with this
+    for w in S
+        coeff = (1.0 + δ[w]) / σ[w]
+        for v in P[w]
+            if v > 0
+                δ[v] += (σ[v] * coeff)
+            end
+        end
+        if w != si
+            betweenness[w] += δ[w]
+        end
+    end
+
+    return betweenness
+end
+
+function parallel_accumulate_endpoints!(
+    state::DijkstraState,
+    g::AbstractGraph,
+    si::Integer
+    )
+
+    n_v = nv(g) # this is the ttl number of vertices
+    δ = zeros(n_v)
+    σ = state.pathcounts
+    P = state.predecessors
+    betweenness = zeros(Float64,n_v)
+    v1 = [1:n_v;]
+    v2 = state.dists # we need to order the source vertices by decreasing distance for this to work.#This is chnged as cmpared to _accumulate_endpoints!  #
+    S = reverse(state.closest_vertices)
+    s = vertices(g)[si]
+    betweenness[s] += length(S) - 1    # 289
+
+    for w in S
+        coeff = (1.0 + δ[w]) / σ[w]
+        for v in P[w]
+            δ[v] += σ[v] * coeff
+        end
+        if w != si
+            betweenness[w] += (δ[w] + 1)
+        end
+    end
+
+    return betweenness
 end
 
 function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Int)

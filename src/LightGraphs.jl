@@ -71,7 +71,7 @@ floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
-eigenvector_centrality,
+eigenvector_centrality,parallel_betweenness_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
