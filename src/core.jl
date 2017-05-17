@@ -33,6 +33,7 @@ type DiGraph
 end
 
 typealias SimpleGraph Union{Graph, DiGraph}
+typealias AbstractGraph SimpleGraph
 
 
 """Return the vertices of a graph."""
