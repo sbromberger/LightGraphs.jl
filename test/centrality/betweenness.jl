@@ -20,8 +20,10 @@
 
     c = readcentrality(joinpath(testdir,"testdata","graph-50-500-bc.txt"))
     for g in testdigraphs(gint)
-        z = @inferred(betweenness_centrality(g))
-        @test map(Float32, z) == map(Float32, c)
+        z  = @inferred(betweenness_centrality(g))
+        zp = @inferred(parallel_betweenness_centrality(g))
+        @test all(isapprox(z,zp))
+        @test map(Float32, z)  == map(Float32, c)
 
         y = @inferred(betweenness_centrality(g, endpoints=true, normalize=false))
         @test round.(y[1:3],4) ==
@@ -36,14 +38,22 @@
 
     g = Graph(2)
     add_edge!(g,1,2)
-    z = @inferred(betweenness_centrality(g; normalize=true))
+    z  = @inferred(betweenness_centrality(g; normalize=true))
+    zp = @inferred(parallel_betweenness_centrality(g; normalize=true))
+    all(isapprox(z,zp))
     @test z[1] == z[2] == 0.0
-    z2 = @inferred(betweenness_centrality(g, vertices(g)))
-    z3 = @inferred(betweenness_centrality(g, [vertices(g);]))
+    z2  = @inferred(betweenness_centrality(g, vertices(g)))
+    zp2 = @inferred(parallel_betweenness_centrality(g, vertices(g)))
+    all(isapprox(z2,zp2))
+    z3  = @inferred(betweenness_centrality(g, [vertices(g);]))
+    zp3 = @inferred(parallel_betweenness_centrality(g, [vertices(g);]))
+    all(isapprox(z3,zp3))
 
     @test z == z2 == z3
 
 
-    z = @inferred(betweenness_centrality(g3; normalize=false))
+    z  = @inferred(betweenness_centrality(g3; normalize=false))
+    zp = @inferred(parallel_betweenness_centrality(g3; normalize=false))
+    all(isapprox(z,zp))
     @test z[1] == z[5] == 0.0
 end

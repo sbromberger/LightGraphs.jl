@@ -73,16 +73,18 @@ function parallel_betweenness_centrality(
     isdir = is_directed(g)
 
     # Parallel reduction
+    ret = zeros(n_v)
     betweenness = @parallel (+) for s in vs
         if degree(g,s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
+            temp_betweenness = zeros(n_v)
             if endpoints
-                parallel_accumulate_endpoints!(state, g, s)
+                parallel_accumulate_endpoints!(temp_betweenness, state, g, s)
             else
-                parallel_accumulate_basic!(state, g, s)
+                parallel_accumulate_basic!(temp_betweenness, state, g, s)
             end
         else
-            zeros(Float64,n_v)
+            zeros(n_v)
         end
     end
 
@@ -92,7 +94,8 @@ function parallel_betweenness_centrality(
     isdir,
     k)
 
-    return betweenness
+    ret = betweenness
+    return ret
 end
 
 parallel_betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
@@ -156,6 +159,7 @@ function _accumulate_endpoints!(
 end
 
 function parallel_accumulate_basic!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
     si::Integer
@@ -165,8 +169,6 @@ function parallel_accumulate_basic!(
     δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
-
-    betweenness = zeros(Float64,n_v)
 
     # make sure the source index has no parents.
     P[si] = []
@@ -184,10 +186,11 @@ function parallel_accumulate_basic!(
         end
     end
 
-    return betweenness
+    betweenness
 end
 
 function parallel_accumulate_endpoints!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
     si::Integer
@@ -197,7 +200,6 @@ function parallel_accumulate_endpoints!(
     δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
-    betweenness = zeros(Float64,n_v)
     v1 = [1:n_v;]
     v2 = state.dists # we need to order the source vertices by decreasing distance for this to work.#This is chnged as cmpared to _accumulate_endpoints!  #
     S = reverse(state.closest_vertices)
@@ -214,7 +216,7 @@ function parallel_accumulate_endpoints!(
         end
     end
 
-    return betweenness
+    betweenness
 end
 
 function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Int)
