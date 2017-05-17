@@ -15,7 +15,7 @@ import Base: write, ==, <, *, ≈, isless, issubset, union, intersect,
 
 
 # core
-export SimpleGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
+export SimpleGraph, AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
 fadj, badj, in_edges, out_edges, has_vertex, has_edge, is_directed,
 nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
 indegree, outdegree, degree, degree_histogram, density, Δ, δ,
