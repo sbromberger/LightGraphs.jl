@@ -60,32 +60,32 @@ function betweenness_centrality(
 end
 
 betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
-betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
+    betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
 function parallel_betweenness_centrality(
     g::AbstractGraph,
     vs::AbstractVector = vertices(g);
     normalize=true,
-    endpoints=false,verbose=false)
+    endpoints=false)::Vector{Float64}
 
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
 
     # Parallel reduction
-    betweenness = @parallel (+) for s in vs
-        if degree(g,s) > 0  # this might be 1?
+
+    betweenness = sum(pmap((s) -> begin
+        temp_betweenness = zeros(n_v)
+        if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
-            temp_betweenness = zeros(n_v)
             if endpoints
                 parallel_accumulate_endpoints!(temp_betweenness, state, g, s)
             else
                 parallel_accumulate_basic!(temp_betweenness, state, g, s)
             end
-        else
-            zeros(n_v)
         end
-    end
+        return temp_betweenness
+    end, vs))
 
     _rescale!(betweenness,
     n_v,
@@ -97,7 +97,7 @@ function parallel_betweenness_centrality(
 end
 
 parallel_betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
-parallel_betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
+    parallel_betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},
@@ -126,6 +126,7 @@ function _accumulate_basic!(
             betweenness[w] += δ[w]
         end
     end
+    return nothing
 end
 
 function _accumulate_endpoints!(
@@ -154,6 +155,7 @@ function _accumulate_endpoints!(
             betweenness[w] += (δ[w] + 1)
         end
     end
+    return nothing
 end
 
 function parallel_accumulate_basic!(
@@ -183,8 +185,7 @@ function parallel_accumulate_basic!(
             betweenness[w] += δ[w]
         end
     end
-
-    betweenness
+    return nothing
 end
 
 function parallel_accumulate_endpoints!(
@@ -213,8 +214,7 @@ function parallel_accumulate_endpoints!(
             betweenness[w] += (δ[w] + 1)
         end
     end
-
-    betweenness
+    return nothing
 end
 
 function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Int)
@@ -241,4 +241,5 @@ function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, di
             betweenness[v] *= scale
         end
     end
+    return nothing
 end

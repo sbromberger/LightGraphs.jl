@@ -21,8 +21,8 @@
     c = readcentrality(joinpath(testdir,"testdata","graph-50-500-bc.txt"))
     for g in testdigraphs(gint)
         z  = @inferred(betweenness_centrality(g))
-        zp = parallel_betweenness_centrality(g)
-        @test all(isapprox(z,zp))
+        zp = @inferred(parallel_betweenness_centrality(g))
+        @test all(isapprox.(z,zp))
         @test map(Float32, z)  == map(Float32, c)
 
         y  = @inferred(betweenness_centrality(g, endpoints=true, normalize=false))
