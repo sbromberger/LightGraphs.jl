@@ -74,7 +74,8 @@ function parallel_betweenness_centrality(
 
     # Parallel reduction
 
-    betweenness = sum(pmap((s) -> begin
+    pool = Distributed.CachingPool(workers())
+    betweenness = sum(pmap(pool, (s) -> begin
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, parallel=true)
