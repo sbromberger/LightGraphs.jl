@@ -102,4 +102,13 @@
         @test ds.paths[1] == [1,3,4,6]
         @test ds.paths[2] == [1,3,5,6]
     end
+
+    # Test all the paths
+    add_edge!(G,1,4)
+    w[1,4] = 3
+    w[4,1] = 3
+    for g in testdigraphs(G)
+        ds = @inferred(yen_k_shortest_paths(G,1,6,w,100))
+        @test ds.dists == [4.0,5.0,7.0,7.0,8.0,8.0,8.0,11.0,11.0]
+    end
 end

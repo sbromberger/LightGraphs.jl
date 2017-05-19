@@ -59,7 +59,8 @@ function yen_k_shortest_paths(
                 end
             end
 
-            # Remove node of root path
+            # Remove node of root path and calculate dist of it
+            distrootpath = 0.
             for n = 1:(length(rootpath)-1)
                 u = rootpath[n]
                 nei = copy(neighbors(gcopy,u))
@@ -67,6 +68,10 @@ function yen_k_shortest_paths(
                     rem_edge!(gcopy, u, v)
                     push!(edgesremoved,(u, v))
                 end
+
+                # Evaluate distante of root path
+                v = rootpath[n+1]
+                distrootpath += distmx[u,v]
             end
 
             # Calculate the spur path from the spur node to the sink
@@ -75,7 +80,7 @@ function yen_k_shortest_paths(
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path
                 pathtotal = [rootpath[1:end-1];spurpath]
-                distpath  = dj.dists[spurnode] + djspur.dists[target]
+                distpath  = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B,pathtotal)
                     enqueue!(B, pathtotal, distpath)
