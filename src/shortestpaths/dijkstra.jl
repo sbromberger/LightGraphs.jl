@@ -26,15 +26,17 @@ on a graph, computing shortest distances between `srcs` and all other vertices.
 Return a [`DijkstraState`](@ref) that contains various traversal information.
 
 ### Optional Arguments
-- `allpaths=false`: If true, returns a [`DijkstraState`](@ref) that keeps track of all
+- `allpaths=false`: If true, populates the `predecessors` field within the [`DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
+- `trackvertices=false`: If true, populates the `closest_vertices` field within the [`DijkstraState`](@ref) that keeps track of
+the sorted distances from the sources to the other vertices in the graph.
 """
 function dijkstra_shortest_paths(
     g::AbstractGraph,
     srcs::Vector{U},
     distmx::AbstractMatrix{T}=DefaultDistance();
     allpaths=false,
-    parallel=false
+    trackvertices=false
     ) where T where U<:Integer
 
     nvg = nv(g)
@@ -61,7 +63,7 @@ function dijkstra_shortest_paths(
             # info("Popped H - got $(hentry.vertex)")
         u = hentry.vertex
 
-        if parallel
+        if trackvertices
           push!(closest_vertices, u)
         end
 
@@ -97,7 +99,7 @@ function dijkstra_shortest_paths(
         end
     end
 
-    if parallel
+    if trackvertices
       for s in vertices(g)
         if !visited[s]
           push!(closest_vertices,s)
@@ -114,5 +116,5 @@ function dijkstra_shortest_paths(
     return DijkstraState{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false, parallel=false) =
-dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, parallel=parallel)
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false, trackvertices=false) =
+    dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)
