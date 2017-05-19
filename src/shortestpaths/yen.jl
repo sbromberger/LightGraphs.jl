@@ -1,5 +1,6 @@
 """
     struct YenState{T, U}
+
 Designed for yen k-shortest-paths calculations.
 """
 struct YenState{T, U<:Integer}<: AbstractPathState
@@ -11,9 +12,9 @@ end
 """
     yen_k_shortest_paths(g, source, target, distmx=DefaultDistance(), K=1; maxdist=Inf);
 
-    Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
-    on a graph, computing k-shortest distances between `source` and `target` other vertices.
-    Return a [`YenState`](@ref) that contains distances and paths.
+Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
+on a graph, computing k-shortest distances between `source` and `target` other vertices.
+Return a [`YenState`](@ref) that contains distances and paths.
 """
 function yen_k_shortest_paths(
     g::AbstractGraph,
@@ -23,23 +24,19 @@ function yen_k_shortest_paths(
     K::Int=1;
     maxdist=Inf) where T <: Real where U<:Integer
 
-    if source == target
-        return YenState{T, U}([U(0)], [[source]])
-    end
+    source == target && return YenState{T, U}([U(0)], [[source]])
 
     dj = dijkstra_shortest_paths(g, source, distmx)
     path = enumerate_paths(dj)[target]
-    if isempty(path)
-        return YenState{T, U}(Vector{T}(), Vector{Vector{U}}())
-    end
+    isempty(path) && return YenState{T, U}(Vector{T}(), Vector{Vector{U}}())
 
-    dists = Array{T,1}()
-    push!(dists,dj.dists[target])
+    dists = Array{T, 1}()
+    push!(dists, dj.dists[target])
     A = [path]
     B = PriorityQueue()
     gcopy = deepcopy(g)
 
-    for k = 1:(K-1)
+    for k = 1:(K - 1)
         for j = 1:length(A[k])
             # Spur node is retrieved from the previous k-shortest path, k − 1
             spurnode = A[k][j]
@@ -47,7 +44,7 @@ function yen_k_shortest_paths(
             rootpath = A[k][1:j]
 
             # Store the removed edges
-            edgesremoved = Array{Tuple{Int,Int},1}()
+            edgesremoved = Array{Tuple{Int, Int}, 1}()
             # Remove the links of the previous shortest paths which share the same root path
             for ppath in A
                 if length(ppath) > j && rootpath == ppath[1:j]
@@ -62,17 +59,17 @@ function yen_k_shortest_paths(
 
             # Remove node of root path and calculate dist of it
             distrootpath = 0.
-            for n = 1:(length(rootpath)-1)
+            for n = 1:(length(rootpath) - 1)
                 u = rootpath[n]
-                nei = copy(neighbors(gcopy,u))
+                nei = copy(neighbors(gcopy, u))
                 for v in nei
                     rem_edge!(gcopy, u, v)
                     push!(edgesremoved,(u, v))
                 end
 
                 # Evaluate distante of root path
-                v = rootpath[n+1]
-                distrootpath += distmx[u,v]
+                v = rootpath[n + 1]
+                distrootpath += distmx[u, v]
             end
 
             # Calculate the spur path from the spur node to the sink
@@ -83,7 +80,7 @@ function yen_k_shortest_paths(
                 pathtotal = [rootpath[1:end-1];spurpath]
                 distpath  = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
-                if !haskey(B,pathtotal)
+                if !haskey(B, pathtotal)
                     enqueue!(B, pathtotal, distpath)
                 end
             end
@@ -92,18 +89,14 @@ function yen_k_shortest_paths(
                 add_edge!(gcopy, u, v)
             end
         end
-        if !isempty(B)
-            mindistB = DataStructures.peek(B)[2]
-            # Verify if distance are small than maxdist
-            if mindistB <= maxdist
-                push!(dists,mindistB)
-                push!(A,dequeue!(B))
-            else
-                break
-            end
-        else
-            break
-        end
+
+        # No more paths in B
+        isempty(B) && break
+        mindistB = DataStructures.peek(B)[2]
+        # The path with minimum distance in B is higher than maxdist
+        mindistB > maxdist && break
+        push!(dists,DataStructures.peek(B)[2])
+        push!(A,dequeue!(B))
     end
 
     return YenState{T, U}(dists, A)
