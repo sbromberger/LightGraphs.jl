@@ -9,7 +9,7 @@ end
 
 
 """
-    yen_k_shortest_paths(g, source, target, distmx=DefaultDistance(), K=1);
+    yen_k_shortest_paths(g, source, target, distmx=DefaultDistance(), K=1; maxdist=Inf);
 
     Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
     on a graph, computing k-shortest distances between `source` and `target` other vertices.
@@ -20,7 +20,8 @@ function yen_k_shortest_paths(
     source::U,
     target::U,
     distmx::AbstractMatrix{T}=DefaultDistance(),
-    K::Int=1) where T <: Real where U<:Integer
+    K::Int=1;
+    maxdist=Inf) where T <: Real where U<:Integer
 
     if source == target
         return YenState{T, U}([U(0)], [[source]])
@@ -92,8 +93,14 @@ function yen_k_shortest_paths(
             end
         end
         if !isempty(B)
-            push!(dists,DataStructures.peek(B)[2])
-            push!(A,dequeue!(B))
+            mindistB = DataStructures.peek(B)[2]
+            # Verify if distance are small than maxdist
+            if mindistB <= maxdist
+                push!(dists,mindistB)
+                push!(A,dequeue!(B))
+            else
+                break
+            end
         else
             break
         end
