@@ -54,6 +54,7 @@ tests = [
     # "graphdigraph",
     "distance",
     "digraph-cyclicity-hadwick-james",
+    "cyclicity",
     "edit_distance",
     "linalg/spectral",
     "linalg/graphmatrices",
