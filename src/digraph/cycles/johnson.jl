@@ -14,23 +14,30 @@ ncycles_n_i(n::Integer, i::Integer) = binomial(big(n), big(n-i+1)) * factorial(b
 
 Compute the theoretical maximum number of cycles in a directed graph of `n` vertices,
 assuming there are no self-loops.
-The formula is coming from [Johnson's paper](http://epubs.siam.org/doi/abs/10.1137/0204007).
+The formula is coming from [Johnson, 1973](Johnson).
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
 """
 
 maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n-1))
 
 
 @doc_str """
-    maxsimplecycles(dg::DiGraph, byscc::Bool = true)
+    maxsimplecycles(dg::::IsDirected, byscc::Bool = true)
 
 Compute the theoretical maximum number of cycles in the directed graph `dg`.
 
 The computation can be performed assuming the graph is complete or taking into account the
 decomposition in strongly connected components (`byscc` parameter). The formula is coming from
-[Johnson's paper](http://epubs.siam.org/doi/abs/10.1137/0204007).
+[Johnson, 1973](Johnson).
+
 
 ### Performance
 A more efficient version is possible.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function maxsimplecycles end
 @traitfn function maxsimplecycles(dg::::IsDirected, byscc::Bool = true)
@@ -50,10 +57,10 @@ end
 
 """
 ```
-type JohnsonVisitor <: Visitor
-stack::Vector{Int}
-blocked::Vector{Bool}
-blockedmap::Vector{Set{Int}}
+type JohnsonVisitor{T<:Integer} <: Visitor{T}
+    stack::Vector{T}
+    blocked::BitArray
+    blockedmap::Vector{Set{T}}
 end
 ```
 
@@ -79,7 +86,7 @@ JohnsonVisitor{T<:Integer}(dg::DiGraph{T}) = JohnsonVisitor(Vector{T}(),
                                              [Set{T}() for i in vertices(dg)])
 
 """
-    unblock!(v::T, blocked::Vector{Bool}, B::Vector{Set{Int}})
+    unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
 
 Unblock the vertices recursively. 
 
@@ -98,12 +105,12 @@ function unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
 end
 
 @doc_str """
-    circuit(v::Int, dg::DiGraph, vis::JohnsonVisitor,
-    allcycles::Vector{Vector{Int}}, vmap:: Vector{Int}, startnode = v)
+    circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+    allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
 
 One step of the recursive version of simple cycle detection, using a DFS algorithm.
 
-The CIRCUIT function from [Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007),
+The CIRCUIT function from [Johnson, 1973](Johnson),
 recursive version. Modify the vector of cycles, when needed.
 
 
@@ -117,6 +124,9 @@ recursive version. Modify the vector of cycles, when needed.
 * `vmap`: vector map containing the link from the old to the new nodes of the directed graph
 * `startnode = v`: optional argument giving the starting node. In the first iteration,
  the same as v, otherwise it should be passed.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit end
 @traitfn function circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
@@ -129,7 +139,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
             push!(allcycles, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            done = circuit(w, dg, vis, allcycles, vmap, startnode) 
+            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done
@@ -147,16 +157,18 @@ end
 
 
 @doc_str """
-    simplecycles(dg::DiGraph)
+    simplecycles(dg::::IsDirected)
 
 Compute all cycles of the given directed graph, using
-[Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007) and return
-them.
+[Johnson, 1973](Johnson)'s algorithm and return them.
 
 /!\ The number of cycles grow more than exponentially with the number of vertices,
 you might want to use the algorithm with a ceiling -- `getcycles` -- on large directed graphs
 (slightly slower). If you want to have an idea of the possible number of cycles,
 look at function ```maxsimplecycles(dg::DiGraph, byscc::Bool = true)```.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function simplecycles end
 @traitfn function simplecycles(dg::::IsDirected)
@@ -181,9 +193,9 @@ end
 
 One step of the recursive version of simple cycle detection, using a DFS algorithm.
 
-The CIRCUIT function from [Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007),
+The CIRCUIT function from [Johnson, 1973](Johnson)'s algorithm,
  recursive and iterative version. Produce a cycle when needed, can be used only inside a
- Task.
+ Channel.
 
 # Arguments
 * v: the vertex considered in this iteration of the DFS
@@ -199,6 +211,9 @@ the same as v, otherwise it should be passed.
 
 # Returns
 * done: tells whether a circuit has been found in the current exploration.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit_iter end
 @traitfn function circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
@@ -211,7 +226,7 @@ vmap::Vector{T}, cycle::Channel, startnode::T = v)
             put!(cycle, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            done = circuit_iter(w, dg, vis, vmap, cycle, startnode)
+            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done
@@ -229,13 +244,16 @@ end
 
 
 """
-    itercycles(dg::DiGraph, cycle::Channel)
+    itercycles(dg::::IsDirected, cycle::Channel)
 
 Compute all cycles of the given directed graph, using
-[Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007).
+[Johnson, 1973](Johnson)'s algorithm.
 
 Iterative version of the algorithm, using Channels to stop the exploration
 after a given number of cycles.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function itercycles end
 @traitfn function itercycles(dg::::IsDirected, cycle::Channel)
@@ -254,14 +272,17 @@ end
     simplecyclescount(dg::DiGraph, ceiling = 10^6)
 
 Count the number of cycles in a directed graph, using
-[Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007).
+[Johnson, 1973](Johnson)'s algorithm.
 
-The `ceiling` is here to avoir memory overload if there are a lot of cycles in the graph.
+The `ceiling` is here to avoid memory overload if there are a lot of cycles in the graph.
 Default value is 10^6, but it can be higher or lower. You can use the function
 ```maxsimplecycles(dg::DiGraph, byscc::Bool = true)``` to get an idea of the
 theoretical maximum number or cycles.
 
-It returns `len`, the number of cycles if below the ceiling, the ceiling otherwise.
+Returns the minimum of the ceiling and the number of cycles.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function simplecyclescount end
 @traitfn function simplecyclescount(dg::::IsDirected, ceiling = 10^6)
@@ -276,17 +297,19 @@ end
     simplecycles_iter(dg::DiGraph, ceiling = 10^6)
 
 Search all cycles of the given directed graph, using
-[Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007),
+[Johnson, 1973](Johnson)'s algorithm,
 up to the ceiling (avoid memory overload).
 
-If the graph is small, the ceiling will not bite and
-``simplecycles(dg::DiGraph)`` is more efficient. it avoids the overhead of the
+If the graph is small, the ceiling will not be reached and
+``simplecycles(dg::DiGraph)`` is more efficient. It avoids the overhead of the
 counting and testing if the ceiling is reached. It returns all the cycles of the
- directed graph if the `ceiling` is not reached,
-a subset of them otherwise.
+directed graph if the `ceiling` is not reached, a subset of them otherwise.
 
 To get an idea of the possible number of cycles, using function
 ```maxsimplecycles(dg::DiGraph, byscc::Bool = true)``` on the directed graph.
+
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """ 
 function simplecycles_iter end
 @traitfn simplecycles_iter(dg::::IsDirected, ceiling = 10^6) = collect(Iterators.take(Channel(c->itercycles(dg,c)), ceiling))
@@ -295,8 +318,7 @@ function simplecycles_iter end
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
 
 Search all cycles of the given directed graph, using
-[Johnson's algorithm](http://epubs.siam.org/doi/abs/10.1137/0204007),
-and return their length.
+[Johnson, 1973](Johnson)'s algorithm, and return their length.
 
 To get an idea of the possible number of cycles, using function
 ```maxsimplecycles(dg::DiGraph, byscc::Bool = true)``` on the directed graph.
@@ -307,6 +329,8 @@ number of cycles. The index in the array is the length of the cycle.
 If the `ceiling` is reached (`ncycles = ceiling`), the output is only
 a subset of the cycles lengths.
 
+### References
+- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function simplecycleslength end
 @traitfn function simplecycleslength(dg::::IsDirected, ceiling = 10^6)

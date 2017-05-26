@@ -148,9 +148,9 @@ include("core.jl")
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
 
-    include("digraph-transitivity.jl")
-    include("digraph-cyclicity.jl")
-    include("digraph-cyclicity-hadwick-james.jl")
+    include("digraph/transitivity.jl")
+    include("digraph/cycles/johnson.jl")
+    include("digraph/cycles/hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/parallel_bfs.jl")
