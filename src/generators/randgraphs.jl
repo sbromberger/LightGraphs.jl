@@ -843,3 +843,41 @@ function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph, Abstr
     bp = bc ./ sum(bc)
     return bp
 end
+
+"""
+    kronecker(SCALE, edgefactor)
+
+Generate a directed [Kronecker graph](https://en.wikipedia.org/wiki/Kronecker_graph)
+according to the Graph500 parameters.
+
+###
+References
+- http://www.graph500.org/specifications#alg:generator
+"""
+function kronecker(SCALE, edgefactor)
+    N = 2^SCALE
+    M = edgefactor * N
+    (A, B, C) = (0.57, 0.19, 0.19)
+    ij = ones(Int, M, 2)
+    ab = A + B
+    c_norm = C/(1 - (A + B))
+    a_norm = A/(A + B)
+
+    for ib = 1:SCALE
+        ii_bit = rand(M).>(ab)  # bitarray
+        jj_bit = rand(M).> ( c_norm.*(ii_bit) + a_norm.*.!(ii_bit) )
+        ij = (ij + 2^(ib-1).*(hcat(ii_bit, jj_bit)))
+    end
+
+    p = randperm(N)
+    ij = p[ij]
+
+    p = randperm(M)
+    ij = ij[p, :]
+
+    g = DiGraph(N)
+    for (s,d) in zip(ij[:,1], ij[:,2])
+        add_edge!(g, s, d)
+    end
+    return g
+end

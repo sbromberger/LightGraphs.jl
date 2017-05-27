@@ -256,4 +256,7 @@
     sbm.affinities[1,1] = 0
     @test sbm != sbm2
 
+    kg = @inferred kronecker(5,5)
+    @test nv(kg) == 32
+    @test is_directed(kg)
 end
