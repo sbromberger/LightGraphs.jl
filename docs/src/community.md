@@ -5,10 +5,12 @@ in graphs.
 
 ```@autodocs
 Modules = [LightGraphs]
-Pages   = ["community/clustering.jl",
-            "community/core-periphery.jl",
-            "community/label_propagation.jl",
-            "community/modularity.jl",
-            "community/cliques.jl"]
+Pages   = [
+    "community/cliques.jl",
+    "community/clustering.jl",
+    "community/core-periphery.jl",
+    "community/label_propagation.jl",
+    "community/modularity.jl"
+]
 Private = false
 ```

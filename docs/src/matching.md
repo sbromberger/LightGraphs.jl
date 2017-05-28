@@ -1,3 +1,3 @@
 # Matching
 
-Maximum weight matching  is supperted in the companion package *LightGraphsExtras.jl*
+Maximum weight matching is supported in the companion package *LightGraphsExtras.jl*.
