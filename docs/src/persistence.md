@@ -17,9 +17,5 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 savegraph("mygraph.jgz", g, compress=true)
 
 dg = load("multiplegraphs.jgz") # dictionary of graphs
-dg = load("multiplegraphs.graphml", :graphml)
-dg = load("mygraph.gml", "mygraph", :gml)
-
-g = loadgraph("mygraph.gml",  :gml)
 
 ```
