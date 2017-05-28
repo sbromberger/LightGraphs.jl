@@ -2,15 +2,12 @@
 
 ## Random Graphs
 
-*LightGraphs.jl* implements some common graph generators:
+*LightGraphs.jl* implements some common random graph generators:
 
 ```@autodocs
 Modules = [LightGraphs]
 Pages   = [
-    "generators/euclideangraphs.jl",
-    "generators/randgraphs.jl",
-    "generators/smallgraphs.jl",
-    "generators/staticgraphs.jl"
+    "generators/randgraphs.jl"
 ]
 Private = false
 ```
