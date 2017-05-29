@@ -75,9 +75,9 @@ function parallel_betweenness_centrality(
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
             if endpoints
-                parallel_accumulate_endpoints!(temp_betweenness, state, g, s)
+                _accumulate_endpoints!(temp_betweenness, state, g, s)
             else
-                parallel_accumulate_basic!(temp_betweenness, state, g, s)
+                _accumulate_basic!(temp_betweenness, state, g, s)
             end
         end
         temp_betweenness
@@ -138,65 +138,6 @@ function _accumulate_endpoints!(
     P = state.predecessors
     v1 = [1:n_v;]
     v2 = state.dists
-    S = reverse(state.closest_vertices)
-    s = vertices(g)[si]
-    betweenness[s] += length(S) - 1    # 289
-
-    for w in S
-        coeff = (1.0 + δ[w]) / σ[w]
-        for v in P[w]
-            δ[v] += σ[v] * coeff
-        end
-        if w != si
-            betweenness[w] += (δ[w] + 1)
-        end
-    end
-    return nothing
-end
-
-function parallel_accumulate_basic!(
-    betweenness::Vector{Float64},
-    state::DijkstraState,
-    g::AbstractGraph,
-    si::Integer
-    )
-
-    n_v = length(state.parents) # this is the ttl number of vertices
-    δ = zeros(n_v)
-    σ = state.pathcounts
-    P = state.predecessors
-
-    # make sure the source index has no parents.
-    P[si] = []
-    # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(state.closest_vertices) #Replaced sortperm with this
-    for w in S
-        coeff = (1.0 + δ[w]) / σ[w]
-        for v in P[w]
-            if v > 0
-                δ[v] += (σ[v] * coeff)
-            end
-        end
-        if w != si
-            betweenness[w] += δ[w]
-        end
-    end
-    return nothing
-end
-
-function parallel_accumulate_endpoints!(
-    betweenness::Vector{Float64},
-    state::DijkstraState,
-    g::AbstractGraph,
-    si::Integer
-    )
-
-    n_v = nv(g) # this is the ttl number of vertices
-    δ = zeros(n_v)
-    σ = state.pathcounts
-    P = state.predecessors
-    v1 = [1:n_v;]
-    v2 = state.dists # we need to order the source vertices by decreasing distance for this to work.#This is chnged as cmpared to _accumulate_endpoints!  #
     S = reverse(state.closest_vertices)
     s = vertices(g)[si]
     betweenness[s] += length(S) - 1    # 289

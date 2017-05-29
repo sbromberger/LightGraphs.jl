@@ -34,10 +34,15 @@
 
 
         x  = @inferred(betweenness_centrality(g,3))
+        xp = parallel_betweenness_centrality(g,3)
+
         x2  = @inferred(betweenness_centrality(g,collect(1:20)))
         xp2 = parallel_betweenness_centrality(g,collect(1:20))
-        @test all(isapprox(x2,xp2))
+        
         @test length(x) == 50
+        @test length(xp) == 50
+        @test length(x2) == 50
+        @test length(xp2) == 50
     end
 
     @test @inferred(betweenness_centrality(s1)) == [0, 1, 0]
@@ -50,20 +55,20 @@
     add_edge!(g,1,2)
     z  = @inferred(betweenness_centrality(g; normalize=true))
     zp = parallel_betweenness_centrality(g; normalize=true)
-    all(isapprox(z,zp))
+    @test all(isapprox(z,zp))
     @test z[1] == z[2] == 0.0
     z2  = @inferred(betweenness_centrality(g, vertices(g)))
     zp2 = parallel_betweenness_centrality(g, vertices(g))
-    all(isapprox(z2,zp2))
+    @test all(isapprox(z2,zp2))
     z3  = @inferred(betweenness_centrality(g, [vertices(g);]))
     zp3 = parallel_betweenness_centrality(g, [vertices(g);])
-    all(isapprox(z3,zp3))
+    @test all(isapprox(z3,zp3))
 
     @test z == z2 == z3
 
 
     z  = @inferred(betweenness_centrality(g3; normalize=false))
     zp = parallel_betweenness_centrality(g3; normalize=false)
-    all(isapprox(z,zp))
+    @test all(isapprox(z,zp))
     @test z[1] == z[5] == 0.0
 end
