@@ -17,5 +17,4 @@ save("mygraph.jgz", g, "mygraph", compress=true)
 savegraph("mygraph.jgz", g, compress=true)
 
 dg = load("multiplegraphs.jgz") # dictionary of graphs
-
 ```

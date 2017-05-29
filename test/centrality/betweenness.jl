@@ -38,7 +38,7 @@
 
         x2  = @inferred(betweenness_centrality(g,collect(1:20)))
         xp2 = parallel_betweenness_centrality(g,collect(1:20))
-        
+
         @test length(x) == 50
         @test length(xp) == 50
         @test length(x2) == 50
