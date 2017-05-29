@@ -70,7 +70,7 @@ Composite type that regroups the information needed for Johnson's algorithm.
 vertex that tells whether it is blocked or not. `blockedmap` tells which 
 vertices to unblock if the key vertex is unblocked.
 """
-type JohnsonVisitor{T<:Integer} <: Visitor{T}
+struct JohnsonVisitor{T<:Integer} <: Visitor{T}
     stack::Vector{T}
     blocked::BitArray
     blockedmap::Vector{Set{T}}
