@@ -58,14 +58,14 @@ is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
 # cycles
-simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,  
+simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
-a_star, dijkstra_shortest_paths,
+a_star, dijkstra_shortest_paths, parallel_betweenness_centrality,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
 yen_k_shortest_paths,
