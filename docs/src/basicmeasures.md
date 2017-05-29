@@ -1,5 +1,5 @@
 # Basic Functions
-*LightGraphs.jl* defines the following basic types and functionalities:
+*LightGraphs.jl* defines the following basic types and functionality:
 
 ```@index
 Order = [:type, :function]
