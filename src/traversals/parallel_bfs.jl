@@ -23,7 +23,7 @@ mutable struct LevelSynchronousBFS <: AbstractGraphVisitAlgorithm end
 A thread safe queue implementation for using as the queue for BFS.
 """
 
-immutable ThreadQueue{T, N<:Integer}
+struct ThreadQueue{T, N<:Integer}
     data::Vector{T}
     head::Atomic{N} #Index of the head
     tail::Atomic{N} #Index of the tail
