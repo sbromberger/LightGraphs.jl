@@ -94,6 +94,7 @@ multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
 stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model, static_scale_free,
+kronecker,
 
 #community
 modularity, core_periphery_deg,
