@@ -1,35 +1,41 @@
-function Graph(nv::Integer, ne::Integer; seed::Int = -1)
-    T = eltype(nv)
+function Graph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Integer
+    tnv = T(nv)
     maxe = div(Int(nv) * (nv-1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
 
     rng = getRNG(seed)
-    g = Graph(nv)
+    g = Graph(tnv)
 
     while g.ne < ne
-        source = rand(rng, one(T):nv)
-        dest = rand(rng, one(T):nv)
-        source != dest && add_edge!(g,source,dest)
+        source = rand(rng, one(T):tnv)
+        dest = rand(rng, one(T):tnv)
+        source != dest && add_edge!(g, source, dest)
     end
     return g
 end
 
-function DiGraph(nv::Integer, ne::Integer; seed::Int = -1)
-    T = eltype(nv)
+Graph(nv::T, ne::Integer; seed::Int = -1) where T<: Integer =
+    Graph{T}(nv, ne, seed=seed)
+
+function DiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
+    tnv = T(nv)
     maxe = Int(nv) * (nv-1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > 2/3 * maxe && return complement(DiGraph(nv, maxe-ne))
+    ne > 2/3 * maxe && return complement(DiGraph{T}(nv, maxe-ne))
 
     rng = getRNG(seed)
-    g = DiGraph(nv)
+    g = DiGraph(tnv)
     while g.ne < ne
-        source = rand(rng, one(T):nv)
-        dest = rand(rng, one(T):nv)
+        source = rand(rng, one(T):tnv)
+        dest = rand(rng, one(T):tnv)
         source != dest && add_edge!(g,source,dest)
     end
     return g
 end
+
+DiGraph(nv::T, ne::Integer; seed::Int = -1) where T<:Integer =
+    DiGraph{Int}(nv, ne, seed=seed)
 
 """
     randbn(n, p, seed=-1)
