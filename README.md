@@ -127,6 +127,7 @@ These functions are defined as the public contract of the `LightGraphs.AbstractG
 - `has_edge`
 - `has_self_loops` (though this might be a trait or an abstract graph type)
 - `is_directed` (implemented via traits)
+- `eltype` (for edges and graphs)
 
 
 ### Non-Core APIs
