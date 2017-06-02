@@ -9,6 +9,6 @@ Pages   = ["basicmeasures.md"]
 ```@autodocs
 Modules = [LightGraphs]
 Order = [:type, :function]
-Pages   = ["core.jl", "graph.jl", "digraph.jl", "edgeiter.jl","connectivity.jl"]
+Pages   = ["interface.jl", "core.jl", "graph.jl", "digraph.jl", "edgeiter.jl","connectivity.jl"]
 Private = false
 ```

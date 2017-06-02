@@ -104,6 +104,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
 
 """
     edges(g)
+
 Return (an iterator to or collection of) the edges of a graph.
 
 ### Implementation Notes
@@ -112,6 +113,11 @@ is invalidated by changes to `g`.
 """
 edges(x...) = _NI("edges")
 
+"""
+    is_directed(g)
+
+Return true if the graph is a directed graph; false otherwise.
+"""
 is_directed(x...) = _NI("is_directed")
 is_directed{T}(::Type{T}) = _NI("is_directed")
 """
