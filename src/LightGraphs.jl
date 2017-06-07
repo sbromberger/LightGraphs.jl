@@ -3,7 +3,6 @@ module LightGraphs
 
 using GZip
 using DataStructures
-using StatsBase: fit, Histogram
 using SimpleTraits
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
@@ -59,19 +58,21 @@ is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
 # cycles
-simplecycles_hadwick_james,
+simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
+simplecyclescount, simplecycleslength,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
-a_star, dijkstra_shortest_paths,
+a_star, dijkstra_shortest_paths, parallel_betweenness_centrality,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
-
+yen_k_shortest_paths,
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
+eigenvector_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -93,6 +94,7 @@ multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
 stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model, static_scale_free,
+kronecker,
 
 #community
 modularity, core_periphery_deg,
@@ -147,10 +149,12 @@ include("core.jl")
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
 
-    include("digraph-transitivity.jl")
-    include("digraph-cyclicity-hadwick-james.jl")
+    include("digraph/transitivity.jl")
+    include("digraph/cycles/johnson.jl")
+    include("digraph/cycles/hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
+            include("traversals/parallel_bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
@@ -161,6 +165,7 @@ include("core.jl")
         include("shortestpaths/bellman-ford.jl")
         include("shortestpaths/dijkstra.jl")
         include("shortestpaths/floyd-warshall.jl")
+        include("shortestpaths/yen.jl")
         include("linalg/LinAlg.jl")
         include("operators.jl")
         include("persistence/common.jl")
@@ -174,6 +179,7 @@ include("core.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
+        include("centrality/eigenvector.jl")
         include("community/modularity.jl")
         include("community/label_propagation.jl")
         include("community/core-periphery.jl")

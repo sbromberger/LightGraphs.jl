@@ -6,6 +6,14 @@
     @test ne(r1) == 20
     @test nv(r2) == 5
     @test ne(r2) == 10
+    @test eltype(r1) == Int
+    @test eltype(r2) == Int
+
+    @test eltype(Graph(0x5, 0x2)) == eltype(Graph(0x5, 2)) == UInt8
+    for T in [UInt8, Int8, UInt16, Int16, UInt32, Int32, UInt, Int]
+        @test eltype(Graph{T}(5,2)) == T
+        @test eltype(DiGraph{T}(5,2)) == T
+    end
 
     @test Graph(10,20,seed=3) == Graph(10,20,seed=3)
     @test DiGraph(10,20,seed=3) == DiGraph(10,20,seed=3)
@@ -256,4 +264,7 @@
     sbm.affinities[1,1] = 0
     @test sbm != sbm2
 
+    kg = @inferred kronecker(5,5)
+    @test nv(kg) == 32
+    @test is_directed(kg)
 end
