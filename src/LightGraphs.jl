@@ -65,14 +65,16 @@ simplecyclescount, simplecycleslength,
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
-a_star, dijkstra_shortest_paths, parallel_betweenness_centrality,
-bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
-yen_k_shortest_paths,
+a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
+has_negative_edge_cycle, enumerate_paths, floyd_warshall_shortest_paths,
+transitiveclosure!, transitiveclosure, yen_k_shortest_paths,
+
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality,
+
+parallel_betweenness_centrality, parallel_closeness_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
