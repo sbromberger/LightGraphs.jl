@@ -68,7 +68,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 a_star, dijkstra_shortest_paths, parallel_betweenness_centrality,
 bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
-yen_k_shortest_paths,
+yen_k_shortest_paths,multisource_dijkstra_shortest_paths,
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
