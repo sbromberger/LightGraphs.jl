@@ -126,7 +126,7 @@ function multisource_dijkstra_shortest_paths{T}(
     g::AbstractGraph,
     distmx::AbstractMatrix{T} = DefaultDistance();
     parallel=false,
-    )
+    )::MultipleDijkstraState{T,Int64}
 
     U = eltype(g)
     n_v = nv(g)
@@ -141,7 +141,7 @@ function multisource_dijkstra_shortest_paths{T}(
         parents[v,:] = state.parents
       end
 
-      return MultipleDijkstraState(Matrix(dists),Matrix(parents))
+      result = MultipleDijkstraState(Matrix(dists),Matrix(parents))
     else
       dists   = zeros(T, Int(n_v),Int(n_v))
       parents = zeros(U, Int(n_v),Int(n_v))
@@ -152,6 +152,8 @@ function multisource_dijkstra_shortest_paths{T}(
         parents[v,:] = state.parents
       end
 
-      return MultipleDijkstraState(dists, parents)
+      result = MultipleDijkstraState(dists, parents)
     end
+
+    return result
 end
