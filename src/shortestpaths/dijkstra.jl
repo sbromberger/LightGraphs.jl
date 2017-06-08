@@ -116,3 +116,42 @@ end
 
 dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false, trackvertices=false) =
 dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)
+
+struct MultipleDijkstraState{T, U<:Integer}<:AbstractPathState
+    dists::Matrix{T}
+    parents::Matrix{U}
+end
+
+function multisource_dijkstra_shortest_paths{T}(
+    g::AbstractGraph,
+    distmx::AbstractMatrix{T} = DefaultDistance();
+    parallel=false,
+    )
+
+    U = eltype(g)
+    n_v = nv(g)
+
+    if parallel
+      dists   = SharedArray(zeros(T,Int(n_v),Int(n_v)))
+      parents = SharedArray(zeros(U,Int(n_v),Int(n_v)))
+
+      @sync @parallel for v in vertices(g)
+        state = dijkstra_shortest_paths(g,v,distmx)
+        dists[v,:] = state.dists
+        parents[v,:] = state.parents
+      end
+
+      return MultipleDijkstraState(Matrix(dists),Matrix(parents))
+    else
+      dists   = zeros(T, Int(n_v),Int(n_v))
+      parents = zeros(U, Int(n_v),Int(n_v))
+
+      for v in vertices(g)
+        state = dijkstra_shortest_paths(g,v,distmx)
+        dists[v,:] = state.dists
+        parents[v,:] = state.parents
+      end
+
+      return MultipleDijkstraState(dists, parents)
+    end
+end

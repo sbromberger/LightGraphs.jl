@@ -100,4 +100,37 @@
       dm = @inferred(dijkstra_shortest_paths(g,1;allpaths=true,trackvertices=true))
       @test dm.closest_vertices == [1,2,3,4,5]
     end
+
+    g3 = PathGraph(5)
+    d = [ 0 1 2 3 4; 1 0 1 0 1; 2 1 0 11 12; 3 0 11 0 5; 4 1 19 5 0]
+    for g in testgraphs(g3)
+      z  = @inferred(floyd_warshall_shortest_paths(g, d))
+      zm = multisource_dijkstra_shortest_paths(g,d)
+      @test all(isapprox(z.dists,zm.dists))
+
+      z  = @inferred(floyd_warshall_shortest_paths(g))
+      zm = multisource_dijkstra_shortest_paths(g)
+      @test all(isapprox(z.dists,zm.dists))
+
+      z  = @inferred(floyd_warshall_shortest_paths(g))
+      zm = multisource_dijkstra_shortest_paths(g;parallel=true)
+      @test all(isapprox(z.dists,zm.dists))
+    end
+
+    g3 = PathDiGraph(5)
+    d = float([ 0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
+
+    for g in testgraphs(g3)
+      z  = @inferred(floyd_warshall_shortest_paths(g, d))
+      zm = multisource_dijkstra_shortest_paths(g,d)
+      @test all(isapprox(z.dists,zm.dists))
+
+      z  = @inferred(floyd_warshall_shortest_paths(g))
+      zm = multisource_dijkstra_shortest_paths(g)
+      @test all(isapprox(z.dists,zm.dists))
+
+      z  = @inferred(floyd_warshall_shortest_paths(g))
+      zm = multisource_dijkstra_shortest_paths(g;parallel=true)
+      @test all(isapprox(z.dists,zm.dists))
+    end
 end
