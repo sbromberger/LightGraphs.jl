@@ -118,6 +118,7 @@
             @test z.parents[i,j] in state.predecessors[j]
           else
             @test length(state.predecessors[j]) == 0
+            @test state.parents[j]==0
           end
         end
       end
