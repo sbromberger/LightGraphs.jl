@@ -108,7 +108,7 @@
     d = [ 0 1 2 3 4; 1 0 1 0 1; 2 1 0 11 12; 3 0 11 0 5; 4 1 19 5 0]
     for g in testgraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g,d))
+      zm = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
       @test all(isapprox(z.dists,zm.dists))
 
       for i in 1:5
@@ -175,7 +175,7 @@
 
     for g in testgraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g,d))
+      zm = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
       @test all(isapprox(z.dists,zm.dists))
 
       for i in 1:5
