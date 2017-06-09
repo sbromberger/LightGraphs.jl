@@ -4,15 +4,22 @@
     for g in testdigraphs(g5)
       y = @inferred(closeness_centrality(g; normalize=false))
       z = @inferred(closeness_centrality(g))
+      py = @inferred(parallel_closeness_centrality(g; normalize=false))
+      pz = @inferred(parallel_closeness_centrality(g))
       @test y == [0.75, 0.6666666666666666, 1.0, 0.0]
       @test z == [0.75, 0.4444444444444444, 0.3333333333333333, 0.0]
+      @test py ≈ [0.75, 0.6666666666666666, 1.0, 0.0]
+      @test pz ≈ [0.75, 0.4444444444444444, 0.3333333333333333, 0.0]
     end
 
     g5 = Graph(5)
     add_edge!(g5,1,2)
     for g in testgraphs(g5)
       z = @inferred(closeness_centrality(g))
+      y = @inferred(parallel_closeness_centrality(g))
       @test z[1] == z[2] == 0.25
       @test z[3] == z[4] == z[5] == 0.0
+      @test y[1] == y[2] == 0.25
+      @test y[3] == y[4] == y[5] == 0.0
     end
 end
