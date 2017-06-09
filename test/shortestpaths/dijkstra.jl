@@ -173,7 +173,7 @@
     g3 = PathDiGraph(5)
     d = float([ 0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
-    for g in testgraphs(g3)
+    for g in testdigraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
       zm = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
       @test all(isapprox(z.dists,zm.dists))
