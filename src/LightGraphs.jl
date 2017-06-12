@@ -58,20 +58,23 @@ is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, isgraphical,
 
 # cycles
-simplecycles_hadwick_james,
+simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
+simplecyclescount, simplecycleslength,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
-a_star, dijkstra_shortest_paths,
-bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure,
-yen_k_shortest_paths,
+a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
+has_negative_edge_cycle, enumerate_paths, floyd_warshall_shortest_paths,
+transitiveclosure!, transitiveclosure, yen_k_shortest_paths,
+
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality,
+
+parallel_betweenness_centrality, parallel_closeness_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -93,6 +96,7 @@ multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, blockfractions,
 stochastic_block_model, barabasi_albert, barabasi_albert!, static_fitness_model, static_scale_free,
+kronecker,
 
 #community
 modularity, core_periphery_deg,
@@ -147,8 +151,9 @@ include("core.jl")
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
 
-    include("digraph-transitivity.jl")
-    include("digraph-cyclicity-hadwick-james.jl")
+    include("digraph/transitivity.jl")
+    include("digraph/cycles/johnson.jl")
+    include("digraph/cycles/hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
             include("traversals/parallel_bfs.jl")

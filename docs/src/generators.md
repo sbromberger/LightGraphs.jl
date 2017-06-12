@@ -6,7 +6,9 @@
 
 ```@autodocs
 Modules = [LightGraphs]
-Pages   = [ "generators/randgraphs.jl"]
+Pages   = [
+    "generators/randgraphs.jl"
+]
 Private = false
 ```
 
