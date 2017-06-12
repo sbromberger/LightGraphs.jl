@@ -12,7 +12,7 @@ is not reached within `n` iterations.
 """
 function pagerank end
 
-@traitfn function pagerank(g::::IsDirected, α=0.85, n=100, ϵ=1.0e-6)
+@traitfn function pagerank(g::::IsDirected, α=0.85, n=100::Integer, ϵ=1.0e-6)
     A = adjacency_matrix(g,:in,Float64)
     S = vec(sum(A,1))
     S = 1./S
@@ -27,18 +27,17 @@ function pagerank end
     p = fill(1.0/N, N)
     # temporary to hold the results of SpMV
     y = zeros(Float64, N)
-    #adjustment for leaf nodes in digraph
+    # adjustment for leaf nodes in digraph
     dangling_weights = p
     is_dangling = find(S .== 0)
-    dangles = x[is_dangling]
-    #trying to save some flops by precomputing this
+    # save some flops by precomputing this
     pscaled = (1 .- α) .* p
     for _ in 1:n
         xlast = x
         # in place SpMV to conserve memory
         A_mul_B!(y, M, x)
         # using broadcast to avoid temporaries
-        x .= α .* (y .+ sum(dangles) .* dangling_weights) .+ pscaled
+        x = α .* (y .+ sum(x[is_dangling]) .* dangling_weights) .+ pscaled
         # l1 change in solution convergence criterion
         err = sum(abs, (x .- xlast))
         if (err < N * ϵ)
