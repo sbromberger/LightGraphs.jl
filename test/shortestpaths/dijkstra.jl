@@ -106,10 +106,13 @@
     #Testing multisource On undirected Graph
     g3 = PathGraph(5)
     d = [ 0 1 2 3 4; 1 0 1 0 1; 2 1 0 11 12; 3 0 11 0 5; 4 1 19 5 0]
+
     for g in testgraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
       zm = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
+      zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g, collect(1:5), d))
       @test all(isapprox(z.dists,zm.dists))
+      @test all(isapprox(z.dists,zp.dists))
 
       for i in 1:5
         state = dijkstra_shortest_paths(g,i;allpaths=true);
@@ -125,10 +128,12 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zm = @inferred(multisource_dijkstra_shortest_paths(g))
-      @test all(isapprox(z.dists,zm.dists))
+      zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g))
+      @test all(isapprox(z.dists, zm.dists))
+      @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
+        state = dijkstra_shortest_paths(g, i;allpaths=true);
         for j in 1:5
           if z.parents[i,j]!=0
             @test z.parents[i,j] in state.predecessors[j]
@@ -139,25 +144,13 @@
       end
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g;parallel=true))
-      @test all(isapprox(z.dists,zm.dists))
+      zm = @inferred(multisource_dijkstra_shortest_paths(g, [1,2]))
+      zp = @inferred(multisource_dijkstra_shortest_paths(g, [1,2]))
+      @test all(isapprox(z.dists[1:2,:], zm.dists))
+      @test all(isapprox(z.dists[1:2,:], zp.dists))
 
-      for i in 1:5
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
-        for j in 1:5
-          if z.parents[i,j]!=0
-            @test z.parents[i,j] in state.predecessors[j]
-          else
-            @test length(state.predecessors[j]) == 0
-          end
-        end
-      end
-
-      z  = @inferred(floyd_warshall_shortest_paths(g))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g,[1,2]))
-      @test all(isapprox(z.dists[1:2,:],zm.dists))
       for i in 1:2
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
+        state = dijkstra_shortest_paths(g, i;allpaths=true);
         for j in 1:5
           if z.parents[i,j]!=0
             @test z.parents[i,j] in state.predecessors[j]
@@ -176,10 +169,12 @@
     for g in testdigraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
       zm = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
-      @test all(isapprox(z.dists,zm.dists))
+      zp = @inferred(multisource_dijkstra_shortest_paths(g, collect(1:5), d))
+      @test all(isapprox(z.dists, zm.dists))
+      @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
+        state = dijkstra_shortest_paths(g, i;allpaths=true);
         for j in 1:5
           if z.parents[i,j]!=0
             @test z.parents[i,j] in state.predecessors[j]
@@ -191,10 +186,12 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zm = @inferred(multisource_dijkstra_shortest_paths(g))
-      @test all(isapprox(z.dists,zm.dists))
+      zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g))
+      @test all(isapprox(z.dists, zm.dists))
+      @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
+        state = dijkstra_shortest_paths(g, i;allpaths=true);
         for j in 1:5
           if z.parents[i,j]!=0
             @test z.parents[i,j] in state.predecessors[j]
@@ -205,25 +202,13 @@
       end
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g;parallel=true))
-      @test all(isapprox(z.dists,zm.dists))
-
-      for i in 1:5
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
-        for j in 1:5
-          if z.parents[i,j]!=0
-            @test z.parents[i,j] in state.predecessors[j]
-          else
-            @test length(state.predecessors[j]) == 0
-          end
-        end
-      end
-
-      z  = @inferred(floyd_warshall_shortest_paths(g))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g,[1,2]))
-      @test all(isapprox(z.dists[1:2,:],zm.dists))
+      zm = @inferred(multisource_dijkstra_shortest_paths(g, [1,2]))
+      zp = @inferred(multisource_dijkstra_shortest_paths(g, [1,2]))
+      @test all(isapprox(z.dists[1:2,:], zm.dists))
+      @test all(isapprox(z.dists[1:2,:], zp.dists))
+      
       for i in 1:2
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
+        state = dijkstra_shortest_paths(g, i;allpaths=true);
         for j in 1:5
           if z.parents[i,j]!=0
             @test z.parents[i,j] in state.predecessors[j]
@@ -233,38 +218,4 @@
         end
       end
     end
-
-
-
-    #Testing on 100 vertices and 500 vertices random graphs
-    for i in 1:50
-      g  = Graph(100)
-      for i in 1:1000        #Allowing self loops also
-        r1 = rand(1:100)
-        r2 = rand(1:100)
-        add_edge!(g,r1,r2)
-      end
-
-      #Testing for distance equivalence
-      z  = @inferred(floyd_warshall_shortest_paths(g))
-      zm = @inferred(multisource_dijkstra_shortest_paths(g;parallel=true))
-      @test all(isapprox(z.dists,zm.dists))
-
-      #Testing for same parent
-      for i in 1:100
-        state = dijkstra_shortest_paths(g,i;allpaths=true);
-        for j in 1:100
-          if i==j
-            if z.parents[i,j]!=0  #Implies self loop present
-              @test length(state.predecessors[j]) == 0
-              @test z.parents[i,j] == i
-            end
-          elseif z.parents[i,j]!=0
-            @test z.parents[i,j] in state.predecessors[j]
-          else
-            @test length(state.predecessors[j]) == 0
-          end
-        end
-      end
-    end    
 end
