@@ -134,7 +134,7 @@ end
     multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=DefaultDistance())
     parallel_multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=DefaultDistance())
 
-This function computes the shortest paths between all pairs of vertices in graph `g` by running
+Compute the shortest paths between all pairs of vertices in graph `g` by running
 [`dijkstra_shortest_paths`] for every vertex and using an optional list of source vertex `sources` and
 an optional distance matrix `distmx`. Return a [`MultipleDijkstraState`](@ref) with relevant
 traversal information.
