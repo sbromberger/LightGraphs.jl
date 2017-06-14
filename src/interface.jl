@@ -111,14 +111,14 @@ Return (an iterator to or collection of) the edges of a graph.
 A returned iterator is valid for one pass over the edges, and
 is invalidated by changes to `g`.
 """
-edges(x...) = _NI("edges")
+edges(g) = _NI("edges")
 
 """
     is_directed(g)
 
 Return true if the graph is a directed graph; false otherwise.
 """
-is_directed(x...) = _NI("is_directed")
+is_directed(g) = _NI("is_directed")
 is_directed{T}(::Type{T}) = _NI("is_directed")
 """
     add_vertex!(g)
@@ -126,7 +126,7 @@ is_directed{T}(::Type{T}) = _NI("is_directed")
 Add a new vertex to the graph `g`.
 Return true if the vertex was added successfully, false otherwise.
 """
-add_vertex!(x...) = _NI("add_vertex!")
+add_vertex!(x) = _NI("add_vertex!")
 
 """
     add_edge!(g, e)
@@ -134,15 +134,15 @@ add_vertex!(x...) = _NI("add_vertex!")
 Add a new edge `e` to `g`. Return false if add fails
 (e.g., if vertices are not in the graph, or edge already exists), true otherwise.
 """
-add_edge!(x...) = _NI("add_edge!")
+add_edge!(x, e) = _NI("add_edge!")
 
 """
-    rem_vertex!(g)
+    rem_vertex!(g, v)
 
 Remove the vertex `v` from graph `g`. Return false if removal fails
 (e.g., if vertex is not in the graph), true otherwise.
 """
-rem_vertex!(x...) = _NI("rem_vertex!")
+rem_vertex!(x, v) = _NI("rem_vertex!")
 
 """
     rem_edge!(g, e)
@@ -150,21 +150,21 @@ rem_vertex!(x...) = _NI("rem_vertex!")
 Remove the edge `e` from `g`. Return false if edge removal fails
 (e.g., if edge does not exist), true otherwise.
 """
-rem_edge!(x...) = _NI("rem_edge!")
+rem_edge!(x, e) = _NI("rem_edge!")
 
 """
     has_vertex(g, v)
 
 Return true if `v` is a vertex of `g`.
 """
-has_vertex(x...) = _NI("has_vertex")
+has_vertex(x, v) = _NI("has_vertex")
 
 """
     has_edge(g, e)
 
 Return true if the graph `g` has an edge `e`.
 """
-has_edge(x...) = _NI("has_edge")
+has_edge(x, e) = _NI("has_edge")
 
 """
     in_neighbors(g, v)
@@ -174,7 +174,7 @@ Return a list of all neighbors connected to vertex `v` by an incoming edge.
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(x...) = _NI("in_neighbors")
+in_neighbors(x, v) = _NI("in_neighbors")
 
 """
     out_neighbors(g, v)
@@ -184,7 +184,7 @@ Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 # Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(x...) = _NI("out_neighbors")
+out_neighbors(x, v) = _NI("out_neighbors")
 
 """
     zero(g)
