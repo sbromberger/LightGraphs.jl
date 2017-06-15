@@ -8,8 +8,7 @@ of coefficients for each node in the list.
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
     ntriang, nalltriang = local_clustering(g, v)
-
-    return alltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
+    return nalltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
 end
 
 function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
