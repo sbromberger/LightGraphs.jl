@@ -87,14 +87,6 @@ gdistances!
 enumerate_paths
 ```
 
-For Floyd-Warshall path states, please note that the output is a bit different,
-since this algorithm calculates all shortest paths for all pairs of vertices:
-`enumerate_paths(state)` will return a vector (indexed by source vertex) of
-vectors (indexed by destination vertex) of paths. `enumerate_paths(state, v)`
-will return a vector (indexed by destination vertex) of paths from source `v`
-to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
-a vector representing the path from vertex `v` to vertex `d`.
-
 ### Path States
 
 The `floyd_warshall_shortest_paths`, `bellman_ford_shortest_paths`,
