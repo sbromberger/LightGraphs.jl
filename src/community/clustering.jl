@@ -11,21 +11,13 @@ function local_clustering_coefficient(g::AbstractGraph, v::Integer)
 
     return alltriang == 0 ? 0. : ntriang * 1.0 / alltriang
 end
-local_clustering_coefficient(g::AbstractGraph, vs = vertices(g)) =
-    [local_clustering_coefficient(g, v) for v in vs]
+
+function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
+    ntriang, nalltriang = local_clustering(g, vs)
+    return map((x,y)->y==0? 0. : x*1.0/y, zip(ntriang, alltriang))
+end
 
 
-@doc_str """
-    local_clustering(g, v)
-    local_clustering(g, vs)
-
-Return a tuple `(a, b)`, where `a` is the number of triangles in the neighborhood
-of `v` and `b` is the maximum number of possible triangles. If a list of vertices
-`vs` is specified, return two vectors representing the number of triangles and
-the maximum number of possible triangles, respectively, for each node in the list.
-
-This function is related to the local clustering coefficient `r` by ``r=\frac{a}{b}``.
-"""
 function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
     k = degree(g, v)
     k <= 1 && return (0, 0)
@@ -60,6 +52,17 @@ function local_clustering!(storage::AbstractVector{Bool},
     return ntriang, nalltriang
 end
 
+@doc_str """
+    local_clustering(g, v)
+    local_clustering(g, vs)
+
+Return a tuple `(a, b)`, where `a` is the number of triangles in the neighborhood
+of `v` and `b` is the maximum number of possible triangles. If a list of vertices
+`vs` is specified, return two vectors representing the number of triangles and
+the maximum number of possible triangles, respectively, for each node in the list.
+
+This function is related to the local clustering coefficient `r` by ``r=\frac{a}{b}``.
+"""
 function local_clustering(g::AbstractGraph, v::Integer)
     storage = zeros(Bool, nv(g))
     return local_clustering!(storage, g, v)
