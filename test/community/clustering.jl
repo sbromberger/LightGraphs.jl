@@ -1,10 +1,11 @@
 @testset "Clustering" begin
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
-      @test @inferred(local_clustering_coefficient(g)) == ones(10)
-      @test @inferred(global_clustering_coefficient(g)) == 1
-      @test @inferred(local_clustering(g)) == (fill(36, 10), fill(36, 10))
-      @test @inferred(triangles(g)) == fill(36, 10)
-      @test @inferred(triangles(g, 1)) == 36
+        @test @inferred(local_clustering_coefficient(g, 1)) == 1.0
+        @test @inferred(local_clustering_coefficient(g)) == ones(10)
+        @test @inferred(global_clustering_coefficient(g)) == 1.0
+        @test @inferred(local_clustering(g)) == (fill(36, 10), fill(36, 10))
+        @test @inferred(triangles(g)) == fill(36, 10)
+        @test @inferred(triangles(g, 1)) == 36
     end
 end
