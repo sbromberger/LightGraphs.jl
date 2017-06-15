@@ -110,7 +110,6 @@
     for g in testgraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g, collect(1:5), d))
-      @test all(isapprox(z.dists,zm.dists))
       @test all(isapprox(z.dists,zp.dists))
 
       for i in 1:5
@@ -127,7 +126,6 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g))
-      @test all(isapprox(z.dists, zm.dists))
       @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
@@ -143,7 +141,6 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g, [1,2]))
-      @test all(isapprox(z.dists[1:2,:], zm.dists))
       @test all(isapprox(z.dists[1:2,:], zp.dists))
 
       for i in 1:2
@@ -166,7 +163,6 @@
     for g in testdigraphs(g3)
       z  = @inferred(floyd_warshall_shortest_paths(g, d))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g, collect(1:5), d))
-      @test all(isapprox(z.dists, zm.dists))
       @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
@@ -182,7 +178,6 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g))
-      @test all(isapprox(z.dists, zm.dists))
       @test all(isapprox(z.dists, zp.dists))
 
       for i in 1:5
@@ -198,7 +193,6 @@
 
       z  = @inferred(floyd_warshall_shortest_paths(g))
       zp = @inferred(parallel_multisource_dijkstra_shortest_paths(g, [1,2]))
-      @test all(isapprox(z.dists[1:2,:], zm.dists))
       @test all(isapprox(z.dists[1:2,:], zp.dists))
 
       for i in 1:2
