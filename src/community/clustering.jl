@@ -7,14 +7,14 @@ for node `v` in graph `g`. If a list of vertices `vs` is specified, return a vec
 of coefficients for each node in the list.
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
-    ntriang, alltriang = local_clustering(g, v)
+    ntriang, nalltriang = local_clustering(g, v)
 
-    return alltriang == 0 ? 0. : ntriang * 1.0 / alltriang
+    return alltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
 end
 
 function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
     ntriang, nalltriang = local_clustering(g, vs)
-    return map((x,y)->y==0? 0. : x*1.0/y, zip(ntriang, alltriang))
+    return map((x,y)->y==0? 0. : x*1.0/y, zip(ntriang, nalltriang))
 end
 
 
