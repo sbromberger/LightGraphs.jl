@@ -14,7 +14,7 @@ end
 
 function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
     ntriang, nalltriang = local_clustering(g, vs)
-    return map((x,y)->y==0? 0. : x*1.0/y, zip(ntriang, nalltriang))
+    return map(p->p[2]==0? 0. : p[1]*1.0/p[2], zip(ntriang, nalltriang))
 end
 
 
