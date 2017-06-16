@@ -442,3 +442,44 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+
+"""
+    gnew = relabel_vertices(g, vertexlabels)
+
+Create a new graph `gnew` where vertex `i` of `g` becomes vertex
+`vertexlabels[i]`. `vertexlabels` must be a vector with no duplicate
+entries covering the range `1:nv(g)`.
+"""
+function relabel_vertices(g::Graph, vlabels)
+    validate_labels(vlabels, nv(g))
+    fadjlist = relabel_adjlist(g.fadjlist, vlabels)
+    SimpleGraphs.SimpleGraph(g.ne, fadjlist)
+end
+
+function relabel_vertices(g::DiGraph, vlabels)
+    validate_labels(vlabels, nv(g))
+    fadjlist = relabel_adjlist(g.fadjlist, vlabels)
+    badjlist = relabel_adjlist(g.badjlist, vlabels)
+    SimpleGraphs.SimpleDiGraph(g.ne, fadjlist, badjlist)
+end
+
+## relabeling utilities
+function validate_labels(vlabels, n)
+    nvert = length(vlabels)
+    nvert == n || error("expected $n vertices, got $nvert")
+    # Check that each label is covered once. Faster than unique and checks bounds too.
+    taken = falses(nvert)
+    for l in vlabels
+        taken[l] = true
+    end
+    all(taken) || error("cannot contain duplicate labels")
+    nothing
+end
+
+function relabel_adjlist(adjlist_old, vlabels)
+    adjlist = similar(adjlist_old)
+    for i = 1:length(adjlist)
+        adjlist[vlabels[i]] = sort(vlabels[adjlist_old[i]])
+    end
+    adjlist
+end

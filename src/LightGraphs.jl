@@ -36,7 +36,7 @@ MinkowskiCost, BoundedMinkowskiCost,
 complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
-induced_subgraph, egonet,
+induced_subgraph, egonet, relabel_vertices,
 
 # graph visit
 AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
