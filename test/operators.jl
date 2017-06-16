@@ -216,4 +216,47 @@
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
     end
+
+    # relabel_vertices
+    grl = Graph(3)
+    add_edge!(grl, 2, 3)
+    add_edge!(grl, 1, 3)
+    @test grl.fadjlist == [[3], [3], [1, 2]]
+    gnew = relabel_vertices(grl, [2, 1, 3])
+    @test gnew.fadjlist == grl.fadjlist
+    gnew = relabel_vertices(grl, [2, 3, 1])
+    @test gnew.fadjlist == [[2, 3], [1], [1]]
+    gnew = relabel_vertices(grl, [3, 2, 1])
+    @test gnew.fadjlist == [[2, 3], [1], [1]]
+    gnew = relabel_vertices(grl, [1, 3, 2])
+    @test gnew.fadjlist == [[2], [1, 3], [2]]
+    gnew = relabel_vertices(grl, [3, 1, 2])
+    @test gnew.fadjlist == [[2], [1, 3], [2]]
+    @test_throws ErrorException relabel_vertices(grl, [1, 1, 1])
+    @test_throws ErrorException relabel_vertices(grl, [1, 2])
+    @test_throws BoundsError relabel_vertices(grl, [1, 5, 2])
+
+    grl = DiGraph(3)
+    add_edge!(grl, 2, 3)
+    add_edge!(grl, 1, 3)
+    @test grl.fadjlist == [[3], [3], Int[]]
+    @test grl.badjlist == [Int[], Int[], [1, 2]]
+    gnew = relabel_vertices(grl, [2, 1, 3])
+    @test gnew.fadjlist == grl.fadjlist
+    @test gnew.badjlist == grl.badjlist
+    gnew = relabel_vertices(grl, [2, 3, 1])
+    @test gnew.fadjlist == [Int[], [1], [1]]
+    @test gnew.badjlist == [[2, 3], Int[], Int[]]
+    gnew = relabel_vertices(grl, [3, 2, 1])
+    @test gnew.fadjlist == [Int[], [1], [1]]
+    @test gnew.badjlist == [[2, 3], Int[], Int[]]
+    gnew = relabel_vertices(grl, [1, 3, 2])
+    @test gnew.fadjlist == [[2], Int[], [2]]
+    @test gnew.badjlist == [Int[], [1, 3], Int[]]
+    gnew = relabel_vertices(grl, [3, 1, 2])
+    @test gnew.fadjlist == [[2], Int[], [2]]
+    @test gnew.badjlist == [Int[], [1, 3], Int[]]
+    @test_throws ErrorException relabel_vertices(grl, [1, 1, 1])
+    @test_throws ErrorException relabel_vertices(grl, [1, 2])
+    @test_throws BoundsError relabel_vertices(grl, [1, 5, 2])
 end
