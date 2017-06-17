@@ -16,19 +16,16 @@ function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
     return map(p->p[2]==0? 0. : p[1]*1.0/p[2], zip(ntriang, nalltriang))
 end
 
-
 function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
     k = degree(g, v)
     k <= 1 && return (0, 0)
     neighs = neighbors(g, v)
     tcount = 0
-    for i in neighs
-        storage[i] = true
-    end
-    for i in neighs
-        for j in neighbors(g, i)
-            i == j && continue
-            if storage[j]
+    storage[neighs] = true
+
+    @inbounds for i in neighs
+        @inbounds for j in neighbors(g, i)
+            if (i != j) && storage[j]
                 tcount += 1
             end
         end
@@ -44,9 +41,7 @@ function local_clustering!(storage::AbstractVector{Bool},
     i = 0
     for (i, v) in enumerate(vs)
         ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
-        for w in neighbors(g, v)
-            storage[w] = false
-        end
+        storage[neighbors(g, v)] = false
     end
     return ntriang, nalltriang
 end
