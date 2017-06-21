@@ -17,6 +17,8 @@ Edge, Graph, DiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
 has_vertex, has_edge, in_neighbors, out_neighbors,
 
+SimpleWeightedGraph, SimpleWeightedEdge,
+
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
@@ -151,7 +153,6 @@ include("core.jl")
     const Graph = SimpleGraphs.SimpleGraph
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
-
     include("digraph/transitivity.jl")
     include("digraph/cycles/johnson.jl")
     include("digraph/cycles/hadwick-james.jl")
@@ -201,5 +202,9 @@ include("core.jl")
         include("spanningtrees/prim.jl")
         include("biconnectivity/articulation.jl")
         include("biconnectivity/biconnect.jl")
+        include("graphtypes/simpleweightedgraphs/SimpleWeightedGraphs.jl")
+        const WGraph = SimpleWeightedGraphs.SimpleWeightedGraph
+        const WEdge = SimpleWeightedGraphs.SimpleWeightedEdge
+
 
 end # module
