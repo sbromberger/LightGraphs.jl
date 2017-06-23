@@ -49,7 +49,7 @@ function a_star(
 
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
-    distmx::AbstractMatrix{T} = LightGraphs.DefaultDistance(),
+    distmx::AbstractMatrix{T} = weights(g),
     heuristic::Function = n -> 0
     ) where T
     # heuristic (under)estimating distance to target

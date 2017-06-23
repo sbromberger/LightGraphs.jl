@@ -17,7 +17,7 @@ for g in testgraphs(g5w)
 
     @test @inferred(Δout(g)) == @inferred(Δin(g)) == @inferred(Δ(g)) == 4
     @test @inferred(δout(g)) == @inferred(δin(g)) == @inferred(δ(g)) == 3
-
+    @test @inferred(weights(g)) == LightGraphs.DefaultDistance(nv(g))
     z1 = @inferred(degree_histogram(g))
     z2 = @inferred(degree_histogram(g, indegree))
     z3 = @inferred(degree_histogram(g, outdegree))
@@ -49,6 +49,7 @@ for g in testgraphs(g5w)
         @test @inferred(indegree(g)) == [0,2,2,2,2]
         @test @inferred(outdegree(g)) == [4,1,1,1,1]
         @test @inferred(degree(g)) == [4,3,3,3,3]
+        @test @inferred(weights(g)) == LightGraphs.DefaultDistance(nv(g))
 
         @test @inferred(Δout(g)) == @inferred(Δ(g)) == 4
         @test @inferred(Δin(g)) == 2
