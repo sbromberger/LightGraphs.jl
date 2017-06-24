@@ -30,20 +30,13 @@ function core_number(g::AbstractGraph)
             curr_degree=degrees[v]
         end
     end
-    # println("vs = $vs")
-    # println("degrees = $degrees")
-    # println("bin_boundaries = $bin_boundaries")
     vertex_pos = sortperm(vs)
-    # println("vertex_pos = $vertex_pos")
     # initial guesses for core is degree
     core = degrees
     nbrs = [Set(all_neighbors(g, v)) for v in vertices(g)]
-    # println("nbrs = $nbrs")
-    # println("type of nbrs = $(typeof(nbrs))")
     for v in vs
         for u in nbrs[v]
             if core[u] > core[v]
-                # println("popping $v from nbrs[$u] = $(nbrs[u])")
                 pop!(nbrs[u], v)
                 pos = vertex_pos[u]
                 bin_start = bin_boundaries[core[u]+1]
