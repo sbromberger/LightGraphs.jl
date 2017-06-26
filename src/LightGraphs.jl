@@ -21,7 +21,10 @@ has_vertex, has_edge, in_neighbors, out_neighbors,
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
-has_self_loops, num_self_loops, density, squash,
+has_self_loops, num_self_loops, density, squash, weights,
+
+# decomposition
+core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -68,6 +71,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, floyd_warshall_shortest_paths,
 transitiveclosure!, transitiveclosure, yen_k_shortest_paths,
+parallel_multisource_dijkstra_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -150,7 +154,7 @@ include("core.jl")
     const Graph = SimpleGraphs.SimpleGraph
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
-
+    include("decomposition.jl")
     include("digraph/transitivity.jl")
     include("digraph/cycles/johnson.jl")
     include("digraph/cycles/hadwick-james.jl")

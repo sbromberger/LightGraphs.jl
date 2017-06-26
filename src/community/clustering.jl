@@ -7,13 +7,44 @@ for node `v` in graph `g`. If a list of vertices `vs` is specified, return a vec
 of coefficients for each node in the list.
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
-    ntriang, alltriang = local_clustering(g, v)
-
-    return alltriang == 0 ? 0. : ntriang * 1.0 / alltriang
+    ntriang, nalltriang = local_clustering(g, v)
+    return nalltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
 end
-local_clustering_coefficient(g::AbstractGraph, vs = vertices(g)) =
-    [local_clustering_coefficient(g, v) for v in vs]
 
+function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
+    ntriang, nalltriang = local_clustering(g, vs)
+    return map(p->p[2]==0? 0. : p[1]*1.0/p[2], zip(ntriang, nalltriang))
+end
+
+function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
+    k = degree(g, v)
+    k <= 1 && return (0, 0)
+    neighs = neighbors(g, v)
+    tcount = 0
+    storage[neighs] = true
+
+    @inbounds for i in neighs
+        @inbounds for j in neighbors(g, i)
+            if (i != j) && storage[j]
+                tcount += 1
+            end
+        end
+    end
+    return is_directed(g) ? (tcount , k*(k-1)) : (div(tcount,2) , div(k*(k-1),2))
+end
+
+function local_clustering!(storage::AbstractVector{Bool},
+                           ntriang::AbstractVector{Int},
+                           nalltriang::AbstractVector{Int},
+                           g::AbstractGraph,
+                           vs)
+    i = 0
+    for (i, v) in enumerate(vs)
+        ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
+        storage[neighbors(g, v)] = false
+    end
+    return ntriang, nalltriang
+end
 
 @doc_str """
     local_clustering(g, v)
@@ -27,26 +58,15 @@ the maximum number of possible triangles, respectively, for each node in the lis
 This function is related to the local clustering coefficient `r` by ``r=\frac{a}{b}``.
 """
 function local_clustering(g::AbstractGraph, v::Integer)
-    k = degree(g, v)
-    k <= 1 && return (0, 0)
-    neighs = neighbors(g, v)
-    c = 0
-    for i in neighs, j in neighs
-        i == j && continue
-        if has_edge(g, i, j)
-            c += 1
-        end
-    end
-    return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
+    storage = zeros(Bool, nv(g))
+    return local_clustering!(storage, g, v)
 end
+
 function local_clustering(g::AbstractGraph, vs = vertices(g))
+    storage = zeros(Bool, nv(g))
     ntriang = zeros(Int, length(vs))
     nalltriang = zeros(Int, length(vs))
-    i = 0
-    for (i, v) in enumerate(vs)
-        ntriang[i], nalltriang[i] = local_clustering(g, v)
-    end
-    return ntriang, nalltriang
+    return local_clustering!(storage, ntriang, nalltriang, g, vs)
 end
 
 

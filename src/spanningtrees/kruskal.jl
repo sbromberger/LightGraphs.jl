@@ -22,7 +22,7 @@ function quick_find!(vs, p, q)
 end
 
 """
-    kruskal_mst(g, distmx=DefaultDistance())
+    kruskal_mst(g, distmx=weights(g))
 
 Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
 distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm).
@@ -30,7 +30,7 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 function kruskal_mst end
 @traitfn function kruskal_mst{T}(
     g::::(!IsDirected),
-    distmx::AbstractMatrix{T} = DefaultDistance()
+    distmx::AbstractMatrix{T} = weights(g)
 )
 
     U = eltype(g)

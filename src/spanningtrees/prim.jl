@@ -6,7 +6,7 @@ end
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
 
 """
-    prim_mst(g, distmx=DefaultDistance())
+    prim_mst(g, distmx=weights(g))
 
 Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
 distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/Prim%27s_algorithm).
@@ -15,7 +15,7 @@ Return a vector of edges.
 function prim_mst end
 @traitfn function prim_mst(
     g::::(!IsDirected),
-    distmx::AbstractMatrix = DefaultDistance()
+    distmx::AbstractMatrix = weights(g)
     )
     pq = Vector{PrimHeapEntry}()
     mst = Vector{Edge}()
