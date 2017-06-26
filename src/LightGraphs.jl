@@ -154,7 +154,7 @@ include("core.jl")
     const Graph = SimpleGraphs.SimpleGraph
     const DiGraph = SimpleGraphs.SimpleDiGraph
     const Edge = SimpleGraphs.SimpleEdge
-    include("decomposition.jl")
+    include("degeneracy.jl")
     include("digraph/transitivity.jl")
     include("digraph/cycles/johnson.jl")
     include("digraph/cycles/hadwick-james.jl")

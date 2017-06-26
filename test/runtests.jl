@@ -52,7 +52,7 @@ tests = [
     "graphtypes/simplegraphs/simpleedgeiter",
     "operators",
     # "graphdigraph",
-    "decomposition",
+    "degeneracy",
     "distance",
     "digraph/transitivity",
     "digraph/cycles/hadwick-james",
