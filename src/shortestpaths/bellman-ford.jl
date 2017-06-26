@@ -60,8 +60,8 @@ function bellman_ford_shortest_paths!(
 end
 
 """
-    bellman_ford_shortest_paths(g, s, distmx=DefaultDistance())
-    bellman_ford_shortest_paths(g, ss, distmx=DefaultDistance())
+    bellman_ford_shortest_paths(g, s, distmx=weights(g))
+    bellman_ford_shortest_paths(g, ss, distmx=weights(g))
 
 Compute shortest paths between a source `s` (or list of sources `ss`) and all
 other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
@@ -70,7 +70,7 @@ Return a [`BellmanFordState`](@ref) with relevant traversal information.
 function bellman_ford_shortest_paths(
     graph::AbstractGraph,
     sources::AbstractVector{U},
-    distmx::AbstractMatrix{T} = DefaultDistance()
+    distmx::AbstractMatrix{T} = weights(g)
     ) where T where U<:Integer
     nvg = nv(graph)
     state = BellmanFordState(zeros(U,nvg), fill(typemax(T), nvg))
@@ -80,7 +80,7 @@ end
 bellman_ford_shortest_paths(
     graph::AbstractGraph,
     v::Integer,
-    distmx::AbstractMatrix = DefaultDistance()
+    distmx::AbstractMatrix = weights(graph)
     ) = bellman_ford_shortest_paths(graph, [v], distmx)
 
 has_negative_edge_cycle(g::AbstractGraph) = false

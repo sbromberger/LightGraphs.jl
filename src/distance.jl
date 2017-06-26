@@ -5,6 +5,11 @@ struct DefaultDistance<:AbstractMatrix{Int}
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end
 
+DefaultDistance(nv::Integer) = DefaultDistance(Int(nv))
+
+show(io::IO, x::DefaultDistance) = print(io, "$(x.nv) × $(x.nv) default distance matrix (value = 1)")
+show(io::IO, z::MIME"text/plain", x::DefaultDistance) = show(io, x)
+
 getindex(::DefaultDistance, s::Integer, d::Integer) = 1
 getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
 size(d::DefaultDistance) = (d.nv, d.nv)
@@ -39,7 +44,7 @@ store, and pass the eccentricities if multiple distance measures are desired.
 function eccentricity(
     g::AbstractGraph,
     v::Integer,
-    distmx::AbstractMatrix{T} = DefaultDistance()
+    distmx::AbstractMatrix{T} = weights(g)
 ) where T
     e = maximum(dijkstra_shortest_paths(g,v,distmx).dists)
     e == typemax(T) && error("Infinite path length detected")
@@ -50,25 +55,25 @@ end
 eccentricity(
     g::AbstractGraph,
     vs::AbstractVector = vertices(g),
-    distmx::AbstractMatrix = DefaultDistance()
+    distmx::AbstractMatrix = weights(g)
 ) = [eccentricity(g,v,distmx) for v in vs]
 
 eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
 
 """
-    diameter(g, distmx=DefaultDistance())
+    diameter(g, distmx=weights(g))
     diameter(eccentricities)
 
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
-diameter(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance())=
+diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g))=
     maximum(eccentricity(g, distmx))
 
 """
-    periphery(g, distmx=DefaultDistance())
+    periphery(g, distmx=weights(g))
     periphery(eccentricities)
 
 Given a graph and optional distance matrix, or a vector of precomputed
@@ -81,22 +86,22 @@ function periphery(eccentricities::Vector)
     return filter((x)->eccentricities[x] == diam, 1:length(eccentricities))
 end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
+periphery(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     periphery(eccentricity(g, distmx))
 
 """
-    radius(g, distmx=DefaultDistance())
+    radius(g, distmx=weights(g))
     radius(eccentricities)
 
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the minimum eccentricity of the graph.
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
-radius(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
+radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     minimum(eccentricity(g, distmx))
 
 """
-    center(g, distmx=DefaultDistance())
+    center(g, distmx=weights(g))
     center(eccentricities)
 
 Given a graph and optional distance matrix, or a vector of precomputed
@@ -108,5 +113,5 @@ function center(eccentricities::Vector)
     return filter((x)->eccentricities[x] == rad, 1:length(eccentricities))
 end
 
-center(g::AbstractGraph, distmx::AbstractMatrix = DefaultDistance()) =
+center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     center(eccentricity(g, distmx))

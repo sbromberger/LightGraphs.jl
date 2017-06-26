@@ -21,7 +21,7 @@ has_vertex, has_edge, in_neighbors, out_neighbors,
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
-has_self_loops, num_self_loops, density, squash,
+has_self_loops, num_self_loops, density, squash, weights,
 
 # decomposition
 core_number, k_core, k_shell, k_crust, k_corona,

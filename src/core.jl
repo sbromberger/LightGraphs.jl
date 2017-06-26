@@ -205,3 +205,11 @@ function squash(g::AbstractGraph)
         nvg < typemax(T) && return gtype{T}(g)
     end
 end
+
+"""
+    weights(g)
+
+Return the weights of the edges of a graph `g` as a matrix. Defaults
+to `DefaultDistance()`.
+"""
+weights(g::AbstractGraph) = DefaultDistance(nv(g))

@@ -19,7 +19,7 @@ struct DijkstraState{T, U<:Integer}<: AbstractPathState
 end
 
 """
-    dijkstra_shortest_paths(g, srcs, distmx=DefaultDistance());
+    dijkstra_shortest_paths(g, srcs, distmx=weights(g));
 
 Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 on a graph, computing shortest distances between `srcs` and all other vertices.
@@ -32,7 +32,7 @@ predecessors of a given vertex.
 function dijkstra_shortest_paths(
     g::AbstractGraph,
     srcs::Vector{U},
-    distmx::AbstractMatrix{T}=DefaultDistance();
+    distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false
     ) where T where U<:Integer
@@ -114,7 +114,7 @@ function dijkstra_shortest_paths(
     return DijkstraState{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = DefaultDistance(); allpaths=false, trackvertices=false) =
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = weights(g); allpaths=false, trackvertices=false) =
 dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)
 
 """
@@ -128,7 +128,7 @@ struct MultipleDijkstraState{T, U<:Integer}<:AbstractPathState
 end
 
 @doc_str """
-    parallel_multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=DefaultDistance())
+    parallel_multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=weights(g))
 
 Compute the shortest paths between all pairs of vertices in graph `g` by running
 [`dijkstra_shortest_paths`] for every vertex and using an optional list of source vertex `sources` and
@@ -139,7 +139,7 @@ traversal information.
 function parallel_multisource_dijkstra_shortest_paths{T}(
     g::AbstractGraph,
     sources::AbstractVector = vertices(g),
-    distmx::AbstractMatrix{T} = DefaultDistance()
+    distmx::AbstractMatrix{T} = weights(g)
     )
 
     U = eltype(g)
