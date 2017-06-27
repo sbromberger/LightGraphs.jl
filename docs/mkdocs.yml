@@ -20,7 +20,7 @@ pages:
   - 'Linear Algebra': 'linalg.md'
   - 'Matching': 'matching.md'
   - 'Community Structures': 'community.md'
-  - 'Decomposition': 'decomposition.md'
+  - 'Degeneracy': 'degeneracy.md'
   - 'Flow and Cut': 'flowcut.md'
   - 'Graph Generators': 'generators.md'
   - 'Reading / Writing Graphs': 'persistence.md'
