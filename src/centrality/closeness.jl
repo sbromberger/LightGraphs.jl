@@ -10,7 +10,8 @@ node `n` by ``\\frac{|δ_n|}{|V|-1}``, where ``δ_n`` is the set of vertices rea
 from node `n`.
 """
 function closeness_centrality(
-    g::AbstractGraph;
+    g::AbstractGraph,
+    distmx::AbstractMatrix=weights(g);
     normalize=true)
 
     n_v = nv(g)
@@ -20,7 +21,7 @@ function closeness_centrality(
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dijkstra_shortest_paths(g,u).dists
+            d = dijkstra_shortest_paths(g,u,distmx).dists
             δ = filter(x->x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
@@ -37,7 +38,8 @@ function closeness_centrality(
 end
 
 function parallel_closeness_centrality(
-    g::AbstractGraph;
+    g::AbstractGraph,
+    distmx::AbstractMatrix=weights(g);
     normalize=true)::Vector{Float64}
 
     n_v = Int(nv(g))
@@ -48,7 +50,7 @@ function parallel_closeness_centrality(
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dijkstra_shortest_paths(g,u).dists
+            d = dijkstra_shortest_paths(g,u,distmx).dists
             δ = filter(x->x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
