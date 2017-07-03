@@ -47,7 +47,7 @@ function dijkstra_shortest_paths(
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
-    popped_out = falses(nvg)        # popped_out[u]=true if shortest distance from src to u is found
+    popped_out = Vector{Bool}(zeros(nvg))   # popped_out[u]=true if shortest distance from src to u is found
 
     sizehint!(H, nvg)
     sizehint!(closest_vertices, nvg)
