@@ -38,10 +38,10 @@
       @test y[1] == y[2] == 0.25
       @test y[3] == y[4] == y[5] == 0.0
     end
-
+    
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     a1 = Graph(adjmx1)
-    for g in testdigraphs(a2)
+    for g in testgraphs(a1)
       distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
       c1 = [0.24390243902439027,0.3225806451612903,0.1923076923076923]
       y = @inferred(closeness_centrality(g,distmx1; normalize=false))
