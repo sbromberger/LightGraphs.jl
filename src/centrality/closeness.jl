@@ -11,7 +11,7 @@ from node `n`.
 """
 function closeness_centrality(
     g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
+    distmx::AbstractMatrix = weights(g);
     normalize=true)
 
     n_v = nv(g)
@@ -21,7 +21,7 @@ function closeness_centrality(
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dijkstra_shortest_paths(g,u,distmx).dists
+            d = dijkstra_shortest_paths(g, u, distmx).dists
             δ = filter(x->x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
@@ -39,7 +39,7 @@ end
 
 function parallel_closeness_centrality(
     g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
+    distmx::AbstractMatrix = weights(g);
     normalize=true)::Vector{Float64}
 
     n_v = Int(nv(g))
@@ -50,7 +50,7 @@ function parallel_closeness_centrality(
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dijkstra_shortest_paths(g,u,distmx).dists
+            d = dijkstra_shortest_paths(g, u, distmx).dists
             δ = filter(x->x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
