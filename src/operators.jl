@@ -442,3 +442,72 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+
+
+"""
+    merge_vertices!(g, vs)
+
+Combine vertices specified in `vs` into single vertex whose
+index will be the lowest value in `vs`.
+
+Supports SimpleGraph.
+
+All edges running to vertices in `vs` connect to new
+merged vertex.
+
+Return a vector with new vertex values indexed by original vertex
+indices.
+"""
+
+function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+    vs = sort!(unique(vs))
+    merged_vertex = shift!(vs)
+
+    x = zeros(Int, nv(g))
+    x[vs] = 1
+    new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
+    new_vertex_ids[vs] = merged_vertex
+
+    for i in vertices(g)
+        # Adjust connections to merged vertices
+        if (i != merged_vertex) & !(i in vs)
+            nbrs_to_rewire = Set{eltype(g)}()
+            for j in out_neighbors(g, i)
+               if j in vs
+                  push!(nbrs_to_rewire, merged_vertex)
+               else
+                 push!(nbrs_to_rewire, new_vertex_ids[j])
+               end
+            end
+            g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
+
+
+        # Collect connections to new merged vertex
+        else
+            nbrs_to_merge = Set{eltype(g)}()
+            for element in filter(x -> !(x in vs) & (x != merged_vertex), g.fadjlist[i])
+                push!(nbrs_to_merge, new_vertex_ids[element])
+            end
+
+            for j in vs, e in out_neighbors(g, j)
+                if new_vertex_ids[e] != merged_vertex
+                    push!(nbrs_to_merge, new_vertex_ids[e])
+                end
+            end
+            g.fadjlist[i] = sort(collect(nbrs_to_merge))
+        end
+    end
+
+    # Drop excess vertices
+    g.fadjlist = g.fadjlist[1: (end-length(vs))]
+
+    # Correct edge counts
+    total_edges = 0
+    for i in vertices(g)
+        total_edges = total_edges + degree(g,i)
+    end
+
+    g.ne = total_edges
+
+    return new_vertex_ids
+end
