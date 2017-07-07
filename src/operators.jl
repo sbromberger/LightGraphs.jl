@@ -442,3 +442,182 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+
+
+"""
+    merge_vertices!(g, vs)
+
+Combine vertices specified in `vs` into single vertex whose
+index will be the lowest value in `vs`.
+
+Supports SimpleGraph.
+
+All edges running to vertices in `vs` connect to new
+merged vertex.
+
+Return a vector with new vertex values index by original vertex
+indices.
+"""
+
+function merge_vertices!(g::AbstractGraph, vs::Vector{T} where T <: Integer)
+
+    vertex_conversions = collect(vertices(g))
+
+    # Use lowest value as new vertex id.
+    sort!(vs)
+    v0 = vs[1]
+
+    for v in vs[2:end]
+        new_v = vertex_conversions[v]
+
+        if new_v != v0
+
+            # Copy over all connections without adding self-loops
+            if isa(g, Graph)
+                for n in neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, v0, n)
+                    end
+                end
+
+            elseif isa(g, DiGraph)
+                # Copy over all connections without adding self-loops
+                for n in out_neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, v0, n)
+                    end
+                end
+                for n in in_neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, n, v0)
+                    end
+                end
+
+            else
+                error("merge_vertices only supports Graphs and DiGraphs")
+            end
+
+            # Now remove vertex
+            vertex_conversions[nv(g)] = new_v
+            rem_vertex!(g, new_v)
+            vertex_conversions[v] = v0
+        end
+    end
+
+    return vertex_conversions
+end
+
+
+"""compute_shifts(n::Int, x::AbstractArray)
+
+Determines how many elements of vs are less than i for all i in 1:n.
+"""
+function compute_shifts(n::Int, x::AbstractArray)
+    tmp = zeros(Int, n)
+    tmp[x[2:end]] = 1
+    return cumsum!(tmp, tmp)
+end
+
+"""
+    merge_vertices(g::AbstractGraph, vs)
+
+Create a new graph where all vertices in vs have been aliased to the same vertex minimum(vs).
+"""
+function merge_vertices(g::AbstractGraph, vs)
+    labels = collect(1:nv(g))
+    @show labels
+    # Use lowest value as new vertex id.
+    sort!(vs)
+    nvnew = nv(g) - length(@show unique(vs)) +1
+    v0 = minimum(vs)
+    v0 > 0 || error("minimum(vs) < 1")
+    maximum(vs) <= nv(g) || error("maximum(vs) > nv(g)")
+    for v in vs
+        labels[v] = v0
+    end
+    @show shifts = compute_shifts(nv(g), vs[2:end])
+    for v in vertices(g)
+        if labels[v] != v0
+            labels[v] -= shifts[v]
+        end
+    end
+    @show labels
+
+    #if v in vs then labels[v] == v0 else labels[v] == v
+    newg = Graph(nvnew)
+    for e in edges(g)
+        u,w = src(e), dst(e)
+        @show u,w, labels[u], labels[w]
+        if labels[u] != labels[w] #not a new self loop
+            add_edge!(newg, labels[u], labels[w])
+        end
+    end
+    return newg
+end
+
+"""
+    if vs is an Associative collection such as Dict{Int, Int}, then use vs as a map from old vertexid to new vertexid.
+"""
+function merge_vertices(g::AbstractGraph, labels::Associative)
+    #if v in vs then labels[v] == v0 else labels[v] == v
+    newg = Graph(nvnew)
+    for e in edges(g)
+        u,w = src(e), dst(e)
+        @show u,w, labels[u], labels[w]
+        if labels[u] != labels[w] #not a new self loop
+            add_edge!(g, labels[u], labels[w])
+        end
+    end
+    return newg
+=======
+Return a vector with new vertex values indexed by original vertex
+indices.
+"""
+
+function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+    vs = sort!(unique(vs))
+    merged_vertex = shift!(vs)
+
+    x = zeros(Int, nv(g))
+    x[vs] = 1
+    new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
+    new_vertex_ids[vs] = merged_vertex
+
+    for i in vertices(g)
+        # Adjust connections to merged vertices
+        if (i != merged_vertex) & !(i in vs)
+            nbrs_to_rewire = Set{eltype(g)}()
+            for j in out_neighbors(g, i)
+               if j in vs
+                  push!(nbrs_to_rewire, merged_vertex)
+               else
+                 push!(nbrs_to_rewire, new_vertex_ids[j])
+               end
+            end
+            g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
+
+
+        # Collect connections to new merged vertex
+        else
+            nbrs_to_merge = Set{eltype(g)}()
+            for element in filter(x -> !(x in vs) & (x != merged_vertex), g.fadjlist[i])
+                push!(nbrs_to_merge, new_vertex_ids[element])
+            end
+
+            for j in vs, e in out_neighbors(g, j)
+                if new_vertex_ids[e] != merged_vertex
+                    push!(nbrs_to_merge, new_vertex_ids[e])
+                end
+            end
+            g.fadjlist[i] = sort(collect(nbrs_to_merge))
+        end
+    end
+
+    # Drop excess vertices
+    g.fadjlist = g.fadjlist[1: (end-length(vs))]
+
+    # Correct edge counts
+    g.ne = sum(degree(g, i) for i in vertices(g))/2
+
+    return new_vertex_ids
+end
