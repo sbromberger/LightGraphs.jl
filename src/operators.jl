@@ -442,3 +442,67 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+
+
+"""
+    merge_vertices!(g, vs)
+
+Combine vertices specified in `vs` into single vertex whose
+index will be the lowest value in `vs`.
+
+Supports Graphs and DiGraphs.
+
+All edges running to vertices in `vs` connect to new
+merged vertex.
+
+Return a vector with new vertex values index by original vertex
+indices.
+"""
+
+function merge_vertices!(g::AbstractGraph, vs::Vector{T} where T <: Integer)
+
+    vertex_conversions = collect(vertices(g))
+
+    # Use lowest value as new vertex id.
+    sort!(vs)
+    v0 = vs[1]
+
+    for v in vs[2:end]
+        new_v = vertex_conversions[v]
+
+        if new_v != v0
+
+            # Copy over all connections without adding self-loops
+            if isa(g, Graph)
+                for n in neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, v0, n)
+                    end
+                end
+
+            elseif isa(g, DiGraph)
+                # Copy over all connections without adding self-loops
+                for n in out_neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, v0, n)
+                    end
+                end
+                for n in in_neighbors(g, new_v)
+                    if v0 != n
+                        add_edge!(g, n, v0)
+                    end
+                end
+
+            else
+                error("merge_vertices only supports Graphs and DiGraphs")
+            end
+
+            # Now remove vertex
+            vertex_conversions[nv(g)] = new_v
+            rem_vertex!(g, new_v)
+            vertex_conversions[v] = v0
+        end
+    end
+
+    return vertex_conversions
+end
