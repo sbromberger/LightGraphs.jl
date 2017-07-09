@@ -142,7 +142,7 @@ end
 
 function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
-    u > nv(g) || v > nv(g) && return false
+    (u > nv(g) || v > nv(g)) && return false
     if degree(g,u) < degree(g,v)
         return length(searchsorted(fadj(g,u), v)) > 0
     else
