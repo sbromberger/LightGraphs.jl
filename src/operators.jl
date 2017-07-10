@@ -506,3 +506,67 @@ function merge_vertices!(g::AbstractGraph, vs::Vector{T} where T <: Integer)
 
     return vertex_conversions
 end
+
+
+"""compute_shifts(n::Int, x::AbstractArray)
+
+Determines how many elements of vs are less than i for all i in 1:n.
+"""
+function compute_shifts(n::Int, x::AbstractArray)
+    tmp = zeros(Int, n)
+    tmp[x[2:end]] = 1
+    return cumsum!(tmp, tmp)
+end
+
+"""
+    merge_vertices(g::AbstractGraph, vs)
+
+Create a new graph where all vertices in vs have been aliased to the same vertex minimum(vs).
+"""
+function merge_vertices(g::AbstractGraph, vs)
+    labels = collect(1:nv(g))
+    @show labels
+    # Use lowest value as new vertex id.
+    sort!(vs)
+    nvnew = nv(g) - length(@show unique(vs)) +1
+    v0 = minimum(vs)
+    v0 > 0 || error("minimum(vs) < 1")
+    maximum(vs) <= nv(g) || error("maximum(vs) > nv(g)")
+    for v in vs
+        labels[v] = v0
+    end
+    @show shifts = compute_shifts(nv(g), vs[2:end])
+    for v in vertices(g)
+        if labels[v] != v0
+            labels[v] -= shifts[v]
+        end
+    end
+    @show labels
+
+    #if v in vs then labels[v] == v0 else labels[v] == v
+    newg = Graph(nvnew)
+    for e in edges(g)
+        u,w = src(e), dst(e)
+        @show u,w, labels[u], labels[w]
+        if labels[u] != labels[w] #not a new self loop
+            add_edge!(newg, labels[u], labels[w])
+        end
+    end
+    return newg
+end
+
+"""
+    if vs is an Associative collection such as Dict{Int, Int}, then use vs as a map from old vertexid to new vertexid.
+"""
+function merge_vertices(g::AbstractGraph, labels::Associative)
+    #if v in vs then labels[v] == v0 else labels[v] == v
+    newg = Graph(nvnew)
+    for e in edges(g)
+        u,w = src(e), dst(e)
+        @show u,w, labels[u], labels[w]
+        if labels[u] != labels[w] #not a new self loop
+            add_edge!(g, labels[u], labels[w])
+        end
+    end
+    return newg
+end
