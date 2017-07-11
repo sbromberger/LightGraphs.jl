@@ -548,12 +548,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
     g.fadjlist = g.fadjlist[1: (end-length(vs))]
 
     # Correct edge counts
-    total_edges = 0
-    for i in vertices(g)
-        total_edges = total_edges + degree(g,i)
-    end
-
-    g.ne = total_edges /2
+    g.ne = sum(degree(g, i) for i in vertices(g))/2
 
     return new_vertex_ids
 end
