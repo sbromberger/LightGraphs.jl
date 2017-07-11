@@ -123,7 +123,7 @@ is_directed(g::SimpleGraph) = false
 
 function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
     u, v = Tuple(e)
-    u > nv(g) || v > nv(g) && return false
+    (u > nv(g) || v > nv(g)) && return false
     if degree(g,u) > degree(g,v)
         u, v = v, u
     end

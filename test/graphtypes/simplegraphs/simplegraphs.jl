@@ -50,6 +50,8 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
         @test @inferred(fadj(g,2)) == badj(g,2) == adj(g,2) == g.fadjlist[2]
 
         @test @inferred(has_edge(g, 2, 3))
+        @test @inferred(!has_edge(g, 20, 3))
+        @test @inferred(!has_edge(g, 2, 30))
         @test @inferred(has_edge(g, 3, 2))
 
         gc = copy(g)
@@ -112,6 +114,8 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         @test @inferred(has_edge(g, 2, 3))
         @test @inferred(!has_edge(g, 3, 2))
+        @test @inferred(!has_edge(g, 20, 3))
+        @test @inferred(!has_edge(g, 2, 30))
 
         gc = copy(g)
         @test @inferred(add_edge!(gc, 4=>1)) && gc == CycleDiGraph(4)
