@@ -16,7 +16,7 @@ using BenchmarkTools
             a = 0
             for u in neighbors(g, i)
                 for v in neighbors(g, u)
-                    a += degree(g,v)
+                    a += degree(g, v)
                 end
             end
             return a
@@ -53,7 +53,7 @@ using BenchmarkTools
         end
 
         nv_ = 10000
-        g = Graph(nv_, 64*nv_)
+        g = Graph(nv_, 64 * nv_)
         f = vertex_function
         println(g)
 

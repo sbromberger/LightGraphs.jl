@@ -42,7 +42,7 @@ and each value containing the vertices associated with that component.
 """
 function components_dict(labels::Vector{T}) where T<:Integer
     d = Dict{T,Vector{T}}()
-    for (v,l) in enumerate(labels)
+    for (v, l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
         push!(vec, v)
         d[l] = vec
@@ -57,10 +57,10 @@ Given a vector of component labels, return a vector of vectors representing the 
 with a given component id.
 """
 function components(labels::Vector{T}) where T<:Integer
-    d = Dict{T, T}()
+    d = Dict{T,T}()
     c = Vector{Vector{T}}()
     i = one(T)
-    for (v,l) in enumerate(labels)
+    for (v, l) in enumerate(labels)
         index = get!(d, l, i)
         if length(c) >= index
             push!(c[index], v)
@@ -98,7 +98,7 @@ Return `true` if graph `g` is connected. For directed graphs, use
 [`is_weakly_connected`](@ref) or [`is_strongly_connected`](@ref).
 """
 function is_connected end
-@traitfn is_connected(g::::(!IsDirected)) = ne(g)+1 >= nv(g) && length(connected_components(g)) == 1
+@traitfn is_connected(g::::(!IsDirected)) = ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
 
 """
     weakly_connected_components(g)
@@ -207,16 +207,16 @@ function period end
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = bfs_tree(g,1)
-    levels      = gdistances(g_bfs_tree,1)
-    tree_diff   = difference(g,g_bfs_tree)
+    g_bfs_tree  = bfs_tree(g, 1)
+    levels      = gdistances(g_bfs_tree, 1)
+    tree_diff   = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
 
     divisor = 0
     for e in edges(tree_diff)
         @inbounds value = levels[src(e)] - levels[dst(e)] + 1
-        divisor = gcd(divisor,value)
-        isequal(divisor,1) && return 1
+        divisor = gcd(divisor, value)
+        isequal(divisor, 1) && return 1
     end
 
     return divisor
@@ -235,19 +235,19 @@ function condensation end
 
     component = Vector{T}(nv(g))
 
-    for (i,s) in enumerate(scc)
+    for (i, s) in enumerate(scc)
         @inbounds component[s] = i
     end
 
     @inbounds for e in edges(g)
         s, d = component[src(e)], component[dst(e)]
         if (s != d)
-            add_edge!(h,s,d)
+            add_edge!(h, s, d)
         end
     end
     return h
 end
-@traitfn condensation(g::::IsDirected) = condensation(g,strongly_connected_components(g))
+@traitfn condensation(g::::IsDirected) = condensation(g, strongly_connected_components(g))
 
 """
     attracting_components(g)
@@ -262,13 +262,13 @@ function attracting_components end
 @traitfn function attracting_components(g::::IsDirected)
     T = eltype(g)
     scc  = strongly_connected_components(g)
-    cond = condensation(g,scc)
+    cond = condensation(g, scc)
 
     attracting = Vector{T}()
 
     for v in vertices(cond)
-        if outdegree(cond,v) == 0
-            push!(attracting,v)
+        if outdegree(cond, v) == 0
+            push!(attracting, v)
         end
     end
     return scc[attracting]
@@ -322,8 +322,8 @@ Return true if the degree sequence `degs` is graphical, according to
 function isgraphical(degs::Vector{Int})
     iseven(sum(degs)) || return false
     n = length(degs)
-    for r=1:n-1
-        cond = sum(i->degs[i], 1:r) <= r*(r-1) + sum(i->min(r,degs[i]), r+1:n)
+    for r = 1:(n - 1)
+        cond = sum(i -> degs[i], 1:r) <= r * (r - 1) + sum(i -> min(r, degs[i]), (r + 1):n)
         cond || return false
     end
     return true

@@ -29,7 +29,7 @@ end
 abstract type AbstractGraphVisitAlgorithm end
 
 const AbstractEdgeMap{T} = Associative{Edge,T}
-const AbstractVertexMap{T<:Integer, U} = Union{AbstractVector{T},Associative{T, U}}
+const AbstractVertexMap{T<:Integer,U} = Union{AbstractVector{T},Associative{T,U}}
 
 struct DummyEdgeMap <: AbstractEdgeMap{Int}
 end

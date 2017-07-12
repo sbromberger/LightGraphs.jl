@@ -15,11 +15,11 @@ end
 
 abstract type AbstractMASVisitor <: AbstractGraphVisitor end
 
-function maximum_adjacency_visit_impl!{T}(
-    g::AbstractGraph,                               # the graph
-    pq::DataStructures.PriorityQueue{Int, T},         # priority queue
-    visitor::AbstractMASVisitor,                      # the visitor
-    colormap::Vector{Int})                            # traversal status
+function maximum_adjacency_visit_impl!(
+    g::AbstractGraph,                                # the graph
+    pq::DataStructures.PriorityQueue{Int,T},         # priority queue
+    visitor::AbstractMASVisitor,                     # the visitor
+    colormap::Vector{Int}) where T                   # traversal status
 
     while !isempty(pq)
         u = DataStructures.dequeue!(pq)
@@ -27,7 +27,7 @@ function maximum_adjacency_visit_impl!{T}(
         for v in out_neighbors(g, u)
             examine_neighbor!(visitor, u, v, 0, 0, 0)
 
-            if haskey(pq,v)
+            if haskey(pq, v)
                 ed = visitor.distmx[u, v]
                 pq[v] += ed
             end
@@ -46,14 +46,14 @@ function traverse_graph!(
     colormap::Vector{Int})
 
 
-    pq = DataStructures.PriorityQueue(Int,T,Base.Order.Reverse)
+    pq = DataStructures.PriorityQueue(Int, T, Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
         pq[v] = zero(T)
     end
 
-    @assert haskey(pq,s)
+    @assert haskey(pq, s)
     @assert nv(g) >= 2
 
     #Give the starting vertex high priority
@@ -77,7 +77,7 @@ end
 #
 #################################################
 
-mutable struct MinCutVisitor{T, U<:Integer} <: AbstractMASVisitor
+mutable struct MinCutVisitor{T,U<:Integer} <: AbstractMASVisitor
     graph::AbstractGraph
     parities::BitVector
     colormap::Vector{Int}
@@ -88,14 +88,14 @@ mutable struct MinCutVisitor{T, U<:Integer} <: AbstractMASVisitor
     vertices::Vector{U}
 end
 
-function MinCutVisitor{T}(g::AbstractGraph, distmx::AbstractMatrix{T})
+function MinCutVisitor(g::AbstractGraph, distmx::AbstractMatrix{T}) where T
     U = eltype(g)
     n = nv(g)
     parities = falses(n)
     return MinCutVisitor(
         g,
         falses(n),
-        zeros(Int,n),
+        zeros(Int, n),
         typemax(T),
         zero(T),
         zero(Int),
@@ -107,7 +107,7 @@ end
 function discover_vertex!(vis::MinCutVisitor, v::Integer)
     vis.parities[v] = false
     vis.colormap[v] = 1
-    push!(vis.vertices,v)
+    push!(vis.vertices, v)
     return true
 end
 
@@ -132,7 +132,7 @@ function close_vertex!(vis::MinCutVisitor, v::Integer)
     if vis.cutweight < vis.bestweight && vis.visited < nv(vis.graph)
         vis.bestweight = vis.cutweight
         for u in vertices(vis.graph)
-            vis.parities[u] = ( vis.colormap[u] == 2)
+            vis.parities[u] = (vis.colormap[u] == 2)
         end
     end
     return true
@@ -144,15 +144,15 @@ end
 #
 #################################################
 
-struct MASVisitor{T, U<:Integer} <: AbstractMASVisitor
+struct MASVisitor{T,U<:Integer} <: AbstractMASVisitor
     io::IO
     vertices::Vector{U}
     distmx::AbstractMatrix{T}
     log::Bool
 end
 
-function discover_vertex!{T}(visitor::MASVisitor{T}, v::Integer)
-    push!(visitor.vertices,v)
+function discover_vertex!(visitor::MASVisitor{T}, v::Integer) where T
+    push!(visitor.vertices, v)
     visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
     return true
 end
@@ -182,10 +182,10 @@ values that determines the partition in `g` (1 or 2) and `bestcut` is the
 weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
-function mincut{T}(
+function mincut(
     g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)
-)
+) where T
     visitor = MinCutVisitor(g, distmx)
     colormap = zeros(Int, nv(g))
     traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, colormap)
@@ -202,12 +202,12 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 `io`, which defaults to `STDOUT`; otherwise, no event information will be
 displayed.
 """
-function maximum_adjacency_visit{T}(
+function maximum_adjacency_visit(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
     log::Bool,
     io::IO
-)
+) where T
     visitor = MASVisitor(io, Vector{Int}(), distmx, log)
     traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(g)))
     return visitor.vertices

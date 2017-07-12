@@ -6,8 +6,8 @@ abstract type Visitor{T<:Integer} end
 Compute the theoretical maximum number of cycles of size `i` in a directed graph of `n`
  vertices.
 """
-ncycles_n_i(n::Integer, i::Integer) = binomial(big(n), big(n-i+1)) * factorial(big(n-i))
-
+ncycles_n_i(n::Integer, i::Integer) =
+    binomial(big(n), big(n - i + 1)) * factorial(big(n - i))
 
 """
     maxsimplecycles(n::Integer)
@@ -19,8 +19,7 @@ The formula is coming from [Johnson, 1973](Johnson).
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
 """
-
-maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n-1))
+maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
 
 
 @doc_str """
@@ -81,9 +80,8 @@ end
 
 Constructor of the visitor, using the directed graph information.
 """
-JohnsonVisitor{T<:Integer}(dg::DiGraph{T}) = JohnsonVisitor(Vector{T}(),
-                                             falses(vertices(dg)),
-                                             [Set{T}() for i in vertices(dg)])
+JohnsonVisitor(dg::DiGraph{T}) where T<:Integer =
+    JohnsonVisitor(Vector{T}(), falses(vertices(dg)), [Set{T}() for i in vertices(dg)])
 
 """
     unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
@@ -94,7 +92,7 @@ Unblock the vertices recursively.
 not and `B` is the map that tells if the unblocking of one vertex should 
 unblock other vertices.
 """
-function unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
+function unblock!(v::T, blocked::BitArray, B::Vector{Set{T}}) where T<:Integer
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
@@ -134,7 +132,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in out_neighbors(dg,v)
+    for w in out_neighbors(dg, v)
         if w == startnode
             push!(allcycles, vmap[vis.stack])
             done = true
@@ -175,7 +173,7 @@ function simplecycles end
     sccs = strongly_connected_components(dg)
     cycles = Vector{Vector{Int}}() # Pas très cohérent : devrait être du type de dg.
     for scc in sccs
-        for i in 1:(length(scc)-1)
+        for i in 1:(length(scc) - 1)
             wdg, vmap = induced_subgraph(dg, scc[i:end])
             visitor = JohnsonVisitor(wdg)
             circuit(1, wdg, visitor, cycles, vmap) # 1 is the startnode.
@@ -287,7 +285,7 @@ Returns the minimum of the ceiling and the number of cycles.
 function simplecyclescount end
 @traitfn function simplecyclescount(dg::::IsDirected, ceiling = 10^6)
     len = 0
-    for cycle in Iterators.take(Channel(c->itercycles(dg,c)), ceiling)
+    for cycle in Iterators.take(Channel(c -> itercycles(dg, c)), ceiling)
         len += 1
     end
     return len
@@ -312,7 +310,8 @@ To get an idea of the possible number of cycles, using function
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """ 
 function simplecycles_iter end
-@traitfn simplecycles_iter(dg::::IsDirected, ceiling = 10^6) = collect(Iterators.take(Channel(c->itercycles(dg,c)), ceiling))
+@traitfn simplecycles_iter(dg::::IsDirected, ceiling = 10^6) =
+    collect(Iterators.take(Channel(c -> itercycles(dg, c)), ceiling))
 
 @doc_str """
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
@@ -336,8 +335,8 @@ function simplecycleslength end
 @traitfn function simplecycleslength(dg::::IsDirected, ceiling = 10^6)
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in Iterators.take(Channel(c->itercycles(dg,c)), ceiling)
-          cyclelength[length(cycle)] +=1
+    for cycle in Iterators.take(Channel(c -> itercycles(dg, c)), ceiling)
+          cyclelength[length(cycle)] += 1
           ncycles += 1
     end
     return cyclelength, ncycles

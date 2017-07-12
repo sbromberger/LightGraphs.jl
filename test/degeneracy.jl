@@ -1,5 +1,5 @@
 @testset "Decomposition" begin
-    d = loadgraph(joinpath(testdir,"testdata","graph-decomposition.jgz"))
+    d = loadgraph(joinpath(testdir, "testdata", "graph-decomposition.jgz"))
 
     for g in testgraphs(d)
         corenum = @inferred(core_number(g))

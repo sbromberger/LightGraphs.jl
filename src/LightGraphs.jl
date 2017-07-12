@@ -86,9 +86,6 @@ CombinatorialAdjacency, non_backtracking_matrix, incidence_matrix,
 nonbacktrack_embedding, Nonbacktracking,
 contract,
 
-# astar
-a_star,
-
 # persistence
 loadgraph, loadgraphs, savegraph, LGFormat,
 

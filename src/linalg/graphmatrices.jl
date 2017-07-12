@@ -2,27 +2,27 @@ __precompile__(true)
 
 
 import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
-export  convert,
-		SparseMatrix,
-		GraphMatrix,
-		Adjacency,
-		adjacency,
-		Laplacian,
-		CombinatorialAdjacency,
-		CombinatorialLaplacian,
-		NormalizedAdjacency,
-		NormalizedLaplacian,
-		StochasticAdjacency,
-		StochasticLaplacian,
-		AveragingAdjacency,
-		AveragingLaplacian,
-		PunchedAdjacency,
-		Noop,
-		diag,
-		degrees,
-		symmetrize,
-		prescalefactor,
-		postscalefactor
+export convert,
+	SparseMatrix,
+	GraphMatrix,
+	Adjacency,
+	adjacency,
+	Laplacian,
+	CombinatorialAdjacency,
+	CombinatorialLaplacian,
+	NormalizedAdjacency,
+	NormalizedLaplacian,
+	StochasticAdjacency,
+	StochasticLaplacian,
+	AveragingAdjacency,
+	AveragingLaplacian,
+	PunchedAdjacency,
+	Noop,
+	diag,
+	degrees,
+	symmetrize,
+	prescalefactor,
+	postscalefactor
 
 
 
@@ -63,8 +63,8 @@ struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 end
 
 function CombinatorialAdjacency(A::SparseMatrix{T}) where T
-	D = vec(sum(A,1))
-	return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A,D)
+	D = vec(sum(A, 1))
+	return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
 end
 
 
@@ -80,7 +80,7 @@ struct NormalizedAdjacency{T} <: Adjacency{T}
 	scalefactor::Vector{T}
 end
 function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
-	sf = adjmat.D.^(-1/2)
+	sf = adjmat.D.^(-1 / 2)
 	return NormalizedAdjacency(adjmat, sf)
 end
 
@@ -113,14 +113,14 @@ function AveragingAdjacency(adjmat::CombinatorialAdjacency)
 	return AveragingAdjacency(adjmat, sf)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D)/norm(sqrt.(adjmat.A.D))
+perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / norm(sqrt.(adjmat.A.D))
 
 struct PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
 end
 function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-            perron=sqrt.(adjmat.D)/norm(sqrt.(adjmat.D))
+            perron = sqrt.(adjmat.D) / norm(sqrt.(adjmat.D))
             return PunchedAdjacency(NormalizedAdjacency(adjmat), perron)
 end
 
@@ -144,7 +144,7 @@ Diagonal(::Noop) = Noop()
 
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
 
-postscalefactor(::Adjacency)= Noop()
+postscalefactor(::Adjacency) = Noop()
 
 postscalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
 
@@ -256,16 +256,16 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 	postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
 
 
-*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T<:Number=
+*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T<:Number =
 	adjmat.A * x
 
-*(lapl::Laplacian{T}, x::AbstractVector{T}) where T<:Number=
-	(diag(lapl) .* x) - (adjacency(lapl)*x)
+*(lapl::Laplacian{T}, x::AbstractVector{T}) where T<:Number =
+	(diag(lapl) .* x) - (adjacency(lapl) * x)
 
 
 function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T<:Number
-    y=adjmat.A*x
-    return y - dot(adjmat.perron, y)*adjmat.perron
+    y = adjmat.A * x
+    return y - dot(adjmat.perron, y) * adjmat.perron
 end
 
 function A_mul_B!(Y, A::Adjacency, B)
@@ -292,16 +292,16 @@ function A_mul_B!(Y, A::StochasticAdjacency, B)
 end
 
 function A_mul_B!(Y, adjmat::PunchedAdjacency, x)
-    y = adjmat.A*x
-    Y[:] = y - dot(adjmat.perron, y)*adjmat.perron
+    y = adjmat.A * x
+    Y[:] = y - dot(adjmat.perron, y) * adjmat.perron
     return Y
 end
 
 function A_mul_B!(Y, lapl::Laplacian, B)
-    A_mul_B!(Y, lapl.A, B)
-	  z = diag(lapl) .* B
-    Y[:] = z - Y[:]
-    return Y
+	A_mul_B!(Y, lapl.A, B)
+	z = diag(lapl) .* B
+	Y[:] = z - Y[:]
+	return Y
 end
 
 
@@ -312,23 +312,23 @@ Return a symmetric version of graph (represented by sparse matrix `A`) as a spar
 `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`. Use `:sum` for weighted graphs.
 """
 function symmetrize(A::SparseMatrix, which=:or)
-	  if which==:or
-	      M = A + A'
-	      M.nzval[M.nzval .== 2] = 1
-        return M
+	if which == :or
+		M = A + A'
+		M.nzval[M.nzval .== 2] = 1
+		return M
     end
-    T = A
-	  if which==:triu
-		    T = triu(A)
-	  elseif which==:tril
-		    T = tril(A)
-    elseif which==:sum
-		    T = A
+	T = A
+	if which == :triu
+		T = triu(A)
+	elseif which == :tril
+	    T = tril(A)
+    elseif which == :sum
+	    T = A
     else
         error("$which is not a supported method of symmetrizing a matrix")
     end
-		M = T + T'
-	  return M
+	M = T + T'
+	return M
 end
 
 """

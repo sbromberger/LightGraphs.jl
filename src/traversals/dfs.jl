@@ -39,7 +39,7 @@ function depth_first_visit_impl!(
             v, tstate = next(udsts, tstate)
             u_color = get(vertexcolormap, u, 0)
             v_color = get(vertexcolormap, v, 0)
-            v_edge = Edge(u,v)
+            v_edge = Edge(u, v)
             e_color = get(edgecolormap, v_edge, 0)
             examine_neighbor!(visitor, u, v, u_color, v_color, e_color) #no return here
 
@@ -69,7 +69,7 @@ function traverse_graph!(
     alg::DepthFirst,
     s::Integer,
     visitor::AbstractGraphVisitor;
-    vertexcolormap = Dict{eltype(g), Int}(),
+    vertexcolormap = Dict{eltype(g),Int}(),
     edgecolormap = DummyEdgeMap())
 
     T = eltype(g)
@@ -174,7 +174,7 @@ mutable struct TreeDFSVisitor{T} <:AbstractGraphVisitor
     predecessor::Vector{T}
 end
 
-TreeDFSVisitor(n::T) where T<:Integer = TreeDFSVisitor(DiGraph(n), zeros(T,n))
+TreeDFSVisitor(n::T) where T<:Integer = TreeDFSVisitor(DiGraph(n), zeros(T, n))
 
 function examine_neighbor!(visitor::TreeDFSVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
     if (vcolor == 0)

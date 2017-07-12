@@ -26,8 +26,8 @@ function core_number(g::AbstractGraph)
     curr_degree = 0
     for (i, v) in enumerate(vs)
         if degrees[v] > curr_degree
-            append!(bin_boundaries, repmat([i], (degrees[v]-curr_degree)))
-            curr_degree=degrees[v]
+            append!(bin_boundaries, repmat([i], (degrees[v] - curr_degree)))
+            curr_degree = degrees[v]
         end
     end
     vertex_pos = sortperm(vs)
@@ -39,11 +39,11 @@ function core_number(g::AbstractGraph)
             if core[u] > core[v]
                 pop!(nbrs[u], v)
                 pos = vertex_pos[u]
-                bin_start = bin_boundaries[core[u]+1]
+                bin_start = bin_boundaries[core[u] + 1]
                 vertex_pos[u] = bin_start
                 vertex_pos[vs[bin_start]] = pos
                 vs[bin_start], vs[pos] = vs[pos], vs[bin_start]
-                bin_boundaries[core[u]+1] += 1
+                bin_boundaries[core[u] + 1] += 1
                 core[u] -= 1
             end
         end
@@ -72,7 +72,7 @@ function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
         k = maximum(corenum) # max core
     end
 
-    return find(x->x>=k, corenum)
+    return find(x -> x >= k, corenum)
 end
 
 """
@@ -126,9 +126,9 @@ Not implemented for graphs with self loops.
 """
 function k_crust(g, k=-1; corenum=core_number(g))
     if k == -1
-        k=maximum(corenum) - 1
+        k = maximum(corenum) - 1
     end
-    return find(x-> x <= k, corenum)
+    return find(x -> x <= k, corenum)
 end
 
 """
@@ -151,7 +151,7 @@ Not implemented for graphs with parallel edges or self loops.
    http://link.aps.org/doi/10.1103/PhysRevE.73.056101
 """
 function k_corona(g::AbstractGraph, k; corenum=core_number(g))
-    kcore = k_core(g,k)
+    kcore = k_core(g, k)
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)
 

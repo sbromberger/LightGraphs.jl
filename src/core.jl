@@ -16,7 +16,7 @@ is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 Add `n` new vertices to the graph `g`.
 Return `true` if all vertices were added successfully, `false` otherwise.
 """
-add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i=1:n])
+add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i = 1:n])
 
 """
     indegree(g[, v])
@@ -25,7 +25,7 @@ Return a vector corresponding to the number of edges which end at each vertex in
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
 indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g,x) for x in v]
+indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
 
 """
     outdegree(g[, v])
@@ -34,7 +34,7 @@ Return a vector corresponding to the number of edges which start at each vertex 
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
 outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g,x) for x in v]
+outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
 
 """
     degree(g[, v])
@@ -54,40 +54,40 @@ degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x 
 
 Return the maximum [`outdegree`](@ref) of vertices in `g`.
 """
-Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
+Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
 """
     δout(g)
 
 Return the minimum [`outdegree`](@ref) of vertices in `g`.
 """
-δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
+δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
 
 """
     Δin(g)
 
 Return the maximum [`indegree`](@ref) of vertices in `g`.
 """
-Δin(g) = noallocextreme(indegree,(>), typemin(Int), g)
+Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
 
 """
     δin(g)
 
 Return the minimum [`indegree`](ref) of vertices in `g`.
 """
-δin(g) = noallocextreme(indegree,(<), typemax(Int), g)
+δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
 
 """
     Δ(g)
 
 Return the maximum [`degree`](@ref) of vertices in `g`.
 """
-Δ(g) = noallocextreme(degree,(>), typemin(Int), g)
+Δ(g) = noallocextreme(degree, (>), typemin(Int), g)
 
 """
     δ(g)
 Return the minimum [`degree`](@ref) of vertices in `g`.
 """
-δ(g) = noallocextreme(degree,(<), typemax(Int), g)
+δ(g) = noallocextreme(degree, (<), typemax(Int), g)
 
 
 """
@@ -115,7 +115,7 @@ Degree function (for example, `indegree` or `outdegree`) may be specified by
 overriding `degfn`.
 """
 function degree_histogram(g::AbstractGraph, degfn=degree)
-    hist = Dict{eltype(g), Int}()
+    hist = Dict{eltype(g),Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
             hist[d] = get(hist, d, 0) + 1
@@ -169,14 +169,14 @@ common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
 
 Return true if `g` has any self loops.
 """
-has_self_loops(g::AbstractGraph) = nv(g) == 0? false : any(v->has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
 
 """
     num_self_loops(g)
 
 Return the number of self loops in `g`.
 """
-num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v->has_edge(g, v, v), vertices(g))
+num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
 
 @doc_str """
     density(g)
@@ -187,9 +187,9 @@ number of possible edges (``|V|×(|V|-1)`` for directed graphs and
 """
 function density end
 @traitfn density(g::::IsDirected) =
-ne(g) / (nv(g) * (nv(g)-1))
+ne(g) / (nv(g) * (nv(g) - 1))
 @traitfn density(g::::(!IsDirected)) =
-(2*ne(g)) / (nv(g) * (nv(g)-1))
+(2 * ne(g)) / (nv(g) * (nv(g) - 1))
 
 
 """
@@ -199,7 +199,7 @@ Return a copy of a graph with the smallest practical type that
 can accommodate all vertices.
 """
 function squash(g::AbstractGraph)
-    gtype = is_directed(g)? DiGraph : Graph
+    gtype = is_directed(g) ? DiGraph : Graph
     validtypes = [UInt8, UInt16, UInt32, UInt64, Int]
     nvg = nv(g)
     for T in validtypes

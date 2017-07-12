@@ -114,7 +114,7 @@ function breakingPoints end
     λ = length(auxpoints) - 1
     left_index = 1
     T = eltype(capacity_matrix)
-    breakingpoints = Vector{Tuple{T, T, Int}}()
+    breakingpoints = Vector{Tuple{T,T,Int}}()
 
     for (id, point) in enumerate(auxpoints)
         if id == 1
@@ -124,7 +124,7 @@ function breakingPoints end
             if point[1] != 0
                 x, y = intersection(pleft[1], pleft[2], pleft[3],
                 point[1], point[2], λ + 1 - id)
-                push!(breakingpoints,(x, y, λ + 1 - id))
+                push!(breakingpoints, (x, y, λ + 1 - id))
                 left_index += 1
             end
         end
@@ -224,7 +224,7 @@ Return the intersection of a set of line segments and a line of slope `k`
 passing by the origin. Segments are defined as a triple (x, y, slope).
 """
 function intersection(
-    points::Vector{Tuple{T, T, I}},  # vector of breaking points
+    points::Vector{Tuple{T,T,I}},  # vector of breaking points
     k::R                               # number of routes (slope of the line)
     ) where T<:AbstractFloat where I<:Integer where R<:Real
     λ = points[1][1] # Connectivity
@@ -250,5 +250,5 @@ Return true if each element in the tuple is approximately equal to its counterpa
 ### Implementation Notes:
 This is a separate function because we don't want to hijack isapprox for tuples.
 """
-approximately_equal(a::Tuple{T, T}, b::Tuple{T, T}) where T <: AbstractFloat =
+approximately_equal(a::Tuple{T,T}, b::Tuple{T,T}) where T <: AbstractFloat =
     a[1] ≈ b[1] && a[2] ≈ b[2]

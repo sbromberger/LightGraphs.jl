@@ -15,8 +15,8 @@ non-backtraking matrix ``B`` is defined as
 ``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
-    # idedgemap = Dict{Int, Edge}()
-    edgeidmap = Dict{Edge, Int}()
+    # idedgemap = Dict{Int,Edge}()
+    edgeidmap = Dict{Edge,Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -32,9 +32,9 @@ function non_backtracking_matrix(g::AbstractGraph)
 
     B = zeros(Float64, m, m)
 
-    for (e,u) in edgeidmap
+    for (e, u) in edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(g,i)
+        for k in in_neighbors(g, i)
             k == j && continue
             v = edgeidmap[Edge(k, i)]
             B[v, u] = 1
@@ -72,7 +72,7 @@ struct Nonbacktracking{G<:AbstractGraph}
 end
 
 function Nonbacktracking(g::AbstractGraph)
-    edgeidmap = Dict{Edge, Int}()
+    edgeidmap = Dict{Edge,Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -87,16 +87,16 @@ function Nonbacktracking(g::AbstractGraph)
     return Nonbacktracking(g, edgeidmap, m)
 end
 
-size(nbt::Nonbacktracking) = (nbt.m,nbt.m)
+size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
 function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
-    for (e,u) in nbt.edgeidmap
+    for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g,i)
+        for k in in_neighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             y[v] += x[u]
@@ -105,9 +105,9 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     return y
 end
 function A_mul_B!(C, nbt::Nonbacktracking, B)
-    # computs C = A*B
-    for i in 1:size(B,2)
-        C[:,i] = nbt*B[:,i]
+    # computs C = A * B
+    for i in 1:size(B, 2)
+        C[:, i] = nbt * B[:, i]
     end
     return C
 end
@@ -115,10 +115,10 @@ end
 function coo_sparse(nbt::Nonbacktracking)
     m = nbt.m
     #= I,J = zeros(Int, m), zeros(Int, m) =#
-    I,J = zeros(Int, 0), zeros(Int, 0)
-    for (e,u) in nbt.edgeidmap
+    I, J = zeros(Int, 0), zeros(Int, 0)
+    for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g,i)
+        for k in in_neighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             #= J[u] = v =#
@@ -127,15 +127,15 @@ function coo_sparse(nbt::Nonbacktracking)
             push!(J, u)
         end
     end
-    return I,J,1.0
+    return I, J, 1.0
 end
 
-sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m,nbt.m)
+sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zeros(x)
     for i in 1:nbt.m
-        y[:,i] = nbt * x[:,i]
+        y[:, i] = nbt * x[:, i]
     end
     return y
 end
@@ -148,7 +148,7 @@ The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     T = eltype(nbt.g)
     for i = one(T):nv(nbt.g), j in neighbors(nbt.g, i)
-        u = nbt.edgeidmap[i > j ? Edge(j,i) : Edge(i,j)]
+        u = nbt.edgeidmap[i > j ? Edge(j, i) : Edge(i, j)]
         vertexspace[i] += edgespace[u]
     end
 end
@@ -161,6 +161,6 @@ Integrate out the edges by summing over the edges incident to each vertex.
 """
 function contract(nbt::Nonbacktracking, edgespace::Vector)
     y = zeros(eltype(edgespace), nv(nbt.g))
-    contract!(y,nbt,edgespace)
+    contract!(y, nbt, edgespace)
     return y
 end

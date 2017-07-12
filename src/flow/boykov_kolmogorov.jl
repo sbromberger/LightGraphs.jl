@@ -36,7 +36,7 @@ function boykov_kolmogorov_impl end
 
     PARENT = zeros(U, n)
 
-    A = [source,target]
+    A = [source, target]
     O = Vector{U}()
 
     while true
@@ -66,12 +66,12 @@ end
     A::Vector                           # active set
     )
     T = eltype(residual_graph)
-    tree_cap(p,q) = TREE[p] == one(T) ? capacity_matrix[p,q] - flow_matrix[p,q] :
-    capacity_matrix[q,p] - flow_matrix[q,p]
+    tree_cap(p, q) = TREE[p] == one(T) ? capacity_matrix[p, q] - flow_matrix[p, q] :
+    capacity_matrix[q, p] - flow_matrix[q, p]
     while !isempty(A)
         p = last(A)
         for q in neighbors(residual_graph, p)
-            if tree_cap(p,q) > 0
+            if tree_cap(p, q) > 0
                 if TREE[q] == zero(T)
                     TREE[q] = TREE[p]
                     PARENT[q] = p
@@ -121,20 +121,20 @@ function augment!(
     T = eltype(path)
     # bottleneck capacity
     Δ = Inf
-    for i=1:length(path)-1
-        p, q = path[i:i+1]
-        cap = capacity_matrix[p,q] - flow_matrix[p,q]
+    for i = 1:(length(path) - 1)
+        p, q = path[i:(i + 1)]
+        cap = capacity_matrix[p, q] - flow_matrix[p, q]
         cap < Δ && (Δ = cap)
     end
 
     # update residual graph
-    for i=1:length(path)-1
-        p, q = path[i:i+1]
-        flow_matrix[p,q] += Δ
-        flow_matrix[q,p] -= Δ
+    for i = 1:(length(path) - 1)
+        p, q = path[i:(i + 1)]
+        flow_matrix[p, q] += Δ
+        flow_matrix[q, p] -= Δ
 
         # create orphans
-        if flow_matrix[p,q] == capacity_matrix[p,q]
+        if flow_matrix[p, q] == capacity_matrix[p, q]
             if TREE[p] == TREE[q] == one(T)
                 PARENT[q] = zero(T)
                 unshift!(O, q)
@@ -162,14 +162,14 @@ end
     )
 
     T = eltype(residual_graph)
-    tree_cap(p,q) = TREE[p] == 1 ? capacity_matrix[p,q] - flow_matrix[p,q] :
-    capacity_matrix[q,p] - flow_matrix[q,p]
+    tree_cap(p, q) = TREE[p] == 1 ? capacity_matrix[p, q] - flow_matrix[p, q] :
+    capacity_matrix[q, p] - flow_matrix[q, p]
     while !isempty(O)
         p = pop!(O)
         # try to find parent that is not an orphan
         parent_found = false
         for q in neighbors(residual_graph, p)
-            if TREE[q] == TREE[p] && tree_cap(q,p) > 0
+            if TREE[q] == TREE[p] && tree_cap(q, p) > 0
                 # check if "origin" is either source or target
                 o = q
                 while PARENT[o] ≠ 0
@@ -187,7 +187,7 @@ end
             # scan all neighbors and make the orphan a free node
             for q in neighbors(residual_graph, p)
                 if TREE[q] == TREE[p]
-                    if tree_cap(q,p) > 0
+                    if tree_cap(q, p) > 0
                         unshift!(A, q)
                     end
                     if PARENT[q] == p

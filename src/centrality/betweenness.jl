@@ -36,7 +36,7 @@ function betweenness_centrality(
 
     betweenness = zeros(n_v)
     for s in vs
-        if degree(g,s) > 0  # this might be 1?
+        if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)

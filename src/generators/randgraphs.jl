@@ -1,8 +1,8 @@
 function Graph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Integer
     tnv = T(nv)
-    maxe = div(Int(nv) * (nv-1), 2)
+    maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > 2/3 * maxe && return complement(Graph(nv, maxe-ne))
+    ne > (2 / 3) * maxe && return complement(Graph(nv, maxe - ne))
 
     rng = getRNG(seed)
     g = Graph(tnv)
@@ -20,16 +20,16 @@ Graph(nv::T, ne::Integer; seed::Int = -1) where T<: Integer =
 
 function DiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
     tnv = T(nv)
-    maxe = Int(nv) * (nv-1)
+    maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > 2/3 * maxe && return complement(DiGraph{T}(nv, maxe-ne))
+    ne > (2 / 3) * maxe && return complement(DiGraph{T}(nv, maxe - ne))
 
     rng = getRNG(seed)
     g = DiGraph(tnv)
     while g.ne < ne
         source = rand(rng, one(T):tnv)
         dest = rand(rng, one(T):tnv)
-        source != dest && add_edge!(g,source,dest)
+        source != dest && add_edge!(g, source, dest)
     end
     return g
 end
@@ -71,7 +71,7 @@ probability `p`.
 - `seed=-1`: set the RNG seed.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
-    m = is_directed ? n*(n-1) : div(n*(n-1),2)
+    m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
     ne = randbn(m, p, seed)
     return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
 end
@@ -103,7 +103,7 @@ randomized per the model based on probability `β`.
 - `seed=-1`: set the RNG seed.
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int = -1)
-    @assert k < n/2
+    @assert k < n / 2
     if is_directed
         g = DiGraph(n)
     else
@@ -111,7 +111,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     end
     rng = getRNG(seed)
     for s in 1:n
-        for i in 1:(floor(Integer, k/2))
+        for i in 1:(floor(Integer, k / 2))
             target = ((s + i - 1) % n) + 1
             if rand(rng) > β && !has_edge(g, s, target) # TODO: optimize this based on return of add_edge!
                 add_edge!(g, s, target)
@@ -119,7 +119,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
                 while true
                     d = target
                     while d == target
-                        d = rand(rng, 1:n-1)
+                        d = rand(rng, 1:(n - 1))
                         if s < d
                             d += 1
                         end
@@ -134,7 +134,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{Edge}, potential_edges::Dict{T, T}) where T<:Integer
+function _suitable(edges::Set{Edge}, potential_edges::Dict{T,T}) where T<:Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -144,25 +144,25 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{T, T}) where T<:Integ
     return false
 end
 
-_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k,n), rng)
+_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
 function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T<:Integer
     edges = Set{Edge}()
     m = 0
     stubs = zeros(T, sum(k))
-    for i=one(T):n
+    for i = one(T):n
         for j = one(T):k[i]
             m += 1
             stubs[m] = i
         end
     end
-    # stubs = vcat([fill(i, k[i]) for i=1:n]...) # slower
+    # stubs = vcat([fill(i, k[i]) for i = 1:n]...) # slower
 
     while !isempty(stubs)
         potential_edges =  Dict{T,T}()
         shuffle!(rng, stubs)
         for i in 1:2:length(stubs)
-            s1,s2 = stubs[i:i+1]
+            s1, s2 = stubs[i:(i + 1)]
             if (s1 > s2)
                 s1, s2 = s2, s1
             end
@@ -261,19 +261,19 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         n0 += 1
 
         # add edges to k existing vertices
-        for target in sample!(collect(1:n0-1), k)
+        for target in sample!(collect(1:(n0 - 1)), k)
             add_edge!(g, n0, target)
         end
     end
 
     # vector of weighted vertices (each node is repeated once for each adjacent edge)
-    weightedVs = Vector{Int}(2*(n-n0)*k + 2*ne(g))
+    weightedVs = Vector{Int}(2 * (n - n0) * k + 2 * ne(g))
 
     # initialize vector of weighted vertices
     offset = 0
     for e in edges(g)
-        weightedVs[offset+=1] = src(e)
-        weightedVs[offset+=1] = dst(e)
+        weightedVs[offset += 1] = src(e)
+        weightedVs[offset += 1] = dst(e)
     end
 
     # array to record if a node is picked
@@ -282,14 +282,14 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     # vector of targets
     targets = Vector{Int}(k)
 
-    for source in n0+1:n
+    for source in (n0 + 1):n
         # choose k targets from the existing vertices
         # pick uniformly from weightedVs (preferential attachement)
         i = 0
         while i < k
             target = weightedVs[rand(1:offset)]
             if !picked[target]
-                targets[i+=1] = target
+                targets[i += 1] = target
                 picked[target] = true
             end
         end
@@ -298,12 +298,11 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         for target in targets
             add_edge!(g, source, target)
 
-            weightedVs[offset+=1] = source
-            weightedVs[offset+=1] = target
+            weightedVs[offset += 1] = source
+            weightedVs[offset += 1] = target
             picked[target] = false
         end
     end
-
     return g
 end
 
@@ -335,7 +334,7 @@ function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) wher
         f > zero(T) && (nvs += 1)
     end
     # avoid getting into an infinite loop when too many edges are requested
-    max_no_of_edges = div(nvs*(nvs-1), 2)
+    max_no_of_edges = div(nvs * (nvs - 1), 2)
     @assert(m <= max_no_of_edges, "too many edges requested")
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
@@ -367,14 +366,14 @@ function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Ve
     m == 0 && return DiGraph(n)
     # avoid getting into an infinite loop when too many edges are requested
     noutvs = ninvs = nvs = 0
-    @inbounds for i=1:n
+    @inbounds for i = 1:n
         # sanity check for the fitness
         (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
         fitness_out[i] > zero(T) && (noutvs += 1)
         fitness_in[i] > zero(S) && (ninvs += 1)
         (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nvs += 1)
     end
-    max_no_of_edges = noutvs*ninvs - nvs
+    max_no_of_edges = noutvs * ninvs - nvs
     @assert(m <= max_no_of_edges, "too many edges requested")
     # calculate the cumulative fitness scores
     cum_fitness_out = cumsum(fitness_out)
@@ -389,8 +388,8 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
     while m > 0
-        source = searchsortedfirst(cum_fitness_out, rand(rng)*max_out)
-        target = searchsortedfirst(cum_fitness_in, rand(rng)*max_in)
+        source = searchsortedfirst(cum_fitness_out, rand(rng) * max_out)
+        target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
         # skip if loop edge
         (source == target) && continue
         edge = Edge(source, target)
@@ -459,16 +458,16 @@ function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64;
 end
 
 function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
-    α = -1/(α-1)
+    α = -1 / (α - 1)
     fitness = zeros(n)
     j = float(n)
     if finite_size_correction && α < -0.5
         # See the Cho et al paper, first page first column + footnote 7
-        j += n^(1+1/2α) * (10sqrt(2)*(1+α)) ^ (-1/α) - 1
+        j += n^(1 + 1 / 2α) * (10sqrt(2) * (1 + α))^(-1 / α) - 1
     end
     j = max(j, n)
-    @inbounds for i=1:n
-        fitness[i] = j ^ α
+    @inbounds for i = 1:n
+        fitness[i] = j^α
         j -= 1
     end
     return fitness
@@ -492,13 +491,13 @@ Allocates an array of `nk` `Int`s, and . For ``k > \\frac{n}{2}``, generates a g
 ``n-k-1`` and returns its complement.
 """
 function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
-    @assert(iseven(n*k), "n * k must be even")
+    @assert(iseven(n * k), "n * k must be even")
     @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
     if k == 0
         return Graph(n)
     end
-    if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_graph(n, n-k-1, seed=seed))
+    if (k > n / 2) && iseven(n * (n - k - 1))
+        return complement(random_regular_graph(n, n - k - 1, seed=seed))
     end
 
     rng = getRNG(seed)
@@ -578,17 +577,17 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     if k == 0
         return DiGraph(n)
     end
-    if (k > n/2) && iseven(n * (n-k-1))
-        return complement(random_regular_digraph(n, n-k-1, dir=dir, seed=seed))
+    if (k > n / 2) && iseven(n * (n - k - 1))
+        return complement(random_regular_digraph(n, n - k - 1, dir=dir, seed=seed))
     end
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Vector{Int}(n*k)
-    J = Vector{Int}(n*k)
-    V = fill(true, n*k)
+    I = Vector{Int}(n * k)
+    J = Vector{Int}(n * k)
+    V = fill(true, n * k)
     for r in 1:n
-        l = (r-1)*k+1 : r*k
+        l = ((r - 1) * k + 1):(r * k)
         I[l] = r
         J[l] = sample!(rng, cs, k, exclude = r)
     end
@@ -617,25 +616,25 @@ For a dynamic version of the SBM see the [`StochasticBlockModel`](@ref) type and
 related functions.
 """
 function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
-    @assert size(c,1) == length(n)
-    @assert size(c,2) == length(n)
+    @assert size(c, 1) == length(n)
+    @assert size(c, 2) == length(n)
     # init dsfmt generator without altering GLOBAL_RNG
     rng = getRNG(seed)
     N = sum(n)
     K = length(n)
-    nedg = zeros(Int,K, K)
+    nedg = zeros(Int, K, K)
     g = Graph(N)
-    cum = [sum(n[1:a]) for a=0:K]
-    for a=1:K
-        ra = cum[a]+1:cum[a+1]
-        for b=a:K
-            @assert a==b? c[a,b] <= n[b]-1 : c[a,b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
+    cum = [sum(n[1:a]) for a = 0:K]
+    for a = 1:K
+        ra = (cum[a] + 1):cum[a + 1]
+        for b = a:K
+            @assert a == b ? c[a, b] <= n[b] - 1 : c[a, b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
 
-            m = a==b ? div(n[a]*(n[a]-1),2) : n[a]*n[b]
-            p = a==b ? n[a]*c[a,b] / (2m) : n[a]*c[a,b]/m
+            m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
+            p = a == b ? n[a] * c[a, b] / (2m) : n[a] * c[a, b] / m
             nedg = randbn(m, p, seed)
-            rb = cum[b]+1:cum[b+1]
-            i=0
+            rb = (cum[b] + 1):cum[b + 1]
+            i = 0
             while i < nedg
                 source = rand(rng, ra)
                 dest = rand(rng, rb)
@@ -658,7 +657,7 @@ from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
 """
 function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T<:Real where U<:Integer
     K = length(n)
-    c = [ifelse(a==b, cint, cext) for a=1:K,b=1:K]
+    c = [ifelse(a == b, cint, cext) for a = 1:K, b = 1:K]
     stochastic_block_model(c, n, seed=seed)
 end
 
@@ -699,7 +698,7 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix;
     nodemap = zeros(Int, csum[end])
     for i in 1:csum[end]
         if i > csum[j]
-            j+=1
+            j += 1
         end
         nodemap[i] = j
     end
@@ -717,7 +716,7 @@ and external probabilities `externalp`.
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || error("Inconsistent input dimensions: internalp, sizes")
-    B = diagm(internalp) + externalp*(ones(numblocks, numblocks)-I)
+    B = diagm(internalp) + externalp * (ones(numblocks, numblocks) - I)
     return B
 end
 
@@ -731,14 +730,14 @@ function StochasticBlockModel(internalp::Real,
     StochasticBlockModel(sizes, B, seed=seed)
 end
 
-function StochasticBlockModel(internalp::Vector{T}, externalp::Real
-        , sizes::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
+function StochasticBlockModel(internalp::Vector{T}, externalp::Real,
+    sizes::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
     B = sbmaffinity(internalp, externalp, sizes)
     return StochasticBlockModel(sizes, B, seed=seed)
 end
 
 
-const biclique = ones(2,2) - eye(2)
+const biclique = ones(2, 2) - eye(2)
 
 #TODO: this documentation needs work. sbromberger 20170326
 @doc_str """
@@ -754,7 +753,7 @@ The blocks are connected with probability `between`.
 """
 function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T<:Integer
     numblocks = div(length(sizes), 2)
-    return kron(between*eye(numblocks), biclique) + eye(2numblocks)*intra
+    return kron(between * eye(numblocks), biclique) + eye(2numblocks) * intra
 end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
@@ -795,9 +794,7 @@ function make_edgestream(sbm::StochasticBlockModel)
     edges(ch) = begin
         for e in pairs
             i, j = Tuple(e)
-    	      if i == j
-                continue
-            end
+            i == j && continue
             p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
             if rand(sbm.rng) < p
                 put!(ch, e)
@@ -833,10 +830,10 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
-    Q = sparse(I,J,V)
+    Q = sparse(I, J, V)
     # Q = Q / Q'Q
     # @show Q'Q# < 1e-6
-    return (Q'A)*(Q)
+    return (Q'A) * Q
 end
 
 
@@ -844,7 +841,7 @@ function blockcounts(sbm::StochasticBlockModel, g::AbstractGraph)
     return blockcounts(sbm, adjacency_matrix(g))
 end
 
-function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph, AbstractMatrix})
+function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,AbstractMatrix})
     bc = blockcounts(sbm, g)
     bp = bc ./ sum(bc)
     return bp
@@ -865,13 +862,13 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
     M = edgefactor * N
     ij = ones(Int, M, 2)
     ab = A + B
-    c_norm = C/(1 - (A + B))
-    a_norm = A/(A + B)
+    c_norm = C / (1 - (A + B))
+    a_norm = A / (A + B)
 
     for ib = 1:SCALE
-        ii_bit = rand(M).>(ab)  # bitarray
-        jj_bit = rand(M).> ( c_norm.*(ii_bit) + a_norm.*.!(ii_bit) )
-        ij .+= 2^(ib-1).*(hcat(ii_bit, jj_bit))
+        ii_bit = rand(M) .> (ab)  # bitarray
+        jj_bit = rand(M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
+        ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
     end
 
     p = randperm(N)
@@ -881,7 +878,7 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
     ij = ij[p, :]
 
     g = DiGraph(N)
-    for (s,d) in zip(@view(ij[:,1]), @view(ij[:,2]))
+    for (s, d) in zip(@view(ij[:, 1]), @view(ij[:, 2]))
         add_edge!(g, s, d)
     end
     return g
