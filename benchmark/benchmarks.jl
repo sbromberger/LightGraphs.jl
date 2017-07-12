@@ -2,7 +2,7 @@ using PkgBenchmark
 using LightGraphs
 
 
-testdatadir = joinpath(dirname(@__FILE__), "..","test","testdata")
+testdatadir = joinpath(dirname(@__FILE__), "..", "test", "testdata")
 benchdatadir = joinpath(dirname(@__FILE__), "data")
 paramsfile = joinpath(benchdatadir, "params.jld")
 
@@ -11,13 +11,13 @@ println("paramsfile = $paramsfile")
 
 dg1fn = joinpath(testdatadir, "graph-5k-50k.jgz")
 
-DIGRAPHS = Dict{String, DiGraph}(
+DIGRAPHS = Dict{String,DiGraph}(
     "complete100"   => CompleteDiGraph(100),
     "5000-50000"    => LightGraphs.load(dg1fn)["graph-5000-50000"],
     "path500"       => PathDiGraph(500)
 )
 
-GRAPHS = Dict{String, Graph}(
+GRAPHS = Dict{String,Graph}(
     "complete100"   => CompleteGraph(100),
     "tutte"         => smallgraph(:tutte),
     "path500"       => PathGraph(500),

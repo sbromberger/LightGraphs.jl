@@ -25,9 +25,9 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test adjmat.D == vec(sum(mat, 1))
         @test adjmat.A == mat
         @test convert(SparseMatrix{Float64}, adjmat) == sparse(mat)
-        converttest(SparseMatrix{Float64},stochmat)
-        converttest(SparseMatrix{Float64},adjhat)
-        converttest(SparseMatrix{Float64},avgmat)
+        converttest(SparseMatrix{Float64}, stochmat)
+        converttest(SparseMatrix{Float64}, adjhat)
+        converttest(SparseMatrix{Float64}, avgmat)
         @test isa(CombinatorialAdjacency(adjmat), CombinatorialAdjacency)
         @test isa(CombinatorialAdjacency(avgmat), CombinatorialAdjacency)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
@@ -47,18 +47,18 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test typeof(AveragingAdjacency(adj)) <: AveragingAdjacency
 
         @test typeof(adjacency(lapl)) <: CombinatorialAdjacency
-        converttest(SparseMatrix{Float64},lapl)
+        converttest(SparseMatrix{Float64}, lapl)
 
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         @test typeof(adjacency(lapl))  <: CombinatorialAdjacency
         stochlapl = StochasticLaplacian(StochasticAdjacency(adjmat))
-        @test typeof(adjacency(stochlapl))  <: StochasticAdjacency
+        @test typeof(adjacency(stochlapl)) <: StochasticAdjacency
         averaginglapl = AveragingLaplacian(AveragingAdjacency(adjmat))
-        @test typeof(adjacency(averaginglapl))  <: AveragingAdjacency
+        @test typeof(adjacency(averaginglapl)) <: AveragingAdjacency
 
         normalizedlapl = NormalizedLaplacian(NormalizedAdjacency(adjmat))
-        @test typeof(adjacency(normalizedlapl))  <: NormalizedAdjacency
-        @test !( typeof(adjacency(normalizedlapl)) <: CombinatorialAdjacency)
+        @test typeof(adjacency(normalizedlapl)) <: NormalizedAdjacency
+        @test !(typeof(adjacency(normalizedlapl)) <: CombinatorialAdjacency)
 
         #constructors that fail.
         @test_throws MethodError CombinatorialAdjacency(lapl)
@@ -67,7 +67,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test_throws MethodError AveragingLaplacian(lapl)
         @test_throws MethodError convert(CombinatorialAdjacency, lapl)
         L = convert(SparseMatrix{Float64}, lapl)
-        @test sum(abs, (sum(L,1))) == 0
+        @test sum(abs, (sum(L, 1))) == 0
     end
 
     function test_accessors(mat, n)
@@ -80,7 +80,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         for m in (adjmat, stochmat, adjhat, avgmat)
             @test degrees(m) == dv
             @test eltype(m) == eltype(m.A)
-            @test size(m) == (n,n)
+            @test size(m) == (n, n)
             #@fact length(m) --> length(adjmat.A)
         end
     end
@@ -89,11 +89,11 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         lapl = CombinatorialLaplacian(adjmat)
         onevec = ones(Float64, n)
-        v = adjmat*ones(Float64, n)
-        @test sum(abs, (adjmat*onevec)) > 0.0
+        v = adjmat * ones(Float64, n)
+        @test sum(abs, (adjmat * onevec)) > 0.0
         @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
-        @test sum(abs, (lapl*onevec)) == 0
-        g(a) = sum(abs, (sum(sparse(a),1)))
+        @test sum(abs, (lapl * onevec)) == 0
+        g(a) = sum(abs, (sum(sparse(a), 1)))
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
@@ -107,7 +107,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test eigs(lhat, which=:LR)[1][1] < 2.0 + 1e-9
     end
 
-    function test_other(mat, n )
+    function test_other(mat, n)
         adjmat = CombinatorialAdjacency(mat)
         lapl = CombinatorialLaplacian(CombinatorialAdjacency(mat))
         @test size(lapl, 1) == n
@@ -133,7 +133,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         end
     end
 
-    function test_symmetry(mat,n)
+    function test_symmetry(mat, n)
         adjmat = CombinatorialAdjacency(mat)
         lapl = CombinatorialLaplacian(CombinatorialAdjacency(mat))
         @test size(lapl, 1) == n
@@ -156,27 +156,27 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         adjmat = CombinatorialAdjacency(mat)
         ahatp  = PunchedAdjacency(adjmat)
         y = ahatp * perron(ahatp)
-        @test dot(y, ahatp.perron) ≈ 0.0 atol=1.0e-8
-        @test sum(abs, y) ≈ 0.0 atol=1.0e-8
+        @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
+        @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
         eval, evecs = eigs(ahatp, which=:LM)
-        @test eval[1]-1  <= 0
-        @test dot(perron(ahatp), evecs[:,1]) ≈ 0.0 atol=1e-8
+        @test eval[1] - 1  <= 0
+        @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
         ahat = ahatp.A
         @test isa(ahat, NormalizedAdjacency)
 
         z = ahatp * perron(ahat)
-        @test norm(z) ≈ 0.0 atol=1e-8
+        @test norm(z) ≈ 0.0 atol = 1e-8
     end
 
 
     n = 10
-    mat = sparse(spones(sprand(n,n,0.3)))
+    mat = sparse(spones(sprand(n, n, 0.3)))
 
     test_adjacency(mat)
     test_laplacian(mat)
     test_accessors(mat, n)
 
-    mat = symmetrize(sparse(spones(sprand(n,n,0.3))))
+    mat = symmetrize(sparse(spones(sprand(n, n, 0.3))))
     test_arithmetic(mat, n)
     test_other(mat, n)
     test_symmetry(mat, n)
@@ -188,8 +188,8 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     function stationarydistribution(R::StochasticAdjacency; kwargs...)
         er = eigs(R, nev=1, which=:LR; kwargs...)
         l1 = er[1][1]
-        abs(l1 -1) < 1e-8 || error("failed to compute stationary distribution")
-        p = real(er[2][:,1])
+        abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution")
+        p = real(er[2][:, 1])
         if p[1] < 0
             for i in 1:length(p)
                 p[i] = -p[i]
@@ -205,11 +205,11 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
 
     # Random walk demo
     n = 100
-    p = 16/n
-    M = sprand(n,n, p)
+    p = 16 / n
+    M = sprand(n, n, p)
     M.nzval[:] = 1.0
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; ncv=10)
-    @test all(sd.>=0)
+    @test all(sd .>= 0)
 end
 end

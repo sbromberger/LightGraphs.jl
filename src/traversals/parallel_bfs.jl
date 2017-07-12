@@ -23,7 +23,7 @@ mutable struct LevelSynchronousBFS <: AbstractGraphVisitAlgorithm end
 A thread safe queue implementation for using as the queue for BFS.
 """
 
-struct ThreadQueue{T, N<:Integer}
+struct ThreadQueue{T,N<:Integer}
     data::Vector{T}
     head::Atomic{N} #Index of the head
     tail::Atomic{N} #Index of the tail
@@ -34,41 +34,41 @@ function ThreadQueue(T::Type, maxlength::N) where N <: Integer
     return q
 end
 
-function push!{T, N}(q::ThreadQueue{T, N}, val::T)
+function push!(q::ThreadQueue{T,N}, val::T) where T where N
     # TODO: check that head > tail
     offset = atomic_add!(q.tail, one(N))
     q.data[offset] = val
     return offset
 end
 
-function shift!{T, N}(q::ThreadQueue{T, N})
+function shift!(q::ThreadQueue{T,N}) where T where N
     # TODO: check that head < tail
     offset = atomic_add!(q.head, one(N))
     return q.data[offset]
 end
 
-function isempty{T, N}(q::ThreadQueue{T, N})
-    return ( q.head[] == q.tail[] ) && q.head != one(N)
+function isempty(q::ThreadQueue{T,N}) where T where N
+    return (q.head[] == q.tail[]) && q.head != one(N)
 end
 
-function getindex{T}(q::ThreadQueue{T}, iter)
+function getindex(q::ThreadQueue{T}, iter) where T
     return q.data[iter]
 end
 
 # Traverses the vertices in the queue and adds newly found successors to the queue.
-function bfskernel{T <: Integer}(
+function bfskernel(
         alg::LevelSynchronousBFS,
         next::ThreadQueue, # Thread safe queue to add vertices to
         g::AbstractGraph, # The graph
         parents::Array{Atomic{T}}, # Parents array
         level::Array{T} # Vertices in the current frontier
-    )
+    ) where T <: Integer
     @threads for src in level
         vertexneighbors = neighbors(g, src) # Get the neighbors of the vertex
         for vertex in vertexneighbors
             # Atomically check and set parent value if not set yet.
             parent = atomic_cas!(parents[vertex], zero(T), src)
-            if parent==0
+            if parent == 0
                 push!(next, vertex) #Push onto queue if newly found
             end
         end
@@ -93,10 +93,10 @@ function bfs_tree!(
         source::T, # Source vertex
         parents::Array{Atomic{T}} # Parents array
     ) where T<:Integer
-    parents[source][]=source # Set source to source
+    parents[source][] = source # Set source to source
     push!(next, source) # Add source to the queue
     while !isempty(next)
-        level = next[next.head[]:next.tail[]-1] # Get vertices in the frontier
+        level = next[next.head[]:(next.tail[] - 1)] # Get vertices in the frontier
         next.head[] = next.tail[] # reset the queue
         bfskernel(alg, next, g, parents, level) # Find new frontier
     end
@@ -116,14 +116,14 @@ environment variable to decide the number of threads to use. Refer `@threads` do
 for more details.
 This function is a high level wrapper around [`bfs_tree!`](@ref); use that function for more performance.
 """
-function bfs_tree{T <: Integer}(alg::LevelSynchronousBFS, g::AbstractGraph, source::T, nv::T)
+function bfs_tree(alg::LevelSynchronousBFS, g::AbstractGraph, source::T, nv::T) where T <: Integer
     next = ThreadQueue(T, nv) # Initialize threadqueue
-    parents = [Atomic{T}(0) for i=1:nv] # Create parents array
+    parents = [Atomic{T}(0) for i = 1:nv] # Create parents array
     bfs_tree!(alg, next, g, source, parents)
     tree([i[] for i in parents])
 end
 
-function bfs_tree{T <: Integer}(alg::LevelSynchronousBFS, g::AbstractGraph, source::T)
+function bfs_tree(alg::LevelSynchronousBFS, g::AbstractGraph, source::T) where T <: Integer
     nvg = nv(g)
     bfs_tree(alg, g, source, nvg)
 end

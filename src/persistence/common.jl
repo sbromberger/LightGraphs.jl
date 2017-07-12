@@ -11,7 +11,7 @@ multiple graphs; if the file format does not support multiple graphs, this
 value is ignored. The default value may change in the future.
 """
 function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGraphFormat)
-    GZip.open(fn,"r") do io
+    GZip.open(fn, "r") do io
         loadgraph(io, gname, format)
     end
 end
@@ -73,9 +73,9 @@ Return the number of graphs written.
 ### Implementation Notes
 Will only work if the file format supports multiple graph types.
 """
-function savegraph(fn::AbstractString, d::Dict{T, U},
+function savegraph(fn::AbstractString, d::Dict{T,U},
     format::AbstractGraphFormat; compress=true) where T<:AbstractString where U<:AbstractGraph
-    openfn = compress? GZip.open : open
+    openfn = compress ? GZip.open : open
     retval = -1
     openfn(fn, "w") do io
         retval = savegraph(io, d, format)

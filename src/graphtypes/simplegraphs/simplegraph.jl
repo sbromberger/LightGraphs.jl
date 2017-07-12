@@ -34,14 +34,14 @@ SimpleGraph(::Type{T}) where T<:Integer = SimpleGraph{T}(zero(T))
 
 # Graph{UInt8}(adjmx)
 function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
-    dima,dimb = size(adjmx)
-    isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
+    dima, dimb = size(adjmx)
+    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
     issymmetric(adjmx) || error("Adjacency / distance matrices must be symmetric")
 
     g = SimpleGraph(T(dima))
     for i in find(triu(adjmx))
-        ind = ind2sub((dima,dimb),i)
-        add_edge!(g,ind...)
+        ind = ind2sub((dima, dimb), i)
+        add_edge!(g, ind...)
     end
     return g
 end
@@ -62,7 +62,7 @@ function SimpleGraph(g::SimpleDiGraph)
     edgect = 0
     newfadj = deepcopy(g.fadjlist)
     for i in vertices(g)
-        for j in badj(g,i)
+        for j in badj(g, i)
             if (_insert_and_dedup!(newfadj[i], j))
                 edgect += 2     # this is a new edge only in badjlist
             else
@@ -124,10 +124,10 @@ is_directed(g::SimpleGraph) = false
 function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
     u, v = Tuple(e)
     (u > nv(g) || v > nv(g)) && return false
-    if degree(g,u) > degree(g,v)
+    if degree(g, u) > degree(g, v)
         u, v = v, u
     end
-    return length(searchsorted(fadj(g,u), v)) > 0
+    return length(searchsorted(fadj(g, u), v)) > 0
 end
 
 function add_edge!(g::SimpleGraph, e::SimpleGraphEdge)

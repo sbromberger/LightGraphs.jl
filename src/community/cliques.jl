@@ -53,7 +53,7 @@ function maximal_cliques end
     # union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
     done = Set{T}()
-    stack = Vector{Tuple{Set{T}, Set{T}, Set{T}}}()
+    stack = Vector{Tuple{Set{T},Set{T},Set{T}}}()
     clique_so_far = Vector{T}()
     cliques = Vector{Array{T}}()
 
