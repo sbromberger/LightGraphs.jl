@@ -23,7 +23,7 @@ function a_star_impl!(
             if colormap[v] < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
-                new_path = cat(1, path, Edge(u,v))
+                new_path = cat(1, path, Edge(u, v))
                 path_cost = cost_so_far + dist
                 enqueue!(frontier,
                 (path_cost, new_path, v),
@@ -54,7 +54,7 @@ function a_star(
     ) where T
     # heuristic (under)estimating distance to target
     U = eltype(g)
-    frontier = PriorityQueue(Tuple{T,Vector{Edge},U},T)
+    frontier = PriorityQueue(Tuple{T,Vector{Edge},U}, T)
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(g))
     colormap[s] = 1

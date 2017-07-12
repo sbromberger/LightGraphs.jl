@@ -20,7 +20,7 @@ This function is optimized for speed and directly manipulates CSC sparse matrix 
 """
 function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     n_v = nv(g)
-    nz = ne(g) * (is_directed(g)? 1 : 2)
+    nz = ne(g) * (is_directed(g) ? 1 : 2)
     colpt = ones(Int, n_v + 1)
 
     # see below - we iterate over columns. That's why we take the
@@ -43,14 +43,14 @@ function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     rowval = sizehint!(Vector{Int}(), nz)
     selfloops = Vector{Int}()
     for j in 1:n_v  # this is by column, not by row.
-        if has_edge(g,j,j)
+        if has_edge(g, j, j)
             push!(selfloops, j)
         end
         dsts = neighborfn(g, j)
-        colpt[j+1] = colpt[j] + length(dsts)
+        colpt[j + 1] = colpt[j] + length(dsts)
         append!(rowval, sort!(dsts))
     end
-    spmx = SparseMatrixCSC(n_v,n_v,colpt,rowval,ones(T,nz))
+    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
@@ -58,7 +58,7 @@ function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
     if !is_directed(g)
         for i in selfloops
             if !(T <: Bool)
-                spmx[i,i] += one(T)
+                spmx[i, i] += one(T)
             end
         end
     end
@@ -77,10 +77,10 @@ defaults to `Int` for both graph types.
 """
 function laplacian_matrix(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
     if dir == :unspec
-        dir = is_directed(g)? :both : :out
+        dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, dir, T)
-    D = spdiagm(sum(A,2)[:])
+    D = spdiagm(sum(A, 2)[:])
     return D - A
 end
 
@@ -114,7 +114,7 @@ eigenvalues/eigenvectors.
 """
 function adjacency_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
     if dir == :unspec
-        dir = is_directed(g)?  :both : :out
+        dir = is_directed(g) ?  :both : :out
     end
     return eigvals(full(adjacency_matrix(g, dir, T)))
 end
@@ -149,14 +149,14 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     for u in vertices(g)
         for v in out_neighbors(g, u)
             if isdir || u < v # add every edge only once
-                rowval[2*i - 1] = u
-                rowval[2*i] = v
+                rowval[2 * i - 1] = u
+                rowval[2 * i] = v
                 i += 1
             end
         end
     end
 
-    spmx = SparseMatrixCSC(n_v,n_e,colpt,rowval,nzval)
+    spmx = SparseMatrixCSC(n_v, n_e, colpt, rowval, nzval)
     return spmx
 end
 
@@ -177,8 +177,8 @@ function spectral_distance end
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁)-1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:end-(k-1)]
-    λ₂ = k < nv(G₂)-1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:end-(k-1)]
+    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:(end - (k - 1))]
+    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:(end - (k - 1))]
 
     return sum(abs, (λ₁ - λ₂))
 end

@@ -1,9 +1,9 @@
 @testset "Cycles" begin
     completedg = CompleteDiGraph(4)
     pathdg = PathDiGraph(5)
-    triangle = random_regular_graph(3,2)
-    quadrangle = random_regular_graph(4,2)
-    pentagon = random_regular_graph(5,2)
+    triangle = random_regular_graph(3, 2)
+    quadrangle = random_regular_graph(4, 2)
+    pentagon = random_regular_graph(5, 2)
 
     @test maxsimplecycles(pathdg) == 0
     @test maxsimplecycles(completedg) == 20
@@ -13,7 +13,7 @@
     @test length(simplecycles(completedg)) == 20
     @test simplecycles(completedg) == @inferred(simplecycles_iter(completedg))
     @test simplecyclescount(completedg) == 20
-    @test simplecycleslength(completedg) == ([0,6,8,6], 20)
+    @test simplecycleslength(completedg) == ([0, 6, 8, 6], 20)
 
     @test simplecyclescount(pathdg) == 0
     @test length(simplecycles(pathdg)) == 0

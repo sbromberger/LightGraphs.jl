@@ -22,7 +22,7 @@ function edmonds_karp_impl end
     while true
         fill!(P, -1)
         fill!(S, -1)
-        v, P, S, flag = fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P,S)
+        v, P, S, flag = fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P, S)
 
         if flag != 0                       # no more valid paths
             break
@@ -31,14 +31,14 @@ function edmonds_karp_impl end
             sizehint!(path, n)
 
             u = v
-            while u!=source                # trace path from v to source
+            while u != source                # trace path from v to source
                 u = P[u]
                 push!(path, u)
             end
             reverse!(path)
 
             u = v                          # trace path from v to target
-            while u!=target
+            while u != target
                 u = S[u]
                 push!(path, Int(u))
             end
@@ -63,17 +63,17 @@ function augment_path!(
     )
     T = eltype(flow_matrix)
     augment = typemax(T)                   # initialize augment
-    for i in 1:length(path)-1              # calculate min capacity along path
+    for i in 1:(length(path) - 1)              # calculate min capacity along path
         u = path[i]
-        v = path[i+1]
-        augment = min(augment,capacity_matrix[u,v] - flow_matrix[u,v])
+        v = path[i + 1]
+        augment = min(augment, capacity_matrix[u, v] - flow_matrix[u, v])
     end
 
-    for i in 1:length(path)-1              # augment flow along path
+    for i in 1:(length(path) - 1)              # augment flow along path
         u = path[i]
-        v = path[i+1]
-        flow_matrix[u,v] += augment
-        flow_matrix[v,u] -= augment
+        v = path[i + 1]
+        flow_matrix[u, v] += augment
+        flow_matrix[v, u] -= augment
     end
 
     return augment
@@ -110,7 +110,7 @@ function fetch_path! end
         if length(Q_f) <= length(Q_r)
             u = pop!(Q_f)
             for v in out_neighbors(residual_graph, u)
-                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && P[v] == -1
+                if capacity_matrix[u, v] - flow_matrix[u, v] > 0 && P[v] == -1
                     P[v] = u
                     if S[v] == -1
                         unshift!(Q_f, v)
@@ -124,9 +124,9 @@ function fetch_path! end
         else
             v = pop!(Q_r)
             for u in in_neighbors(residual_graph, v)
-                if capacity_matrix[u,v] - flow_matrix[u,v] > 0 && S[u] == -1
+                if capacity_matrix[u, v] - flow_matrix[u, v] > 0 && S[u] == -1
                     S[u] = v
-                    P[u] != -1 && return  u, P, S, 0 # 0 indicates success
+                    P[u] != -1 && return u, P, S, 0 # 0 indicates success
 
                     unshift!(Q_r, u)
                 end

@@ -14,11 +14,11 @@ function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g,currs)
+        nbrs = out_neighbors(g, currs)
         length(nbrs) == 0 && break
         currs = rand(nbrs)
     end
-    return visited[1:i-1]
+    return visited[1:(i - 1)]
 end
 
 """
@@ -40,17 +40,17 @@ function non_backtracking_randomwalk end
 
     push!(visited, currs)
     i += 1
-    nbrs = out_neighbors(g,currs)
-    length(nbrs) == 0 && return visited[1:i-1]
+    nbrs = out_neighbors(g, currs)
+    length(nbrs) == 0 && return visited[1:(i - 1)]
     prev = currs
     currs = rand(nbrs)
 
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g,currs)
+        nbrs = out_neighbors(g, currs)
         length(nbrs) == 1 && break
-        idnext = rand(1:length(nbrs)-1)
+        idnext = rand(1:(length(nbrs) - 1))
         next = nbrs[idnext]
         if next == prev
             next = nbrs[end]
@@ -58,7 +58,7 @@ function non_backtracking_randomwalk end
         prev = currs
         currs = next
     end
-    return visited[1:i-1]
+    return visited[1:(i - 1)]
 end
 
 @traitfn function non_backtracking_randomwalk(g::::IsDirected, s::Integer, niter::Integer)
@@ -73,12 +73,12 @@ end
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g,currs)
+        nbrs = out_neighbors(g, currs)
         length(nbrs) == 0 && break
         next = rand(nbrs)
         if next == prev
             length(nbrs) == 1 && break
-            idnext = rand(1:length(nbrs)-1)
+            idnext = rand(1:(length(nbrs) - 1))
             next = nbrs[idnext]
             if next == prev
                 next = nbrs[end]
@@ -87,7 +87,7 @@ end
         prev = currs
         currs = next
     end
-    return visited[1:i-1]
+    return visited[1:(i - 1)]
 end
 
 """
@@ -109,9 +109,9 @@ function saw(g::AbstractGraph, s::Integer, niter::Integer)
         push!(visited, currs)
         push!(svisited, currs)
         i += 1
-        nbrs = setdiff(Set(out_neighbors(g,currs)),svisited)
+        nbrs = setdiff(Set(out_neighbors(g, currs)), svisited)
         length(nbrs) == 0 && break
         currs = rand(collect(nbrs))
     end
-    return visited[1:i-1]
+    return visited[1:(i - 1)]
 end

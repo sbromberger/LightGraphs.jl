@@ -13,18 +13,18 @@ is not reached within `n` iterations.
 function pagerank end
 
 @traitfn function pagerank(g::::IsDirected, α=0.85, n=100::Integer, ϵ=1.0e-6)
-    A = adjacency_matrix(g,:in,Float64)
-    S = vec(sum(A,1))
-    S = 1./S
-    S[find(S .== Inf)]=0.0
-    M = A' # need a separate line due to bug #17456 in julia
+    A = adjacency_matrix(g, :in, Float64)
+    S = vec(sum(A, 1))
+    S = 1 ./ S
+    S[find(S .== Inf)] = 0.0
+    M = A'  # need a separate line due to bug #17456 in julia
     # scaling the adjmat to stochastic adjacency matrix
     M = (Diagonal(S) * M)'
     N = Int(nv(g))
     # solution vector
-    x = fill(1.0/N, N)
+    x = fill(1.0 / N, N)
     # personalization vector
-    p = fill(1.0/N, N)
+    p = fill(1.0 / N, N)
     # temporary to hold the results of SpMV
     y = zeros(Float64, N)
     # adjustment for leaf nodes in digraph

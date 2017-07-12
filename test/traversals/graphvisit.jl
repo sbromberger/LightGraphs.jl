@@ -33,7 +33,7 @@
     # dummy edge map test
     d = @inferred(LightGraphs.DummyEdgeMap())
 
-    e = Edge(1,2)
+    e = Edge(1, 2)
     @test d[e] == 0
     @test getindex(d, e) == 0
 end

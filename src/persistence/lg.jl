@@ -22,7 +22,7 @@ function _lg_read_one_graph(f::IO, n_v::Integer, n_e::Integer, directed::Bool)
     for i = 1:n_e
         line = chomp(readline(f))
         if length(line) > 0
-            src_s, dst_s = split(line,r"\s*,\s*")
+            src_s, dst_s = split(line, r"\s*,\s*")
             src = parse(Int, src_s)
             dst = parse(Int, dst_s)
             add_edge!(g, src, dst)
@@ -43,10 +43,10 @@ end
 Return a dictionary of (name=>graph) loaded from IO stream `io`.
 """
 function loadlg_mult(io::IO)
-    graphs = Dict{String, AbstractGraph}()
+    graphs = Dict{String,AbstractGraph}()
     while !eof(io)
         line = strip(chomp(readline(io)))
-        if startswith(line,"#") || line == ""
+        if startswith(line, "#") || line == ""
             next
         else
             nvstr, nestr, dirundir, graphname = split(line, r"s*,s*", limit=4)
@@ -66,7 +66,7 @@ end
 function loadlg(io::IO, gname::String)
     while !eof(io)
         line = strip(chomp(readline(io)))
-        (startswith(line,"#") || line == "") && continue
+        (startswith(line, "#") || line == "") && continue
         nvstr, nestr, dirundir, graphname = split(line, r"s*,s*", limit=4)
         n_v = parse(Int, nvstr)
         n_e = parse(Int, nestr)
@@ -90,7 +90,7 @@ to the IO stream designated by `io`. Return 1 (number of graphs written).
 """
 function savelg(io::IO, g::AbstractGraph, gname::String)
     # write header line
-    dir = is_directed(g)? "d" : "u"
+    dir = is_directed(g) ? "d" : "u"
     line = join([nv(g), ne(g), dir, gname], ",")
     write(io, "$line\n")
     # write edges

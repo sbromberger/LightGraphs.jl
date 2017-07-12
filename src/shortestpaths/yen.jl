@@ -3,7 +3,7 @@
 
 Designed for yen k-shortest-paths calculations.
 """
-struct YenState{T, U<:Integer}<: AbstractPathState
+struct YenState{T,U<:Integer} <: AbstractPathState
     dists::Vector{T}
     paths::Vector{Vector{U}}
 end
@@ -22,15 +22,15 @@ function yen_k_shortest_paths(
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
-    maxdist=Inf) where T <: Real where U<:Integer
+    maxdist=Inf) where T <: Real where U <: Integer
 
-    source == target && return YenState{T, U}([U(0)], [[source]])
+    source == target && return YenState{T,U}([U(0)], [[source]])
 
     dj = dijkstra_shortest_paths(g, source, distmx)
     path = enumerate_paths(dj)[target]
-    isempty(path) && return YenState{T, U}(Vector{T}(), Vector{Vector{U}}())
+    isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
 
-    dists = Array{T, 1}()
+    dists = Array{T,1}()
     push!(dists, dj.dists[target])
     A = [path]
     B = PriorityQueue()
@@ -44,7 +44,7 @@ function yen_k_shortest_paths(
             rootpath = A[k][1:j]
 
             # Store the removed edges
-            edgesremoved = Array{Tuple{Int, Int}, 1}()
+            edgesremoved = Array{Tuple{Int,Int},1}()
             # Remove the links of the previous shortest paths which share the same root path
             for ppath in A
                 if length(ppath) > j && rootpath == ppath[1:j]
@@ -52,7 +52,7 @@ function yen_k_shortest_paths(
                     v = ppath[j + 1]
                     if has_edge(gcopy, u, v)
                         rem_edge!(gcopy, u, v)
-                        push!(edgesremoved,(u, v))
+                        push!(edgesremoved, (u, v))
                     end
                 end
             end
@@ -64,7 +64,7 @@ function yen_k_shortest_paths(
                 nei = copy(neighbors(gcopy, u))
                 for v in nei
                     rem_edge!(gcopy, u, v)
-                    push!(edgesremoved,(u, v))
+                    push!(edgesremoved, (u, v))
                 end
 
                 # Evaluate distante of root path
@@ -77,7 +77,7 @@ function yen_k_shortest_paths(
             spurpath = enumerate_paths(djspur)[target]
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path
-                pathtotal = [rootpath[1:end-1];spurpath]
+                pathtotal = [rootpath[1:(end - 1)]; spurpath]
                 distpath  = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B, pathtotal)
@@ -95,9 +95,9 @@ function yen_k_shortest_paths(
         mindistB = DataStructures.peek(B)[2]
         # The path with minimum distance in B is higher than maxdist
         mindistB > maxdist && break
-        push!(dists,DataStructures.peek(B)[2])
-        push!(A,dequeue!(B))
+        push!(dists, DataStructures.peek(B)[2])
+        push!(A, dequeue!(B))
     end
 
-    return YenState{T, U}(dists, A)
+    return YenState{T,U}(dists, A)
 end

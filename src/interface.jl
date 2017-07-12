@@ -119,7 +119,7 @@ edges(g) = _NI("edges")
 Return true if the graph is a directed graph; false otherwise.
 """
 is_directed(g) = _NI("is_directed")
-is_directed{T}(::Type{T}) = _NI("is_directed")
+is_directed(::Type{T}) where T = _NI("is_directed")
 """
     add_vertex!(g)
 

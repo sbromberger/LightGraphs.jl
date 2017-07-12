@@ -56,7 +56,7 @@ function blocking_flow! end
     while length(Q) > 0                   # Construct the Level Graph using BFS
         u = pop!(Q)
         for v in out_neighbors(residual_graph, u)
-            if P[v] == -1 && capacity_matrix[u,v] > flow_matrix[u,v]
+            if P[v] == -1 && capacity_matrix[u, v] > flow_matrix[u, v]
                 P[v] = u
                 unshift!(Q, v)
             end
@@ -76,7 +76,7 @@ function blocking_flow! end
                 flow = 0
                 break
             else
-                flow = min(flow, capacity_matrix[u,v] - flow_matrix[u,v])
+                flow = min(flow, capacity_matrix[u, v] - flow_matrix[u, v])
                 v = u
                 u = P[u]
             end
@@ -87,8 +87,8 @@ function blocking_flow! end
         v = target
         u = bv
         while v != source             # Augment flow along path
-            flow_matrix[u,v] += flow
-            flow_matrix[v,u] -= flow
+            flow_matrix[u, v] += flow
+            flow_matrix[v, u] -= flow
             v = u
             u = P[u]
         end
