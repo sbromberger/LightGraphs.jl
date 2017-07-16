@@ -5,20 +5,9 @@
     s1 = Graph(s2)
     g3 = PathGraph(5)
 
-    function readcentrality(f::AbstractString)
-        f = open(f, "r")
-        c = Vector{Float64}()
-        while !eof(f)
-            line = chomp(readline(f))
-            push!(c, float(line))
-        end
-        return c
-    end
-
-
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
-    c = readcentrality(joinpath(testdir, "testdata", "graph-50-500-bc.txt"))
+    c = vec(readcsv(joinpath(testdir, "testdata", "graph-50-500-bc.txt")))
     for g in testdigraphs(gint)
         z  = @inferred(betweenness_centrality(g))
         zp = @inferred(parallel_betweenness_centrality(g))
