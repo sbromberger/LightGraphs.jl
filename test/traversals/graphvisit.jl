@@ -32,6 +32,7 @@
     end
     # dummy edge map test
     d = @inferred(LightGraphs.DummyEdgeMap())
+    string(LightGraphs.DummyEdgeMap())  # check that it doesn't error
 
     e = Edge(1, 2)
     @test d[e] == 0
