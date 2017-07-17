@@ -37,6 +37,8 @@ end
 getindex(d::DummyEdgeMap, e::Edge) = 0
 setindex!(d::DummyEdgeMap, x::Int, e::Edge) = x
 get(d::DummyEdgeMap, e::Edge, x::Int) = x
+Base.show(io::IO, ::MIME"text/plain", ::DummyEdgeMap) =
+    write(io, "LightGraphs.DummyEdgeMap()")
 
 
 ###########################################################
