@@ -32,7 +32,12 @@
     end
     # dummy edge map test
     d = @inferred(LightGraphs.DummyEdgeMap())
-    string(LightGraphs.DummyEdgeMap())  # check that it doesn't error
+    
+    # check that printing DummyEdgeMap doesn't error
+    string(LightGraphs.DummyEdgeMap())
+    mktemp() do _, io
+        show(io, MIME"text/plain"(), LightGraphs.DummyEdgeMap())
+    end    
 
     e = Edge(1, 2)
     @test d[e] == 0
