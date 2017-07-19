@@ -160,10 +160,11 @@ end
 Compute all cycles of the given directed graph, using
 [Johnson, 1973](Johnson)'s algorithm and return them.
 
-/!\ The number of cycles grow more than exponentially with the number of vertices,
+### Performance
+The number of cycles grows more than exponentially with the number of vertices,
 you might want to use the algorithm with a ceiling -- `getcycles` -- on large directed graphs
 (slightly slower). If you want to have an idea of the possible number of cycles,
-look at function ```maxsimplecycles(dg::DiGraph, byscc::Bool = true)```.
+look at function `maxsimplecycles(dg::DiGraph, byscc::Bool = true)`.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)

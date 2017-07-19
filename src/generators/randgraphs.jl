@@ -346,9 +346,9 @@ end
 @doc_str """
     static_fitness_model(m, fitness_out, fitness_in)
 
-Generate a random graph with ``|fitness\_out + fitness\_in|`` vertices and `m` edges,
+Generate a random graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional with
-respect to ``i ∝ fitness\_out`` and ``j ∝ fitness\_in``.
+respect to ``i ∝ fitness\\_out`` and ``j ∝ fitness\\_in``.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
@@ -757,16 +757,11 @@ function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) whe
 end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
-function nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer
-    B = nearbipartiteaffinity(sizes, between, inter) + noise
-    # info("Affinities are:\n$B")#, file=stderr)
-    return B
-end
+nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer =
+    nearbipartiteaffinity(sizes, between, inter) + noise
 
-function nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1)
-    return StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
-end
-
+nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
+    StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
 
 """
     random_pair(rng, n)
@@ -808,7 +803,6 @@ function Graph(nvg::Integer, neg::Integer, edgestream::Channel)
     g = Graph(nvg)
     # println(g)
     for e in edgestream
-        # print("$count, $i,$j\n")
         add_edge!(g, e)
         ne(g) >= neg && break
     end

@@ -18,7 +18,7 @@ and for a directed graph, ``{(|V|-1)(|V|-2)}``.
 - `endpoints=false`: If true, include endpoints in the shortest path count.
 Betweenness centrality is defined as:
 ``
-bc(v) = \\frac{1}{\\mathcal{N}} \sum_{s \\neq t \\neq v}
+bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 \\frac{\\sigma_{st}(v)}{\\sigma_{st}}
 ``.
 ### References
