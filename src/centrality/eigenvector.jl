@@ -6,11 +6,11 @@ Compute the eigenvector centrality for the graph `g`.
 Eigenvector centrality computes the centrality for a node based on the
 centrality of its neighbors. The eigenvector centrality for node `i` is
 
-    ``\mathbf{Ax} = \lambda \mathbf{x}``
+    ``\\mathbf{Ax} = λ \\mathbf{x}``
 
-where `A` is the adjacency matrix of the graph `g` with eigenvalue `\lambda`.
+where `A` is the adjacency matrix of the graph `g` with eigenvalue `λ`.
 By virtue of the Perron–Frobenius theorem, there is a unique and positive
-solution if `\lambda` is the largest eigenvalue associated with the
+solution if `λ` is the largest eigenvalue associated with the
 eigenvector of the adjacency matrix `A`.
 
 ### References
