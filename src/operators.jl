@@ -552,19 +552,3 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
     return new_vertex_ids
 end
-
-"""
-    if labels is an Associative use it to perform multiple merges at once.
-"""
-function merge_vertices(g::AbstractGraph, labels::Associative)
-    #if v in vs then labels[v] == v0 else labels[v] == v
-    newg = Graph(nvnew)
-    for e in edges(g)
-        u,w = src(e), dst(e)
-        @show u,w, labels[u], labels[w]
-        if labels[u] != labels[w] #not a new self loop
-            add_edge!(g, labels[u], labels[w])
-        end
-    end
-    return newg
-end
