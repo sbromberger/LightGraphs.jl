@@ -55,7 +55,7 @@ of `v` and `b` is the maximum number of possible triangles. If a list of vertice
 `vs` is specified, return two vectors representing the number of triangles and
 the maximum number of possible triangles, respectively, for each node in the list.
 
-This function is related to the local clustering coefficient `r` by ``r=\frac{a}{b}``.
+This function is related to the local clustering coefficient `r` by ``r=\\frac{a}{b}``.
 """
 function local_clustering(g::AbstractGraph, v::Integer)
     storage = zeros(Bool, nv(g))

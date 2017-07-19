@@ -55,7 +55,7 @@ add an edge that already exists in a graph will result in a silent failure.
 
 ## Installation
 Installation is straightforward:
-```julia
+```julia-repl
 julia> Pkg.add("LightGraphs")
 ```
 
