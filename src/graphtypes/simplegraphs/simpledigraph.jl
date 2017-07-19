@@ -76,6 +76,7 @@ function (::Type{SimpleDiGraph{T}})(g::SimpleDiGraph) where T<:Integer
     return SimpleDiGraph(ne(g), h_fadj, h_badj)
 end
 
+SimpleDiGraph(g::SimpleDiGraph) = copy(g)
 
 # constructor from abstract graph: DiGraph(graph)
 function SimpleDiGraph(g::AbstractSimpleGraph)

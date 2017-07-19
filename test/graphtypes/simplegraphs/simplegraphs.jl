@@ -169,8 +169,11 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
     gdx = CompleteDiGraph(4)
     for g in testdigraphs(gdx)
+        h = DiGraph(g)
+        @test g == h
         @test rem_vertex!(g, 2)
         @test nv(g) == 3 && ne(g) == 6
+        @test g != h
     end
 
 
