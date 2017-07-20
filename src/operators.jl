@@ -445,9 +445,10 @@ egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v
 
 
 
-"""compute_shifts(n::Int, x::AbstractArray)
+"""
+    compute_shifts(n::Int, x::AbstractArray)
 
-Determines how many elements of vs are less than i for all i in 1:n.
+Determine how many elements of vs are less than i for all i in 1:n.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
@@ -458,19 +459,18 @@ end
 """
     merge_vertices(g::AbstractGraph, vs)
 
-Create a new graph where all vertices in vs have been aliased to the same vertex minimum(vs).
+Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
 """
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
     sort!(vs)
-    nvnew = nv(g) - length(@show unique(vs)) +1
+    nvnew = nv(g) - length(unique(vs)) +1
+    @assert nvnew <= nv(g) "Merging vertices increased the number of vertices!"
     v0 = minimum(vs)
     v0 > 0 || error("minimum(vs) < 1")
     maximum(vs) <= nv(g) || error("maximum(vs) > nv(g)")
-    for v in vs
-        labels[v] = v0
-    end
+    labels[vs] = v0
     shifts = compute_shifts(nv(g), vs[2:end])
     for v in vertices(g)
         if labels[v] != v0
@@ -481,7 +481,7 @@ function merge_vertices(g::AbstractGraph, vs)
     #if v in vs then labels[v] == v0 else labels[v] == v
     newg = Graph(nvnew)
     for e in edges(g)
-        u,w = src(e), dst(e)
+        u, w = src(e), dst(e)
         if labels[u] != labels[w] #not a new self loop
             add_edge!(newg, labels[u], labels[w])
         end
@@ -489,21 +489,29 @@ function merge_vertices(g::AbstractGraph, vs)
     return newg
 end
 
+function insorted(x::AbstractArray, val)
+    i = searchsortedfirst(x, val)
+    if i > length(x)
+        return false
+    end
+    if x[i] != val
+        return false
+    end
+    return true
+end
+
 
 """
     merge_vertices!(g, vs)
 
 Combine vertices specified in `vs` into single vertex whose
-index will be the lowest value in `vs`.
+index will be the lowest value in `vs`. All edges connected to vertices in `vs`
+connect to the new merged vertex.
 
-Supports SimpleGraph.
+Return a vector with new vertex values are indexed by the original vertex indices.
 
-All edges running to vertices in `vs` connect to new
-merged vertex.
-
-
-Return a vector with new vertex values index by original vertex
-indices.
+### Implementation Notes
+Supports SimpleGraph only.
 """
 function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
     vs = sort!(unique(vs))
@@ -516,10 +524,10 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
     for i in vertices(g)
         # Adjust connections to merged vertices
-        if (i != merged_vertex) & !(i in vs)
+        if (i != merged_vertex) && !insorted(vs, i)
             nbrs_to_rewire = Set{eltype(g)}()
             for j in out_neighbors(g, i)
-               if j in vs
+               if insorted(vs, j)
                   push!(nbrs_to_rewire, merged_vertex)
                else
                  push!(nbrs_to_rewire, new_vertex_ids[j])
@@ -531,7 +539,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
         # Collect connections to new merged vertex
         else
             nbrs_to_merge = Set{eltype(g)}()
-            for element in filter(x -> !(x in vs) & (x != merged_vertex), g.fadjlist[i])
+            for element in filter(x -> !(insorted(vs, x)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
@@ -545,10 +553,10 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
     end
 
     # Drop excess vertices
-    g.fadjlist = g.fadjlist[1: (end-length(vs))]
+    g.fadjlist = g.fadjlist[1:(end - length(vs))]
 
     # Correct edge counts
-    g.ne = sum(degree(g, i) for i in vertices(g))/2
+    g.ne = sum(degree(g, i) for i in vertices(g)) / 2
 
     return new_vertex_ids
 end

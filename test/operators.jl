@@ -47,13 +47,14 @@
 
         vs = [2, 3, 7, 3, 3, 2]
         hmerged = merge_vertices(h, vs)
-        @show hmerged.fadjlist
+        @test neighbors(hmerged, 1) == [2]
         @test neighbors(hmerged, 2) == [1, 4, 5]
         @test neighbors(hmerged, 3) == []
         @test neighbors(hmerged, 4) == [2, 5]
 
         new_map = @inferred(merge_vertices!(h, vs))
         @test new_map == [1, 2, 2, 3, 4, 5, 2]
+        @test neighbors(h, 1) == [2]
         @test neighbors(h, 2) == [1, 4, 5]
         @test neighbors(h, 3) == []
         @test neighbors(hmerged, 4) == [2, 5]
