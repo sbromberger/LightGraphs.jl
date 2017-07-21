@@ -37,6 +37,62 @@
         z = @inferred(union(g, h))
         @test has_edge(z, e)
         @test z == PathGraph(6)
+
+        # Check merge_vertices function.
+        h = Graph{T}(7)
+        add_edge!(h, 2, 5)
+        add_edge!(h, 3, 6)
+        add_edge!(h, 1, 7)
+        add_edge!(h, 6, 5)
+
+        vs = [2, 3, 7, 3, 3, 2]
+        hmerged = merge_vertices(h, vs)
+        @test neighbors(hmerged, 1) == [2]
+        @test neighbors(hmerged, 2) == [1, 4, 5]
+        @test neighbors(hmerged, 3) == []
+        @test neighbors(hmerged, 4) == [2, 5]
+
+        new_map = @inferred(merge_vertices!(h, vs))
+        @test new_map == [1, 2, 2, 3, 4, 5, 2]
+        @test neighbors(h, 1) == [2]
+        @test neighbors(h, 2) == [1, 4, 5]
+        @test neighbors(h, 3) == []
+        @test neighbors(hmerged, 4) == [2, 5]
+        @test hmerged == h
+
+        h = Graph{T}(7)
+        add_edge!(h, 1, 2)
+        add_edge!(h, 2, 3)
+        add_edge!(h, 2, 4)
+        add_edge!(h, 3, 4)
+        add_edge!(h, 3, 7)
+        new_map = @inferred(merge_vertices!(h, [2, 3, 2, 2]))
+        @test new_map == [1, 2, 2, 3, 4, 5, 6]
+        @test neighbors(h, 2) == [1, 3, 6]
+        @test neighbors(h, 1) == [2]
+        @test neighbors(h, 3) == [2]
+        @test neighbors(h, 4) == Int[]
+        @test neighbors(h, 6) == [2]
+        @test ne(h) == 3
+        @test nv(h) == 6
+
+        h2 = Graph{T}(7)
+        add_edge!(h2, 1, 2)
+        add_edge!(h2, 2, 3)
+        add_edge!(h2, 2, 4)
+        add_edge!(h2, 3, 4)
+        add_edge!(h2, 3, 7)
+        add_edge!(h2, 6, 7)
+        new_map = @inferred(merge_vertices!(h2, [2, 7, 3, 2]))
+        @test new_map == [1, 2, 2, 3, 4, 5, 2]
+        @test neighbors(h2, 2) == [1, 3, 5]
+        @test neighbors(h2, 1) == [2]
+        @test neighbors(h2, 3) == [2]
+        @test neighbors(h2, 4) == Int[]
+        @test neighbors(h2, 5) == [2]
+        @test ne(h2) == 3
+        @test nv(h2) == 5
+
     end
     for g in testlargedigraphs(g4)
         T = eltype(g)
@@ -51,6 +107,20 @@
         z = @inferred(union(g, h))
         @test has_edge(z, e)
         @test z == PathDiGraph(6)
+
+        # Check merge_vertices function.
+        # h = DiGraph{T}(7)
+        # add_edge!(h, 2, 5)
+        # add_edge!(h, 3, 6)
+        # add_edge!(h, 1, 7)
+        # add_edge!(h, 4, 3)
+        # add_edge!(h, 6, 5)
+        # new_map = @inferred(merge_vertices!(h, [2, 3, 7, 3, 3, 2]))
+        # @test new_map == [1, 2, 2, 4, 5, 3, 2]
+        # @test in_neighbors(h, 2) == [1, 4]
+        # @test out_neighbors(h, 2) == [3, 5]
+        # @test out_neighbors(h, 3) == [5]
+
     end
 
     re1 = Edge(2, 1)
