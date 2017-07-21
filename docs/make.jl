@@ -15,22 +15,22 @@ makedocs(
     sitename    = "LightGraphs",
     doctest     = false,
     pages       = Any[
-        "Getting Started"	                => "index.md",
-        "Basic Functions"	                => "basicmeasures.md",
-        "Operators"	                        => "operators.md",
-        "Path and Traversal"	            => "pathing.md",
-        "Distance"	                        => "distance.md",
-        "Centrality Measures"	            => "centrality.md",
-        "Linear Algebra"	                => "linalg.md",
-        "Matching"	                        => "matching.md",
-        "Community Structures"	            => "community.md",
-        "Degeneracy"	                    => "degeneracy.md",
-        "Flow and Cut"	                    => "flowcut.md",
-        "Graph Generators"	                => "generators.md",
-        "Reading / Writing Graphs"	        => "persistence.md",
-        "Integration with other packages"	=> "integration.md",
-        "Contributing"	                    => "contributing.md",
-        "License Information"	            => "license.md"
+        "Getting Started"                   => "index.md",
+        "Basic Functions"                   => "basicmeasures.md",
+        "Operators"                         => "operators.md",
+        "Path and Traversal"                => "pathing.md",
+        "Distance"                          => "distance.md",
+        "Centrality Measures"               => "centrality.md",
+        "Linear Algebra"                    => "linalg.md",
+        "Matching"                          => "matching.md",
+        "Community Structures"              => "community.md",
+        "Degeneracy"                        => "degeneracy.md",
+        "Flow and Cut"                      => "flowcut.md",
+        "Graph Generators"                  => "generators.md",
+        "Reading / Writing Graphs"          => "persistence.md",
+        "Integration with other packages"   => "integration.md",
+        "Contributing"                      => "contributing.md",
+        "License Information"               => "license.md"
     ]
 )
 
