@@ -1,4 +1,3 @@
-using Distributions
 
 @testset "Diffusion Simulation" begin
 
@@ -88,9 +87,10 @@ using Distributions
     @test result != [5, 5, 5, 5]
 
     # Test probability accurate
+    means = Dict(0.2 => 0.8, 0.4 => 1.6)
+    stds = Dict(0.2 => 0.8, 0.4 => 0.98)
     runs = 20
     for p in [0.2, 0.4]
-        binomial = Binomial(4, p)
         final_value = 0.0
 
         for i in 1:20
@@ -108,8 +108,8 @@ using Distributions
         # False rate less than 1 in 1000
         # Subtract 1 for initial infection
         avg = final_value / runs - 1
-        @test avg < mean(binomial) + std(binomial) / sqrt(runs) * 3.5
-        @test avg > mean(binomial) - std(binomial) / sqrt(runs) * 3.5
+        @test avg < means[p] + stds[p] / sqrt(runs) * 3.5
+        @test avg > means[p] - stds[p] / sqrt(runs) * 3.5
     end
 
     ######
@@ -135,6 +135,9 @@ using Distributions
 
     # Check probabilities
     runs = 20
+    means = Dict(0.2 => 2, 0.4 => 4)
+    stds = Dict(0.2 => 1.2649110640673518, 0.4 => 1.5491933384829668)
+
     for p in [0.2, 0.4]
         binomial = Binomial(10, p)
         final_value = 0.0
@@ -154,8 +157,8 @@ using Distributions
         # False rate less than 1 in 1000
         # Subtract 1 for initial infection
         avg = final_value / runs - 1
-        @test avg < mean(binomial) + std(binomial) / sqrt(runs) * 3.5
-        @test avg > mean(binomial) - std(binomial) / sqrt(runs) * 3.5
+        @test avg < means[p] + stds[p] / sqrt(runs) * 3.5
+        @test avg > means[p] - stds[p] / sqrt(runs) * 3.5
     end
 
 
