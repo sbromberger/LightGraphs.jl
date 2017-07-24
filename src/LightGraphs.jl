@@ -1,7 +1,7 @@
 __precompile__(true)
 module LightGraphs
 
-using GZip
+import CodecZlib
 using DataStructures
 using SimpleTraits
 
