@@ -37,10 +37,19 @@ end
 loadgraphs(fn::AbstractString) = loadgraphs(fn, LGFormat())
 
 function auto_decompress(io::IO)
+    format = :raw
     mark(io)
-    magic = read(io, 2)
+    if !eof(io)
+        b1 = read(io, UInt8)
+        if !eof(io)
+            b2 = read(io, UInt8)
+            if (b1, b2) == (0x1f, 0x8b)  # check magic bytes
+                format = :gzip
+            end
+        end
+    end
     reset(io)
-    if magic == [0x1f, 0x8b]
+    if format == :gzip
         io = CodecZlib.GzipDecompressionStream(io)
     end
     return io
