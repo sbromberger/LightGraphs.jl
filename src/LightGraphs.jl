@@ -55,6 +55,9 @@ DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 # random
 randomwalk, saw, non_backtracking_randomwalk,
 
+# diffusion
+diffusion_simulation,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
