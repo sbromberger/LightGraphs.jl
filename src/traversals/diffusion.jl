@@ -16,32 +16,34 @@ each of the out_neighbors of ``i`` to ``p``. If `true`, set the probability of s
 from a vertex ``i`` to each of the `out_neighbors` of ``i`` to ``\\frac{p}{out_degreee(g, i)}``.
 """
 
-function diffusion(g::AbstractGraph, p, n;
-    initial_infections=LightGraphs.sample(vertices(g), 1),
-    watch=vertices(g),
-    normalize::Bool=false
-    )
+function diffusion(g::AbstractGraph,
+                   p::AbstractFloat,
+                   num_steps::Integer;
+                   watch::Set=Set(vertices(g)),
+                   initial_infections::Set=Set(LightGraphs::sample(vertices(g), 1)),
+                   normalize::Bool=false
+                   )
 
     # Initialize
     T = eltype(g)
     watch_set = Set{T}(watch)
-    new_infections = Set{T}()
     infected_vertices = IntSet(initial_infections)
-    vertices_per_step = [Vector{T}() for i in 1:n]
+    vertices_per_step = [Vector{T}() for i in 1:num_steps]
 
     # Record initial infection
-    vertices_per_step[1] = initial_infections
+    vertices_per_step[1] = collect(infected_vertices)
 
     # Run simulation
-    for step in 2:n
+    for step in 2:num_steps
         new_infections = Set{T}()
+
         for i in infected_vertices
-            infect_neighbors(g, i, p, new_infections)
+            infect_neighbors(g, i, p, normalize, new_infections)
         end
 
         # Record only new infections
         setdiff!(new_infections, infected_vertices)
-        vertices_per_step[step] = T.(collect(intersect(new_infections, watch_set)))
+        vertices_per_step[step] = collect(intersect(new_infections, watch_set))
 
         # Add new to master set of infected
         union!(infected_vertices, new_infections)
@@ -50,7 +52,7 @@ function diffusion(g::AbstractGraph, p, n;
     return vertices_per_step
 end
 
-function infect_neighbors(g, i, p, new_infections)
+function infect_neighbors(g, i, p, normalize, new_infections)
     if normalize
         local_p = p / out_degree(g, i)
     else

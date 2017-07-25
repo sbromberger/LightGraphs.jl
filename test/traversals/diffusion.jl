@@ -11,42 +11,42 @@
     end
 
     # Basic test. Watch connected vertices
-    result = @inferred(diffusion_simulation(g,
+    result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:5),
-                                  initial_at_risk=Set(1:5)
+                                  watch=Set(1:5),
+                                  initial_infections=2
                                   )
              )
     result
-    @test result == [5, 5, 5, 5]
+    @test result == [1, 5, 5, 5]
 
     # Watching unconnected vertices
-    result = @inferred(diffusion_simulation(g,
+    result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  to_watch=Set(6:10),
-                                  initial_at_risk=Set(1:5)
+                                  watch=Set(6:10),
+                                  initial_infections=2
                                   )
                )
     @test  result == [0, 0, 0, 0]
 
     # Watch subset
-    result = @inferred(diffusion_simulation(g,
+    result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:2),
-                                  initial_at_risk=Set(1:5)
+                                  watch=Set(1:2),
+                                  initial_infections=2
                                   )
              )
     result
-    @test result == [2, 2, 2, 2]
+    @test result == [1, 2, 2, 2]
 
-    result = diffusion_simulation(g,
+    result = diffusion_rate(g,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:5),
-                                  initial_at_risk=Set(10)
+                                  watch=Set(1:5),
+                                  initial_infections=10
                                   )
 
     @test result == [0, 0, 0, 0]
@@ -56,30 +56,30 @@
     ######
 
     g2 = PathGraph(5)
-    result = @inferred(diffusion_simulation(g2,
+    result = @inferred(diffusion_rate(g2,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:5),
-                                  initial_at_risk=Set(1)
+                                  watch=Set(1:5),
+                                  initial_infections=Set(1)
                                   )
               )
-    @test  result == [2, 3, 4, 5]
+    @test  result == [1, 2, 3, 4]
 
-    result = @inferred(diffusion_simulation(g2,
+    result = @inferred(diffusion_rate(g2,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:5),
-                                  initial_at_risk=Set(3)
+                                  watch=Set(1:5),
+                                  initial_infections=Set(3)
                                   )
              )
-    @test result == [3, 5, 5, 5]
+    @test result == [1, 3, 5, 5]
 
     # Check normalize
-    result = @inferred(diffusion_simulation(g,
+    result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  to_watch=Set(1:5),
-                                  initial_at_risk=Set(1:5),
+                                  watch=Set(1:5),
+                                  initial_infections=1,
                                   normalize_p=true
                                   )
              )
@@ -94,10 +94,10 @@
         final_value = 0.0
 
         for i in 1:20
-            result = @inferred(diffusion_simulation(g2,
+            result = @inferred(diffusion_rate(g2,
                                                     p,
                                                     4,
-                                                    initial_at_risk=Set(1))
+                                                    initial_infections=Set(1))
                                )
             final_value += result[4]
 
@@ -117,18 +117,18 @@
     ######
     gx = PathDiGraph(10)
 
-    result = @inferred(diffusion_simulation(gx,
+    result = @inferred(diffusion_rate(gx,
                                   1.0,
                                   9,
-                                  initial_at_risk=Set(1)
+                                  initial_infections=Set(1)
                                   )
              )
     @test result == collect(2:10)
 
-    result = @inferred(diffusion_simulation(gx,
+    result = @inferred(diffusion_rate(gx,
                                   1.0,
                                   9,
-                                  initial_at_risk=Set(10)
+                                  initial_infections=Set(10)
                                   )
              )
     @test result == ones(Int64, 9)
@@ -143,10 +143,10 @@
         final_value = 0.0
 
         for i in 1:20
-            result = @inferred(diffusion_simulation(gx,
+            result = @inferred(diffusion_rate(gx,
                                                     p,
                                                     10,
-                                                    initial_at_risk=Set(1))
+                                                    initial_infections=Set(1))
                                )
             final_value += result[10]
 
