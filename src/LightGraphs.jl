@@ -28,6 +28,7 @@ core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
+parallel_eccentricity,
 
 # distance between graphs
 spectral_distance, edit_distance,
@@ -76,9 +77,10 @@ parallel_multisource_dijkstra_shortest_paths,
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
-eigenvector_centrality,
+eigenvector_centrality, stress_centrality, radiality_centrality,
 
 parallel_betweenness_centrality, parallel_closeness_centrality,
+parallel_stress_centrality, parallel_radiality_centrality,
 
 # spectral
 adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -178,10 +180,12 @@ include("core.jl")
             include("generators/euclideangraphs.jl")
             include("generators/smallgraphs.jl")
         include("centrality/betweenness.jl")
+        include("centrality/stress.jl")
         include("centrality/closeness.jl")
         include("centrality/degree.jl")
         include("centrality/katz.jl")
         include("centrality/pagerank.jl")
+        include("centrality/radiality.jl")
         include("centrality/eigenvector.jl")
         include("community/modularity.jl")
         include("community/label_propagation.jl")

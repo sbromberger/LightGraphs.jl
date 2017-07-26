@@ -13,6 +13,7 @@
     for g in testgraphs(a1)
         z = @inferred(eccentricity(g, distmx1))
         @test z == [6.2, 4.2, 6.2]
+        @test z == @inferred(parallel_eccentricity(g, distmx1))
         @test @inferred(diameter(z)) == diameter(g, distmx1) == 6.2
         @test @inferred(periphery(z)) == periphery(g, distmx1) == [1, 3]
         @test @inferred(radius(z)) == radius(g, distmx1) == 4.2
@@ -21,6 +22,7 @@
 
     for g in testdigraphs(a2)
         z = @inferred(eccentricity(g, distmx2))
+        @test z == @inferred(parallel_eccentricity(g, distmx2))
         @test z == [6.2, 4.2, 6.1]
         @test @inferred(diameter(z)) == diameter(g, distmx2) == 6.2
         @test @inferred(periphery(z)) == periphery(g, distmx2) == [1]

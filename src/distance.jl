@@ -18,6 +18,7 @@ ctranspose(d::DefaultDistance) = d
 
 """
     eccentricity(g[, v][, distmx])
+    parallel_eccentricity(g[, v][, distmx])
 
 Return the eccentricity[ies] of a vertex / vertex list `v` or the
 entire graph. An optional matrix of edge distances may be supplied; if missing,
@@ -45,7 +46,7 @@ function eccentricity(
     g::AbstractGraph,
     v::Integer,
     distmx::AbstractMatrix{T} = weights(g)
-) where T
+) where T <: Real
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && error("Infinite path length detected")
 
@@ -60,6 +61,19 @@ eccentricity(
 
 eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
+
+function parallel_eccentricity(g::AbstractGraph, vs::AbstractVector=vertices(g), distmx::AbstractMatrix{T} = weights(g)) where T <: Real
+    k = length(vs)
+    eccs = SharedVector{T}(k)
+    @sync @parallel for i in 1:length(vs)
+        eccs[i] = eccentricity(g, vs[i], distmx)
+    end
+    return eccs
+end
+
+parallel_eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
+    parallel_eccentricity(g, vertices(g), distmx)
+
 
 """
     diameter(g, distmx=weights(g))
