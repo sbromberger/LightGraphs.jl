@@ -6,6 +6,13 @@
     ######
 
     g = CompleteGraph(5)
+
+    # Most basic
+    result = @inferred( diffusion_rate(g, 1.0, 4) )
+    result
+    @test result == [1, 5, 5, 5]
+
+    # Add disconnected for more dynamics
     for i in 1:5
       add_vertex!(g)
     end
@@ -14,8 +21,8 @@
     result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  watch=Set(1:5),
-                                  initial_infections=Set(2)
+                                  watch=collect(1:5),
+                                  initial_infections=[2]
                                   )
              )
     result
@@ -25,8 +32,8 @@
     result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  watch=Set(6:10),
-                                  initial_infections=Set(2)
+                                  watch=collect(6:10),
+                                  initial_infections=[2]
                                   )
                )
     @test  result == [0, 0, 0, 0]
@@ -35,8 +42,8 @@
     result = @inferred(diffusion_rate(g,
                                   1.0,
                                   4,
-                                  watch=Set(1:2),
-                                  initial_infections=Set(2)
+                                  watch=collect(1:2),
+                                  initial_infections=[2]
                                   )
              )
     result
@@ -45,8 +52,8 @@
     result = diffusion_rate(g,
                                   1.0,
                                   4,
-                                  watch=Set(1:5),
-                                  initial_infections=Set(10)
+                                  watch=collect(1:5),
+                                  initial_infections=[10]
                                   )
 
     @test result == [0, 0, 0, 0]
@@ -59,8 +66,8 @@
     result = @inferred(diffusion_rate(g2,
                                   1.0,
                                   4,
-                                  watch=Set(1:5),
-                                  initial_infections=Set(1)
+                                  watch=collect(1:5),
+                                  initial_infections=[1]
                                   )
               )
     @test  result == [1, 2, 3, 4]
@@ -68,8 +75,8 @@
     result = @inferred(diffusion_rate(g2,
                                   1.0,
                                   4,
-                                  watch=Set(1:5),
-                                  initial_infections=Set(3)
+                                  watch=collect(1:5),
+                                  initial_infections=[3]
                                   )
              )
     @test result == [1, 3, 5, 5]
@@ -79,7 +86,7 @@
     result = @inferred(diffusion_rate(g3,
                                   1.0,
                                   6,
-                                  initial_infections=Set(15),
+                                  initial_infections=[15],
                                   normalize=false
                                   )
              )
@@ -90,7 +97,7 @@
     result = @inferred(diffusion_rate(g3,
                                   2.0,
                                   6,
-                                  initial_infections=Set(15),
+                                  initial_infections=[15],
                                   normalize=true
                                   )
              )
@@ -107,7 +114,7 @@
             result = @inferred(diffusion_rate(g2,
                                               p,
                                               5,
-                                              initial_infections=Set(1))
+                                              initial_infections=[1])
                                )
             final_value += result[5]
         end
@@ -130,7 +137,7 @@
     result = @inferred(diffusion_rate(gx,
                                   1.0,
                                   9,
-                                  initial_infections=Set(1)
+                                  initial_infections=[1]
                                   )
              )
     @test result == collect(1:9)
@@ -138,7 +145,7 @@
     result = @inferred(diffusion_rate(gx,
                                   1.0,
                                   9,
-                                  initial_infections=Set(10)
+                                  initial_infections=[10]
                                   )
              )
     @test result == ones(Int64, 9)
@@ -155,7 +162,7 @@
             result = @inferred(diffusion_rate(gx,
                                                     p,
                                                     11,
-                                                    initial_infections=Set(1))
+                                                    initial_infections=[1])
                                )
             final_value += result[11]
 

@@ -1,7 +1,7 @@
 """
-    diffusion(g, p, num_steps)
+    diffusion(g, p, n)
 
-Run diffusion simulation on `g` for `num_steps` steps with spread
+Run diffusion simulation on `g` for `n` steps with spread
 probabilities based on `p`. Return a vector with the set of vertices
 reached at each step of the simulation.
 
@@ -19,9 +19,9 @@ from a vertex ``i`` to each of the `out_neighbors` of ``i`` to
 
 function diffusion(g::AbstractGraph,
                    p::AbstractFloat,
-                   num_steps::Integer;
-                   watch::Set=Set(),
-                   initial_infections::Set=Set(LightGraphs::sample(vertices(g), 1)),
+                   n::Integer;
+                   watch::Vector=Vector{Int}[],
+                   initial_infections::Vector=LightGraphs.sample(vertices(g), 1),
                    normalize::Bool=false
                    )
 
@@ -29,22 +29,28 @@ function diffusion(g::AbstractGraph,
     T = eltype(g)
     watch_set = Set{T}(watch)
     infected_vertices = IntSet(initial_infections)
-    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:num_steps]
+    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
 
     # Record initial infection
     if !isempty(watch_set)
         watched_initial_infections = intersect(initial_infections, watch_set)
-        vertices_per_step[1] = T.(collect( watched_initial_infections ))
+        vertices_per_step[1] = T.(watched_initial_infections)
     else
-        vertices_per_step[1] = T.(collect(initial_infections))
+        vertices_per_step[1] = T.(initial_infections)
     end
 
     # Run simulation
-    for step in 2:num_steps
+    for step in 2:n
         new_infections = Set{T}()
 
         for i in infected_vertices
-            infect_neighbors(g, i, p, normalize, new_infections)
+            if normalize
+                local_p = convert(Float64, p / outdegree(g, i))::Float64
+            else
+                local_p = convert(Float64, p)::Float64
+            end
+
+            union!(new_infections, randsubseq(out_neighbors(g, i), local_p))
         end
 
         # Record only new infections
@@ -62,19 +68,6 @@ function diffusion(g::AbstractGraph,
     return vertices_per_step
 end
 
-function infect_neighbors(g::AbstractGraph, i, p::AbstractFloat,
-                          normalize::Bool,
-                          new_infections::Set)
-
-    if normalize
-        local_p = convert(Float64, p / outdegree(g, i))::Float64
-    else
-        local_p = convert(Float64, p)::Float64
-    end
-
-    union!(new_infections, randsubseq(out_neighbors(g, i), local_p))
-end
-
 """
     diffusion_rate(results)
     diffusion_rate(g, p, n; ...)
@@ -85,12 +78,12 @@ infected at each simulation step, restricted to vertices included
 in `watch`, if specified.
 """
 diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
-diffusion_rate(g::AbstractGraph, p, num_steps;
-    initial_infections=Set(LightGraphs::sample(vertices(g), 1)),
-    watch=Set(),
+diffusion_rate(g::AbstractGraph, p, n;
+    initial_infections::Vector=LightGraphs.sample(vertices(g), 1),
+    watch=Vector{Int}[],
     normalize::Bool=false
     ) = diffusion_rate(
-           diffusion(g, p, num_steps,
+           diffusion(g, p, n,
            initial_infections=initial_infections,
            watch=watch, normalize=normalize
            )
