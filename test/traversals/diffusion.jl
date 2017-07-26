@@ -15,7 +15,7 @@
                                   1.0,
                                   4,
                                   watch=Set(1:5),
-                                  initial_infections=2
+                                  initial_infections=Set(2)
                                   )
              )
     result
@@ -26,7 +26,7 @@
                                   1.0,
                                   4,
                                   watch=Set(6:10),
-                                  initial_infections=2
+                                  initial_infections=Set(2)
                                   )
                )
     @test  result == [0, 0, 0, 0]
@@ -36,7 +36,7 @@
                                   1.0,
                                   4,
                                   watch=Set(1:2),
-                                  initial_infections=2
+                                  initial_infections=Set(2)
                                   )
              )
     result
@@ -46,7 +46,7 @@
                                   1.0,
                                   4,
                                   watch=Set(1:5),
-                                  initial_infections=10
+                                  initial_infections=Set(10)
                                   )
 
     @test result == [0, 0, 0, 0]
@@ -75,16 +75,26 @@
     @test result == [1, 3, 5, 5]
 
     # Check normalize
-    result = @inferred(diffusion_rate(g,
+    g3 = PathGraph(30)
+    result = @inferred(diffusion_rate(g3,
                                   1.0,
-                                  4,
-                                  watch=Set(1:5),
-                                  initial_infections=1,
-                                  normalize_p=true
+                                  6,
+                                  initial_infections=Set(15),
+                                  normalize=false
                                   )
              )
     result
-    @test result != [5, 5, 5, 5]
+    @test result == [1, 3, 5, 7, 9, 11]
+
+
+    result = @inferred(diffusion_rate(g3,
+                                  2.0,
+                                  6,
+                                  initial_infections=Set(15),
+                                  normalize=true
+                                  )
+             )
+    @test result == [1, 3, 5, 7, 9, 11]
 
     # Test probability accurate
     means = Dict(0.2 => 0.8, 0.4 => 1.6)
@@ -95,16 +105,16 @@
 
         for i in 1:20
             result = @inferred(diffusion_rate(g2,
-                                                    p,
-                                                    4,
-                                                    initial_infections=Set(1))
+                                              p,
+                                              5,
+                                              initial_infections=Set(1))
                                )
-            final_value += result[4]
-
+            final_value += result[5]
         end
 
         # Pretty loose bounds so don't get lots of failed tests.
         # Just want some safeguard.
+        # Note 5 steps = 4 Bernoullis + initial infection.
         # False rate less than 1 in 1000
         # Subtract 1 for initial infection
         avg = final_value / runs - 1
@@ -123,7 +133,7 @@
                                   initial_infections=Set(1)
                                   )
              )
-    @test result == collect(2:10)
+    @test result == collect(1:9)
 
     result = @inferred(diffusion_rate(gx,
                                   1.0,
@@ -139,16 +149,15 @@
     stds = Dict(0.2 => 1.2649110640673518, 0.4 => 1.5491933384829668)
 
     for p in [0.2, 0.4]
-        binomial = Binomial(10, p)
         final_value = 0.0
 
         for i in 1:20
             result = @inferred(diffusion_rate(gx,
                                                     p,
-                                                    10,
+                                                    11,
                                                     initial_infections=Set(1))
                                )
-            final_value += result[10]
+            final_value += result[11]
 
         end
 

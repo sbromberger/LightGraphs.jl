@@ -56,7 +56,7 @@ DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 randomwalk, saw, non_backtracking_randomwalk,
 
 # diffusion
-diffusion, diffusion_rate
+diffusion, diffusion_rate,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
