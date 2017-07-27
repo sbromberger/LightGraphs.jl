@@ -29,4 +29,7 @@
     @test savegraph(f, d) == 2
     # test try block (#701)
     @test_throws TypeError savegraph(f, d; compress=nothing)
+    
+    close(fio)
+    rm(f)
 end
