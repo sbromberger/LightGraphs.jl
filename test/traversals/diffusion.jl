@@ -5,7 +5,7 @@ gx = CompleteGraph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Most basic
-    @test @inferred( diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
+    @test @inferred(diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
 end
 
 for i in 1:5
