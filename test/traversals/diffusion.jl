@@ -155,7 +155,5 @@ for g in testdigraphs(gx)
         @test avg < means[p] + stds[p] / sqrt(runs) * 3.5
         @test avg > means[p] - stds[p] / sqrt(runs) * 3.5
     end
-
-
 end
 end
