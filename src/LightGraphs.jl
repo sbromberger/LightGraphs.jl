@@ -55,6 +55,9 @@ DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 # random
 randomwalk, saw, non_backtracking_randomwalk,
 
+# diffusion
+diffusion, diffusion_rate,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
@@ -161,6 +164,7 @@ include("core.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
+            include("traversals/diffusion.jl")
         include("connectivity.jl")
         include("distance.jl")
         include("edit_distance.jl")
