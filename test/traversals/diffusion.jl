@@ -1,109 +1,95 @@
 
 @testset "Diffusion Simulation" begin
 
+gx = CompleteGraph(5)
+
+for g in testgraphs(gx)  # this makes graphs of different eltypes
+    # Most basic
+    @test @inferred( diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
+end
+
+for i in 1:5
+  add_vertex!(gx)
+end
+
+for g in testgraphs(gx)  # this makes graphs of different eltypes
+
     ######
     # Check on fully connected, prob = 1
     ######
 
-    g = CompleteGraph(5)
-
-    # Most basic
-    result = @inferred( diffusion_rate(g, 1.0, 4) )
-    result
-    @test result == [1, 5, 5, 5]
 
     # Add disconnected for more dynamics
-    for i in 1:5
-      add_vertex!(g)
-    end
 
     # Basic test. Watch connected vertices
-    result = @inferred(diffusion_rate(g,
-                                  1.0,
-                                  4,
-                                  watch=collect(1:5),
-                                  initial_infections=[2]
-                                  )
-             )
-    result
-    @test result == [1, 5, 5, 5]
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(1:5),
+                                   initial_infections=[2]
+                                   )) == [1, 5, 5, 5]
 
     # Watching unconnected vertices
-    result = @inferred(diffusion_rate(g,
-                                  1.0,
-                                  4,
-                                  watch=collect(6:10),
-                                  initial_infections=[2]
-                                  )
-               )
-    @test  result == [0, 0, 0, 0]
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(6:10),
+                                   initial_infections=[2]
+                                   )) == [0, 0, 0, 0]
 
     # Watch subset
-    result = @inferred(diffusion_rate(g,
-                                  1.0,
-                                  4,
-                                  watch=collect(1:2),
-                                  initial_infections=[2]
-                                  )
-             )
-    result
-    @test result == [1, 2, 2, 2]
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(1:2),
+                                   initial_infections=[2]
+                                   )) == [1, 2, 2, 2]
 
-    result = diffusion_rate(g,
-                                  1.0,
-                                  4,
-                                  watch=collect(1:5),
-                                  initial_infections=[10]
-                                  )
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(1:5),
+                                   initial_infections=[10]
+                                   )) == [0, 0, 0, 0]
 
-    @test result == [0, 0, 0, 0]
+end
 
-    ######
-    # Check along path graph
-    ######
+######
+# Check along path graph
+######
 
-    g2 = PathGraph(5)
-    result = @inferred(diffusion_rate(g2,
-                                  1.0,
-                                  4,
-                                  watch=collect(1:5),
-                                  initial_infections=[1]
-                                  )
-              )
-    @test  result == [1, 2, 3, 4]
+gx = PathGraph(5)
 
-    result = @inferred(diffusion_rate(g2,
-                                  1.0,
-                                  4,
-                                  watch=collect(1:5),
-                                  initial_infections=[3]
-                                  )
-             )
-    @test result == [1, 3, 5, 5]
+for g in testgraphs(gx)  # this makes graphs of different eltypes
 
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(1:5),
+                                   initial_infections=[1]
+                                   )) == [1, 2, 3, 4]
+
+    @test @inferred(diffusion_rate(g, 1.0, 4,
+                                   watch=collect(1:5),
+                                   initial_infections=[3]
+                                   )) == [1, 3, 5, 5]
+end
+
+gx = PathGraph(30)
+for g in testgraphs(gx)
     # Check normalize
-    g3 = PathGraph(30)
-    result = @inferred(diffusion_rate(g3,
+    @test @inferred(diffusion_rate(g,
                                   1.0,
                                   6,
                                   initial_infections=[15],
                                   normalize=false
-                                  )
-             )
-    result
-    @test result == [1, 3, 5, 7, 9, 11]
+                                  )) == [1, 3, 5, 7, 9, 11]
 
 
-    result = @inferred(diffusion_rate(g3,
-                                  2.0,
-                                  6,
-                                  initial_infections=[15],
-                                  normalize=true
-                                  )
-             )
-    @test result == [1, 3, 5, 7, 9, 11]
+    @test @inferred(diffusion_rate(g, 2.0, 6,
+                                   initial_infections=[15],
+                                   normalize=true)
+                                   ) == [1, 3, 5, 7, 9, 11]
 
     # Test probability accurate
+    # In a Path network,
+    # number of nodes infected (minus 1)
+    # is equal to number of successes of a
+    # Burnoulli process.
+    # So if p = 0.2, in 5 steps (seed +
+    # 4 trials) expected value is 0.8,
+    # with standard deviation 0.8.
+
     means = Dict(0.2 => 0.8, 0.4 => 1.6)
     stds = Dict(0.2 => 0.8, 0.4 => 0.98)
     runs = 20
@@ -111,11 +97,8 @@
         final_value = 0.0
 
         for i in 1:20
-            result = @inferred(diffusion_rate(g2,
-                                              p,
-                                              5,
-                                              initial_infections=[1])
-                               )
+            result = @inferred(diffusion_rate(g, p, 5,
+                                     initial_infections=[1]))
             final_value += result[5]
         end
 
@@ -128,42 +111,38 @@
         @test avg < means[p] + stds[p] / sqrt(runs) * 3.5
         @test avg > means[p] - stds[p] / sqrt(runs) * 3.5
     end
+end
+
+
+gx = PathDiGraph(10)
+
+for g in testdigraphs(gx)
 
     ######
     # Check on digraphs
     ######
-    gx = PathDiGraph(10)
 
-    result = @inferred(diffusion_rate(gx,
-                                  1.0,
-                                  9,
+    @test @inferred(diffusion_rate(g, 1.0, 9,
                                   initial_infections=[1]
-                                  )
-             )
-    @test result == collect(1:9)
+                                  )) == collect(1:9)
 
-    result = @inferred(diffusion_rate(gx,
-                                  1.0,
-                                  9,
+    @test @inferred(diffusion_rate(g, 1.0, 9,
                                   initial_infections=[10]
-                                  )
-             )
-    @test result == ones(Int64, 9)
+                                  )) == ones(Int, 9)
 
-    # Check probabilities
+    # Check probabilities.
+    # See note in analogous tests above for undirected tests.
     runs = 20
     means = Dict(0.2 => 2, 0.4 => 4)
-    stds = Dict(0.2 => 1.2649110640673518, 0.4 => 1.5491933384829668)
+    stds = Dict(0.2 => 1.2649110640673518,
+                0.4 => 1.5491933384829668)
 
     for p in [0.2, 0.4]
         final_value = 0.0
 
         for i in 1:20
-            result = @inferred(diffusion_rate(gx,
-                                                    p,
-                                                    11,
-                                                    initial_infections=[1])
-                               )
+            result = @inferred(diffusion_rate(g, p, 11,
+                                     initial_infections=[1]))
             final_value += result[11]
 
         end
@@ -178,4 +157,5 @@
     end
 
 
+end
 end
