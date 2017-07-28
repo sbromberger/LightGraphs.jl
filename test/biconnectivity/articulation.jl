@@ -27,7 +27,7 @@
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
           artpts = @inferred(articulation(tree))
-          @test artpts == collect(1:(2^(level-1)-1))
+          @test artpts == collect(1:(2^(level - 1) - 1))
         end
     end
 

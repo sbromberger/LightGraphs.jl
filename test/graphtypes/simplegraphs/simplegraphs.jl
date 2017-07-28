@@ -44,24 +44,26 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
     gx = PathGraph(4)
     for g in testgraphs(gx)
         @test @inferred(vertices(g)) == 1:4
-        @test Edge(2,3) in edges(g)
+        @test Edge(2, 3) in edges(g)
         @test @inferred(nv(g)) == 4
         @test @inferred(fadj(g)) == badj(g) == adj(g) == g.fadjlist
-        @test @inferred(fadj(g,2)) == badj(g,2) == adj(g,2) == g.fadjlist[2]
+        @test @inferred(fadj(g, 2)) == badj(g, 2) == adj(g, 2) == g.fadjlist[2]
 
         @test @inferred(has_edge(g, 2, 3))
+        @test @inferred(!has_edge(g, 20, 3))
+        @test @inferred(!has_edge(g, 2, 30))
         @test @inferred(has_edge(g, 3, 2))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4=>1)) && gc == CycleGraph(4)
-        @test @inferred(has_edge(gc, 4=>1)) && has_edge(gc, 0x04=>0x01)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleGraph(4)
+        @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4,1))) && gc == CycleGraph(4)
-        @test @inferred(has_edge(gc, (4,1))) && has_edge(gc, (0x04, 0x01))
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleGraph(4)
+        @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = copy(g)
         @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
 
-        @test @inferred(in_neighbors(g, 2)) == @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g,2)) == [1,3]
+        @test @inferred(in_neighbors(g, 2)) == @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
@@ -77,7 +79,7 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         # concrete tests below
 
-        @test @inferred(eltype(g)) == eltype(fadj(g,1)) == eltype(nv(g))
+        @test @inferred(eltype(g)) == eltype(fadj(g, 1)) == eltype(nv(g))
         T = @inferred(eltype(g))
         @test @inferred(nv(SimpleGraph{T}(6))) == 6
 
@@ -103,8 +105,8 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
     gdx = PathDiGraph(4)
     for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
-        @test Edge(2,3) in edges(g)
-        @test !(Edge(3,2) in edges(g))
+        @test Edge(2, 3) in edges(g)
+        @test !(Edge(3, 2) in edges(g))
         @test @inferred(nv(g)) == 4
         @test @inferred(fadj(g)[2]) == fadj(g, 2) == [3]
         @test @inferred(badj(g)[2]) == badj(g, 2) == [1]
@@ -112,18 +114,20 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         @test @inferred(has_edge(g, 2, 3))
         @test @inferred(!has_edge(g, 3, 2))
+        @test @inferred(!has_edge(g, 20, 3))
+        @test @inferred(!has_edge(g, 2, 30))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4=>1)) && gc == CycleDiGraph(4)
-        @test @inferred(has_edge(gc, 4=>1)) && has_edge(gc, 0x04=>0x01)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleDiGraph(4)
+        @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4,1))) && gc == CycleDiGraph(4)
-        @test @inferred(has_edge(gc, (4,1))) && has_edge(gc, (0x04, 0x01))
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleDiGraph(4)
+        @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = @inferred(copy(g))
         @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
 
         @test @inferred(in_neighbors(g, 2)) == [1]
-        @test @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g,2)) == [3]
+        @test @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
@@ -140,7 +144,7 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
         # concrete tests below
 
-        @test @inferred(eltype(g)) == eltype(@inferred(fadj(g,1))) == eltype(nv(g))
+        @test @inferred(eltype(g)) == eltype(@inferred(fadj(g, 1))) == eltype(nv(g))
         T = @inferred(eltype(g))
         @test @inferred(nv(SimpleDiGraph{T}(6))) == 6
 
@@ -165,8 +169,11 @@ struct DummySimpleGraph <: AbstractSimpleGraph end
 
     gdx = CompleteDiGraph(4)
     for g in testdigraphs(gdx)
+        h = DiGraph(g)
+        @test g == h
         @test rem_vertex!(g, 2)
         @test nv(g) == 3 && ne(g) == 6
+        @test g != h
     end
 
 

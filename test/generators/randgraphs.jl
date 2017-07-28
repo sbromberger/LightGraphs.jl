@@ -201,7 +201,6 @@
 
     function generate_nbp_sbm(numedges, sizes)
         density = 1
-        # print(STDERR, "Generating communites with sizes: $sizes\n")
         between = density * 0.90
         intra = density * -0.005
         noise = density * 0.00501

@@ -9,9 +9,9 @@ with `n` vertices.
 """
 function CompleteGraph(n::Integer)
     g = Graph(n)
-    for i = 1:n, j=1:n
+    for i = 1:n, j = 1:n
         if i < j
-            add_edge!(g, Edge(i,j))
+            add_edge!(g, Edge(i, j))
         end
     end
     return g
@@ -25,9 +25,9 @@ Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Co
 with `n1 + n2` vertices.
 """
 function CompleteBipartiteGraph(n1::Integer, n2::Integer)
-    g = Graph(n1+n2)
-    for i = 1:n1, j=n1+1:n1+n2
-        add_edge!(g, Edge(i,j))
+    g = Graph(n1 + n2)
+    for i = 1:n1, j = (n1 + 1):(n1 + n2)
+        add_edge!(g, Edge(i, j))
     end
     return g
 end
@@ -40,9 +40,9 @@ with `n` vertices.
 """
 function CompleteDiGraph(n::Integer)
     g = DiGraph(n)
-    for i = 1:n, j=1:n
+    for i = 1:n, j = 1:n
         if i != j
-            add_edge!(g, Edge(i,j))
+            add_edge!(g, Edge(i, j))
         end
     end
     return g
@@ -57,7 +57,7 @@ with `n` vertices.
 function StarGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        add_edge!(g, Edge(1,i))
+        add_edge!(g, Edge(1, i))
     end
     return g
 end
@@ -71,7 +71,7 @@ with `n` vertices.
 function StarDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(1,i))
+        add_edge!(g, Edge(1, i))
     end
     return g
 end
@@ -85,7 +85,7 @@ with `n` vertices.
 function PathGraph(n::Integer)
     g = Graph(n)
     for i = 2:n
-        add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i - 1, i))
     end
     return g
 end
@@ -99,7 +99,7 @@ with `n` vertices.
 function PathDiGraph(n::Integer)
     g = DiGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i - 1, i))
     end
     return g
 end
@@ -112,8 +112,8 @@ with `n` vertices.
 """
 function CycleGraph(n::Integer)
     g = Graph(n)
-    for i = 1:n-1
-        add_edge!(g, Edge(i, i+1))
+    for i = 1:(n - 1)
+        add_edge!(g, Edge(i, i + 1))
     end
     add_edge!(g, Edge(n, 1))
     return g
@@ -127,8 +127,8 @@ with `n` vertices.
 """
 function CycleDiGraph(n::Integer)
     g = DiGraph(n)
-    for i = 1:n-1
-        add_edge!(g, Edge(i, i+1))
+    for i = 1:(n - 1)
+        add_edge!(g, Edge(i, i + 1))
     end
     add_edge!(g, Edge(n, 1))
     return g
@@ -144,7 +144,7 @@ with `n` vertices.
 function WheelGraph(n::Integer)
     g = StarGraph(n)
     for i = 3:n
-        add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i - 1, i))
     end
     if n != 2
         add_edge!(g, Edge(n, 2))
@@ -161,7 +161,7 @@ with `n` vertices.
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
     for i = 3:n
-        add_edge!(g, Edge(i-1, i))
+        add_edge!(g, Edge(i - 1, i))
     end
     if n != 2
         add_edge!(g, Edge(n, 2))
@@ -202,11 +202,11 @@ of depth `k`.
 """
 
 function BinaryTree(k::Integer)
-    g = Graph(Int(2^k-1))
-    for i in 0:k-2
-        for j in 2^i:2^(i+1)-1
+    g = Graph(Int(2^k - 1))
+    for i in 0:(k - 2)
+        for j in (2^i):(2^(i + 1) - 1)
             add_edge!(g, j, 2j)
-            add_edge!(g, j, 2j+1)
+            add_edge!(g, j, 2j + 1)
         end
     end
     return g
@@ -224,7 +224,7 @@ function DoubleBinaryTree(k::Integer)
     gl = BinaryTree(k)
     gr = BinaryTree(k)
     g = blkdiag(gl, gr)
-    add_edge!(g,1, nv(gl)+1)
+    add_edge!(g, 1, nv(gl) + 1)
     return g
 end
 
@@ -241,10 +241,10 @@ function RoachGraph(k::Integer)
     dipole = CompleteGraph(2)
     nopole = Graph(2)
     antannae = crosspath(k, nopole)
-    body = crosspath(k,dipole)
+    body = crosspath(k, dipole)
     roach = blkdiag(antannae, body)
-    add_edge!(roach, nv(antannae)-1, nv(antannae)+1)
-    add_edge!(roach, nv(antannae), nv(antannae)+2)
+    add_edge!(roach, nv(antannae) - 1, nv(antannae) + 1)
+    add_edge!(roach, nv(antannae), nv(antannae) + 2)
     return roach
 end
 
@@ -255,15 +255,15 @@ end
 Create a graph consisting of `n` connected `k`-cliques.
 """
 function CliqueGraph(k::Integer, n::Integer)
-    g = Graph(k*n)
-    for c=1:n
-        for i=(c-1)*k+1:c*k-1, j=i+1:c*k
+    g = Graph(k * n)
+    for c = 1:n
+        for i = ((c - 1) * k + 1):(c * k - 1), j = (i + 1):(c * k)
             add_edge!(g, i, j)
         end
     end
-    for i=1:n-1
-        add_edge!(g, (i-1)*k+1, i*k+1)
+    for i = 1:(n - 1)
+        add_edge!(g, (i - 1) * k + 1, i * k + 1)
     end
-    add_edge!(g, 1, (n-1)*k+1)
+    add_edge!(g, 1, (n - 1) * k + 1)
     return g
 end

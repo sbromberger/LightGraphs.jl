@@ -1,7 +1,7 @@
 __precompile__(true)
 module LightGraphs
 
-using GZip
+import CodecZlib
 using DataStructures
 using SimpleTraits
 
@@ -39,7 +39,7 @@ MinkowskiCost, BoundedMinkowskiCost,
 complement, reverse, reverse!, blkdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
-induced_subgraph, egonet,
+induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
 # graph visit
 AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -54,6 +54,9 @@ DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
 # random
 randomwalk, saw, non_backtracking_randomwalk,
+
+# diffusion
+diffusion, diffusion_rate,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -85,9 +88,6 @@ adjacency_matrix,laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 CombinatorialAdjacency, non_backtracking_matrix, incidence_matrix,
 nonbacktrack_embedding, Nonbacktracking,
 contract,
-
-# astar
-a_star,
 
 # persistence
 loadgraph, loadgraphs, savegraph, LGFormat,
@@ -164,6 +164,7 @@ include("core.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
             include("traversals/randomwalks.jl")
+            include("traversals/diffusion.jl")
         include("connectivity.jl")
         include("distance.jl")
         include("edit_distance.jl")

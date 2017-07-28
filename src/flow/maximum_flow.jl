@@ -44,7 +44,7 @@ end
 @traitfn DefaultCapacity(flow_graph::::IsDirected) =
     DefaultCapacity(DiGraph(flow_graph), nv(flow_graph))
 
-getindex(d::DefaultCapacity{T}, s::Integer, t::Integer) where T = if has_edge(d.flow_graph, s , t) one(T) else zero(T) end
+getindex(d::DefaultCapacity{T}, s::Integer, t::Integer) where T = if has_edge(d.flow_graph, s, t) one(T) else zero(T) end
 # isassigned{T<:Integer}(d::DefaultCapacity{T}, u::T, v::T) = (u in 1:d.nv) && (v in 1:d.nv)
 size(d::DefaultCapacity) = (Int(d.nv), Int(d.nv))
 transpose(d::DefaultCapacity) = DefaultCapacity(reverse(d.flow_graph))

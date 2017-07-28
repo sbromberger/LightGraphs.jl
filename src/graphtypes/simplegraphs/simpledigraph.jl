@@ -37,16 +37,16 @@ SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 # sparse adjacency matrix constructor: DiGraph(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
-    isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
+    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
 
     g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
-    for c = 1:(maxc-1)
-        for rind = adjmx.colptr[c]:adjmx.colptr[c+1]-1
+    for c = 1:(maxc - 1)
+        for rind = adjmx.colptr[c]:(adjmx.colptr[c + 1] - 1)
             isnz = (adjmx.nzval[rind] != zero(U))
             if isnz
                 r = adjmx.rowval[rind]
-                add_edge!(g,r,c)
+                add_edge!(g, r, c)
             end
         end
     end
@@ -55,13 +55,13 @@ end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
-    dima,dimb = size(adjmx)
-    isequal(dima,dimb) || error("Adjacency / distance matrices must be square")
+    dima, dimb = size(adjmx)
+    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
 
     g = SimpleDiGraph(T(dima))
     for i in find(adjmx)
-        ind = ind2sub((dima,dimb),i)
-        add_edge!(g,ind...)
+        ind = ind2sub((dima, dimb), i)
+        add_edge!(g, ind...)
     end
     return g
 end
@@ -76,6 +76,7 @@ function (::Type{SimpleDiGraph{T}})(g::SimpleDiGraph) where T<:Integer
     return SimpleDiGraph(ne(g), h_fadj, h_badj)
 end
 
+SimpleDiGraph(g::SimpleDiGraph) = copy(g)
 
 # constructor from abstract graph: DiGraph(graph)
 function SimpleDiGraph(g::AbstractSimpleGraph)
@@ -120,7 +121,7 @@ end
 
 
 function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    has_edge(g,e) || return false
+    has_edge(g, e) || return false
     i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
     deleteat!(g.fadjlist[src(e)], i)
     i = searchsorted(g.badjlist[dst(e)], src(e))[1]
@@ -142,10 +143,10 @@ end
 
 function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
-    u > nv(g) || v > nv(g) && return false
-    if degree(g,u) < degree(g,v)
-        return length(searchsorted(fadj(g,u), v)) > 0
+    (u > nv(g) || v > nv(g)) && return false
+    if degree(g, u) < degree(g, v)
+        return length(searchsorted(fadj(g, u), v)) > 0
     else
-        return length(searchsorted(badj(g,v), u)) > 0
+        return length(searchsorted(badj(g, v), u)) > 0
     end
 end

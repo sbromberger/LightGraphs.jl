@@ -41,7 +41,7 @@
     gint = blkdiag(g, h)
     add_edge!(gint, 4, 5)
 
-    a = [[Edge(5, 8),Edge(7, 8),Edge(6, 7),Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4),Edge(3, 4),Edge(2, 3),Edge(1, 2)]]
+    a = [[Edge(5, 8), Edge(7, 8), Edge(6, 7), Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4), Edge(3, 4), Edge(2, 3), Edge(1, 2)]]
 
     for g in testgraphs(gint)
       bcc = @inferred(biconnected_components(g))

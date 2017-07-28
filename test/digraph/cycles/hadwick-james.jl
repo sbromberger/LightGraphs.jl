@@ -46,8 +46,8 @@
 
     # Almost fully connected DiGraph
     ex4 = DiGraph(9)
-    for (src, dest) in [(1,2),(1,5),(1,7),(1,8),(2,9),(3,4),(3,6),
-                        (4,5),(4,7),(5,6),(6,7),(6,8),(7,9),(8,9)]
+    for (src, dest) in [(1, 2), (1, 5), (1, 7), (1, 8), (2, 9), (3, 4), (3, 6), 
+                        (4, 5), (4, 7), (5, 6), (6, 7), (6, 8), (7, 9), (8, 9)] 
         add_edge!(ex4, src, dest)
         add_edge!(ex4, dest, src)
     end

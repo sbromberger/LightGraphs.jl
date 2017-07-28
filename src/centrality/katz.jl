@@ -32,7 +32,7 @@ function katz_centrality(g::AbstractGraph, α::Real=0.3)
     v = ones(Float64, nvg)
     spI = speye(Float64, nvg)
     A = adjacency_matrix(g, :in, Bool)
-    v = (spI - α*A)\v
+    v = (spI - α * A) \ v
     v /=  norm(v)
     return v
 end

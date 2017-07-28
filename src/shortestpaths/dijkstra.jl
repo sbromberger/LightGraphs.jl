@@ -1,4 +1,4 @@
-struct DijkstraHeapEntry{T, U<:Integer}
+struct DijkstraHeapEntry{T,U<:Integer}
     vertex::U
     dist::T
 end
@@ -10,7 +10,7 @@ isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
 
 An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
-struct DijkstraState{T, U<:Integer}<: AbstractPathState
+struct DijkstraState{T,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -40,10 +40,10 @@ function dijkstra_shortest_paths(
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    preds = fill(Vector{U}(),nvg)
+    preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = Vector{DijkstraHeapEntry{T, U}}()  # this should be Vector{T}() in 0.4, I think.
+    H = Vector{DijkstraHeapEntry{T,U}}()  # this should be Vector{T}() in 0.4, I think.
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
@@ -53,7 +53,7 @@ function dijkstra_shortest_paths(
     sizehint!(closest_vertices, nvg)
 
     for v in srcs
-        heappush!(H, DijkstraHeapEntry{T, U}(v, dists[v]))
+        heappush!(H, DijkstraHeapEntry{T,U}(v, dists[v]))
         visited[v] = true
     end
 
@@ -68,8 +68,8 @@ function dijkstra_shortest_paths(
           popped_out[u] = true
         end
 
-        for v in out_neighbors(g,u)
-            alt = (dists[u] == typemax(T))? typemax(T) : dists[u] + distmx[u,v]
+        for v in out_neighbors(g, u)
+            alt = (dists[u] == typemax(T)) ? typemax(T) : dists[u] + distmx[u, v]
 
             if !visited[v]
                 dists[v] = alt
@@ -79,7 +79,7 @@ function dijkstra_shortest_paths(
                 if allpaths
                     preds[v] = [u;]
                 end
-                heappush!(H, DijkstraHeapEntry{T, U}(v, alt))
+                heappush!(H, DijkstraHeapEntry{T,U}(v, alt))
                 # info("Pushed $v")
             else
                 if alt < dists[v]
@@ -88,7 +88,7 @@ function dijkstra_shortest_paths(
                     #615
                     pathcounts[v] = 0
                     preds[v] = []
-                    heappush!(H, DijkstraHeapEntry{T, U}(v, alt))
+                    heappush!(H, DijkstraHeapEntry{T,U}(v, alt))
                 end
                 if alt == dists[v]
                     pathcounts[v] += pathcounts[u]
@@ -103,7 +103,7 @@ function dijkstra_shortest_paths(
     if trackvertices
       for s in vertices(g)
         if !visited[s]
-          push!(closest_vertices,s)
+          push!(closest_vertices, s)
         end
       end
     end
@@ -114,7 +114,7 @@ function dijkstra_shortest_paths(
         preds[src] = []
     end
 
-    return DijkstraState{T, U}(parents, dists, preds, pathcounts, closest_vertices)
+    return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
 dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = weights(g); allpaths=false, trackvertices=false) =
@@ -125,7 +125,7 @@ dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trac
 
 An [`AbstractPathState`](@ref) designed for multisource_dijkstra_shortest_paths calculation.
 """
-struct MultipleDijkstraState{T, U<:Integer}<:AbstractPathState
+struct MultipleDijkstraState{T,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -139,25 +139,25 @@ an optional distance matrix `distmx`. Return a [`MultipleDijkstraState`](@ref) w
 traversal information.
 """
 
-function parallel_multisource_dijkstra_shortest_paths{T}(
+function parallel_multisource_dijkstra_shortest_paths(
     g::AbstractGraph,
     sources::AbstractVector = vertices(g),
     distmx::AbstractMatrix{T} = weights(g)
-    )
+    ) where T
 
     U = eltype(g)
     n_v = nv(g)
     r_v = length(sources)
 
-    dists   = SharedArray(zeros(T,r_v,n_v))
-    parents = SharedArray(zeros(U,r_v,n_v))
+    dists   = SharedArray(zeros(T, r_v, n_v))
+    parents = SharedArray(zeros(U, r_v, n_v))
 
     @sync @parallel for i in 1:r_v
-      state = dijkstra_shortest_paths(g,sources[i],distmx)
-      dists[i,:] = state.dists
-      parents[i,:] = state.parents
+      state = dijkstra_shortest_paths(g, sources[i], distmx)
+      dists[i, :] = state.dists
+      parents[i, :] = state.parents
     end
 
-    result = MultipleDijkstraState(Matrix(dists),Matrix(parents))
+    result = MultipleDijkstraState(Matrix(dists), Matrix(parents))
     return result
 end

@@ -13,7 +13,7 @@ end
 
 function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
     ntriang, nalltriang = local_clustering(g, vs)
-    return map(p->p[2]==0? 0. : p[1]*1.0/p[2], zip(ntriang, nalltriang))
+    return map(p -> p[2] == 0 ? 0. : p[1] * 1.0 / p[2], zip(ntriang, nalltriang))
 end
 
 function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
@@ -30,7 +30,7 @@ function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::I
             end
         end
     end
-    return is_directed(g) ? (tcount , k*(k-1)) : (div(tcount,2) , div(k*(k-1),2))
+    return is_directed(g) ? (tcount, k * (k - 1)) : (div(tcount, 2), div(k * (k - 1), 2))
 end
 
 function local_clustering!(storage::AbstractVector{Bool},
@@ -55,7 +55,7 @@ of `v` and `b` is the maximum number of possible triangles. If a list of vertice
 `vs` is specified, return two vectors representing the number of triangles and
 the maximum number of possible triangles, respectively, for each node in the list.
 
-This function is related to the local clustering coefficient `r` by ``r=\frac{a}{b}``.
+This function is related to the local clustering coefficient `r` by ``r=\\frac{a}{b}``.
 """
 function local_clustering(g::AbstractGraph, v::Integer)
     storage = zeros(Bool, nv(g))
@@ -101,7 +101,7 @@ function global_clustering_coefficient(g::AbstractGraph)
             end
         end
         k = degree(g, v)
-        ntriangles += k*(k-1)
+        ntriangles += k * (k - 1)
     end
     ntriangles == 0 && return 1.
     return c / ntriangles

@@ -39,7 +39,7 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
                 e = Edge(0, 0)  #Invalid Edge, used for comparison only
                 st = Vector{Edge}()
-                while e != Edge(min(v, w),max(v, w))
+                while e != Edge(min(v, w), max(v, w))
                     e = pop!(state.stack)
                     push!(st, e)
                 end

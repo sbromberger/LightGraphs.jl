@@ -14,7 +14,7 @@ function label_propagation(g::AbstractGraph, maxiter=1000)
     n = nv(g)
     label = collect(one(T):n)
     active_vs = IntSet(vertices(g))
-    c = NeighComm(collect(one(T):n), fill(-1,n), one(T))
+    c = NeighComm(collect(one(T):n), fill(-1, n), one(T))
     convergence_hist = Vector{Int}()
     random_order = Vector{T}(n)
     i = 0
@@ -24,11 +24,11 @@ function label_propagation(g::AbstractGraph, maxiter=1000)
         i += 1
 
         # processing vertices in random order
-        for (j,node) in enumerate(active_vs)
+        for (j, node) in enumerate(active_vs)
             random_order[j] = node
         end
         range_shuffle!(1:num_active, random_order)
-        @inbounds for j=1:num_active
+        @inbounds for j = 1:num_active
             u = random_order[j]
             old_comm = label[u]
             label[u] = vote!(g, label, c, u)
@@ -64,11 +64,11 @@ Fast shuffle Array `a` in UnitRange `r`.
 """
 function range_shuffle!(r::UnitRange, a::AbstractVector)
     (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
-    @inbounds for i=length(r):-1:2
+    @inbounds for i = length(r):-1:2
         j = rand(1:i)
         ii = i + r.start - 1
         jj = j + r.start - 1
-        a[ii],a[jj] = a[jj],a[ii]
+        a[ii], a[jj] = a[jj], a[ii]
     end
 end
 
@@ -78,7 +78,7 @@ end
 Return the label with greatest frequency.
 """
 function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
-    @inbounds for i=1:c.neigh_last-1
+    @inbounds for i = 1:c.neigh_last - 1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
     c.neigh_last = 1
@@ -86,7 +86,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     c.neigh_cnt[c.neigh_pos[1]] = 0
     c.neigh_last = 2
     max_cnt = 0
-    for neigh in out_neighbors(g,u)
+    for neigh in out_neighbors(g, u)
         neigh_comm = m[neigh]
         if c.neigh_cnt[neigh_comm] < 0
             c.neigh_cnt[neigh_comm] = 0
@@ -99,7 +99,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
     end
     # ties breaking randomly
-    range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
+    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
     for lbl in c.neigh_pos
         if c.neigh_cnt[lbl] == max_cnt
             return lbl
@@ -111,7 +111,7 @@ function renumber_labels!(membership::Vector, label_counters::Vector{Int})
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
     j = 1
-    @inbounds for i=1:length(membership)
+    @inbounds for i = 1:length(membership)
         k = membership[i]
         if k >= 1
             if label_counters[k] == 0

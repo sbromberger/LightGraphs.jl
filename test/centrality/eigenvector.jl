@@ -11,7 +11,6 @@
     end
     for g in testdigraphs(g2)
         y = @inferred(eigenvector_centrality(g))
-        @test round.(y, 3) == round.([
-            0.5, 0.5, 0.5, 0.5 ], 3)
+        @test round.(y, 3) == round.([0.5, 0.5, 0.5, 0.5], 3)
     end
 end

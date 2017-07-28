@@ -86,7 +86,7 @@ function unblock!(v::T, blocked::BitArray, B::Vector{Vector{T}}) where T
     Bv = B[v]
     while wPos <= length(Bv)
         w = Bv[wPos]
-        wPos += 1 - (length(Bv) - length(filter!(v->v == w, Bv)))
+        wPos += 1 - (length(Bv) - length(filter!(v -> v == w, Bv)))
         if blocked[w]
             unblock!(w, blocked, B)
         end

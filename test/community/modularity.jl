@@ -1,6 +1,6 @@
 @testset "Modularity" begin
     n = 10
-    m = n*(n-1)/2
+    m = n * (n - 1) / 2
     c = ones(Int, n)
     gint = CompleteGraph(n)
     for g in testgraphs(gint)

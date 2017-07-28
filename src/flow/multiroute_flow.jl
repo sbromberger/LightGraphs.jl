@@ -54,7 +54,7 @@ end
 ## Methods for Extended Multiroute Flow Algorithm
 #1 When the breaking points are not already known
 @traitfn function multiroute_flow(
-    flow_graph::::IsDirected,                            # the input graph
+    flow_graph::::IsDirected,                       # the input graph
     source::Integer,                                # the source vertex
     target::Integer,                                # the target vertex
     capacity_matrix::AbstractMatrix,           # edge flow capacities
@@ -67,14 +67,14 @@ end
 #2 When the breaking points are already known
 #2-a Output: flow value (paired with the associated restriction)
 multiroute_flow(
-    breakingpoints::Vector{Tuple{T, T, Int}},       # vector of breaking points
+    breakingpoints::Vector{Tuple{T,T,Int}},       # vector of breaking points
     routes::R                                       # keyword argument for routes
     ) where T<:Real where R<:Real =
     intersection(breakingpoints, routes)
 
 #2-b Output: flow value, flows(, labels)
 function multiroute_flow(
-    breakingpoints::AbstractVector{Tuple{T1, T1, Int}}, # vector of breaking points
+    breakingpoints::AbstractVector{Tuple{T1,T1,Int}}, # vector of breaking points
     routes::R,                                # keyword argument for routes
     flow_graph::AbstractGraph,                      # the input graph
     source::Integer,                          # the source vertex

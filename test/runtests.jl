@@ -77,6 +77,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "traversals/randomwalks",
+    "traversals/diffusion",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
@@ -101,9 +102,9 @@ tests = [
     "biconnectivity/biconnect"
 ]
 
-@testset begin
+@testset "LightGraphs" begin
     for t in tests
-        tp = joinpath(testdir,"$(t).jl")
+        tp = joinpath(testdir, "$(t).jl")
         include(tp)
     end
 end

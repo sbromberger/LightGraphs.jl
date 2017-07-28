@@ -18,7 +18,7 @@ SimpleEdgeIter(g::SimpleDiGraph) = SimpleEdgeIter(ne(g), g.fadjlist, true)
 
 function _next(
     eit::SimpleEdgeIter{T},
-    state::SimpleEdgeIterState{T} = SimpleEdgeIterState(one(T),1,false),
+    state::SimpleEdgeIterState{T} = SimpleEdgeIterState(one(T), 1, false),
     first::Bool = true) where T <: Integer
     s = state.s
     di = state.di
@@ -55,7 +55,7 @@ function _isequal(e1::SimpleEdgeIter, e2)
         s, d = Tuple(e)
         found = length(searchsorted(e1.adj[s], d)) > 0
         if !e1.directed
-            found = found || length(searchsorted(e1.adj[d],s)) > 0
+            found = found || length(searchsorted(e1.adj[d], s)) > 0
         end
         !found && return false
     end

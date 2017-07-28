@@ -14,8 +14,8 @@ function core_periphery_deg end
     s = sum(degs) / 2.
     sbest = +Inf
     kbest = 0
-    for k = 1:nv(g)-1
-        s = s + k  - 1 - degree(g, p[k])
+    for k = 1:nv(g) - 1
+        s = s + k - 1 - degree(g, p[k])
         if s < sbest
             sbest = s
             kbest = k

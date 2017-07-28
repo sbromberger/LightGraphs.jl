@@ -40,7 +40,7 @@ function breadth_first_visit_impl!(
 
         for v in fneig(g, u)
             v_color = get(vertexcolormap, v, 0)
-            v_edge = Edge(u,v)
+            v_edge = Edge(u, v)
             e_color = get(edgecolormap, v_edge, 0)
             examine_neighbor!(visitor, u, v, u_color, v_color, e_color) || return
             edgecolormap[v_edge] = 1
@@ -60,7 +60,7 @@ function traverse_graph!(
     alg::BreadthFirst,
     source,
     visitor::AbstractGraphVisitor;
-    vertexcolormap::AbstractVertexMap = Dict{eltype(g), Int}(),
+    vertexcolormap::AbstractVertexMap = Dict{eltype(g),Int}(),
     edgecolormap::AbstractEdgeMap = DummyEdgeMap(),
     queue = Vector{eltype(g)}(),
     dir = :out)
@@ -71,8 +71,7 @@ function traverse_graph!(
         push!(queue, s)
     end
 
-    breadth_first_visit_impl!(g, queue, vertexcolormap, edgecolormap
-            , visitor, dir)
+    breadth_first_visit_impl!(g, queue, vertexcolormap, edgecolormap, visitor, dir)
 end
 
 
@@ -191,7 +190,7 @@ mutable struct BipartiteVisitor <: AbstractGraphVisitor
     is_bipartite::Bool
 end
 
-BipartiteVisitor(n::Integer) = BipartiteVisitor(zeros(UInt8,n), true)
+BipartiteVisitor(n::Integer) = BipartiteVisitor(zeros(UInt8, n), true)
 
 function examine_neighbor!(visitor::BipartiteVisitor, u::Integer, v::Integer,
         ucolor::Int, vcolor::Int, ecolor::Int)
@@ -214,13 +213,13 @@ If a node `v` is specified, only the connected component to which it belongs is 
 function is_bipartite(g::AbstractGraph)
     T = eltype(g)
     if !is_directed(g)
-        cc = filter(x->length(x)>2, connected_components(g))
+        cc = filter(x -> length(x) > 2, connected_components(g))
     else
-        cc = filter(x->length(x)>2, weakly_connected_components(g))
+        cc = filter(x -> length(x) > 2, weakly_connected_components(g))
     end
     vmap = Dict{T,Int}()
     for c in cc
-        _is_bipartite(g,c[1], vmap=vmap) || return false
+        _is_bipartite(g, c[1], vmap=vmap) || return false
     end
     return true
 end
@@ -252,7 +251,7 @@ function bipartite_map(g::AbstractGraph)
     !all([v.is_bipartite for v in visitors]) && return zeros(Int, 0)
     m = zeros(Int, nv(g))
     for i in vertices(g)
-        m[i] = any(v->v.bipartitemap[i] == 1, visitors) ? 2 : 1
+        m[i] = any(v -> v.bipartitemap[i] == 1, visitors) ? 2 : 1
     end
     m
 end

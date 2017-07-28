@@ -18,7 +18,7 @@ function transitiveclosure! end
             for j in vertices(g)
                 j == k && continue
                 if (has_edge(g, i, k) && has_edge(g, k, j))
-                    if ( i != j || selflooped )
+                    if (i != j || selflooped)
                         add_edge!(g, i, j)
                     end
                 end

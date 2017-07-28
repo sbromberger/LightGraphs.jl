@@ -11,8 +11,8 @@ multiple graphs; if the file format does not support multiple graphs, this
 value is ignored. The default value may change in the future.
 """
 function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGraphFormat)
-    GZip.open(fn,"r") do io
-        loadgraph(io, gname, format)
+    open(fn, "r") do io
+        loadgraph(auto_decompress(io), gname, format)
     end
 end
 loadgraph(fn::AbstractString, gname::AbstractString="graph") = loadgraph(fn, gname, LGFormat())
@@ -29,12 +29,31 @@ For unnamed graphs the default name \"graph\" will be used. This default
 may change in the future.
 """
 function loadgraphs(fn::AbstractString, format::AbstractGraphFormat)
-    GZip.open(fn, "r") do io
-        loadgraphs(io, format)
+    open(fn, "r") do io
+        loadgraphs(auto_decompress(io), format)
     end
 end
 
 loadgraphs(fn::AbstractString) = loadgraphs(fn, LGFormat())
+
+function auto_decompress(io::IO)
+    format = :raw
+    mark(io)
+    if !eof(io)
+        b1 = read(io, UInt8)
+        if !eof(io)
+            b2 = read(io, UInt8)
+            if (b1, b2) == (0x1f, 0x8b)  # check magic bytes
+                format = :gzip
+            end
+        end
+    end
+    reset(io)
+    if format == :gzip
+        io = CodecZlib.GzipDecompressionStream(io)
+    end
+    return io
+end
 
 
 """
@@ -50,12 +69,17 @@ The default graph name assigned to `gname` may change in the future.
 function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
         format::AbstractGraphFormat; compress=true
     )
-    openfn = compress ? GZip.open : open
-    retval = -1
-    openfn(fn, "w") do io
-        retval = savegraph(io, g, gname, format)
+    io = open(fn, "w")
+    try
+        if compress
+            io = CodecZlib.GzipCompressionStream(io)
+        end
+        return savegraph(io, g, gname, format)
+    catch
+        rethrow()
+    finally
+        close(io)
     end
-    return retval
 end
 
 savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString="graph", format=LGFormat(); compress=true) =
@@ -73,14 +97,19 @@ Return the number of graphs written.
 ### Implementation Notes
 Will only work if the file format supports multiple graph types.
 """
-function savegraph(fn::AbstractString, d::Dict{T, U},
+function savegraph(fn::AbstractString, d::Dict{T,U},
     format::AbstractGraphFormat; compress=true) where T<:AbstractString where U<:AbstractGraph
-    openfn = compress? GZip.open : open
-    retval = -1
-    openfn(fn, "w") do io
-        retval = savegraph(io, d, format)
+    io = open(fn, "w")
+    try
+        if compress
+            io = CodecZlib.GzipCompressionStream(io)
+        end
+        return savegraph(io, d, format)
+    catch
+        rethrow()
+    finally
+        close(io)
     end
-    return retval
 end
 
 savegraph(fn::AbstractString, d::Dict; compress=true) = savegraph(fn, d, LGFormat(), compress=compress)

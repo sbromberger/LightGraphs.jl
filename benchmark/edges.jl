@@ -1,13 +1,13 @@
 import Base: convert
 
-const P = Pair{Int, Int}
+const P = Pair{Int,Int}
 
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 
 function fille(n)
     t = Array{LightGraphs.Edge,1}(n)
     for i in 1:n
-        t[i] = LightGraphs.Edge(i, i+1)
+        t[i] = LightGraphs.Edge(i, i + 1)
     end
     return t
 end
@@ -15,7 +15,7 @@ end
 function fillp(n)
     t = Array{P,1}(n)
     for i in 1:n
-        t[i] = P(i, i+1)
+        t[i] = P(i, i + 1)
     end
     return t
 end
@@ -23,7 +23,7 @@ end
 function tsum(t)
     x = 0
     for i in 1:length(t)
-        u,v = Tuple(t[i])
+        u, v = Tuple(t[i])
         x += u
         x += v
     end

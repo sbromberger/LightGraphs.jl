@@ -22,9 +22,9 @@ function push_relabel end
     height = zeros(Int, n)
     height[source] = n
 
-    count = zeros(Int, 2*n+1)
-    count[0+1] = n-1
-    count[n+1] = 1
+    count = zeros(Int, 2 * n + 1)
+    count[0 + 1] = n - 1
+    count[n + 1] = 1
 
     excess = zeros(T, n)
     excess[source] = typemax(T)
@@ -47,7 +47,7 @@ function push_relabel end
         discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
     end
 
-    return sum([flow_matrix[v,target] for v in in_neighbors(residual_graph, target) ]), flow_matrix
+    return sum([flow_matrix[v, target] for v in in_neighbors(residual_graph, target)]), flow_matrix
 end
 
 """
@@ -89,13 +89,13 @@ function push_flow! end
     active::AbstractVector{Bool},
     Q::AbstractVector
     )
-    flow = min(excess[u], capacity_matrix[u,v] - flow_matrix[u,v])
+    flow = min(excess[u], capacity_matrix[u, v] - flow_matrix[u, v])
 
     flow == 0 && return nothing
     height[u] <= height[v] && return nothing
 
-    flow_matrix[u,v] += flow
-    flow_matrix[v,u] -= flow
+    flow_matrix[u, v] += flow
+    flow_matrix[v, u] -= flow
 
     excess[u] -= flow
     excess[v] += flow
@@ -133,9 +133,9 @@ function gap! end
     n = nv(residual_graph)
     for v in vertices(residual_graph)
         height[v] < h && continue
-        count[height[v]+1] -= 1
+        count[height[v] + 1] -= 1
         height[v] = max(height[v], n + 1)
-        count[height[v]+1] += 1
+        count[height[v] + 1] += 1
         enqueue_vertex!(Q, v, active, excess)
     end
     nothing
@@ -159,14 +159,14 @@ function relabel! end
     Q::AbstractVector
     )
     n = nv(residual_graph)
-    count[height[v]+1] -= 1
-    height[v] = 2*n
+    count[height[v] + 1] -= 1
+    height[v] = 2 * n
     for to in out_neighbors(residual_graph, v)
-        if capacity_matrix[v,to] > flow_matrix[v,to]
-            height[v] = min(height[v], height[to]+1)
+        if capacity_matrix[v, to] > flow_matrix[v, to]
+            height[v] = min(height[v], height[to] + 1)
         end
     end
-    count[height[v]+1] += 1
+    count[height[v] + 1] += 1
     enqueue_vertex!(Q, v, active, excess)
     nothing
 end
@@ -196,7 +196,7 @@ function discharge! end
     end
 
     if excess[v] > 0
-        if count[height[v]+1] == 1
+        if count[height[v] + 1] == 1
             gap!(residual_graph, height[v], excess, height, active, count, Q)
         else
             relabel!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)

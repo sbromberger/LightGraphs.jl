@@ -17,7 +17,7 @@ struct NegativeCycleError <: Exception end
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 """
-struct BellmanFordState{T<:Number, U<:Integer}<:AbstractPathState
+struct BellmanFordState{T<:Number,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -70,10 +70,10 @@ Return a [`BellmanFordState`](@ref) with relevant traversal information.
 function bellman_ford_shortest_paths(
     graph::AbstractGraph,
     sources::AbstractVector{U},
-    distmx::AbstractMatrix{T} = weights(g)
+    distmx::AbstractMatrix{T} = weights(graph)
     ) where T where U<:Integer
     nvg = nv(graph)
-    state = BellmanFordState(zeros(U,nvg), fill(typemax(T), nvg))
+    state = BellmanFordState(zeros(U, nvg), fill(typemax(T), nvg))
     bellman_ford_shortest_paths!(graph, sources, distmx, state)
 end
 
@@ -99,7 +99,7 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integ
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(num_vs)
-    for i=1:num_vs
+    for i = 1:num_vs
         all_paths[i] = Vector{T}()
         index = vs[i]
         if parents[index] != 0 || parents[index] == index

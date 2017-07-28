@@ -10,10 +10,10 @@ Preserves the eltype of the input graph.
 function complement(g::Graph)
     gnv = nv(g)
     h = Graph(gnv)
-    for i=1:gnv
-        for j=i+1:gnv
+    for i = 1:gnv
+        for j = (i + 1):gnv
             if !has_edge(g, i, j)
-                add_edge!(h,i,j)
+                add_edge!(h, i, j)
             end
         end
     end
@@ -24,8 +24,8 @@ function complement(g::DiGraph)
     gnv = nv(g)
     h = DiGraph(gnv)
     for i in vertices(g), j in vertices(g)
-      if i != j && !has_edge(g,i,j)
-        add_edge!(h,i,j)
+      if i != j && !has_edge(g, i, j)
+        add_edge!(h, i, j)
       end
     end
     return h
@@ -79,7 +79,7 @@ function blkdiag(g::T, h::T) where T<:AbstractGraph
         add_edge!(r, e)
     end
     for e in edges(h)
-        add_edge!(r, gnv+src(e), gnv+dst(e))
+        add_edge!(r, gnv + src(e), gnv + dst(e))
     end
     return r
 end
@@ -98,8 +98,8 @@ function intersect(g::T, h::T) where T<:AbstractGraph
     hnv = nv(h)
 
     r = T(min(gnv, hnv))
-    for e in intersect(edges(g),edges(h))
-        add_edge!(r,e)
+    for e in intersect(edges(g), edges(h))
+        add_edge!(r, e)
     end
     return r
 end
@@ -119,7 +119,7 @@ function difference(g::T, h::T) where T<:AbstractGraph
 
     r = T(gnv)
     for e in edges(g)
-        !has_edge(h, e) && add_edge!(r,e)
+        !has_edge(h, e) && add_edge!(r, e)
     end
     return r
 end
@@ -191,7 +191,7 @@ in the generated graph exceeds the eltype.
 function join(g::T, h::T) where T<:AbstractGraph
     r = blkdiag(g, h)
     for i in vertices(g)
-        for j=nv(g)+1:nv(g)+nv(h)
+        for j = (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
         end
     end
@@ -262,7 +262,7 @@ size(g::AbstractGraph) = (nv(g), nv(g))
 
 Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
 """
-size(g::Graph,dim::Int) = (dim == 1 || dim == 2)? nv(g) : 1
+size(g::Graph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
 """
     sum(g)
@@ -280,7 +280,7 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 #arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
 # eltype(g::AbstractGraph) = Float64
-length(g::AbstractGraph) = nv(g)*nv(g)
+length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
 
@@ -295,19 +295,19 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function cartesian_product(g::G, h::G) where G<:AbstractGraph
-    z = G(nv(g)*nv(h))
-    id(i, j) = (i-1)*nv(h) + j
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
         i1, i2 = Tuple(e)
-        for j=1:nv(h)
-            add_edge!(z, id(i1,j), id(i2,j))
+        for j = 1:nv(h)
+            add_edge!(z, id(i1, j), id(i2, j))
         end
     end
 
     for e in edges(h)
         j1, j2 = Tuple(e)
         for i in vertices(g)
-            add_edge!(z, id(i,j1), id(i,j2))
+            add_edge!(z, id(i, j1), id(i, j2))
         end
     end
     return z
@@ -324,8 +324,8 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function tensor_product(g::G, h::G) where G<:AbstractGraph
-    z = G(nv(g)*nv(h))
-    id(i, j) = (i-1)*nv(h) + j
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
     for e1 in edges(g)
         i1, i2 = Tuple(e1)
         for e2 in edges(h)
@@ -379,9 +379,9 @@ julia> @assert sg == g[elist]
 function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph where U<:Integer
     allunique(vlist) || error("Vertices in subgraph list must be unique")
     h = T(length(vlist))
-    newvid = Dict{U, U}()
-    vmap =Vector{U}(length(vlist))
-    for (i,v) in enumerate(vlist)
+    newvid = Dict{U,U}()
+    vmap = Vector{U}(length(vlist))
+    for (i, v) in enumerate(vlist)
         newvid[v] = U(i)
         vmap[i] = v
     end
@@ -403,12 +403,12 @@ end
 function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
     h = zero(g)
     et = eltype(h)
-    newvid = Dict{et, et}()
+    newvid = Dict{et,et}()
     vmap = Vector{et}()
 
     for e in elist
         u, v = Tuple(e)
-        for i in (u,v)
+        for i in (u, v)
             if !haskey(newvid, i)
                 add_vertex!(h)
                 newvid[i] = nv(h)
@@ -442,3 +442,121 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+
+
+
+"""
+    compute_shifts(n::Int, x::AbstractArray)
+
+Determine how many elements of vs are less than i for all i in 1:n.
+"""
+function compute_shifts(n::Integer, x::AbstractArray)
+    tmp = zeros(eltype(x), n)
+    tmp[x[2:end]] = 1
+    return cumsum!(tmp, tmp)
+end
+
+"""
+    merge_vertices(g::AbstractGraph, vs)
+
+Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
+"""
+function merge_vertices(g::AbstractGraph, vs)
+    labels = collect(1:nv(g))
+    # Use lowest value as new vertex id.
+    sort!(vs)
+    nvnew = nv(g) - length(unique(vs)) +1
+    @assert nvnew <= nv(g) "Merging vertices increased the number of vertices!"
+    v0 = minimum(vs)
+    v0 > 0 || error("minimum(vs) < 1")
+    maximum(vs) <= nv(g) || error("maximum(vs) > nv(g)")
+    labels[vs] = v0
+    shifts = compute_shifts(nv(g), vs[2:end])
+    for v in vertices(g)
+        if labels[v] != v0
+            labels[v] -= shifts[v]
+        end
+    end
+
+    #if v in vs then labels[v] == v0 else labels[v] == v
+    newg = Graph(nvnew)
+    for e in edges(g)
+        u, w = src(e), dst(e)
+        if labels[u] != labels[w] #not a new self loop
+            add_edge!(newg, labels[u], labels[w])
+        end
+    end
+    return newg
+end
+
+function insorted(x::AbstractArray, val)
+    i = searchsortedfirst(x, val)
+    if i > length(x)
+        return false
+    end
+    if x[i] != val
+        return false
+    end
+    return true
+end
+
+
+"""
+    merge_vertices!(g, vs)
+
+Combine vertices specified in `vs` into single vertex whose
+index will be the lowest value in `vs`. All edges connected to vertices in `vs`
+connect to the new merged vertex.
+
+Return a vector with new vertex values are indexed by the original vertex indices.
+
+### Implementation Notes
+Supports SimpleGraph only.
+"""
+function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+    vs = sort!(unique(vs))
+    merged_vertex = shift!(vs)
+
+    x = zeros(Int, nv(g))
+    x[vs] = 1
+    new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
+    new_vertex_ids[vs] = merged_vertex
+
+    for i in vertices(g)
+        # Adjust connections to merged vertices
+        if (i != merged_vertex) && !insorted(vs, i)
+            nbrs_to_rewire = Set{eltype(g)}()
+            for j in out_neighbors(g, i)
+               if insorted(vs, j)
+                  push!(nbrs_to_rewire, merged_vertex)
+               else
+                 push!(nbrs_to_rewire, new_vertex_ids[j])
+               end
+            end
+            g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
+
+
+        # Collect connections to new merged vertex
+        else
+            nbrs_to_merge = Set{eltype(g)}()
+            for element in filter(x -> !(insorted(vs, x)) && (x != merged_vertex), g.fadjlist[i])
+                push!(nbrs_to_merge, new_vertex_ids[element])
+            end
+
+            for j in vs, e in out_neighbors(g, j)
+                if new_vertex_ids[e] != merged_vertex
+                    push!(nbrs_to_merge, new_vertex_ids[e])
+                end
+            end
+            g.fadjlist[i] = sort(collect(nbrs_to_merge))
+        end
+    end
+
+    # Drop excess vertices
+    g.fadjlist = g.fadjlist[1:(end - length(vs))]
+
+    # Correct edge counts
+    g.ne = sum(degree(g, i) for i in vertices(g)) / 2
+
+    return new_vertex_ids
+end
