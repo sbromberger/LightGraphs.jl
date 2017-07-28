@@ -28,6 +28,8 @@ better-optimized mechanisms.
 
 Additional functionality may be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
+Our JuliaCon '17 talk is now available:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/MFD-qmApXl8" frameborder="0" allowfullscreen></iframe>
 
 ## Documentation
 Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
