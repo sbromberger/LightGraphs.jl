@@ -78,7 +78,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **centrality:** betweenness, closeness, degree, pagerank, Katz
 
-- **traversal operations:** cycle detection, BFS and DFS DAGs, BFS and DFS traversals with visitors, DFS topological sort, maximum adjacency / minimum cut, multiple random walks
+- **traversal operations:** cycle detection, BFS and DFS DAGs, BFS and DFS traversals with visitors, DFS topological sort, maximum adjacency / minimum cut, multiple random walks, diffusion
 
 - **flow operations:** maximum flow
 
