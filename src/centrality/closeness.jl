@@ -11,7 +11,7 @@ from node `n`.
 """
 function closeness_centrality(
     g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
+    distmx::AbstractMatrix = weights(g);
     normalize=true)
 
     n_v = nv(g)
@@ -39,7 +39,7 @@ end
 
 function parallel_closeness_centrality(
     g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
+    distmx::AbstractMatrix = weights(g);
     normalize=true)::Vector{Float64}
 
     n_v = Int(nv(g))
