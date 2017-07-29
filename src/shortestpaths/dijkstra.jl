@@ -40,6 +40,7 @@ function dijkstra_shortest_paths(
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
+    popped_out = Vector{Bool}(zeros(nvg))   # popped_out[u]=true if shortest distance from src to u is found
 
     sizehint!(closest_vertices, nvg)
 
@@ -53,8 +54,10 @@ function dijkstra_shortest_paths(
             # info("Popped H - got $(hentry.vertex)")
         u = hentry[1]
 
-        if trackvertices
+        # Add to closest_vertices only if it has not been added yet
+        if (trackvertices && !popped_out[u])
           push!(closest_vertices, u)
+          popped_out[u] = true
         end
 
         for v in out_neighbors(g, u)
