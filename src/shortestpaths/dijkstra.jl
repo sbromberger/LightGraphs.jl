@@ -1,10 +1,3 @@
-struct DijkstraHeapEntry{T,U<:Integer}
-    vertex::U
-    dist::T
-end
-
-isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
-
 """
     struct DijkstraState{T, U}
 
@@ -43,24 +36,23 @@ function dijkstra_shortest_paths(
     preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = Vector{DijkstraHeapEntry{T,U}}()  # this should be Vector{T}() in 0.4, I think.
+    H = PriorityQueue{U,T,Base.Order.ForwardOrdering}() # this should be Vector{T}() in 0.4, I think.
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
     popped_out = Vector{Bool}(zeros(nvg))   # popped_out[u]=true if shortest distance from src to u is found
 
-    sizehint!(H, nvg)
     sizehint!(closest_vertices, nvg)
 
     for v in srcs
-        heappush!(H, DijkstraHeapEntry{T,U}(v, dists[v]))
+        H[v] = dists[v]
         visited[v] = true
     end
 
     while !isempty(H)
-        hentry = heappop!(H)
+        hentry = dequeue_pair!(H)
             # info("Popped H - got $(hentry.vertex)")
-        u = hentry.vertex
+        u = hentry[1]
 
         # Add to closest_vertices only if it has not been added yet
         if (trackvertices && !popped_out[u])
@@ -79,7 +71,7 @@ function dijkstra_shortest_paths(
                 if allpaths
                     preds[v] = [u;]
                 end
-                heappush!(H, DijkstraHeapEntry{T,U}(v, alt))
+                H[v] = alt
                 # info("Pushed $v")
             else
                 if alt < dists[v]
@@ -88,7 +80,7 @@ function dijkstra_shortest_paths(
                     #615
                     pathcounts[v] = 0
                     preds[v] = []
-                    heappush!(H, DijkstraHeapEntry{T,U}(v, alt))
+                    H[v] = alt
                 end
                 if alt == dists[v]
                     pathcounts[v] += pathcounts[u]
