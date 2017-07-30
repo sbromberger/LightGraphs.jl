@@ -63,5 +63,5 @@ function parallel_closeness_centrality(
             end
         end
     end
-    return Vector(closeness)
+    return sdata(closeness)
 end
