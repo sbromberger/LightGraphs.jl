@@ -28,7 +28,6 @@ better-optimized mechanisms.
 
 Additional functionality may be found in the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl).
 
-
 ## Documentation
 Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
 Documentation for methods is also available via the Julia REPL help system.
@@ -79,7 +78,7 @@ symmetric difference, blkdiag, induced subgraphs, products (cartesian/scalar)
 
 - **centrality:** betweenness, closeness, degree, pagerank, Katz
 
-- **traversal operations:** cycle detection, BFS and DFS DAGs, BFS and DFS traversals with visitors, DFS topological sort, maximum adjacency / minimum cut, multiple random walks
+- **traversal operations:** cycle detection, BFS and DFS DAGs, BFS and DFS traversals with visitors, DFS topological sort, maximum adjacency / minimum cut, multiple random walks, diffusion
 
 - **flow operations:** maximum flow
 

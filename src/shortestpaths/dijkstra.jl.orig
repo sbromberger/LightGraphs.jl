@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+struct DijkstraHeapEntry{T<:Real,U<:Integer}
+    vertex::U
+    dist::T
+end
+
+isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
+
+=======
+>>>>>>> master
 """
     struct DijkstraState{T, U}
 

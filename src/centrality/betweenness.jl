@@ -29,7 +29,8 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 """
 function betweenness_centrality(
     g::AbstractGraph,
-    vs::AbstractVector = vertices(g);
+    vs::AbstractVector = vertices(g),
+    distmx::AbstractMatrix = weights(g);
     normalize=true,
     endpoints=false)
 
@@ -39,8 +40,8 @@ function betweenness_centrality(
 
     betweenness = zeros(n_v)
     for s in vs
-        if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+        if degree(g,s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -58,12 +59,13 @@ function betweenness_centrality(
     return betweenness
 end
 
-betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
-    betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
+betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
+    betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
 function parallel_betweenness_centrality(
     g::AbstractGraph,
-    vs::AbstractVector = vertices(g);
+    vs::AbstractVector = vertices(g),
+    distmx::AbstractMatrix = weights(g);
     normalize=true,
     endpoints=false)::Vector{Float64}
 
@@ -76,7 +78,7 @@ function parallel_betweenness_centrality(
     betweenness = @parallel (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
             if endpoints
                 _accumulate_endpoints!(temp_betweenness, state, g, s)
             else
@@ -95,8 +97,8 @@ function parallel_betweenness_centrality(
     return betweenness
 end
 
-parallel_betweenness_centrality(g::AbstractGraph, k::Integer; normalize=true, endpoints=false) =
-    parallel_betweenness_centrality(g, sample(vertices(g), k); normalize=normalize, endpoints=endpoints)
+parallel_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
+    parallel_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},

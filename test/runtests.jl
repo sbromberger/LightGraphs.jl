@@ -77,6 +77,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/graphvisit",
     "traversals/randomwalks",
+    "traversals/diffusion",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
