@@ -138,8 +138,9 @@ function parallel_multisource_dijkstra_shortest_paths(
     n_v = nv(g)
     r_v = length(sources)
 
-    dists   = SharedArray(zeros(T, r_v, n_v))
-    parents = SharedArray(zeros(U, r_v, n_v))
+    # TODO: remove `Int` once julialang/#23029 / #23032 are resolved
+    dists   = SharedMatrix{T}(Int(r_v), Int(n_v))
+    parents = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @parallel for i in 1:r_v
       state = dijkstra_shortest_paths(g, sources[i], distmx)
@@ -147,6 +148,6 @@ function parallel_multisource_dijkstra_shortest_paths(
       parents[i, :] = state.parents
     end
 
-    result = MultipleDijkstraState(Matrix(dists), Matrix(parents))
+    result = MultipleDijkstraState(sdata(dists), sdata(parents))
     return result
 end
