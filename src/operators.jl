@@ -431,7 +431,7 @@ getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 
 """
-    egonet(g, v:, d)
+    egonet(g, v, d)
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
 `d`.
