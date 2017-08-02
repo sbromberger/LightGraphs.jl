@@ -306,8 +306,9 @@ gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g))
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
 
-Return `true` if there is a path from `u to `v`` in `g` (while avoiding vertices in
-`exclude_vertices``) or `u == v`. Return false if there is no such path or if `u` or `v` is "excluded". 
+Return `true` if there is a path from `u to `v` in `g` (while avoiding vertices in
+`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
+is in `excluded_vertices`. 
 """
 function has_path(g::AbstractGraph, u::Integer, v::Integer; 
         exclude_vertices::AbstractVector=Vector{eltype(g)}())
@@ -319,20 +320,16 @@ function has_path(g::AbstractGraph, u::Integer, v::Integer;
     if seen[u] || seen[v] 
         return false
     end
-    if u == v # cannot be separated
-        return true 
-    end 
+    u == v && return true # cannot be separated
     next = Vector{T}()
     push!(next, u)
     seen[u] = true
     while !isempty(next)
         src = shift!(next) # get new element from queue
         for vertex in neighbors(g, src)
-            if vertex == v
-                return true
-            end
+            vertex == v && return true
             if !seen[vertex]
-                push!(next, vertex) # Push onto queue
+                push!(next, vertex) # push onto queue
                 seen[vertex] = true
             end
         end

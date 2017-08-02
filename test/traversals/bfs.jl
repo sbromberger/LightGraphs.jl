@@ -90,25 +90,24 @@ import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
       @test @inferred(bipartite_map(h)) == Vector{T}([ones(T, 10); 2 * ones(T, 10); ones(T, 10); 2 * ones(T, 10)])
     end
 
-    let g = Graph(6)
-        d = nv(g)
-        for (i,j) in [(1,2), (2,3), (2,4),(4,5), (3,5)]
-            add_edge!(g,i,j)
-        end
-        @test has_path(g, 1, 5)
-        @test has_path(g, 1, 5; exclude_vertices = [3])
-        @test has_path(g, 1, 5; exclude_vertices = [4])
-        @test !has_path(g, 1, 5; exclude_vertices = [3, 4])
-        @test has_path(g, 5, 1)
-        @test has_path(g, 5, 1; exclude_vertices = [3])
-        @test has_path(g, 5, 1; exclude_vertices = [4])
-        @test !has_path(g, 5, 1; exclude_vertices = [3, 4])
-        
-        # Edge cases
-        @test !has_path(g, 1, 6)
-        @test !has_path(g, 6, 1)  
-        @test has_path(g, 1, 1) # inseparable 
-        @test !has_path(g, 1, 2; exclude_vertices = [2])
-        @test !has_path(g, 1, 2; exclude_vertices = [1])
+    g = Graph(6)
+    d = nv(g)
+    for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3,5)]
+        add_edge!(g, i, j)
     end
+    @test has_path(g, 1, 5)
+    @test has_path(g, 1, 5; exclude_vertices = [3])
+    @test has_path(g, 1, 5; exclude_vertices = [4])
+    @test !has_path(g, 1, 5; exclude_vertices = [3, 4])
+    @test has_path(g, 5, 1)
+    @test has_path(g, 5, 1; exclude_vertices = [3])
+    @test has_path(g, 5, 1; exclude_vertices = [4])
+    @test !has_path(g, 5, 1; exclude_vertices = [3, 4])
+    
+    # Edge cases
+    @test !has_path(g, 1, 6)
+    @test !has_path(g, 6, 1)  
+    @test has_path(g, 1, 1) # inseparable 
+    @test !has_path(g, 1, 2; exclude_vertices = [2])
+    @test !has_path(g, 1, 2; exclude_vertices = [1])
 end
