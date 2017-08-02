@@ -48,6 +48,7 @@ examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 
 # bfs
 BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
+has_path,
 
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
