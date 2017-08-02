@@ -317,9 +317,7 @@ function has_path(g::AbstractGraph, u::Integer, v::Integer;
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true
     end
-    if seen[u] || seen[v] 
-        return false
-    end
+    (seen[u] || seen[v]) && return false
     u == v && return true # cannot be separated
     next = Vector{T}()
     push!(next, u)
