@@ -45,7 +45,6 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
-    
     "interface",
     "core",
     "graphtypes/simplegraphs/simplegraphs",
@@ -74,7 +73,7 @@ tests = [
     "shortestpaths/yen",
     "traversals/bfs",
     "traversals/parallel_bfs",
-    "traversals/bipartiteness",
+    "traversals/bipartition",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",

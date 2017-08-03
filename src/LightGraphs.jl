@@ -50,7 +50,7 @@ examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 BreadthFirst, gdistances, gdistances!, bfs_tree, bfs_parents,
 has_path,
 
-# bipartiteness
+# bipartition
 is_bipartite, bipartite_map,
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
@@ -163,7 +163,7 @@ include("core.jl")
     include("digraph/cycles/hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
-            include("traversals/bipartiteness.jl")
+            include("traversals/bipartition.jl")
             include("traversals/parallel_bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")

@@ -6,16 +6,12 @@
 Fill `label` with the `id` of the connected component in the undirected graph
 `g` to which it belongs. Return a vector representing the component assigned
 to each vertex. The component value is the smallest vertex ID in the component.
+
+### Performance
+This algorithm is linear in the number of edges of the graph.
 """
 function connected_components! end
 @traitfn function connected_components!(label::AbstractVector, g::::(!IsDirected))
-    # this version of connected components uses Breadth First Traversal
-    # with custom visitor type in order to improve performance.
-    # one BFS is performed for each component.
-    # This algorithm is linear in the number of edges of the graph
-    # each edge is touched once. memory performance is a single allocation.
-    # the return type is a vector of labels which can be used directly or
-    # passed to components(a)
     T = eltype(g)
     nvg = nv(g)
 
@@ -26,8 +22,7 @@ function connected_components! end
         push!(Q, u)
         while !isempty(Q)
             src = shift!(Q)
-            vertexneighbors = out_neighbors(g, src)
-            for vertex in vertexneighbors
+            for vertex in out_neighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
                     label[vertex] = u
