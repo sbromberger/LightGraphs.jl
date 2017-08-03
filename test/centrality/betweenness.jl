@@ -60,4 +60,36 @@
     zp = parallel_betweenness_centrality(g3; normalize=false)
     @test all(isapprox(z, zp))
     @test z[1] == z[5] == 0.0
+
+    # Weighted Graph tests
+    g=Graph(6)
+    add_edge!(g,1,2)
+    add_edge!(g,2,3)
+    add_edge!(g,3,4)
+    add_edge!(g,2,5)
+    add_edge!(g,5,6)
+    add_edge!(g,5,4)
+
+    distmx = [ 0.0  2.0  0.0  0.0  0.0  0.0;
+               2.0  0.0  4.2  0.0  1.2  0.0;
+               0.0  4.2  0.0  5.5  0.0  0.0;
+               0.0  0.0  5.5  0.0  0.9  0.0;
+               0.0  1.2  0.0  0.9  0.0  0.6;
+               0.0  0.0  0.0  0.0  0.6  0.0;]
+
+    @test isapprox(betweenness_centrality(g,vertices(g), distmx; normalize=false), [0.0,6.0,0.0,0.0,6.0,0.0])
+    @test isapprox(betweenness_centrality(g,vertices(g), distmx; normalize=false, endpoints=true), [5.0,11.0,5.0,5.0,11.0,5.0])
+    @test isapprox(betweenness_centrality(g,vertices(g), distmx; normalize=true), [0.0, 0.6000000000000001, 0.0, 0.0, 0.6000000000000001, 0.0])
+    @test isapprox(betweenness_centrality(g,vertices(g), distmx; normalize=true, endpoints=true), [0.5,1.1,0.5,0.5,1.1,0.5])
+
+    adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
+    a2 = DiGraph(adjmx2)
+    for g in testdigraphs(a2)
+      distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
+      c2 = [0.24390243902439027,0.27027027027027023,0.1724137931034483]
+      @test isapprox(betweenness_centrality(g,vertices(g), distmx2; normalize=false), [0.0,1.0,0.0])
+      @test isapprox(betweenness_centrality(g,vertices(g), distmx2; normalize=false, endpoints=true), [4.0,5.0,4.0])
+      @test isapprox(betweenness_centrality(g,vertices(g), distmx2; normalize=true), [0.0,0.5,0.0])
+      @test isapprox(betweenness_centrality(g,vertices(g), distmx2; normalize=true, endpoints=true), [2.0,2.5,2.0])
+    end
 end

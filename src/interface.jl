@@ -5,7 +5,7 @@ _NI(m) = error("Not implemented: $m")
 """
     AbstractEdge
 
-An absract type representing a single edge between two vertices of a graph.
+An abstract type representing a single edge between two vertices of a graph.
 """
 abstract type AbstractEdge end
 
