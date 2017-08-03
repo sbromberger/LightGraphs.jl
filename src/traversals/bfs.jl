@@ -302,3 +302,35 @@ Return a vector filled with the geodesic distances of vertices in  `g` from
 For vertices in disconnected components the default distance is -1.
 """
 gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+
+"""
+    has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
+
+Return `true` if there is a path from `u to `v` in `g` (while avoiding vertices in
+`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
+is in `excluded_vertices`. 
+"""
+function has_path(g::AbstractGraph, u::Integer, v::Integer; 
+        exclude_vertices::AbstractVector=Vector{eltype(g)}())
+    T = eltype(g)
+    seen = falses(nv(g))
+    for ve in exclude_vertices # mark excluded vertices as seen
+        seen[ve] = true
+    end
+    (seen[u] || seen[v]) && return false
+    u == v && return true # cannot be separated
+    next = Vector{T}()
+    push!(next, u)
+    seen[u] = true
+    while !isempty(next)
+        src = shift!(next) # get new element from queue
+        for vertex in neighbors(g, src)
+            vertex == v && return true
+            if !seen[vertex]
+                push!(next, vertex) # push onto queue
+                seen[vertex] = true
+            end
+        end
+    end
+    return false
+end
