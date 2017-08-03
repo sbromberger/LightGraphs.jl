@@ -19,19 +19,25 @@ function connected_components! end
     T = eltype(g)
     nvg = nv(g)
 
-    visitor = LightGraphs.ComponentVisitorVector(label, zero(T))
-    colormap = fill(0, nvg)
-    queue = Vector{T}()
-    sizehint!(queue, nvg)
-    for v in vertices(g)
-        if label[v] == zero(T)
-            visitor.labels[v] = v
-            visitor.seed = v
-            traverse_graph!(g, BreadthFirst(), v, visitor; vertexcolormap=colormap, queue=queue)
+    for u in vertices(g)
+        label[u] != zero(T) && continue
+        label[u] = u
+        Q = Vector{T}()
+        push!(Q, u)
+        while !isempty(Q)
+            src = shift!(Q)
+            vertexneighbors = out_neighbors(g, src)
+            for vertex in vertexneighbors
+                if label[vertex] == zero(T)
+                    push!(Q, vertex)
+                    label[vertex] = u
+                end
+            end
         end
     end
     return label
 end
+
 
 """
     components_dict(labels)
@@ -274,22 +280,6 @@ function attracting_components end
     return scc[attracting]
 end
 
-mutable struct NeighborhoodVisitor{T<:Integer} <: AbstractGraphVisitor
-    d::T
-    neigs::Vector{T}
-end
-
-NeighborhoodVisitor(d::T) where T<:Integer = NeighborhoodVisitor(d, Vector{T}())
-
-function examine_neighbor!(visitor::NeighborhoodVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
-    -ucolor > visitor.d && return false # color is negative for not-closed vertices
-    if vcolor == 0
-        push!(visitor.neigs, v)
-    end
-    return true
-end
-
-
 """
     neighborhood(g, v, d)
 
@@ -303,11 +293,30 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 function neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out)
     @assert d >= 0 "Distance has to be greater then zero."
     T = eltype(g)
-    visitor = NeighborhoodVisitor(d)
-    push!(visitor.neigs, T(v))
-    traverse_graph!(g, BreadthFirst(), v, visitor,
-        vertexcolormap=Dict{T,Int}(), dir=dir)
-    return visitor.neigs
+    neighs = Vector{T}()
+    push!(neighs, v)    
+
+    neighborfn = (dir == :out) ? out_neighbors : in_neighbors
+    Q = Vector{T}()
+    seen = falses(nv(g))
+    dists = zeros(T, nv(g))
+    push!(Q, v)
+    dists[v] = d
+    while !isempty(Q)
+        src = shift!(Q)
+        seen[src] && continue
+        seen[src] = true
+        currdist = dists[src]
+        vertexneighbors = neighborfn(g, src)
+        for vertex in vertexneighbors
+            if !seen[vertex] && currdist > 0
+                push!(Q, vertex)
+                push!(neighs, vertex)
+                dists[vertex] = currdist - 1
+            end
+        end
+    end
+    return neighs
 end
 
 """
