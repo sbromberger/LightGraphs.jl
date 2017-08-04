@@ -7,7 +7,7 @@ coo_sparse,
 spectral_distance
 
 """
-    adjacency_matrix(g, dir=:out, T=Int)
+    adjacency_matrix(g[, dir=:out, T=Int])
 
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
 vertices. Non-zero values indicate an edge between `u` and `v`. Users may
@@ -19,27 +19,31 @@ matrix (defaults to `Int`).
 This function is optimized for speed and directly manipulates CSC sparse matrix fields.
 """
 function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
-    n_v = nv(g)
-    nz = ne(g) * (is_directed(g) ? 1 : 2)
-    colpt = ones(Int, n_v + 1)
-
+    nzmult = 1
     # see below - we iterate over columns. That's why we take the
     # "opposite" neighbor function. It's faster than taking the transpose
     # at the end.
-    if dir == :out
-        neighborfn = in_neighbors
-    elseif dir == :in
-        neighborfn = out_neighbors
-    elseif dir == :both
+
+    if (dir == :out)
+        _adjacency_matrix(g, in_neighbors, T, 1)
+    elseif (dir == :in)
+        _adjacency_matrix(g, out_neighbors, T, 1)
+    elseif (dir == :both)
+        _adjacency_matrix(g, all_neighbors, T, 1)
         if is_directed(g)
-            neighborfn = all_neighbors
-            nz *= 2
+            _adjacency_matrix(g, all_neighbors, T, 2)
         else
-            neighborfn = out_neighbors
+            _adjacency_matrix(g, out_neighbors, T, 1)
         end
     else
         error("Not implemented")
     end
+end
+function _adjacency_matrix(g::AbstractGraph, neighborfn::Function, T::DataType, nzmult::Int=1)
+    n_v = nv(g)
+    nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
+    colpt = ones(Int, n_v + 1)
+
     rowval = sizehint!(Vector{Int}(), nz)
     selfloops = Vector{Int}()
     for j in 1:n_v  # this is by column, not by row.

@@ -285,13 +285,14 @@ from `v`.
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
-function neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out)
+neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) =
+(dir == :out) ? _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
+function _neighborhood(g::AbstractGraph, v::Integer, d::Integer, neighborfn::Function)
     @assert d >= 0 "Distance has to be greater then zero."
     T = eltype(g)
     neighs = Vector{T}()
     push!(neighs, v)    
 
-    neighborfn = (dir == :out) ? out_neighbors : in_neighbors
     Q = Vector{T}()
     seen = falses(nv(g))
     dists = zeros(T, nv(g))
