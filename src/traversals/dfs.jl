@@ -202,3 +202,25 @@ function dfs_tree(g::AbstractGraph, s::Integer)
     end
     return h
 end
+
+dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
+    (dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
+function _dfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
+    T = eltype(g)
+    S = Vector{T}()
+    
+    parents = zeros(T, nv(g))
+    seen = falses(nv(g))
+    push!(S, s)
+    while !isempty(S)
+        u = pop!(S)
+        seen[u] = true
+        neighbors = reverse(filter(x->!seen[x], neighborfn(g, u)))
+        append!(S, neighbors)
+        parents[neighbors] = u
+    end
+    return parents
+end
+
+dfs_tree2(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
+    

@@ -107,10 +107,9 @@ Convert a parents array into a directed graph.
 function tree(parents::AbstractVector{T}) where T<:Integer
     n = T(length(parents))
     t = DiGraph(n)
-    for i in one(T):n
-        parent = parents[i]
-        if parent > zero(T)  && parent != i
-            add_edge!(t, parent, i)
+    for (v, u) in enumerate(parents)
+        if u > zero(T)  && u != v
+            add_edge!(t, u, v)
         end
     end
     return t
