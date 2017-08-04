@@ -7,39 +7,41 @@ coo_sparse,
 spectral_distance
 
 """
-    adjacency_matrix(g[, dir=:out, T=Int])
+    adjacency_matrix(g[, T=Int; dir=:out])
 
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
 vertices. Non-zero values indicate an edge between `u` and `v`. Users may
-specify a direction (`:in`, `:out`, or `:both` are currently supported; `:out`
-is default for both directed and undirected graphs) and a data type for the
-matrix (defaults to `Int`).
+override the default data type (`Int`) and specify an optional direction.
+    
+### Optional Arguments
+`dir=:out`: `:in`, `:out`, or `:both` are currently supported.
 
 ### Implementation Notes
 This function is optimized for speed and directly manipulates CSC sparse matrix fields.
 """
-function adjacency_matrix(g::AbstractGraph, dir::Symbol=:out, T::DataType=Int)
+function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     nzmult = 1
     # see below - we iterate over columns. That's why we take the
     # "opposite" neighbor function. It's faster than taking the transpose
     # at the end.
 
     if (dir == :out)
-        _adjacency_matrix(g, in_neighbors, T, 1)
+        _adjacency_matrix(g, T, in_neighbors, 1)
     elseif (dir == :in)
-        _adjacency_matrix(g, out_neighbors, T, 1)
+        _adjacency_matrix(g, T, out_neighbors, 1)
     elseif (dir == :both)
-        _adjacency_matrix(g, all_neighbors, T, 1)
+        _adjacency_matrix(g, T, all_neighbors, 1)
         if is_directed(g)
-            _adjacency_matrix(g, all_neighbors, T, 2)
+            _adjacency_matrix(g, T, all_neighbors, 2)
         else
-            _adjacency_matrix(g, out_neighbors, T, 1)
+            _adjacency_matrix(g, T, out_neighbors, 1)
         end
     else
         error("Not implemented")
     end
 end
-function _adjacency_matrix(g::AbstractGraph, neighborfn::Function, T::DataType, nzmult::Int=1)
+
+function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     colpt = ones(Int, n_v + 1)
@@ -69,31 +71,35 @@ function _adjacency_matrix(g::AbstractGraph, neighborfn::Function, T::DataType, 
     return spmx
 end
 
-adjacency_matrix(g::AbstractGraph, T::DataType) = adjacency_matrix(g, :out, T)
-
 """
-    laplacian_matrix(g, dir=:unspec, T=Int)
+    laplacian_matrix(g[, T=Int; dir=:unspec])
 
 Return a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matrix)
-for a graph `g`, indexed by `[u, v]` vertices. For undirected graphs, `dir`
-defaults to `:out`; for directed graphs, `dir` defaults to `:both`. `T`
-defaults to `Int` for both graph types.
+for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both graph types.
+
+### Optional Arguments
+`dir=:unspec`: `:unspec`, `:both`, :in`, and `:out` are currently supported.
+For undirected graphs, `dir` defaults to `:out`; for directed graphs,
+`dir` defaults to `:both`. 
 """
-function laplacian_matrix(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
+function laplacian_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
-    A = adjacency_matrix(g, dir, T)
+    A = adjacency_matrix(g, T; dir=dir)
     D = spdiagm(sum(A, 2)[:])
     return D - A
 end
 
 @doc_str """
-    laplacian_spectrum(g, dir=:unspec, T=Int)
+    laplacian_spectrum(g[, T=Int; dir=:unspec])
 
 Return the eigenvalues of the Laplacian matrix for a graph `g`, indexed
-by vertex. Default values for `dir` and `T` are the same as those in
+by vertex. Default values for `T` are the same as those in
 [`laplacian_matrix`](@ref).
+
+### Optional Arguments
+`dir=:unspec`: Options for `dir` are the same as those in [`laplacian_matrix`](@ref).
 
 ### Performance
 Converts the matrix to dense with ``nv^2`` memory usage.
@@ -102,12 +108,15 @@ Converts the matrix to dense with ``nv^2`` memory usage.
 Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
-laplacian_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int) = eigvals(full(laplacian_matrix(g, dir, T)))
+laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(full(laplacian_matrix(g, T; dir=dir)))
 
 @doc_str """
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
-by vertex. Default values for `dir` and `T` are the same as those in
+by vertex. Default values for `T` are the same as those in
 [`adjacency_matrix`](@ref).
+
+### Optional Arguments
+`dir=:unspec`: Options for `dir` are the same as those in [`laplacian_matrix`](@ref).
 
 ### Performance
 Converts the matrix to dense with ``nv^2`` memory usage.
@@ -116,15 +125,15 @@ Converts the matrix to dense with ``nv^2`` memory usage.
 Use `eigs(adjacency_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
-function adjacency_spectrum(g::AbstractGraph, dir::Symbol=:unspec, T::DataType=Int)
+function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
     if dir == :unspec
         dir = is_directed(g) ?  :both : :out
     end
-    return eigvals(full(adjacency_matrix(g, dir, T)))
+    return eigvals(full(adjacency_matrix(g, T; dir=dir)))
 end
 
 """
-    incidence_matrix(g, T=Int)
+    incidence_matrix(g[, T=Int; oriented=false])
 
 Return a sparse node-arc incidence matrix for a graph, indexed by
 `[v, i]`, where `i` is in `1:ne(g)`, indexing an edge `e`. For
@@ -133,9 +142,9 @@ value of `1` indicates that `dst(e) == v`. Otherwise, the value is
 `0`. For undirected graphs, both entries are `1` by default (this behavior
 can be overridden by the `oriented` optional argument).
 
-### Optional Arguments
-- `oriented=false`: If true, for an undirected graph `g`, the matrix will
-contain arbitrary non-zero values representing connectivity between `v` and `i`.
+If `oriented` (default false) is true, for an undirected graph `g`, the
+matrix will contain arbitrary non-zero values representing connectivity
+between `v` and `i`.
 """
 function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     isdir = is_directed(g)
