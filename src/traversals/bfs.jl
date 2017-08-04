@@ -16,15 +16,16 @@ function tree(parents::AbstractVector{T}) where T<:Integer
 end
 
 """
-    bfs_parents(g, s[, dir=:out])
+    bfs_parents(g, s[; dir=:out])
 
 Perform a breadth-first search of graph `g` starting from vertex `s`.
 Return a vector of parent vertices indexed by vertex. If `dir` is specified,
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
-function bfs_parents(g::AbstractGraph, s::Integer; dir=:out)
+bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
+    (dir == :out) ? _bfs_parents(g, s, out_neighbors) : _bfs_parents(g, s, in_neighbors)
+function _bfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
     T = eltype(g)
-    neighfn = (dir == :out) ? out_neighbors : in_neighbors
     Q=Vector{T}()
     parents = zeros(T, nv(g))
     seen = falses(nv(g))
@@ -33,7 +34,7 @@ function bfs_parents(g::AbstractGraph, s::Integer; dir=:out)
     push!(Q, s)
     while !isempty(Q)
         src = shift!(Q)
-        for vertex in neighfn(g, src)
+        for vertex in neighborfn(g, src)
             if !seen[vertex]
                 push!(Q, vertex) #Push onto queue
                 parents[vertex] = src
@@ -46,14 +47,14 @@ end
 
 
 """
-    bfs_tree(g, s[, dir=:out])
+    bfs_tree(g, s[; dir=:out])
 
 Provide a breadth-first traversal of the graph `g` starting with source vertex `s`,
 and return a directed acyclic graph of vertices in the order they were discovered.
 If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are
 acceptable values).
 """
-bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s))
+bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=dir))
 
 """
     gdistances!(g, source, dists)
