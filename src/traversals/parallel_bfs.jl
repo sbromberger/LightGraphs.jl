@@ -15,7 +15,7 @@ import Base: push!, shift!, isempty, getindex
 
 export bfs_tree, LevelSynchronousBFS
 
-mutable struct LevelSynchronousBFS <: AbstractGraphVisitAlgorithm end
+struct LevelSynchronousBFS end
 
 """
     ThreadQueue
