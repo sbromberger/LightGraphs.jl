@@ -28,6 +28,7 @@ core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
+parallel_eccentricity, parallel_diameter, parallel_periphery, parallel_radius, parallel_center,
 
 # distance between graphs
 spectral_distance, edit_distance,
