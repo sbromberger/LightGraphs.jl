@@ -28,7 +28,7 @@ function _bfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
     T = eltype(g)
     Q=Vector{T}()
     parents = zeros(T, nv(g))
-    seen = falses(nv(g))
+    seen = zeros(Bool, nv(g))
     parents[s] = s
     seen[s] = true
     push!(Q, s)
@@ -109,7 +109,7 @@ is in `excluded_vertices`.
 function has_path(g::AbstractGraph, u::Integer, v::Integer; 
         exclude_vertices::AbstractVector=Vector{eltype(g)}())
     T = eltype(g)
-    seen = falses(nv(g))
+    seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true
     end
