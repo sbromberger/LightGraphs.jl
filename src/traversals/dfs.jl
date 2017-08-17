@@ -134,6 +134,37 @@ function is_cyclic end
     return false
 end
 
+
+@traitfn function is_cyclic2(g::::IsDirected)
+    T = eltype(g)
+    vcolor = zeros(UInt8, nv(g))
+    for v in vertices(g)
+        vcolor[v] != 0 && continue
+        S = Vector{T}([v])
+        vcolor[v] = 1
+        while !isempty(S)
+            u = S[end]
+            w = 0
+            for n in out_neighbors(g, u)
+                if vcolor[n] == 1
+                    return true
+                elseif vcolor[n] == 0
+                    w = n
+                    break
+                end
+            end
+            if w != 0
+                vcolor[w] = 1
+                push!(S, w)
+            else
+                vcolor[u] = 2
+                pop!(S)
+            end
+        end
+    end
+    return false
+end
+
 # Topological sort using DFS
 
 mutable struct TopologicalSortVisitor{T} <: AbstractGraphVisitor
@@ -168,6 +199,37 @@ function topological_sort_by_dfs(g::AbstractGraph)
     reverse(visitor.vertices)
 end
 
+function topological_sort_by_dfs2(g::AbstractGraph)
+    T = eltype(g)
+    vcolor = zeros(UInt8, nv(g))
+    verts = Vector{T}()
+    for v in vertices(g)
+        vcolor[v] != 0 && continue
+        S = Vector{T}([v])
+        vcolor[v] = 1
+        while !isempty(S)
+            u = S[end]
+            w = 0
+            for n in out_neighbors(g, u)
+                if vcolor[n] == 1
+                    error("The input graph contains at least one loop.")
+                elseif vcolor[n] == 0
+                    w = n
+                    break
+                end
+            end
+            if w != 0
+                vcolor[w] = 1
+                push!(S, w)
+            else
+                vcolor[u] = 2
+                push!(verts, u)
+                pop!(S)
+            end
+        end
+    end
+    return reverse(verts)
+end
 
 mutable struct TreeDFSVisitor{T} <:AbstractGraphVisitor
     tree::DiGraph
@@ -203,24 +265,81 @@ function dfs_tree(g::AbstractGraph, s::Integer)
     return h
 end
 
+# """
+# dfs_tree(g, s)
+
+# Return an ordered vector of vertices representing a directed acylic graph based on
+# depth-first traversal of the graph `g` starting with source vertex `s`.
+# """
+# dfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
+
+"""
+dfs_parents(g, s[; dir=:out])
+
+Perform a depth-first search of graph `g` starting from vertex `s`.
+Return a vector of parent vertices indexed by vertex. If `dir` is specified,
+use the corresponding edge direction (`:in` and `:out` are acceptable values).
+
+### Implementation Notes
+This version of DFS is iterative.
+"""
 dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
-    (dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
+(dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
+
 function _dfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
     T = eltype(g)
-    S = Vector{T}()
-    
     parents = zeros(T, nv(g))
+
     seen = falses(nv(g))
-    push!(S, s)
+    S = Vector{T}([s])
+    seen[s] = true
+    parents[s] = s
     while !isempty(S)
-        u = pop!(S)
-        seen[u] = true
-        neighbors = reverse(filter(x->!seen[x], neighborfn(g, u)))
-        append!(S, neighbors)
-        parents[neighbors] = u
+        v = S[end]
+        u = 0
+        for n in neighborfn(g, v)
+            if !seen[n]
+                u = n
+                break
+            end
+        end
+        if u == 0
+            pop!(S)
+        else
+            seen[u] = true
+            push!(S, u)
+            parents[u] = v
+        end
     end
     return parents
 end
-
 dfs_tree2(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
-    
+
+function _dfs_parents3(g::AbstractGraph, s::Integer, neighborfn::Function)
+    T = eltype(g)
+    parents = zeros(T, nv(g))
+
+    seen = zeros(Bool, nv(g))
+    S = Vector{T}([s])
+    seen[s] = true
+    parents[s] = s
+    while !isempty(S)
+        v = S[end]
+        u = 0
+        for n in neighborfn(g, v)
+            if !seen[n]
+                u = n
+                break
+            end
+        end
+        if u == 0
+            pop!(S)
+        else
+            seen[u] = true
+            push!(S, u)
+            parents[u] = v
+        end
+    end
+    return parents
+end
+dfs_tree3(g::AbstractGraph, s::Integer; dir=:out) = tree(_dfs_parents3(g, s, out_neighbors))
