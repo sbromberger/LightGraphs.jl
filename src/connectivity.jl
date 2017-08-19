@@ -118,72 +118,105 @@ Return `true` if the directed graph `g` is connected.
 function is_weakly_connected end
 @traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
 
-# Adapated from Graphs.jl
-mutable struct TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
+
+mutable struct TarjanState{T<:Integer}
     stack::Vector{T}
-    onstack::BitVector
+    onstack::Vector{Bool}
     lowlink::Vector{T}
     index::Vector{T}
+    parents::Vector{T}
     components::Vector{Vector{T}}
 end
 
-TarjanVisitor(n::T) where T<:Integer = TarjanVisitor(
+TarjanState(n::T) where T<:Integer = TarjanState(
     Vector{T}(),
-    falses(n),
-    Vector{T}(),
+    zeros(Bool, n),
+    zeros(T, n),
+    zeros(T, n),
     zeros(T, n),
     Vector{Vector{T}}()
 )
-
-function discover_vertex!(vis::TarjanVisitor, v)
-    vis.index[v] = length(vis.stack) + 1
-    push!(vis.lowlink, length(vis.stack) + 1)
-    push!(vis.stack, v)
-    vis.onstack[v] = true
-    return true
-end
-
-function examine_neighbor!(vis::TarjanVisitor, v, w, v_color::Int, w_color::Int, e_color::Int)
-    if w_color != 0 && vis.onstack[w] # != 0 means seen
-        while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
-            pop!(vis.lowlink)
-        end
-    end
-    return true
-end
-
-function close_vertex!(vis::TarjanVisitor, v)
-    if vis.index[v] == vis.lowlink[end]
-        component = splice!(vis.stack, vis.index[v]:length(vis.stack))
-        vis.onstack[component] = false
-        pop!(vis.lowlink)
-        push!(vis.components, component)
-    end
-    return true
-end
 
 """
     strongly_connected_components(g)
 
 Compute the strongly connected components of a directed graph `g`.
 """
+
 function strongly_connected_components end
 @traitfn function strongly_connected_components(g::::IsDirected)
     T = eltype(g)
+    zero_t = zero(T)
+    one_t = one(T)
     nvg = nv(g)
-    cmap = zeros(Int, nvg)
-    components = Vector{Vector{T}}()
+    count = one_t
+    scc = TarjanState(nvg)
+    sizehint!(scc.stack, nvg)
+    sizehint!(scc.components, nvg)
 
-    for v in vertices(g)
-        if cmap[v] == 0 # 0 means not visited yet
-            visitor = TarjanVisitor(nvg)
-            traverse_graph!(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
-            for component in visitor.components
-                push!(components, component)
-            end
+    for s in vertices(g)
+        if scc.index[s] == zero_t
+            scc.index[s] = count
+            scc.lowlink[s] = count
+            scc.onstack[s] = true
+            scc.parents[s] = s
+            push!(scc.stack, s)
+            count = count + one_t
+            strongconnect!(g, s, count, scc)
         end
     end
-    return components
+
+    return scc.components
+end
+
+
+function strongconnect! end
+@traitfn function strongconnect!{T<:Integer}(
+    g::::IsDirected,
+    s::T,
+    count::T,
+    scc::TarjanState{T}
+    )
+
+    zero_t = zero(T)
+    one_t = one(T)
+    Dfs_Stack = Vector{T}([s])
+
+    while !isempty(Dfs_Stack)
+        v = Dfs_Stack[end]
+        u = zero_t
+        for n in out_neighbors(g, v)
+            if scc.index[n] == zero_t
+                u = n
+                break
+            elseif scc.onstack[n]
+                scc.lowlink[v] = min(scc.lowlink[v], scc.index[n])
+            end
+        end
+        if u == zero_t
+            popped = pop!(Dfs_Stack)
+            scc.lowlink[scc.parents[popped]] = min(scc.lowlink[scc.parents[popped]], scc.lowlink[popped])
+            if (scc.index[v] == scc.lowlink[v])
+                component = Vector{T}()
+                sizehint!(component, length(scc.stack))
+                while (popped = pop!(scc.stack)) != v
+                    push!(component, popped)
+                    scc.onstack[popped] = false
+                end
+                push!(component, popped)
+                scc.onstack[popped] = false
+                push!(scc.components, reverse(component))
+            end
+        else
+            scc.index[u] = count
+            scc.lowlink[u] = count
+            scc.onstack[u] = true
+            scc.parents[u] = v
+            count = count + one_t
+            push!(scc.stack, u)
+            push!(Dfs_Stack, u)
+        end
+    end
 end
 
 """
@@ -285,14 +318,14 @@ from `v`.
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
-neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ? 
+neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ?
     _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
 
 function _neighborhood(g::AbstractGraph, v::Integer, d::Integer, neighborfn::Function)
     @assert d >= 0 "Distance has to be greater then zero."
     T = eltype(g)
     neighs = Vector{T}()
-    push!(neighs, v)    
+    push!(neighs, v)
 
     Q = Vector{T}()
     seen = falses(nv(g))
