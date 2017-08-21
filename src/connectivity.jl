@@ -180,10 +180,10 @@ function strongconnect! end
 
     zero_t = zero(T)
     one_t = one(T)
-    Dfs_Stack = Vector{T}([s])
+    dfs_stack = Vector{T}([s])
 
-    while !isempty(Dfs_Stack)
-        v = Dfs_Stack[end]
+    while !isempty(dfs_stack)
+        v = dfs_stack[end]
         u = zero_t
         for n in out_neighbors(g, v)
             if scc.index[n] == zero_t
@@ -194,7 +194,7 @@ function strongconnect! end
             end
         end
         if u == zero_t
-            popped = pop!(Dfs_Stack)
+            popped = pop!(dfs_stack)
             scc.lowlink[scc.parents[popped]] = min(scc.lowlink[scc.parents[popped]], scc.lowlink[popped])
             if (scc.index[v] == scc.lowlink[v])
                 component = Vector{T}()
@@ -214,7 +214,7 @@ function strongconnect! end
             scc.parents[u] = v
             count = count + one_t
             push!(scc.stack, u)
-            push!(Dfs_Stack, u)
+            push!(dfs_stack, u)
         end
     end
 end
