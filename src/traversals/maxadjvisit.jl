@@ -3,7 +3,6 @@
 
 # Maximum adjacency visit / traversal
 
-
 #################################################
 #
 #  Maximum adjacency visit
