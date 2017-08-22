@@ -34,7 +34,7 @@ function diffusion(g::AbstractGraph,
     # Record initial infection
     if !isempty(watch_set)
         watched_initial_infections = intersect(watch_set, initial_infections)
-        vertices_per_step[1] = T.(watched_initial_infections)
+        vertices_per_step[1] = T.(collect(watched_initial_infections))
     else
         vertices_per_step[1] = T.(initial_infections)
     end
