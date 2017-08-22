@@ -19,8 +19,8 @@
     @test_throws TypeError savegraph(f, p2; compress=nothing)
 
     (f, fio) = mktemp()
-    @test length(sprint(savegraph, p1, LGFormat())) == 401
-    @test length(sprint(savegraph, p2, LGFormat())) == 50
+    @test length(sprint(savegraph, p1, LGFormat())) == 421
+    @test length(sprint(savegraph, p2, LGFormat())) == 70
     gs = loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
     @test gs == p2
     @test_throws ErrorException loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "badname")
