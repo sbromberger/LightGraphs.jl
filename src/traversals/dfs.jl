@@ -1,6 +1,6 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
-
+# DFS implementation optimized from http://www.cs.nott.ac.uk/~psznza/G5BADS03/graphs2.pdf
 # Depth-first visit / traversal
 
 
