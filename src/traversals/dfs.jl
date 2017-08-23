@@ -97,6 +97,7 @@ Return `true` if graph `g` contains a cycle.
 Uses DFS.
 """
 function is_cyclic end
+@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 @traitfn function is_cyclic(g::::IsDirected)
     T = eltype(g)
     vcolor = zeros(UInt8, nv(g))

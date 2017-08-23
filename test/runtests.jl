@@ -71,6 +71,7 @@ tests = [
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
+    "traversals/graphvisit",
     "traversals/bfs",
     "traversals/parallel_bfs",
     "traversals/bipartition",
