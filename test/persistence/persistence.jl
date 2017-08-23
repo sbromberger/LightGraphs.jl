@@ -14,6 +14,9 @@
     @test (ne(p2), nv(p2)) == (9, 10)
     
     g2 = loadgraph(f)
+    h2 = loadgraph(f, LGFormat())
+    j2 = loadgraph(f, "graph")
+    @test g2 == h2 == j2
     @test (ne(g2), nv(g2)) == (9, 10)
     # test try block (#701)
     @test_throws TypeError savegraph(f, p2; compress=nothing)
