@@ -119,24 +119,6 @@ function is_weakly_connected end
 @traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
 
 
-mutable struct TarjanState{T<:Integer}
-    stack::Vector{T}
-    onstack::Vector{Bool}
-    lowlink::Vector{T}
-    index::Vector{T}
-    parents::Vector{T}
-    components::Vector{Vector{T}}
-end
-
-TarjanState(n::T) where T<:Integer = TarjanState(
-    Vector{T}(),
-    zeros(Bool, n),
-    zeros(T, n),
-    zeros(T, n),
-    zeros(T, n),
-    Vector{Vector{T}}()
-)
-
 """
     strongly_connected_components(g)
 
@@ -150,74 +132,72 @@ function strongly_connected_components end
     one_t = one(T)
     nvg = nv(g)
     count = one_t
-    scc = TarjanState(nvg)
-    sizehint!(scc.stack, nvg)
-    sizehint!(scc.components, nvg)
+    index = zeros(T, nvg)         # lowest time at which vertex is discovered
+    stack = Vector{T}()           # stores vertex which have been found and not assigned to any component
+    onstack = zeros(Bool, nvg)    # False if a vertex is not found/ assigned any component
+    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge
+    parents = zeros(T, nvg)       # parent of every vertex in dfs
+    components = Vector{Vector{T}}()    # maintains a list of scc
+    sizehint!(stack, nvg)
+    sizehint!(components, nvg)
 
     for s in vertices(g)
-        if scc.index[s] == zero_t
-            scc.index[s] = count
-            scc.lowlink[s] = count
-            scc.onstack[s] = true
-            scc.parents[s] = s
-            push!(scc.stack, s)
+        if index[s] == zero_t
+            index[s] = count
+            lowlink[s] = count
+            onstack[s] = true
+            parents[s] = s
+            push!(stack, s)
             count = count + one_t
-            strongconnect!(g, s, count, scc)
-        end
-    end
 
-    return scc.components
-end
-
-
-function strongconnect! end
-@traitfn function strongconnect!{T<:Integer}(
-    g::::IsDirected,
-    s::T,
-    count::T,
-    scc::TarjanState{T}
-    )
-
-    zero_t = zero(T)
-    one_t = one(T)
-    dfs_stack = Vector{T}([s])
-
-    while !isempty(dfs_stack)
-        v = dfs_stack[end]
-        u = zero_t
-        for n in out_neighbors(g, v)
-            if scc.index[n] == zero_t
-                u = n
-                break
-            elseif scc.onstack[n]
-                scc.lowlink[v] = min(scc.lowlink[v], scc.index[n])
-            end
-        end
-        if u == zero_t
-            popped = pop!(dfs_stack)
-            scc.lowlink[scc.parents[popped]] = min(scc.lowlink[scc.parents[popped]], scc.lowlink[popped])
-            if (scc.index[v] == scc.lowlink[v])
-                component = Vector{T}()
-                sizehint!(component, length(scc.stack))
-                while (popped = pop!(scc.stack)) != v
-                    push!(component, popped)
-                    scc.onstack[popped] = false
+            # start dfs from 's'
+            dfs_stack = Vector{T}([s])
+            while !isempty(dfs_stack)
+                v = dfs_stack[end]
+                u = zero_t
+                for n in out_neighbors(g, v)
+                    if index[n] == zero_t
+                        # unvisited neightbour found
+                        u = n
+                        break
+                    elseif onstack[n]
+                        # update lowest index 'v' can reach through out neighbours
+                        lowlink[v] = min(lowlink[v], index[n])
+                    end
                 end
-                push!(component, popped)
-                scc.onstack[popped] = false
-                push!(scc.components, reverse(component))
+                if u == zero_t
+                    # All out neighbours already visited or no out neighbours
+                    popped = pop!(dfs_stack)
+                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
+                    if (index[v] == lowlink[v])
+                        # found a cycle
+                        component = Vector{T}()
+                        sizehint!(component, length(stack))
+                        while (popped = pop!(stack)) != v
+                            push!(component, popped)
+                            onstack[popped] = false
+                        end
+                        push!(component, popped)
+                        onstack[popped] = false
+                        push!(components, reverse(component))
+                    end
+                else
+                    # add unvisited neighbour to dfs
+                    index[u] = count
+                    lowlink[u] = count
+                    onstack[u] = true
+                    parents[u] = v
+                    count = count + one_t
+                    push!(stack, u)
+                    push!(dfs_stack, u)
+                end
             end
-        else
-            scc.index[u] = count
-            scc.lowlink[u] = count
-            scc.onstack[u] = true
-            scc.parents[u] = v
-            count = count + one_t
-            push!(scc.stack, u)
-            push!(dfs_stack, u)
         end
     end
+
+    return components
 end
+
 
 """
     is_strongly_connected(g)
