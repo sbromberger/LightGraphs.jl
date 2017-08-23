@@ -17,8 +17,8 @@ function bipartite_map(g::AbstractGraph)
     else
         ccs = filter(x -> length(x) > 2, weakly_connected_components(g))
     end
-    seen = falses(nvg)
-    colors = falses(nvg)
+    seen = zeros(Bool, nvg)
+    colors = zeros(Bool, nvg)
     for cc in ccs
         Q = Vector{T}()
         s = cc[1]
