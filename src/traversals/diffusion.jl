@@ -40,6 +40,8 @@ function diffusion(g::AbstractGraph,
     end
 
     # Run simulation
+    randsubseq_buf = zeros(T, nv(g))
+
     for step in 2:n
         new_infections = Set{T}()
 
@@ -54,7 +56,8 @@ function diffusion(g::AbstractGraph,
                     local_p = p
                 end
 
-                union!(new_infections, randsubseq(outn, local_p))
+                randsubseq!(randsubseq_buf, outn, local_p)
+                union!(new_infections, randsubseq_buf)
             end
         end
 
