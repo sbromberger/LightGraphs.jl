@@ -12,22 +12,40 @@
     end
     for g in testgraphs(a1)
         z = @inferred(eccentricity(g, distmx1))
+        y = @inferred(parallel_eccentricity(g, distmx1))
+        @test isapprox(y, z)
         @test z == [6.2, 4.2, 6.2]
-        @test z == @inferred(parallel_eccentricity(g, distmx1))
-        @test @inferred(diameter(z)) == diameter(g, distmx1) == 6.2
-        @test @inferred(periphery(z)) == periphery(g, distmx1) == [1, 3]
-        @test @inferred(radius(z)) == radius(g, distmx1) == 4.2
-        @test @inferred(center(z)) == center(g, distmx1) == [2]
+        @test @inferred(diameter(z)) == 
+            diameter(g, distmx1) == 
+            parallel_diameter(g, distmx1) == 6.2
+        @test @inferred(periphery(z)) == 
+            periphery(g, distmx1) == 
+            parallel_periphery(g, distmx1) == [1, 3]
+        @test @inferred(radius(z)) == 
+            radius(g, distmx1) == 
+            parallel_radius(g, distmx1) == 4.2
+        @test @inferred(center(z)) == 
+            center(g, distmx1) == 
+            parallel_center(g, distmx1) == [2]
     end
 
     for g in testdigraphs(a2)
         z = @inferred(eccentricity(g, distmx2))
-        @test z == @inferred(parallel_eccentricity(g, distmx2))
+        y = @inferred(parallel_eccentricity(g, distmx2))
+        @test isapprox(y, z)
         @test z == [6.2, 4.2, 6.1]
-        @test @inferred(diameter(z)) == diameter(g, distmx2) == 6.2
-        @test @inferred(periphery(z)) == periphery(g, distmx2) == [1]
-        @test @inferred(radius(z)) == radius(g, distmx2) == 4.2
-        @test @inferred(center(z)) == center(g, distmx2) == [2]
+        @test @inferred(diameter(z)) == 
+            diameter(g, distmx2) == 
+            parallel_diameter(g, distmx2) == 6.2
+        @test @inferred(periphery(z)) == 
+            periphery(g, distmx2) == 
+            parallel_periphery(g, distmx2) == [1]
+        @test @inferred(radius(z)) == 
+            radius(g, distmx2) == 
+            parallel_radius(g, distmx2) == 4.2
+        @test @inferred(center(z)) == 
+            center(g, distmx2) == 
+            parallel_center(g, distmx2) == [2]
     end
     @test size(LightGraphs.DefaultDistance()) == (typemax(Int), typemax(Int))
     d = @inferred(LightGraphs.DefaultDistance(3))

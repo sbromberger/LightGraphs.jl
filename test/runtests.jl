@@ -73,6 +73,7 @@ tests = [
     "shortestpaths/yen",
     "traversals/bfs",
     "traversals/parallel_bfs",
+    "traversals/bipartition",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/graphvisit",

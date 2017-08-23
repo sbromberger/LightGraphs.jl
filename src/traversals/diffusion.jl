@@ -34,12 +34,14 @@ function diffusion(g::AbstractGraph,
     # Record initial infection
     if !isempty(watch_set)
         watched_initial_infections = intersect(watch_set, initial_infections)
-        vertices_per_step[1] = T.(watched_initial_infections)
+        vertices_per_step[1] = T.(collect(watched_initial_infections))
     else
         vertices_per_step[1] = T.(initial_infections)
     end
 
     # Run simulation
+    randsubseq_buf = zeros(T, nv(g))
+
     for step in 2:n
         new_infections = Set{T}()
 
@@ -54,7 +56,8 @@ function diffusion(g::AbstractGraph,
                     local_p = p
                 end
 
-                union!(new_infections, randsubseq(outn, local_p))
+                randsubseq!(randsubseq_buf, outn, local_p)
+                union!(new_infections, randsubseq_buf)
             end
         end
 

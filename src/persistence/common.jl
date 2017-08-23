@@ -15,11 +15,13 @@ function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGr
         loadgraph(auto_decompress(io), gname, format)
     end
 end
-loadgraph(fn::AbstractString, gname::AbstractString="graph") = loadgraph(fn, gname, LGFormat())
+loadgraph(fn::AbstractString) = loadgraph(fn, "graph", LGFormat())
+loadgraph(fn::AbstractString, gname::AbstractString) = loadgraph(fn, gname, LGFormat())
+loadgraph(fn::AbstractString, format::AbstractGraphFormat) = loadgraph(fn, "graph", format)
 
 
 """
-    loadgraphs(file, format=LGFormat)
+    loadgraphs(file, format=LGFormat())
 
 Load multiple graphs from `file` in the format `format`.
 Return a dictionary mapping graph name to graph.

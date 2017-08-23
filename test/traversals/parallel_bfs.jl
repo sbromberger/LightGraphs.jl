@@ -31,7 +31,7 @@ import Base.Threads: Atomic, @threads
       @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
     end
 
-    function istree{T<:Integer}(parents::Vector{Atomic{T}}, maxdepth, n::T)
+    function istree(parents::Vector{Atomic{T}}, maxdepth, n::T) where T<:Integer
         flag = true
         for i in one(T):n
             s = i

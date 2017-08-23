@@ -13,7 +13,7 @@ is not reached within `n` iterations.
 function pagerank end
 
 @traitfn function pagerank(g::::IsDirected, α=0.85, n=100::Integer, ϵ=1.0e-6)
-    A = adjacency_matrix(g, :in, Float64)
+    A = adjacency_matrix(g, Float64; dir=:in)
     S = vec(sum(A, 1))
     S = 1 ./ S
     S[find(S .== Inf)] = 0.0

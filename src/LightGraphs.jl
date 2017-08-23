@@ -28,7 +28,7 @@ core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
-parallel_eccentricity,
+parallel_eccentricity, parallel_diameter, parallel_periphery, parallel_radius, parallel_center,
 
 # distance between graphs
 spectral_distance, edit_distance,
@@ -48,8 +48,11 @@ discover_vertex!, open_vertex!, close_vertex!,
 examine_neighbor!, visited_vertices, traverse_graph!, traverse_graph_withlog,
 
 # bfs
-BreadthFirst, gdistances, gdistances!, bfs_tree, is_bipartite, bipartite_map,
+BreadthFirst, gdistances, gdistances!, bfs_tree, bfs_parents,
+has_path,
 
+# bipartition
+is_bipartite, bipartite_map,
 # dfs
 DepthFirst, is_cyclic, topological_sort_by_dfs, dfs_tree,
 
@@ -162,6 +165,7 @@ include("core.jl")
     include("digraph/cycles/hadwick-james.jl")
         include("traversals/graphvisit.jl")
             include("traversals/bfs.jl")
+            include("traversals/bipartition.jl")
             include("traversals/parallel_bfs.jl")
             include("traversals/dfs.jl")
             include("traversals/maxadjvisit.jl")
