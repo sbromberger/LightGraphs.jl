@@ -12,7 +12,8 @@
     @test Set{Edge}(collect(Edge, edges(gb))) == edges(ga)
     @test @inferred(edges(ga)) == Set{Edge}(collect(Edge, edges(gb)))
 
-    @test @inferred(eltype(edges(ga))) == eltype(typeof(edges(ga))) == SimpleEdge
+    @test @inferred(eltype(edges(ga))) == eltype(typeof(edges(ga))) == edgetype(ga)
+    @test eltype(collect(edges(ga))) == edgetype(ga)
 
     ga = @inferred(SimpleDiGraph(10, 20; seed=1))
     gb = @inferred(SimpleDiGraph(10, 20; seed=1))
