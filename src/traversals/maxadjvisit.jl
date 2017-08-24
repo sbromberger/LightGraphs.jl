@@ -3,12 +3,15 @@
 
 # Maximum adjacency visit / traversal
 
-
 #################################################
 #
 #  Maximum adjacency visit
 #
 #################################################
+
+abstract type AbstractGraphVisitor end
+abstract type AbstractGraphVisitAlgorithm end
+
 
 struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
