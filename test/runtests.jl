@@ -76,7 +76,6 @@ tests = [
     "traversals/bipartition",
     "traversals/dfs",
     "traversals/maxadjvisit",
-    "traversals/graphvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
     "community/cliques",
