@@ -124,7 +124,6 @@ function is_weakly_connected end
 
 Compute the strongly connected components of a directed graph `g`.
 """
-
 function strongly_connected_components end
 @traitfn function strongly_connected_components(g::::IsDirected)
     T = eltype(g)
