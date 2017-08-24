@@ -9,6 +9,10 @@
 #
 #################################################
 
+abstract type AbstractGraphVisitor end
+abstract type AbstractGraphVisitAlgorithm end
+
+
 struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
