@@ -11,7 +11,7 @@ struct SimpleEdgeIterState{T<:Integer}
 end
 
 
-eltype(::Type{SimpleEdgeIter{T}}) where T<:Integer = SimpleEdge
+eltype(::Type{SimpleEdgeIter{T}}) where T<:Integer = SimpleEdge{T}
 
 SimpleEdgeIter(g::SimpleGraph) = SimpleEdgeIter(ne(g), g.fadjlist, false)
 SimpleEdgeIter(g::SimpleDiGraph) = SimpleEdgeIter(ne(g), g.fadjlist, true)
