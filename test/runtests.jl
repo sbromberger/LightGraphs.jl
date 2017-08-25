@@ -89,6 +89,8 @@ tests = [
     "centrality/katz",
     "centrality/pagerank",
     "centrality/eigenvector",
+    "centrality/stress",
+    "centrality/radiality",
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/boykov_kolmogorov",

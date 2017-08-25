@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
-struct DijkstraState{T,U<:Integer} <: AbstractPathState
+struct DijkstraState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -28,7 +28,7 @@ function dijkstra_shortest_paths(
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false
-    ) where T where U<:Integer
+    ) where T <: Real where U<:Integer
 
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
@@ -114,7 +114,7 @@ dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trac
 
 An [`AbstractPathState`](@ref) designed for multisource_dijkstra_shortest_paths calculation.
 """
-struct MultipleDijkstraState{T,U<:Integer} <: AbstractPathState
+struct MultipleDijkstraState{T<:Real,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -132,7 +132,7 @@ function parallel_multisource_dijkstra_shortest_paths(
     g::AbstractGraph,
     sources::AbstractVector = vertices(g),
     distmx::AbstractMatrix{T} = weights(g)
-    ) where T
+    ) where T <: Real
 
     U = eltype(g)
     n_v = nv(g)
