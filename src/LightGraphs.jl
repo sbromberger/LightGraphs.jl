@@ -127,7 +127,10 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components
+articulation, biconnected_components,
+
+#graphcut
+normalized_cut
 
 """
     LightGraphs
@@ -212,5 +215,6 @@ include("core.jl")
     include("spanningtrees/prim.jl")
     include("biconnectivity/articulation.jl")
     include("biconnectivity/biconnect.jl")
+    include("graphcut/normalized_cut.jl")
 
 end # module
