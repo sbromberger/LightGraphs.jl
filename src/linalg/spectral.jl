@@ -1,10 +1,4 @@
-import Base: *
-
-export adjacency_matrix,
-laplacian_matrix,
-incidence_matrix,
-coo_sparse,
-spectral_distance
+# This file provides reexported functions.
 
 """
     adjacency_matrix(g[, T=Int; dir=:out])
