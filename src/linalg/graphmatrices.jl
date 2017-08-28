@@ -1,31 +1,3 @@
-__precompile__(true)
-
-
-import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
-export convert,
-	SparseMatrix,
-	GraphMatrix,
-	Adjacency,
-	adjacency,
-	Laplacian,
-	CombinatorialAdjacency,
-	CombinatorialLaplacian,
-	NormalizedAdjacency,
-	NormalizedLaplacian,
-	StochasticAdjacency,
-	StochasticLaplacian,
-	AveragingAdjacency,
-	AveragingLaplacian,
-	PunchedAdjacency,
-	Noop,
-	diag,
-	degrees,
-	symmetrize,
-	prescalefactor,
-	postscalefactor
-
-
-
 const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
 """

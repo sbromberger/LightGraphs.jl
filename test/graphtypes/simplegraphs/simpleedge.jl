@@ -1,4 +1,4 @@
-import LightGraphs.SimpleGraphs.SimpleEdge
+
 @testset "SimpleEdge" begin
     e = SimpleEdge(1, 2)
     re = SimpleEdge(2, 1)
