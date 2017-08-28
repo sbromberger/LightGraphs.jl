@@ -12,7 +12,7 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             Pair, Tuple, zero
 export
 # Interface
-AbstractGraph, AbstractDiGraph, AbstractEdge, AbstractEdgeInter,
+AbstractGraph, AbstractDiGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, DiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
 has_vertex, has_edge, in_neighbors, out_neighbors,
