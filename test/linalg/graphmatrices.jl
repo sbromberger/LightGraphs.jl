@@ -1,11 +1,4 @@
-module TestLinAlg
-using LightGraphs.LinAlg
-using Base.Test
-import LightGraphs.LinAlg.SparseMatrix
-import LightGraphs.LinAlg.perron
-
-
-export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other
+# export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other
 
 @testset "Graph matrices" begin
     function converttest(T::Type, var)
@@ -211,5 +204,4 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; ncv=10)
     @test all(sd .>= 0)
-end
 end

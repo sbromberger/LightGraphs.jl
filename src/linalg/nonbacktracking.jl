@@ -1,7 +1,3 @@
-export non_backtracking_matrix,
-        Nonbacktracking,
-        contract!,
-        contract
 
 @doc_str """
     non_backtracking_matrix(g)
