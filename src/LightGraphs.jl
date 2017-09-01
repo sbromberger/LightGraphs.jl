@@ -215,5 +215,6 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("graphcut/normalized_cut.jl")
 
 end # module
