@@ -2,6 +2,7 @@ __precompile__(true)
 module LightGraphs
 
 import CodecZlib
+
 using DataStructures
 using SimpleTraits
 
@@ -31,7 +32,7 @@ eccentricity, diameter, periphery, radius, center,
 parallel_eccentricity, parallel_diameter, parallel_periphery, parallel_radius, parallel_center,
 
 # distance between graphs
-spectral_distance, edit_distance,
+edit_distance, spectral_distance,
 
 # edit path cost functions
 MinkowskiCost, BoundedMinkowskiCost,
@@ -44,8 +45,7 @@ induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
 # graph visit
 AbstractGraphVisitor,
-discover_vertex!, close_vertex!,
-examine_neighbor!, traverse_graph,
+discover_vertex!, close_vertex!, examine_neighbor!,
 
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
@@ -126,8 +126,11 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components
+articulation, biconnected_components,
 
+#spectral
+adjacency_matrix, laplacian_matrix, incidence_matrix,
+adjacency_spectrum, laplacian_spectrum, spectral_distance
 """
     LightGraphs
 
@@ -177,7 +180,8 @@ include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
-include("linalg/LinAlg.jl")
+include("GraphMatrices/GraphMatrices.jl")
+include("spectral.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")

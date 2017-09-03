@@ -1,9 +1,9 @@
-module LinAlg
+module GraphMatrices
 
 using SimpleTraits
 using ..LightGraphs
 
-import LightGraphs: IsDirected, adjacency_matrix, laplacian_matrix, laplacian_spectrum
+import LightGraphs: IsDirected
 
 import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
 
@@ -35,20 +35,9 @@ export convert,
     Nonbacktracking,
     contract!,
     contract,
+    coo_sparse
 
-    adjacency_matrix,
-    laplacian_matrix,
-    incidence_matrix,
-    adjacency_spectrum,
-    laplacian_spectrum,
-    coo_sparse,
-    spectral_distance
-
-
-include("./graphmatrices.jl")
-include("./spectral.jl")
+include("./graphmatrix.jl")
 include("./nonbacktracking.jl")
-
-
 end
 
