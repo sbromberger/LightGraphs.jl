@@ -55,6 +55,7 @@ tests = [
     "digraph/transitivity",
     "digraph/cycles/hadwick-james",
     "digraph/cycles/johnson",
+    "digraph/cycles/karp",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
