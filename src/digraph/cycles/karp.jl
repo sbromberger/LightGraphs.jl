@@ -6,6 +6,7 @@ function _karp_minimum_cycle_mean(
     distmx::AbstractMatrix{T},
     component::Vector{U}
     ) where T where U<:Integer
+
     v2j = Dict{U, Int}()
     for (j, v) in enumerate(component)
         v2j[v] = j
@@ -63,12 +64,16 @@ function _karp_minimum_cycle_mean(
     walk = zeros(Int, n+1)
     walk[n+1] = jbest
     for i in n:-1:1
+        v = component[walk[i+1]]
         dmin = Inf
-        for j in 1:n
-            dcur = F[i, j] + distmx[j, walk[i+1]]
-            if dcur < dmin
-                walk[i] = j
-                dmin = dcur
+        for u in in_neighbors(g, v)
+            j = get(v2j, u, 0)
+            if !iszero(j)
+                dcur = F[i, j] + distmx[u, v]
+                if dcur < dmin
+                    walk[i] = j
+                    dmin = dcur
+                end
             end
         end
     end
