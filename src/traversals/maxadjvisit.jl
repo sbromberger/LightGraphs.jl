@@ -49,7 +49,7 @@ function traverse_graph!(
     colormap::Vector{Int})
 
 
-    pq = DataStructures.PriorityQueue(Int, T, Base.Order.Reverse)
+    pq = DataStructures.PriorityQueue{Int, T}(Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
