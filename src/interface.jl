@@ -106,6 +106,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
+For `AbstractSimpleGraph`s it returns a [`SimpleEdgeIter`](@ref).
 
 ### Implementation Notes
 A returned iterator is valid for one pass over the edges, and

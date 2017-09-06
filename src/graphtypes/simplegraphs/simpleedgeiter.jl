@@ -1,3 +1,10 @@
+"""
+    SimpleEdgeIter
+
+The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraphs`.
+The iterates are in lexicographical order, smallest first. The iterator is valid for
+one pass over the edges, and is invalidated by changes to the graph.
+"""
 mutable struct SimpleEdgeIter{T<:Integer} <: AbstractEdgeIter
     m::Int
     adj::Vector{Vector{T}}
