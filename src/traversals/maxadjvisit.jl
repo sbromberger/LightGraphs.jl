@@ -28,16 +28,12 @@ function maximum_adjacency_visit_impl!(
         u = DataStructures.dequeue!(pq)
         discover_vertex!(visitor, u)
         for v in out_neighbors(g, u)
-            examine_neighbor!(visitor, u, v, 0, 0, 0)
-
             if haskey(pq, v)
                 ed = visitor.distmx[u, v]
                 pq[v] += ed
             end
         end
-        close_vertex!(visitor, u)
     end
-
 end
 
 function traverse_graph!(
