@@ -25,15 +25,19 @@ function maximum_adjacency_visit_impl!(
     colormap::Vector{Int}) where T                   # traversal status
 
     while !isempty(pq)
-        u = DataStructures.dequeue!(pq)
+        u,temp = DataStructures.dequeue_pair!(pq)
         discover_vertex!(visitor, u)
         for v in out_neighbors(g, u)
+            examine_neighbor!(visitor, u, v, 0, 0, 0)
+
             if haskey(pq, v)
                 ed = visitor.distmx[u, v]
                 pq[v] += ed
             end
         end
+        close_vertex!(visitor, u)
     end
+
 end
 
 function traverse_graph!(
@@ -216,5 +220,50 @@ maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
     g,
     weights(g),
     false,
+    STDOUT
+)
+
+function maximum_adjacency_visit_new(
+    g::AbstractGraph,
+    distmx::AbstractMatrix{T},
+    log::Bool,
+    io::IO
+) where T<:Real
+
+    U = eltype(g)
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    vertices_order = Vector{U}()
+    sizehint!(vertices_order, nv(g))
+    @assert nv(g) >= 2
+
+    # Setting intial count to 0
+    for v in vertices(g)
+        pq[v] = zero(T)
+    end
+
+    #Give vertex `1` maximum priority
+    pq[one(U)] = one(T)
+
+    #start traversing the graph
+    while !isempty(pq)
+        u = dequeue!(pq)
+        push!(vertices_order, u)
+        log && println(io, "discover vertex: $u")
+        for v in out_neighbors(g, u)
+            log && println(io, " -- examine neighbor from $u to $v")
+            if haskey(pq, v)
+                ed = distmx[u, v]
+                pq[v] += ed
+            end
+        end
+        log && println(io, "close vertex: $u")
+    end
+    return vertices_order
+end
+
+maximum_adjacency_visit_new(g::AbstractGraph, log::Bool) = maximum_adjacency_visit_new(
+    g,
+    weights(g),
+    log,
     STDOUT
 )
