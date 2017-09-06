@@ -54,7 +54,7 @@ function a_star(
     ) where T
     # heuristic (under)estimating distance to target
     U = eltype(g)
-    frontier = PriorityQueue(Tuple{T,Vector{Edge},U}, T)
+    frontier = PriorityQueue{Tuple{T,Vector{Edge},U}, T}()
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(g))
     colormap[s] = 1
