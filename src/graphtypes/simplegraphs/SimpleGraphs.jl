@@ -25,23 +25,23 @@ AbstractSimpleGraphs must have the following elements:
 - fadjlist::Vector{Vector{Integer}}
 - ne::Integer
 """
-abstract type AbstractSimpleGraph <: AbstractGraph end
+abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
 
-function show(io::IO, g::AbstractSimpleGraph)
+function show(io::IO, g::AbstractSimpleGraph{T}) where T
     if is_directed(g)
         dir = "directed"
     else
         dir = "undirected"
     end
     if nv(g) == 0
-        print(io, "empty $dir simple $(eltype(g)) graph")
+        print(io, "empty $dir simple $T graph")
     else
-        print(io, "{$(nv(g)), $(ne(g))} $dir simple $(eltype(g)) graph")
+        print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
     end
 end
 
-nv(g::AbstractSimpleGraph) = eltype(g)(length(fadj(g)))
-vertices(g::AbstractSimpleGraph) = one(eltype(g)):nv(g)
+nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
+vertices(g::AbstractSimpleGraph{T}) where T = one(T):nv(g)
 
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
@@ -74,8 +74,7 @@ has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
 
-function rem_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
-    T = eltype(g)
+function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
     rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 

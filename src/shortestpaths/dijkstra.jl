@@ -129,12 +129,11 @@ traversal information.
 """
 
 function parallel_multisource_dijkstra_shortest_paths(
-    g::AbstractGraph,
+    g::AbstractGraph{U},
     sources::AbstractVector = vertices(g),
     distmx::AbstractMatrix{T} = weights(g)
-    ) where T <: Real
+    ) where T <: Real where U
 
-    U = eltype(g)
     n_v = nv(g)
     r_v = length(sources)
 

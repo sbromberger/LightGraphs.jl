@@ -81,7 +81,7 @@ end
 #################################################
 
 mutable struct MinCutVisitor{T,U<:Integer} <: AbstractMASVisitor
-    graph::AbstractGraph
+    graph::AbstractGraph{U}
     parities::BitVector
     colormap::Vector{Int}
     bestweight::T
@@ -91,8 +91,7 @@ mutable struct MinCutVisitor{T,U<:Integer} <: AbstractMASVisitor
     vertices::Vector{U}
 end
 
-function MinCutVisitor(g::AbstractGraph, distmx::AbstractMatrix{T}) where T
-    U = eltype(g)
+function MinCutVisitor(g::AbstractGraph{U}, distmx::AbstractMatrix{T}) where T where U
     n = nv(g)
     parities = falses(n)
     return MinCutVisitor(

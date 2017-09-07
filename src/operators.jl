@@ -513,7 +513,7 @@ Return a vector with new vertex values are indexed by the original vertex indice
 ### Implementation Notes
 Supports SimpleGraph only.
 """
-function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
     merged_vertex = shift!(vs)
 
@@ -525,7 +525,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
     for i in vertices(g)
         # Adjust connections to merged vertices
         if (i != merged_vertex) && !insorted(vs, i)
-            nbrs_to_rewire = Set{eltype(g)}()
+            nbrs_to_rewire = Set{T}()
             for j in out_neighbors(g, i)
                if insorted(vs, j)
                   push!(nbrs_to_rewire, merged_vertex)
@@ -538,7 +538,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
         # Collect connections to new merged vertex
         else
-            nbrs_to_merge = Set{eltype(g)}()
+            nbrs_to_merge = Set{T}()
             for element in filter(x -> !(insorted(vs, x)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end

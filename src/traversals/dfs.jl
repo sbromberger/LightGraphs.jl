@@ -102,8 +102,7 @@ This version of DFS is iterative.
 dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
 (dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
 
-function _dfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
-    T = eltype(g)
+function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     parents = zeros(T, nv(g))
 
     seen = zeros(Bool, nv(g))

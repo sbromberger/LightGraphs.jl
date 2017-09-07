@@ -300,9 +300,8 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ?
     _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
 
-function _neighborhood(g::AbstractGraph, v::Integer, d::Integer, neighborfn::Function)
+function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Integer, neighborfn::Function) where T
     @assert d >= 0 "Distance has to be greater then zero."
-    T = eltype(g)
     neighs = Vector{T}()
     push!(neighs, v)
 

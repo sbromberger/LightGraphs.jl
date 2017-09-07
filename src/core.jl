@@ -114,8 +114,8 @@ represented by the key.
 Degree function (for example, `indegree` or `outdegree`) may be specified by
 overriding `degfn`.
 """
-function degree_histogram(g::AbstractGraph, degfn=degree)
-    hist = Dict{eltype(g),Int}()
+function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
+    hist = Dict{T,Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
             hist[d] = get(hist, d, 0) + 1
