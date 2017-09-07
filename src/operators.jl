@@ -210,8 +210,8 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function crosspath end
-@traitfn function crosspath(len::Integer, g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function crosspath{T, AG<:AbstractGraph{T}}(len::Integer, g::AG::(!IsDirected))
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -278,8 +278,6 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
-# eltype(g::AbstractGraph) = Float64
 length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
@@ -400,11 +398,10 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
 end
 
 
-function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
+function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG<:AbstractGraph{T} where T where U<:AbstractEdge
     h = zero(g)
-    et = eltype(h)
-    newvid = Dict{et,et}()
-    vmap = Vector{et}()
+    newvid = Dict{T,T}()
+    vmap = Vector{T}()
 
     for e in elist
         u, v = Tuple(e)

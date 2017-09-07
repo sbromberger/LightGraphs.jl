@@ -10,7 +10,7 @@ mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
 
-eltype(x::SimpleGraph{T}) where T<:Integer = T
+eltype(x::SimpleGraph{T}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
