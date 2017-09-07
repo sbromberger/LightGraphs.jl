@@ -36,7 +36,7 @@ function dijkstra_shortest_paths(
     preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = PriorityQueue{U,T}(Base.Order.ForwardOrdering())
+    H = PriorityQueue{U,T}()
     dists[srcs] = zero(T)
     pathcounts[srcs] = 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source

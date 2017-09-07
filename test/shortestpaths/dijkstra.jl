@@ -33,14 +33,7 @@
     # small function to reconstruct the shortest path; I copied it from somewhere, can't find the original source to give the credits
     # @Beatzekatze on github
     spath(target, dijkstraStruct, source) = target == source ? target : [spath(dijkstraStruct.parents[target], dijkstraStruct, source) target]
-    function spaths(ds, targets, source)
-        shortest_paths = []
-        for i in targets
-            push!(shortest_paths, spath(i, ds, source))
-        end
-        return shortest_paths
-    end
-
+    spaths(ds, targets, source) = [spath(i, ds, source) for i in targets]
 
     G = LightGraphs.Graph()
     add_vertices!(G, 4)

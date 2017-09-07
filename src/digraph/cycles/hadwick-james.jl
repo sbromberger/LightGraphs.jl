@@ -11,10 +11,7 @@ function simplecycles_hadwick_james end
 @traitfn function simplecycles_hadwick_james(g::::IsDirected)
     nvg = nv(g)
     T = eltype(g)
-    B = Vector{Vector{T}}()
-    for i in vertices(g)
-        push!(B, Vector{T}())
-    end
+    B = [Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)
     stack = Vector{T}()
     cycles = Vector{Vector{T}}()
