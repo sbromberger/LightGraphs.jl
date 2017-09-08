@@ -49,3 +49,4 @@ function inner!(storage::AbstractVector{Int}, g::AbstractGraph, v::Integer)
 end
 ```
 This allows us to reuse the memory and improve performance.
+
