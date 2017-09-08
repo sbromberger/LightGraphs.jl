@@ -69,7 +69,7 @@ condensation, attracting_components, neighborhood, isgraphical,
 
 # cycles
 simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
-simplecyclescount, simplecycleslength,
+simplecyclescount, simplecycleslength, karp_minimum_cycle_mean,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit, maximum_adjacency_visit_new,
@@ -162,6 +162,7 @@ include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")
 include("digraph/cycles/hadwick-james.jl")
+include("digraph/cycles/karp.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/parallel_bfs.jl")

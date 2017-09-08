@@ -18,7 +18,6 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     # see below - we iterate over columns. That's why we take the
     # "opposite" neighbor function. It's faster than taking the transpose
     # at the end.
-
     if (dir == :out)
         _adjacency_matrix(g, T, in_neighbors, 1)
     elseif (dir == :in)
@@ -38,10 +37,11 @@ end
 function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
-    colpt = ones(Int, n_v + 1)
-
-    rowval = sizehint!(Vector{Int}(), nz)
-    selfloops = Vector{Int}()
+    U = eltype(g)
+    colpt = ones(U, n_v + 1)
+    
+    rowval = sizehint!(Vector{U}(), nz)
+    selfloops = Vector{U}()
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
@@ -77,11 +77,12 @@ For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`. 
 """
 function laplacian_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
+    U = eltype(g)
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = spdiagm(sum(A, 2)[:])
+    D = convert(SparseMatrixCSC{T, U}, spdiagm(sum(A, 2)[:]))
     return D - A
 end
 
