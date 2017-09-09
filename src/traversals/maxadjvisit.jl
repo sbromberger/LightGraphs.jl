@@ -210,29 +210,12 @@ function maximum_adjacency_visit(
     distmx::AbstractMatrix{T},
     log::Bool,
     io::IO
-) where T
-    visitor = MASVisitor(io, Vector{Int}(), distmx, log)
-    traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(g)))
-    return visitor.vertices
-end
-
-maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
-    g,
-    weights(g),
-    false,
-    STDOUT
-)
-
-function maximum_adjacency_visit_new(
-    g::AbstractGraph,
-    distmx::AbstractMatrix{T},
-    log::Bool,
-    io::IO
 ) where T<:Real
 
     U = eltype(g)
     pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
+    has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
     @assert nv(g) >= 2
 
@@ -241,17 +224,19 @@ function maximum_adjacency_visit_new(
         pq[v] = zero(T)
     end
 
+
     #Give vertex `1` maximum priority
     pq[one(U)] = one(T)
 
     #start traversing the graph
     while !isempty(pq)
         u = dequeue!(pq)
+        has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")
         for v in out_neighbors(g, u)
             log && println(io, " -- examine neighbor from $u to $v")
-            if haskey(pq, v)
+            if has_key[v]
                 ed = distmx[u, v]
                 pq[v] += ed
             end
@@ -261,9 +246,9 @@ function maximum_adjacency_visit_new(
     return vertices_order
 end
 
-maximum_adjacency_visit_new(g::AbstractGraph, log::Bool) = maximum_adjacency_visit_new(
+maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
     g,
     weights(g),
-    log,
+    false,
     STDOUT
 )
