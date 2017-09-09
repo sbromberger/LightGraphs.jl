@@ -25,7 +25,7 @@ function maximum_adjacency_visit_impl!(
     colormap::Vector{Int}) where T                   # traversal status
 
     while !isempty(pq)
-        u,temp = DataStructures.dequeue_pair!(pq)
+        u = DataStructures.dequeue!(pq)
         discover_vertex!(visitor, u)
         for v in out_neighbors(g, u)
             examine_neighbor!(visitor, u, v, 0, 0, 0)
@@ -65,13 +65,6 @@ function traverse_graph!(
     #start traversing the graph
     maximum_adjacency_visit_impl!(g, pq, visitor, colormap)
 end
-
-
-#################################################
-#
-#  Visitors
-#
-#################################################
 
 
 #################################################
@@ -141,34 +134,6 @@ function close_vertex!(vis::MinCutVisitor, v::Integer)
     return true
 end
 
-#################################################
-#
-#  MAS Visitor
-#
-#################################################
-
-struct MASVisitor{T,U<:Integer} <: AbstractMASVisitor
-    io::IO
-    vertices::Vector{U}
-    distmx::AbstractMatrix{T}
-    log::Bool
-end
-
-function discover_vertex!(visitor::MASVisitor{T}, v::Integer) where T
-    push!(visitor.vertices, v)
-    visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
-    return true
-end
-
-function examine_neighbor!(visitor::MASVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
-    visitor.log ? println(visitor.io, " -- examine neighbor from $u to $v") : nothing
-    return true
-end
-
-function close_vertex!(visitor::MASVisitor, v::Integer)
-    visitor.log ? println(visitor.io, "close vertex: $v") : nothing
-    return true
-end
 
 #################################################
 #
