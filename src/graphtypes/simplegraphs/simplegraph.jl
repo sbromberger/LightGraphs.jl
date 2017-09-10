@@ -146,12 +146,12 @@ end
 
 function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
     i = searchsorted(g.fadjlist[src(e)], dst(e))
-    length(i) > 0 || return false   # edge not in graph
-    i = i[1]
-    deleteat!(g.fadjlist[src(e)], i)
+    isempty(i) && return false   # edge not in graph
+    j = first(i)
+    deleteat!(g.fadjlist[src(e)], j)
     if src(e) != dst(e)     # not a self loop
-        i = searchsortedfirst(g.fadjlist[dst(e)], src(e))
-        deleteat!(g.fadjlist[dst(e)], i)
+        j = searchsortedfirst(g.fadjlist[dst(e)], src(e))
+        deleteat!(g.fadjlist[dst(e)], j)
     end
     g.ne -= 1
     return true # edge successfully removed
