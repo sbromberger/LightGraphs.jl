@@ -69,13 +69,6 @@ end
 
 #################################################
 #
-#  Visitors
-#
-#################################################
-
-
-#################################################
-#
 #  Minimum Cut Visitor
 #
 #################################################
@@ -140,34 +133,6 @@ function close_vertex!(vis::MinCutVisitor, v::Integer)
     return true
 end
 
-#################################################
-#
-#  MAS Visitor
-#
-#################################################
-
-struct MASVisitor{T,U<:Integer} <: AbstractMASVisitor
-    io::IO
-    vertices::Vector{U}
-    distmx::AbstractMatrix{T}
-    log::Bool
-end
-
-function discover_vertex!(visitor::MASVisitor{T}, v::Integer) where T
-    push!(visitor.vertices, v)
-    visitor.log ? println(visitor.io, "discover vertex: $v") : nothing
-    return true
-end
-
-function examine_neighbor!(visitor::MASVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
-    visitor.log ? println(visitor.io, " -- examine neighbor from $u to $v") : nothing
-    return true
-end
-
-function close_vertex!(visitor::MASVisitor, v::Integer)
-    visitor.log ? println(visitor.io, "close vertex: $v") : nothing
-    return true
-end
 
 #################################################
 #
@@ -209,10 +174,40 @@ function maximum_adjacency_visit(
     distmx::AbstractMatrix{T},
     log::Bool,
     io::IO
-) where T
-    visitor = MASVisitor(io, Vector{Int}(), distmx, log)
-    traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, zeros(Int, nv(g)))
-    return visitor.vertices
+) where T<:Real
+
+    U = eltype(g)
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    vertices_order = Vector{U}()
+    has_key = ones(Bool, nv(g))
+    sizehint!(vertices_order, nv(g))
+    @assert nv(g) >= 2
+
+    # Setting intial count to 0
+    for v in vertices(g)
+        pq[v] = zero(T)
+    end
+
+
+    #Give vertex `1` maximum priority
+    pq[one(U)] = one(T)
+
+    #start traversing the graph
+    while !isempty(pq)
+        u = dequeue!(pq)
+        has_key[u] = false
+        push!(vertices_order, u)
+        log && println(io, "discover vertex: $u")
+        for v in out_neighbors(g, u)
+            log && println(io, " -- examine neighbor from $u to $v")
+            if has_key[v]
+                ed = distmx[u, v]
+                pq[v] += ed
+            end
+        end
+        log && println(io, "close vertex: $u")
+    end
+    return vertices_order
 end
 
 maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
