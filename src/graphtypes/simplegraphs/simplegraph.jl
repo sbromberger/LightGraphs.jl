@@ -127,7 +127,7 @@ function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
     if degree(g, u) > degree(g, v)
         u, v = v, u
     end
-    return length(searchsorted(fadj(g, u), v)) > 0
+    return insorted(fadj(g, u), v)
 end
 
 function add_edge!(g::SimpleGraph, e::SimpleGraphEdge)
@@ -150,7 +150,7 @@ function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
     i = i[1]
     deleteat!(g.fadjlist[src(e)], i)
     if src(e) != dst(e)     # not a self loop
-        i = searchsorted(g.fadjlist[dst(e)], src(e))[1]
+        i = searchsortedfirst(g.fadjlist[dst(e)], src(e))
         deleteat!(g.fadjlist[dst(e)], i)
     end
     g.ne -= 1

@@ -122,9 +122,9 @@ end
 
 function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     has_edge(g, e) || return false
-    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
+    i = searchsortedfirst(g.fadjlist[src(e)], dst(e))
     deleteat!(g.fadjlist[src(e)], i)
-    i = searchsorted(g.badjlist[dst(e)], src(e))[1]
+    i = searchsortedfirst(g.badjlist[dst(e)], src(e))
     deleteat!(g.badjlist[dst(e)], i)
     g.ne -= 1
     return true
@@ -145,8 +145,8 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
     (u > nv(g) || v > nv(g)) && return false
     if degree(g, u) < degree(g, v)
-        return length(searchsorted(fadj(g, u), v)) > 0
+        return insorted(fadj(g, u), v)
     else
-        return length(searchsorted(badj(g, v), u)) > 0
+        return insorted(badj(g, v), u)
     end
 end

@@ -489,18 +489,6 @@ function merge_vertices(g::AbstractGraph, vs)
     return newg
 end
 
-function insorted(x::AbstractArray, val)
-    i = searchsortedfirst(x, val)
-    if i > length(x)
-        return false
-    end
-    if x[i] != val
-        return false
-    end
-    return true
-end
-
-
 """
     merge_vertices!(g, vs)
 
