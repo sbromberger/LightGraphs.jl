@@ -58,10 +58,11 @@
 
       #check properties of the undirected laplacian carry over.
         for dir in [:in, :out, :both]
+            T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
             lmat = laplacian_matrix(g, Float64; dir=dir)
-            @test isa(amat, SparseMatrixCSC{Float64,Int64})
-            @test isa(lmat, SparseMatrixCSC{Float64,Int64})
+            @test isa(amat, SparseMatrixCSC{Float64,T})
+            @test isa(lmat, SparseMatrixCSC{Float64,T})
             evals = eigvals(full(lmat))
             @test all(evals .>= -1e-15) # positive semidefinite
             @test (minimum(evals)) ≈ 0 atol = 1e-13

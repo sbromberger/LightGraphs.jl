@@ -14,12 +14,7 @@ eltype(x::SimpleGraph{T}) where T<:Integer = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
-    fadjlist = Vector{Vector{T}}()
-    sizehint!(fadjlist, n)
-    for _ = one(T):n
-        push!(fadjlist, Vector{T}())
-    end
-    vertices = one(T):T(n)
+    fadjlist = [Vector{T}() for _ = one(T):n]
     return SimpleGraph{T}(0, fadjlist)
 end
 

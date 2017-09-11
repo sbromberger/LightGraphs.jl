@@ -16,12 +16,8 @@ eltype(x::SimpleDiGraph{T}) where T = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
-    fadjlist = Vector{Vector{T}}()
-    badjlist = Vector{Vector{T}}()
-    for _ = one(T):n
-        push!(badjlist, Vector{T}())
-        push!(fadjlist, Vector{T}())
-    end
+    fadjlist = [Vector{T}() for _ = one(T):n]
+    badjlist = [Vector{T}() for _ = one(T):n]
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
