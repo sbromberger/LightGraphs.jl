@@ -82,5 +82,8 @@ function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     return true   
 end
 
+in(e::SimpleEdge, es::SimpleEdgeIter) = has_edge(es.g, e)
+in(e::Union{Pair, NTuple{2}}, es::SimpleEdgeIter) = has_edge(es.g, e)
+
 show(io::IO, eit::SimpleEdgeIter) = write(io, "SimpleEdgeIter $(ne(eit.g))")
 show(io::IO, s::SimpleEdgeIterState) = write(io, "SimpleEdgeIterState [$(s.s), $(s.di)]")
