@@ -486,18 +486,6 @@ function merge_vertices(g::AbstractGraph, vs)
     return newg
 end
 
-function insorted(x::AbstractArray, val)
-    i = searchsortedfirst(x, val)
-    if i > length(x)
-        return false
-    end
-    if x[i] != val
-        return false
-    end
-    return true
-end
-
-
 """
     merge_vertices!(g, vs)
 
@@ -524,7 +512,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
         if (i != merged_vertex) && !insorted(vs, i)
             nbrs_to_rewire = Set{T}()
             for j in out_neighbors(g, i)
-               if insorted(vs, j)
+               if insorted(j, vs)
                   push!(nbrs_to_rewire, merged_vertex)
                else
                  push!(nbrs_to_rewire, new_vertex_ids[j])
