@@ -2,12 +2,14 @@
     ga = @inferred(SimpleGraph(10, 20; seed=1))
     gb = @inferred(SimpleGraph(10, 20; seed=1))
     @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
-    @test sprint(show, start(edges(ga))) == "SimpleEdgeIterState [1, 1, false]"
+    @test sprint(show, start(edges(ga))) == "SimpleEdgeIterState [1, 1]"
 
     @test length(collect(edges(Graph(0, 0)))) == 0
 
     @test @inferred(edges(ga)) == edges(gb)
     @test @inferred(edges(ga)) == collect(Edge, edges(gb))
+    @test edges(ga) != collect(Edge, Base.Iterators.take(edges(gb), 5))
+    
     @test collect(Edge, edges(gb)) == edges(ga)
     @test Set{Edge}(collect(Edge, edges(gb))) == edges(ga)
     @test @inferred(edges(ga)) == Set{Edge}(collect(Edge, edges(gb)))
@@ -37,6 +39,11 @@
 
     @test [e for e in eit] == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
+    gb = copy(ga)
+    add_vertex!(gb)
+    @test edges(ga) == edges(gb)
+    @test edges(gb) == edges(ga)
+
     ga = SimpleDiGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
@@ -53,4 +60,9 @@
       SimpleEdge(3, 2), SimpleEdge(3, 10),
       SimpleEdge(5, 10), SimpleEdge(10, 3)
     ]
+
+    gb = copy(ga)
+    add_vertex!(gb)
+    @test edges(ga) == edges(gb)
+    @test edges(gb) == edges(ga)
 end
