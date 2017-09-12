@@ -64,7 +64,23 @@ end
 ==(e1::SimpleEdgeIter, e2::Set{SimpleEdge}) = _isequal(e1, e2)
 ==(e1::Set{SimpleEdge}, e2::SimpleEdgeIter) = _isequal(e2, e1)
 
-==(e1::SimpleEdgeIter, e2::SimpleEdgeIter) = e1.g == e2.g
- 
+function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter) 
+    g = e1.g
+    h = e2.g
+    g.ne == g.ne || return false
+    m = min(nv(g), nv(h))
+    for i in 1:m
+        fadj(g, i) == fadj(h, i) || return false
+    end
+    nv(g) == nv(h) && return true
+    for i in m+1:nv(g)
+        isempty(fadj(g, i)) || return false
+    end
+    for i in m+1:nv(h)
+        isempty(fadj(h, i)) || return false
+    end
+    return true   
+end
+
 show(io::IO, eit::SimpleEdgeIter) = write(io, "SimpleEdgeIter $(ne(eit.g))")
 show(io::IO, s::SimpleEdgeIterState) = write(io, "SimpleEdgeIterState [$(s.s), $(s.di)]")

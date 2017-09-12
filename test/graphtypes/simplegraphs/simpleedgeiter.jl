@@ -39,6 +39,11 @@
 
     @test [e for e in eit] == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
+    gb = copy(ga)
+    add_vertex!(gb)
+    @test edges(ga) == edges(gb)
+    @test edges(gb) == edges(ga)
+
     ga = SimpleDiGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
@@ -55,4 +60,9 @@
       SimpleEdge(3, 2), SimpleEdge(3, 10),
       SimpleEdge(5, 10), SimpleEdge(10, 3)
     ]
+
+    gb = copy(ga)
+    add_vertex!(gb)
+    @test edges(ga) == edges(gb)
+    @test edges(gb) == edges(ga)
 end
