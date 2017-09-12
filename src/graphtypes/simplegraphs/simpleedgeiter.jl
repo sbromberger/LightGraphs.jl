@@ -60,9 +60,9 @@ end
 function _isequal(e1::SimpleEdgeIter, e2)
     for e in e2
         s, d = Tuple(e)
-        found = insorted(e1.adj[s], d)
+        found = insorted(d, e1.adj[s])
         if !e1.directed
-            found = found || insorted(e1.adj[d], s)
+            found = found || insorted(s, e1.adj[d])
         end
         !found && return false
     end

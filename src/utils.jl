@@ -44,12 +44,12 @@ sample(a::UnitRange, k::Integer; exclude = ()) = sample!(getRNG(), collect(a), k
 getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
 
 """
-    insorted(x, val)
+    insorted(item, collection)
 
-Return true if `val` is in sorted collection `x`.
+Return true if `item` is in sorted collection `collection`.
 
 ### Implementation Notes
-Does not verify that `x` is sorted.
+Does not verify that `collection` is sorted.
 """
-insorted(x, val) = !isempty(searchsorted(x, val))
+insorted(item, collection) = !isempty(searchsorted(collection, item))
 

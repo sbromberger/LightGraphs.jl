@@ -142,8 +142,8 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
     (u > nv(g) || v > nv(g)) && return false
     if degree(g, u) < degree(g, v)
-        return insorted(fadj(g, u), v)
+        return insorted(v, fadj(g, u))
     else
-        return insorted(badj(g, v), u)
+        return insorted(u, badj(g, v))
     end
 end

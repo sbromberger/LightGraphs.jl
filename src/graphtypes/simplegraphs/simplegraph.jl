@@ -122,7 +122,7 @@ function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
     if degree(g, u) > degree(g, v)
         u, v = v, u
     end
-    return insorted(fadj(g, u), v)
+    return insorted(v, fadj(g, u))
 end
 
 function add_edge!(g::SimpleGraph, e::SimpleGraphEdge)
