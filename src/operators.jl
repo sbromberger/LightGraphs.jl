@@ -509,7 +509,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 
     for i in vertices(g)
         # Adjust connections to merged vertices
-        if (i != merged_vertex) && !insorted(vs, i)
+        if (i != merged_vertex) && !insorted(i, vs)
             nbrs_to_rewire = Set{T}()
             for j in out_neighbors(g, i)
                if insorted(j, vs)
@@ -524,7 +524,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
         # Collect connections to new merged vertex
         else
             nbrs_to_merge = Set{T}()
-            for element in filter(x -> !(insorted(vs, x)) && (x != merged_vertex), g.fadjlist[i])
+            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
