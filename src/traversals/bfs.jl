@@ -68,7 +68,7 @@ function gdistances!(g::AbstractGraph, source, dists)
     fill!(dists, typemax(T))
     seen = zeros(Bool, n)
     queue = Vector{T}(n)
-    for i in 1:length(source)
+    @inbounds for i in 1:length(source)
         queue[i] = source[i]
         dists[source[i]] = 0
         seen[source[i]] = true
@@ -79,7 +79,7 @@ function gdistances!(g::AbstractGraph, source, dists)
         current = queue[head]
         distance = dists[current] + 1
         head += 1
-        for j in out_neighbors(g, current)
+        @inbounds for j in out_neighbors(g, current)
             if !seen[j]
                 dists[j] = distance
                 tail += 1
