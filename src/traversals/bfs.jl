@@ -65,11 +65,13 @@ For vertices in disconnected components the default distance is -1.
 function gdistances!(g::AbstractGraph, source, dists)
     T = eltype(g)
     n = nv(g)
-    fill!(dists, -1)
+    fill!(dists, typemax(T))
+    seen = zeros(Bool, n)
     queue = Vector{T}(n)
-    for i in 1:length(source)
+    @inbounds for i in 1:length(source)
         queue[i] = source[i]
         dists[source[i]] = 0
+        seen[source[i]] = true
     end
     head = 1
     tail = length(source)
@@ -77,11 +79,12 @@ function gdistances!(g::AbstractGraph, source, dists)
         current = queue[head]
         distance = dists[current] + 1
         head += 1
-        for j in out_neighbors(g, current)
-            if dists[j] == -1
+        @inbounds for j in out_neighbors(g, current)
+            if !seen[j]
                 dists[j] = distance
                 tail += 1
                 queue[tail] = j
+                seen[j] = true
             end
         end
     end
