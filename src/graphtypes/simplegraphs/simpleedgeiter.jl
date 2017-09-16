@@ -17,7 +17,8 @@ end
 eltype(::Type{SimpleEdgeIter{SimpleGraph{T}}}) where {T} = SimpleGraphEdge{T}
 eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
 
-function edge_start(g::Union{SimpleGraph{T}, SimpleDiGraph{T}}) where {T <: Integer}
+function edge_start(g::AbstractSimpleGraph)
+    T = eltype(g)
     s = one(T)
     while s <= nv(g)
         isempty(fadj(g, s)) || return SimpleEdgeIterState(s, 1)
@@ -26,7 +27,7 @@ function edge_start(g::Union{SimpleGraph{T}, SimpleDiGraph{T}}) where {T <: Inte
     return SimpleEdgeIterState(zero(T), 1)
 end
 
-function edge_next(g::Union{SimpleGraph{T}, SimpleDiGraph{T}}, 
+function edge_next(g::AbstractSimpleGraph, 
     state::SimpleEdgeIterState{T}) where {T <: Integer}
     s = state.s
     di = state.di
