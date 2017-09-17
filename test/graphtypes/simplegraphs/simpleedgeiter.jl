@@ -31,6 +31,19 @@
     add_edge!(ga, 5, 10)
     add_edge!(ga, 10, 3)
 
+    e1 = Edge(3, 10)
+    e2 = (3, 10)
+    @test e1 ∈ edges(ga)
+    @test e2 ∈ edges(ga) 
+    @test (3, 9) ∉ edges(ga)
+   
+    for u in 1:20, v in 1:20
+      b = has_edge(ga, u, v) 
+      @test b == @inferred (u, v) ∈ edges(ga)
+      @test b == @inferred (u => v) ∈ edges(ga)
+      @test b == @inferred Edge(u, v) ∈ edges(ga)
+    end      
+
     eit = edges(ga)
     es = @inferred(start(eit))
 
@@ -44,11 +57,19 @@
     @test edges(ga) == edges(gb)
     @test edges(gb) == edges(ga)
 
+
     ga = SimpleDiGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
     add_edge!(ga, 5, 10)
     add_edge!(ga, 10, 3)
+
+    for u in 1:20, v in 1:20
+      b = has_edge(ga, u, v) 
+      @test b == @inferred (u, v) ∈ edges(ga)
+      @test b == @inferred (u => v) ∈ edges(ga)
+      @test b == @inferred Edge(u, v) ∈ edges(ga)
+    end   
 
     eit = @inferred(edges(ga))
     es = @inferred(start(eit))

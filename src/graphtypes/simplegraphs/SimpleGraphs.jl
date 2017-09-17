@@ -1,7 +1,7 @@
 module SimpleGraphs
 
 import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero
+    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero, in
 
 import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
