@@ -17,8 +17,7 @@ end
 eltype(::Type{SimpleEdgeIter{SimpleGraph{T}}}) where {T} = SimpleGraphEdge{T}
 eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
 
-function edge_start(g::AbstractSimpleGraph)
-    T = eltype(g)
+function edge_start(g::AbstractSimpleGraph{T}) where T
     s = one(T)
     while s <= nv(g)
         isempty(fadj(g, s)) || return SimpleEdgeIterState(s, 1)
@@ -48,7 +47,7 @@ function edge_next(g::AbstractSimpleGraph,
 end
 
 start(eit::SimpleEdgeIter) = edge_start(eit.g)
-done(eit::SimpleEdgeIter, state::SimpleEdgeIterState) = state.s == 0
+done(eit::SimpleEdgeIter, state::SimpleEdgeIterState{T}) where T = state.s == zero(T)
 length(eit::SimpleEdgeIter) = ne(eit.g)
 next(eit::SimpleEdgeIter, state::SimpleEdgeIterState) = edge_next(eit.g, state)
 
