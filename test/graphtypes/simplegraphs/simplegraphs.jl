@@ -100,6 +100,13 @@
         @test @inferred(has_edge(g, e))
     end
 
+    let 
+        g = Graph(7, 12)
+        h = Graph()
+        add_edges!(h, edges(g))
+        @test g == h
+    end
+
     gdx = PathDiGraph(4)
     for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
@@ -174,5 +181,10 @@
         @test g != h
     end
 
-
+    let 
+        g = DiGraph(7, 24)
+        h = DiGraph()
+        add_edges!(h, edges(g))
+        @test g == h
+    end
 end
