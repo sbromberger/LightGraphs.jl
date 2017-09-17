@@ -161,6 +161,20 @@ function mincut(
 end
 
 
+function mincut_new(
+    g::AbstractGraph,
+    distmx::AbstractMatrix{T}=weights(g)
+) where T
+    U = eltype(g)
+    colormap = zeros(Int8, nv(g))
+    parities = falses(n)
+    bestweight = typemax(T)
+    cutweight = zero(T)
+    visited = zero(Int)
+    vertices = Vector{U}()
+
+
+end
 """
     maximum_adjacency_visit(g[, distmx][, log][, io])
 
