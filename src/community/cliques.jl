@@ -23,10 +23,11 @@ julia> maximal_cliques(g)
 ```
 """
 function maximal_cliques end
-@traitfn function maximal_cliques(g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function maximal_cliques{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected))
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
+    # uncomment this when https://github.com/JuliaLang/julia/issues/23618 is fixed
     # nnbrs = [Set{T}() for n in vertices(g)]
     nnbrs = Vector{Set{T}}()
     for n in vertices(g)

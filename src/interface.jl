@@ -7,7 +7,7 @@ _NI(m) = error("Not implemented: $m")
 
 An abstract type representing a single edge between two vertices of a graph.
 """
-abstract type AbstractEdge end
+abstract type AbstractEdge{T} end
 
 """
     AbstractEdgeIter
@@ -21,7 +21,7 @@ abstract type AbstractEdgeIter end
 
 An abstract type representing a graph.
 """
-abstract type AbstractGraph end
+abstract type AbstractGraph{T} end
 
 
 @traitdef IsDirected{G<:AbstractGraph}
