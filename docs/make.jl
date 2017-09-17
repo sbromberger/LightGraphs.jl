@@ -27,6 +27,7 @@ makedocs(
         "Degeneracy"                        => "degeneracy.md",
         "Flow and Cut"                      => "flowcut.md",
         "Graph Generators"                  => "generators.md",
+        "Choosing A Graph Type"             => "graphtypes.md",
         "Reading / Writing Graphs"          => "persistence.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
