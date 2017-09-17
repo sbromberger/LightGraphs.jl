@@ -1,14 +1,14 @@
-using LightGraphs.LinAlg
+using LightGraphs.GraphMatrices
 
 const linalgtestdir = dirname(@__FILE__)
 
 tests = [
-    "graphmatrices",
-    "spectral"
+    "graphmatrix",
+    "nonbacktracking"
 ]
 
 
-@testset "LightGraphs.LinAlg" begin
+@testset "LightGraphs.GraphMatrices" begin
     for t in tests
         tp = joinpath(linalgtestdir, "$(t).jl")
         include(tp)
