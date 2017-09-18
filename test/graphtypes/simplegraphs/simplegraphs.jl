@@ -102,9 +102,12 @@
 
     let 
         g = Graph(7, 12)
-        h = Graph()
-        add_edges!(h, edges(g))
-        @test g == h
+        add_edge!(g, 1, 1) # add a self loop to check edge case in counting edges
+        h = Graph(12, 12) 
+        g2 = copy(g)
+        invoke(add_edges!, Tuple{Any, Any}, g, edges(h))
+        add_edges!(g2, edges(h)) 
+        @test g == g2
     end
 
     gdx = PathDiGraph(4)
@@ -183,8 +186,11 @@
 
     let 
         g = DiGraph(7, 24)
-        h = DiGraph()
-        add_edges!(h, edges(g))
-        @test g == h
+        add_edge!(g, 1, 1)
+        h = DiGraph(12, 24) 
+        g2 = copy(g)
+        invoke(add_edges!, Tuple{Any, Any}, g, edges(h))
+        add_edges!(g2, edges(h)) 
+        @test g == g2
     end
 end

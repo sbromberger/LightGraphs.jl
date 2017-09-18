@@ -141,39 +141,49 @@ end
 
 function add_edges!(g::SimpleGraph, es)
     T = eltype(g)
-    nvg = nv(g)
-    neg = ne(g)
+    nvnew = nvold = nv(g)
+    touched = falses(nvold)
+    neold = ne(g)
     for e in es
         s, d = T.(Tuple(e))
         if s < 1 || d < 1
-            error("Nonpositive vertex numner")
-        elseif s == d
-            error("Self loop in edges")
+            error("Nonpositive vertex number")
         end
         for v in (s, d)
-            if v > nvg
+            if v > nvnew
                 resize!(g.fadjlist, v)
-                for i in nvg+1:v
+                for i in nvnew+1:v
                     g.fadjlist[i] = Vector{T}()
                 end
-                nvg = v
+                nvnew = v
+            elseif v <= nvold 
+                touched[v] = true
             end
         end
         append!(g.fadjlist[s], d)
-        append!(g.fadjlist[d], s)
+        s != d && append!(g.fadjlist[d], s)
     end
-    nenew = 0
-    for s in 1:nvg
-        sort!(g.fadjlist[s])
-        if VERSION >= v"0.7.0-DEV.601"
-            unique!(g.fadjlist[s])
-        else
-            g.fadjlist[s] = unique(g.fadjlist[s])
+    k = 0
+    for s in 1:nvold
+        if touched[s]
+            sort!(g.fadjlist[s])
+            uniquesorted!(g.fadjlist[s])
         end
-        nenew += length(g.fadjlist[s])
+        k += length(g.fadjlist[s])
+        if insorted(s, g.fadjlist[s])
+            k += 1
+        end
     end
-    g.ne = nenew ÷ 2
-    return g.ne > neg
+    for s in nvold+1:nvnew
+        sort!(g.fadjlist[s])
+        uniquesorted!(g.fadjlist[s])
+        k += length(g.fadjlist[s])
+        if insorted(s, g.fadjlist[s])
+            k += 1
+        end
+    end
+    g.ne = k ÷ 2
+    return g.ne > neold
 end
 
 

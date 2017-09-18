@@ -118,43 +118,57 @@ end
 
 function add_edges!(g::SimpleDiGraph, es)
     T = eltype(g)
-    nvg = nv(g)
-    neg = ne(g)
+    nvnew = nvold = nv(g)
+    neold = ne(g)
+    ftouched = falses(nvold)
+    btouched = falses(nvold)
+
     for e in es
         s, d = T.(Tuple(e))
         if s < 1 || d < 1
-            error("Nonpositive vertex numner")
-        elseif s == d
-            error("Self loop in edges")
+            error("Nonpositive vertex number")
         end
         for v in (s, d)
-            if v > nvg
+            if v > nvnew
                 resize!(g.fadjlist, v)
                 resize!(g.badjlist, v)     
-                for i in nvg+1:v
+                for i in nvnew+1:v
                     g.fadjlist[i] = Vector{T}()
                     g.badjlist[i] = Vector{T}()
                 end
-                nvg = v
+                nvnew = v
             end
+        end
+        if s <= nvold
+            ftouched[s] = true
+        end
+        if d <= nvold 
+            btouched[d] = true   
         end
         append!(g.fadjlist[s], d)
         append!(g.badjlist[d], s)
     end
     nenew = 0
-    for s in 1:nvg
-        sort!(g.fadjlist[s])
-        if VERSION >= v"0.7.0-DEV.601"
-            unique!(g.fadjlist[s])
-            unique!(g.badjlist[s])
-        else
-            g.fadjlist[s] = unique(g.fadjlist[s])
-            g.badjlist[s] = unique(g.badjlist[s])          
+    for s in 1:nvold
+        if ftouched[s]
+            sort!(g.fadjlist[s])
+            uniquesorted!(g.fadjlist[s])
         end
+        nenew += length(g.fadjlist[s])
+        if btouched[s]    
+            sort!(g.badjlist[s])
+            uniquesorted!(g.badjlist[s])
+        end
+    end
+    for s in nvold+1:nvnew
+        sort!(g.fadjlist[s])
+        uniquesorted!(g.fadjlist[s])
+        sort!(g.badjlist[s])
+        uniquesorted!(g.badjlist[s])
         nenew += length(g.fadjlist[s])
     end
     g.ne = nenew 
-    return g.ne > neg
+    return g.ne > neold
 end
 
 function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)

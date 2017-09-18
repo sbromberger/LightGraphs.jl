@@ -9,7 +9,7 @@ import LightGraphs:
     add_vertex!, add_edge!, add_edges!, rem_vertex!, rem_edge!,
     has_vertex, has_edge, in_neighbors, out_neighbors,
 
-    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
+    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted, uniquesorted!
 
 export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphEdge,
