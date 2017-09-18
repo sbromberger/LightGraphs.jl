@@ -72,7 +72,7 @@ simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean,
 
 # maximum_adjacency_visit
-MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
+MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit, mincut_new,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,

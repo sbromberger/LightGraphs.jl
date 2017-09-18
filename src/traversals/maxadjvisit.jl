@@ -165,16 +165,61 @@ function mincut_new(
     g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)
 ) where T
+
     U = eltype(g)
-    colormap = zeros(Int8, nv(g))
-    parities = falses(n)
+    colormap = zeros(Int8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
+    parities = falses(nv(g))
     bestweight = typemax(T)
     cutweight = zero(T)
-    visited = zero(Int)
-    vertices = Vector{U}()
+    visited = zero(Int)             ## number of vertices visited
+    # vertices = Vector{U}()        ## not sure if this extra info is necessary to be stored
+    pq = DataStructures.PriorityQueue{Int, T}(Base.Order.Reverse)
 
+    # Set number of visited neighbors for all vertices to 0
+    for v in vertices(g)
+        pq[v] = zero(T)
+    end
 
+    @assert haskey(pq, 1)
+    @assert nv(g) >= 2
+
+    #Give the starting vertex high priority
+    pq[1] = one(T)
+
+    while !isempty(pq)
+        u = DataStructures.dequeue!(pq)
+        # parities[u] = false
+        colormap[u] = 1
+        # push!(vertices, u)
+
+        for v in out_neighbors(g, u)
+            # if the target of e is already marked then decrease cutweight
+            # otherwise, increase it
+            ew = distmx[u, v]
+            if colormap[v] != 0
+                cutweight -= ew
+            else
+                cutweight += ew
+            end
+            if haskey(pq, v)
+                pq[v] += distmx[u, v]
+            end
+        end
+
+        colormap[u] = 2
+        visited += 1
+        if cutweight < bestweight && visited < nv(g)
+            bestweight = cutweight
+            for u in vertices(g)
+                parities[u] = (colormap[u] == 2)
+            end
+        end
+    end
+
+    return(parities + 1, bestweight)
 end
+
+
 """
     maximum_adjacency_visit(g[, distmx][, log][, io])
 
