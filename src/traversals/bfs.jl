@@ -89,7 +89,40 @@ function gdistances!(g::AbstractGraph{T}, source, dists) where T
     return dists
 end
 
+function gdistances2!(g::AbstractGraph{T}, source, vert_level) where T
+    n = nv(g)
+    visited = falses(n)
+    n_level = T(2)
+    cur_level = Vector{T}()
+    sizehint!(cur_level, n)
+    next_level = Vector{T}()
+    sizehint!(next_level, n)
+    vert_level[source] = zero(T)
+    visited[source] = true
 
+    push!(cur_level, source)
+    while !isempty(cur_level)
+        @inbounds for v in cur_level
+            @simd for i in out_neighbors(g, v)
+                if !visited[i]
+                    push!(next_level, i)
+                    vert_level[i] = n_level
+                    visited[i] = true
+                end
+            end
+        end
+        n_level += one(T)
+        empty!(cur_level)
+        cur_level, next_level = next_level, cur_level
+        sort!(cur_level)
+    end
+    return vert_level
+end
+
+function gdist2(g::AbstractGraph{T}, source) where T
+    dists = zeros(T, nv(g))
+    gdistances2!(g, source, dists)
+end
 """
     gdistances(g, source)
 
@@ -97,7 +130,7 @@ Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
 For vertices in disconnected components the default distance is -1.
 """
-gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, Vector{T}(nv(g)))
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
