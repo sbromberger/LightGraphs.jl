@@ -167,30 +167,27 @@ function mincut_new(
 ) where T
 
     U = eltype(g)
-    colormap = zeros(Int8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
+    colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
     parities = falses(nv(g))
     bestweight = typemax(T)
     cutweight = zero(T)
-    visited = zero(Int)             ## number of vertices visited
-    # vertices = Vector{U}()        ## not sure if this extra info is necessary to be stored
-    pq = DataStructures.PriorityQueue{Int, T}(Base.Order.Reverse)
+    visited = zero(U)               ## number of vertices visited
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
         pq[v] = zero(T)
     end
 
-    @assert haskey(pq, 1)
-    @assert nv(g) >= 2
+    @assert haskey(pq, one(U))
+    @assert nv(g) >= U(2)
 
     #Give the starting vertex high priority
-    pq[1] = one(T)
+    pq[one(U)] = one(T)
 
     while !isempty(pq)
         u = DataStructures.dequeue!(pq)
-        # parities[u] = false
         colormap[u] = 1
-        # push!(vertices, u)
 
         for v in out_neighbors(g, u)
             # if the target of e is already marked then decrease cutweight
@@ -207,7 +204,7 @@ function mincut_new(
         end
 
         colormap[u] = 2
-        visited += 1
+        visited += one(U)
         if cutweight < bestweight && visited < nv(g)
             bestweight = cutweight
             for u in vertices(g)
@@ -215,8 +212,7 @@ function mincut_new(
             end
         end
     end
-
-    return(parities + 1, bestweight)
+    return(convert(Vector{Int8},parities) .+ 1, bestweight)
 end
 
 
