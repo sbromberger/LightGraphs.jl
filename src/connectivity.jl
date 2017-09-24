@@ -125,6 +125,8 @@ function is_weakly_connected end
 Compute the strongly connected components of a directed graph `g`.
 
 Return an array of arrays, each of which is the entire connected component.
+
+### Implementation Notes
 The order of the components is not part of the API contract.
 """
 function strongly_connected_components end
