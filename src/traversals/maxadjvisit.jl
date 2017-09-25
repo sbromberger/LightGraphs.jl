@@ -48,7 +48,7 @@ function mincut(
             # if the target of e is already marked then decrease cutweight
             # otherwise, increase it
             ew = distmx[u, v]
-            if colormap[v] != 0x00
+            if colormap[v] != 0
                 cutweight -= ew
             else
                 cutweight += ew
@@ -58,12 +58,12 @@ function mincut(
             end
         end
 
-        colormap[u] = 0x02
+        colormap[u] = 0
         visited += one(U)
         if cutweight < bestweight && visited < nv(g)
             bestweight = cutweight
             for u in vertices(g)
-                parities[u] = (colormap[u] == 0x02)
+                parities[u] = (colormap[u] == 2)
             end
         end
     end

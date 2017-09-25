@@ -17,16 +17,15 @@ from a vertex ``i`` to each of the `out_neighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
 
-function diffusion(g::AbstractGraph,
+function diffusion(g::AbstractGraph{T},
                    p::Real,
                    n::Integer;
                    watch::AbstractVector=Vector{Int}(),
                    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
                    normalize::Bool=false
-                   )
+                   ) where T
 
     # Initialize
-    T = eltype(g)
     watch_set = Set{T}(watch)
     infected_vertices = IntSet(initial_infections)
     vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]

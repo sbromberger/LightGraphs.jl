@@ -152,7 +152,7 @@
         @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
         @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
         eval, evecs = eigs(ahatp, which=:LM)
-        @test eval[1] - 1  <= 0
+        @test eval[1] - (1 + 1.0e-8)  <= 0
         @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
         ahat = ahatp.A
         @test isa(ahat, NormalizedAdjacency)

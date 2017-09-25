@@ -104,16 +104,15 @@ Calculates the breaking of the restricted max-flow from a set of auxiliary point
 for `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 """
 function breakingPoints end
-@traitfn function breakingPoints(
+@traitfn function breakingPoints{T}(
     flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
-    capacity_matrix::AbstractMatrix   # edge flow capacities
+    capacity_matrix::AbstractMatrix{T}   # edge flow capacities
     )
     auxpoints = auxiliaryPoints(flow_graph, source, target, capacity_matrix)
     λ = length(auxpoints) - 1
     left_index = 1
-    T = eltype(capacity_matrix)
     breakingpoints = Vector{Tuple{T,T,Int}}()
 
     for (id, point) in enumerate(auxpoints)
@@ -145,9 +144,8 @@ since we have to ignore zero values.
 # note: this is more efficient than maximum() / minimum() / extrema()
 #       since we have to ignore zero values.
 function minmaxCapacity(
-    capacity_matrix::AbstractMatrix    # edge flow capacities
-    )
-    T = eltype(capacity_matrix)
+    capacity_matrix::AbstractMatrix{T}    # edge flow capacities
+    ) where T
     cmin, cmax = typemax(T), typemin(T)
     for c in capacity_matrix
         if c > zero(T)
