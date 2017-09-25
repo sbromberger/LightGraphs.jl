@@ -58,7 +58,7 @@ function mincut(
             end
         end
 
-        colormap[u] = 0
+        colormap[u] = 2
         visited += one(U)
         if cutweight < bestweight && visited < nv(g)
             bestweight = cutweight
