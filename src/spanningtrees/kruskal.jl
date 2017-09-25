@@ -28,12 +28,12 @@ Return a vector of edges representing the minimum spanning tree of a connected, 
 distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm).
 """
 function kruskal_mst end
-@traitfn function kruskal_mst{T}(
-    g::::(!IsDirected),
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function kruskal_mst{T, U, AG<:AbstractGraph{U}}(
+    g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g)
 )
 
-    U = eltype(g)
     edge_list = Vector{KruskalHeapEntry{T}}()
     mst = Vector{Edge}()
     connected_vs = collect(one(U):nv(g))

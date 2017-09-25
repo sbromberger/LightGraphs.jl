@@ -5,12 +5,12 @@ const SimpleGraphEdge = SimpleEdge
 
 A type representing an undirected graph.
 """
-mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph
+mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
 
-eltype(x::SimpleGraph{T}) where T<:Integer = T
+eltype(x::SimpleGraph{T}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
@@ -125,8 +125,7 @@ function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
     return insorted(v, fadj(g, u))
 end
 
-function add_edge!(g::SimpleGraph, e::SimpleGraphEdge)
-    T = eltype(g)
+function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
@@ -206,8 +205,7 @@ end
 
 Add a new vertex to the graph `g`. Return `true` if addition was successful.
 """
-function add_vertex!(g::SimpleGraph)
-    T = eltype(g)
+function add_vertex!(g::SimpleGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.fadjlist, Vector{T}())
     return true

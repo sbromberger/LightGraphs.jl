@@ -9,8 +9,7 @@ If `g` is not bipartite, return an empty vector.
 Note that an empty vector does not necessarily indicate non-bipartiteness.
 An empty graph will return an empty vector but is bipartite.
 """
-function bipartite_map(g::AbstractGraph)
-    T = eltype(g)
+function bipartite_map(g::AbstractGraph{T}) where T
     nvg = nv(g)
     if !is_directed(g)
         ccs = filter(x -> length(x) > 2, connected_components(g))

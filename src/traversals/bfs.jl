@@ -23,8 +23,7 @@ use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
 bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
     (dir == :out) ? _bfs_parents(g, s, out_neighbors) : _bfs_parents(g, s, in_neighbors)
-function _bfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
-    T = eltype(g)
+function _bfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     Q=Vector{T}()
     parents = zeros(T, nv(g))
     seen = zeros(Bool, nv(g))
@@ -62,14 +61,15 @@ Fill `dists` with the geodesic distances of vertices in `g` from `source`.
 `dists` should be a vector of length `nv(g)`. Return `dists`.
 For vertices in disconnected components the default distance is -1.
 """
-function gdistances!(g::AbstractGraph, source, dists)
-    T = eltype(g)
+function gdistances!(g::AbstractGraph{T}, source, dists) where T
     n = nv(g)
-    fill!(dists, -1)
+    fill!(dists, typemax(T))
+    seen = zeros(Bool, n)
     queue = Vector{T}(n)
-    for i in 1:length(source)
+    @inbounds for i in 1:length(source)
         queue[i] = source[i]
         dists[source[i]] = 0
+        seen[source[i]] = true
     end
     head = 1
     tail = length(source)
@@ -77,11 +77,12 @@ function gdistances!(g::AbstractGraph, source, dists)
         current = queue[head]
         distance = dists[current] + 1
         head += 1
-        for j in out_neighbors(g, current)
-            if dists[j] == -1
+        @inbounds for j in out_neighbors(g, current)
+            if !seen[j]
                 dists[j] = distance
                 tail += 1
                 queue[tail] = j
+                seen[j] = true
             end
         end
     end
@@ -105,9 +106,8 @@ Return `true` if there is a path from `u to `v` in `g` (while avoiding vertices 
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
 is in `excluded_vertices`. 
 """
-function has_path(g::AbstractGraph, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector=Vector{eltype(g)}())
-    T = eltype(g)
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
+        exclude_vertices::AbstractVector=Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true

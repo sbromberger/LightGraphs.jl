@@ -11,8 +11,8 @@ to each vertex. The component value is the smallest vertex ID in the component.
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components! end
-@traitfn function connected_components!(label::AbstractVector, g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function connected_components!{T, AG<:AbstractGraph{T}}(label::AbstractVector, g::AG::(!IsDirected))
     nvg = nv(g)
 
     for u in vertices(g)
@@ -84,8 +84,8 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 [`weakly_connected_components`](@ref).
 """
 function connected_components end
-@traitfn function connected_components(g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function connected_components{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected))
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -125,8 +125,8 @@ function is_weakly_connected end
 Compute the strongly connected components of a directed graph `g`.
 """
 function strongly_connected_components end
-@traitfn function strongly_connected_components(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function strongly_connected_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
@@ -213,8 +213,8 @@ Return the (common) period for all vertices in a strongly connected directed gra
 Will throw an error if the graph is not strongly connected.
 """
 function period end
-@traitfn function period(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function period{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     !is_strongly_connected(g) && error("Graph must be strongly connected")
 
     # First check if there's a self loop
@@ -272,8 +272,8 @@ The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges.
 """
 function attracting_components end
-@traitfn function attracting_components(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function attracting_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     scc  = strongly_connected_components(g)
     cond = condensation(g, scc)
 
@@ -300,9 +300,8 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ?
     _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
 
-function _neighborhood(g::AbstractGraph, v::Integer, d::Integer, neighborfn::Function)
+function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Integer, neighborfn::Function) where T
     @assert d >= 0 "Distance has to be greater then zero."
-    T = eltype(g)
     neighs = Vector{T}()
     push!(neighs, v)
 
