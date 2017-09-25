@@ -141,9 +141,9 @@ function strongly_connected_components end
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
-    components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
+    components = zeros(T, nvg)    # mapping of vertex to component
+    compnumber = 1
     sizehint!(stack, nvg)
-    sizehint!(components, nvg)
 
     for s in vertices(g)
         if index[s] == zero_t
@@ -194,7 +194,8 @@ function strongly_connected_components end
                                 break
                             end
                         end
-                        push!(components, reverse(component))
+                        components[component] = compnumber
+                        compnumber += 1
                     end
                 else #LABEL A
                     # add unvisited neighbor to dfs
@@ -210,8 +211,7 @@ function strongly_connected_components end
             end
         end
     end
-
-    return components
+    return [T.(findin(components,i)) for i in 1:compnumber]
 end
 
 
