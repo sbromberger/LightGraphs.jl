@@ -1,11 +1,4 @@
-module TestLinAlg
-using LightGraphs.LinAlg
-using Base.Test
-import LightGraphs.LinAlg.SparseMatrix
-import LightGraphs.LinAlg.perron
-
-
-export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other
+# export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other
 
 @testset "Graph matrices" begin
     function converttest(T::Type, var)
@@ -159,7 +152,7 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
         @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
         @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
         eval, evecs = eigs(ahatp, which=:LM)
-        @test eval[1] - 1  <= 0
+        @test eval[1] - (1 + 1.0e-8)  <= 0
         @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
         ahat = ahatp.A
         @test isa(ahat, NormalizedAdjacency)
@@ -211,5 +204,4 @@ export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_oth
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; ncv=10)
     @test all(sd .>= 0)
-end
 end

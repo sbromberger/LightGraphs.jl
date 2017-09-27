@@ -50,7 +50,7 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
   h(λ) = heuristic(λ, G₁, G₂)
 
   # initialize open set
-  OPEN = PriorityQueue(Vector{Tuple}, Float64)
+  OPEN = PriorityQueue{Vector{Tuple}, Float64}()
   for v in 1:nv(G₂)
     enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
   end

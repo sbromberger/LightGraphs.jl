@@ -15,16 +15,13 @@ Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 - Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function boykov_kolmogorov_impl end
-@traitfn function boykov_kolmogorov_impl(
-    residual_graph::::IsDirected,          # the input graph
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function boykov_kolmogorov_impl{T, U, AG<:AbstractGraph{U}}(
+    residual_graph::AG::IsDirected,          # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
-    capacity_matrix::AbstractMatrix    # edge flow capacities
+    capacity_matrix::AbstractMatrix{T}    # edge flow capacities
     )
-
-    T = eltype(capacity_matrix)
-    U = eltype(residual_graph)
-
     n = nv(residual_graph)
 
     flow = 0
@@ -55,8 +52,9 @@ function boykov_kolmogorov_impl end
     return flow, flow_matrix, TREE
 end
 
-@traitfn function find_path!(
-    residual_graph::::IsDirected,            # the input graph
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function find_path!{T, AG<:AbstractGraph{T}}(
+    residual_graph::AG::IsDirected,            # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix
@@ -65,7 +63,7 @@ end
     TREE::Vector,                       # tree table
     A::Vector                           # active set
     )
-    T = eltype(residual_graph)
+
     tree_cap(p, q) = TREE[p] == one(T) ? capacity_matrix[p, q] - flow_matrix[p, q] :
     capacity_matrix[q, p] - flow_matrix[q, p]
     while !isempty(A)
@@ -149,8 +147,8 @@ function augment!(
     return Δ
 end
 
-@traitfn function adopt!(
-    residual_graph::::IsDirected,               # the input graph
+@traitfn function adopt!{T, AG<:AbstractGraph{T}}(
+    residual_graph::AG::IsDirected,               # the input graph
     source::Integer,                             # the source vertex
     target::Integer,                             # the target vertex
     flow_matrix::AbstractMatrix,       # the current flow matrix
@@ -161,7 +159,6 @@ end
     O::Vector                           # orphan set
     )
 
-    T = eltype(residual_graph)
     tree_cap(p, q) = TREE[p] == 1 ? capacity_matrix[p, q] - flow_matrix[p, q] :
     capacity_matrix[q, p] - flow_matrix[q, p]
     while !isempty(O)

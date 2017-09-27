@@ -1,6 +1,5 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
-using LightGraphs.LinAlg
 using Base.Test
 
 # g1 = smallgraph(:petersen)
@@ -34,7 +33,7 @@ using Base.Test
 # quadrangle = random_regular_graph(4,2)
 # pentagon = random_regular_graph(5,2)
 
-testdir = dirname(@__FILE__)
+const testdir = dirname(@__FILE__)
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -45,11 +44,10 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
+    "graphtypes/simplegraphs/runtests",
+    "linalg/runtests",
     "interface",
     "core",
-    "graphtypes/simplegraphs/simplegraphs",
-    "graphtypes/simplegraphs/simpleedge",
-    "graphtypes/simplegraphs/simpleedgeiter",
     "operators",
     # "graphdigraph",
     "degeneracy",
@@ -57,9 +55,8 @@ tests = [
     "digraph/transitivity",
     "digraph/cycles/hadwick-james",
     "digraph/cycles/johnson",
+    "digraph/cycles/karp",
     "edit_distance",
-    "linalg/spectral",
-    "linalg/graphmatrices",
     "connectivity",
     "persistence/persistence",
     "generators/randgraphs",
@@ -76,7 +73,6 @@ tests = [
     "traversals/bipartition",
     "traversals/dfs",
     "traversals/maxadjvisit",
-    "traversals/graphvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
     "community/cliques",
@@ -90,6 +86,8 @@ tests = [
     "centrality/katz",
     "centrality/pagerank",
     "centrality/eigenvector",
+    "centrality/stress",
+    "centrality/radiality",
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/boykov_kolmogorov",

@@ -29,12 +29,8 @@ function bellman_ford_shortest_paths!(
     state::BellmanFordState
     ) where R<:Real where T<:Integer
 
-    active = Set{T}()
-    for v in sources
-        state.dists[v] = 0
-        state.parents[v] = 0
-        push!(active, v)
-    end
+    active = Set{T}(sources)
+    state.dists[sources] = state.parents[sources] = 0
     no_changes = false
     for i in one(T):nv(graph)
         no_changes = true

@@ -1,6 +1,4 @@
-importall LightGraphs.SimpleGraphs
-import LightGraphs.SimpleGraphs: fadj, badj, adj
-struct DummySimpleGraph <: AbstractSimpleGraph end
+
 @testset "SimpleGraphs" begin
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
