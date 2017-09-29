@@ -224,9 +224,8 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
-*{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T}) =
+*(adjmat::Adjacency{T}, x::AbstractVector{T}) where T<:Number =
 	postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
-
 
 *(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T<:Number =
 	adjmat.A * x
