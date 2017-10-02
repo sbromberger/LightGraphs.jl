@@ -47,7 +47,7 @@ function eccentricity(
     g::AbstractGraph,
     v::Integer,
     distmx::AbstractMatrix{T} = weights(g)
-) where T
+) where T <: Real
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && error("Infinite path length detected")
 

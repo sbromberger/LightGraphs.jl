@@ -7,7 +7,7 @@ _NI(m) = error("Not implemented: $m")
 
 An abstract type representing a single edge between two vertices of a graph.
 """
-abstract type AbstractEdge end
+abstract type AbstractEdge{T} end
 
 """
     AbstractEdgeIter
@@ -21,7 +21,7 @@ abstract type AbstractEdgeIter end
 
 An abstract type representing a graph.
 """
-abstract type AbstractGraph end
+abstract type AbstractGraph{T} end
 
 
 @traitdef IsDirected{G<:AbstractGraph}
@@ -106,6 +106,9 @@ vertices(g::AbstractGraph) = _NI("vertices")
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
+For `AbstractSimpleGraph`s it returns a [`SimpleEdgeIter`](@ref).
+The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+calls to [`has_edge`](@ref).
 
 ### Implementation Notes
 A returned iterator is valid for one pass over the edges, and
@@ -161,8 +164,11 @@ has_vertex(x, v) = _NI("has_vertex")
 
 """
     has_edge(g, e)
+    e ∈ edges(g)
 
-Return true if the graph `g` has an edge `e`.
+Return true if the graph `g` has an edge `e`. 
+The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+calls to `has_edge`, c.f. [`edges`](@ref).
 """
 has_edge(x, e) = _NI("has_edge")
 

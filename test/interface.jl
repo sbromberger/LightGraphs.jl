@@ -1,6 +1,6 @@
-mutable struct DummyGraph <: AbstractGraph end
-mutable struct DummyDiGraph <: AbstractGraph end
-mutable struct DummyEdge <: AbstractEdge end
+mutable struct DummyGraph <: AbstractGraph{Int} end
+mutable struct DummyDiGraph <: AbstractGraph{Int} end
+mutable struct DummyEdge <: AbstractEdge{Int} end
 
 @testset "Interface" begin
     dummygraph = DummyGraph()

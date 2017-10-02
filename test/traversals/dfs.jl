@@ -13,6 +13,7 @@
     gx = CycleDiGraph(3)
     for g in testdigraphs(gx)
       @test @inferred(is_cyclic(g))
+      @test_throws ErrorException topological_sort_by_dfs(g)
     end
 
     for g in testgraphs(PathGraph(2))

@@ -1,40 +1,8 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
-using LightGraphs.LinAlg
 using Base.Test
 
-# g1 = smallgraph(:petersen)
-# g2 = smallgraph(:tutte)
-# g3 = PathGraph(5)
-# g4 = PathDiGraph(5)
-# g5 = DiGraph(4)
-# add_edge!(g5,1,2); add_edge!(g5,2,3); add_edge!(g5,1,3); add_edge!(g5,3,4)
-# g6 = smallgraph(:house)
-#
-# h1 = Graph(5)
-# h2 = Graph(3)
-# h3 = Graph()
-# h4 = DiGraph(7)
-# h5 = DiGraph()
-#
-# # self loops
-# s2 = DiGraph(3)
-# add_edge!(s2,1,2); add_edge!(s2,2,3); add_edge!(s2,3,3)
-# s1 = Graph(s2)
-#
-# r1 = Graph(10,20)
-# r2 = DiGraph(5,10)
-#
-# e0 = Edge(2, 3)
-# e1 = Edge(1, 2)
-# re1 = Edge(2, 1)
-#
-# # polygons
-# triangle = random_regular_graph(3,2)
-# quadrangle = random_regular_graph(4,2)
-# pentagon = random_regular_graph(5,2)
-
-testdir = dirname(@__FILE__)
+const testdir = dirname(@__FILE__)
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -45,11 +13,10 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
+    "graphtypes/simplegraphs/runtests",
+    "linalg/runtests",
     "interface",
     "core",
-    "graphtypes/simplegraphs/simplegraphs",
-    "graphtypes/simplegraphs/simpleedge",
-    "graphtypes/simplegraphs/simpleedgeiter",
     "operators",
     # "graphdigraph",
     "degeneracy",
@@ -57,9 +24,8 @@ tests = [
     "digraph/transitivity",
     "digraph/cycles/hadwick-james",
     "digraph/cycles/johnson",
+    "digraph/cycles/karp",
     "edit_distance",
-    "linalg/spectral",
-    "linalg/graphmatrices",
     "connectivity",
     "persistence/persistence",
     "generators/randgraphs",
@@ -76,7 +42,6 @@ tests = [
     "traversals/bipartition",
     "traversals/dfs",
     "traversals/maxadjvisit",
-    "traversals/graphvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
     "community/cliques",
@@ -90,6 +55,8 @@ tests = [
     "centrality/katz",
     "centrality/pagerank",
     "centrality/eigenvector",
+    "centrality/stress",
+    "centrality/radiality",
     "flow/edmonds_karp",
     "flow/dinic",
     "flow/boykov_kolmogorov",

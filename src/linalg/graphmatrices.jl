@@ -1,31 +1,3 @@
-__precompile__(true)
-
-
-import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
-export convert,
-	SparseMatrix,
-	GraphMatrix,
-	Adjacency,
-	adjacency,
-	Laplacian,
-	CombinatorialAdjacency,
-	CombinatorialLaplacian,
-	NormalizedAdjacency,
-	NormalizedLaplacian,
-	StochasticAdjacency,
-	StochasticLaplacian,
-	AveragingAdjacency,
-	AveragingLaplacian,
-	PunchedAdjacency,
-	Noop,
-	diag,
-	degrees,
-	symmetrize,
-	prescalefactor,
-	postscalefactor
-
-
-
 const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
 """
@@ -252,9 +224,8 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
-*{T<:Number}(adjmat::Adjacency{T}, x::AbstractVector{T}) =
+*(adjmat::Adjacency{T}, x::AbstractVector{T}) where T<:Number =
 	postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
-
 
 *(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T<:Number =
 	adjmat.A * x

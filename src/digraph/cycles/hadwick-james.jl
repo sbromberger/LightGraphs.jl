@@ -8,13 +8,10 @@ of Hadwick & James.
 - Hadwick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
 """
 function simplecycles_hadwick_james end
-@traitfn function simplecycles_hadwick_james(g::::IsDirected)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function simplecycles_hadwick_james{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     nvg = nv(g)
-    T = eltype(g)
-    B = Vector{Vector{T}}()
-    for i in vertices(g)
-        push!(B, Vector{T}())
-    end
+    B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)
     stack = Vector{T}()
     cycles = Vector{Vector{T}}()

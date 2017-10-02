@@ -11,8 +11,8 @@ to each vertex. The component value is the smallest vertex ID in the component.
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components! end
-@traitfn function connected_components!(label::AbstractVector, g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function connected_components!{T, AG<:AbstractGraph{T}}(label::AbstractVector, g::AG::(!IsDirected))
     nvg = nv(g)
 
     for u in vertices(g)
@@ -84,8 +84,8 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 [`weakly_connected_components`](@ref).
 """
 function connected_components end
-@traitfn function connected_components(g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function connected_components{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected))
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -118,73 +118,102 @@ Return `true` if the directed graph `g` is connected.
 function is_weakly_connected end
 @traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
 
-# Adapated from Graphs.jl
-mutable struct TarjanVisitor{T<:Integer} <: AbstractGraphVisitor
-    stack::Vector{T}
-    onstack::BitVector
-    lowlink::Vector{T}
-    index::Vector{T}
-    components::Vector{Vector{T}}
-end
-
-TarjanVisitor(n::T) where T<:Integer = TarjanVisitor(
-    Vector{T}(),
-    falses(n),
-    Vector{T}(),
-    zeros(T, n),
-    Vector{Vector{T}}()
-)
-
-function discover_vertex!(vis::TarjanVisitor, v)
-    vis.index[v] = length(vis.stack) + 1
-    push!(vis.lowlink, length(vis.stack) + 1)
-    push!(vis.stack, v)
-    vis.onstack[v] = true
-    return true
-end
-
-function examine_neighbor!(vis::TarjanVisitor, v, w, v_color::Int, w_color::Int, e_color::Int)
-    if w_color != 0 && vis.onstack[w] # != 0 means seen
-        while vis.index[w] > 0 && vis.index[w] < vis.lowlink[end]
-            pop!(vis.lowlink)
-        end
-    end
-    return true
-end
-
-function close_vertex!(vis::TarjanVisitor, v)
-    if vis.index[v] == vis.lowlink[end]
-        component = splice!(vis.stack, vis.index[v]:length(vis.stack))
-        vis.onstack[component] = false
-        pop!(vis.lowlink)
-        push!(vis.components, component)
-    end
-    return true
-end
 
 """
     strongly_connected_components(g)
 
 Compute the strongly connected components of a directed graph `g`.
+
+Return an array of arrays, each of which is the entire connected component.
+
+### Implementation Notes
+The order of the components is not part of the API contract.
 """
 function strongly_connected_components end
-@traitfn function strongly_connected_components(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function strongly_connected_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+    zero_t = zero(T)
+    one_t = one(T)
     nvg = nv(g)
-    cmap = zeros(Int, nvg)
-    components = Vector{Vector{T}}()
+    count = one_t
+    index = zeros(T, nvg)         # first time in which vertex is discovered
+    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
+    onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
+    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
+    parents = zeros(T, nvg)       # parent of every vertex in dfs
+    components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
+    sizehint!(stack, nvg)
+    sizehint!(components, nvg)
 
-    for v in vertices(g)
-        if cmap[v] == 0 # 0 means not visited yet
-            visitor = TarjanVisitor(nvg)
-            traverse_graph!(g, DepthFirst(), v, visitor, vertexcolormap=cmap)
-            for component in visitor.components
-                push!(components, component)
+    for s in vertices(g)
+        if index[s] == zero_t
+            index[s] = count
+            lowlink[s] = count
+            onstack[s] = true
+            parents[s] = s
+            push!(stack, s)
+            count = count + one_t
+
+            # start dfs from 's'
+            dfs_stack = Vector{T}([s])
+            while !isempty(dfs_stack)
+                v = dfs_stack[end] #end is the most recently added item
+                u = zero_t
+                for n in out_neighbors(g, v)
+                    if index[n] == zero_t
+                        # unvisited neighbor found
+                        u = n
+                        break
+                        #GOTO A push u onto DFS stack and continue DFS
+                    elseif onstack[n]
+                        # we have already seen n, but can update the lowlink of v
+                        # which has the effect of possibly keeping v on the stack until n is ready to pop.
+                        # update lowest index 'v' can reach through out neighbors
+                        lowlink[v] = min(lowlink[v], index[n])
+                    end
+                end
+                if u == zero_t
+                    # All out neighbors already visited or no out neighbors
+                    # we have fully explored the DFS tree from v.
+                    # time to start popping.
+                    popped = pop!(dfs_stack)
+                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
+                    if index[v] == lowlink[v]
+                        # found a cycle in a completed dfs tree.
+                        component = Vector{T}()
+                        sizehint!(component, length(stack))
+                        while !isempty(stack) #break when popped == v
+                            # drain stack until we see v.
+                            # everything on the stack until we see v is in the SCC rooted at v.
+                            popped = pop!(stack)
+                            push!(component, popped)
+                            onstack[popped] = false
+                            # popped has been assigned a component, so we will never see it again.
+                            if popped == v
+                                # we have drained the stack of an entire component.
+                                break
+                            end
+                        end
+                        push!(components, reverse(component))
+                    end
+                else #LABEL A
+                    # add unvisited neighbor to dfs
+                    index[u] = count
+                    lowlink[u] = count
+                    onstack[u] = true
+                    parents[u] = v
+                    count = count + one_t
+                    push!(stack, u)
+                    push!(dfs_stack, u)
+                    # next iteration of while loop will expand the DFS tree from u.
+                end
             end
         end
     end
+
     return components
 end
+
 
 """
     is_strongly_connected(g)
@@ -201,8 +230,8 @@ Return the (common) period for all vertices in a strongly connected directed gra
 Will throw an error if the graph is not strongly connected.
 """
 function period end
-@traitfn function period(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function period{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     !is_strongly_connected(g) && error("Graph must be strongly connected")
 
     # First check if there's a self loop
@@ -260,8 +289,8 @@ The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges.
 """
 function attracting_components end
-@traitfn function attracting_components(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function attracting_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     scc  = strongly_connected_components(g)
     cond = condensation(g, scc)
 
@@ -285,14 +314,13 @@ from `v`.
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
-neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ? 
+neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ?
     _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
 
-function _neighborhood(g::AbstractGraph, v::Integer, d::Integer, neighborfn::Function)
+function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Integer, neighborfn::Function) where T
     @assert d >= 0 "Distance has to be greater then zero."
-    T = eltype(g)
     neighs = Vector{T}()
-    push!(neighs, v)    
+    push!(neighs, v)
 
     Q = Vector{T}()
     seen = falses(nv(g))
