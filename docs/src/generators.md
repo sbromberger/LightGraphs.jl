@@ -8,21 +8,20 @@ generator functions, and the ability to read and write graphs from files
 
 ## Modifying graphs
 
-- `Graph`: Constructor for a simple undirected graph.
-- `DiGraph`: Constructor for a simple directed graph.
-- `add_edge!`: Add an edge to an existing graph.
-- `rem_edge!`: Remove an edge from an existing graph.
-- `add_vertex!`, `add_vertices!`: Add one (or several) vertices to an existing graph.
-- `rem_vertex!`: Remove an existing vertex. Note that for `Graph` and `DiGraph` objects
-this is accomplished via a "swap-and-pop" procedure where the highest-indexed vertex
-is swapped with the vertex to be removed, and only then is the vertex removed. As a
-result, unlike in some libraries (like `iGraph`), vertex indices will not all
-down-shift when a vertex is removed; rather, the only change is that the previously
-highest-index vertex will take on the index of the removed index.
-- `zero`: creates a zero-vertex zero-edge graph of same types as the graph passed
-as an argument.
+*LightGraphs.jl* offers a range of tools for modifying graphs, including:
 
-In addition to these core functions, more advanced operators can be found in [operators](@ref).
+```@docs
+Graph
+DiGraph
+add_edge!
+rem_edge!
+add_vertex!
+add_vertices!
+rem_vertex!
+zero
+```
+
+In addition to these core functions, more advanced operators can be found in [Operators](@ref).
 
 ## Graph Generators
 

@@ -10,6 +10,8 @@ Order = [:type, :function]
 Pages   = ["centrality.md"]
 ```
 
+## Full docs
+
 ```@autodocs
 Modules = [LightGraphs]
 Pages   = [

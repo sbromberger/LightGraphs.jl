@@ -1,7 +1,7 @@
 # Accessing Graph Properties
-The following is an overview of functions for accessing graph properties. For functions that modify graphs, see [Making and Modifying Graphs](@ref). 
+The following is an overview of functions for accessing graph properties. For functions that modify graphs, see [Making and Modifying Graphs](@ref).
 
-## Whole-Graph Properties:
+## Graph Properties:
 
 - `nv`: Returns number of vertices in graph.
 - `ne`: Returns number of edges in graph.

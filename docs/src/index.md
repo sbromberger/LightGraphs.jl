@@ -1,11 +1,8 @@
 # Light Graphs
 
-The goal of *LightGraphs.jl* is to mirror the functionality of robust network and graph analysis libraries such as [NetworkX](http://networkx.github.io) while being simpler to use and more efficient than existing Julian graph libraries such as [Graphs.jl](https://github.com/JuliaLang/Graphs.jl). It is an explicit design decision that any data not required for graph manipulation (attributes and other information, for example) is expected to be stored outside of the graph structure itself. Such data lends itself to storage in more traditional and better-optimized mechanisms.
+The goal of *LightGraphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph` (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
 
-To this end, LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph` (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
-
-
-Additional functionality may be found in a number of companion packages, including:
+As such, *LightGraphs.jl* is the central package of the JuliaGraphs ecosystem. Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization related functions can be found in the following packages:
   * [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): extra functions for graph analysis.
   * [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl): graphs with associated meta-data.
   * [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): weighted graphs.
@@ -13,7 +10,7 @@ Additional functionality may be found in a number of companion packages, includi
 
 ## Basic library examples
 
-The *LightGraphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making Graphs](@ref), such as `PathGraph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+The *LightGraphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `PathGraph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia
 julia> g = PathGraph(6)
@@ -25,7 +22,7 @@ julia> nv(g)
 julia> ne(g)
 
 # Add an edge to make the path a loop
-julia> add_edge!(g, [6, 1])
+julia> add_edge!(g, 1, 6)
 ```
 
 For an overview of basic functions for interacting with graphs, check out [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref).

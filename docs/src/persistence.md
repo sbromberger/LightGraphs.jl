@@ -2,7 +2,7 @@
 
 ## Saving using *LightGraphs.jl* `lg` format.
 
-Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a proprietary compressed *LightGraphs.jl* format `lg`.
+Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `lg`.
 
 ### Example
 
