@@ -34,7 +34,7 @@ Pages   = ["generators.md"]
 
 ## Datasets
 
-Other notorious graphs and integration with the `MatrixDepot.jl` package are available in the `Datasets` submodule of the companion packages [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl) and [SNAPDatasets.jl](https://github.com/JuliaGraphs/SNAPDatasets.jl).
+Other notorious graphs and integration with the `MatrixDepot.jl` package are available in the `Datasets` submodule of the companion package [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl). Selected graphs from the [Stanford Large Network Dataset Collection](https://snap.stanford.edu/data/index.html) may be found in the [SNAPDatasets.jl](https://github.com/JuliaGraphs/SNAPDatasets.jl) package.
 
 ### All Generators
 
