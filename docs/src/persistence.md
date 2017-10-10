@@ -7,12 +7,33 @@ Graphs may be written to I/O streams and files using the `savegraph` function an
 ### Example
 
 ```julia
-save(STDOUT, g)
-save("mygraph.jgz", g, "mygraph", compress=true)
 
-savegraph("mygraph.jgz", g, compress=true)
+g = erdos_renyi(5, 0.2)
 
-dg = load("multiplegraphs.jgz") # dictionary of graphs
+savegraph("mygraph.lg", g)
+reloaded_g = loadgraph("mygraph.lg")
+```
+
+In addition, graphs can also be compressed for storage using the `compress` option.
+
+```julia
+
+savegraph("mygraph.lgz", g, compress=true)
+
+reloaded_g = loadgraph("mygraph.lgz")
+```
+
+Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.
+
+```julia
+graph_dict = {"g1" => erdos_renyi(5, 0.1),
+              "g2" => erdos_renyi(10, 0.2),
+              "g3" => erdos_renyi(2, 0.9)}
+
+savegraph("mygraph_dict.lg", graph_dict)
+
+# Re-load only graph g1
+reloaded_g1 = loadgraph("mygraph_dict.lg", "g1")
 ```
 
 ## Reading and Writing using other formats using GraphIO
