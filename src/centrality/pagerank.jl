@@ -12,7 +12,7 @@ is not reached within `n` iterations.
 """
 function pagerank end
 
-@traitfn function pagerank1(g::AbstractGraph, α=0.85, n=100::Integer, ϵ=1.0e-6)
+@traitfn function pagerank(g::AbstractGraph, α=0.85, n=100::Integer, ϵ=1.0e-6)
     # collect dangling nodes
     dangling_nodes = [v for v in vertices(g) if outdegree(g, v) == 0]
     N = Int(nv(g))
