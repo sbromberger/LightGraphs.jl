@@ -1,8 +1,4 @@
-julia 0.4 0.5-
-Requires
-GZip 0.2.18
-StatsBase 0.7.4
-LightXML 0.2.1
-ParserCombinator 1.7.3
-JLD
-Clustering 0.4
+julia 0.6
+CodecZlib 0.2
+DataStructures 0.7
+SimpleTraits 0.4.0
