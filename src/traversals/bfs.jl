@@ -123,6 +123,42 @@ function gdist2(g::AbstractGraph{T}, source) where T
     dists = zeros(T, nv(g))
     gdistances2!(g, source, dists)
 end
+
+
+function gdistances3!(g::AbstractGraph{T}, source, dists) where T
+    n = nv(g)
+    fill!(dists, typemax(T))
+    seen = zeros(Bool, n)
+    queue = Vector{T}(n)
+    @inbounds @simd for i in 1:length(source)
+        queue[i] = source[i]
+        dists[source[i]] = 0
+        seen[source[i]] = true
+    end
+    head = 1
+    tail = length(source)
+    while head <= tail
+        current = queue[head]
+        distance = dists[current] + 1
+        head += 1
+        @inbounds @simd for j in out_neighbors(g, current)
+            if !seen[j]
+                dists[j] = distance
+                tail += 1
+                queue[tail] = j
+                seen[j] = true
+            end
+        end
+    end
+    return dists
+end
+
+
+function gdist3(g::AbstractGraph{T}, source) where T 
+    dists = zeros(T, nv(g))
+    gdistances3!(g, source, dists)
+end
+    
 """
     gdistances(g, source)
 
