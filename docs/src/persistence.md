@@ -2,7 +2,7 @@
 
 ## Saving using *LightGraphs.jl* `lg` format.
 
-Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `lg`.
+Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `LG`.
 
 ### Example
 
@@ -10,17 +10,17 @@ Graphs may be written to I/O streams and files using the `savegraph` function an
 
 g = erdos_renyi(5, 0.2)
 
-savegraph("mygraph.lg", g)
-reloaded_g = loadgraph("mygraph.lg")
+savegraph("mygraph.lgz", g)
+reloaded_g = loadgraph("mygraph.lgz")
 ```
 
-In addition, graphs can also be compressed for storage using the `compress` option.
+In addition, graphs can also be saved in an uncompressed format using the `compress=false` option.
 
 ```julia
 
-savegraph("mygraph.lgz", g, compress=true)
+savegraph("mygraph.lg", g, compress=false)
 
-reloaded_g = loadgraph("mygraph.lgz")
+reloaded_g = loadgraph("mygraph.lg")
 ```
 
 Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.
