@@ -7,6 +7,8 @@ Order = [:type, :function]
 Pages   = ["degeneracy.md"]
 ```
 
+## Full Docs
+
 ```@autodocs
 Modules = [LightGraphs]
 Pages   = ["degeneracy.jl"]
