@@ -61,38 +61,10 @@ Fill `dists` with the geodesic distances of vertices in `g` from `source`.
 `dists` should be a vector of length `nv(g)`. Return `dists`.
 For vertices in disconnected components the default distance is -1.
 """
-function gdistances!(g::AbstractGraph{T}, source, dists) where T
-    n = nv(g)
-    fill!(dists, typemax(T))
-    seen = zeros(Bool, n)
-    queue = Vector{T}(n)
-    @inbounds for i in 1:length(source)
-        queue[i] = source[i]
-        dists[source[i]] = 0
-        seen[source[i]] = true
-    end
-    head = 1
-    tail = length(source)
-    while head <= tail
-        current = queue[head]
-        distance = dists[current] + 1
-        head += 1
-        @inbounds for j in out_neighbors(g, current)
-            if !seen[j]
-                dists[j] = distance
-                tail += 1
-                queue[tail] = j
-                seen[j] = true
-            end
-        end
-    end
-    return dists
-end
-
-function gdistances2!(g::AbstractGraph{T}, source, vert_level) where T
+function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     n = nv(g)
     visited = falses(n)
-    n_level = T(2)
+    n_level = one(T)
     cur_level = Vector{T}()
     sizehint!(cur_level, n)
     next_level = Vector{T}()
@@ -103,7 +75,7 @@ function gdistances2!(g::AbstractGraph{T}, source, vert_level) where T
     push!(cur_level, source)
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @simd for i in out_neighbors(g, v)
+            @inbounds @simd for i in out_neighbors(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     vert_level[i] = n_level
@@ -119,46 +91,6 @@ function gdistances2!(g::AbstractGraph{T}, source, vert_level) where T
     return vert_level
 end
 
-function gdist2(g::AbstractGraph{T}, source) where T
-    dists = zeros(T, nv(g))
-    gdistances2!(g, source, dists)
-end
-
-
-function gdistances3!(g::AbstractGraph{T}, source, dists) where T
-    n = nv(g)
-    fill!(dists, typemax(T))
-    seen = zeros(Bool, n)
-    queue = Vector{T}(n)
-    @inbounds @simd for i in 1:length(source)
-        queue[i] = source[i]
-        dists[source[i]] = 0
-        seen[source[i]] = true
-    end
-    head = 1
-    tail = length(source)
-    while head <= tail
-        current = queue[head]
-        distance = dists[current] + 1
-        head += 1
-        @inbounds @simd for j in out_neighbors(g, current)
-            if !seen[j]
-                dists[j] = distance
-                tail += 1
-                queue[tail] = j
-                seen[j] = true
-            end
-        end
-    end
-    return dists
-end
-
-
-function gdist3(g::AbstractGraph{T}, source) where T 
-    dists = zeros(T, nv(g))
-    gdistances3!(g, source, dists)
-end
-    
 """
     gdistances(g, source)
 
@@ -166,7 +98,7 @@ Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
 For vertices in disconnected components the default distance is -1.
 """
-gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, Vector{T}(nv(g)))
+gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, zeros(T, nv(g)))
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
