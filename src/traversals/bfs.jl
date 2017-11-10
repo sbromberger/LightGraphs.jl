@@ -58,8 +58,8 @@ bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=di
     gdistances!(g, source, dists)
 
 Fill `dists` with the geodesic distances of vertices in `g` from `source`.
-`dists` should be a vector of length `nv(g)`. Return `dists`.
-For vertices in disconnected components the default distance is -1.
+`dists` should be a vector of length `nv(g)` filled with `typemax(T)`. Return `dists`.
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
 function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     n = nv(g)
@@ -69,10 +69,11 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
-    vert_level[source] = zero(T)
-    visited[source] = true
-
-    push!(cur_level, source)
+    @inbounds for s in source
+        vert_level[s] = zero(T)
+        visited[s] = true
+        push!(cur_level, s)
+    end
     while !isempty(cur_level)
         @inbounds for v in cur_level
             @inbounds @simd for i in out_neighbors(g, v)
@@ -96,9 +97,9 @@ end
 
 Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
-For vertices in disconnected components the default distance is -1.
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
-gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, zeros(T, nv(g)))
+gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, fill(typemax(T), nv(g)))
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
