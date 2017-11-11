@@ -46,7 +46,7 @@ julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 ```
 
 
-##[NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
+## [NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
 NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
 
 ```julia
