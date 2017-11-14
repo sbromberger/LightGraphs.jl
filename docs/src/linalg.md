@@ -10,7 +10,7 @@ Pages   = ["linalg.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [LightGraphs.LinAlg]
 Pages   = [
     "graphmatrices.jl",
     "Nonbacktracking.jl",
