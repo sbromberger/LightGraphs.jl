@@ -213,4 +213,5 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 
+using .LinAlg
 end # module

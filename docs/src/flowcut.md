@@ -1,6 +1,13 @@
 # Flow and Cut
 *LightGraphs.jl* provides different algorithms for [maximum flow](https://en.wikipedia.org/wiki/Maximum_flow_problem)
-and minimum cut computations.
+and minimum cut computations, including:
+
+```@index
+Order = [:type, :function]
+Pages   = ["flowcut.md"]
+```
+
+## Full Docs
 
 ```@autodocs
 Modules = [LightGraphs]
