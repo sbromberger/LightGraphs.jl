@@ -154,6 +154,7 @@ and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
 LightGraphs
+include("utils.jl")
 include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
@@ -211,11 +212,11 @@ include("flow/push_relabel.jl")
 include("flow/multiroute_flow.jl")
 include("flow/kishimoto.jl")
 include("flow/ext_multiroute_flow.jl")
-include("utils.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
 
+using .LinAlg
 end # module

@@ -5,7 +5,7 @@ const SimpleDiGraphEdge = SimpleEdge
 
 A type representing a directed graph.
 """
-mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
+mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
@@ -104,8 +104,7 @@ is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
 is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
-function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    T = eltype(g)
+function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
@@ -117,18 +116,18 @@ end
 
 
 function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    has_edge(g, e) || return false
-    i = searchsorted(g.fadjlist[src(e)], dst(e))[1]
-    deleteat!(g.fadjlist[src(e)], i)
-    i = searchsorted(g.badjlist[dst(e)], src(e))[1]
-    deleteat!(g.badjlist[dst(e)], i)
+    i = searchsorted(g.fadjlist[src(e)], dst(e))
+    isempty(i) && return false # edge doesn't exist
+    j = first(i)
+    deleteat!(g.fadjlist[src(e)], j)
+    j = searchsortedfirst(g.badjlist[dst(e)], src(e))
+    deleteat!(g.badjlist[dst(e)], j)
     g.ne -= 1
     return true
 end
 
 
-function add_vertex!(g::SimpleDiGraph)
-    T = eltype(g)
+function add_vertex!(g::SimpleDiGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.badjlist, Vector{T}())
     push!(g.fadjlist, Vector{T}())
@@ -141,8 +140,8 @@ function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     u, v = Tuple(e)
     (u > nv(g) || v > nv(g)) && return false
     if degree(g, u) < degree(g, v)
-        return length(searchsorted(fadj(g, u), v)) > 0
+        return insorted(v, fadj(g, u))
     else
-        return length(searchsorted(badj(g, v), u)) > 0
+        return insorted(u, badj(g, v))
     end
 end

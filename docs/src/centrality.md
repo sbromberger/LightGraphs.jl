@@ -9,6 +9,8 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 Pages   = ["centrality.md"]
 ```
 
+## Full docs
+
 ```@autodocs
 Modules = [LightGraphs]
 Pages   = [

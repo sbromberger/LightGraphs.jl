@@ -8,15 +8,14 @@ FIFO push relabel algorithm with gap heuristic.
 Takes approximately ``\\mathcal{O}(|V|^{3})`` time.
 """
 function push_relabel end
-@traitfn function push_relabel(
+@traitfn function push_relabel{T}(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
-    capacity_matrix::AbstractMatrix    # edge flow capacities
+    capacity_matrix::AbstractMatrix{T}    # edge flow capacities
     )
 
     n = nv(residual_graph)
-    T = eltype(capacity_matrix)
     flow_matrix = zeros(T, n, n)
 
     height = zeros(Int, n)

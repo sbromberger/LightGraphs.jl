@@ -9,8 +9,7 @@ the second is the convergence history for each node. Will return after
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph, maxiter=1000)
-    T = eltype(g)
+function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
     n = nv(g)
     label = collect(one(T):n)
     active_vs = IntSet(vertices(g))

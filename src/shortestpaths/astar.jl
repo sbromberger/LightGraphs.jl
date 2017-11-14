@@ -45,15 +45,14 @@ the distance matrix is set to [`DefaultDistance`](@ref) and the heuristic is set
 `n -> 0`.
 """
 function a_star(
-    g::AbstractGraph,  # the g
+    g::AbstractGraph{U},  # the g
 
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
     distmx::AbstractMatrix{T} = weights(g),
     heuristic::Function = n -> 0
-    ) where T
+    ) where T where U
     # heuristic (under)estimating distance to target
-    U = eltype(g)
     frontier = PriorityQueue{Tuple{T,Vector{Edge},U}, T}()
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(g))

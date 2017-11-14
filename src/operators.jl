@@ -210,8 +210,8 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function crosspath end
-@traitfn function crosspath(len::Integer, g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function crosspath{T, AG<:AbstractGraph{T}}(len::Integer, g::AG::(!IsDirected))
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -278,8 +278,6 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
-# eltype(g::AbstractGraph) = Float64
 length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
@@ -400,11 +398,10 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
 end
 
 
-function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
+function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG<:AbstractGraph{T} where T where U<:AbstractEdge
     h = zero(g)
-    et = eltype(h)
-    newvid = Dict{et,et}()
-    vmap = Vector{et}()
+    newvid = Dict{T,T}()
+    vmap = Vector{T}()
 
     for e in elist
         u, v = Tuple(e)
@@ -489,18 +486,6 @@ function merge_vertices(g::AbstractGraph, vs)
     return newg
 end
 
-function insorted(x::AbstractArray, val)
-    i = searchsortedfirst(x, val)
-    if i > length(x)
-        return false
-    end
-    if x[i] != val
-        return false
-    end
-    return true
-end
-
-
 """
     merge_vertices!(g, vs)
 
@@ -513,7 +498,7 @@ Return a vector with new vertex values are indexed by the original vertex indice
 ### Implementation Notes
 Supports SimpleGraph only.
 """
-function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
     merged_vertex = shift!(vs)
 
@@ -524,10 +509,10 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
     for i in vertices(g)
         # Adjust connections to merged vertices
-        if (i != merged_vertex) && !insorted(vs, i)
-            nbrs_to_rewire = Set{eltype(g)}()
+        if (i != merged_vertex) && !insorted(i, vs)
+            nbrs_to_rewire = Set{T}()
             for j in out_neighbors(g, i)
-               if insorted(vs, j)
+               if insorted(j, vs)
                   push!(nbrs_to_rewire, merged_vertex)
                else
                  push!(nbrs_to_rewire, new_vertex_ids[j])
@@ -538,8 +523,8 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
         # Collect connections to new merged vertex
         else
-            nbrs_to_merge = Set{eltype(g)}()
-            for element in filter(x -> !(insorted(vs, x)) && (x != merged_vertex), g.fadjlist[i])
+            nbrs_to_merge = Set{T}()
+            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
