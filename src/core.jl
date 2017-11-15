@@ -14,9 +14,9 @@ is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 """
     add_vertices!(g, n)
 Add `n` new vertices to the graph `g`.
-Return `true` if all vertices were added successfully, `false` otherwise.
+Return the number of vertices that were added successfully.
 """
-add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i = 1:n])
+add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
     indegree(g[, v])
