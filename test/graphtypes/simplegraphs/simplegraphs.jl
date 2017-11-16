@@ -20,7 +20,7 @@
 
     for gbig in [Graph(0xff), DiGraph(0xff)]
         @test @inferred(!add_vertex!(gbig))    # overflow
-        @test @inferred(!add_vertices!(gbig, 10))
+        @test @inferred(add_vertices!(gbig, 10) == 0)
     end
 
     gdx = PathDiGraph(4)
@@ -28,14 +28,14 @@
     for g in testgraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "empty undirected simple $T graph"
-        @inferred(add_vertices!(g, 5))
+        @test @inferred(add_vertices!(g, 5) == 5)
         @test sprint(show, g) == "{5, 0} undirected simple $T graph"
     end
     gx = SimpleDiGraph()
     for g in testdigraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "empty directed simple $T graph"
-        @inferred(add_vertices!(g, 5))
+        @test @inferred(add_vertices!(g, 5) == 5)
         @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
