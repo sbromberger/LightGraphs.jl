@@ -61,7 +61,7 @@ end
 
 Compute shortest paths between a source `s` (or list of sources `ss`) and all
 other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
-Return a [`BellmanFordState`](@ref) with relevant traversal information.
+Return a [`LightGraphs.BellmanFordState`](@ref) with relevant traversal information.
 """
 function bellman_ford_shortest_paths(
     graph::AbstractGraph,
