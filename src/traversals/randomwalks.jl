@@ -4,8 +4,7 @@
 Perform a random walk on graph `g` starting at vertex `s` and continuing for
 a maximum of `niter` steps. Return a vector of vertices visited in order.
 """
-function randomwalk(g::AbstractGraph, s::Integer, niter::Integer)
-    T = eltype(g)
+function randomwalk(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -29,8 +28,8 @@ vertex `s` and continuing for a maximum of `niter` steps. Return a
 vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
-@traitfn function non_backtracking_randomwalk(g::::(!IsDirected), s::Integer, niter::Integer)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected), s::Integer, niter::Integer)
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -61,8 +60,8 @@ function non_backtracking_randomwalk end
     return visited[1:(i - 1)]
 end
 
-@traitfn function non_backtracking_randomwalk(g::::IsDirected, s::Integer, niter::Integer)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::IsDirected, s::Integer, niter::Integer)
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -96,8 +95,7 @@ Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
 Return a vector of vertices visited in order.
 """
-function saw(g::AbstractGraph, s::Integer, niter::Integer)
-    T = eltype(g)
+function saw(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     svisited = Set{T}()

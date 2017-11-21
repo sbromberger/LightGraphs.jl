@@ -23,8 +23,7 @@ use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
 bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
     (dir == :out) ? _bfs_parents(g, s, out_neighbors) : _bfs_parents(g, s, in_neighbors)
-function _bfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
-    T = eltype(g)
+function _bfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     Q=Vector{T}()
     parents = zeros(T, nv(g))
     seen = zeros(Bool, nv(g))
@@ -59,44 +58,48 @@ bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=di
     gdistances!(g, source, dists)
 
 Fill `dists` with the geodesic distances of vertices in `g` from `source`.
-`dists` should be a vector of length `nv(g)`. Return `dists`.
-For vertices in disconnected components the default distance is -1.
+`dists` should be a vector of length `nv(g)` filled with `typemax(T)`. Return `dists`.
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function gdistances!(g::AbstractGraph, source, dists)
-    T = eltype(g)
+function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     n = nv(g)
-    fill!(dists, -1)
-    queue = Vector{T}(n)
-    for i in 1:length(source)
-        queue[i] = source[i]
-        dists[source[i]] = 0
+    visited = falses(n)
+    n_level = one(T)
+    cur_level = Vector{T}()
+    sizehint!(cur_level, n)
+    next_level = Vector{T}()
+    sizehint!(next_level, n)
+    @inbounds for s in source
+        vert_level[s] = zero(T)
+        visited[s] = true
+        push!(cur_level, s)
     end
-    head = 1
-    tail = length(source)
-    while head <= tail
-        current = queue[head]
-        distance = dists[current] + 1
-        head += 1
-        for j in out_neighbors(g, current)
-            if dists[j] == -1
-                dists[j] = distance
-                tail += 1
-                queue[tail] = j
+    while !isempty(cur_level)
+        @inbounds for v in cur_level
+            @inbounds @simd for i in out_neighbors(g, v)
+                if !visited[i]
+                    push!(next_level, i)
+                    vert_level[i] = n_level
+                    visited[i] = true
+                end
             end
         end
+        n_level += one(T)
+        empty!(cur_level)
+        cur_level, next_level = next_level, cur_level
+        sort!(cur_level)
     end
-    return dists
+    return vert_level
 end
-
 
 """
     gdistances(g, source)
 
 Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
-For vertices in disconnected components the default distance is -1.
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
-gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, fill(typemax(T), nv(g)))
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
@@ -105,9 +108,8 @@ Return `true` if there is a path from `u to `v` in `g` (while avoiding vertices 
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
 is in `excluded_vertices`. 
 """
-function has_path(g::AbstractGraph, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector=Vector{eltype(g)}())
-    T = eltype(g)
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
+        exclude_vertices::AbstractVector=Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true

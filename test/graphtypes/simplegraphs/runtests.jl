@@ -3,7 +3,7 @@ using LightGraphs.SimpleGraphs
 import LightGraphs.SimpleGraphs: fadj, badj, adj
 
 
-struct DummySimpleGraph <: AbstractSimpleGraph end
+struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
 
 const simplegraphtestdir = dirname(@__FILE__)
 

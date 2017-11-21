@@ -1,5 +1,10 @@
 # used in shortest path calculations
 
+"""
+    DefaultDistance
+
+An array-like structure that provides distance values of `1` for any `src, dst` combination.
+"""
 struct DefaultDistance<:AbstractMatrix{Int}
     nv::Int
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)

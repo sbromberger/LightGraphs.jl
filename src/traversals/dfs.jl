@@ -11,8 +11,8 @@ Uses DFS.
 """
 function is_cyclic end
 @traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
-@traitfn function is_cyclic(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function is_cyclic{T,AG<:AbstractGraph{T}}(g::AG::IsDirected)
     vcolor = zeros(UInt8, nv(g))
     for v in vertices(g)
         vcolor[v] != 0 && continue
@@ -49,8 +49,8 @@ Return a [toplogical sort](https://en.wikipedia.org/wiki/Topological_sorting) of
 graph `g` as a vector of vertices in topological order.
 """
 function toplogical_sort_by_dfs end
-@traitfn function topological_sort_by_dfs(g::::IsDirected)
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function topological_sort_by_dfs{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     for v in vertices(g)
@@ -102,8 +102,7 @@ This version of DFS is iterative.
 dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
 (dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
 
-function _dfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
-    T = eltype(g)
+function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     parents = zeros(T, nv(g))
 
     seen = zeros(Bool, nv(g))

@@ -6,7 +6,7 @@
 
     gx = Graph(10)
     for g in testgraphs(gx)
-        add_vertices!(g, 5)
+        @test add_vertices!(g, 5) == 5
         @test @inferred(nv(g)) == 15
     end
 

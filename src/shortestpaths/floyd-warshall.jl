@@ -16,17 +16,16 @@ end
 floyd_warshall_shortest_paths(g, distmx=weights(g))
 Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`. Return a [`FloydWarshallState`](@ref) with relevant
+optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@ref) with relevant
 traversal information.
 
 ### Performance
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
 function floyd_warshall_shortest_paths(
-    g::AbstractGraph,
+    g::AbstractGraph{U},
     distmx::AbstractMatrix{T} = weights(g)
-) where T
-    U = eltype(g)
+) where T where U
     n_v = nv(g)
     dists = fill(typemax(T), (Int(n_v), Int(n_v)))
     parents = zeros(U, (Int(n_v), Int(n_v)))
