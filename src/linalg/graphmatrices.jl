@@ -174,7 +174,7 @@ issymmetric(::AveragingAdjacency) = false
 """
 	degrees(adjmat)
 
-Return the degrees of a graph represented by the [CombinatorialAdjacency](@ref) `adjmat`.
+Return the degrees of a graph represented by the [`CombinatorialAdjacency`](@ref) `adjmat`.
 """
 degrees(adjmat::CombinatorialAdjacency) = adjmat.D
 
@@ -310,7 +310,7 @@ as a [`CombinatorialAdjacency`](@ref). `which` may be one of `:triu`, `:tril`, `
 Use `:sum` for weighted graphs.
 
 ### Implementation Notes
-Only works on [Adjacency](@ref) because the normalizations don't commute with symmetrization.
+Only works on [`Adjacency`](@ref) because the normalizations don't commute with symmetrization.
 """
 symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 	CombinatorialAdjacency(symmetrize(adjmat.A, which))

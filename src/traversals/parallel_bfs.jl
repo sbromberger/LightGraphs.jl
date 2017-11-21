@@ -114,7 +114,7 @@ using a frontier based parallel approach.
 This function uses `@threads` for parallelism which depends on the `JULIA_NUM_THREADS`
 environment variable to decide the number of threads to use. Refer `@threads` documentation
 for more details.
-This function is a high level wrapper around [`bfs_tree!`](@ref); use that function for more performance.
+This function is a high level wrapper around [`LightGraphs.bfs_tree!`](@ref); use that function for more performance.
 """
 function bfs_tree(alg::LevelSynchronousBFS, g::AbstractGraph, source::T, nv::T) where T <: Integer
     next = ThreadQueue(T, nv) # Initialize threadqueue

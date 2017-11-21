@@ -156,8 +156,24 @@ include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
 include("graphtypes/simplegraphs/SimpleGraphs.jl")
+"""
+    Graph
+
+A datastruture representing an undirected graph.
+"""
 const Graph = SimpleGraphs.SimpleGraph
+"""
+    DiGraph
+
+A datastruture representing a directed graph.
+"""
 const DiGraph = SimpleGraphs.SimpleDiGraph
+"""
+    Edge
+
+A datastruture representing an edge between two vertices in
+a `Graph` or `DiGraph`.
+"""
 const Edge = SimpleGraphs.SimpleEdge
 include("degeneracy.jl")
 include("digraph/transitivity.jl")

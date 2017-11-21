@@ -152,7 +152,7 @@ in the following cases:
 - The number of routes is 0 or non-specified
 
 ### Usage Example :
-(please consult the  [`max_flow`](@ref) section for options about flow_algorithm
+(please consult the  [`maximum_flow`](@ref) section for options about flow_algorithm
 and capacity_matrix)
 
 ```jldoctest
@@ -182,7 +182,7 @@ julia> f, F = multiroute_flow(points, 1.5) # Then run multiroute flow algorithm 
 
 julia> f = multiroute_flow(points, 1.5, valueonly = true)
 
-julia> f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix, algorithm = BoykovKolmogorovAlgorithm(), routes = 2) # Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as max_flow routine
+julia> f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix, algorithm = BoykovKolmogorovAlgorithm(), routes = 2) # Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as maximum_flow routine
 
 ```
 """

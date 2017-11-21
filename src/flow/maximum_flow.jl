@@ -61,7 +61,7 @@ flow in the reverse direction.
 
 If only the forward edge exists, a reverse edge is created with capacity 0.
 If both forward and reverse edges exist, their capacities are left unchanged.
-Since the capacities in [`DefaultDistance`](@ref) cannot be changed, an array of ones
+Since the capacities in [`LightGraphs.DefaultDistance`](@ref) cannot be changed, an array of ones
 is created.
 """
 function residual end
