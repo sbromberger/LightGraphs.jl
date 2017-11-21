@@ -8,6 +8,7 @@ cp(normpath(@__FILE__, "../../README.md"), normpath(@__FILE__, "../src/index.md"
 # same for contributing and license
 cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); remove_destination=true)
 cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); remove_destination=true)
+cp(normpath(@__FILE__, "../../CITING.md"), normpath(@__FILE__, "../src/citing.md"); remove_destination=true)
 
 makedocs(
     modules     = [LightGraphs],
@@ -31,6 +32,7 @@ makedocs(
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
         "License Information"               => "license.md"
+        "Citing LightGraphs"                => "citing.md"
     ]
 )
 
