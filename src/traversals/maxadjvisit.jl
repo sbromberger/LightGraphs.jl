@@ -83,8 +83,8 @@ displayed.
 function maximum_adjacency_visit(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
-    log::Bool,
-    io::IO
+    log::Bool=false,
+    io::IO=STDOUT
 ) where T<:Real
 
     U = eltype(g)
@@ -92,7 +92,7 @@ function maximum_adjacency_visit(
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
-    @assert nv(g) >= 2
+    nv(g) >= 2 || error("nv(g) must be greater than 1")
 
     # Setting intial count to 0
     for v in vertices(g)
