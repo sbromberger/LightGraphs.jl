@@ -6,7 +6,7 @@ A state type for the depth-first search that finds the articulation points in a 
 mutable struct Articulations{T<:Integer}
     low::Vector{T}
     depth::Vector{T}
-    articulation_points::BitArray
+    articulation_points::BitVector
     id::T
 end
 
