@@ -34,8 +34,9 @@ function mincut(
         pq[v] = zero(T)
     end
 
-    @assert haskey(pq, one(U))
-    @assert nv(g) >= U(2)
+    # make sure we have at least two vertices, otherwise, there's nothing to cut,
+    # in which case we'll return immediately.
+    (haskey(pq, one(U)) && nv(g) > one(U) || return (parities, cutweight)
 
     #Give the starting vertex high priority
     pq[one(U)] = one(T)
