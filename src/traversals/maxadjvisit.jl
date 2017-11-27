@@ -19,7 +19,7 @@ be specified; if omitted, edge distances are assumed to be 1.
 function mincut(
     g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)
-) where T
+) where T <: Real
 
     U = eltype(g)
     colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
@@ -36,7 +36,7 @@ function mincut(
 
     # make sure we have at least two vertices, otherwise, there's nothing to cut,
     # in which case we'll return immediately.
-    (haskey(pq, one(U)) && nv(g) > one(U) || return (parities, cutweight)
+    (haskey(pq, one(U)) && nv(g) > one(U)) || return (Vector{Int8}([1]), cutweight)
 
     #Give the starting vertex high priority
     pq[one(U)] = one(T)
@@ -68,7 +68,7 @@ function mincut(
             end
         end
     end
-    return(convert(Vector{Int8},parities) .+ one(Int8), bestweight)
+    return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
 
