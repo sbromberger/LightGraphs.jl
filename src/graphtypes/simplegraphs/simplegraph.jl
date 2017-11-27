@@ -138,6 +138,54 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     return inserted
 end
 
+function add_edges!(g::SimpleGraph, es)
+    T = eltype(g)
+    nvnew = nvold = nv(g)
+    touched = falses(nvold)
+    neold = ne(g)
+    for e in es
+        s, d = T.(Tuple(e))
+        if s < 1 || d < 1
+            error("Nonpositive vertex number")
+        end
+        for v in (s, d)
+            if v > nvnew
+                resize!(g.fadjlist, v)
+                for i in nvnew+1:v
+                    g.fadjlist[i] = Vector{T}()
+                end
+                nvnew = v
+            elseif v <= nvold 
+                touched[v] = true
+            end
+        end
+        append!(g.fadjlist[s], d)
+        s != d && append!(g.fadjlist[d], s)
+    end
+    k = 0
+    for s in 1:nvold
+        if touched[s]
+            sort!(g.fadjlist[s])
+            uniquesorted!(g.fadjlist[s])
+        end
+        k += length(g.fadjlist[s])
+        if insorted(s, g.fadjlist[s])
+            k += 1
+        end
+    end
+    for s in nvold+1:nvnew
+        sort!(g.fadjlist[s])
+        uniquesorted!(g.fadjlist[s])
+        k += length(g.fadjlist[s])
+        if insorted(s, g.fadjlist[s])
+            k += 1
+        end
+    end
+    g.ne = k ÷ 2
+    return g.ne > neold
+end
+
+
 function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
     i = searchsorted(g.fadjlist[src(e)], dst(e))
     isempty(i) && return false   # edge not in graph

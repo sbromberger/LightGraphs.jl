@@ -139,6 +139,26 @@ Add a new edge `e` to `g`. Return false if add fails
 """
 add_edge!(x, e) = _NI("add_edge!")
 
+
+"""
+add_edges!(g, es)
+
+Add new edges `e in es` to `g`. Return true if any new edges are added.
+Implicitly adds new vertices needed.
+"""
+function add_edges!(g, es)
+    modified = false
+    for e in es
+        n = max(dst(e), src(e))
+        if n > nv(g) 
+            add_vertices!(g, n - nv(g))
+        end
+        modified = add_edge!(g, e) || modified
+    end
+    modified
+end
+
+
 """
     rem_vertex!(g, v)
 

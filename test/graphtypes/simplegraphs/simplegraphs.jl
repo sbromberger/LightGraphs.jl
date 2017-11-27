@@ -100,6 +100,16 @@
         @test @inferred(has_edge(g, e))
     end
 
+    let 
+        g = Graph(7, 12)
+        add_edge!(g, 1, 1) # add a self loop to check edge case in counting edges
+        h = Graph(12, 12) 
+        g2 = copy(g)
+        invoke(add_edges!, Tuple{Any, Any}, g, edges(h))
+        add_edges!(g2, edges(h)) 
+        @test g == g2
+    end
+
     gdx = PathDiGraph(4)
     for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
@@ -174,5 +184,13 @@
         @test g != h
     end
 
-
+    let 
+        g = DiGraph(7, 24)
+        add_edge!(g, 1, 1)
+        h = DiGraph(12, 24) 
+        g2 = copy(g)
+        invoke(add_edges!, Tuple{Any, Any}, g, edges(h))
+        add_edges!(g2, edges(h)) 
+        @test g == g2
+    end
 end

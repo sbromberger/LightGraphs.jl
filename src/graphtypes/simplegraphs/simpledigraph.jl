@@ -115,6 +115,61 @@ function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
 end
 
 
+function add_edges!(g::SimpleDiGraph, es)
+    T = eltype(g)
+    nvnew = nvold = nv(g)
+    neold = ne(g)
+    ftouched = falses(nvold)
+    btouched = falses(nvold)
+
+    for e in es
+        s, d = T.(Tuple(e))
+        if s < 1 || d < 1
+            error("Nonpositive vertex number")
+        end
+        for v in (s, d)
+            if v > nvnew
+                resize!(g.fadjlist, v)
+                resize!(g.badjlist, v)     
+                for i in nvnew+1:v
+                    g.fadjlist[i] = Vector{T}()
+                    g.badjlist[i] = Vector{T}()
+                end
+                nvnew = v
+            end
+        end
+        if s <= nvold
+            ftouched[s] = true
+        end
+        if d <= nvold 
+            btouched[d] = true   
+        end
+        append!(g.fadjlist[s], d)
+        append!(g.badjlist[d], s)
+    end
+    nenew = 0
+    for s in 1:nvold
+        if ftouched[s]
+            sort!(g.fadjlist[s])
+            uniquesorted!(g.fadjlist[s])
+        end
+        nenew += length(g.fadjlist[s])
+        if btouched[s]    
+            sort!(g.badjlist[s])
+            uniquesorted!(g.badjlist[s])
+        end
+    end
+    for s in nvold+1:nvnew
+        sort!(g.fadjlist[s])
+        uniquesorted!(g.fadjlist[s])
+        sort!(g.badjlist[s])
+        uniquesorted!(g.badjlist[s])
+        nenew += length(g.fadjlist[s])
+    end
+    g.ne = nenew 
+    return g.ne > neold
+end
+
 function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
     i = searchsorted(g.fadjlist[src(e)], dst(e))
     isempty(i) && return false # edge doesn't exist

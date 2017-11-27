@@ -6,10 +6,10 @@ import Base:
 import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+    add_vertex!, add_edge!, add_edges!, rem_vertex!, rem_edge!,
     has_vertex, has_edge, in_neighbors, out_neighbors,
 
-    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
+    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted, uniquesorted!
 
 export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphEdge,

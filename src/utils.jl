@@ -53,3 +53,25 @@ Does not verify that `collection` is sorted.
 """
 insorted(item, collection) = !isempty(searchsorted(collection, item))
 
+"""
+    uniquesorted!(A::AbstractVector)
+
+Remove duplicate items from a sorted array. Returns the modified array `A` with 
+items in order of encounter.
+"""
+# Based on the MIT licenced code of `_groupedunique!` from Jack Devine
+# https://github.com/JuliaLang/julia/commit/ce3f853348e23eb6adae211891738058d80b50e7#diff-d39084ec0fef2ad65e4b5fe0fcfaab8e
+function uniquesorted!(A::AbstractVector)
+    isempty(A) && return A
+    idxs = eachindex(A)
+    y = first(A)
+    state = start(idxs)
+    i, state = next(idxs, state)
+    for x in A
+        if !isequal(x, y)
+            i, state = next(idxs, state)
+            y = A[i] = x
+        end
+    end
+    resize!(A, i - first(idxs) + 1)
+end
