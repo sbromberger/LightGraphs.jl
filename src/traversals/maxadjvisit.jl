@@ -93,7 +93,8 @@ function maximum_adjacency_visit(
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
-    nv(g) >= 2 || error("nv(g) must be greater than 1")
+    # if the graph only has one vertex, we return the vertex by itself.
+    nv(g) > one(U) || return collect(vertices(g))
 
     # Setting intial count to 0
     for v in vertices(g)
