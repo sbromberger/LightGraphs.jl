@@ -62,7 +62,7 @@ function toplogical_sort_by_dfs end
             w = 0
             for n in out_neighbors(g, u)
                 if vcolor[n] == 1
-                    error("The input graph contains at least one loop.")
+                    error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
                 elseif vcolor[n] == 0
                     w = n
                     break

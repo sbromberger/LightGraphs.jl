@@ -296,7 +296,7 @@ function symmetrize(A::SparseMatrix, which=:or)
     elseif which == :sum
 	    T = A
     else
-        error("$which is not a supported method of symmetrizing a matrix")
+        throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
 	M = T + T'
 	return M

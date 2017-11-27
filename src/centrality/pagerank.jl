@@ -44,5 +44,5 @@ function pagerank end
             return x
         end
     end
-    error("Pagerank did not converge after $n iterations.")
+    error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
 end
