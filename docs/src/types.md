@@ -1,6 +1,6 @@
 #LightGraphs Types
 
-The LightGraph library supports both the `AbstractGraph` type and two concrete simple graph types- - `Graph` for undirected graphs and `DiGraph` for directed graphs -- that are subtypes of `AbstractGraph`.
+*LightGraphs.jl* supports both the `AbstractGraph` type and two concrete simple graph types- - `Graph` for undirected graphs and `DiGraph` for directed graphs -- that are subtypes of `AbstractGraph`.
 
 ## Concrete Types
 
