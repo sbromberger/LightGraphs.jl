@@ -14,7 +14,7 @@ makedocs(
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
-        "LightGraph Types"                  => "types.md",
+        "LightGraphs Types"                 => "types.md",
         "Accessing Properties"              => "basicproperties.md",
         "Making and Modifying Graphs"       => "generators.md",
         "Reading / Writing Graphs"          => "persistence.md",
@@ -30,7 +30,7 @@ makedocs(
         "Flow and Cut"                      => "flowcut.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
-        "Developer's Notes"                 => "developing.md",
+        "Developer Notes"                   => "developing.md",
         "License Information"               => "license.md",
         "Citing LightGraphs"                => "citing.md"
     ]
