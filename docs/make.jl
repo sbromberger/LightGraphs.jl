@@ -30,6 +30,7 @@ makedocs(
         "Flow and Cut"                      => "flowcut.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
+        "Developer's Notes"                 => "developing.md",
         "License Information"               => "license.md",
         "Citing LightGraphs"                => "citing.md"
     ]
