@@ -26,7 +26,7 @@
     @test length(sprint(savegraph, p2, LGFormat())) == 70
     gs = loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
     @test gs == p2
-    @test_throws ErrorException loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "badname")
+    @test_throws ArgumentError loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "badname")
 
     d = Dict{String,AbstractGraph}("p1" => p1, "p2" => p2)
     @test savegraph(f, d) == 2
