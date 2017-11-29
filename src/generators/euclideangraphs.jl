@@ -37,7 +37,7 @@ function euclidean_graph(points::Matrix;
     weights = Dict{Edge,Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))
     if bc == :periodic
-        maximum(points) > L && error("Some points are outside the box of size $L.")
+        maximum(points) > L && throw(ArgumentError("Some points are outside the box of size $L")) # TODO 0.7: change to DomainError with text.
     end
     for i = 1:N
         for j = (i + 1):N
@@ -47,7 +47,7 @@ function euclidean_graph(points::Matrix;
                 Δ = abs.(points[:, i] - points[:, j])
                 Δ = min.(L - Δ, Δ)
             else
-                error("Not a valid boundary condition.")
+                throw(ArgumentError("$bc is not a valid boundary condition"))
             end
             dist = norm(Δ, p)
             if dist < cutoff

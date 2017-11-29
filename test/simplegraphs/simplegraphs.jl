@@ -5,7 +5,7 @@
     # specific concrete generators - no need for loop
     @test @inferred(eltype(SimpleGraph())) == Int
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
-    @test_throws ErrorException SimpleGraph(adjmx2)
+    @test_throws ArgumentError SimpleGraph(adjmx2)
 
     @test_throws ErrorException badj(DummySimpleGraph())
 

@@ -1,5 +1,10 @@
 # used in shortest path calculations
 
+"""
+    DefaultDistance
+
+An array-like structure that provides distance values of `1` for any `src, dst` combination.
+"""
 struct DefaultDistance<:AbstractMatrix{Int}
     nv::Int
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
@@ -42,6 +47,8 @@ for the rest of the distance measures below. If an eccentricity vector is
 provided, it will be used. Otherwise, an eccentricity vector will be calculated
 for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
+
+An infinite path length is represented by the `typemax` of the distance matrix.
 """
 function eccentricity(
     g::AbstractGraph,
@@ -49,7 +56,7 @@ function eccentricity(
     distmx::AbstractMatrix{T} = weights(g)
 ) where T <: Real
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
-    e == typemax(T) && error("Infinite path length detected")
+    e == typemax(T) && warn("Infinite path length detected for vertex $v")
 
     return e
 end
@@ -75,7 +82,7 @@ function parallel_eccentricity(
         eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
-    maximum(d) == typemax(T) && error("Infinite path length detected")
+    maximum(d) == typemax(T) && warn("Infinite path length detected")
     return d
 end
 

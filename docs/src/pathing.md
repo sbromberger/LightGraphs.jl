@@ -9,6 +9,12 @@ of  values, indexed by `[src,dst]` vertices. That is, `distmx[2,4] = 2.5`
 assigns the distance `2.5` to the (directed) edge connecting vertex 2 and vertex 4.
 Note that also for undirected graphs `distmx[4,2]` has to be set.
 
+Default edge distances may be passed in via the
+```@docs
+LightGraphs.DefaultDistance
+```
+structure.
+
 Any graph traversal  will traverse an edge only if it is present in the graph. When a distance matrix is passed in,
 
 1. distance values for undefined edges will be ignored, and
@@ -25,6 +31,7 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 
 ```@docs
 bfs_tree
+LightGraphs.bfs_tree!
 dfs_tree
 maximum_adjacency_visit
 ```
@@ -49,11 +56,12 @@ is_weakly_connected
 connected_components
 strongly_connected_components
 weakly_connected_components
-has_self_loop
+has_self_loops
 attracting_components
 is_bipartite
 condensation
 period
+isgraphical
 ```
 
 ## Cycle Detection
@@ -89,11 +97,25 @@ enumerate_paths
 
 ### Path States
 
-The `floyd_warshall_shortest_paths`, `bellman_ford_shortest_paths`,
-`dijkstra_shortest_paths`, and `dijkstra_predecessor_and_distance` functions
-return a state that contains various information about the graph learned during
-traversal. The three state types have the following common information,
-accessible via the type:
+All path states derive from
+```@docs
+LightGraphs.AbstractPathState
+```
+
+The `dijkstra_shortest_paths`, `floyd_warshall_shortest_paths`,
+`bellman_ford_shortest_paths`, and `yen_shortest_paths` functions 
+return states that contain various  information about the graph
+learned during traversal. 
+
+```@docs
+
+LightGraphs.DijkstraState
+LightGraphs.BellmanFordState
+LightGraphs.FloydWarshallState
+LightGraphs.YenState
+```
+The above state types (with the exception of `YenState`) have the following common
+information, accessible via the type:
 
 `.dists`
 Holds a vector of distances computed, indexed by source vertex.
@@ -102,8 +124,10 @@ Holds a vector of distances computed, indexed by source vertex.
 Holds a vector of parents of each source vertex. The parent of a source vertex
 is always `0`.
 
-In addition, the `dijkstra_predecessor_and_distance` function stores the
-following information:
+(`YenState` substitutes `.paths` for `.parents`.)
+
+In addition, the following information may be populated with the appropriate
+arguments to `dijkstra_shortest_paths`:
 
 `.predecessors`
 Holds a vector, indexed by vertex, of all the predecessors discovered during

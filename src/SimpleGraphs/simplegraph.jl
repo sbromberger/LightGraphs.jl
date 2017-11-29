@@ -30,8 +30,8 @@ SimpleGraph(::Type{T}) where T<:Integer = SimpleGraph{T}(zero(T))
 # Graph{UInt8}(adjmx)
 function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
-    issymmetric(adjmx) || error("Adjacency / distance matrices must be symmetric")
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
+    issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
     for i in find(triu(adjmx))

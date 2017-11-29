@@ -191,6 +191,6 @@ end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
-    @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
+    nv(G₁) == nv(G₂) || throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))
 end

@@ -1,3 +1,5 @@
+## Citing LightGraphs
+
 We encourage you to cite our work if you have used our libraries, tools or datasets. Starring the repository on GitHub is also appreciated.
 
 Use the following BibTeX citation for the latest version of LightGraphs.jl:

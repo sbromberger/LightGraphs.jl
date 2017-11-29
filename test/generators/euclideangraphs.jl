@@ -17,6 +17,6 @@
     @test minimum(points) >= 0.
 
 
-    @test_throws ErrorException euclidean_graph(points, L=0.01,  bc=:periodic)
-    @test_throws ErrorException euclidean_graph(points, bc=:ciao)
+    @test_throws ArgumentError euclidean_graph(points, L=0.01,  bc=:periodic)
+    @test_throws ArgumentError euclidean_graph(points, bc=:badbc)
 end

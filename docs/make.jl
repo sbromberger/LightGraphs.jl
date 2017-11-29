@@ -5,6 +5,7 @@ using LightGraphs
 # same for contributing and license
 cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); remove_destination=true)
 cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); remove_destination=true)
+cp(normpath(@__FILE__, "../../CITING.md"), normpath(@__FILE__, "../src/citing.md"); remove_destination=true)
 
 makedocs(
     modules     = [LightGraphs],
@@ -13,7 +14,7 @@ makedocs(
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
-        "LightGraph Types"                  => "types.md",
+        "LightGraphs Types"                 => "types.md",
         "Accessing Properties"              => "basicproperties.md",
         "Making and Modifying Graphs"       => "generators.md",
         "Reading / Writing Graphs"          => "persistence.md",
@@ -29,7 +30,9 @@ makedocs(
         "Flow and Cut"                      => "flowcut.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
-        "License Information"               => "license.md"
+        "Developer Notes"                   => "developing.md",
+        "License Information"               => "license.md",
+        "Citing LightGraphs"                => "citing.md"
     ]
 )
 

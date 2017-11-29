@@ -115,7 +115,7 @@ function loadlg(io::IO, gname::String)
             _lg_skip_one_graph(io, header.ne)
         end
     end
-    error("Graph $gname not found")
+    throw(ArgumentError("graph $gname not found"))
 end
 
 """

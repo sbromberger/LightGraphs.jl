@@ -21,10 +21,10 @@
         @test @inferred(k_corona(g, 2)) == [10, 12, 13, 14, 15, 16]
 
         add_edge!(g, 1, 1)
-        @test_throws ErrorException k_core(g)
-        @test_throws ErrorException k_shell(g)
-        @test_throws ErrorException k_crust(g)
-        @test_throws ErrorException k_corona(g, 1)
+        @test_throws ArgumentError k_core(g)
+        @test_throws ArgumentError k_shell(g)
+        @test_throws ArgumentError k_crust(g)
+        @test_throws ArgumentError k_corona(g, 1)
     end
 end
 

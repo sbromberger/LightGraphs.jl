@@ -232,7 +232,7 @@ Will throw an error if the graph is not strongly connected.
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function period{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
-    !is_strongly_connected(g) && error("Graph must be strongly connected")
+    !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
@@ -318,7 +318,7 @@ neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out)
     _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Integer, neighborfn::Function) where T
-    @assert d >= 0 "Distance has to be greater then zero."
+    d < 0 && return Vector{T}()
     neighs = Vector{T}()
     push!(neighs, v)
 

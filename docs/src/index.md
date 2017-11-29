@@ -15,14 +15,14 @@ The *LightGraphs.jl* libraries includes numerous convenience functions for gener
 ```julia
 julia> g = PathGraph(6)
 
-# Number vertices
+# Number of vertices
 julia> nv(g)
 
-# Number edges
+# Number of edges
 julia> ne(g)
 
 # Add an edge to make the path a loop
 julia> add_edge!(g, 1, 6)
 ```
 
-For an overview of basic functions for interacting with graphs, check out [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref).
+For an overview of basic functions for interacting with graphs, check out [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref). Detailed tutorials may be found in the [JuliaGraphs Tutorial Notebooks](https://github.com/JuliaGraphs/JuliaGraphsTutorials) repository.

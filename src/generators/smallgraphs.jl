@@ -78,7 +78,7 @@ function smallgraph(s::Symbol)
     if (s in keys(graphmap))
         return graphmap[s]()
     end
-    error("Please choose a valid graph")
+    throw(ArgumentError("$s is not a valid graph"))
 end
 
 function smallgraph(s::AbstractString)

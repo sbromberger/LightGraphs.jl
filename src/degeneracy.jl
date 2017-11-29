@@ -18,7 +18,7 @@ Not implemented for graphs with self loops.
     http://arxiv.org/abs/cs.DS/0310049
 """
 function core_number(g::AbstractGraph{T}) where T
-    has_self_loops(g) && error("This function does not work on graphs with self-loops")
+    has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     degrees = degree(g)
     vs = sortperm(degrees)
     bin_boundaries = [1]

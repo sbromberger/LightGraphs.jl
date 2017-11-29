@@ -33,7 +33,7 @@ SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 # sparse adjacency matrix constructor: DiGraph(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
@@ -52,7 +52,7 @@ end
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     for i in find(adjmx)

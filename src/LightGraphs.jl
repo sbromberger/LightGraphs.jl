@@ -155,10 +155,27 @@ include("utils.jl")
 include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
-include("graphtypes/simplegraphs/SimpleGraphs.jl")
-const Graph = SimpleGraphs.SimpleGraph
-const DiGraph = SimpleGraphs.SimpleDiGraph
-const Edge = SimpleGraphs.SimpleEdge
+include("SimpleGraphs/SimpleGraphs.jl")
+using .SimpleGraphs
+"""
+    Graph
+
+A datastruture representing an undirected graph.
+"""
+const Graph = LightGraphs.SimpleGraphs.SimpleGraph
+"""
+    DiGraph
+
+A datastruture representing a directed graph.
+"""
+const DiGraph = LightGraphs.SimpleGraphs.SimpleDiGraph
+"""
+    Edge
+
+A datastruture representing an edge between two vertices in
+a `Graph` or `DiGraph`.
+"""
+const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")

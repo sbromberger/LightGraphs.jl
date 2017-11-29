@@ -38,7 +38,7 @@ Output a set of (point, slope) that compose the restricted max-flow function
 of `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 
 ### Performance
-One point by possible slope is enough (hence ``\\mathcal{O}(λ×max_flow)`` complexity).
+One point by possible slope is enough (hence ``\\mathcal{O}(λ×maximum_flow)`` complexity).
 """
 function auxiliaryPoints end
 @traitfn function auxiliaryPoints(
