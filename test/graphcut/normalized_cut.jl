@@ -58,4 +58,10 @@
       labels = @inferred(normalized_cut(g, w, thres=0.1))
       @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
+
+    w = ones(12, 12)
+    for g in testgraphs(gx)
+      labels = @inferred(normalized_cut(g, w, thres=0.1))
+      @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    end
 end
