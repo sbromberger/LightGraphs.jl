@@ -120,9 +120,12 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     # v = eigs(D-W, D, nev=2, which=:SR)[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
-    ret = eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2]
-    y = ret[:,min(2, size(ret, 2))]
-    v = invDroot*y
+    if n > 10
+        ret = eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
+    else
+        ret = eigfact(full(invDroot'*(D-W)*invDroot))[:vectors][:,2]
+    end
+    v = invDroot*ret
 
     #perform n-cuts with different partitions of v and find best one
     min_cost = Inf
