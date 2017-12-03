@@ -1,5 +1,9 @@
 # Reading and writing Graphs
 
+```@index
+Pages   = ["centrality.md"]
+```
+
 ## Saving using *LightGraphs.jl* `lg` format.
 
 Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `LG`.
@@ -34,6 +38,14 @@ savegraph("mygraph_dict.lg", graph_dict)
 
 # Re-load only graph g1
 reloaded_g1 = loadgraph("mygraph_dict.lg", "g1")
+```
+
+## Full docs
+
+```@autodocs
+Modules = [LightGraphs]
+Pages   = ["persistence/common.jl"]
+Private = false
 ```
 
 ## Reading and Writing using other formats using GraphIO
