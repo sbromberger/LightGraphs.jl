@@ -172,7 +172,7 @@
         @test size(p, 1) == size(p, 2) == 10
         @test size(p, 3) == 1
         @test sum(p, 1) == sum(p, 2)
-        @test_throws ErrorException sum(p, 3)
+        @test_throws ArgumentError sum(p, 3)
         @test sparse(p) == adjacency_matrix(p)
         @test length(p) == 100
         @test ndims(p) == 2
@@ -251,7 +251,7 @@
         h = @inferred(g[5:26])
         @test nv(h) == 22
         @test typeof(h) == typeof(g)
-        @test_throws ErrorException g[[1, 1]]
+        @test_throws ArgumentError g[[1, 1]]
 
         r = 5:26
         h2, vm = @inferred(induced_subgraph(g, r))

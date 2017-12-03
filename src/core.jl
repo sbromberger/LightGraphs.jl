@@ -1,3 +1,8 @@
+"""
+    AbstractPathState
+
+An abstract type that provides information from shortest paths calculations.
+"""
 abstract type AbstractPathState end
 # modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
 # returns true if insert succeeded, false if it was a duplicate
@@ -14,9 +19,9 @@ is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 """
     add_vertices!(g, n)
 Add `n` new vertices to the graph `g`.
-Return `true` if all vertices were added successfully, `false` otherwise.
+Return the number of vertices that were added successfully.
 """
-add_vertices!(g::AbstractGraph, n::Integer) = all([add_vertex!(g) for i = 1:n])
+add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
     indegree(g[, v])
@@ -211,6 +216,6 @@ end
     weights(g)
 
 Return the weights of the edges of a graph `g` as a matrix. Defaults
-to `DefaultDistance()`.
+to [`LightGraphs.DefaultDistance`](@ref).
 """
 weights(g::AbstractGraph) = DefaultDistance(nv(g))

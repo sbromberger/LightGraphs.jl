@@ -19,7 +19,7 @@ be specified; if omitted, edge distances are assumed to be 1.
 function mincut(
     g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)
-) where T
+) where T <: Real
 
     U = eltype(g)
     colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
@@ -34,8 +34,9 @@ function mincut(
         pq[v] = zero(T)
     end
 
-    @assert haskey(pq, one(U))
-    @assert nv(g) >= U(2)
+    # make sure we have at least two vertices, otherwise, there's nothing to cut,
+    # in which case we'll return immediately.
+    (haskey(pq, one(U)) && nv(g) > one(U)) || return (Vector{Int8}([1]), cutweight)
 
     #Give the starting vertex high priority
     pq[one(U)] = one(T)
@@ -67,7 +68,7 @@ function mincut(
             end
         end
     end
-    return(convert(Vector{Int8},parities) .+ one(Int8), bestweight)
+    return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
 
@@ -83,8 +84,8 @@ displayed.
 function maximum_adjacency_visit(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
-    log::Bool,
-    io::IO
+    log::Bool=false,
+    io::IO=STDOUT
 ) where T<:Real
 
     U = eltype(g)
@@ -92,7 +93,8 @@ function maximum_adjacency_visit(
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
-    @assert nv(g) >= 2
+    # if the graph only has one vertex, we return the vertex by itself.
+    nv(g) > one(U) || return collect(vertices(g))
 
     # Setting intial count to 0
     for v in vertices(g)
