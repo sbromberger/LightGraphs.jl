@@ -5,45 +5,41 @@
     pagerank(g, α=0.85, n=100, ϵ=1.0e-6)
 
 Calculate the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the
-graph `g` parameterized by damping factor `α`, number of iterations 
-`n`, and convergence threshold `ϵ`. Return a vector representing the
-centrality calculated for each node in `g`, or an error if convergence
+directed graph `g` parameterized by damping factor `α`, number of
+iterations `n`, and convergence threshold `ϵ`. Return a vector representing
+the centrality calculated for each node in `g`, or an error if convergence
 is not reached within `n` iterations.
 """
-function pagerank(g::AbstractGraph, α=0.85, n=100::Integer, ϵ=1.0e-6)
-    # collect dangling nodes
-    dangling_nodes = [v for v in vertices(g) if outdegree(g, v) == 0]
+function pagerank end
+
+@traitfn function pagerank(g::::IsDirected, α=0.85, n=100::Integer, ϵ=1.0e-6)
+    A = adjacency_matrix(g, Float64; dir=:in)
+    S = vec(sum(A, 1))
+    S = 1 ./ S
+    S[find(S .== Inf)] = 0.0
+    M = A'  # need a separate line due to bug #17456 in julia
+    # scaling the adjmat to stochastic adjacency matrix
+    M = (Diagonal(S) * M)'
     N = Int(nv(g))
-    # solution vector and temporary vector
+    # solution vector
     x = fill(1.0 / N, N)
-    xlast = copy(x)
     # personalization vector
     p = fill(1.0 / N, N)
+    # temporary to hold the results of SpMV
+    y = zeros(Float64, N)
     # adjustment for leaf nodes in digraph
     dangling_weights = p
+    is_dangling = find(S .== 0)
+    # save some flops by precomputing this
+    pscaled = (1 .- α) .* p
     for _ in 1:n
-        dangling_sum = 0.0
-        for v in dangling_nodes
-            dangling_sum += x[v]
-        end
-        # flow from teleprotation
-        for v in vertices(g)
-            xlast[v] = (1 - α + α * dangling_sum) * p[v]
-        end
-        # flow from edges
-        for edge in edges(g)
-            u, v = src(edge), dst(edge)
-            xlast[v] += α * x[u] / outdegree(g, u)
-            if !is_directed(g)
-                xlast[u] += α * x[v] / outdegree(g, v)
-            end
-        end
+        xlast = x
+        # in place SpMV to conserve memory
+        A_mul_B!(y, M, x)
+        # using broadcast to avoid temporaries
+        x = α .* (y .+ sum(x[is_dangling]) .* dangling_weights) .+ pscaled
         # l1 change in solution convergence criterion
-        err = 0.0
-        for v in vertices(g)
-            err += abs(xlast[v] - x[v])
-            x[v] = xlast[v]
-        end
+        err = sum(abs, (x .- xlast))
         if (err < N * ϵ)
             return x
         end
