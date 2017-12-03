@@ -1,3 +1,5 @@
+# Contributor Guide
+
 We welcome all possible contributors and ask that you read these guidelines before starting to work on this project. Following these guidelines will reduce friction and improve the speed at which your code gets merged.
 
 ## Bug reports
@@ -50,3 +52,45 @@ end
 ```
 This allows us to reuse the memory and improve performance.
 
+## Git usage
+
+In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at `$HOME/.julia/v0.6/LightGraphs/.git/config`. Follow the instructions [here]( https://gist.github.com/piscisaureus/3342247).
+
+Locate the section for your github remote in the `.git/config` file. It looks like this:
+
+```
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+```
+
+Now add the line `fetch = +refs/pull/*/head:refs/remotes/origin/pr/*` to this section. Obviously, change the github url to match your project's URL. It ends up looking like this:
+
+```
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+```
+
+Now fetch all the pull requests:
+
+```
+$ git fetch origin
+From github.com:JuliaGraphs/LightGraphs.jl
+ * [new ref]         refs/pull/1000/head -> origin/pr/1000
+ * [new ref]         refs/pull/1002/head -> origin/pr/1002
+ * [new ref]         refs/pull/1004/head -> origin/pr/1004
+ * [new ref]         refs/pull/1009/head -> origin/pr/1009
+...
+```
+
+To check out a particular pull request:
+
+```
+$ git checkout pr/999
+Branch pr/999 set up to track remote branch pr/999 from origin.
+Switched to a new branch 'pr/999'
+```
+
+Now you can test a PR by running `git fetch && git checkout pr/PRNUMBER && julia -e 'Pkg.test("LightGraphs")`
