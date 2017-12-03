@@ -71,5 +71,5 @@
     g = smallgraph(:tutte)
     @test nv(g) == 46 && ne(g) == 69
 
-    @test_throws ErrorException g = smallgraph(:nonexistent)
+    @test_throws ArgumentError g = smallgraph(:nonexistent)
 end

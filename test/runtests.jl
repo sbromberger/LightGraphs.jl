@@ -13,7 +13,7 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
-    "graphtypes/simplegraphs/runtests",
+    "simplegraphs/runtests",
     "linalg/runtests",
     "interface",
     "core",

@@ -9,8 +9,9 @@ Sample `k` element from array `a` without repetition and eventually excluding el
 ### Implementation Notes
 Changes the order of the elements in `a`. For a non-mutating version, see [`sample`](@ref).
 """
-function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = ())
-    length(a) < k + length(exclude) && error("Array too short.")
+function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude = ())
+    minsize = k + length(exclude)
+    length(a) < minsize && throw(ArgumentError("vector must be at least size $minsize"))
     res = Vector{eltype(a)}()
     sizehint!(res, k)
     n = length(a)
@@ -26,7 +27,7 @@ function sample!(rng::AbstractRNG, a::AbstractArray, k::Integer; exclude = ())
     res
 end
 
-sample!(a::AbstractArray, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
+sample!(a::AbstractVector, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
 
 """
     sample([rng,] r, k)
