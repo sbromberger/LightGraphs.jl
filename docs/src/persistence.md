@@ -1,7 +1,7 @@
 # Reading and writing Graphs
 
 ```@index
-Pages   = ["centrality.md"]
+Pages   = ["persistence.md"]
 ```
 
 ## Saving using *LightGraphs.jl* `lg` format.
