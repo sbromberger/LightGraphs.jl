@@ -142,7 +142,7 @@
         @test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'
         @test symmetrize(adjmat, :sum).A == adjmat.A + adjmat.A
 
-        @test_throws ErrorException symmetrize(adjmat, :fake)
+        @test_throws ArgumentError symmetrize(adjmat, :fake)
     end
 
     function test_punchedmatrix(mat, n)
@@ -152,7 +152,7 @@
         @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
         @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
         eval, evecs = eigs(ahatp, which=:LM)
-        @test eval[1] - 1  <= 0
+        @test eval[1] - (1 + 1.0e-8)  <= 0
         @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
         ahat = ahatp.A
         @test isa(ahat, NormalizedAdjacency)
@@ -181,7 +181,7 @@
     function stationarydistribution(R::StochasticAdjacency; kwargs...)
         er = eigs(R, nev=1, which=:LR; kwargs...)
         l1 = er[1][1]
-        abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution")
+        abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution") # TODO 0.7: should we change the error type to InexactError?
         p = real(er[2][:, 1])
         if p[1] < 0
             for i in 1:length(p)

@@ -47,4 +47,10 @@
       v = @inferred(maximum_adjacency_visit(g))
       @test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])
     end
+
+    g1 = Graph(1)
+    for g in testgraphs(g1)
+        @test @inferred(maximum_adjacency_visit(g)) == collect(vertices(g))
+        @test @inferred(mincut(g)) == ([1], zero(eltype(g)))
+    end
 end

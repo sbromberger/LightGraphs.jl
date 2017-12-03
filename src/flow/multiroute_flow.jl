@@ -79,13 +79,12 @@ function multiroute_flow(
     flow_graph::AbstractGraph,                      # the input graph
     source::Integer,                          # the source vertex
     target::Integer,                          # the target vertex
-    capacity_matrix::AbstractMatrix =   # edge flow capacities
+    capacity_matrix::AbstractMatrix{T2} =   # edge flow capacities
     DefaultCapacity(flow_graph);
     flow_algorithm::AbstractFlowAlgorithm  =  # keyword argument for algorithm
     PushRelabelAlgorithm()
-    ) where T1<:Real where R<:Real
+    ) where T2 where T1<:Real where R<:Real
     x, f = intersection(breakingpoints, routes)
-    T2 = eltype(capacity_matrix)
     # For other cases, capacities need to be Floats
     if !(T2<:AbstractFloat)
         capacity_matrix = convert(AbstractMatrix{Float64}, capacity_matrix)
@@ -153,7 +152,7 @@ in the following cases:
 - The number of routes is 0 or non-specified
 
 ### Usage Example :
-(please consult the  [`max_flow`](@ref) section for options about flow_algorithm
+(please consult the  [`maximum_flow`](@ref) section for options about flow_algorithm
 and capacity_matrix)
 
 ```jldoctest
@@ -183,7 +182,7 @@ julia> f, F = multiroute_flow(points, 1.5) # Then run multiroute flow algorithm 
 
 julia> f = multiroute_flow(points, 1.5, valueonly = true)
 
-julia> f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix, algorithm = BoykovKolmogorovAlgorithm(), routes = 2) # Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as max_flow routine
+julia> f, F, labels = multiroute_flow(flow_graph, 1, 8, capacity_matrix, algorithm = BoykovKolmogorovAlgorithm(), routes = 2) # Run multiroute flow algorithm using Boykov-Kolmogorov algorithm as maximum_flow routine
 
 ```
 """
@@ -191,14 +190,14 @@ function multiroute_flow(
     flow_graph::AbstractGraph,                    # the input graph
     source::Integer,                        # the source vertex
     target::Integer,                        # the target vertex
-    capacity_matrix::AbstractMatrix =  # edge flow capacities
+    capacity_matrix::AbstractMatrix{T} =  # edge flow capacities
         DefaultCapacity(flow_graph);
     flow_algorithm::AbstractFlowAlgorithm  =    # keyword argument for algorithm
     PushRelabelAlgorithm(),
     mrf_algorithm::AbstractMultirouteFlowAlgorithm  =    # keyword argument for algorithm
     KishimotoAlgorithm(),
     routes::R = 0              # keyword argument for number of routes (0 = all values)
-    ) where R <: Real
+    ) where T where R <: Real
 
     # a flow with a set of 1-disjoint paths is a classical max-flow
     (routes == 1) &&
@@ -210,7 +209,6 @@ function multiroute_flow(
     (routes > λ) && return empty_flow(capacity_matrix, flow_algorithm)
 
     # For other cases, capacities need to be Floats
-    T = eltype(capacity_matrix)
     if !(T<:AbstractFloat)
         capacity_matrix = convert(AbstractMatrix{Float64}, capacity_matrix)
     end

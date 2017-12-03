@@ -9,8 +9,7 @@ the second is the convergence history for each node. Will return after
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph, maxiter=1000)
-    T = eltype(g)
+function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
     n = nv(g)
     label = collect(one(T):n)
     active_vs = IntSet(vertices(g))
@@ -63,7 +62,7 @@ end
 Fast shuffle Array `a` in UnitRange `r`.
 """
 function range_shuffle!(r::UnitRange, a::AbstractVector)
-    (r.start > 0 && r.stop <= length(a)) || error("out of bounds")
+    (r.start > 0 && r.stop <= length(a)) || throw(ArgumentError("range indices are out of bounds")) # TODO 0.7: change to DomainError?
     @inbounds for i = length(r):-1:2
         j = rand(1:i)
         ii = i + r.start - 1
@@ -109,7 +108,7 @@ end
 
 function renumber_labels!(membership::Vector, label_counters::Vector{Int})
     N = length(membership)
-    (maximum(membership) > N || minimum(membership) < 1) && error("Label must between 1 and |V|")
+    (maximum(membership) > N || minimum(membership) < 1) && throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
     j = 1
     @inbounds for i = 1:length(membership)
         k = membership[i]

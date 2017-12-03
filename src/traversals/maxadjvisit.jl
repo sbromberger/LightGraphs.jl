@@ -1,140 +1,6 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
-# Maximum adjacency visit / traversal
-
-#################################################
-#
-#  Maximum adjacency visit
-#
-#################################################
-
-abstract type AbstractGraphVisitor end
-abstract type AbstractGraphVisitAlgorithm end
-
-
-struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
-end
-
-abstract type AbstractMASVisitor <: AbstractGraphVisitor end
-
-function maximum_adjacency_visit_impl!(
-    g::AbstractGraph,                                # the graph
-    pq::DataStructures.PriorityQueue{Int,T},         # priority queue
-    visitor::AbstractMASVisitor,                     # the visitor
-    colormap::Vector{Int}) where T                   # traversal status
-
-    while !isempty(pq)
-        u = DataStructures.dequeue!(pq)
-        discover_vertex!(visitor, u)
-        for v in out_neighbors(g, u)
-            examine_neighbor!(visitor, u, v, 0, 0, 0)
-
-            if haskey(pq, v)
-                ed = visitor.distmx[u, v]
-                pq[v] += ed
-            end
-        end
-        close_vertex!(visitor, u)
-    end
-
-end
-
-function traverse_graph!(
-    g::AbstractGraph,
-    T::DataType,
-    alg::MaximumAdjacency,
-    s::Integer,
-    visitor::AbstractMASVisitor,
-    colormap::Vector{Int})
-
-
-    pq = DataStructures.PriorityQueue{Int, T}(Base.Order.Reverse)
-
-    # Set number of visited neighbors for all vertices to 0
-    for v in vertices(g)
-        pq[v] = zero(T)
-    end
-
-    @assert haskey(pq, s)
-    @assert nv(g) >= 2
-
-    #Give the starting vertex high priority
-    pq[s] = one(T)
-
-    #start traversing the graph
-    maximum_adjacency_visit_impl!(g, pq, visitor, colormap)
-end
-
-
-#################################################
-#
-#  Minimum Cut Visitor
-#
-#################################################
-
-mutable struct MinCutVisitor{T,U<:Integer} <: AbstractMASVisitor
-    graph::AbstractGraph
-    parities::BitVector
-    colormap::Vector{Int}
-    bestweight::T
-    cutweight::T
-    visited::Int
-    distmx::AbstractMatrix{T}
-    vertices::Vector{U}
-end
-
-function MinCutVisitor(g::AbstractGraph, distmx::AbstractMatrix{T}) where T
-    U = eltype(g)
-    n = nv(g)
-    parities = falses(n)
-    return MinCutVisitor(
-        g,
-        falses(n),
-        zeros(Int, n),
-        typemax(T),
-        zero(T),
-        zero(Int),
-        distmx,
-        Vector{U}()
-    )
-end
-
-function discover_vertex!(vis::MinCutVisitor, v::Integer)
-    vis.parities[v] = false
-    vis.colormap[v] = 1
-    push!(vis.vertices, v)
-    return true
-end
-
-function examine_neighbor!(vis::MinCutVisitor, u::Integer, v::Integer, ucolor::Int, vcolor::Int, ecolor::Int)
-    ew = vis.distmx[u, v]
-
-    # if the target of e is already marked then decrease cutweight
-    # otherwise, increase it
-
-    if vis.colormap[v] != vcolor # here vcolor is 0
-        vis.cutweight -= ew
-    else
-        vis.cutweight += ew
-    end
-    return true
-end
-
-function close_vertex!(vis::MinCutVisitor, v::Integer)
-    vis.colormap[v] = 2
-    vis.visited += 1
-
-    if vis.cutweight < vis.bestweight && vis.visited < nv(vis.graph)
-        vis.bestweight = vis.cutweight
-        for u in vertices(vis.graph)
-            vis.parities[u] = (vis.colormap[u] == 2)
-        end
-    end
-    return true
-end
-
-
 #################################################
 #
 #  Minimum Cut
@@ -153,11 +19,56 @@ be specified; if omitted, edge distances are assumed to be 1.
 function mincut(
     g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)
-) where T
-    visitor = MinCutVisitor(g, distmx)
-    colormap = zeros(Int, nv(g))
-    traverse_graph!(g, T, MaximumAdjacency(), 1, visitor, colormap)
-    return(visitor.parities + 1, visitor.bestweight)
+) where T <: Real
+
+    U = eltype(g)
+    colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
+    parities = falses(nv(g))
+    bestweight = typemax(T)
+    cutweight = zero(T)
+    visited = zero(U)               ## number of vertices visited
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+
+    # Set number of visited neighbors for all vertices to 0
+    for v in vertices(g)
+        pq[v] = zero(T)
+    end
+
+    # make sure we have at least two vertices, otherwise, there's nothing to cut,
+    # in which case we'll return immediately.
+    (haskey(pq, one(U)) && nv(g) > one(U)) || return (Vector{Int8}([1]), cutweight)
+
+    #Give the starting vertex high priority
+    pq[one(U)] = one(T)
+
+    while !isempty(pq)
+        u = DataStructures.dequeue!(pq)
+        colormap[u] = 1
+
+        for v in out_neighbors(g, u)
+            # if the target of e is already marked then decrease cutweight
+            # otherwise, increase it
+            ew = distmx[u, v]
+            if colormap[v] != 0
+                cutweight -= ew
+            else
+                cutweight += ew
+            end
+            if haskey(pq, v)
+                pq[v] += distmx[u, v]
+            end
+        end
+
+        colormap[u] = 2
+        visited += one(U)
+        if cutweight < bestweight && visited < nv(g)
+            bestweight = cutweight
+            for u in vertices(g)
+                parities[u] = (colormap[u] == 2)
+            end
+        end
+    end
+    return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
 
@@ -173,8 +84,8 @@ displayed.
 function maximum_adjacency_visit(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
-    log::Bool,
-    io::IO
+    log::Bool=false,
+    io::IO=STDOUT
 ) where T<:Real
 
     U = eltype(g)
@@ -182,7 +93,8 @@ function maximum_adjacency_visit(
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
-    @assert nv(g) >= 2
+    # if the graph only has one vertex, we return the vertex by itself.
+    nv(g) > one(U) || return collect(vertices(g))
 
     # Setting intial count to 0
     for v in vertices(g)

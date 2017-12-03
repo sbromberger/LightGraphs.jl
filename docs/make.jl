@@ -2,12 +2,10 @@ using Documenter
 include("../src/LightGraphs.jl")
 using LightGraphs
 
-# index is equal to the README for the time being
-cp(normpath(@__FILE__, "../../README.md"), normpath(@__FILE__, "../src/index.md"); remove_destination=true)
-
 # same for contributing and license
 cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); remove_destination=true)
 cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); remove_destination=true)
+cp(normpath(@__FILE__, "../../CITING.md"), normpath(@__FILE__, "../src/citing.md"); remove_destination=true)
 
 makedocs(
     modules     = [LightGraphs],
@@ -16,8 +14,13 @@ makedocs(
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
-        "Basic Functions"                   => "basicmeasures.md",
+        "Choosing A Graph Type"             => "graphtypes.md",
+        "LightGraphs Types"                 => "types.md",
+        "Accessing Properties"              => "basicproperties.md",
+        "Making and Modifying Graphs"       => "generators.md",
+        "Reading / Writing Graphs"          => "persistence.md",
         "Operators"                         => "operators.md",
+        "Plotting Graphs"                   => "plotting.md",
         "Path and Traversal"                => "pathing.md",
         "Distance"                          => "distance.md",
         "Centrality Measures"               => "centrality.md",
@@ -26,12 +29,11 @@ makedocs(
         "Community Structures"              => "community.md",
         "Degeneracy"                        => "degeneracy.md",
         "Flow and Cut"                      => "flowcut.md",
-        "Graph Generators"                  => "generators.md",
-        "Choosing A Graph Type"             => "graphtypes.md",
-        "Reading / Writing Graphs"          => "persistence.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
-        "License Information"               => "license.md"
+        "Developer Notes"                   => "developing.md",
+        "License Information"               => "license.md",
+        "Citing LightGraphs"                => "citing.md"
     ]
 )
 
@@ -44,6 +46,5 @@ deploydocs(
     osname      = "linux"
 )
 
-rm(normpath(@__FILE__, "../src/index.md"))
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))

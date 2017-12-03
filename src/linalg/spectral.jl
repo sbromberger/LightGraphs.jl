@@ -34,10 +34,9 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     end
 end
 
-function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1)
+function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Function, nzmult::Int=1) where U
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
-    U = eltype(g)
     colpt = ones(U, n_v + 1)
     
     rowval = sizehint!(Vector{U}(), nz)
@@ -76,8 +75,7 @@ for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both gr
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`. 
 """
-function laplacian_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
-    U = eltype(g)
+function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:unspec) where U
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
@@ -193,6 +191,6 @@ end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
-    @assert nv(G₁) == nv(G₂) "spectral distance not defined for |G₁| != |G₂|"
+    nv(G₁) == nv(G₂) || throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))
 end

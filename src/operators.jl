@@ -210,8 +210,8 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function crosspath end
-@traitfn function crosspath(len::Integer, g::::(!IsDirected))
-    T = eltype(g)
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function crosspath{T, AG<:AbstractGraph{T}}(len::Integer, g::AG::(!IsDirected))
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -222,7 +222,7 @@ end
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
 # """
 function *(g::Graph, v::Vector{T}) where T<:Real
-    length(v) == nv(g) || error("Vector size must equal number of vertices")
+    length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
         i = src(e)
@@ -234,7 +234,7 @@ function *(g::Graph, v::Vector{T}) where T<:Real
 end
 
 function *(g::DiGraph, v::Vector{T}) where T<:Real
-    length(v) == nv(g) || error("Vector size must equal number of vertices")
+    length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
         i = src(e)
@@ -252,7 +252,7 @@ Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 function sum(g::AbstractGraph, dim::Int)
     dim == 1 && return indegree(g, vertices(g))
     dim == 2 && return outdegree(g, vertices(g))
-    error("Graphs are only two dimensional")
+    throw(ArgumentError("dimension must be <= 2"))
 end
 
 
@@ -278,8 +278,6 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-#arrayfunctions = (:eltype, :length, :ndims, :size, :strides, :issymmetric)
-# eltype(g::AbstractGraph) = Float64
 length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
@@ -377,7 +375,7 @@ julia> @assert sg == g[elist]
 ```
 """
 function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph where U<:Integer
-    allunique(vlist) || error("Vertices in subgraph list must be unique")
+    allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
     vmap = Vector{U}(length(vlist))
@@ -400,11 +398,10 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
 end
 
 
-function induced_subgraph(g::T, elist::AbstractVector{U}) where T<:AbstractGraph where U<:AbstractEdge
+function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG<:AbstractGraph{T} where T where U<:AbstractEdge
     h = zero(g)
-    et = eltype(h)
-    newvid = Dict{et,et}()
-    vmap = Vector{et}()
+    newvid = Dict{T,T}()
+    vmap = Vector{T}()
 
     for e in elist
         u, v = Tuple(e)
@@ -466,10 +463,10 @@ function merge_vertices(g::AbstractGraph, vs)
     # Use lowest value as new vertex id.
     sort!(vs)
     nvnew = nv(g) - length(unique(vs)) +1
-    @assert nvnew <= nv(g) "Merging vertices increased the number of vertices!"
-    v0 = minimum(vs)
-    v0 > 0 || error("minimum(vs) < 1")
-    maximum(vs) <= nv(g) || error("maximum(vs) > nv(g)")
+    nvnew <= nv(g) || return g
+    (v0, vm) = extrema(vs)
+    v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
+    vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
     labels[vs] = v0
     shifts = compute_shifts(nv(g), vs[2:end])
     for v in vertices(g)
@@ -501,7 +498,7 @@ Return a vector with new vertex values are indexed by the original vertex indice
 ### Implementation Notes
 Supports SimpleGraph only.
 """
-function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
     merged_vertex = shift!(vs)
 
@@ -513,7 +510,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
     for i in vertices(g)
         # Adjust connections to merged vertices
         if (i != merged_vertex) && !insorted(i, vs)
-            nbrs_to_rewire = Set{eltype(g)}()
+            nbrs_to_rewire = Set{T}()
             for j in out_neighbors(g, i)
                if insorted(j, vs)
                   push!(nbrs_to_rewire, merged_vertex)
@@ -526,7 +523,7 @@ function merge_vertices!(g::Graph, vs::Vector{T} where T <: Integer)
 
         # Collect connections to new merged vertex
         else
-            nbrs_to_merge = Set{eltype(g)}()
+            nbrs_to_merge = Set{T}()
             for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end

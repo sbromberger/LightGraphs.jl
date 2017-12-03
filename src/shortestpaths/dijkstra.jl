@@ -16,10 +16,10 @@ end
 
 Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 on a graph, computing shortest distances between `srcs` and all other vertices.
-Return a [`DijkstraState`](@ref) that contains various traversal information.
+Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal information.
 
 ### Optional Arguments
-- `allpaths=false`: If true, returns a [`DijkstraState`](@ref) that keeps track of all
+- `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
 """
 function dijkstra_shortest_paths(
@@ -129,12 +129,11 @@ traversal information.
 """
 
 function parallel_multisource_dijkstra_shortest_paths(
-    g::AbstractGraph,
+    g::AbstractGraph{U},
     sources::AbstractVector = vertices(g),
     distmx::AbstractMatrix{T} = weights(g)
-    ) where T <: Real
+    ) where T <: Real where U
 
-    U = eltype(g)
     n_v = nv(g)
     r_v = length(sources)
 

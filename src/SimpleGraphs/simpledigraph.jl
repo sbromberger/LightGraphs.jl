@@ -5,7 +5,7 @@ const SimpleDiGraphEdge = SimpleEdge
 
 A type representing a directed graph.
 """
-mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph
+mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
@@ -33,7 +33,7 @@ SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 # sparse adjacency matrix constructor: DiGraph(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
@@ -52,7 +52,7 @@ end
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) || error("Adjacency / distance matrices must be square")
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     for i in find(adjmx)
@@ -104,8 +104,7 @@ is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
 is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
-function add_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    T = eltype(g)
+function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false
     inserted = _insert_and_dedup!(g.fadjlist[s], d)
@@ -128,8 +127,7 @@ function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
 end
 
 
-function add_vertex!(g::SimpleDiGraph)
-    T = eltype(g)
+function add_vertex!(g::SimpleDiGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.badjlist, Vector{T}())
     push!(g.fadjlist, Vector{T}())

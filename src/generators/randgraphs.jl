@@ -243,8 +243,7 @@ already present in the system by preferential attachment.
 function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1)
     n0 = nv(g)
     1 <= k <= n0 <= n ||
-    throw(ArgumentError("Barabási-Albert model requires 1 <= k <= n0 <= n" *
-    "where n0 is the number of vertices in graph g"))
+        throw(ArgumentError("Barabási-Albert model requires 1 <= k <= nv(g) <= n"))
     n0 == n && return g
 
     # seed random number generator
@@ -312,7 +311,7 @@ end
 
 Generate a random graph with ``|fitness|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional
-to ``fitness_i  × fitness_j``.
+to ``fitness_i × fitness_j``.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
@@ -324,18 +323,18 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
 function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T<:Real
-    @assert(m >= 0, "invalid number of edges")
+    m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness)
     m == 0 && return Graph(n)
     nvs = 0
     for f in fitness
         # sanity check for the fitness
-        f < zero(T) && error("fitness scores must be non-negative")
+        f < zero(T) && throw(ArgumentError("fitness scores must be non-negative"))
         f > zero(T) && (nvs += 1)
     end
     # avoid getting into an infinite loop when too many edges are requested
     max_no_of_edges = div(nvs * (nvs - 1), 2)
-    @assert(m <= max_no_of_edges, "too many edges requested")
+    m > max_no_of_edges && throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
     g = Graph(n)
@@ -360,21 +359,21 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
 function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T<:Real where S<:Real
-    @assert(m >= 0, "invalid number of edges")
+    m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness_out)
-    @assert(length(fitness_in) == n, "fitness_in must have the same size as fitness_out")
+    length(fitness_in) != n && throw(ArgumentError("fitness_in must have the same size as fitness_out"))
     m == 0 && return DiGraph(n)
     # avoid getting into an infinite loop when too many edges are requested
     noutvs = ninvs = nvs = 0
     @inbounds for i = 1:n
         # sanity check for the fitness
-        (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative")
+        (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) && error("fitness scores must be non-negative") # TODO 0.7: change to DomainError?
         fitness_out[i] > zero(T) && (noutvs += 1)
         fitness_in[i] > zero(S) && (ninvs += 1)
         (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nvs += 1)
     end
     max_no_of_edges = noutvs * ninvs - nvs
-    @assert(m <= max_no_of_edges, "too many edges requested")
+    m > max_no_of_edges && throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
     # calculate the cumulative fitness scores
     cum_fitness_out = cumsum(fitness_out)
     cum_fitness_in = cumsum(fitness_in)
@@ -419,8 +418,8 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
 function static_scale_free(n::Integer, m::Integer, α::Real; seed::Int=-1, finite_size_correction::Bool=true)
-    @assert(n >= 0, "Invalid number of vertices")
-    @assert(α >= 2, "out-degree exponent must be >= 2")
+    n < 0 && throw(ArgumentError("number of vertices must be positive"))
+    α < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
     fitness = _construct_fitness(n, α, finite_size_correction)
     static_fitness_model(m, fitness, seed=seed)
 end
@@ -446,9 +445,9 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
 function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64; seed::Int=-1, finite_size_correction::Bool=true)
-    @assert(n >= 0, "Invalid number of vertices")
-    @assert(α_out >= 2, "out-degree exponent must be >= 2")
-    @assert(α_in >= 2, "in-degree exponent must be >= 2")
+    n < 0 && throw(ArgumentError("number of vertices must be positive"))
+    α_out < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
+    α_in < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
     # construct the fitness
     fitness_out = _construct_fitness(n, α_out, finite_size_correction)
     fitness_in = _construct_fitness(n, α_in, finite_size_correction)
@@ -491,8 +490,8 @@ Allocates an array of `nk` `Int`s, and . For ``k > \\frac{n}{2}``, generates a g
 ``n-k-1`` and returns its complement.
 """
 function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
-    @assert(iseven(n * k), "n * k must be even")
-    @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
+    !iseven(n * k) && throw(ArgumentError("n * k must be even"))
+    !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
     if k == 0
         return Graph(n)
     end
@@ -533,12 +532,12 @@ Time complexity is approximately ``\\mathcal{O}(n \\bar{k}^2)``.
 Allocates an array of ``n \\bar{k}`` `Int`s.
 """
 function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check_graphical::Bool=false) where T<:Integer
-    @assert(n == length(k), "a degree sequence of length n has to be provided")
+    n != length(k) && throw(ArgumentError("a degree sequence of length n must be provided"))
     m = sum(k)
-    @assert(iseven(m), "sum(k) must be even")
-    @assert(all(0 .<= k .< n), "the 0 <= k[i] < n inequality must be satisfied")
+    !iseven(m) && throw(ArgumentError("sum(k) must be even"))
+    !all(0 .<= k .< n) && throw(ArgumentError("the 0 <= k[i] < n inequality must be satisfied"))
     if check_graphical
-        isgraphical(k) || error("Degree sequence non graphical")
+        isgraphical(k) || throw(ArgumentError("degree sequence must be graphical"))
     end
     rng = getRNG(seed)
 
@@ -572,7 +571,7 @@ uses that to generate the directed graph.
 function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::Int=-1)
     #TODO remove the function sample from StatsBase for one allowing the use
     # of a local rng
-    @assert(0 <= k < n, "the 0 <= k < n inequality must be satisfied")
+    !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
 
     if k == 0
         return DiGraph(n)
@@ -616,8 +615,8 @@ For a dynamic version of the SBM see the [`StochasticBlockModel`](@ref) type and
 related functions.
 """
 function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
-    @assert size(c, 1) == length(n)
-    @assert size(c, 2) == length(n)
+    size(c, 1) == size(c, 2) == length(n) || throw(ArgumentError("matrix-vector size mismatch"))
+
     # init dsfmt generator without altering GLOBAL_RNG
     rng = getRNG(seed)
     N = sum(n)
@@ -628,8 +627,9 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
     for a = 1:K
         ra = (cum[a] + 1):cum[a + 1]
         for b = a:K
-            @assert a == b ? c[a, b] <= n[b] - 1 : c[a, b] <= n[b]   "Mean degree cannot be greater than available neighbors in the block."
-
+            ((a == b) && !(c[a, b] <= n[b] - 1)) || ((a != b) && !(c[a, b] <= n[b])) &&
+                error("Mean degree cannot be greater than available neighbors in the block.") # TODO 0.7: turn into some other error?
+            
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
             p = a == b ? n[a] * c[a, b] / (2m) : n[a] * c[a, b] / m
             nedg = randbn(m, p, seed)
@@ -715,7 +715,7 @@ and external probabilities `externalp`.
 """
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
-    numblocks == length(internalp) || error("Inconsistent input dimensions: internalp, sizes")
+    numblocks == length(internalp) || throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
     B = diagm(internalp) + externalp * (ones(numblocks, numblocks) - I)
     return B
 end

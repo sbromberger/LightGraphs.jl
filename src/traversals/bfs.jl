@@ -5,7 +5,7 @@ Convert a parents array into a directed graph.
 """
 function tree(parents::AbstractVector{T}) where T<:Integer
     n = T(length(parents))
-    t = DiGraph(n)
+    t = DiGraph{T}(n)
     for (v, u) in enumerate(parents)
         if u > zero(T)  && u != v
             add_edge!(t, u, v)
@@ -20,30 +20,46 @@ end
 Perform a breadth-first search of graph `g` starting from vertex `s`.
 Return a vector of parent vertices indexed by vertex. If `dir` is specified,
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
+
+
+### Performance
+This implementation is designed to perform well on large graphs. There are
+implementations which are marginally faster in practice for smaller graphs,
+but the performance improvements using this implementation on large graphs
+can be significant.
 """
 bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
     (dir == :out) ? _bfs_parents(g, s, out_neighbors) : _bfs_parents(g, s, in_neighbors)
-function _bfs_parents(g::AbstractGraph, s::Integer, neighborfn::Function)
-    T = eltype(g)
-    Q=Vector{T}()
+
+function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
+    n = nv(g)
+    visited = falses(n)
     parents = zeros(T, nv(g))
-    seen = zeros(Bool, nv(g))
-    parents[s] = s
-    seen[s] = true
-    push!(Q, s)
-    while !isempty(Q)
-        src = shift!(Q)
-        for vertex in neighborfn(g, src)
-            if !seen[vertex]
-                push!(Q, vertex) #Push onto queue
-                parents[vertex] = src
-                seen[vertex] = true
+    cur_level = Vector{T}()
+    sizehint!(cur_level, n)
+    next_level = Vector{T}()
+    sizehint!(next_level, n)
+    @inbounds for s in source
+        visited[s] = true
+        push!(cur_level, s)
+        parents[s] = s
+    end
+    while !isempty(cur_level)
+        @inbounds for v in cur_level
+            @inbounds @simd for i in  neighborfn(g, v)
+                if !visited[i]
+                    push!(next_level, i)
+                    parents[i] = v
+                    visited[i] = true
+                end
             end
         end
+        empty!(cur_level)
+        cur_level, next_level = next_level, cur_level
+        sort!(cur_level)
     end
     return parents
 end
-
 
 """
     bfs_tree(g, s[; dir=:out])
@@ -58,48 +74,51 @@ bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=di
 """
     gdistances!(g, source, dists)
 
-Fill `dists` with the geodesic distances of vertices in `g` from `source`.
-`dists` should be a vector of length `nv(g)`. Return `dists`.
-For vertices in disconnected components the default distance is -1.
+Fill `dists` with the geodesic distances of vertices in `g` from source vertex/vertices
+`sources`. `dists` should be a vector of length `nv(g)` filled with `typemax(T)`.
+Return `dists`.
+
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function gdistances!(g::AbstractGraph, source, dists)
-    T = eltype(g)
+function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     n = nv(g)
-    fill!(dists, typemax(T))
-    seen = zeros(Bool, n)
-    queue = Vector{T}(n)
-    @inbounds for i in 1:length(source)
-        queue[i] = source[i]
-        dists[source[i]] = 0
-        seen[source[i]] = true
+    visited = falses(n)
+    n_level = one(T)
+    cur_level = Vector{T}()
+    sizehint!(cur_level, n)
+    next_level = Vector{T}()
+    sizehint!(next_level, n)
+    @inbounds for s in source
+        vert_level[s] = zero(T)
+        visited[s] = true
+        push!(cur_level, s)
     end
-    head = 1
-    tail = length(source)
-    while head <= tail
-        current = queue[head]
-        distance = dists[current] + 1
-        head += 1
-        @inbounds for j in out_neighbors(g, current)
-            if !seen[j]
-                dists[j] = distance
-                tail += 1
-                queue[tail] = j
-                seen[j] = true
+    while !isempty(cur_level)
+        @inbounds for v in cur_level
+            @inbounds @simd for i in out_neighbors(g, v)
+                if !visited[i]
+                    push!(next_level, i)
+                    vert_level[i] = n_level
+                    visited[i] = true
+                end
             end
         end
+        n_level += one(T)
+        empty!(cur_level)
+        cur_level, next_level = next_level, cur_level
+        sort!(cur_level)
     end
-    return dists
+    return vert_level
 end
-
 
 """
     gdistances(g, source)
 
 Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
-For vertices in disconnected components the default distance is -1.
+For vertices in disconnected components the default distance is `typemax(T)`.
 """
-gdistances(g::AbstractGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, fill(typemax(T), nv(g)))
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
@@ -108,9 +127,8 @@ Return `true` if there is a path from `u to `v` in `g` (while avoiding vertices 
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
 is in `excluded_vertices`. 
 """
-function has_path(g::AbstractGraph, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector=Vector{eltype(g)}())
-    T = eltype(g)
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
+        exclude_vertices::AbstractVector=Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true

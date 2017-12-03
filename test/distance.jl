@@ -7,9 +7,6 @@
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
-    for g in testdigraphs(g4)
-        @test_throws ErrorException eccentricity(g)
-    end
     for g in testgraphs(a1)
         z = @inferred(eccentricity(g, distmx1))
         y = @inferred(parallel_eccentricity(g, distmx1))

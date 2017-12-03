@@ -25,23 +25,23 @@ AbstractSimpleGraphs must have the following elements:
 - fadjlist::Vector{Vector{Integer}}
 - ne::Integer
 """
-abstract type AbstractSimpleGraph <: AbstractGraph end
+abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
 
-function show(io::IO, g::AbstractSimpleGraph)
+function show(io::IO, g::AbstractSimpleGraph{T}) where T
     if is_directed(g)
         dir = "directed"
     else
         dir = "undirected"
     end
     if nv(g) == 0
-        print(io, "empty $dir simple $(eltype(g)) graph")
+        print(io, "empty $dir simple $T graph")
     else
-        print(io, "{$(nv(g)), $(ne(g))} $dir simple $(eltype(g)) graph")
+        print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
     end
 end
 
-nv(g::AbstractSimpleGraph) = eltype(g)(length(fadj(g)))
-vertices(g::AbstractSimpleGraph) = one(eltype(g)):nv(g)
+nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
+vertices(g::AbstractSimpleGraph{T}) where T = one(T):nv(g)
 
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
@@ -74,8 +74,7 @@ has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
 
-function rem_edge!(g::AbstractSimpleGraph, u::Integer, v::Integer)
-    T = eltype(g)
+function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
     rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 
@@ -102,17 +101,17 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 
     # remove the in_edges from v
     srcs = copy(in_neighbors(g, v))
-    for s in srcs
+    @inbounds for s in srcs
         rem_edge!(g, edgetype(g)(s, v))
     end
     # remove the in_edges from the last vertex
     neigs = copy(in_neighbors(g, n))
-    for s in neigs
+    @inbounds for s in neigs
         rem_edge!(g, edgetype(g)(s, n))
     end
     if v != n
         # add the edges from n back to v
-        for s in neigs
+        @inbounds for s in neigs
             add_edge!(g, edgetype(g)(s, v))
         end
     end
@@ -120,17 +119,17 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     if is_directed(g)
         # remove the out_edges from v
         dsts = copy(out_neighbors(g, v))
-        for d in dsts
+        @inbounds for d in dsts
             rem_edge!(g, edgetype(g)(v, d))
         end
         # remove the out_edges from the last vertex
         neigs = copy(out_neighbors(g, n))
-        for d in neigs
+        @inbounds for d in neigs
             rem_edge!(g, edgetype(g)(n, d))
         end
         if v != n
             # add the out_edges back to v
-            for d in neigs
+            @inbounds for d in neigs
                 add_edge!(g, edgetype(g)(v, d))
             end
         end
@@ -145,9 +144,9 @@ end
 
 zero(g::T) where T<:AbstractSimpleGraph = T()
 
-include("simpleedge.jl")
-include("simpledigraph.jl")
-include("simplegraph.jl")
-include("simpleedgeiter.jl")
+include("./simpleedge.jl")
+include("./simpledigraph.jl")
+include("./simplegraph.jl")
+include("./simpleedgeiter.jl")
 
 end # module

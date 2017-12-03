@@ -115,7 +115,7 @@ function loadlg(io::IO, gname::String)
             _lg_skip_one_graph(io, header.ne)
         end
     end
-    error("Graph $gname not found")
+    throw(ArgumentError("graph $gname not found"))
 end
 
 """
@@ -124,8 +124,8 @@ end
 Write a graph `g` with name `gname` in a proprietary format
 to the IO stream designated by `io`. Return 1 (number of graphs written).
 """
-function savelg(io::IO, g::AbstractGraph, gname::String)
-    header = LGHeader(nv(g), ne(g), is_directed(g), gname, 2, eltype(g), "simplegraph")
+function savelg(io::IO, g::AbstractGraph{T}, gname::String) where T
+    header = LGHeader(nv(g), ne(g), is_directed(g), gname, 2, T, "simplegraph")
     # write header line
     line = string(header)
     write(io, "$line\n")

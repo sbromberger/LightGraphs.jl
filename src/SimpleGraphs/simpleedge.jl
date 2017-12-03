@@ -1,9 +1,9 @@
 import Base: Pair, Tuple, show, ==
 import LightGraphs: AbstractEdge, src, dst, reverse
 
-abstract type AbstractSimpleEdge <: AbstractEdge end
+abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
 
-struct SimpleEdge{T<:Integer} <: AbstractSimpleEdge
+struct SimpleEdge{T<:Integer} <: AbstractSimpleEdge{T}
     src::T
     dst::T
 end
@@ -13,7 +13,7 @@ SimpleEdge(p::Pair) = SimpleEdge(p.first, p.second)
 SimpleEdge{T}(p::Pair) where T<:Integer = SimpleEdge(T(p.first), T(p.second))
 SimpleEdge{T}(t::Tuple) where T<:Integer = SimpleEdge(T(t[1]), T(t[2]))
 
-eltype(e::T) where T<:AbstractSimpleEdge = eltype(src(e))
+eltype(e::ET) where ET<:AbstractSimpleEdge{T} where T = T
 
 # Accessors
 src(e::AbstractSimpleEdge) = e.src
