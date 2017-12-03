@@ -14,6 +14,7 @@ makedocs(
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
+        "Choosing A Graph Type"             => "graphtypes.md",
         "LightGraphs Types"                 => "types.md",
         "Accessing Properties"              => "basicproperties.md",
         "Making and Modifying Graphs"       => "generators.md",
