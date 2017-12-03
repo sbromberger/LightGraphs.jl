@@ -47,6 +47,7 @@ mincut
 
 ```@docs
 randomwalk
+non_backtracking_randomwalk
 saw
 ```
 
@@ -65,6 +66,7 @@ has_self_loops
 attracting_components
 is_bipartite
 bipartite_map
+biconnected_components
 condensation
 neighborhood
 articulation
@@ -80,6 +82,21 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 ```@docs
 is_cyclic
 maxsimplecycles
+simplecycles
+simplecycles_iter
+simplecycles_hadwick_james
+simplecyclescount
+simplecycleslength
+karp_minimum_cycle_mean
+```
+
+## Minimum Spanning Trees (MST) Algorithms
+
+A Minimum Spanning Tree (MST) is a subset of the edges of a connected, edge-weighted (un)directed graph that connects all the vertices together, without any cycles and with the minimum possible total edge weight.
+
+```@docs
+kruskal_mst
+prim_mst
 ```
 
 ## Shortest-Path Algorithms
