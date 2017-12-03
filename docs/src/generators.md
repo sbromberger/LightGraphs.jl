@@ -13,6 +13,7 @@ generator functions, and the ability to read and write graphs from files
 ```@docs
 Graph
 DiGraph
+Edge
 add_edge!
 rem_edge!
 add_vertex!
