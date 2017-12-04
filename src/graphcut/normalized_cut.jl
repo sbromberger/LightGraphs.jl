@@ -142,11 +142,6 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     if min_cost < thres
         #split graph, compute normalized_cut for each subgraph recursively and merge indices.
         cut = v.>best_thres
-
-        if sum(cut) == 0 || sum(cut) == m
-            return ones(Int, m)
-        end
-
         W1, W2, vmap1, vmap2 = _partition_weightmx(cut, W)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
         labels2 = _recursive_normalized_cut(W2, thres, num_cuts)
