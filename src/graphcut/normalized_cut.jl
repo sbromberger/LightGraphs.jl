@@ -30,15 +30,15 @@ end
 
 function _partition_weightmx(cut, W::AbstractMatrix)
     nv = length(cut)
-    nv1 = sum(cut)
-    nv2 = nv - nv1
+    nv2 = sum(cut)
+    nv1 = nv - nv2
     newvid = Vector{Int}(nv)
     vmap1 = Vector{Int}(nv1)
     vmap2 = Vector{Int}(nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
-        if cut[i] == true
+        if cut[i] == false
             newvid[i] = j1
             vmap1[j1] = i
             j1+=1
@@ -54,9 +54,9 @@ function _partition_weightmx(cut, W::AbstractMatrix)
 
     for j in indices(W, 2)
         for i in indices(W, 1)
-            if cut[i] == cut[j] == true
+            if cut[i] == cut[j] == false
                 W1[newvid[i], newvid[j]] = W[i, j]
-            elseif cut[i] == cut[j] == false
+            elseif cut[i] == cut[j] == true
                 W2[newvid[i], newvid[j]] = W[i, j]
             end
         end
@@ -67,15 +67,15 @@ end
 
 function _partition_weightmx(cut, W::SparseMatrixCSC)
     nv = length(cut)
-    nv1 = sum(cut)
-    nv2 = nv - nv1
+    nv2 = sum(cut)
+    nv1 = nv - nv2
     newvid = Vector{Int}(nv)
     vmap1 = Vector{Int}(nv1)
     vmap2 = Vector{Int}(nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
-        if cut[i] == true
+        if cut[i] == false
             newvid[i] = j1
             vmap1[j1] = i
             j1+=1
@@ -183,10 +183,11 @@ Return a vector that contains the set index for each vertex.
 """
 function normalized_cut(
     g::AbstractGraph,
-    W::AbstractMatrix{T}=weights(g);
+    W::AbstractMatrix{T}=adjacency_matrix(g);
     thres = 0.01,
     num_cuts::Int = 10
     ) where T <: Real
 
     return _recursive_normalized_cut(W, thres, num_cuts)
 end
+

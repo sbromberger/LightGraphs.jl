@@ -64,4 +64,16 @@
       labels = @inferred(normalized_cut(g, w, thres=0.1))
       @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
+
+    w = ones(12, 12)
+    for g in testgraphs(gx)
+      labels = @inferred(normalized_cut(g, w, thres=0.1))
+      @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    end
+
+    g = PathGraph(100)
+    labels = @inferred(normalized_cut(g))
+    @test unique(labels) == [1]
+    labels = @inferred(normalized_cut(g, thres=0.05))
+    @test sort(unique(labels)) == [1, 2, 3, 4]
 end
