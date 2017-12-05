@@ -1,7 +1,7 @@
 abstract type AbstractGraphFormat end
 
 """
-    loadgraph(file, gname="graph", format=LGFormat)
+    loadgraph(file, gname="graph", format=LGFormat())
 
 Read a graph named `gname` from `file` in the format `format`.
 
