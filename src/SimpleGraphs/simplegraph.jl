@@ -34,7 +34,7 @@ function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
-    for i in find(triu(adjmx))
+    @inbounds for i in find(triu(adjmx))
         ind = ind2sub((dima, dimb), i)
         add_edge!(g, ind...)
     end
@@ -56,7 +56,7 @@ function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
     edgect = 0
     newfadj = deepcopy(g.fadjlist)
-    for i in vertices(g)
+    @inbounds for i in vertices(g)
         for j in badj(g, i)
             if (_insert_and_dedup!(newfadj[i], j))
                 edgect += 2     # this is a new edge only in badjlist

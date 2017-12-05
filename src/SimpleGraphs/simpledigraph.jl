@@ -37,7 +37,7 @@ function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer 
 
     g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
-    for c = 1:(maxc - 1)
+    @inbounds for c = 1:(maxc - 1)
         for rind = adjmx.colptr[c]:(adjmx.colptr[c + 1] - 1)
             isnz = (adjmx.nzval[rind] != zero(U))
             if isnz
@@ -55,7 +55,7 @@ function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
-    for i in find(adjmx)
+    @inbounds for i in find(adjmx)
         ind = ind2sub((dima, dimb), i)
         add_edge!(g, ind...)
     end
