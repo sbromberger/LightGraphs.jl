@@ -280,9 +280,11 @@
     end
 
     gs = StarGraph(10)
+    distgs = fill(4.0, 10, 10)
     for g in testgraphs(gs)
         T = eltype(g)
         @test @inferred(egonet(g, 1, 0)) == Graph{T}(1)
+        @test @inferred(egonet(g, 1, 3, distgs)) == Graph{T}(1)
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
     end
