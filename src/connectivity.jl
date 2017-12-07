@@ -305,43 +305,52 @@ function attracting_components end
 end
 
 """
-    neighborhood(g, v, d)
+    neighborhood(g, v, d, distmx=weights(g))
+    neighborhood_with_distances(g, v, d, distmx=weights(g))
 
-Return a vector of the vertices in `g` at a geodesic distance less or equal to `d`
-from `v`.
+Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
+may be specified by `distmx`. 
+
+For `neighborhood_with_distances`, return a tuple of each vertex with its distance from `v`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
-neighborhood(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = (dir == :out) ?
-    _neighborhood(g, v, d, out_neighbors) : _neighborhood(g, v, d, in_neighbors)
+neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
+    first.(neighborhood_with_distances(g, v, d, distmx; dir=dir))
 
-function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Integer, neighborfn::Function) where T
-    d < 0 && return Vector{T}()
+neighborhood_with_distances(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
+    (dir == :out) ? _neighborhood(g, v, d, distmx, out_neighbors) : _neighborhood(g, v, d, distmx, in_neighbors)
+
+
+function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T<:Integer where U<:Real
+    d < 0 && return Vector{Tuple{T, U}}()
     neighs = Vector{T}()
     push!(neighs, v)
-
     Q = Vector{T}()
-    seen = falses(nv(g))
-    dists = zeros(T, nv(g))
     push!(Q, v)
-    dists[v] = d
+    seen = falses(nv(g))
+    dists = fill(typemax(U), nv(g))
+    dists[v] = zero(U)
     while !isempty(Q)
         src = shift!(Q)
         seen[src] && continue
         seen[src] = true
         currdist = dists[src]
         vertexneighbors = neighborfn(g, src)
-        for vertex in vertexneighbors
-            if !seen[vertex] && currdist > 0
-                push!(Q, vertex)
-                push!(neighs, vertex)
-                dists[vertex] = currdist - 1
+        @inbounds for vertex in vertexneighbors
+            if !seen[vertex] 
+                vdist = currdist + distmx[src, vertex]
+                if vdist <= d
+                    push!(Q, vertex)
+                    push!(neighs, vertex)
+                    dists[vertex] = vdist
+                end
             end
         end
     end
-    return neighs
+    return [(x::T, dists[x]::U) for x in neighs]
 end
 
 """
