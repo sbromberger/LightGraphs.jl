@@ -69,6 +69,7 @@ bipartite_map
 biconnected_components
 condensation
 neighborhood
+neighborhood_dists
 articulation
 period
 isgraphical

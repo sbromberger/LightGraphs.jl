@@ -169,7 +169,7 @@
     g10dists[1,2] = 10.0
     g10 = StarGraph(10)
     for g in testgraphs(g10)
-      @test @inferred(neighborhood_with_distances(g, 1, 0)) == [(1, 0)]
+      @test @inferred(neighborhood_dists(g, 1, 0)) == [(1, 0)]
       @test length(@inferred(neighborhood(g, 1, 1))) == 10
       @test length(@inferred(neighborhood(g, 1, 1, g10dists))) == 9
       @test length(@inferred(neighborhood(g, 2, 1))) == 2
@@ -179,13 +179,13 @@
     end
     g10 = StarDiGraph(10)
     for g in testdigraphs(g10)
-        @test @inferred(neighborhood_with_distances(g10, 1, 0, dir=:out)) == [(1, 0)]
+        @test @inferred(neighborhood_dists(g10, 1, 0, dir=:out)) == [(1, 0)]
         @test length(@inferred(neighborhood(g, 1, 1, dir=:out))) == 10
         @test length(@inferred(neighborhood(g, 1, 1, g10dists, dir=:out))) == 9
         @test length(@inferred(neighborhood(g, 2, 1, dir=:out))) == 1
         @test length(@inferred(neighborhood(g, 1, 2, dir=:out))) == 10
         @test length(@inferred(neighborhood(g, 2, 2, dir=:out))) == 1
-        @test @inferred(neighborhood_with_distances(g, 1, 0, dir=:in)) == [(1, 0)]
+        @test @inferred(neighborhood_dists(g, 1, 0, dir=:in)) == [(1, 0)]
         @test length(@inferred(neighborhood(g, 1, 1, dir=:in))) == 1
         @test length(@inferred(neighborhood(g, 2, 1, dir=:in))) == 2
         @test length(@inferred(neighborhood(g, 2, 1, g10dists, dir=:in))) == 2

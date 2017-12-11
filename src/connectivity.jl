@@ -306,21 +306,21 @@ end
 
 """
     neighborhood(g, v, d, distmx=weights(g))
-    neighborhood_with_distances(g, v, d, distmx=weights(g))
+    neighborhood_dists(g, v, d, distmx=weights(g))
 
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
 may be specified by `distmx`. 
 
-For `neighborhood_with_distances`, return a tuple of each vertex with its distance from `v`.
+For `neighborhood_dists`, return a tuple of each vertex with its distance from `v`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
 neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
-    first.(neighborhood_with_distances(g, v, d, distmx; dir=dir))
+    first.(neighborhood_dists(g, v, d, distmx; dir=dir))
 
-neighborhood_with_distances(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
+neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
     (dir == :out) ? _neighborhood(g, v, d, distmx, out_neighbors) : _neighborhood(g, v, d, distmx, in_neighbors)
 
 
