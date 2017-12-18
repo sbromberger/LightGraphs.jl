@@ -42,7 +42,7 @@ function diffusion(g::AbstractGraph{T},
     randsubseq_buf = zeros(T, nv(g))
 
     for step in 2:n
-        new_infections = Set{T}()
+        new_infections = IntSet{T}()
 
         for i in infected_vertices
             outn = out_neighbors(g, i)
