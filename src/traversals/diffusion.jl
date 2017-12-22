@@ -39,7 +39,7 @@ function diffusion(g::AbstractGraph{T},
     end
 
     # Run simulation
-    randsubseq_buf = zeros(T, nv(g))
+    randsubseq_buf = zeros(T, Δout(g))
 
     for step in 2:n
         new_infections = Set{T}()
