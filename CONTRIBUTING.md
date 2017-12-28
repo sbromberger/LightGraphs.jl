@@ -42,7 +42,7 @@ function f(g::AbstractGraph, v::Integer)
     return f!(g, v, storage)
 end
 
-function f!(g::AbstractGraph, v::Integer, storage::AbstractVector{Int}, )
+function f!(g::AbstractGraph, v::Integer, storage::AbstractVector{Int})
     # some code operating on storage, g, and v.
     for i in 1:nv(g)
         storage[i] = v-i
