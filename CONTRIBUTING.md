@@ -18,7 +18,7 @@ Please include version numbers of all relevant libraries and Julia itself.
     - PRs introducing dependencies on non-core "leaf" packages (no subdependencies except for core Julia packages) are less ok.
     - PRs introducing dependencies on non-core non-leaf packages require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
 
-- Put type assertions on all function arguments (use abstract types, Union, or Any if necessary).
+- Put type assertions on all function arguments where conflict may arise (use abstract types, Union, or Any if necessary).
 - If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
 - Take steps to ensure that code works on graphs with multiple connected components efficiently.
 - Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
@@ -39,10 +39,10 @@ should be rewritten as two functions
 ```julia
 function f(g::AbstractGraph, v::Integer)
     storage = Vector{Int}(nv(g))
-    return inner!(storage, g, v)
+    return f!(g, v, storage)
 end
 
-function inner!(storage::AbstractVector{Int}, g::AbstractGraph, v::Integer)
+function f!(g::AbstractGraph, v::Integer, storage::AbstractVector{Int}, )
     # some code operating on storage, g, and v.
     for i in 1:nv(g)
         storage[i] = v-i
@@ -50,7 +50,7 @@ function inner!(storage::AbstractVector{Int}, g::AbstractGraph, v::Integer)
     return sum(storage)
 end
 ```
-This allows us to reuse the memory and improve performance.
+This gives users the option of reusing memory and improving performance.
 
 ## Git usage
 
