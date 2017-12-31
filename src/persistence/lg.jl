@@ -25,7 +25,7 @@ struct LGHeader
     code::String
 end
 function show(io::IO, h::LGHeader)
-    isdir = h.is_directed? "d" : "u"
+    isdir = h.is_directed ? "d" : "u"
     print(io, "$(h.nv),$(h.ne),$isdir,$(h.name),$(h.ver),$(h.dtype),$(h.code)")
 end
 

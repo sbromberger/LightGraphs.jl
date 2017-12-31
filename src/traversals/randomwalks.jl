@@ -29,7 +29,7 @@ vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected), s::Integer, niter::Integer)
+@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -61,7 +61,7 @@ function non_backtracking_randomwalk end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::IsDirected, s::Integer, niter::Integer)
+@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)

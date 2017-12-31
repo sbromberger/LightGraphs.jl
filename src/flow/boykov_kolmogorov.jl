@@ -16,12 +16,12 @@ Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 """
 function boykov_kolmogorov_impl end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function boykov_kolmogorov_impl{T, U, AG<:AbstractGraph{U}}(
+@traitfn function boykov_kolmogorov_impl(
     residual_graph::AG::IsDirected,          # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix{T}    # edge flow capacities
-    )
+    ) where {T, U, AG<:AbstractGraph{U}}
     n = nv(residual_graph)
 
     flow = 0
@@ -53,7 +53,7 @@ function boykov_kolmogorov_impl end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function find_path!{T, AG<:AbstractGraph{T}}(
+@traitfn function find_path!(
     residual_graph::AG::IsDirected,            # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
@@ -62,7 +62,7 @@ end
     PARENT::Vector,                     # parent table
     TREE::Vector,                       # tree table
     A::Vector                           # active set
-    )
+    ) where {T, AG<:AbstractGraph{T}}
 
     tree_cap(p, q) = TREE[p] == one(T) ? capacity_matrix[p, q] - flow_matrix[p, q] :
     capacity_matrix[q, p] - flow_matrix[q, p]
@@ -147,7 +147,7 @@ function augment!(
     return Δ
 end
 
-@traitfn function adopt!{T, AG<:AbstractGraph{T}}(
+@traitfn function adopt!(
     residual_graph::AG::IsDirected,               # the input graph
     source::Integer,                             # the source vertex
     target::Integer,                             # the target vertex
@@ -157,7 +157,7 @@ end
     TREE::Vector,                       # tree table
     A::Vector,                             # active set
     O::Vector                           # orphan set
-    )
+    ) where {T, AG<:AbstractGraph{T}}
 
     tree_cap(p, q) = TREE[p] == 1 ? capacity_matrix[p, q] - flow_matrix[p, q] :
     capacity_matrix[q, p] - flow_matrix[q, p]

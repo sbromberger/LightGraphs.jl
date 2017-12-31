@@ -26,7 +26,7 @@ show(io::IO, e::AbstractSimpleEdge) = print(io, "Edge $(e.src) => $(e.dst)")
 Pair(e::AbstractSimpleEdge) = Pair(src(e), dst(e))
 Tuple(e::AbstractSimpleEdge) = (src(e), dst(e))
 
-(::Type{SimpleEdge{T}})(e::AbstractSimpleEdge) where T <: Integer = SimpleEdge{T}(T(e.src), T(e.dst))
+SimpleEdge{T}(e::AbstractSimpleEdge) where T <: Integer = SimpleEdge{T}(T(e.src), T(e.dst))
 
 # Convenience functions
 reverse(e::T) where T<:AbstractSimpleEdge = T(dst(e), src(e))
