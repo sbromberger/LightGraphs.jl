@@ -163,11 +163,13 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
 end
 
 """
-    normalized_cut(g, distmx=weights(g), [thres=0.01], [num_cuts=10]);
+    normalized_cut(g, distmx=weights(g), thres, [num_cuts=10]);
 
 Perform [recursive two-way normalized graph-cut](https://en.wikipedia.org/wiki/Segmentation-based_object_categorization#Normalized_cuts)
 on a graph, partitioning the vertices into disjoint sets.
 Return a vector that contains the set index for each vertex.
+
+It is important to identify a good threshold for your application. A bisection search over the range (0,1) will help determine a good value of thres.
 
 ### Keyword Arguments
 - `thres`: Subgraphs aren't split if best normalized cut is above this threshold
@@ -178,8 +180,8 @@ Return a vector that contains the set index for each vertex.
 """
 function normalized_cut(
     g::AbstractGraph,
-    W::AbstractMatrix{T}=adjacency_matrix(g);
-    thres = 0.01,
+    thres::Real,
+    W::AbstractMatrix{T}=adjacency_matrix(g),
     num_cuts::Int = 10
     ) where T <: Real
 
