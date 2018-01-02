@@ -428,17 +428,18 @@ getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 
 """
-    egonet(g, v, d)
+    egonet(g, v, d, distmx=weights(g))
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
-`d`.
+`d`, using weights (optionally) provided by `distmx`.
 This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=dir))[1].`
 
 ### Optional Arguments
 - `dir=:out`: if `g` is directed, this argument specifies the edge direction
 with respect to `v` (i.e. `:in` or `:out`).
 """
-egonet(g::AbstractGraph, v::Integer, d::Integer; dir=:out) = g[neighborhood(g, v, d, dir=dir)]
+egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
+    g[neighborhood(g, v, d, distmx, dir=dir)]
 
 
 
