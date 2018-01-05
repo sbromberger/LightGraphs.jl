@@ -127,7 +127,10 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components
+articulation, biconnected_components,
+
+#graphcut
+normalized_cut
 
 """
     LightGraphs
@@ -156,6 +159,7 @@ include("utils.jl")
 include("interface.jl")
 include("deprecations.jl")
 include("core.jl")
+
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
 """
@@ -177,6 +181,7 @@ A datastruture representing an edge between two vertices in
 a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
+
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")
@@ -230,6 +235,7 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("graphcut/normalized_cut.jl")
 
 using .LinAlg
 end # module

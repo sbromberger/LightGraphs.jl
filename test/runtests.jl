@@ -67,7 +67,8 @@ tests = [
     "spanningtrees/kruskal",
     "spanningtrees/prim",
     "biconnectivity/articulation",
-    "biconnectivity/biconnect"
+    "biconnectivity/biconnect",
+    "graphcut/normalized_cut"
 ]
 
 @testset "LightGraphs" begin
