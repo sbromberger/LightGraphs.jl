@@ -163,7 +163,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
 end
 
 """
-    normalized_cut(g, distmx=weights(g), thres, [num_cuts=10]);
+    normalized_cut(g, thres, distmx=weights(g), [num_cuts=10]);
 
 Perform [recursive two-way normalized graph-cut](https://en.wikipedia.org/wiki/Segmentation-based_object_categorization#Normalized_cuts)
 on a graph, partitioning the vertices into disjoint sets.
