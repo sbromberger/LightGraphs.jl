@@ -196,9 +196,13 @@
 
     rt = random_tournament_digraph(10)
     @test nv(rt) == 10
-    @test ne(rt) == 55
+    @test ne(rt) == 45
     @test is_directed(rt)
-    @test all(degree(rt) .== 11)
+    @test all(degree(rt) .== 9)
+    Edges = edges(rt)
+    for edge in Edges
+        @test !(reverse(edge) ∈ Edges)
+    end
 
     g = stochastic_block_model(2., 3., [100,100])
     @test  4.0 < mean(degree(g)) < 6.0
