@@ -613,10 +613,8 @@ function random_tournament_digraph(n::Integer; seed::Int=-1)
     rng = getRNG(seed)
     g = DiGraph(n)
 
-    for i = 1:n
-        for j = i+1:n
-            rand(rng) > 0.5 ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
-        end
+    for i = 1:n, j = i+1:n
+        rand(rng) > 0.5 ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
     end
 
     return g
