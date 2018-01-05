@@ -599,6 +599,30 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
 end
 
 @doc_str """
+    random_tournament_digraph(n)
+
+Create a random directed [tournament graph]
+(https://en.wikipedia.org/wiki/Tournament_(graph_theory))
+with `n` vertices.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+"""
+function random_tournament_digraph(n::Integer; seed::Int=-1)
+
+    rng = getRNG(seed)
+    g = DiGraph(n)
+
+    for i = 1:n
+        for j = i:n
+            rand(rng) > 0.5 ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
+        end
+    end
+
+    return g
+end
+
+@doc_str """
     stochastic_block_model(c, n)
 
 Return a Graph generated according to the Stochastic Block Model (SBM).
