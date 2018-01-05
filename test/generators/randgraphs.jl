@@ -200,8 +200,11 @@
     @test is_directed(rt)
     @test all(degree(rt) .== 9)
     Edges = edges(rt)
-    for edge in Edges
-        @test !(reverse(edge) ∈ Edges)
+    for i = 1:10, j = 1:10
+        if i != j
+            edge = Edge(i, j)
+            @test xor(edge ∈ Edges, reverse(edge) ∈ Edges)
+        end
     end
 
     g = stochastic_block_model(2., 3., [100,100])
