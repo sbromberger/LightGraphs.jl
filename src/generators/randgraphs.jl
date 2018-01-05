@@ -602,7 +602,7 @@ end
     random_tournament_digraph(n)
 
 Create a random directed [tournament graph]
-(https://en.wikipedia.org/wiki/Tournament_(graph_theory))
+(https://en.wikipedia.org/wiki/Tournament_%28graph_theory%29)
 with `n` vertices.
 
 ### Optional Arguments
