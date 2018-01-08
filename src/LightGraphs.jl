@@ -97,10 +97,6 @@ contract,
 # persistence
 loadgraph, loadgraphs, savegraph, LGFormat,
 
-# flow
-maximum_flow, EdmondsKarpAlgorithm, DinicAlgorithm, BoykovKolmogorovAlgorithm, PushRelabelAlgorithm,
-multiroute_flow, KishimotoAlgorithm, ExtendedMultirouteFlowAlgorithm,
-
 # randgraphs
 erdos_renyi, watts_strogatz, random_regular_graph, random_regular_digraph, random_configuration_model,
 random_tournament_digraph, StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts,
@@ -223,14 +219,6 @@ include("community/label_propagation.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
-include("flow/maximum_flow.jl")
-include("flow/edmonds_karp.jl")
-include("flow/dinic.jl")
-include("flow/boykov_kolmogorov.jl")
-include("flow/push_relabel.jl")
-include("flow/multiroute_flow.jl")
-include("flow/kishimoto.jl")
-include("flow/ext_multiroute_flow.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")

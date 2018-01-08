@@ -28,7 +28,6 @@ makedocs(
         "Matching"                          => "matching.md",
         "Community Structures"              => "community.md",
         "Degeneracy"                        => "degeneracy.md",
-        "Flow and Cut"                      => "flowcut.md",
         "Integration with other packages"   => "integration.md",
         "Contributing"                      => "contributing.md",
         "Developer Notes"                   => "developing.md",
