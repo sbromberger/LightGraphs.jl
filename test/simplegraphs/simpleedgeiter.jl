@@ -9,7 +9,7 @@
     @test @inferred(edges(ga)) == edges(gb)
     @test @inferred(edges(ga)) == collect(Edge, edges(gb))
     @test edges(ga) != collect(Edge, Base.Iterators.take(edges(gb), 5))
-    
+
     @test collect(Edge, edges(gb)) == edges(ga)
     @test Set{Edge}(collect(Edge, edges(gb))) == edges(ga)
     @test @inferred(edges(ga)) == Set{Edge}(collect(Edge, edges(gb)))
@@ -34,15 +34,15 @@
     e1 = Edge(3, 10)
     e2 = (3, 10)
     @test e1 ∈ edges(ga)
-    @test e2 ∈ edges(ga) 
+    @test e2 ∈ edges(ga)
     @test (3, 9) ∉ edges(ga)
-   
+
     for u in 1:20, v in 1:20
-      b = has_edge(ga, u, v) 
+      b = has_edge(ga, u, v)
       @test b == @inferred (u, v) ∈ edges(ga)
       @test b == @inferred (u => v) ∈ edges(ga)
       @test b == @inferred Edge(u, v) ∈ edges(ga)
-    end      
+    end
 
     eit = edges(ga)
     es = @inferred(start(eit))
@@ -65,11 +65,11 @@
     add_edge!(ga, 10, 3)
 
     for u in 1:20, v in 1:20
-      b = has_edge(ga, u, v) 
+      b = has_edge(ga, u, v)
       @test b == @inferred (u, v) ∈ edges(ga)
       @test b == @inferred (u => v) ∈ edges(ga)
       @test b == @inferred Edge(u, v) ∈ edges(ga)
-    end   
+    end
 
     eit = @inferred(edges(ga))
     es = @inferred(start(eit))

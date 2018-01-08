@@ -1,6 +1,6 @@
 import LightGraphs: tree
 @testset "BFS" begin
-    g5 = DiGraph(4)
+    g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 
@@ -16,7 +16,7 @@ import LightGraphs: tree
         @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
     end
 
-    gx = Graph(5)
+    gx = SimpleGraph(5)
     add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
     add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
     add_edge!(gx, 3, 4)
@@ -57,7 +57,7 @@ import LightGraphs: tree
     end
 
 
-    gx = Graph(6)
+    gx = SimpleGraph(6)
     d = nv(gx)
     for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3,5)]
         add_edge!(gx, i, j)

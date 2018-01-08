@@ -33,7 +33,7 @@ Set `bc=:periodic` to impose periodic boundary conditions in the box ``[0,L]^d``
 function euclidean_graph(points::Matrix;
     L=1., p=2., cutoff=-1., bc=:open)
     d, N = size(points)
-    g = Graph(N)
+    g = SimpleGraph(N)
     weights = Dict{Edge,Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))
     if bc == :periodic

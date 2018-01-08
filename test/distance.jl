@@ -2,8 +2,8 @@
     g4 = PathDiGraph(5)
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
-    a1 = Graph(adjmx1)
-    a2 = DiGraph(adjmx2)
+    a1 = SimpleGraph(adjmx1)
+    a2 = SimpleDiGraph(adjmx2)
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 

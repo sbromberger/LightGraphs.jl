@@ -7,7 +7,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
 
     g3 = PathGraph(5)
     g4 = PathDiGraph(5)
-    g5 = DiGraph(4)
+    g5 = SimpleDiGraph(4)
     for g in testgraphs(g3)
         @test adjacency_matrix(g, Bool) == adjacency_matrix(g, Bool; dir=:out)
         @test adjacency_matrix(g)[3, 2] == 1

@@ -18,7 +18,7 @@
     @test @inferred(is_directed(SimpleDiGraph))
 
 
-    for gbig in [Graph(0xff), DiGraph(0xff)]
+    for gbig in [SimpleGraph(0xff), SimpleDiGraph(0xff)]
         @test @inferred(!add_vertex!(gbig))    # overflow
         @test @inferred(add_vertices!(gbig, 10) == 0)
     end
