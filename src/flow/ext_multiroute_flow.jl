@@ -104,12 +104,12 @@ Calculates the breaking of the restricted max-flow from a set of auxiliary point
 for `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 """
 function breakingPoints end
-@traitfn function breakingPoints{T}(
+@traitfn function breakingPoints(
     flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix{T}   # edge flow capacities
-    )
+    ) where T
     auxpoints = auxiliaryPoints(flow_graph, source, target, capacity_matrix)
     λ = length(auxpoints) - 1
     left_index = 1

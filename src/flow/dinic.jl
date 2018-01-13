@@ -7,12 +7,12 @@ with edge flow capacities in `capacity_matrix` using
 Return the value of the maximum flow as well as the final flow matrix.
 """
 function dinic_impl end
-@traitfn function dinic_impl{T}(
+@traitfn function dinic_impl(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix{T}    # edge flow capacities
-    )
+    ) where T
     n = nv(residual_graph)                     # number of vertexes
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
     P = zeros(Int, n)                      # Sharable parent vector
@@ -36,14 +36,14 @@ end
 Like `blocking_flow`, but requires a preallocated parent vector `P`.
 """
 function blocking_flow! end
-@traitfn function blocking_flow!{T}(
+@traitfn function blocking_flow!(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix{T},   # edge flow capacities
     flow_matrix::AbstractMatrix,       # the current flow matrix
     P::AbstractVector{Int}                 # Parent vector to store Level Graph
-    )
+    ) where T
     n = nv(residual_graph)                     # number of vertexes
     fill!(P, -1)
     P[source] = -2

@@ -127,8 +127,8 @@ recursive version. Modify the vector of cycles, when needed.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit end
-@traitfn function circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
-allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
+@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v) where T<:Integer
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
@@ -215,8 +215,8 @@ the same as v, otherwise it should be passed.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit_iter end
-@traitfn function circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
-vmap::Vector{T}, cycle::Channel, startnode::T = v)
+@traitfn function circuit_iter(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+vmap::Vector{T}, cycle::Channel, startnode::T = v) where T<:Integer
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true

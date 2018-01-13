@@ -12,7 +12,7 @@ Uses DFS.
 function is_cyclic end
 @traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function is_cyclic{T,AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     for v in vertices(g)
         vcolor[v] != 0 && continue
@@ -50,7 +50,7 @@ graph `g` as a vector of vertices in topological order.
 """
 function toplogical_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function topological_sort_by_dfs{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     for v in vertices(g)

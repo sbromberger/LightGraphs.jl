@@ -7,12 +7,12 @@ Compute the maximum flow in flow graph `residual_graph` between `source` and
 Return the value of the maximum flow as well as the final flow matrix.
 """
 function edmonds_karp_impl end
-@traitfn function edmonds_karp_impl{T}(
+@traitfn function edmonds_karp_impl(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
     capacity_matrix::AbstractMatrix{T}    # edge flow capacities
-    )
+    ) where T
     n = nv(residual_graph)                     # number of vertexes
     flow = 0
     flow_matrix = zeros(T, n, n)           # initialize flow matrix
