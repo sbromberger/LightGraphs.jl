@@ -38,5 +38,21 @@
     pentagonlengths, pentagontotal = simplecycleslength(DiGraph(pentagon))
     @test sum(pentagonlengths) == pentagontotal
 
-end
+    selfloopg = DiGraph([
+        0 1 0 0;
+        0 0 1 0;
+        1 0 1 0;
+        0 0 0 1;
+    ])
+    cycles = simplecycles(selfloopg)
+    @test [3] in cycles
+    @test [4] in cycles
+    @test [1, 2, 3] in cycles || [2, 3, 1] in cycles || [3, 1, 2] in cycles
+    @test length(cycles) == 3
 
+    cycles2 = simplecycles_iter(selfloopg)
+    @test [3] in cycles2
+    @test [4] in cycles2
+    @test [1, 2, 3] in cycles2 || [2, 3, 1] in cycles2 || [3, 1, 2] in cycles2
+    @test length(cycles2) == 3
+end
