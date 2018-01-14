@@ -28,7 +28,7 @@
     ]
 
     vec2 = Vector{Edge}([Edge(1, 8), Edge(2, 8), Edge(1, 3), Edge(3, 4), Edge(6, 8), Edge(5, 6), Edge(3, 7)])
-    gx = Graph(distmx_sec)
+    gx = SimpleGraph(distmx_sec)
     for g in testgraphs(gx)
         mst2 = @inferred(prim_mst(g, distmx_sec))
         @test mst2 == vec2

@@ -1,6 +1,6 @@
 @testset "Dinic" begin
     # Construct DiGraph
-    flow_graph = DiGraph(8)
+    flow_graph = SimpleDiGraph(8)
 
     # Load custom dataset
     flow_edges = [

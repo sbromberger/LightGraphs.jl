@@ -21,16 +21,16 @@ function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
-# DiGraph()
+# SimpleDiGraph()
 SimpleDiGraph() = SimpleDiGraph{Int}()
 
-# DiGraph(6), DiGraph(0x5)
+# SimpleDiGraph(6), SimpleDiGraph(0x5)
 SimpleDiGraph(n::T) where T<:Integer = SimpleDiGraph{T}(n)
 
 # SimpleDiGraph(UInt8)
 SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 
-# sparse adjacency matrix constructor: DiGraph(adjmx)
+# sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
 function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
@@ -62,7 +62,7 @@ function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
     return g
 end
 
-# DiGraph(adjmx)
+# SimpleDiGraph(adjmx)
 SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # converts DiGraph{Int} to DiGraph{Int32}
@@ -74,7 +74,7 @@ end
 
 SimpleDiGraph(g::SimpleDiGraph) = copy(g)
 
-# constructor from abstract graph: DiGraph(graph)
+# constructor from abstract graph: SimpleDiGraph(graph)
 function SimpleDiGraph(g::AbstractSimpleGraph)
     h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)

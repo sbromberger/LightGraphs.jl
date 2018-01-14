@@ -18,10 +18,10 @@ function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
     return SimpleGraph{T}(0, fadjlist)
 end
 
-# Graph()
+# SimpleGraph()
 SimpleGraph() = SimpleGraph{Int}()
 
-# Graph(6), Graph(0x5)
+# SimpleGraph(6), SimpleGraph(0x5)
 SimpleGraph(n::T) where T<:Integer = SimpleGraph{T}(n)
 
 # SimpleGraph(UInt8)
@@ -48,10 +48,10 @@ function (::Type{SimpleGraph{T}})(g::SimpleGraph) where T<:Integer
 end
 
 
-# Graph(adjmx)
+# SimpleGraph(adjmx)
 SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
 
-# Graph(digraph)
+# SimpleGraph(digraph)
 function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
     edgect = 0

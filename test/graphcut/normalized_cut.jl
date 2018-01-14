@@ -1,6 +1,6 @@
 @testset "Normalized Cut" begin
 
-    gx = Graph(6)
+    gx = SimpleGraph(6)
     add_edge!(gx, 1, 2)
     add_edge!(gx, 2, 3)
     add_edge!(gx, 1, 3)
@@ -39,7 +39,7 @@
       @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
 
-    gx = Graph(4)
+    gx = SimpleGraph(4)
     add_edge!(gx, 1, 2)
     add_edge!(gx, 3, 4)
 
