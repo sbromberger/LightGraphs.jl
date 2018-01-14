@@ -11,8 +11,8 @@ generator functions, and the ability to read and write graphs from files
 *LightGraphs.jl* offers a range of tools for modifying graphs, including:
 
 ```@docs
-Graph
-DiGraph
+SimpleGraph
+SimpleDiGraph
 Edge
 add_edge!
 rem_edge!
