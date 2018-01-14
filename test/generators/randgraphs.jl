@@ -1,6 +1,6 @@
 @testset "Randgraphs" begin
-    r1 = Graph(10,20)
-    r2 = DiGraph(5,10)
+    r1 = SimpleGraph(10,20)
+    r2 = SimpleDiGraph(5,10)
 
     @test nv(r1) == 10
     @test ne(r1) == 20
@@ -15,9 +15,9 @@
         @test eltype(DiGraph{T}(5,2)) == T
     end
 
-    @test Graph(10,20,seed=3) == Graph(10,20,seed=3)
-    @test DiGraph(10,20,seed=3) == DiGraph(10,20,seed=3)
-    @test Graph(10,20,seed=3) == erdos_renyi(10,20,seed=3)
+    @test SimpleGraph(10,20,seed=3) == SimpleGraph(10,20,seed=3)
+    @test SimpleDiGraph(10,20,seed=3) == SimpleDiGraph(10,20,seed=3)
+    @test SimpleGraph(10,20,seed=3) == erdos_renyi(10,20,seed=3)
     @test ne(Graph(10,40,seed=3)) == 40
     @test ne(DiGraph(10,80,seed=3)) == 80
 
@@ -219,7 +219,7 @@
         noise = density * 0.00501
         sbm = nearbipartiteSBM(sizes, between, intra, noise)
         edgestream = make_edgestream(sbm)
-        g = Graph(sum(sizes), numedges, edgestream)
+        g = SimpleGraph(sum(sizes), numedges, edgestream)
         return sbm, g
     end
 
@@ -252,7 +252,7 @@
     numedges = internaldeg + externaldeg #+ sum(externaldeg.*sizes[2:end])
     numedges *= div(sum(sizes), 2)
     sbm = StochasticBlockModel(internalp, externalp, sizes)
-    g = Graph(sum(sizes), numedges, sbm)
+    g = SimpleGraph(sum(sizes), numedges, sbm)
     @test ne(g) >= 0.9numedges
     @test ne(g) <= numedges
     @test nv(g) == sum(sizes)

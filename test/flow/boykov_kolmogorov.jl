@@ -1,6 +1,6 @@
 @testset "Boykov Kolmogorov" begin
     # construct graph
-    gg = DiGraph(3)
+    gg = SimpleDiGraph(3)
     add_edge!(gg, 1, 2)
     add_edge!(gg, 2, 3)
 

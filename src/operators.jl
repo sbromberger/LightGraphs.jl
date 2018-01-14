@@ -9,7 +9,7 @@ Preserves the eltype of the input graph.
 """
 function complement(g::Graph)
     gnv = nv(g)
-    h = Graph(gnv)
+    h = SimpleGraph(gnv)
     for i = 1:gnv
         for j = (i + 1):gnv
             if !has_edge(g, i, j)
@@ -22,7 +22,7 @@ end
 
 function complement(g::DiGraph)
     gnv = nv(g)
-    h = DiGraph(gnv)
+    h = SimpleDiGraph(gnv)
     for i in vertices(g), j in vertices(g)
       if i != j && !has_edge(g, i, j)
         add_edge!(h, i, j)
@@ -44,7 +44,7 @@ function reverse end
 @traitfn function reverse(g::::IsDirected)
     gnv = nv(g)
     gne = ne(g)
-    h = DiGraph(gnv)
+    h = SimpleDiGraph(gnv)
     h.fadjlist = deepcopy(g.badjlist)
     h.badjlist = deepcopy(g.fadjlist)
     h.ne = gne
@@ -477,7 +477,7 @@ function merge_vertices(g::AbstractGraph, vs)
     end
 
     #if v in vs then labels[v] == v0 else labels[v] == v
-    newg = Graph(nvnew)
+    newg = SimpleGraph(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
         if labels[u] != labels[w] #not a new self loop

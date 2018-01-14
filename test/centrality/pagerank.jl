@@ -25,9 +25,9 @@
         return α*M .+ (1-α)*p
     end
 
-    g5 = DiGraph(4)
+    g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    g6 = Graph(4)
+    g6 = SimpleGraph(4)
     add_edge!(g6, 1, 2); add_edge!(g6, 2, 3); add_edge!(g6, 1, 3); add_edge!(g6, 3, 4)
     for α in [0.75, 0.85]
       for g in testdigraphs(g5)

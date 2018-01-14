@@ -66,7 +66,7 @@
 
     #615
     m = [0 2 2 0 0; 2 0 0 0 3; 2 0 0 1 2;0 0 1 0 1;0 3 2 1 0]
-    G = Graph(5)
+    G = SimpleGraph(5)
     add_edge!(G, 1, 2)
     add_edge!(G, 1, 3)
     add_edge!(G, 2, 5)
@@ -85,7 +85,7 @@
       @test dm.closest_vertices == [1, 2, 3, 5, 4]
     end
 
-    G = Graph(5)
+    G = SimpleGraph(5)
     add_edge!(G, 1, 2)
     add_edge!(G, 1, 3)
     add_edge!(G, 4, 5)

@@ -1,5 +1,5 @@
 @testset "Karp Minimum Cycle Mean" begin
-     g1 = DiGraph(12)
+     g1 = SimpleDiGraph(12)
      w = [0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 0. 0.  1.1 0.0  0.  0.
@@ -47,7 +47,7 @@
          Inf  Inf    Inf  Inf  Inf  Inf   -0.06 Inf  Inf    Inf  Inf    Inf
          Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf   -0.01 Inf  Inf    Inf]
 
-    g2 = DiGraph(12)
+    g2 = SimpleDiGraph(12)
     add_edge!(g2, 1, 7)
     add_edge!(g2, 2, 7)
     add_edge!(g2, 3, 9)
@@ -77,7 +77,7 @@
     # 1 - 3 - 4 - 3 - 4
     # 1 - 2 - 2 - 3 - 4
     # We will do the backward walk from 3 in the test since 0 = F_4(3) < F_4(4) = 1
-    tricky = DiGraph(4)
+    tricky = SimpleDiGraph(4)
     add_edge!(tricky, 1, 3)
     add_edge!(tricky, 1, 2)
     add_edge!(tricky, 3, 4)
@@ -101,7 +101,7 @@
     end
 
     # Multiple strongly connected components and one component with one node and no edge
-    multi = DiGraph(3)
+    multi = SimpleDiGraph(3)
     add_edge!(multi, 1, 1)
     add_edge!(multi, 2, 2)
     distmx = [0. Inf

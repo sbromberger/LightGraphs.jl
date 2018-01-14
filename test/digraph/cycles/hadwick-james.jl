@@ -1,7 +1,7 @@
 @testset "Hadwick-James Cycles" begin
 
     # Simple graph gives expected circuits
-    ex1 = DiGraph(5)
+    ex1 = SimpleDiGraph(5)
     add_edge!(ex1, 1, 2)
     add_edge!(ex1, 2, 3)
     add_edge!(ex1, 3, 4)
@@ -45,7 +45,7 @@
     end
 
     # Almost fully connected DiGraph
-    ex4 = DiGraph(9)
+    ex4 = SimpleDiGraph(9)
     for (src, dest) in [(1, 2), (1, 5), (1, 7), (1, 8), (2, 9), (3, 4), (3, 6), 
                         (4, 5), (4, 7), (5, 6), (6, 7), (6, 8), (7, 9), (8, 9)] 
         add_edge!(ex4, src, dest)

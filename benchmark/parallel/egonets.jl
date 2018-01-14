@@ -53,7 +53,7 @@ using BenchmarkTools
         end
 
         nv_ = 10000
-        g = Graph(nv_, 64 * nv_)
+        g = SimpleGraph(nv_, 64 * nv_)
         f = vertex_function
         println(g)
 

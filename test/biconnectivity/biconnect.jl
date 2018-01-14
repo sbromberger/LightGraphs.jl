@@ -1,5 +1,5 @@
 @testset "Biconnect" begin
-    gint = Graph(12)
+    gint = SimpleGraph(12)
     add_edge!(gint, 1, 2)
     add_edge!(gint, 2, 3)
     add_edge!(gint, 2, 4)
@@ -26,13 +26,13 @@
       @test bcc == a
     end
 
-    g = Graph(4)
+    g = SimpleGraph(4)
     add_edge!(g, 1, 2)
     add_edge!(g, 2, 3)
     add_edge!(g, 3, 4)
     add_edge!(g, 1, 4)
 
-    h = Graph(4)
+    h = SimpleGraph(4)
     add_edge!(h, 1, 2)
     add_edge!(h, 2, 3)
     add_edge!(h, 3, 4)

@@ -1,8 +1,8 @@
 @testset "Betweenness" begin
     # self loops
-    s2 = DiGraph(3)
+    s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
-    s1 = Graph(s2)
+    s1 = SimpleGraph(s2)
     g3 = PathGraph(5)
 
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
@@ -40,7 +40,7 @@
     @test @inferred(betweenness_centrality(s2)) == [0, 0.5, 0]
     @test parallel_betweenness_centrality(s2)   == [0, 0.5, 0]
 
-    g = Graph(2)
+    g = SimpleGraph(2)
     add_edge!(g, 1, 2)
     z  = @inferred(betweenness_centrality(g; normalize=true))
     zp = parallel_betweenness_centrality(g; normalize=true)
@@ -83,7 +83,7 @@
     @test isapprox(betweenness_centrality(g,vertices(g), distmx; normalize=true, endpoints=true), [0.5,1.1,0.5,0.5,1.1,0.5])
 
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
-    a2 = DiGraph(adjmx2)
+    a2 = SimpleDiGraph(adjmx2)
     for g in testdigraphs(a2)
       distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
       c2 = [0.24390243902439027,0.27027027027027023,0.1724137931034483]

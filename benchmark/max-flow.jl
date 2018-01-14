@@ -3,7 +3,7 @@
     srand(1)
     p = 8.0 / n
     A = sprand(n, n, p)
-    g = DiGraph(A)
+    g = SimpleDiGraph(A)
     cap = round.(A * 100)
     @bench "n = $n" LightGraphs.maximum_flow($g, 1, $n, $cap)
   end

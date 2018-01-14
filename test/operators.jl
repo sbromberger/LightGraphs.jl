@@ -149,7 +149,7 @@
         @test !has_edge(z, 2, 4)
     end
 
-    gx = Graph(2)
+    gx = SimpleGraph(2)
     for g in testgraphs(gx)
         T = eltype(g)
         h = Graph{T}(2)
@@ -179,7 +179,7 @@
         @test issymmetric(p)
     end
 
-    gx = DiGraph(4)
+    gx = SimpleDiGraph(4)
     add_edge!(gx, 1, 2); add_edge!(gx, 2, 3); add_edge!(gx, 1, 3); add_edge!(gx, 3, 4)
     for g in testdigraphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
@@ -246,7 +246,7 @@
         @test typeof(h) == typeof(g)
     end
 
-    gx = DiGraph(100, 200)
+    gx = SimpleDiGraph(100, 200)
     for g in testdigraphs(gx)
         h = @inferred(g[5:26])
         @test nv(h) == 22

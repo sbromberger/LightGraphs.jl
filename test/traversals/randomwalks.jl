@@ -44,7 +44,7 @@
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
     end
 
-    gx = DiGraph(PathGraph(10))
+    gx = SimpleDiGraph(PathGraph(10))
     for g in testdigraphs(gx)
       @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)

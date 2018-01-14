@@ -4,7 +4,7 @@
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
 
-    gx = Graph(10)
+    gx = SimpleGraph(10)
     for g in testgraphs(gx)
         @test add_vertices!(g, 5) == 5
         @test @inferred(nv(g)) == 15

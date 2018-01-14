@@ -65,7 +65,7 @@ Since the capacities in [`LightGraphs.DefaultDistance`](@ref) cannot be changed,
 is created.
 """
 function residual end
-@traitfn residual(flow_graph::::IsDirected) = DiGraph(Graph(flow_graph))
+@traitfn residual(flow_graph::::IsDirected) = SimpleDiGraph(Graph(flow_graph))
 
 # Method for Edmonds–Karp algorithm
 
@@ -136,7 +136,7 @@ algorithm, the associated mincut is returned as a third output.
 ### Usage Example:
 
 ```jldoctest
-julia> flow_graph = DiGraph(8) # Create a flow-graph
+julia> flow_graph = SimpleDiGraph(8) # Create a flow-graph
 julia> flow_edges = [
 (1,2,10),(1,3,5),(1,4,15),(2,3,4),(2,5,9),
 (2,6,15),(3,4,4),(3,6,8),(4,7,16),(5,6,15),
