@@ -32,6 +32,5 @@ GRAPHS = Dict{String,Graph}(
   include("edges.jl")
   include("centrality.jl")
   include("connectivity.jl")
-  include("max-flow.jl")
   include("traversals.jl")
 end
