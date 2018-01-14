@@ -174,7 +174,8 @@ function simplecycles end
     sccs = strongly_connected_components(dg)
     cycles = Vector{Vector{Int}}() # Pas très cohérent : devrait être du type de dg.
     for scc in sccs
-        for i in 1:(length(scc) - 1)
+        maxl = length(scc) > 1 ? length(scc) - 1 : 1
+        for i in 1:maxl
             wdg, vmap = induced_subgraph(dg, scc[i:end])
             visitor = JohnsonVisitor(wdg)
             circuit(1, wdg, visitor, cycles, vmap) # 1 is the startnode.
@@ -258,7 +259,8 @@ function itercycles end
 @traitfn function itercycles(dg::::IsDirected, cycle::Channel)
     sccs = strongly_connected_components(dg)
     for scc in sccs
-        while length(scc) > 1
+        minl = length(scc) > 1 ? 2 : 1
+        while length(scc) >= minl
             wdg, vmap = induced_subgraph(dg, scc)
             shift!(scc)
             visitor = JohnsonVisitor(wdg)
