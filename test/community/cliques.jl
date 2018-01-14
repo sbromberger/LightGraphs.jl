@@ -15,7 +15,7 @@
         setofsets(@inferred(maximal_cliques(graph))) == setofsets(expected)
     end
 
-    gx = Graph(3)
+    gx = SimpleGraph(3)
     add_edge!(gx, 1, 2)
     for g in testgraphs(gx)
       @test test_cliques(g, Array[[1, 2], [3]])
@@ -25,7 +25,7 @@
       @test test_cliques(g, Array[[1, 2], [2, 3]])
     end
     # Test for "pivotdonenbrs not defined" bug
-    h = Graph(6)
+    h = SimpleGraph(6)
     add_edge!(h, 1, 2)
     add_edge!(h, 1, 3)
     add_edge!(h, 1, 4)
@@ -41,7 +41,7 @@
 
     # test for extra cliques bug
 
-    h = Graph(7)
+    h = SimpleGraph(7)
     add_edge!(h, 1, 3)
     add_edge!(h, 2, 6)
     add_edge!(h, 3, 5)

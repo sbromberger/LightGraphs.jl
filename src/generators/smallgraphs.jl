@@ -3,7 +3,7 @@
 #####################
 
 function _make_simple_undirected_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
-    g = Graph(n)
+    g = SimpleGraph(n)
     for (s, d) in edgelist
         add_edge!(g, Edge(s, d))
     end
@@ -11,7 +11,7 @@ function _make_simple_undirected_graph(n::T, edgelist::Vector{Tuple{T,T}}) where
 end
 
 function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
-    g = DiGraph(n)
+    g = SimpleDiGraph(n)
     for (s, d) in edgelist
         add_edge!(g, Edge(s, d))
     end

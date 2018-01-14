@@ -16,7 +16,7 @@ import Base.Threads: Atomic, @threads
         @test first == 1
     end
 
-    g5 = DiGraph(4)
+    g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 

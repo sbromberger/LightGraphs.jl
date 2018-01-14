@@ -1,5 +1,5 @@
 @testset "Articulation" begin
-    gint = Graph(13)
+    gint = SimpleGraph(13)
     add_edge!(gint, 1, 7)
     add_edge!(gint, 1, 2)
     add_edge!(gint, 1, 3)

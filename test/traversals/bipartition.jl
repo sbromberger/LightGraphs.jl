@@ -4,7 +4,7 @@
         @test @inferred(!is_bipartite(g))
     end
 
-    gx = Graph(5)
+    gx = SimpleGraph(5)
     add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
     add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
     add_edge!(gx, 3, 4)

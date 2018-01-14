@@ -7,7 +7,7 @@
       @test @inferred(modularity(g, c)) == 0
     end
 
-    gint = Graph(n)
+    gint = SimpleGraph(n)
     for g in testgraphs(gint)
       @test @inferred(modularity(g, c)) == 0
     end

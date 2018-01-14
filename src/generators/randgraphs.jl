@@ -1,11 +1,11 @@
-function Graph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Integer
+function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Integer
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(Graph(nv, maxe - ne))
+    ne > (2 / 3) * maxe && return complement(SimpleGraph(nv, maxe - ne))
 
     rng = getRNG(seed)
-    g = Graph(tnv)
+    g = SimpleGraph(tnv)
 
     while g.ne < ne
         source = rand(rng, one(T):tnv)
@@ -18,14 +18,14 @@ end
 Graph(nv::T, ne::Integer; seed::Int = -1) where T<: Integer =
     Graph{T}(nv, ne, seed=seed)
 
-function DiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
+function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(DiGraph{T}(nv, maxe - ne))
+    ne > (2 / 3) * maxe && return complement(SimpleDiGraph{T}(nv, maxe - ne))
 
     rng = getRNG(seed)
-    g = DiGraph(tnv)
+    g = SimpleDiGraph(tnv)
     while g.ne < ne
         source = rand(rng, one(T):tnv)
         dest = rand(rng, one(T):tnv)
@@ -34,8 +34,8 @@ function DiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
     return g
 end
 
-DiGraph(nv::T, ne::Integer; seed::Int = -1) where T<:Integer =
-    DiGraph{Int}(nv, ne, seed=seed)
+SimpleDiGraph(nv::T, ne::Integer; seed::Int = -1) where T<:Integer =
+    SimpleDiGraph{Int}(nv, ne, seed=seed)
 
 """
     randbn(n, p, seed=-1)
@@ -73,7 +73,7 @@ probability `p`.
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
     ne = randbn(m, p, seed)
-    return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
+    return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
 """
@@ -87,7 +87,7 @@ graph with `n` vertices and `ne` edges.
 - `seed=-1`: set the RNG seed.
 """
 function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-1)
-    return is_directed ? DiGraph(n, ne, seed=seed) : Graph(n, ne, seed=seed)
+    return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
 
@@ -105,9 +105,9 @@ randomized per the model based on probability `β`.
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int = -1)
     @assert k < n / 2
     if is_directed
-        g = DiGraph(n)
+        g = SimpleDiGraph(n)
     else
-        g = Graph(n)
+        g = SimpleGraph(n)
     end
     rng = getRNG(seed)
     for s in 1:n
@@ -222,7 +222,7 @@ function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool 
     if complete
         g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
     else
-        g = is_directed ? DiGraph(n0) : Graph(n0)
+        g = is_directed ? SimpleDiGraph(n0) : SimpleGraph(n0)
     end
 
     barabasi_albert!(g, n, k; seed = seed)
@@ -325,7 +325,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T<:Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness)
-    m == 0 && return Graph(n)
+    m == 0 && return SimpleGraph(n)
     nvs = 0
     for f in fitness
         # sanity check for the fitness
@@ -337,7 +337,7 @@ function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) wher
     m > max_no_of_edges && throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
-    g = Graph(n)
+    g = SimpleGraph(n)
     _create_static_fitness_graph!(g, m, cum_fitness, cum_fitness, seed)
     return g
 end
@@ -362,7 +362,7 @@ function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Ve
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness_out)
     length(fitness_in) != n && throw(ArgumentError("fitness_in must have the same size as fitness_out"))
-    m == 0 && return DiGraph(n)
+    m == 0 && return SimpleDiGraph(n)
     # avoid getting into an infinite loop when too many edges are requested
     noutvs = ninvs = nvs = 0
     @inbounds for i = 1:n
@@ -377,7 +377,7 @@ function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Ve
     # calculate the cumulative fitness scores
     cum_fitness_out = cumsum(fitness_out)
     cum_fitness_in = cumsum(fitness_in)
-    g = DiGraph(n)
+    g = SimpleDiGraph(n)
     _create_static_fitness_graph!(g, m, cum_fitness_out, cum_fitness_in, seed)
     return g
 end
@@ -493,7 +493,7 @@ function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
     !iseven(n * k) && throw(ArgumentError("n * k must be even"))
     !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
     if k == 0
-        return Graph(n)
+        return SimpleGraph(n)
     end
     if (k > n / 2) && iseven(n * (n - k - 1))
         return complement(random_regular_graph(n, n - k - 1, seed=seed))
@@ -506,7 +506,7 @@ function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
         edges = _try_creation(n, k, rng)
     end
 
-    g = Graph(n)
+    g = SimpleGraph(n)
     for edge in edges
         add_edge!(g, edge)
     end
@@ -546,7 +546,7 @@ function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check
         edges = _try_creation(n, k, rng)
     end
 
-    g = Graph(n)
+    g = SimpleGraph(n)
     for edge in edges
         add_edge!(g, edge)
     end
@@ -574,7 +574,7 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
 
     if k == 0
-        return DiGraph(n)
+        return SimpleDiGraph(n)
     end
     if (k > n / 2) && iseven(n * (n - k - 1))
         return complement(random_regular_digraph(n, n - k - 1, dir=dir, seed=seed))
@@ -592,9 +592,9 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     end
 
     if dir == :out
-        return DiGraph(sparse(I, J, V, n, n))
+        return SimpleDiGraph(sparse(I, J, V, n, n))
     else
-        return DiGraph(sparse(I, J, V, n, n)')
+        return SimpleDiGraph(sparse(I, J, V, n, n)')
     end
 end
 
@@ -611,7 +611,7 @@ with `n` vertices.
 function random_tournament_digraph(n::Integer; seed::Int=-1)
 
     rng = getRNG(seed)
-    g = DiGraph(n)
+    g = SimpleDiGraph(n)
 
     for i = 1:n, j = i+1:n
         rand(rng, Bool) ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
@@ -644,14 +644,14 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
     N = sum(n)
     K = length(n)
     nedg = zeros(Int, K, K)
-    g = Graph(N)
+    g = SimpleGraph(N)
     cum = [sum(n[1:a]) for a = 0:K]
     for a = 1:K
         ra = (cum[a] + 1):cum[a + 1]
         for b = a:K
             ((a == b) && !(c[a, b] <= n[b] - 1)) || ((a != b) && !(c[a, b] <= n[b])) &&
                 error("Mean degree cannot be greater than available neighbors in the block.") # TODO 0.7: turn into some other error?
-            
+
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
             p = a == b ? n[a] * c[a, b] / (2m) : n[a] * c[a, b] / m
             nedg = randbn(m, p, seed)
@@ -821,8 +821,8 @@ function make_edgestream(sbm::StochasticBlockModel)
     return Channel(edges, ctype=Edge, csize=32)
 end
 
-function Graph(nvg::Integer, neg::Integer, edgestream::Channel)
-    g = Graph(nvg)
+function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
+    g = SimpleGraph(nvg)
     # println(g)
     for e in edgestream
         add_edge!(g, e)
@@ -833,7 +833,7 @@ function Graph(nvg::Integer, neg::Integer, edgestream::Channel)
 end
 
 Graph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
-    Graph(nvg, neg, make_edgestream(sbm))
+    SimpleGraph(nvg, neg, make_edgestream(sbm))
 
 #TODO: this documentation needs work. sbromberger 20170326
 """
@@ -893,7 +893,7 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
     p = randperm(M)
     ij = ij[p, :]
 
-    g = DiGraph(N)
+    g = SimpleDiGraph(N)
     for (s, d) in zip(@view(ij[:, 1]), @view(ij[:, 2]))
         add_edge!(g, s, d)
     end

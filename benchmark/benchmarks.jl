@@ -21,7 +21,7 @@ GRAPHS = Dict{String,Graph}(
     "complete100"   => CompleteGraph(100),
     "tutte"         => smallgraph(:tutte),
     "path500"       => PathGraph(500),
-    "5000-49947"    => Graph(DIGRAPHS["5000-50000"])
+    "5000-49947"    => SimpleGraph(DIGRAPHS["5000-50000"])
 )
 
 
