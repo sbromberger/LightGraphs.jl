@@ -20,7 +20,7 @@ The Metis graph partitioning package can interface with *LightGraphs.jl*:
 ```julia
 julia> using LightGraphs
 
-julia> g = Graph(100,1000)
+julia> g = SimpleGraph(100,1000)
 {100, 1000} undirected graph
 
 julia> partGraphKway(g, 6)  # 6 partitions
