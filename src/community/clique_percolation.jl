@@ -1,4 +1,4 @@
-using LightGraphs
+# Uncovering the overlapping community structure of complex networks in nature and society
 
 function clique_percolation(g::SimpleGraph; k=3)
   kcliques = filter(x->length(x)>=k, maximal_cliques(g))
