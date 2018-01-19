@@ -1,4 +1,5 @@
-# Uncovering the overlapping community structure of complex networks in nature and society
+# Finding overlapping communities of an undirected graph using the clique percolation method
+
 
 function clique_percolation(g::SimpleGraph; k=3)
   kcliques = filter(x->length(x)>=k, maximal_cliques(g))
