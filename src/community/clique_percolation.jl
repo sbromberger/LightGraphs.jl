@@ -1,5 +1,15 @@
-# Finding overlapping communities of an undirected graph using the clique percolation method
+##############################################################################################
 
+# Finding overlapping communities of an undirected graph using the clique percolation method #
+
+##############################################################################################
+
+"""
+     clique_percolation(g,k=3)
+     community detection using the clique percolation method.
+     # reference 
+     -[Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
+"""
 
 function clique_percolation(g::SimpleGraph; k=3)
   kcliques = filter(x->length(x)>=k, maximal_cliques(g))
