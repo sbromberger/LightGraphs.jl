@@ -70,6 +70,7 @@ tests = [
     "community/label_propagation",
     "community/modularity",
     "community/clustering",
+    "community/clique_percolation",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
