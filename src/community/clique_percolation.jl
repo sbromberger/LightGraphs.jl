@@ -1,14 +1,12 @@
-##############################################################################################
-
-# Finding overlapping communities of an undirected graph using the clique percolation method #
-
-##############################################################################################
 
 """
-     clique_percolation(g,k=3)
-     community detection using the clique percolation method.
-     # reference 
-     -[Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
+     clique_percolation(g, k=3)
+
+Community detection using the clique percolation algorithm. Communities are potentionally overlapping.
+Returns a vector of vectors `c` such that `c[i]` is the set of vertices in community `i`.
+
+#### References
+- [Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
 """
 
 function clique_percolation(g::SimpleGraph; k=3)
