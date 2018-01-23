@@ -1,20 +1,53 @@
 # Reading and writing Graphs
 
-Graphs may be written to I/O streams and files using the `save` function and
-read with the `load` function. Currently supported graph formats are the
- *LightGraphs.jl* format `lg` and the common formats `gml, graphml, gexf, dot, net`.
-
-```@docs
-save
-load
+```@index
+Pages   = ["persistence.md"]
 ```
 
-## Examples
+## Saving using *LightGraphs.jl* `lg` format.
+
+Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `LG`.
+
+### Example
 
 ```julia
-julia> save(STDOUT, g)
-julia> save("mygraph.jgz", g, "mygraph"; compress=true)
-julia> g = load("multiplegraphs.jgz")
-julia> g = load("multiplegraphs.xml", :graphml)
-julia> g = load("mygraph.gml", "mygraph", :gml)
+
+g = erdos_renyi(5, 0.2)
+
+savegraph("mygraph.lgz", g)
+reloaded_g = loadgraph("mygraph.lgz")
 ```
+
+In addition, graphs can also be saved in an uncompressed format using the `compress=false` option.
+
+```julia
+
+savegraph("mygraph.lg", g, compress=false)
+
+reloaded_g = loadgraph("mygraph.lg")
+```
+
+Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.
+
+```julia
+graph_dict = {"g1" => erdos_renyi(5, 0.1),
+              "g2" => erdos_renyi(10, 0.2),
+              "g3" => erdos_renyi(2, 0.9)}
+
+savegraph("mygraph_dict.lg", graph_dict)
+
+# Re-load only graph g1
+reloaded_g1 = loadgraph("mygraph_dict.lg", "g1")
+```
+
+## Full docs
+
+```@autodocs
+Modules = [LightGraphs]
+Pages   = ["persistence/common.jl"]
+Private = false
+```
+
+## Reading and Writing using other formats using GraphIO
+
+The [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl) library provides tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.

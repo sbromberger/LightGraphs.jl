@@ -1,84 +1,117 @@
-NI(x...) = error("This function is not implemented.")
+abstract type AbstractGraphFormat end
 
-@deprecate readgraph load
-
-const filemap = Dict{Symbol, Tuple{Function, Function, Function, Function}}()
-        # :gml        => (loadgml, loadgml_mult, savegml, savegml_mult)
-        # :graphml    => (loadgraphml, loadgraphml_mult, savegraphml, savegraphml_mult)
-        # :md         => (loadmatrixdepot, NOTIMPLEMENTED, NOTIMPLEMENTED, NOTIMPLEMENTED)
-
-# load a single graph by name
 """
-    load(file, name, t=:lg)
+    loadgraph(file, gname="graph", format=LGFormat())
 
-Loads a graph with name `name` from `file` in format `t`.
+Read a graph named `gname` from `file` in the format `format`.
 
-Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
+### Implementation Notes
+`gname` is graph-format dependent and is only used if the file contains
+multiple graphs; if the file format does not support multiple graphs, this
+value is ignored. The default value may change in the future.
 """
-function load(io::IO, gname::AbstractString, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][1](io, gname)
+function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGraphFormat)
+    open(fn, "r") do io
+        loadgraph(auto_decompress(io), gname, format)
+    end
 end
+loadgraph(fn::AbstractString) = loadgraph(fn, "graph", LGFormat())
+loadgraph(fn::AbstractString, gname::AbstractString) = loadgraph(fn, gname, LGFormat())
+loadgraph(fn::AbstractString, format::AbstractGraphFormat) = loadgraph(fn, "graph", format)
+
 
 """
-    load(file, t=:lg)
+    loadgraphs(file, format=LGFormat())
 
-Loads multiple graphs from  `file` in the format `t`. Returns a dictionary
-mapping graph name to graph.
+Load multiple graphs from `file` in the format `format`.
+Return a dictionary mapping graph name to graph.
 
-For unnamed graphs the default names \"graph\" and \"digraph\" will be used.
+### Implementation Notes
+For unnamed graphs the default name \"graph\" will be used. This default
+may change in the future.
 """
-
-function load(io::IO, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][2](io)
-end
-
-# load from a file
-function load(fn::AbstractString, x...)
-    GZip.open(fn,"r") do io
-        load(io, x...)
+function loadgraphs(fn::AbstractString, format::AbstractGraphFormat)
+    open(fn, "r") do io
+        loadgraphs(auto_decompress(io), format)
     end
 end
 
+loadgraphs(fn::AbstractString) = loadgraphs(fn, LGFormat())
 
-"""
-    save(file, g, t=:lg)
-    save(file, g, name, t=:lg)
-    save(file, dict, t=:lg)
-
-Saves a graph `g` with name `name` to `file` in the format `t`. If `name` is not given
-the default names \"graph\" and \"digraph\" will be used.
-
-Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
-
-For some graph formats, multiple graphs in a  `dict` `"name"=>g` can be saved in the same file.
-
-Returns the number of graphs written.
-"""
-function save(io::IO, g::SimpleGraph, gname::AbstractString, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][3](io, g, gname)
-end
-
-# save a single graph without name
-save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
-save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
-
-# save a dictionary of graphs {"name" => graph}
-function save{T<:AbstractString}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][4](io, d)
-end
-
-# save to a file
-function save(fn::AbstractString, x...; compress::Bool=false)
-    if compress
-        io = GZip.open(fn,"w")
-    else
-        io = open(fn,"w")
+function auto_decompress(io::IO)
+    format = :raw
+    mark(io)
+    if !eof(io)
+        b1 = read(io, UInt8)
+        if !eof(io)
+            b2 = read(io, UInt8)
+            if (b1, b2) == (0x1f, 0x8b)  # check magic bytes
+                format = :gzip
+            end
+        end
     end
-    retval = save(io, x...)
-    close(io)
-    return retval
+    reset(io)
+    if format == :gzip
+        io = CodecZlib.GzipDecompressorStream(io)
+    end
+    return io
 end
+
+
+"""
+    savegraph(file, g, gname="graph", format=LGFormat; compress=true)
+
+Saves a graph `g` with name `gname` to `file` in the format `format`.
+If `compress = true`, use GZip compression when writing the file.
+Return the number of graphs written.
+
+### Implementation Notes
+The default graph name assigned to `gname` may change in the future.
+"""
+function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
+        format::AbstractGraphFormat; compress=true
+    )
+    io = open(fn, "w")
+    try
+        if compress
+            io = CodecZlib.GzipCompressorStream(io)
+        end
+        return savegraph(io, g, gname, format)
+    catch
+        rethrow()
+    finally
+        close(io)
+    end
+end
+
+savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString="graph", format=LGFormat(); compress=true) =
+    savegraph(fn, g, gname, LGFormat, compress=compress)
+
+savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=true) =
+    savegraph(fn, g, "graph", format, compress=compress)
+"""
+    savegraph(file, g, d, format=LGFormat; compress=true)
+
+Save a dictionary of `graphname => graph` to `file` in the format `format`.
+If `compress = true`, use GZip compression when writing the file.
+Return the number of graphs written.
+
+### Implementation Notes
+Will only work if the file format supports multiple graph types.
+"""
+function savegraph(fn::AbstractString, d::Dict{T,U},
+    format::AbstractGraphFormat; compress=true) where T<:AbstractString where U<:AbstractGraph
+    io = open(fn, "w")
+    try
+        if compress
+            io = CodecZlib.GzipCompressorStream(io)
+        end
+        return savegraph(io, d, format)
+    catch
+        rethrow()
+    finally
+        close(io)
+    end
+end
+
+savegraph(fn::AbstractString, d::Dict; compress=true) = savegraph(fn, d, LGFormat(), compress=compress)

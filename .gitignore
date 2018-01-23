@@ -1,5 +1,8 @@
 .DS_Store
 *.jl.cov
 *.jl.mem
+.vscode
 docs/build/
 docs/site/
+benchmark/.results/*
+benchmark/.tune.jld
