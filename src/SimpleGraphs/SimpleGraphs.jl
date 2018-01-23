@@ -28,16 +28,8 @@ AbstractSimpleGraphs must have the following elements:
 abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
 
 function show(io::IO, g::AbstractSimpleGraph{T}) where T
-    if is_directed(g)
-        dir = "directed"
-    else
-        dir = "undirected"
-    end
-    if nv(g) == 0
-        print(io, "empty $dir simple $T graph")
-    else
-        print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
-    end
+    dir = is_directed(g) ? "directed" : "undirected"
+    print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
 end
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
