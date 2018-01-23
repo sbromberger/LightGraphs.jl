@@ -98,6 +98,7 @@ vertices in `g` will be indexed by ``1:|V|-1``.
 function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     v in vertices(g) || return false
     n = nv(g)
+    self_loop_n = false  # true if n is self-looped (see #820)
 
     # remove the in_edges from v
     srcs = copy(in_neighbors(g, v))
@@ -112,7 +113,11 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     if v != n
         # add the edges from n back to v
         @inbounds for s in neigs
-            add_edge!(g, edgetype(g)(s, v))
+            if s != n  # don't add an edge to the last vertex - see #820.
+                add_edge!(g, edgetype(g)(s, v))
+            else
+                self_loop_n = true
+            end
         end
     end
 
@@ -130,11 +135,15 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
         if v != n
             # add the out_edges back to v
             @inbounds for d in neigs
-                add_edge!(g, edgetype(g)(v, d))
+                if d != n
+                    add_edge!(g, edgetype(g)(v, d))
+                end
             end
         end
     end
-
+    if self_loop_n
+        add_edge!(g, edgetype(g)(v, v))
+    end
     pop!(g.fadjlist)
     if is_directed(g)
         pop!(g.badjlist)
