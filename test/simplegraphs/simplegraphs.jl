@@ -173,6 +173,15 @@
         @test nv(g) == 3 && ne(g) == 6
         @test g != h
     end
+    # tests for #820
+    g = CompleteGraph(3)
+    add_edge!(g, 3, 3)
+    rem_vertex!(g, 1)
+    @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
+    g = PathDiGraph(3)
+    add_edge!(g, 3, 3)
+    rem_vertex!(g, 1)
+    @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
 end
