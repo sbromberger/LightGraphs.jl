@@ -173,13 +173,13 @@
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(outdegree(rd)) == 0
+    @test std(out_degree(rd)) == 0
 
     rd = random_regular_digraph(1000, 4, dir=:in)
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(indegree(rd)) == 0
+    @test std(in_degree(rd)) == 0
 
     rr = random_regular_graph(10, 8, seed=4)
     @test nv(rr) == 10

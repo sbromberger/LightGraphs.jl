@@ -24,22 +24,22 @@ Return the number of vertices that were added successfully.
 add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
-    indegree(g[, v])
+    in_degree(g[, v])
 
 Return a vector corresponding to the number of edges which end at each vertex in
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
+in_degree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
+in_degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [in_degree(g, x) for x in v]
 
 """
-    outdegree(g[, v])
+    out_degree(g[, v])
 
 Return a vector corresponding to the number of edges which start at each vertex in
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
+out_degree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
+out_degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [out_degree(g, x) for x in v]
 
 """
     degree(g[, v])
@@ -49,37 +49,37 @@ For directed graphs, this value equals the incoming plus outgoing edges.
 For undirected graphs, it equals the connected edges.
 """
 function degree end
-@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
+@traitfn degree(g::::IsDirected, v::Integer) = in_degree(g, v) + out_degree(g, v)
+@traitfn degree(g::::(!IsDirected), v::Integer) = in_degree(g, v)
 
 degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
 
 """
     Δout(g)
 
-Return the maximum [`outdegree`](@ref) of vertices in `g`.
+Return the maximum [`out_degree`](@ref) of vertices in `g`.
 """
-Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
+Δout(g) = noallocextreme(out_degree, (>), typemin(Int), g)
 """
     δout(g)
 
-Return the minimum [`outdegree`](@ref) of vertices in `g`.
+Return the minimum [`out_degree`](@ref) of vertices in `g`.
 """
-δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
+δout(g) = noallocextreme(out_degree, (<), typemax(Int), g)
 
 """
     Δin(g)
 
-Return the maximum [`indegree`](@ref) of vertices in `g`.
+Return the maximum [`in_degree`](@ref) of vertices in `g`.
 """
-Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
+Δin(g) = noallocextreme(in_degree, (>), typemin(Int), g)
 
 """
     δin(g)
 
-Return the minimum [`indegree`](ref) of vertices in `g`.
+Return the minimum [`in_degree`](ref) of vertices in `g`.
 """
-δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
+δin(g) = noallocextreme(in_degree, (<), typemax(Int), g)
 
 """
     Δ(g)
@@ -116,7 +116,7 @@ end
 Return a Dict with values representing the number of vertices that have degree
 represented by the key.
 
-Degree function (for example, `indegree` or `outdegree`) may be specified by
+Degree function (for example, `in_degree` or `out_degree`) may be specified by
 overriding `degfn`.
 """
 function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T

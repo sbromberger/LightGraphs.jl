@@ -2,7 +2,7 @@
     function dense_pagerank_solver(g::AbstractGraph, α=0.85::Real)
         # M = google_matrix(g, α)
         p = fill(1/nv(g), nv(g))
-        danglingnodes = outdegree(g) .== 0
+        danglingnodes = out_degree(g) .== 0
         M = float(full(adjacency_matrix(g)))
         M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
@@ -15,7 +15,7 @@
 
     function google_matrix(g::AbstractGraph, α=0.85::Real)
         p = fill(1/nv(g), nv(g))
-        danglingnodes = outdegree(g) .== 0
+        danglingnodes = out_degree(g) .== 0
         M = float(full(adjacency_matrix(g)))
         @show M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
