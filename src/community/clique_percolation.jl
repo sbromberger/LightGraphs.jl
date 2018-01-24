@@ -15,31 +15,22 @@ function clique_percolation(g::SimpleGraph; k=3)
   # graph with nodes represent k-cliques
   h = Graph(nc)
   # vector for counting common nodes between two cliques efficiently
-  x = fill(false, nv(g))
+  x = falses(nv(g))
   for i = 1:nc
-    for u in kcliques[i]
-      x[u] = true
-    end
+    x[kcliques[i]] = true
     for j = i+1:nc
-        common_nodes = 0
-        for v in kcliques[j]
-            if x[v]
-                common_nodes += 1
-            end
-        end
+        common_nodes = sum(x[kcliques[j]])
         if common_nodes >= k-1
             add_edge!(h, i, j)
         end
     end
     # reset status
-    for u in kcliques[i]
-      x[u] = false
-    end
+    x[kcliques[i]] = false
   end
   components = connected_components(h)
   communities = [IntSet() for i=1:length(components)]
-  for (i,component) in enumerate(components), u in component, v in kcliques[u]
-    push!(communities[i], v)
-   end
-   communities
+  for (i,component) in enumerate(components)    
+    push!(communities[i], vcat(kcliques[component]...)...)
+  end 
+  return communities
 end
