@@ -8,7 +8,7 @@
         Set(clique_percolation(graph)) == setofsets(expected)
     end
 
-    g = SimpleGraph(5)
+    g = Graph(5)
     add_edge!(g, 1, 2)
     add_edge!(g, 2, 3)
     add_edge!(g, 3, 1)
