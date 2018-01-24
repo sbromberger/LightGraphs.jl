@@ -9,7 +9,7 @@ Returns a vector of vectors `c` such that `c[i]` is the set of vertices in commu
 - [Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
 """
 
-function clique_percolation(g::SimpleGraph; k=3)
+function clique_percolation(g::::(!IsDirected); k=3)
   kcliques = filter(x->length(x)>=k, maximal_cliques(g))
   nc = length(kcliques)
   # graph with nodes represent k-cliques
