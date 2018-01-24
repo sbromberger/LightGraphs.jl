@@ -15,5 +15,5 @@
     add_edge!(g, 1, 4)
     add_edge!(g, 4, 5)
     add_edge!(g, 5, 1)
-    @test test_cliques(g, Array[[1, 2, 3], [1, 4, 5]])
+    @test @inferred test_cliques(g, Array[[1, 2, 3], [1, 4, 5]])
 end
