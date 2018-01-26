@@ -23,9 +23,9 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     elseif (dir == :in)
         _adjacency_matrix(g, T, outneighbors, 1)
     elseif (dir == :both)
-        _adjacency_matrix(g, T, all_neighbors, 1)
+        _adjacency_matrix(g, T, allneighbors, 1)
         if is_directed(g)
-            _adjacency_matrix(g, T, all_neighbors, 2)
+            _adjacency_matrix(g, T, allneighbors, 2)
         else
             _adjacency_matrix(g, T, outneighbors, 1)
         end

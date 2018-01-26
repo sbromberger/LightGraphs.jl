@@ -24,7 +24,7 @@
 
         @test z1 == z2 == z3 == Dict(4 => 1, 3 => 4)
 
-        @test @inferred(neighbors(g, 2)) == @inferred(all_neighbors(g, 2)) == [1, 3, 5]
+        @test @inferred(neighbors(g, 2)) == @inferred(allneighbors(g, 2)) == [1, 3, 5]
         @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
 
         gsl = copy(g)
@@ -65,7 +65,7 @@
         @test z3 == Dict(4 => 1, 1 => 4)
 
         @test @inferred(neighbors(g, 2)) == [3]
-        @test Set(@inferred(all_neighbors(g, 2))) == Set([1, 3, 5])
+        @test Set(@inferred(allneighbors(g, 2))) == Set([1, 3, 5])
         @test @inferred(common_neighbors(g, 1, 5)) == [2]
 
         gsl = copy(g)

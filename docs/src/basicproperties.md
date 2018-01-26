@@ -16,7 +16,7 @@ The following is an overview of functions for accessing graph properties. For fu
 ## Vertex Properties
 
 - `neighbors`: Return array of neighbors of a vertex. If graph is directed, output is equivalent of `outneighbors`.
-- `all_neighbors`:  Returns array of all neighbors (both `inneighbors` and `outneighbors`). For undirected graphs, equivalent to `neighbors`.
+- `allneighbors`:  Returns array of all neighbors (both `inneighbors` and `outneighbors`). For undirected graphs, equivalent to `neighbors`.
 - `inneighbors`: Return array of in-neighbors. Equivalent to `neighbors` for undirected graphs.
 - `outneighbors`: Return array of out-neighbors. Equivalent to `neighbors` for undirected graphs.
 
