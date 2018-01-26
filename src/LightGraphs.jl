@@ -106,7 +106,7 @@ static_scale_free, kronecker,
 #community
 modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
-label_propagation, maximal_cliques,
+label_propagation, maximal_cliques, clique_percolation,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
