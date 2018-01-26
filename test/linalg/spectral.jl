@@ -36,8 +36,8 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     g = copy(g5)
     add_edge!(g, 1, 1)
     @test adjacency_matrix(g)[1, 1] == 1
-    @test indegree(g) == sum(adjacency_matrix(g), 1)[1, :]
-    @test outdegree(g) == sum(adjacency_matrix(g), 2)[:, 1]
+    @test in_degree(g) == sum(adjacency_matrix(g), 1)[1, :]
+    @test out_degree(g) == sum(adjacency_matrix(g), 2)[:, 1]
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)

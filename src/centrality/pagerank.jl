@@ -12,7 +12,7 @@ is not reached within `n` iterations.
 """
 function pagerank(g::AbstractGraph, α=0.85, n=100::Integer, ϵ=1.0e-6)
     # collect dangling nodes
-    dangling_nodes = [v for v in vertices(g) if outdegree(g, v) == 0]
+    dangling_nodes = [v for v in vertices(g) if out_degree(g, v) == 0]
     N = Int(nv(g))
     # solution vector and temporary vector
     x = fill(1.0 / N, N)
@@ -33,9 +33,9 @@ function pagerank(g::AbstractGraph, α=0.85, n=100::Integer, ϵ=1.0e-6)
         # flow from edges
         for edge in edges(g)
             u, v = src(edge), dst(edge)
-            xlast[v] += α * x[u] / outdegree(g, u)
+            xlast[v] += α * x[u] / out_degree(g, u)
             if !is_directed(g)
-                xlast[u] += α * x[v] / outdegree(g, v)
+                xlast[u] += α * x[v] / out_degree(g, v)
             end
         end
         # l1 change in solution convergence criterion

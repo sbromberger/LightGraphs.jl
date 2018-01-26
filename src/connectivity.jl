@@ -297,7 +297,7 @@ function attracting_components end
     attracting = Vector{T}()
 
     for v in vertices(cond)
-        if outdegree(cond, v) == 0
+        if out_degree(cond, v) == 0
             push!(attracting, v)
         end
     end

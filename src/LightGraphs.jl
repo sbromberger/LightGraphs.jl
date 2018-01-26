@@ -18,7 +18,7 @@ is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
 has_vertex, has_edge, in_neighbors, out_neighbors,
 
 # core
-is_ordered, add_vertices!, indegree, outdegree, degree,
+is_ordered, add_vertices!, in_degree, out_degree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
@@ -83,7 +83,7 @@ parallel_multisource_dijkstra_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
-indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
+in_degree_centrality, out_degree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
 parallel_betweenness_centrality, parallel_closeness_centrality,

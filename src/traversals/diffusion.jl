@@ -14,7 +14,7 @@ during the simulation. If left empty, all vertices will be watched.
 - `normalize=false`: if `false`, set the probability of spread from a vertex ``i`` to
 each of the out_neighbors of ``i`` to ``p``. If `true`, set the probability of spread
 from a vertex ``i`` to each of the `out_neighbors` of ``i`` to
-``\\frac{p}{outdegreee(g, i)}``.
+``\\frac{p}{out_degreee(g, i)}``.
 """
 
 function diffusion(g::AbstractGraph{T},
@@ -50,7 +50,7 @@ function diffusion(g::AbstractGraph{T},
 
             if outd > 0
                 if normalize
-                    local_p = p / outdegree(g, i)
+                    local_p = p / out_degree(g, i)
                 else
                     local_p = p
                 end

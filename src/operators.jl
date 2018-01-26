@@ -247,11 +247,11 @@ end
 """
     sum(g, i)
 
-Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
+Return a vector of in_degree (`i`=1) or out_degree (`i`=2) values for graph `g`.
 """
 function sum(g::AbstractGraph, dim::Int)
-    dim == 1 && return indegree(g, vertices(g))
-    dim == 2 && return outdegree(g, vertices(g))
+    dim == 1 && return in_degree(g, vertices(g))
+    dim == 2 && return out_degree(g, vertices(g))
     throw(ArgumentError("dimension must be <= 2"))
 end
 
