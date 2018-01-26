@@ -1,16 +1,16 @@
 """
- +    clique_percolation(g, k=3)
- +
- +Community detection using the clique percolation algorithm. Communities are potentionally overlapping.
- +Return a vector of vectors `c` such that `c[i]` is the set of vertices in community `i`. 
- +The parameter `k` defines the size of the clique to use in percolation.
- +
- +### References
- +- [Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
- +"""
- +function clique_percolation end
- +
- +@traitfn function clique_percolation(g::::(!IsDirected); k = 3)
+    clique_percolation(g, k=3)
+ 
+Community detection using the clique percolation algorithm. Communities are potentionally overlapping.
+Return a vector of vectors `c` such that `c[i]` is the set of vertices in community `i`. 
+The parameter `k` defines the size of the clique to use in percolation.
+ 
+### References
+- [Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
+"""
+function clique_percolation end
+ 
+@traitfn function clique_percolation(g::::(!IsDirected); k = 3)
   kcliques = filter(x->length(x)>=k, maximal_cliques(g))
   nc = length(kcliques)
   # graph with nodes represent k-cliques
