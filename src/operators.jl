@@ -386,7 +386,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
 
     vset = Set(vlist)
     for s in vlist
-        for d in out_neighbors(g, s)
+        for d in outneighbors(g, s)
             # println("s = $s, d = $d")
             if d in vset && has_edge(g, s, d)
                 newe = Edge(newvid[s], newvid[d])
@@ -512,7 +512,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
         # Adjust connections to merged vertices
         if (i != merged_vertex) && !insorted(i, vs)
             nbrs_to_rewire = Set{T}()
-            for j in out_neighbors(g, i)
+            for j in outneighbors(g, i)
                if insorted(j, vs)
                   push!(nbrs_to_rewire, merged_vertex)
                else
@@ -529,7 +529,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
-            for j in vs, e in out_neighbors(g, j)
+            for j in vs, e in outneighbors(g, j)
                 if new_vertex_ids[e] != merged_vertex
                     push!(nbrs_to_merge, new_vertex_ids[e])
                 end

@@ -15,12 +15,12 @@ export
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
-has_vertex, has_edge, in_neighbors, out_neighbors,
+has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
-neighbors, all_neighbors, common_neighbors,
+neighbors, allneighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
 
 # decomposition

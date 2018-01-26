@@ -117,9 +117,9 @@
         # add_edge!(h, 6, 5)
         # new_map = @inferred(merge_vertices!(h, [2, 3, 7, 3, 3, 2]))
         # @test new_map == [1, 2, 2, 4, 5, 3, 2]
-        # @test in_neighbors(h, 2) == [1, 4]
-        # @test out_neighbors(h, 2) == [3, 5]
-        # @test out_neighbors(h, 3) == [5]
+        # @test inneighbors(h, 2) == [1, 4]
+        # @test outneighbors(h, 2) == [3, 5]
+        # @test outneighbors(h, 3) == [5]
 
     end
 

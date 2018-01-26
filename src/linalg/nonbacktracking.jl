@@ -30,7 +30,7 @@ function non_backtracking_matrix(g::AbstractGraph)
 
     for (e, u) in edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(g, i)
+        for k in inneighbors(g, i)
             k == j && continue
             v = edgeidmap[Edge(k, i)]
             B[v, u] = 1
@@ -92,7 +92,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g, i)
+        for k in inneighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             y[v] += x[u]
@@ -114,7 +114,7 @@ function coo_sparse(nbt::Nonbacktracking)
     I, J = zeros(Int, 0), zeros(Int, 0)
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g, i)
+        for k in inneighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             #= J[u] = v =#

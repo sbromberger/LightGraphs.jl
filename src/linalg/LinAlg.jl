@@ -3,8 +3,8 @@ module LinAlg
 using SimpleTraits
 using ..LightGraphs
 
-import LightGraphs: IsDirected, adjacency_matrix, laplacian_matrix, laplacian_spectrum, AbstractGraph, in_neighbors,
-out_neighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
+import LightGraphs: IsDirected, adjacency_matrix, laplacian_matrix, laplacian_spectrum, AbstractGraph, inneighbors,
+outneighbors, allneighbors, is_directed, nv, ne, has_edge, vertices
 
 import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
 

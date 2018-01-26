@@ -29,7 +29,7 @@ add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 Return a vector corresponding to the number of edges which end at each vertex in
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-indegree(g::AbstractGraph, v::Integer) = length(in_neighbors(g, v))
+indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
 indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
 
 """
@@ -38,7 +38,7 @@ indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) fo
 Return a vector corresponding to the number of edges which start at each vertex in
 graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 """
-outdegree(g::AbstractGraph, v::Integer) = length(out_neighbors(g, v))
+outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
 outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
 
 """
@@ -134,27 +134,27 @@ end
     neighbors(g, v)
 
 Return a list of all neighbors reachable from vertex `v` in `g`.
-For directed graphs, the default is equivalent to [`out_neighbors`](@ref);
-use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
+For directed graphs, the default is equivalent to [`outneighbors`](@ref);
+use [`allneighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-neighbors(g::AbstractGraph, v::Integer) = out_neighbors(g, v)
+neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
 """
-    all_neighbors(g, v)
+    allneighbors(g, v)
 Return a list of all inbound and outbound neighbors of `v` in `g`.
-For undirected graphs, this is equivalent to both [`out_neighbors`](@ref)
-and [`in_neighbors`](@ref).
+For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
+and [`inneighbors`](@ref).
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-function all_neighbors end
-@traitfn all_neighbors(g::::IsDirected, v::Integer) =
-    union(out_neighbors(g, v), in_neighbors(g, v))
-@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
+function allneighbors end
+@traitfn allneighbors(g::::IsDirected, v::Integer) =
+    union(outneighbors(g, v), inneighbors(g, v))
+@traitfn allneighbors(g::::(!IsDirected), v::Integer) =
     neighbors(g, v)
 
 

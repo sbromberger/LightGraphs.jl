@@ -19,15 +19,15 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     # "opposite" neighbor function. It's faster than taking the transpose
     # at the end.
     if (dir == :out)
-        _adjacency_matrix(g, T, in_neighbors, 1)
+        _adjacency_matrix(g, T, inneighbors, 1)
     elseif (dir == :in)
-        _adjacency_matrix(g, T, out_neighbors, 1)
+        _adjacency_matrix(g, T, outneighbors, 1)
     elseif (dir == :both)
-        _adjacency_matrix(g, T, all_neighbors, 1)
+        _adjacency_matrix(g, T, allneighbors, 1)
         if is_directed(g)
-            _adjacency_matrix(g, T, all_neighbors, 2)
+            _adjacency_matrix(g, T, allneighbors, 2)
         else
-            _adjacency_matrix(g, T, out_neighbors, 1)
+            _adjacency_matrix(g, T, outneighbors, 1)
         end
     else
         error("Not implemented")
@@ -153,7 +153,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     rowval = zeros(Int, nz)
     i = 1
     for u in vertices(g)
-        for v in out_neighbors(g, u)
+        for v in outneighbors(g, u)
             if isdir || u < v # add every edge only once
                 rowval[2 * i - 1] = u
                 rowval[2 * i] = v

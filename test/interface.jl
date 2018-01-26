@@ -25,7 +25,7 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     end
 
     for graphfun1int in [
-        rem_vertex!, has_vertex, in_neighbors, out_neighbors
+        rem_vertex!, has_vertex, inneighbors, outneighbors
     ]
         @test_throws ErrorException graphfun1int(dummygraph, 1)
     end

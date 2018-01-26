@@ -45,7 +45,7 @@ function mincut(
         u = DataStructures.dequeue!(pq)
         colormap[u] = 1
 
-        for v in out_neighbors(g, u)
+        for v in outneighbors(g, u)
             # if the target of e is already marked then decrease cutweight
             # otherwise, increase it
             ew = distmx[u, v]
@@ -111,7 +111,7 @@ function maximum_adjacency_visit(
         has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")
-        for v in out_neighbors(g, u)
+        for v in outneighbors(g, u)
             log && println(io, " -- examine neighbor from $u to $v")
             if has_key[v]
                 ed = distmx[u, v]

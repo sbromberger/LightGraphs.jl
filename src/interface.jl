@@ -174,24 +174,24 @@ calls to `has_edge`, c.f. [`edges`](@ref).
 has_edge(x, e) = _NI("has_edge")
 
 """
-    in_neighbors(g, v)
+    inneighbors(g, v)
 
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(x, v) = _NI("in_neighbors")
+inneighbors(x, v) = _NI("inneighbors")
 
 """
-    out_neighbors(g, v)
+    outneighbors(g, v)
 
 Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(x, v) = _NI("out_neighbors")
+outneighbors(x, v) = _NI("outneighbors")
 
 """
     zero(g)
