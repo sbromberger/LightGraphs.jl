@@ -61,7 +61,7 @@
         gc = copy(g)
         @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
 
-        @test @inferred(in_neighbors(g, 2)) == @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
+        @test @inferred(inneighbors(g, 2)) == @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
@@ -124,8 +124,8 @@
         gc = @inferred(copy(g))
         @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
 
-        @test @inferred(in_neighbors(g, 2)) == [1]
-        @test @inferred(out_neighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
+        @test @inferred(inneighbors(g, 2)) == [1]
+        @test @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))

@@ -7,7 +7,7 @@ import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     add_vertex!, add_edge!, rem_vertex!, rem_edge!,
-    has_vertex, has_edge, in_neighbors, out_neighbors,
+    has_vertex, has_edge, inneighbors, outneighbors,
 
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
 
@@ -53,8 +53,8 @@ add_edge!(g::AbstractSimpleGraph, x) = add_edge!(g, edgetype(g)(x))
 has_edge(g::AbstractSimpleGraph, x, y) = has_edge(g, edgetype(g)(x, y))
 add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
-in_neighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
-out_neighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
+inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
+outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
 function issubset(g::T, h::T) where T<:AbstractSimpleGraph
     (gmin, gmax) = extrema(vertices(g))
@@ -93,12 +93,12 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     self_loop_n = false  # true if n is self-looped (see #820)
 
     # remove the in_edges from v
-    srcs = copy(in_neighbors(g, v))
+    srcs = copy(inneighbors(g, v))
     @inbounds for s in srcs
         rem_edge!(g, edgetype(g)(s, v))
     end
     # remove the in_edges from the last vertex
-    neigs = copy(in_neighbors(g, n))
+    neigs = copy(inneighbors(g, n))
     @inbounds for s in neigs
         rem_edge!(g, edgetype(g)(s, n))
     end
@@ -115,12 +115,12 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 
     if is_directed(g)
         # remove the out_edges from v
-        dsts = copy(out_neighbors(g, v))
+        dsts = copy(outneighbors(g, v))
         @inbounds for d in dsts
             rem_edge!(g, edgetype(g)(v, d))
         end
         # remove the out_edges from the last vertex
-        neigs = copy(out_neighbors(g, n))
+        neigs = copy(outneighbors(g, n))
         @inbounds for d in neigs
             rem_edge!(g, edgetype(g)(n, d))
         end

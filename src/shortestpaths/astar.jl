@@ -18,7 +18,7 @@ function a_star_impl!(
             return path
         end
 
-        for v in LightGraphs.out_neighbors(g, u)
+        for v in LightGraphs.outneighbors(g, u)
 
             if colormap[v] < 2
                 dist = distmx[u, v]

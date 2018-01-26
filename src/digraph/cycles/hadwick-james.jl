@@ -48,7 +48,7 @@ function circuit_recursive! end
     push!(stack, v2)
     blocked[v2] = true
 
-    Av = out_neighbors(g, v2)
+    Av = outneighbors(g, v2)
     for w in Av
         (w < v1) && continue
         if w == v1 # Found a circuit

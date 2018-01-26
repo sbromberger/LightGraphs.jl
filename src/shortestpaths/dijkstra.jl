@@ -57,7 +57,7 @@ function dijkstra_shortest_paths(
           push!(closest_vertices, u)
         end
 
-        for v in out_neighbors(g, u)
+        for v in outneighbors(g, u)
             alt = (dists[u] == typemax(T)) ? typemax(T) : dists[u] + distmx[u, v]
 
             if !visited[v]

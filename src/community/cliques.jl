@@ -38,7 +38,7 @@ function maximal_cliques end
 
     for n in vertices(g)
         nbrs = Set{T}()
-        union!(nbrs, out_neighbors(g, n))
+        union!(nbrs, outneighbors(g, n))
         delete!(nbrs, n) # ignore edges between n and itself
         conn = length(nbrs)
         if conn > maxconn

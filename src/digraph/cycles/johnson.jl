@@ -132,7 +132,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in out_neighbors(dg, v)
+    for w in outneighbors(dg, v)
         if w == startnode
             push!(allcycles, vmap[vis.stack])
             done = true
@@ -143,7 +143,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
     else
-        for w in out_neighbors(dg, v)
+        for w in outneighbors(dg, v)
             if !in(vis.blockedmap[w], v)
                 push!(vis.blockedmap[w], v)
             end
@@ -220,7 +220,7 @@ vmap::Vector{T}, cycle::Channel, startnode::T = v)
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
-    for w in out_neighbors(dg, v)
+    for w in outneighbors(dg, v)
         if w == startnode
             put!(cycle, vmap[vis.stack])
             done = true
@@ -231,7 +231,7 @@ vmap::Vector{T}, cycle::Channel, startnode::T = v)
     if done
         unblock!(v, vis.blocked, vis.blockedmap)
     else
-        for w in out_neighbors(dg, v)
+        for w in outneighbors(dg, v)
             if !in(vis.blockedmap[w], v)
                 push!(vis.blockedmap[w], v)
             end

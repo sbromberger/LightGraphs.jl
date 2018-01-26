@@ -15,7 +15,7 @@ export
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
-has_vertex, has_edge, in_neighbors, out_neighbors,
+has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,
