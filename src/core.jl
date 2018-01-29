@@ -135,7 +135,7 @@ end
 
 Return a list of all neighbors reachable from vertex `v` in `g`.
 For directed graphs, the default is equivalent to [`outneighbors`](@ref);
-use [`allneighbors`](@ref) to list inbound and outbound neighbors.
+use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
@@ -143,7 +143,7 @@ Returns a reference, not a copy. Do not modify result.
 neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
 """
-    allneighbors(g, v)
+    all_neighbors(g, v)
 Return a list of all inbound and outbound neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
 and [`inneighbors`](@ref).
@@ -151,10 +151,10 @@ and [`inneighbors`](@ref).
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-function allneighbors end
-@traitfn allneighbors(g::::IsDirected, v::Integer) =
+function all_neighbors end
+@traitfn all_neighbors(g::::IsDirected, v::Integer) =
     union(outneighbors(g, v), inneighbors(g, v))
-@traitfn allneighbors(g::::(!IsDirected), v::Integer) =
+@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
     neighbors(g, v)
 
 

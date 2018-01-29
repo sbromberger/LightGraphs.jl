@@ -20,7 +20,7 @@ has_vertex, has_edge, inneighbors, outneighbors,
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
-neighbors, allneighbors, common_neighbors,
+neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
 
 # decomposition

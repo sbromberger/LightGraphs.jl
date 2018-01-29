@@ -32,7 +32,7 @@ function core_number(g::AbstractGraph{T}) where T
     vertex_pos = sortperm(vs)
     # initial guesses for core is degree
     core = degrees
-    nbrs = [Set(allneighbors(g, v)) for v in vertices(g)]
+    nbrs = [Set(all_neighbors(g, v)) for v in vertices(g)]
     for v in vs
         for u in nbrs[v]
             if core[u] > core[v]
