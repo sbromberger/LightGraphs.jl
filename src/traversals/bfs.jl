@@ -29,7 +29,7 @@ but the performance improvements using this implementation on large graphs
 can be significant.
 """
 bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
-    (dir == :out) ? _bfs_parents(g, s, out_neighbors) : _bfs_parents(g, s, in_neighbors)
+    (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
 
 function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
     n = nv(g)
@@ -95,7 +95,7 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds @simd for i in out_neighbors(g, v)
+            @inbounds @simd for i in outneighbors(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     vert_level[i] = n_level
@@ -140,7 +140,7 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
     seen[u] = true
     while !isempty(next)
         src = shift!(next) # get new element from queue
-        for vertex in out_neighbors(g, src)
+        for vertex in outneighbors(g, src)
             vertex == v && return true
             if !seen[vertex]
                 push!(next, vertex) # push onto queue

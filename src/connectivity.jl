@@ -22,7 +22,7 @@ function connected_components! end
         push!(Q, u)
         while !isempty(Q)
             src = shift!(Q)
-            for vertex in out_neighbors(g, src)
+            for vertex in outneighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
                     label[vertex] = u
@@ -159,7 +159,7 @@ function strongly_connected_components end
             while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
-                for n in out_neighbors(g, v)
+                for n in outneighbors(g, v)
                     if index[n] == zero_t
                         # unvisited neighbor found
                         u = n
@@ -321,7 +321,7 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
     first.(neighborhood_dists(g, v, d, distmx; dir=dir))
 
 neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
-    (dir == :out) ? _neighborhood(g, v, d, distmx, out_neighbors) : _neighborhood(g, v, d, distmx, in_neighbors)
+    (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) : _neighborhood(g, v, d, distmx, inneighbors)
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T<:Integer where U<:Real

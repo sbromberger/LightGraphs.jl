@@ -54,7 +54,7 @@ function visit!(
     distmx::AbstractMatrix
 )
     marked[v] = true
-    for w in out_neighbors(g, v)
+    for w in outneighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)

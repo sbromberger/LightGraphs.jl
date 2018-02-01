@@ -21,7 +21,7 @@ function is_cyclic end
         while !isempty(S)
             u = S[end]
             w = 0
-            for n in out_neighbors(g, u)
+            for n in outneighbors(g, u)
                 if vcolor[n] == 1
                     return true
                 elseif vcolor[n] == 0
@@ -60,7 +60,7 @@ function toplogical_sort_by_dfs end
         while !isempty(S)
             u = S[end]
             w = 0
-            for n in out_neighbors(g, u)
+            for n in outneighbors(g, u)
                 if vcolor[n] == 1
                     error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
                 elseif vcolor[n] == 0
@@ -100,7 +100,7 @@ use the corresponding edge direction (`:in` and `:out` are acceptable values).
 This version of DFS is iterative.
 """
 dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
-(dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
+(dir == :out) ? _dfs_parents(g, s, outneighbors) : _dfs_parents(g, s, inneighbors)
 
 function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     parents = zeros(T, nv(g))
