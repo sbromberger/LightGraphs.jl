@@ -90,6 +90,46 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
+"""
+    expected_degree(ω)
+
+Create an random graph with given expected degree random graph with `length(ω)`
+vertices and vector of expected degree `ω`, see [here](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.462.3375&rep=rep1&type=pdf).
+Vertices `i` and `j` are connected with probability `ω[i]∗ω[j]/sum(ω)`.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+"""
+function expected_degree(ω::Vector{S}; seed::Int=-1) where S<:Real
+    n = length(ω)
+    @assert all(zero(S) .<= ω .<= n-one(S)) "Elements of vector ω needs to be at least 0 and at most n-1"
+
+    π = sortperm(ω, rev=true)
+    rng = getRNG(seed)
+
+    g = Graph(n)
+    ω_sum = sum(ω)
+
+    for u=1:(n-1)
+       v = u+1
+       p = min(ω[π[v]]*ω[π[u]]/ω_sum, one(S))
+       while v <= n && p > zero(p)
+          if p != one(p)
+             v += floor(Int, log(rand(rng))/log(one(p)-p))
+          end
+          if v <= n
+             q = min(ω[π[v]]*ω[π[u]]/ω_sum, one(S))
+             if rand(rng) < q/p
+                 add_edge!(g, π[u], π[v])
+             end
+             p = q
+             v += 1
+          end
+       end
+    end
+    g
+end
+
 
 """
     watts_strogatz(n, k, β)
