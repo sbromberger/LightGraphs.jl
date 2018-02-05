@@ -90,9 +90,6 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
-# Algorithm from https://doi.org/10.1007/978-3-642-21286-4_10
-# Efficient Generation of Networks with Given Expected Degrees
-# Joel C. Miller and Aric Hagberg
 """
     expected_degree_graph(ω)
 
@@ -105,6 +102,9 @@ some deviations from the expected values.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
+
+### References
+- Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 """
 function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
     g = Graph(length(ω))
@@ -137,7 +137,7 @@ function expected_degree_graph!(g::Graph, ω::Vector{T}; seed::Int=-1) where T<:
           end
        end
     end
-    g
+    return g
 end
 
 
