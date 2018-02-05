@@ -104,7 +104,7 @@ The algorithm should work well for `maximum(ω) << sum(ω)`. As `maximum(ω)` ap
 from the expected values are likely.
 
 ### References
-- Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
+- Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu and Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 """
 function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
