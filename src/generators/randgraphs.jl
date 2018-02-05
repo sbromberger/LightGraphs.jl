@@ -90,36 +90,42 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
+# Algorithm from https://doi.org/10.1007/978-3-642-21286-4_10
+# Efficient Generation of Networks with Given Expected Degrees
+# Joel C. Miller and Aric Hagberg
 """
-    expected_degree(ω)
+    expected_degree_graph(ω)
 
-Create an random graph with given expected degree random graph with `length(ω)`
-vertices and vector of expected degree `ω`, see [here](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.462.3375&rep=rep1&type=pdf).
-Vertices `i` and `j` are connected with probability `ω[i]∗ω[j]/sum(ω)`.
+Create a random graph with given expected degree with `length(ω)`
+vertices and vector of expected degrees `ω`, see [here](https://doi.org/10.1007/PL00012580).
+Vertices `i` and `j` are connected with probability `ω[i]*ω[j]/sum(ω)`.
+
+Note that the algorithm works well for `maximum(ω) << sum(ω)`. Otherwise, we can see
+some deviations from the expected values.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
 """
-function expected_degree(ω::Vector{S}; seed::Int=-1) where S<:Real
+function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
     n = length(ω)
-    @assert all(zero(S) .<= ω .<= n-one(S)) "Elements of vector ω needs to be at least 0 and at most n-1"
+    @assert all(zero(T) .<= ω .<= n-one(T)) "Elements of ω needs to be at least 0 and at most n-1"
 
     π = sortperm(ω, rev=true)
     rng = getRNG(seed)
 
     g = Graph(n)
-    ω_sum = sum(ω)
+    S = sum(ω)
 
     for u=1:(n-1)
        v = u+1
-       p = min(ω[π[v]]*ω[π[u]]/ω_sum, one(S))
+       p = min(ω[π[u]]*ω[π[v]]/S, one(T))
        while v <= n && p > zero(p)
-          if p != one(p)
-             v += floor(Int, log(rand(rng))/log(one(p)-p))
+          if p != one(T)
+             v += floor(Int, log(rand())/log(one(T)-p))
           end
           if v <= n
-             q = min(ω[π[v]]*ω[π[u]]/ω_sum, one(S))
-             if rand(rng) < q/p
+             q = min(ω[π[u]]*ω[π[v]]/S, one(T))
+             if rand() < q/p
                  add_edge!(g, π[u], π[v])
              end
              p = q

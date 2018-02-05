@@ -32,18 +32,18 @@
     @test nv(er) == 10
     @test is_directed(er) == false
 
-    cl = expected_degree(zeros(10), seed = 17)
+    cl = expected_degree_graph(zeros(10), seed = 17)
     @test nv(cl) == 10
     @test ne(cl) == 0
     @test is_directed(cl) == false
 
-    cl = expected_degree([3, 2, 1, 2], seed = 17)
+    cl = expected_degree_graph([3, 2, 1, 2], seed = 17)
     @test nv(cl) == 4
     @test is_directed(cl) == false
 
-    cl = expected_degree(fill(99, 100), seed = 17)
+    cl = expected_degree_graph(fill(99, 100), seed = 17)
     @test nv(cl) == 100
-    @test all(degree(cl) .> 95)
+    @test all(degree(cl) .> 90)
 
     ws = watts_strogatz(10,4,0.2)
     @test nv(ws) == 10
