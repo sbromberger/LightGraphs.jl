@@ -90,6 +90,57 @@ function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
 end
 
+"""
+    expected_degree_graph(ω)
+
+Given a vector of expected degrees `ω` indexed by vertex, create a random undirected graph in which vertices `i` and `j` are
+connected with probability `ω[i]*ω[j]/sum(ω)`.
+
+### Optional Arguments
+- `seed=-1`: set the RNG seed.
+
+### Implementation Notes
+The algorithm should work well for `maximum(ω) << sum(ω)`. As `maximum(ω)` approaches `sum(ω)`, some deviations
+from the expected values are likely.
+
+### References
+- Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu and Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
+- Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
+"""
+function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
+    g = Graph(length(ω))
+    expected_degree_graph!(g, ω, seed=seed)
+end
+
+function expected_degree_graph!(g::Graph, ω::Vector{T}; seed::Int=-1) where T<:Real
+    n = length(ω)
+    @assert all(zero(T) .<= ω .<= n-one(T)) "Elements of ω needs to be at least 0 and at most n-1"
+
+    π = sortperm(ω, rev=true)
+    rng = getRNG(seed)
+
+    S = sum(ω)
+
+    for u=1:(n-1)
+       v = u+1
+       p = min(ω[π[u]]*ω[π[v]]/S, one(T))
+       while v <= n && p > zero(p)
+          if p != one(T)
+             v += floor(Int, log(rand(rng))/log(one(T)-p))
+          end
+          if v <= n
+             q = min(ω[π[u]]*ω[π[v]]/S, one(T))
+             if rand(rng) < q/p
+                 add_edge!(g, π[u], π[v])
+             end
+             p = q
+             v += 1
+          end
+       end
+    end
+    return g
+end
+
 
 """
     watts_strogatz(n, k, β)
