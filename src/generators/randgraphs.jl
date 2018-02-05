@@ -121,11 +121,11 @@ function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
        p = min(ω[π[u]]*ω[π[v]]/S, one(T))
        while v <= n && p > zero(p)
           if p != one(T)
-             v += floor(Int, log(rand())/log(one(T)-p))
+             v += floor(Int, log(rand(rng))/log(one(T)-p))
           end
           if v <= n
              q = min(ω[π[u]]*ω[π[v]]/S, one(T))
-             if rand() < q/p
+             if rand(rng) < q/p
                  add_edge!(g, π[u], π[v])
              end
              p = q
