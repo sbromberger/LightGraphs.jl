@@ -1,5 +1,5 @@
 struct KruskalHeapEntry{T<:Real}
-    edge::Edge
+    edge::AbstractEdge
     dist::T
 end
 
@@ -35,7 +35,7 @@ function kruskal_mst end
 )
 
     edge_list = Vector{KruskalHeapEntry{T}}()
-    mst = Vector{Edge}()
+    mst = Vector{AbstractEdge}()
     connected_vs = collect(one(U):nv(g))
 
     sizehint!(edge_list, ne(g))
