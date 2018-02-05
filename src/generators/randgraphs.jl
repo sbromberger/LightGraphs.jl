@@ -107,13 +107,17 @@ some deviations from the expected values.
 - `seed=-1`: set the RNG seed.
 """
 function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
+    g = Graph(length(ω))
+    expected_degree_graph!(g, ω, seed=seed)
+end
+
+function expected_degree_graph!(g::Graph, ω::Vector{T}; seed::Int=-1) where T<:Real
     n = length(ω)
     @assert all(zero(T) .<= ω .<= n-one(T)) "Elements of ω needs to be at least 0 and at most n-1"
 
     π = sortperm(ω, rev=true)
     rng = getRNG(seed)
 
-    g = Graph(n)
     S = sum(ω)
 
     for u=1:(n-1)
