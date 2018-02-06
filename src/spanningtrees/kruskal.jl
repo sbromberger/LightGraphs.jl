@@ -29,9 +29,9 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst{T<:AbstractEdge, U<:Real, V, AG<:AbstractGraph{T}}(
+@traitfn function kruskal_mst{T<:AbstractEdge, U, V, AG<:AbstractGraph{U}}(
     g::AG::(!IsDirected),
-    distmx::AbstractMatrix{U} = weights(g)
+    distmx::AbstractMatrix{T} = weights(g)
 )
 
     edge_list = Vector{KruskalHeapEntry{T, U}}()
