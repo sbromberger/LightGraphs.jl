@@ -1,5 +1,5 @@
 struct PrimHeapEntry{T<:Real}
-    edge::AbstractEdge
+    edge::Edge
     dist::T
 end
 
@@ -18,7 +18,7 @@ function prim_mst end
     distmx::AbstractMatrix = weights(g)
     )
     pq = Vector{PrimHeapEntry}()
-    mst = Vector{AbstractEdge}()
+    mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
