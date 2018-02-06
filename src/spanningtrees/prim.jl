@@ -1,6 +1,6 @@
-struct PrimHeapEntry{T<:AbstractEdge, U<:Real}
-    edge::T
-    dist::U
+struct PrimHeapEntry{T<:Real}
+    edge::Edge
+    dist::T
 end
 
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
@@ -13,14 +13,12 @@ distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/
 Return a vector of edges.
 """
 function prim_mst end
-@traitfn function prim_mst{U<:Real, V, AG<:AbstractGraph{V}}(
-    g::AG::(!IsDirected),
-    distmx::AbstractMatrix{U} = weights(g)
-)
-    
-    T = edgetype(g)
-    pq = Vector{PrimHeapEntry{T, U}}()
-    mst = Vector{T}()
+@traitfn function prim_mst(
+    g::::(!IsDirected),
+    distmx::AbstractMatrix = weights(g)
+    )
+    pq = Vector{PrimHeapEntry}()
+    mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
@@ -52,15 +50,15 @@ function visit!(
     g::AbstractGraph,
     v::Integer,
     marked::AbstractVector{Bool},
-    pq::AbstractVector{PrimHeapEntry{T, U}},
+    pq::AbstractVector,
     distmx::AbstractMatrix
-) where {T<:AbstractEdge, U<:Real}
+)
     marked[v] = true
     for w in outneighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-            heappush!(pq, PrimHeapEntry{T, U}(T(x, y), distmx[x, y]))
+            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
         end
     end
 end
