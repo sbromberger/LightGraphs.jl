@@ -1,6 +1,6 @@
-struct PrimHeapEntry{T<:Real}
-    edge::AbstractEdge
-    dist::T
+struct PrimHeapEntry{T<:AbstractEdge, U<:Real}
+    edge::T
+    dist::U
 end
 
 isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
@@ -13,12 +13,12 @@ distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/
 Return a vector of edges.
 """
 function prim_mst end
-@traitfn function prim_mst(
-    g::::(!IsDirected),
-    distmx::AbstractMatrix = weights(g)
+@traitfn function prim_mst{T<:AbstractEdge, U<:Real, V, AG<:AbstractGraph{T}}(
+    g::AG::(!IsDirected),
+    distmx::AbstractMatrix{U} = weights(g)
     )
-    pq = Vector{PrimHeapEntry}()
-    mst = Vector{AbstractEdge}()
+    pq = Vector{PrimHeapEntry{T, U}}()
+    mst = Vector{T}()
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
@@ -46,7 +46,7 @@ end
 Mark the vertex `v` of graph `g` true in the array `marked` and enter all its
 edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
-function visit!(
+function visit!{T<:AbstractEdge, U<:Real}(
     g::AbstractGraph,
     v::Integer,
     marked::AbstractVector{Bool},
@@ -58,7 +58,7 @@ function visit!(
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+            heappush!(pq, PrimHeapEntry{T, U}(Edge(x, y), distmx[x, y]))
         end
     end
 end
