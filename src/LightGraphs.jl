@@ -5,6 +5,8 @@ import CodecZlib
 using DataStructures
 using SimpleTraits
 
+import Random: AbstractRNG, MersenneTwister, GLOBAL_RNG
+import Distributed: @parallel, @sync
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
