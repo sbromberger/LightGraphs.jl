@@ -46,19 +46,19 @@ end
 Mark the vertex `v` of graph `g` true in the array `marked` and enter all its
 edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
 """
-function visit!{T<:AbstractEdge, U<:Real}(
+function visit!(
     g::AbstractGraph,
     v::Integer,
     marked::AbstractVector{Bool},
-    pq::AbstractVector,
+    pq::AbstractVector{PrimHeapEntry{T, U}},
     distmx::AbstractMatrix
-)
+) where {T<:AbstractEdge, U<:Real}
     marked[v] = true
     for w in outneighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-            heappush!(pq, PrimHeapEntry{T, U}(Edge(x, y), distmx[x, y]))
+            heappush!(pq, PrimHeapEntry{T, U}(T(x, y), distmx[x, y]))
         end
     end
 end
