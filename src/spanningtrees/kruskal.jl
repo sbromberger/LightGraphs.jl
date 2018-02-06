@@ -1,6 +1,6 @@
-struct KruskalHeapEntry{T<:Real}
-    edge::Edge
-    dist::T
+struct KruskalHeapEntry{T<:AbstractEdge, U<:Real}
+    edge::T
+    dist::U
 end
 
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
@@ -29,20 +29,21 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst{T, U, AG<:AbstractGraph{U}}(
+@traitfn function kruskal_mst{U<:Real, V, AG<:AbstractGraph{V}}(
     g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T} = weights(g)
+    distmx::AbstractMatrix{U} = weights(g)
 )
 
-    edge_list = Vector{KruskalHeapEntry{T}}()
-    mst = Vector{Edge}()
-    connected_vs = collect(one(U):nv(g))
+    T = edgetype(g)
+    edge_list = Vector{KruskalHeapEntry{T, U}}()
+    mst = Vector{T}()
+    connected_vs = collect(one(V):nv(g))
 
     sizehint!(edge_list, ne(g))
     sizehint!(mst, ne(g))
 
     for e in edges(g)
-        heappush!(edge_list, KruskalHeapEntry{T}(e, distmx[src(e), dst(e)]))
+        heappush!(edge_list, KruskalHeapEntry{T, U}(e, distmx[src(e), dst(e)]))
     end
 
     while !isempty(edge_list) && length(mst) < nv(g) - 1
