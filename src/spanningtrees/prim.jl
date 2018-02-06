@@ -13,10 +13,12 @@ distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/
 Return a vector of edges.
 """
 function prim_mst end
-@traitfn function prim_mst{T<:AbstractEdge, U<:Real, V, AG<:AbstractGraph{T}}(
+@traitfn function prim_mst{U<:Real, V, AG<:AbstractGraph{V}}(
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{U} = weights(g)
-    )
+)
+    
+    T = edgetype(g)
     pq = Vector{PrimHeapEntry{T, U}}()
     mst = Vector{T}()
     marked = zeros(Bool, nv(g))
