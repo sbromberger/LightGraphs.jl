@@ -29,7 +29,7 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst{T, U, AG<:AbstractGraph{U}}(
+@traitfn function kruskal_mst{T<:Real, U, AG<:AbstractGraph{U}}(
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g)
 )
@@ -42,7 +42,7 @@ function kruskal_mst end
     sizehint!(mst, ne(g))
 
     for e in edges(g)
-        heappush!(edge_list, KruskalHeapEntry{T}(e, distmx[src(e), dst(e)]))
+        heappush!(edge_list, KruskalHeapEntry{T}(Edge(src(e), dst(e)), distmx[src(e), dst(e)]))
     end
 
     while !isempty(edge_list) && length(mst) < nv(g) - 1
