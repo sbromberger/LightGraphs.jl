@@ -1,5 +1,8 @@
 module SimpleGraphs
 
+using SparseArrays
+using LinearAlgebra
+
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero, in
 

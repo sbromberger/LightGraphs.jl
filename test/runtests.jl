@@ -1,6 +1,8 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
-using Base.Test
+using Test
+using SparseArrays
+using LinearAlgebra
 
 const testdir = dirname(@__FILE__)
 

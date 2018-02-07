@@ -169,7 +169,7 @@
     test_laplacian(mat)
     test_accessors(mat, n)
 
-    mat = symmetrize(sparse(spones(sprand(n, n, 0.3))))
+    mat = symmetrize(sparse(LinearAlgebra.fillstored!(sprand(n, n, 0.3), 1)))
     test_arithmetic(mat, n)
     test_other(mat, n)
     test_symmetry(mat, n)
