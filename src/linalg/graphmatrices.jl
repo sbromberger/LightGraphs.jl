@@ -239,37 +239,37 @@ function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T<:Number
     return y - dot(adjmat.perron, y) * adjmat.perron
 end
 
-function A_mul_B!(Y, A::Adjacency, B)
+function mul!(Y, A::Adjacency, B)
     # we need to do 3 matrix products
-    # Y and B can't overlap in any one call to A_mul_B!
-    # The last call to A_mul_B! must be (Y, postscalefactor, tmp)
+    # Y and B can't overlap in any one call to mul!
+    # The last call to mul! must be (Y, postscalefactor, tmp)
     # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
     # and the first step (Y, prescalefactor, B)
     tmp1 = Diagonal(prescalefactor(A)) * B
     tmp = similar(Y)
-    A_mul_B!(tmp, A.A, tmp1)
-    return A_mul_B!(Y, Diagonal(postscalefactor(A)), tmp)
+    mul!(tmp, A.A, tmp1)
+    return mul!(Y, Diagonal(postscalefactor(A)), tmp)
 end
 
-A_mul_B!(Y, A::CombinatorialAdjacency, B) = A_mul_B!(Y, A.A, B)
+mul!(Y, A::CombinatorialAdjacency, B) = mul!(Y, A.A, B)
 
 # You can compute the StochasticAdjacency product without allocating a similar of Y.
 # This is true for all Adjacency where the postscalefactor is a Noop
 # at time of writing this is just StochasticAdjacency and CombinatorialAdjacency
-function A_mul_B!(Y, A::StochasticAdjacency, B)
+function mul!(Y, A::StochasticAdjacency, B)
     tmp = Diagonal(prescalefactor(A)) * B
-    A_mul_B!(Y, A.A, tmp)
+    mul!(Y, A.A, tmp)
     return Y
 end
 
-function A_mul_B!(Y, adjmat::PunchedAdjacency, x)
+function mul!(Y, adjmat::PunchedAdjacency, x)
     y = adjmat.A * x
     Y[:] = y - dot(adjmat.perron, y) * adjmat.perron
     return Y
 end
 
-function A_mul_B!(Y, lapl::Laplacian, B)
-	A_mul_B!(Y, lapl.A, B)
+function mul!(Y, lapl::Laplacian, B)
+	mul!(Y, lapl.A, B)
 	z = diag(lapl) .* B
 	Y[:] = z - Y[:]
 	return Y
@@ -317,7 +317,7 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 
 
 # per #564
-@deprecate A_mul_B!(Y, A::Noop, B) None
+@deprecate mul!(Y, A::Noop, B) None
 @deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
 @deprecate convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) sparse(adjmat)
 
