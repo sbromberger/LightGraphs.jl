@@ -22,7 +22,7 @@ function prim_mst end
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
-    sizehint!(mst, ne(g))
+    sizehint!(mst, nv(g) - 1)
     visit!(g, 1, marked, pq, distmx)
 
     while !isempty(pq)
