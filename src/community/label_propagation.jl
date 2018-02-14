@@ -12,7 +12,7 @@ the second is the convergence history for each node. Will return after
 function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
     n = nv(g)
     label = collect(one(T):n)
-    active_vs = IntSet(vertices(g))
+    active_vs = BitSet(vertices(g))
     c = NeighComm(collect(one(T):n), fill(-1, n), one(T))
     convergence_hist = Vector{Int}()
     random_order = Vector{T}(n)
