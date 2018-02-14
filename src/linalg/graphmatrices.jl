@@ -298,7 +298,7 @@ function symmetrize(A::SparseMatrix, which=:or)
     else
         throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
-	M = T + T'
+	M = T + sparse(T')
 	return M
 end
 
