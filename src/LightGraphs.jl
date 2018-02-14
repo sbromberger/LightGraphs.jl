@@ -8,6 +8,7 @@ using SimpleTraits
 using SparseArrays
 using LinearAlgebra
 using IterativeEigensolvers
+using SharedArrays
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
