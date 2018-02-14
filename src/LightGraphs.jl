@@ -9,11 +9,13 @@ using SparseArrays
 using LinearAlgebra
 using IterativeEigensolvers
 using SharedArrays
+using Random
+using Markdown
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
-import Random: AbstractRNG, MersenneTwister, GLOBAL_RNG
+import Random: GLOBAL_RNG
 import Distributed: @parallel, @sync
 import SparseArrays: sparse, blkdiag
 import LinearAlgebra: issymmetric, mul!
