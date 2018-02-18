@@ -6,20 +6,31 @@ end
 isless(e1::KruskalHeapEntry, e2::KruskalHeapEntry) = e1.dist < e2.dist
 
 """
-    quick_find!(vs, p, q)
+    find_set!(vs, q)
 
 Perform [Quick-Find algorithm](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
-on a given pair of vertices `p`and `q`, and make a connection between them in the vector `vs`.
+on a given vertex `q` and return the component id in `vs` to which it belongs.
 """
-function quick_find!(vs, p, q)
-    pid = vs[p]
-    qid = vs[q]
-    for i in 1:length(vs)
-        if vs[i] == pid
-            vs[i] = qid
-        end
+function find_set!(set_id::Vector{U}, q::U) where U<:Integer
+    
+    root = q
+    while root != set_id[root]
+        root = set_id[root]
     end
+
+    p_1 = q
+    p_2 = set_id[q]
+    
+    while p_2 != root
+        set_id[p_1] = root
+        p_1 = p_2
+        p_2 = set_id[p_1]
+    end
+    
+    return root
 end
+
+union_set!{U<:Integer}(set_id::Vector{U}, p::U, q::U) = (set_id[find_set!(set_id, p)] = find_set!(set_id, q))
 
 """
     kruskal_mst(g, distmx=weights(g))
@@ -39,22 +50,27 @@ function kruskal_mst end
     connected_vs = collect(one(U):nv(g))
 
     sizehint!(edge_list, ne(g))
-    sizehint!(mst, ne(g))
+    sizehint!(mst, nv(g) - 1)
 
     for e in edges(g)
-        heappush!(edge_list, KruskalHeapEntry{T}(Edge(src(e), dst(e)), distmx[src(e), dst(e)]))
+        push!(edge_list, KruskalHeapEntry{T}(Edge(src(e), dst(e)), distmx[src(e), dst(e)]))
     end
+    heapify!(edge_list)
 
-    while !isempty(edge_list) && length(mst) < nv(g) - 1
+    while !isempty(edge_list)
         heap_entry = heappop!(edge_list)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
-        if connected_vs[v] != connected_vs[w]
-            quick_find!(connected_vs, v, w)
+        if find_set!(connected_vs, v) != find_set!(connected_vs, w)
+            union_set!(connected_vs, v, w)
             push!(mst, heap_entry.edge)
+            if length(mst) >= nv(g) - 1
+                break
+            end
         end
     end
 
     return mst
 end
+
