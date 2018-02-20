@@ -1,3 +1,6 @@
+# we need a specific branch of SimpleTraits.jl until https://github.com/mauro3/SimpleTraits.jl/pull/51 is merged
+Pkg.checkout("SimpleTraits", "m3/where-fns")
+
 using LightGraphs
 using LightGraphs.SimpleGraphs
 using Test
@@ -6,8 +9,6 @@ using LinearAlgebra
 
 const testdir = dirname(@__FILE__)
 
-# we need a specific branch of SimpleTraits.jl until https://github.com/mauro3/SimpleTraits.jl/pull/51 is merged
-Pkg.checkout("SimpleTraits", "m3/where-fns")
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
