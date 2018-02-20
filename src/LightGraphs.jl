@@ -1,6 +1,8 @@
 __precompile__(true)
 module LightGraphs
 
+using SharedArrays
+using Random
 import CodecZlib
 using DataStructures
 using SimpleTraits
