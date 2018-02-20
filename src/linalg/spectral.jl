@@ -73,14 +73,14 @@ for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both gr
 ### Optional Arguments
 `dir=:unspec`: `:unspec`, `:both`, :in`, and `:out` are currently supported.
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
-`dir` defaults to `:both`. 
+`dir` defaults to `:both`.
 """
 function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:unspec) where U
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseMatrixCSC{T, U}, spdiagm(sum(A, 2)[:]))
+    D = convert(SparseMatrixCSC{T, U}, Diagonal(sparse(sum(A, 2)[:])))
     return D - A
 end
 

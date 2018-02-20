@@ -26,7 +26,7 @@ function clique_percolation end
     x[kcliques[i]] = false
   end
   components = connected_components(h)
-  communities = [IntSet() for i=1:length(components)]
+  communities = [BitSet() for i=1:length(components)]
   for (i,component) in enumerate(components)
     push!(communities[i], vcat(kcliques[component]...)...)
   end

@@ -1,6 +1,6 @@
 @testset "Clique percolation" begin
     function setofsets(array_of_arrays)
-        Set(map(IntSet, array_of_arrays))
+        Set(map(BitSet, array_of_arrays))
     end
 
     function test_cliques(graph, expected)
