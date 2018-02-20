@@ -62,6 +62,9 @@ randomwalk, saw, non_backtracking_randomwalk,
 # diffusion
 diffusion, diffusion_rate,
 
+# coloring
+greedy_color,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
@@ -185,6 +188,7 @@ include("digraph/cycles/hadwick-james.jl")
 include("digraph/cycles/karp.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
+include("traversals/greedy_color.jl")
 include("traversals/parallel_bfs.jl")
 include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")

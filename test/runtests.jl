@@ -39,6 +39,7 @@ tests = [
     "traversals/bfs",
     "traversals/parallel_bfs",
     "traversals/bipartition",
+    "traversals/greedy_color",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/randomwalks",
