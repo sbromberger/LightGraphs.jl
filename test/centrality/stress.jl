@@ -1,7 +1,7 @@
 @testset "Stress" begin
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
-    c = vec(readcsv(joinpath(testdir, "testdata", "graph-50-500-sc.txt")))
+    c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
     for g in testdigraphs(gint)
         z  = @inferred(stress_centrality(g))
         zp = @inferred(parallel_stress_centrality(g))

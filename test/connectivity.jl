@@ -143,7 +143,7 @@
 
     # construct a n-number edge ring graph (period = n)
     n = 10
-    n_ring_m = spdiagm(ones(n - 1), 1, n, n); n_ring_m[end, 1] = 1
+    n_ring_m = spdiagm(1 => ones(n - 1)); n_ring_m[end, 1] = 1
     n_ring = SimpleDiGraph(n_ring_m)
 
     n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut, 1, 4)
