@@ -1,6 +1,3 @@
-# we need a specific branch of SimpleTraits.jl until https://github.com/mauro3/SimpleTraits.jl/pull/51 is merged
-Pkg.checkout("SimpleTraits", "m3/where-fns")
-
 using LightGraphs
 using LightGraphs.SimpleGraphs
 using Test
