@@ -9,7 +9,7 @@ of Hadwick & James.
 """
 function simplecycles_hadwick_james end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function simplecycles_hadwick_james{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function simplecycles_hadwick_james(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)
     B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)
@@ -43,7 +43,7 @@ resetblocked!(blocked) = fill!(blocked, false)
 Find circuits in `g` recursively starting from v1.
 """
 function circuit_recursive! end
-@traitfn function circuit_recursive!{T<:Integer}(g::::IsDirected, v1::T, v2::T, blocked::AbstractVector, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}})
+@traitfn function circuit_recursive!(g::::IsDirected, v1::T, v2::T, blocked::AbstractVector, B::Vector{Vector{T}}, stack::Vector{T}, cycles::Vector{Vector{T}}) where T<:Integer
     f = false
     push!(stack, v2)
     blocked[v2] = true

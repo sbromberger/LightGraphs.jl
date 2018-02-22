@@ -27,7 +27,7 @@ function diffusion(g::AbstractGraph{T},
 
     # Initialize
     watch_set = Set{T}(watch)
-    infected_vertices = IntSet(initial_infections)
+    infected_vertices = BitSet(initial_infections)
     vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
 
     # Record initial infection

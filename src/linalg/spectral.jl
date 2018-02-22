@@ -73,14 +73,14 @@ for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both gr
 ### Optional Arguments
 `dir=:unspec`: `:unspec`, `:both`, :in`, and `:out` are currently supported.
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
-`dir` defaults to `:both`. 
+`dir` defaults to `:both`.
 """
 function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:unspec) where U
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseMatrixCSC{T, U}, spdiagm(sum(A, 2)[:]))
+    D = convert(SparseMatrixCSC{T, U}, Diagonal(sparse(sum(A, 2)[:])))
     return D - A
 end
 
@@ -179,7 +179,7 @@ If `k` is ommitted, uses full spectrum.
 function spectral_distance end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
-@traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G, k::Integer)
+@traitfn function spectral_distance(G₁::G, G₂::G, k::Integer) where {G<:AbstractGraph; !IsDirected{G}}
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
@@ -190,7 +190,7 @@ function spectral_distance end
 end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
-@traitfn function spectral_distance{G<:AbstractGraph; !IsDirected{G}}(G₁::G, G₂::G)
+@traitfn function spectral_distance(G₁::G, G₂::G) where {G<:AbstractGraph; !IsDirected{G}}
     nv(G₁) == nv(G₂) || throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))
 end

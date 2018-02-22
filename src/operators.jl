@@ -211,7 +211,7 @@ in the generated graph exceeds the eltype.
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function crosspath{T, AG<:AbstractGraph{T}}(len::Integer, g::AG::(!IsDirected))
+@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
