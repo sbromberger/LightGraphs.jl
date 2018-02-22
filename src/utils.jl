@@ -42,7 +42,7 @@ Unlike [`sample!`](@ref), does not produce side effects.
 """
 sample(a::UnitRange, k::Integer; exclude = ()) = sample!(getRNG(), collect(a), k; exclude = exclude)
 
-getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : Base.Random.GLOBAL_RNG
+getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
     insorted(item, collection)
@@ -53,4 +53,3 @@ Return true if `item` is in sorted collection `collection`.
 Does not verify that `collection` is sorted.
 """
 insorted(item, collection) = !isempty(searchsorted(collection, item))
-
