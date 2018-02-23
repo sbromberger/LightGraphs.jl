@@ -186,7 +186,7 @@ function spectral_distance end
     λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
     λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
 
-    return sum(abs, dims=(λ₁ - λ₂))
+    return sum(abs, (λ₁ - λ₂))
 end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
