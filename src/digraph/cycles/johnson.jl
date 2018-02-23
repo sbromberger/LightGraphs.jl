@@ -260,7 +260,7 @@ function itercycles end
     for scc in sccs
         while length(scc) >= 1
             wdg, vmap = induced_subgraph(dg, scc)
-            shift!(scc)
+            popfirst!(scc)
             visitor = JohnsonVisitor(wdg)
             circuit_iter(1, wdg, visitor, vmap, cycle)
         end

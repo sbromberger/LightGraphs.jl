@@ -25,7 +25,7 @@ function core_number(g::AbstractGraph{T}) where T
     curr_degree = 0
     for (i, v) in enumerate(vs)
         if degrees[v] > curr_degree
-            append!(bin_boundaries, repmat([i], (degrees[v] - curr_degree)))
+            append!(bin_boundaries, repeat([i], (degrees[v] - curr_degree)))
             curr_degree = degrees[v]
         end
     end

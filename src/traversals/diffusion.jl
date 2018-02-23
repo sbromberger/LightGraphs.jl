@@ -16,7 +16,6 @@ each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of sp
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
-
 function diffusion(g::AbstractGraph{T},
                    p::Real,
                    n::Integer;

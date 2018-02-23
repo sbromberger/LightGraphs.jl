@@ -11,7 +11,7 @@
 
 using Base.Threads
 
-import Base: push!, shift!, isempty, getindex
+import Base: push!, popfirst!, isempty, getindex
 
 export bfs_tree, LevelSynchronousBFS
 
@@ -22,7 +22,6 @@ struct LevelSynchronousBFS end
 
 A thread safe queue implementation for using as the queue for BFS.
 """
-
 struct ThreadQueue{T,N<:Integer}
     data::Vector{T}
     head::Atomic{N} #Index of the head
@@ -41,7 +40,7 @@ function push!(q::ThreadQueue{T,N}, val::T) where T where N
     return offset
 end
 
-function shift!(q::ThreadQueue{T,N}) where T where N
+function popfirst!(q::ThreadQueue{T,N}) where T where N
     # TODO: check that head < tail
     offset = atomic_add!(q.head, one(N))
     return q.data[offset]

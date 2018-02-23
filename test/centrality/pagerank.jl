@@ -3,7 +3,7 @@
         # M = google_matrix(g, α)
         p = fill(1/nv(g), nv(g))
         danglingnodes = outdegree(g) .== 0
-        M = float(full(adjacency_matrix(g)))
+        M = Matrix{Float64}(adjacency_matrix(g))
         M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
         M = M * Diagonal(1./sum(M,1)[:])
@@ -16,7 +16,7 @@
     function google_matrix(g::AbstractGraph, α=0.85::Real)
         p = fill(1/nv(g), nv(g))
         danglingnodes = outdegree(g) .== 0
-        M = float(full(adjacency_matrix(g)))
+        M = Matrix{Float64}(adjacency_matrix(g))
         @show M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
         @show M = M * Diagonal(1./sum(M,1)[:])

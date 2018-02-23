@@ -501,7 +501,7 @@ Supports SimpleGraph only.
 """
 function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
-    merged_vertex = shift!(vs)
+    merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
     x[vs] = 1

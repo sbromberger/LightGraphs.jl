@@ -21,7 +21,7 @@ function connected_components! end
         Q = Vector{T}()
         push!(Q, u)
         while !isempty(Q)
-            src = shift!(Q)
+            src = popfirst!(Q)
             for vertex in outneighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
@@ -334,7 +334,7 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
     dists = fill(typemax(U), nv(g))
     dists[v] = zero(U)
     while !isempty(Q)
-        src = shift!(Q)
+        src = popfirst!(Q)
         seen[src] && continue
         seen[src] = true
         currdist = dists[src]

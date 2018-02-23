@@ -129,7 +129,7 @@ end
 sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
-    y = zeros(x)
+    y = zero(x)
     for i in 1:nbt.m
         y[:, i] = nbt * x[:, i]
     end

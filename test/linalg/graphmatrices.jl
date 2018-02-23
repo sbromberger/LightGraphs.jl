@@ -15,7 +15,7 @@
 
     function test_adjacency(mat)
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
-        @test adjmat.D == vec(sum(mat, 1))
+        @test adjmat.D == vec(sum(mat, dims=1))
         @test adjmat.A == mat
         @test convert(SparseMatrix{Float64}, adjmat) == sparse(mat)
         converttest(SparseMatrix{Float64}, stochmat)
@@ -60,7 +60,7 @@
         @test_throws MethodError AveragingLaplacian(lapl)
         @test_throws MethodError convert(CombinatorialAdjacency, lapl)
         L = convert(SparseMatrix{Float64}, lapl)
-        @test sum(abs, (sum(L, 1))) == 0
+        @test sum(abs, (sum(L, dims=1))) == 0
     end
 
     function test_accessors(mat, n)
@@ -83,10 +83,10 @@
         lapl = CombinatorialLaplacian(adjmat)
         onevec = ones(Float64, n)
         v = adjmat * ones(Float64, n)
-        @test sum(abs, (adjmat * onevec)) > 0.0
-        @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
-        @test sum(abs, (lapl * onevec)) == 0
-        g(a) = sum(abs, (sum(sparse(a), 1)))
+        @test sum(abs, dims=(adjmat * onevec)) > 0.0
+        @test sum(abs, dims=((stochmat * onevec) / sum(onevec))) ≈ 1.0
+        @test sum(abs, dims=(lapl * onevec)) == 0
+        g(a) = sum(abs, dims=(sum(sparse(a), 1)))
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
@@ -150,7 +150,7 @@
         ahatp  = PunchedAdjacency(adjmat)
         y = ahatp * perron(ahatp)
         @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
-        @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
+        @test sum(abs, dims=y) ≈ 0.0 atol = 1.0e-8
         eval, evecs = eigs(ahatp, which=:LM)
         @test eval[1] - (1 + 1.0e-8)  <= 0
         @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8

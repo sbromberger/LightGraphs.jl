@@ -123,7 +123,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     if n > 10
         ret = eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
     else
-        ret = eigfact(full(invDroot'*(D-W)*invDroot))[:vectors][:,2]
+        ret = eigfact(Matrix(invDroot'*(D-W)*invDroot))[:vectors][:,2]
     end
     v = invDroot*ret
 

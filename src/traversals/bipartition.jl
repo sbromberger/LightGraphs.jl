@@ -24,7 +24,7 @@ function bipartite_map(g::AbstractGraph{T}) where T
         push!(Q, s)
         bipartitemap = zeros(UInt8, nvg)
         while !isempty(Q)
-            u = shift!(Q)
+            u = popfirst!(Q)
             for v in outneighbors(g, u)
                 if !seen[v]
                     colors[v] = !colors[u]

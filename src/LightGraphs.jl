@@ -19,7 +19,7 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
 import Random: GLOBAL_RNG
-import Distributed: @parallel, @sync
+import Distributed: @distributed, @sync
 import SparseArrays: sparse, blkdiag
 import LinearAlgebra: issymmetric, mul!
 

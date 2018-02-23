@@ -55,9 +55,8 @@ function SimpleDiGraph{T}(adjmx::AbstractMatrix) where T<:Integer
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
-    @inbounds for i in find(adjmx)
-        ind = ind2sub((dima, dimb), i)
-        add_edge!(g, ind...)
+    @inbounds for i in findall(adjmx)
+        add_edge!(g, i[1], i[2])
     end
     return g
 end
