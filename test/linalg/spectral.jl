@@ -36,8 +36,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     g = copy(g5)
     add_edge!(g, 1, 1)
     @test adjacency_matrix(g)[1, 1] == 1
-    @test indegree(g) == sum(adjacency_matrix(g), 1)[1, :]
-    @test outdegree(g) == sum(adjacency_matrix(g), 2)[:, 1]
+    @test indegree(g) == sum(adjacency_matrix(g), dims=1)[1, :]
+    @test outdegree(g) == sum(adjacency_matrix(g), dims=2)[:, 1]
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
@@ -142,10 +142,10 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test norm(y - z) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)

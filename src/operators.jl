@@ -378,7 +378,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
-    vmap = Vector{U}(length(vlist))
+    vmap = Vector{U}(uninitialized, length(vlist))
     for (i, v) in enumerate(vlist)
         newvid[v] = U(i)
         vmap[i] = v

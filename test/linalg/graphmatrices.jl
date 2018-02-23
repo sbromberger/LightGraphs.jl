@@ -86,7 +86,7 @@
         @test sum(abs, adjmat * onevec) > 0.0
         @test sum(abs, (stochmat * onevec) / sum(onevec)) ≈ 1.0
         @test sum(abs, lapl * onevec) == 0
-        g(a) = sum(abs, sum(sparse(a), 1))
+        g(a) = sum(abs, sum(sparse(a), dims=1))
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13

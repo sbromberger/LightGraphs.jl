@@ -32,9 +32,9 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     nv = length(cut)
     nv2 = sum(cut)
     nv1 = nv - nv2
-    newvid = Vector{Int}(nv)
-    vmap1 = Vector{Int}(nv1)
-    vmap2 = Vector{Int}(nv2)
+    newvid = Vector{Int}(uninitialized, nv)
+    vmap1 = Vector{Int}(uninitialized, nv1)
+    vmap2 = Vector{Int}(uninitialized, nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
@@ -69,9 +69,9 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
     nv = length(cut)
     nv2 = sum(cut)
     nv1 = nv - nv2
-    newvid = Vector{Int}(nv)
-    vmap1 = Vector{Int}(nv1)
-    vmap2 = Vector{Int}(nv2)
+    newvid = Vector{Int}(uninitialized, nv)
+    vmap1 = Vector{Int}(uninitialized, nv1)
+    vmap2 = Vector{Int}(uninitialized, nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
@@ -146,7 +146,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
         labels2 = _recursive_normalized_cut(W2, thres, num_cuts)
 
-        labels = Vector{Int}(m)
+        labels = Vector{Int}(uninitialized, m)
         offset = maximum(labels1)
 
         for i in eachindex(labels1)

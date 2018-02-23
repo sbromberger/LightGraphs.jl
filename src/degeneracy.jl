@@ -71,7 +71,7 @@ function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
         k = maximum(corenum) # max core
     end
 
-    return find(x -> x >= k, corenum)
+    return findall(x -> x >= k, corenum)
 end
 
 """
@@ -99,7 +99,7 @@ function k_shell(g::AbstractGraph, k=-1; corenum=core_number(g))
     if k == -1
         k = maximum(corenum)
     end
-    return find(x -> x == k, corenum)
+    return findall(x -> x == k, corenum)
 end
 
 """
@@ -127,7 +127,7 @@ function k_crust(g, k=-1; corenum=core_number(g))
     if k == -1
         k = maximum(corenum) - 1
     end
-    return find(x -> x <= k, corenum)
+    return findall(x -> x <= k, corenum)
 end
 
 """
@@ -154,5 +154,5 @@ function k_corona(g::AbstractGraph, k; corenum=core_number(g))
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)
 
-    return kcore[findin(kcoredeg, k)]
+    return kcore[findall(occursin(k), kcoredeg)]
 end

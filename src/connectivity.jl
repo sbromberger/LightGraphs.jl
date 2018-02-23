@@ -263,7 +263,7 @@ function condensation end
 @traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T<:Integer
     h = DiGraph{T}(length(scc))
 
-    component = Vector{T}(nv(g))
+    component = Vector{T}(uninitialized, nv(g))
 
     for (i, s) in enumerate(scc)
         @inbounds component[s] = i
