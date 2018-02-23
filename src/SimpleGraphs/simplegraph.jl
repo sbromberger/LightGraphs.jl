@@ -13,7 +13,7 @@ end
 eltype(x::SimpleGraph{T}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
-function (::Type{SimpleGraph{T}})(n::Integer = 0) where T<:Integer
+function SimpleGraph{T}(n::Integer = 0) where T<:Integer
     fadjlist = [Vector{T}() for _ = one(T):n]
     return SimpleGraph{T}(0, fadjlist)
 end
@@ -28,7 +28,7 @@ SimpleGraph(n::T) where T<:Integer = SimpleGraph{T}(n)
 SimpleGraph(::Type{T}) where T<:Integer = SimpleGraph{T}(zero(T))
 
 # Graph{UInt8}(adjmx)
-function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
+function SimpleGraph{T}(adjmx::AbstractMatrix) where T<:Integer
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
     issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
@@ -42,7 +42,7 @@ function (::Type{SimpleGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
 end
 
 # converts Graph{Int} to Graph{Int32}
-function (::Type{SimpleGraph{T}})(g::SimpleGraph) where T<:Integer
+function SimpleGraph{T}(g::SimpleGraph) where T<:Integer
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     return SimpleGraph(ne(g), h_fadj)
 end

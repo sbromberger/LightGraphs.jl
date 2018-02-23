@@ -15,7 +15,7 @@ end
 eltype(x::SimpleDiGraph{T}) where T = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
-function (::Type{SimpleDiGraph{T}})(n::Integer = 0) where T<:Integer
+function SimpleDiGraph{T}(n::Integer = 0) where T<:Integer
     fadjlist = [Vector{T}() for _ = one(T):n]
     badjlist = [Vector{T}() for _ = one(T):n]
     return SimpleDiGraph(0, fadjlist, badjlist)
@@ -31,7 +31,7 @@ SimpleDiGraph(n::T) where T<:Integer = SimpleDiGraph{T}(n)
 SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 
 # sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
-function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
+function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
@@ -50,7 +50,7 @@ function (::Type{SimpleDiGraph{T}})(adjmx::SparseMatrixCSC{U}) where T<:Integer 
 end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
-function (::Type{SimpleDiGraph{T}})(adjmx::AbstractMatrix) where T<:Integer
+function SimpleDiGraph{T}(adjmx::AbstractMatrix) where T<:Integer
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
@@ -66,7 +66,7 @@ end
 SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # converts DiGraph{Int} to DiGraph{Int32}
-function (::Type{SimpleDiGraph{T}})(g::SimpleDiGraph) where T<:Integer
+function SimpleDiGraph{T}(g::SimpleDiGraph) where T<:Integer
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
     return SimpleDiGraph(ne(g), h_fadj, h_badj)
