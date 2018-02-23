@@ -279,7 +279,7 @@
     @test mean(degree(g)) <= 4//2*numedges/sum(sizes)
     # check that the internal degrees are higher than the external degrees
     # 5//4 is cushion for random process.
-    @test all(sum(bc-diagm(diag(bc)), 1) .<= 5//4 .* diag(bc))
+    @test all(sum(bc-diagm(0=>diag(bc)), dims=1) .<= 5//4 .* diag(bc))
 
 
     sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))

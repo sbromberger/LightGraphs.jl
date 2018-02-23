@@ -789,7 +789,7 @@ and external probabilities `externalp`.
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
-    B = diagm(internalp) + externalp * (ones(numblocks, numblocks) - I)
+    B = diagm(0=>internalp) + externalp * (ones(numblocks, numblocks) - I)
     return B
 end
 
