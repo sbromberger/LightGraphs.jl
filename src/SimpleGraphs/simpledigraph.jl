@@ -50,13 +50,13 @@ function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:R
 end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
-function SimpleDiGraph{T}(adjmx::AbstractMatrix) where T<:Integer
+function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where T<:Integer where U <: Real
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
-    @inbounds for i in findall(adjmx)
-        add_edge!(g, i[1], i[2])
+    @inbounds for i in findall(adjmx.!=zero(U))
+        add_edge!(g, i[1], i[2])    
     end
     return g
 end
