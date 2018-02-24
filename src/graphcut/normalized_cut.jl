@@ -1,8 +1,8 @@
 #computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = 0
-    for j in indices(W, 2)
-        for i in indices(W, 1)
+    for j in axes(W, 2)
+        for i in axes(W, 1)
             if cut[i] != cut[j]
                 cut_cost += W[i, j]
             end
@@ -52,8 +52,8 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     W1 = similar(W, (nv1, nv1))
     W2 = similar(W, (nv2, nv2))
 
-    for j in indices(W, 2)
-        for i in indices(W, 1)
+    for j in axes(W, 2)
+        for i in axes(W, 1)
             if cut[i] == cut[j] == false
                 W1[newvid[i], newvid[j]] = W[i, j]
             elseif cut[i] == cut[j] == true
@@ -112,7 +112,7 @@ end
 
 function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m, n = size(W)
-    D = Diagonal(vec(sum(W, 2)))
+    D = Diagonal(vec(sum(W, dims=2)))
 
     m == 1 && return [1]
 
@@ -123,14 +123,14 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     if n > 10
         ret = eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
     else
-        ret = eigfact(Matrix(invDroot'*(D-W)*invDroot))[:vectors][:,2]
+        ret = eigfact(Matrix(invDroot'*(D-W)*invDroot)).vectors[:,2]
     end
     v = invDroot*ret
 
     #perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
-    for t in linspace(minimum(v), maximum(v), num_cuts)
+    for t in range(minimum(v), stop=maximum(v), length=num_cuts)
         cut = v.>t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost

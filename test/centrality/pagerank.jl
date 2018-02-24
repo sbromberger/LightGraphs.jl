@@ -6,8 +6,8 @@
         M = Matrix{Float64}(adjacency_matrix(g))
         M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
-        M = M * Diagonal(1./sum(M,1)[:])
-        @assert all(1.01 .>= sum(M, 1).>=0.999)
+        M = M * Diagonal(1 ./ sum(M, dims=1)[:])
+        @assert all(1.01 .>= sum(M, dims=1).>=0.999)
        # v = inv(I-β*M) * ((1-β)/nv(g) * ones(nv(g), 1))
         v = inv(I-α*M) * ((1-α)/nv(g) * ones(nv(g), 1))
         return v
@@ -19,7 +19,7 @@
         M = Matrix{Float64}(adjacency_matrix(g))
         @show M = M'
         M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
-        @show M = M * Diagonal(1./sum(M,1)[:])
+        @show M = M * Diagonal(1 ./ sum(M, dims=1)[:])
         @show sum(M,1)
         @assert all(1.01 .>= sum(M, 1).>=0.999)
         return α*M .+ (1-α)*p

@@ -29,7 +29,7 @@ struct ThreadQueue{T,N<:Integer}
 end
 
 function ThreadQueue(T::Type, maxlength::N) where N <: Integer
-    q = ThreadQueue(Vector{T}(maxlength), Atomic{N}(1), Atomic{N}(1))
+    q = ThreadQueue(Vector{T}(uninitialized, maxlength), Atomic{N}(1), Atomic{N}(1))
     return q
 end
 

@@ -831,7 +831,7 @@ end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
 nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer =
-    nearbipartiteaffinity(sizes, between, inter) + noise
+    nearbipartiteaffinity(sizes, between, inter) .+ noise
 
 nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
     StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
