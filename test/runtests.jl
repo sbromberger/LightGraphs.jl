@@ -3,6 +3,7 @@ using LightGraphs.SimpleGraphs
 using Test
 using SparseArrays
 using LinearAlgebra
+using DelimitedFiles
 
 const testdir = dirname(@__FILE__)
 

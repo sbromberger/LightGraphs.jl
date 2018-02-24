@@ -163,13 +163,13 @@
 
 
     n = 10
-    mat = sparse(spones(sprand(n, n, 0.3)))
+    mat = Float64.(sprand(Bool, n, n, 0.3))
 
     test_adjacency(mat)
     test_laplacian(mat)
     test_accessors(mat, n)
 
-    mat = symmetrize(sparse(LinearAlgebra.fillstored!(sprand(n, n, 0.3), 1)))
+    mat = symmetrize(Float64.(sprand(Bool, n, n, 0.3)))
     test_arithmetic(mat, n)
     test_other(mat, n)
     test_symmetry(mat, n)

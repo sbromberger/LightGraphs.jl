@@ -4,7 +4,7 @@ module LightGraphs
 using SharedArrays
 using Random
 import CodecZlib
-import Base64:stringmime
+using Base64
 using DataStructures
 using SimpleTraits
 

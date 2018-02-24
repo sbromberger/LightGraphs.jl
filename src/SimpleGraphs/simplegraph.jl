@@ -34,7 +34,7 @@ function SimpleGraph{T}(adjmx::AbstractMatrix) where T<:Integer
     issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
-    @inbounds for i in findall(triu(adjmx))
+    @inbounds for i in findall(triu(adjmx).!=0)
         add_edge!(g, i[1], i[2])
     end
     return g
