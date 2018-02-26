@@ -18,7 +18,7 @@ function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T
     return g
 end
 
-doc"""
+"""
     smallgraph(s)
     smallgraph(s)
 

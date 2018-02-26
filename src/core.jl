@@ -183,7 +183,7 @@ Return the number of self loops in `g`.
 """
 num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
 
-@doc_str """
+"""
     density(g)
 Return the density of `g`.
 Density is defined as the ratio of the number of actual edges to the

@@ -2,7 +2,7 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-@doc_str """
+"""
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
     parallel_betweenness_centrality(g[, vs])

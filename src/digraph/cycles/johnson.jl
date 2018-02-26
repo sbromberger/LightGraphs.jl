@@ -22,7 +22,7 @@ The formula is coming from [Johnson, 1973](Johnson).
 maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
 
 
-@doc_str """
+"""
     maxsimplecycles(dg::::IsDirected, byscc::Bool = true)
 
 Compute the theoretical maximum number of cycles in the directed graph `dg`.
@@ -102,7 +102,7 @@ function unblock!(v::T, blocked::BitArray, B::Vector{Set{T}}) where T<:Integer
     end
 end
 
-@doc_str """
+"""
     circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
     allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
 
@@ -154,7 +154,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v) where T<:Intege
 end
 
 
-@doc_str """
+"""
     simplecycles(dg::::IsDirected)
 
 Compute all cycles of the given directed graph, using
@@ -186,7 +186,7 @@ end
 
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
-@doc_str """
+"""
     circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
     vmap::Vector{T}, cycle::Channel, startnode::T = v)
 
@@ -267,7 +267,7 @@ function itercycles end
     end
 end
 
-@doc_str """
+"""
     simplecyclescount(dg::DiGraph, ceiling = 10^6)
 
 Count the number of cycles in a directed graph, using
@@ -292,7 +292,7 @@ function simplecyclescount end
     return len
 end
 
-@doc_str """
+"""
     simplecycles_iter(dg::DiGraph, ceiling = 10^6)
 
 Search all cycles of the given directed graph, using
@@ -314,7 +314,7 @@ function simplecycles_iter end
 @traitfn simplecycles_iter(dg::::IsDirected, ceiling = 10^6) =
     collect(Iterators.take(Channel(c -> itercycles(dg, c)), ceiling))
 
-@doc_str """
+"""
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
 
 Search all cycles of the given directed graph, using
