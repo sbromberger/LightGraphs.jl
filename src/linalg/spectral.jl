@@ -6,7 +6,7 @@
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
 vertices. Non-zero values indicate an edge between `u` and `v`. Users may
 override the default data type (`Int`) and specify an optional direction.
-    
+
 ### Optional Arguments
 `dir=:out`: `:in`, `:out`, or `:both` are currently supported.
 
@@ -38,7 +38,7 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     colpt = ones(U, n_v + 1)
-    
+
     rowval = sizehint!(Vector{U}(), nz)
     selfloops = Vector{U}()
     for j in 1:n_v  # this is by column, not by row.
@@ -101,7 +101,7 @@ Converts the matrix to dense with ``nv^2`` memory usage.
 Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
-laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(full(laplacian_matrix(g, T; dir=dir)))
+laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
 @doc_str """
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
@@ -122,7 +122,7 @@ function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unsp
     if dir == :unspec
         dir = is_directed(g) ?  :both : :out
     end
-    return eigvals(full(adjacency_matrix(g, T; dir=dir)))
+    return eigvals(Matrix(adjacency_matrix(g, T; dir=dir)))
 end
 
 """
@@ -183,8 +183,8 @@ function spectral_distance end
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:(end - (k - 1))]
-    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:(end - (k - 1))]
+    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
+    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
 
     return sum(abs, (λ₁ - λ₂))
 end
