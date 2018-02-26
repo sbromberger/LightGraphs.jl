@@ -80,7 +80,7 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseMatrixCSC{T, U}, Diagonal(sparse(sum(A, 2)[:])))
+    D = convert(SparseMatrixCSC{T, U}, Diagonal(sparse(sum(A, dims=2)[:])))
     return D - A
 end
 
@@ -101,7 +101,7 @@ Converts the matrix to dense with ``nv^2`` memory usage.
 Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
-laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(full(laplacian_matrix(g, T; dir=dir)))
+laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
 @doc_str """
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
@@ -122,7 +122,7 @@ function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unsp
     if dir == :unspec
         dir = is_directed(g) ?  :both : :out
     end
-    return eigvals(full(adjacency_matrix(g, T; dir=dir)))
+    return eigvals(Matrix(adjacency_matrix(g, T; dir=dir)))
 end
 
 """
@@ -147,7 +147,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
 
     # every col has the same 2 entries
     colpt = collect(1:2:(nz + 1))
-    nzval = repmat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
+    nzval = repeat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
 
     # iterate over edges for row indices
     rowval = zeros(Int, nz)
@@ -183,8 +183,8 @@ function spectral_distance end
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(full(A₁))[end:-1:(end - (k - 1))]
-    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(full(A₂))[end:-1:(end - (k - 1))]
+    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
+    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
 
     return sum(abs, (λ₁ - λ₂))
 end

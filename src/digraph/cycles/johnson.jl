@@ -81,7 +81,7 @@ end
 Constructor of the visitor, using the directed graph information.
 """
 JohnsonVisitor(dg::DiGraph{T}) where T<:Integer =
-    JohnsonVisitor(Vector{T}(), falses(vertices(dg)), [Set{T}() for i in vertices(dg)])
+    JohnsonVisitor(Vector{T}(), falses(nv(dg)), [Set{T}() for i in vertices(dg)])
 
 """
     unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
@@ -260,7 +260,7 @@ function itercycles end
     for scc in sccs
         while length(scc) >= 1
             wdg, vmap = induced_subgraph(dg, scc)
-            shift!(scc)
+            popfirst!(scc)
             visitor = JohnsonVisitor(wdg)
             circuit_iter(1, wdg, visitor, vmap, cycle)
         end

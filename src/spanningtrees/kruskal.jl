@@ -30,7 +30,7 @@ function find_set!(set_id::Vector{U}, q::U) where U<:Integer
     return root
 end
 
-union_set!{U<:Integer}(set_id::Vector{U}, p::U, q::U) = (set_id[find_set!(set_id, p)] = find_set!(set_id, q))
+union_set!(set_id::Vector{U}, p::U, q::U) where {U<:Integer} = (set_id[find_set!(set_id, p)] = find_set!(set_id, q))
 
 """
     kruskal_mst(g, distmx=weights(g))

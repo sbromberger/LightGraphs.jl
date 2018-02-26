@@ -75,7 +75,7 @@ function parallel_betweenness_centrality(
 
     # Parallel reduction
 
-    betweenness = @parallel (+) for s in vs
+    betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)

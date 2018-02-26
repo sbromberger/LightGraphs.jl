@@ -1,7 +1,7 @@
-import Base: full
+import Base: Matrix
 
 # just so that we can assert equality of matrices
-full(nbt::Nonbacktracking) = full(sparse(nbt))
+Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
 @testset "Spectral" begin
 
@@ -36,8 +36,8 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     g = copy(g5)
     add_edge!(g, 1, 1)
     @test adjacency_matrix(g)[1, 1] == 1
-    @test indegree(g) == sum(adjacency_matrix(g), 1)[1, :]
-    @test outdegree(g) == sum(adjacency_matrix(g), 2)[:, 1]
+    @test indegree(g) == sum(adjacency_matrix(g), dims=1)[1, :]
+    @test outdegree(g) == sum(adjacency_matrix(g), dims=2)[:, 1]
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
@@ -95,7 +95,7 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
             lmat = laplacian_matrix(g, Float64; dir=dir)
             @test isa(amat, SparseMatrixCSC{Float64,T})
             @test isa(lmat, SparseMatrixCSC{Float64,T})
-            evals = eigvals(full(lmat))
+            evals = eigvals(Matrix(lmat))
             @test all(evals .>= -1e-15) # positive semidefinite
             @test (minimum(evals)) ≈ 0 atol = 1e-13
         end
@@ -141,18 +141,18 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
         z = B * x
         @test norm(y - z) < 1e-8
 
-        #check that matmat works and full(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        #check that matmat works and Matrix(nbt) == B
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
-        #check that matmat works and full(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        #check that matmat works and Matrix(nbt) == B
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
 
         B₁ = Nonbacktracking(g10)
 
-        @test full(B₁) == full(B)
+        @test Matrix(B₁) == Matrix(B)
         @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
         #   @test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8

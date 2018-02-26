@@ -21,7 +21,7 @@ function core_periphery_deg end
             kbest = k
         end
     end
-    c = 2 + zeros(Int, nv(g))
+    c = fill(2, nv(g))
     c[p[1:kbest]] = 1
     c
 end

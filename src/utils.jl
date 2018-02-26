@@ -53,3 +53,10 @@ Return true if `item` is in sorted collection `collection`.
 Does not verify that `collection` is sorted.
 """
 insorted(item, collection) = !isempty(searchsorted(collection, item))
+
+"""
+    eye(m)
+
+Return the `m` x `m` identity matrix with type specified by the type of `m`.
+"""
+eye(m::T) where T <: Number = Matrix{T}(I, m , m)
