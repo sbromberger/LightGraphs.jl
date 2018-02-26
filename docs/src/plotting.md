@@ -8,7 +8,7 @@ This excellent graph visualization package can be used with *LightGraphs.jl*
 as follows:
 
 ```julia
-julia> g = WheelGraph(10); am = full(adjacency_matrix(g))
+julia> g = WheelGraph(10); am = Matrix(adjacency_matrix(g))
 julia> loc_x, loc_y = layout_spring_adj(am)
 julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
 ```

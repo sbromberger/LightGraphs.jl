@@ -200,7 +200,6 @@ end
 Create a [binary tree](https://en.wikipedia.org/wiki/Binary_tree)
 of depth `k`.
 """
-
 function BinaryTree(k::Integer)
     g = SimpleGraph(Int(2^k - 1))
     for i in 0:(k - 2)

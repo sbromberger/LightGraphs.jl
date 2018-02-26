@@ -28,7 +28,7 @@ import LightGraphs: tree
 
     # import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
-    function istree{T<:Integer}(parents::Vector{T}, maxdepth, n::T)
+    function istree(parents::Vector{T}, maxdepth, n::T) where T<:Integer
         flag = true
         for i in one(T):n
             s = i

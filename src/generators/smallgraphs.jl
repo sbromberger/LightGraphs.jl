@@ -84,7 +84,7 @@ end
 function smallgraph(s::AbstractString)
     ls = lowercase(s)
     if endswith(ls, "graph")
-        ls = replace(ls, "graph", "")
+        ls = replace(ls, "graph" => "")
     end
 
     return smallgraph(Symbol(ls))

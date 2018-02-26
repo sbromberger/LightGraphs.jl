@@ -12,7 +12,7 @@ import Base.Threads: Atomic, @threads
             push!(next, i)
         end
         @test Set([i[] for i in next[1:5]]) == Set([1, 2, 3, 4, 5])
-        first = shift!(next)
+        first = popfirst!(next)
         @test first == 1
     end
 

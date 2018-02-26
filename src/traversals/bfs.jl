@@ -139,7 +139,7 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
     push!(next, u)
     seen[u] = true
     while !isempty(next)
-        src = shift!(next) # get new element from queue
+        src = popfirst!(next) # get new element from queue
         for vertex in outneighbors(g, src)
             vertex == v && return true
             if !seen[vertex]

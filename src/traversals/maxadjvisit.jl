@@ -85,7 +85,7 @@ function maximum_adjacency_visit(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
     log::Bool=false,
-    io::IO=STDOUT
+    io::IO=stdout
 ) where T<:Real
 
     U = eltype(g)
@@ -127,5 +127,5 @@ maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
     g,
     weights(g),
     false,
-    STDOUT
+    stdout
 )

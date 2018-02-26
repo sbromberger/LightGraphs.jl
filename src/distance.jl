@@ -78,7 +78,7 @@ function parallel_eccentricity(
 ) where T <: Real
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
-    @sync @parallel for i = 1:vlen
+    @sync @distributed for i = 1:vlen
         eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
