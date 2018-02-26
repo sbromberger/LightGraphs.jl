@@ -59,7 +59,9 @@
         @test_throws MethodError NormalizedLaplacian(lapl)
         @test_throws MethodError AveragingLaplacian(lapl)
         @test_throws MethodError convert(CombinatorialAdjacency, lapl)
+
         L = sparse(lapl)
+
         @test sum(abs, (sum(L, dims=1))) == 0
     end
 
@@ -87,6 +89,7 @@
         @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
         @test sum(abs, (lapl * onevec)) == 0
         g(a) = sum(abs, (sum(sparse(a), dims=1)))
+
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
@@ -163,13 +166,14 @@
 
 
     n = 10
-    mat = sparse(LinearAlgebra.fillstored!(sprand(n, n, 0.3), 1))
+
+    mat = Float64.(sprand(Bool, n, n, 0.3))
 
     test_adjacency(mat)
     test_laplacian(mat)
     test_accessors(mat, n)
 
-    mat = symmetrize(sparse(LinearAlgebra.fillstored!(sprand(n, n, 0.3), 1)))
+    mat = symmetrize(Float64.(sprand(Bool, n, n, 0.3)))
     test_arithmetic(mat, n)
     test_other(mat, n)
     test_symmetry(mat, n)

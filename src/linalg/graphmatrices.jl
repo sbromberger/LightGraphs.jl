@@ -35,7 +35,7 @@ struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 end
 
 function CombinatorialAdjacency(A::SparseMatrix{T}) where T
-	D = vec(sum(A, 1))
+	D = vec(sum(A, dims=1))
 	return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
 end
 
@@ -197,7 +197,7 @@ convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 function sparse(lapl::M) where M<:Laplacian
 	adjmat = adjacency(lapl)
 	A = sparse(adjmat)
-	L = spdiagm(diag(lapl)) - A
+	L = sparse(Diagonal(diag(lapl))) - A
 	return L
 end
 
@@ -210,6 +210,14 @@ function sparse(adjmat::Adjacency)
     return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
+
+
+function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
+	adjmat = adjacency(lapl)
+	A = convert(SparseMatrix{T}, adjmat)
+	L = sparse(Diagonal(diag(lapl))) - A
+	return L
+end
 
 diag(lapl::CombinatorialLaplacian) = lapl.A.D
 diag(lapl::Laplacian) = ones(size(lapl)[2])

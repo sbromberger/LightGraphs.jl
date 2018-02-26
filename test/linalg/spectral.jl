@@ -1,4 +1,5 @@
 import Base: Matrix
+
 # just so that we can assert equality of matrices
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
@@ -141,10 +142,11 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test norm(y - z) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * Matrix(1.0I, nbt.m, nbt.m) - B) < 1e-8
+
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * Matrix(1.0I, nbt.m, nbt.m) - B) < 1e-8
+        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
