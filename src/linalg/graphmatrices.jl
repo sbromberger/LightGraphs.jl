@@ -201,15 +201,15 @@ function sparse(lapl::M) where M<:Laplacian
 	return L
 end
 
+function SparseMatrix(lapl::M) where M<:GraphMatrix
+	return sparse(lapl)
+end
+
 function sparse(adjmat::Adjacency)
     A = sparse(adjmat.A)
     return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
-function convert(::Type{SparseMatrix{T}}, adjmat::Adjacency{T}) where T
-    A = sparse(adjmat.A)
-    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
-end
 
 
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
@@ -319,7 +319,7 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 # per #564
 @deprecate mul!(Y, A::Noop, B) None
 @deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
-@deprecate convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) sparse(adjmat)
+@deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
 
 
 

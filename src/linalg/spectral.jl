@@ -6,7 +6,7 @@
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
 vertices. Non-zero values indicate an edge between `u` and `v`. Users may
 override the default data type (`Int`) and specify an optional direction.
-    
+
 ### Optional Arguments
 `dir=:out`: `:in`, `:out`, or `:both` are currently supported.
 
@@ -38,7 +38,7 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     colpt = ones(U, n_v + 1)
-    
+
     rowval = sizehint!(Vector{U}(), nz)
     selfloops = Vector{U}()
     for j in 1:n_v  # this is by column, not by row.

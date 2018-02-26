@@ -142,6 +142,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test norm(y - z) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
+
         @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
