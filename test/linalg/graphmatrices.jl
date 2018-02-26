@@ -2,7 +2,7 @@
 
 @testset "Graph matrices" begin
     function converttest(T::Type, var)
-        @test typeof(convert(T, var)) == T
+        @test typeof(T(var)) == T
     end
 
     function constructors(mat)
@@ -15,14 +15,14 @@
 
     function test_adjacency(mat)
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
-        @test adjmat.D == vec(sum(mat, 1))
+        @test adjmat.D == vec(sum(mat, dims=1))
         @test adjmat.A == mat
-        @test convert(SparseMatrix{Float64}, adjmat) == sparse(mat)
-        converttest(SparseMatrix{Float64}, stochmat)
-        converttest(SparseMatrix{Float64}, adjhat)
-        converttest(SparseMatrix{Float64}, avgmat)
-        @test isa(CombinatorialAdjacency(adjmat), CombinatorialAdjacency)
-        @test isa(CombinatorialAdjacency(avgmat), CombinatorialAdjacency)
+        @test isa(sparse(mat), SparseMatrixCSC)
+        @test isa(sparse(stochmat), SparseMatrixCSC)
+        @test isa(sparse(adjhat), SparseMatrixCSC)
+        @test isa(sparse(avgmat), SparseMatrixCSC)
+        @test isa(convert(CombinatorialAdjacency, adjmat), CombinatorialAdjacency)
+        @test isa(convert(CombinatorialAdjacency, avgmat), CombinatorialAdjacency)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
         @test postscalefactor(stochmat) == prescalefactor(avgmat)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
@@ -40,7 +40,7 @@
         @test typeof(AveragingAdjacency(adj)) <: AveragingAdjacency
 
         @test typeof(adjacency(lapl)) <: CombinatorialAdjacency
-        converttest(SparseMatrix{Float64}, lapl)
+        # converttest(SparseMatrix{Float64}, lapl)
 
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         @test typeof(adjacency(lapl))  <: CombinatorialAdjacency
@@ -59,8 +59,8 @@
         @test_throws MethodError NormalizedLaplacian(lapl)
         @test_throws MethodError AveragingLaplacian(lapl)
         @test_throws MethodError convert(CombinatorialAdjacency, lapl)
-        L = convert(SparseMatrix{Float64}, lapl)
-        @test sum(abs, (sum(L, 1))) == 0
+        L = sparse(lapl)
+        @test sum(abs, (sum(L, dims=1))) == 0
     end
 
     function test_accessors(mat, n)
@@ -86,7 +86,7 @@
         @test sum(abs, (adjmat * onevec)) > 0.0
         @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
         @test sum(abs, (lapl * onevec)) == 0
-        g(a) = sum(abs, (sum(sparse(a), 1)))
+        g(a) = sum(abs, (sum(sparse(a), dims=1)))
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
@@ -163,7 +163,7 @@
 
 
     n = 10
-    mat = sparse(spones(sprand(n, n, 0.3)))
+    mat = sparse(LinearAlgebra.fillstored!(sprand(n, n, 0.3), 1))
 
     test_adjacency(mat)
     test_laplacian(mat)
