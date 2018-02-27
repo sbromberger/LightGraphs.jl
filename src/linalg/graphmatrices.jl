@@ -40,7 +40,7 @@ function CombinatorialAdjacency(A::SparseMatrix{T}) where T
 end
 
 
-@doc_str """
+"""
 	NormalizedAdjacency{T}
 
 The normalized adjacency matrix is ``\\hat{A} = D^{-1/2} A D^{-1/2}``.
@@ -133,7 +133,7 @@ struct CombinatorialLaplacian{T} <: Laplacian{T}
 	A::CombinatorialAdjacency{T}
 end
 
-@doc_str """
+"""
 	NormalizedLaplacian{T}
 
 The normalized Laplacian is ``\\hat{L} = I - D^{-1/2} A D^{-1/2}``.

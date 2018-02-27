@@ -84,7 +84,7 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
     return D - A
 end
 
-@doc_str """
+"""
     laplacian_spectrum(g[, T=Int; dir=:unspec])
 
 Return the eigenvalues of the Laplacian matrix for a graph `g`, indexed
@@ -103,7 +103,7 @@ eigenvalues/eigenvectors.
 """
 laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
-@doc_str """
+"""
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
 by vertex. Default values for `T` are the same as those in
 [`adjacency_matrix`](@ref).
@@ -166,7 +166,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     return spmx
 end
 
-@doc_str """
+"""
     spectral_distance(G₁, G₂ [, k])
 
 Compute the spectral distance between undirected n-vertex

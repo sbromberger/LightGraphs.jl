@@ -18,7 +18,7 @@ function CompleteGraph(n::Integer)
 end
 
 
-@doc_str """
+"""
     CompleteBipartiteGraph(n1, n2)
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
@@ -169,7 +169,7 @@ function WheelDiGraph(n::Integer)
     return g
 end
 
-@doc_str """
+"""
     Grid(dims; periodic=false)
 
 Create a ``|dims|``-dimensional cubic lattice, with length `dims[i]`

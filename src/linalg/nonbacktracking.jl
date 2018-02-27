@@ -1,5 +1,5 @@
 
-@doc_str """
+"""
     non_backtracking_matrix(g)
 
 Return a non-backtracking matrix `B` and an edgemap storing the oriented
@@ -40,7 +40,7 @@ function non_backtracking_matrix(g::AbstractGraph)
     return B, edgeidmap
 end
 
-@doc_str """
+"""
     Nonbacktracking{G}
 
 A compact representation of the nonbacktracking operator.
