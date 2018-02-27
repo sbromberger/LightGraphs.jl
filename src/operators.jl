@@ -62,7 +62,7 @@ function reverse! end
     return g
 end
 
-doc"""
+"""
     blkdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``

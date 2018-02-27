@@ -73,7 +73,7 @@ function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
     rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 
-@doc_str """
+"""
     rem_vertex!(g, v)
 
 Remove the vertex `v` from graph `g`. Return false if removal fails

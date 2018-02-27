@@ -53,7 +53,7 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     end
 end
 
-@doc_str """
+"""
     biconnected_components(g)
 
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)

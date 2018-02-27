@@ -108,7 +108,7 @@ If parallel is true then the colorings are executed in parallel.
 random_greedy_color(g::AbstractGraph{T}, reps::Integer = 1, parallel::Bool = false) where {T<:Integer} =
 parallel ? parallel_random_greedy_color(g, reps) : seq_random_greedy_color(g, reps)
 
-@doc_str """
+"""
     greedy_color(g; sort_degree=false, parallel=false, reps = 1)
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)

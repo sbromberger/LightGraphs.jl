@@ -1,4 +1,4 @@
-@doc_str """
+"""
     closeness_centrality(g)
 
 Calculate the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality)

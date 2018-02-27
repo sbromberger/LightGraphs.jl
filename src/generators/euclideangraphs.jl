@@ -1,4 +1,4 @@
-@doc_str """
+"""
     euclidean_graph(N, d; seed=-1, L=1., p=2., cutoff=-1., bc=:open)
 
 Generate `N` uniformly distributed points in the box ``[0,L]^{d}``

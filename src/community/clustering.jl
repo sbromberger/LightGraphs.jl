@@ -46,7 +46,7 @@ function local_clustering!(storage::AbstractVector{Bool},
     return ntriang, nalltriang
 end
 
-@doc_str """
+"""
     local_clustering(g, v)
     local_clustering(g, vs)
 

@@ -4,6 +4,7 @@ using Test
 using SparseArrays
 using LinearAlgebra
 using DelimitedFiles
+using Base64
 
 const testdir = dirname(@__FILE__)
 

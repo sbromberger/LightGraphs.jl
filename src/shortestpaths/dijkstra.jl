@@ -119,7 +119,7 @@ struct MultipleDijkstraState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Matrix{U}
 end
 
-@doc_str """
+"""
     parallel_multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=weights(g))
 
 Compute the shortest paths between all pairs of vertices in graph `g` by running
