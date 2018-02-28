@@ -28,7 +28,7 @@ export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+is_directed,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
