@@ -48,7 +48,7 @@ julia> Pkg.add("LightGraphs")
 ```
 
 ## Supported Versions
-* LightGraphs master is designed to work with the latest stable version of Julia.
+* LightGraphs master is generally designed to work with the latest stable version of Julia (except during Julia version increments as we transition to the new version).
 * Julia 0.3: LightGraphs v0.3.7 is the last version guaranteed to work with Julia 0.3.
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
