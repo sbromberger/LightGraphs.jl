@@ -37,6 +37,9 @@ is_ordered, add_vertices!, indegree, outdegree, degree,
 neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
 
+# simplegraphs
+add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!,
+
 # decomposition
 core_number, k_core, k_shell, k_crust, k_corona,
 
