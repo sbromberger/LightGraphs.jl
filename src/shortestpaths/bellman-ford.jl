@@ -94,7 +94,7 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integ
     parents = state.parents
 
     num_vs = length(vs)
-    all_paths = Vector{Vector{T}}(uninitialized, num_vs)
+    all_paths = Vector{Vector{T}}(undef, num_vs)
     for i = 1:num_vs
         all_paths[i] = Vector{T}()
         index = vs[i]
