@@ -10,7 +10,7 @@
     end
 
     g10 = StarGraph(10)
-    g10 = blkdiag(g10, g10)
+    g10 = blockdiag(g10, g10)
     add_edge!(g10, 1, 11)
     for g in testgraphs(g10)
         c = @inferred(core_periphery_deg(g))

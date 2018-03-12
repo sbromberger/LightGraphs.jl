@@ -317,7 +317,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     end
 
     # vector of weighted vertices (each node is repeated once for each adjacent edge)
-    weightedVs = Vector{Int}(uninitialized, 2 * (n - n0) * k + 2 * ne(g))
+    weightedVs = Vector{Int}(undef, 2 * (n - n0) * k + 2 * ne(g))
 
     # initialize vector of weighted vertices
     offset = 0
@@ -330,7 +330,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     picked = fill(false, n)
 
     # vector of targets
-    targets = Vector{Int}(uninitialized, k)
+    targets = Vector{Int}(undef, k)
 
     for source in (n0 + 1):n
         # choose k targets from the existing vertices
@@ -633,8 +633,8 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Vector{Int}(uninitialized, n * k)
-    J = Vector{Int}(uninitialized, n * k)
+    I = Vector{Int}(undef, n * k)
+    J = Vector{Int}(undef, n * k)
     V = fill(true, n * k)
     for r in 1:n
         l = ((r - 1) * k + 1):(r * k)

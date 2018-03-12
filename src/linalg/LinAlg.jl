@@ -6,7 +6,7 @@ using LinearAlgebra
 using IterativeEigensolvers
 using ..LightGraphs
 
-import LightGraphs: IsDirected, adjacency_matrix, laplacian_matrix, laplacian_spectrum, AbstractGraph, inneighbors,
+import LightGraphs: IsDirected, AbstractGraph, inneighbors,
 outneighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
 
 import Base: convert, size, eltype, ndims, ==, *, .*, length

@@ -83,7 +83,7 @@
         return changes == length(unique(labels)) - 1
     end
 
-    num_subgraphs = Vector{Int}(uninitialized, 9)
+    num_subgraphs = Vector{Int}(undef, 9)
 
     for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         labels = @inferred(normalized_cut(g, t))

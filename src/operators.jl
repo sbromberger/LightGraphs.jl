@@ -63,7 +63,7 @@ function reverse! end
 end
 
 """
-    blkdiag(g, h)
+    blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
 edges where the vertices an edges from graph `h` are appended to graph `g`.
@@ -72,7 +72,7 @@ edges where the vertices an edges from graph `h` are appended to graph `g`.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function blkdiag(g::T, h::T) where T<:AbstractGraph
+function blockdiag(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -181,7 +181,7 @@ end
 """
     join(g, h)
 
-Return a graph that combines graphs `g` and `h` using `blkdiag` and then
+Return a graph that combines graphs `g` and `h` using `blockdiag` and then
 adds all the edges between the vertices in `g` and those in `h`.
 
 ### Implementation Notes
@@ -189,7 +189,7 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function join(g::T, h::T) where T<:AbstractGraph
-    r = blkdiag(g, h)
+    r = blockdiag(g, h)
     for i in vertices(g)
         for j = (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
@@ -378,7 +378,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
-    vmap = Vector{U}(uninitialized, length(vlist))
+    vmap = Vector{U}(undef, length(vlist))
     for (i, v) in enumerate(vlist)
         newvid[v] = U(i)
         vmap[i] = v

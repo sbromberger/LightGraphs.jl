@@ -22,7 +22,7 @@ function perm_greedy_color(
     ) where T <: Integer 
 
     nvg::T = nv(g)
-    cols = Vector{T}(uninitialized, nvg)  
+    cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
 
     for v in seq

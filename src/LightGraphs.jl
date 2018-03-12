@@ -21,7 +21,7 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
 import Random: GLOBAL_RNG
 import Distributed: @distributed, @sync
-import SparseArrays: sparse, blkdiag
+import SparseArrays: sparse, blockdiag
 import LinearAlgebra: issymmetric, mul!
 
 export
@@ -54,7 +54,7 @@ spectral_distance, edit_distance,
 MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
-complement, reverse, reverse!, blkdiag, union, intersect,
+complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,

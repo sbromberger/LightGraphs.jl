@@ -8,7 +8,7 @@
         @test nv(c) == 5
         @test ne(c) == 6
 
-        gb = @inferred(blkdiag(g, g))
+        gb = @inferred(blockdiag(g, g))
         @test nv(gb) == 10
         @test ne(gb) == 8
 
@@ -138,7 +138,7 @@
         T = eltype(g)
         hc = CompleteGraph(2)
         h = Graph{T}(hc)
-        z = @inferred(blkdiag(g, h))
+        z = @inferred(blockdiag(g, h))
         @test nv(z) == nv(g) + nv(h)
         @test ne(z) == ne(g) + ne(h)
         @test has_edge(z, 1, 2)
@@ -204,7 +204,7 @@
         m = nv(h)
         for i in 1:(len - 1)
             k = nv(g)
-            g = blkdiag(g, h)
+            g = blockdiag(g, h)
             for v in 1:m
                 add_edge!(g, v + (k - m), v + k)
             end
