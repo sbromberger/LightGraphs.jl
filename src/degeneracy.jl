@@ -154,5 +154,5 @@ function k_corona(g::AbstractGraph, k; corenum=core_number(g))
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)
 
-    return kcore[findall(equalto(k), kcoredeg)]
+    return kcore[findall(x-> x == k, kcoredeg)]
 end
