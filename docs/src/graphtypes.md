@@ -13,5 +13,5 @@ These are general guidelines to help you select the proper graph type.
 
 - In general, prefer `SimpleGraphs` and `SimpleDiGraph`.
 - If you need edge weights and don't require large numbers of graph modifications, use `SimpleWeightedGraphs` or `SimpleWeightedDiGraphs`.
-- If you need labeling of vertices or edges, use `MetaGraphs` or `MetaDiGraphs`.
+- If you need labeling of vertices or edges, use [MetaGraphs](https://github.com/JuliaGraphs/MetaGraphs.jl).
 - If you work with very large graphs (billons to tens of billions of edges) and don't need mutability, use `StaticGraphs` or `StaticDiGraphs`.
