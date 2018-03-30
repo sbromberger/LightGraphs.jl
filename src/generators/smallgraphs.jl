@@ -18,7 +18,7 @@ function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T
     return g
 end
 
-doc"""
+"""
     smallgraph(s)
     smallgraph(s)
 
@@ -84,7 +84,7 @@ end
 function smallgraph(s::AbstractString)
     ls = lowercase(s)
     if endswith(ls, "graph")
-        ls = replace(ls, "graph", "")
+        ls = replace(ls, "graph" => "")
     end
 
     return smallgraph(Symbol(ls))

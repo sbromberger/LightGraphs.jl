@@ -18,7 +18,7 @@ function CompleteGraph(n::Integer)
 end
 
 
-@doc_str """
+"""
     CompleteBipartiteGraph(n1, n2)
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
@@ -169,7 +169,7 @@ function WheelDiGraph(n::Integer)
     return g
 end
 
-@doc_str """
+"""
     Grid(dims; periodic=false)
 
 Create a ``|dims|``-dimensional cubic lattice, with length `dims[i]`
@@ -200,7 +200,6 @@ end
 Create a [binary tree](https://en.wikipedia.org/wiki/Binary_tree)
 of depth `k`.
 """
-
 function BinaryTree(k::Integer)
     g = SimpleGraph(Int(2^k - 1))
     for i in 0:(k - 2)
@@ -223,7 +222,7 @@ Create a double complete binary tree with `k` levels.
 function DoubleBinaryTree(k::Integer)
     gl = BinaryTree(k)
     gr = BinaryTree(k)
-    g = blkdiag(gl, gr)
+    g = blockdiag(gl, gr)
     add_edge!(g, 1, nv(gl) + 1)
     return g
 end
@@ -242,7 +241,7 @@ function RoachGraph(k::Integer)
     nopole = SimpleGraph(2)
     antannae = crosspath(k, nopole)
     body = crosspath(k, dipole)
-    roach = blkdiag(antannae, body)
+    roach = blockdiag(antannae, body)
     add_edge!(roach, nv(antannae) - 1, nv(antannae) + 1)
     add_edge!(roach, nv(antannae), nv(antannae) + 2)
     return roach

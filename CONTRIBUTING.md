@@ -27,7 +27,7 @@ Please include version numbers of all relevant libraries and Julia itself.
 - When possible write code to reuse memory. For example:
 ```julia
 function f(g, v)
-    storage = Vector{Int}(nv(g))
+    storage = Vector{Int}(undef, nv(g))
     # some code operating on storage, g, and v.
     for i in 1:nv(g)
         storage[i] = v-i
@@ -38,7 +38,7 @@ end
 should be rewritten as two functions
 ```julia
 function f(g::AbstractGraph, v::Integer)
-    storage = Vector{Int}(nv(g))
+    storage = Vector{Int}(undef, nv(g))
     return f!(g, v, storage)
 end
 

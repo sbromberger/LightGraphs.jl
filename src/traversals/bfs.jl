@@ -1,9 +1,13 @@
+### DEVELOPERS NOTE: BFS optimization experiments are typically
+### prototyped in gdistances!, since it's one of the simplest
+### BFS implementations.
+
 """
     tree(parents)
 
 Convert a parents array into a directed graph.
 """
-function tree(parents::AbstractVector{T}) where T<:Integer
+function tree(parents::AbstractVector{T}) where T <: Integer
     n = T(length(parents))
     t = DiGraph{T}(n)
     for (v, u) in enumerate(parents)
@@ -28,7 +32,7 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-bfs_parents(g::AbstractGraph, s::Integer; dir=:out) = 
+bfs_parents(g::AbstractGraph, s::Integer; dir = :out) = 
     (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
 
 function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
@@ -69,18 +73,26 @@ and return a directed acyclic graph of vertices in the order they were discovere
 If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are
 acceptable values).
 """
-bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=dir))
+bfs_tree(g::AbstractGraph, s::Integer; dir = :out) = tree(bfs_parents(g, s; dir = dir))
 
 """
-    gdistances!(g, source, dists)
+    gdistances!(g, source, dists; sort_alg=QuickSort)
 
-Fill `dists` with the geodesic distances of vertices in `g` from source vertex/vertices
-`sources`. `dists` should be a vector of length `nv(g)` filled with `typemax(T)`.
-Return `dists`.
+Fill `dists` with the geodesic distances of vertices in `g` from source vertex (or
+collection of vertices) `source`. `dists` should be a vector of length `nv(g)` 
+filled with `typemax(T)`. Return `dists`.
 
 For vertices in disconnected components the default distance is `typemax(T)`.
+
+An optional sorting algorithm may be specified (see Performance section).
+
+### Performance
+`gdistances` uses `QuickSort` internally for its default sorting algorithm, since it performs
+the best of the algorithms built into Julia Base. However, passing a `RadixSort` (available via
+[SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
+significant performance improvements on larger graphs.
 """
-function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
+function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where T
     n = nv(g)
     visited = falses(n)
     n_level = one(T)
@@ -106,19 +118,27 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level) where T
         n_level += one(T)
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level)
+        sort!(cur_level, alg = sort_alg)
     end
     return vert_level
 end
 
 """
-    gdistances(g, source)
+    gdistances(g, source; sort_alg=QuickSort)
 
 Return a vector filled with the geodesic distances of vertices in  `g` from
 `source`. If `source` is a collection of vertices each element should be unique.
 For vertices in disconnected components the default distance is `typemax(T)`.
+
+An optional sorting algorithm may be specified (see Performance section).
+
+### Performance
+`gdistances` uses `QuickSort` internally for its default sorting algorithm, since it performs
+the best of the algorithms built into Julia Base. However, passing a `RadixSort` (available via
+[SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
+significant performance improvements on larger graphs.
 """
-gdistances(g::AbstractGraph{T}, source) where T = gdistances!(g, source, fill(typemax(T), nv(g)))
+gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg = sort_alg)
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
@@ -128,7 +148,7 @@ Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices
 is in `excluded_vertices`. 
 """
 function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector=Vector{T}()) where T
+        exclude_vertices::AbstractVector = Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true
@@ -139,7 +159,7 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
     push!(next, u)
     seen[u] = true
     while !isempty(next)
-        src = shift!(next) # get new element from queue
+        src = popfirst!(next) # get new element from queue
         for vertex in outneighbors(g, src)
             vertex == v && return true
             if !seen[vertex]

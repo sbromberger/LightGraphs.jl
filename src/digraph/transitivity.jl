@@ -1,4 +1,4 @@
-@doc_str """
+"""
     transitiveclosure!(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using the Floyd-Warshall

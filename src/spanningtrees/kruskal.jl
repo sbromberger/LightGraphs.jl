@@ -30,7 +30,7 @@ function find_set!(set_id::Vector{U}, q::U) where U<:Integer
     return root
 end
 
-union_set!{U<:Integer}(set_id::Vector{U}, p::U, q::U) = (set_id[find_set!(set_id, p)] = find_set!(set_id, q))
+union_set!(set_id::Vector{U}, p::U, q::U) where {U<:Integer} = (set_id[find_set!(set_id, p)] = find_set!(set_id, q))
 
 """
     kruskal_mst(g, distmx=weights(g))
@@ -40,10 +40,10 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst{T<:Real, U, AG<:AbstractGraph{U}}(
+@traitfn function kruskal_mst(
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g)
-)
+) where {T<:Real, U, AG<:AbstractGraph{U}}
 
     edge_list = Vector{KruskalHeapEntry{T}}()
     mst = Vector{Edge}()

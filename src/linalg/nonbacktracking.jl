@@ -1,5 +1,5 @@
 
-@doc_str """
+"""
     non_backtracking_matrix(g)
 
 Return a non-backtracking matrix `B` and an edgemap storing the oriented
@@ -40,7 +40,7 @@ function non_backtracking_matrix(g::AbstractGraph)
     return B, edgeidmap
 end
 
-@doc_str """
+"""
     Nonbacktracking{G}
 
 A compact representation of the nonbacktracking operator.
@@ -100,7 +100,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     end
     return y
 end
-function A_mul_B!(C, nbt::Nonbacktracking, B)
+function mul!(C, nbt::Nonbacktracking, B)
     # computs C = A * B
     for i in 1:size(B, 2)
         C[:, i] = nbt * B[:, i]
@@ -129,7 +129,7 @@ end
 sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
-    y = zeros(x)
+    y = zero(x)
     for i in 1:nbt.m
         y[:, i] = nbt * x[:, i]
     end

@@ -1,20 +1,34 @@
 __precompile__(true)
 module LightGraphs
 
+using SharedArrays
+using Random
 import CodecZlib
+using Base64
 using DataStructures
 using SimpleTraits
 
+using SparseArrays
+using LinearAlgebra
+using IterativeEigensolvers
+using SharedArrays
+using Random
+using Markdown
+using DelimitedFiles
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
-            reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
-            print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
-            Pair, Tuple, zero
+            reverse, reverse!, isassigned, getindex, setindex!, show,
+            print, copy, in, sum, size, eltype, length, ndims, transpose,
+            ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
+import Random: GLOBAL_RNG
+import Distributed: @distributed, @sync
+import SparseArrays: sparse, blockdiag
+import LinearAlgebra: issymmetric, mul!
+
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+is_directed,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
@@ -22,6 +36,9 @@ is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
+
+# simplegraphs
+add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!,
 
 # decomposition
 core_number, k_core, k_shell, k_crust, k_corona,
@@ -37,7 +54,7 @@ spectral_distance, edit_distance,
 MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
-complement, reverse, reverse!, blkdiag, union, intersect,
+complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
@@ -61,6 +78,9 @@ randomwalk, saw, non_backtracking_randomwalk,
 
 # diffusion
 diffusion, diffusion_rate,
+
+# coloring
+greedy_color,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -185,6 +205,7 @@ include("digraph/cycles/hadwick-james.jl")
 include("digraph/cycles/karp.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
+include("traversals/greedy_color.jl")
 include("traversals/parallel_bfs.jl")
 include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
