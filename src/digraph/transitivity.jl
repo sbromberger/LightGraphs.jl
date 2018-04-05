@@ -13,16 +13,13 @@ This version of the function modifies the original graph.
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
     for k in vertices(g)
-        for i in vertices(g)
+        for i in inneighbors(g, k), j in outneighbors(g, k)
             i == k && continue
-            for j in vertices(g)
-                j == k && continue
-                if (has_edge(g, i, k) && has_edge(g, k, j))
-                    if (i != j || selflooped)
-                        add_edge!(g, i, j)
-                    end
-                end
+            j == k && continue
+            if i == j && !selflooped
+                continue
             end
+            add_edge!(g, i, j)      
         end
     end
     return g
