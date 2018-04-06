@@ -14,11 +14,7 @@ function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
     for k in vertices(g)
         for i in inneighbors(g, k), j in outneighbors(g, k)
-            i == k && continue
-            j == k && continue
-            if i == j && !selflooped
-                continue
-            end
+            ((!selflooped && i == j) || i == k || j == k) && continue
             add_edge!(g, i, j)      
         end
     end
