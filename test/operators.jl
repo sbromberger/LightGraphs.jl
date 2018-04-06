@@ -108,19 +108,6 @@
         @test has_edge(z, e)
         @test z == PathDiGraph(6)
 
-        # Check merge_vertices function.
-        # h = DiGraph{T}(7)
-        # add_edge!(h, 2, 5)
-        # add_edge!(h, 3, 6)
-        # add_edge!(h, 1, 7)
-        # add_edge!(h, 4, 3)
-        # add_edge!(h, 6, 5)
-        # new_map = @inferred(merge_vertices!(h, [2, 3, 7, 3, 3, 2]))
-        # @test new_map == [1, 2, 2, 4, 5, 3, 2]
-        # @test inneighbors(h, 2) == [1, 4]
-        # @test outneighbors(h, 2) == [3, 5]
-        # @test outneighbors(h, 3) == [5]
-
     end
 
     re1 = Edge(2, 1)
@@ -287,5 +274,16 @@
         @test @inferred(egonet(g, 1, 3, distgs)) == Graph{T}(1)
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
+    end
+
+    gp = PathGraph(4)
+    for g in testgraphs(gp)
+        @test @inferred(g[1,2] == 1)
+        @test @inferred(g[3,4] == 1)
+        @test @inferred(g[1,3] == 0)
+        @test @inferred(g[1,10] == 0) # nonexistent vertex
+        @test @inferred(g[1,-10] == 0) # nonexistent negative vertex
+        @test @inferred(g[-10,1] == 0) # nonexistent negative vertex
+        @test @inferred(g[0,1] == 0) # nonexistent negative vertex
     end
 end
