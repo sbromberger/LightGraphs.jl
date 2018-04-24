@@ -14,10 +14,10 @@ notifications:
 # uncomment the following lines to override the default test script
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
+  - julia -e 'import Pkg3; Pkg3.clone(pwd()); Pkg3.build("LightGraphs"); Pkg3.test("LightGraphs"; coverage=true)'
 
 after_success:
-    - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
-    - julia -e 'Pkg.add("Documenter")'
-    - julia -e 'cd(Pkg.dir("LightGraphs")); include(joinpath("docs", "make.jl"))'
+    - julia -e 'import Pkg3; cd(Pkg3.dir("LightGraphs")); Pkg3.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+    - julia -e 'import Pkg3; Pkg3.add("Documenter")'
+    - julia -e 'import Pkg3; cd(Pkg3.dir("LightGraphs")); include(joinpath("docs", "make.jl"))'
 #    - export JULIA_NUM_THREADS=4; julia -e 'Pkg.add("PkgBenchmark"); using PkgBenchmark; benchmarkpkg("LightGraphs", promptoverwrite=false)'
