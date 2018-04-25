@@ -39,11 +39,11 @@ end
 """
     transitivereduction(g; selflooped=false)
 
-    Compute the transitive reduction of  a directed graph. If the graph contains
-    cycles, each strongly connected component is replaced by a directed cycle and
-    the transitive reduction is calculated on the condensation graph connecting the
-    components. If `selflooped` is true, self loops on strongly connected components
-    of size one will be preserved.
+Compute the transitive reduction of  a directed graph. If the graph contains
+cycles, each strongly connected component is replaced by a directed cycle and
+the transitive reduction is calculated on the condensation graph connecting the
+components. If `selflooped` is true, self loops on strongly connected components
+of size one will be preserved.
 
 ### Performance
 Time complexity is \\mathcal{O}(|V||E|).
