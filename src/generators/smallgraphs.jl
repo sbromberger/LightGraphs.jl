@@ -194,7 +194,7 @@ function FruchtGraph()
     (9, 10), (9, 12),
     (11, 12)
     ]
-    return _make_simple_undirected_graph(20, e)
+    return _make_simple_undirected_graph(12, e)
 end
 
 
