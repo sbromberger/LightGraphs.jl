@@ -24,7 +24,7 @@
     @test nv(g) == 20 && ne(g) == 30
 
     g = smallgraph(:frucht)
-    @test nv(g) == 20 && ne(g) == 18
+    @test nv(g) == 12 && ne(g) == 18
 
     g = smallgraph(:heawood)
     @test nv(g) == 14 && ne(g) == 21
