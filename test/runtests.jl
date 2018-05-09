@@ -40,6 +40,7 @@ tests = [
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
+    "shortestpaths/johnson",
     "shortestpaths/yen",
     "traversals/bfs",
     "traversals/parallel_bfs",
