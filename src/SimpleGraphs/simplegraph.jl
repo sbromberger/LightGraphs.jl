@@ -71,6 +71,144 @@ function SimpleGraph(g::SimpleDiGraph)
     return SimpleGraph(edgect ÷ 2, newfadj)
 end
 
+@inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T<:Integer
+    neg = 0
+    for v in 1:length(fadjlist)
+        if !issorted(fadjlist[v])
+            sort!(fadjlist[v])
+        end
+        unique!(fadjlist[v])
+        neg += length(fadjlist[v])
+        # self-loops should count as one edge
+        for w in fadjlist[v]
+            if w == v
+                neg += 1
+                break
+            end
+        end
+    end
+    return neg ÷ 2
+end
+
+function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T<:Integer
+    nvg = zero(T)
+    @inbounds(
+    for e in edge_list
+        nvg = max(nvg, src(e), dst(e)) 
+    end)
+   
+    list_sizes = ones(Int, nvg)
+    degs = zeros(Int, nvg)
+    @inbounds(
+    for e in edge_list
+        s, d = src(e), dst(e)
+        (s >= 1 && d >= 1) || continue
+        degs[s] += 1
+        if s != d
+            degs[d] += 1
+        end
+    end)
+    
+    fadjlist = Vector{Vector{T}}(undef, nvg)
+    @inbounds(
+    for v in 1:nvg
+        fadjlist[v] = Vector{T}(undef, degs[v])
+    end)
+
+    @inbounds(
+    for e in edge_list
+        s, d = src(e), dst(e)
+        (s >= 1 && d >= 1) || continue
+        fadjlist[s][list_sizes[s]] = d 
+        list_sizes[s] += 1
+        if s != d 
+            fadjlist[d][list_sizes[d]] = s 
+            list_sizes[d] += 1
+        end
+    end)
+
+    neg = cleanupedges!(fadjlist)
+    g = SimpleGraph{T}()
+    g.fadjlist = fadjlist
+    g.ne = neg
+
+    return g
+end
+
+
+@inbounds function add_to_fadjlist!(fadjlist::Vector{Vector{T}}, s::T, d::T) where T<:Integer
+    nvg = length(fadjlist)
+    nvg_new = max(nvg, s, d)
+    for v = (nvg+1):nvg_new
+        push!(fadjlist, Vector{T}())
+    end
+
+    push!(fadjlist[s], d)
+    if s != d
+        push!(fadjlist[d], s)
+    end
+end
+
+function _SimpleGraphFromIterator(iter)::SimpleGraph
+    T = Union{}
+    fadjlist = Vector{Vector{T}}() 
+    @inbounds(
+    for e in iter
+        typeof(e) <: SimpleGraphEdge ||
+                        throw(ArgumentError("iter must be an iterator over SimpleEdge"))
+        s, d = src(e), dst(e)
+        (s >= 1 && d >= 1) || continue
+        if T != eltype(e)
+            T = typejoin(T, eltype(e)) 
+            fadjlist = convert(Vector{Vector{T}}, fadjlist)
+        end
+        add_to_fadjlist!(fadjlist, s, d)
+    end)
+
+    T == Union{} && return SimpleGraph(0)
+    neg  = cleanupedges!(fadjlist)
+    g = SimpleGraph{T}()
+    g.fadjlist = fadjlist
+    g.ne = neg
+
+    return g
+end
+
+function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T<:Integer
+    fadjlist = Vector{Vector{T}}() 
+    @inbounds(
+    for e in iter
+        s, d = src(e), dst(e)
+        (s >= 1 && d >= 1) || continue
+        add_to_fadjlist!(fadjlist, s, d)
+    end)
+
+    neg  = cleanupedges!(fadjlist)
+    g = SimpleGraph{T}()
+    g.fadjlist = fadjlist
+    g.ne = neg
+
+    return g
+end
+
+"""
+    SimpleGraphFromIterator(iter)
+
+Creates a SimpleGraph from an iterator iter. The elements in iter must
+be of type <: SimpleEdge.
+"""
+function SimpleGraphFromIterator(iter)::SimpleGraph
+    if Base.IteratorEltype(iter) == Base.EltypeUnknown()
+        return _SimpleGraphFromIterator(iter)
+    end
+    # if the eltype of iter is know but is a proper supertype of SimpleDiEdge
+    if !(eltype(iter) <: SimpleGraphEdge) && SimpleGraphEdge <: eltype(iter)
+        return _SimpleGraphFromIterator(iter)
+    end
+    return _SimpleGraphFromIterator(iter, eltype(iter))
+end
+
+
 edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T}
 
 """
