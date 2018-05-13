@@ -170,7 +170,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     g.fadjlist = fadjlist
     g.ne = neg
-
+    
     return g
 end
 
