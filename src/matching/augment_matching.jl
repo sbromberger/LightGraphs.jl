@@ -73,7 +73,7 @@ Each augmentation iteration takes O(|V|*(|V|+|E|)) time.
 """
 function augment_matching(g::AbstractGraph{T},
 	matching=Vector{Edge}();
-	reps_augment::Integer=div(nv(g), 2),
+	reps_augment::Integer=div(nv(g), 2)
 	) where T <: Integer 
 
 	nvg = nv(g)
