@@ -79,8 +79,8 @@ function augment_matching(g::AbstractGraph{T},
 	nvg = nv(g)
 	partner = zeros(T, nvg)
 	for e in matching
-		partner[e.src] = e.dst
 		partner[e.dst] = e.src
+		partner[e.src] = e.dst
 	end
 	unpartnered = Vector{T}()
 	for v in vertices(g)
