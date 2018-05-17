@@ -78,11 +78,12 @@ function augment_matching(g::AbstractGraph{T},
 
 	nvg = nv(g)
 	partner = zeros(T, nvg)
-	#=for e in matching
+	for e in matching
 		partner[e.dst] = e.src
 		partner[e.src] = e.dst
-	end=#
+	end
 	unpartnered = Vector{T}()
+	sizehint!(unpartnered, nvg-size(matching)[1])
 	for v in vertices(g)
 		if partner[v] == zero(T)
 			push!(unpartnered, v)
