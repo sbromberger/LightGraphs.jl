@@ -146,7 +146,19 @@ kruskal_mst, prim_mst,
 articulation, biconnected_components,
 
 #graphcut
-normalized_cut
+normalized_cut,
+
+#dominatingset
+degree_dominating_set, random_minimal_dominating_set,
+
+#independentset
+degree_independent_set, random_maximal_independent_set,
+
+#matching
+random_maximal_matching, augment_matching,
+
+#vertexcover
+degree_vertex_cover, random_vertex_cover
 
 """
     LightGraphs
@@ -246,6 +258,14 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("dominatingset/degree_dom_set.jl")
+include("dominatingset/random_minimal_dom_set.jl")
+include("independentset/degree_ind_set.jl")
+include("independentset/random_maximal_ind_set.jl")
+include("matching/random_maximal_matching.jl")
+include("matching/augment_matching.jl")
+include("vertexcover/degree_vertex_cover.jl")
+include("vertexcover/random_vertex_cover.jl")
 
 using .LinAlg
 end # module
