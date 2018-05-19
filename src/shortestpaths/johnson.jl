@@ -23,10 +23,9 @@ Behaviour in case of negative cycle depends on bellman_ford_shortest_paths.
 Throws NegativeCycleError() if a negative cycle is present.
 ### Performance
 Complexity: O(|V|*|E|)
-A sparse matrix will be produced using distmx.
-To reduce memory overhead,  
+If distmx is not mutable or of type, DefaultDistance than a sparse matrix will be produced using distmx.
+In the case that distmx is immutable, to reduce memory overhead,  
 if edge (a, b) does not exist in g then distmx[a, b] should be set to 0.
-Memory overhead: 2*|V|^2 + |E| + |V|
 ### Dependencies from LightGraphs
 bellman_ford_shortest_paths
 parallel_multisource_dijkstra_shortest_paths
@@ -39,25 +38,31 @@ function johnson_shortest_paths(
 ) where T<:Real where U<:Integer
 
     nvg = nv(g)
+    type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
-    #Some matrices are immutable
-    new_distmx = sparse(typeof(distmx) == LightGraphs.DefaultDistance ? g : distmx) 
-    #Transform weights
-    for e in edges(g)
-    	new_distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+    
+    if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
+        distmx = sparse(distmx) #Change reference, not value
     end
-    dists = Matrix{T}(nvg, nvg)
-    parents = Matrix{U}(nvg, nvg)
+
+    #Weight transform not needed if all weights are positive.
+    if type_distmx !=  LightGraphs.DefaultDistance
+        for e in edges(g)
+        	distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+        end
+    end
+    dists = Matrix{T}(undef, nvg, nvg)
+    parents = Matrix{U}(undef, nvg, nvg)
 
     if !parallel
     	for v in vertices(g)
-    		dijk_state = dijkstra_shortest_paths(g, v, new_distmx)
+    		dijk_state = dijkstra_shortest_paths(g, v, distmx)
     		dists[v, :] = dijk_state.dists
       		parents[v, :] = dijk_state.parents
     	end
     else
-    	dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), new_distmx)
+    	dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
     	dists = dijk_state.dists
     	parents = dijk_state.parents
     end
@@ -65,6 +70,12 @@ function johnson_shortest_paths(
     broadcast!(-, dists, dists, wt_transform)
     for v in vertices(g)
         dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+    end
+
+    if type_distmx.mutable
+        for e in edges(g)
+            distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
+        end
     end
 
     return JohnsonState(dists, parents)

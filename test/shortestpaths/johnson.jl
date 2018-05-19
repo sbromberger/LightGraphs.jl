@@ -1,6 +1,6 @@
 @testset "Johnson" begin
     g3 = PathGraph(5)
-    d = [0 1 2 3 4; 1 0 6 7 8; 2 6 0 11 12; 3 7 11 0 16; 4 8 12 16 0]
+    d = LinearAlgebra.Symmetric([0 1 2 3 4; 1 0 6 7 8; 2 6 0 11 12; 3 7 11 0 16; 4 8 12 16 0])
     for g in testgraphs(g3)
       z = @inferred(johnson_shortest_paths(g, d))
       @test z.dists[3, :][:] == [7, 6, 0, 11, 27]
