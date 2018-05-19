@@ -52,10 +52,10 @@ function johnson_shortest_paths(
         	distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
         end
     end
-    dists = Matrix{T}(undef, nvg, nvg)
-    parents = Matrix{U}(undef, nvg, nvg)
 
     if !parallel
+        dists = Matrix{T}(undef, nvg, nvg)
+        parents = Matrix{U}(undef, nvg, nvg)
     	for v in vertices(g)
     		dijk_state = dijkstra_shortest_paths(g, v, distmx)
     		dists[v, :] = dijk_state.dists
