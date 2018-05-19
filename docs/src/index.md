@@ -1,4 +1,4 @@
-# Light Graphs
+# LightGraphs
 
 The goal of *LightGraphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, LightGraphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
 
