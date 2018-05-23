@@ -14,8 +14,8 @@ import LightGraphs:
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
 
 export AbstractSimpleGraph, AbstractSimpleEdge,
-    SimpleEdge, SimpleGraph, SimpleGraphEdge,
-    SimpleDiGraph, SimpleDiGraphEdge,
+    SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
+    SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
     add_vertex!, add_edge!, rem_vertex!, rem_edge!
 
 
