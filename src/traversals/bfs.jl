@@ -32,7 +32,7 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-bfs_parents(g::AbstractGraph, s::Integer; dir = :out) = 
+bfs_parents(g::AbstractGraph, s::Integer; dir = :out) =
     (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
 
 function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
@@ -43,7 +43,7 @@ function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
-    @inbounds for s in source
+    for s in source
         visited[s] = true
         push!(cur_level, s)
         parents[s] = s
@@ -79,7 +79,7 @@ bfs_tree(g::AbstractGraph, s::Integer; dir = :out) = tree(bfs_parents(g, s; dir 
     gdistances!(g, source, dists; sort_alg=QuickSort)
 
 Fill `dists` with the geodesic distances of vertices in `g` from source vertex (or
-collection of vertices) `source`. `dists` should be a vector of length `nv(g)` 
+collection of vertices) `source`. `dists` should be a vector of length `nv(g)`
 filled with `typemax(T)`. Return `dists`.
 
 For vertices in disconnected components the default distance is `typemax(T)`.
@@ -145,9 +145,9 @@ gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T 
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `excluded_vertices`. 
+is in `excluded_vertices`.
 """
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
         exclude_vertices::AbstractVector = Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
