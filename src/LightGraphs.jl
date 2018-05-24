@@ -27,7 +27,8 @@ import LinearAlgebra: issymmetric, mul!
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
-Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
+Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
+SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed,
 has_vertex, has_edge, inneighbors, outneighbors,
 
@@ -97,9 +98,9 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-has_negative_edge_cycle, enumerate_paths, floyd_warshall_shortest_paths,
-transitiveclosure!, transitiveclosure, yen_k_shortest_paths,
-parallel_multisource_dijkstra_shortest_paths,
+has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+yen_k_shortest_paths, parallel_multisource_dijkstra_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -217,6 +218,7 @@ include("edit_distance.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
+include("shortestpaths/johnson.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("linalg/LinAlg.jl")
