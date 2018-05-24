@@ -27,7 +27,8 @@ import LinearAlgebra: issymmetric, mul!
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
-Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
+Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
+SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed,
 has_vertex, has_edge, inneighbors, outneighbors,
 
