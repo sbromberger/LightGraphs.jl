@@ -83,6 +83,9 @@ diffusion, diffusion_rate,
 # coloring
 greedy_color,
 
+#travellingsalesman
+metric_travelling_salesman,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
@@ -143,8 +146,11 @@ euclidean_graph,
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
 
+#steinertree
+metric_steiner_tree, steiner_tree,
+
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, lower_bound_pairwise_connectivity,
 
 #graphcut
 normalized_cut
@@ -212,6 +218,7 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("traversals/metric_travelling_salesman.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("edit_distance.jl")
@@ -245,9 +252,11 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("steinertree/metric_steiner_tree.jl")
+include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/pairwise_connectivity.jl")
 include("graphcut/normalized_cut.jl")
-
 using .LinAlg
 end # module

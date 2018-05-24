@@ -50,6 +50,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "traversals/metric_travelling_salesman",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
@@ -67,7 +68,10 @@ tests = [
     "utils",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "steinertree/steiner_tree",
+    "steinertree/metric_steiner_tree",
     "biconnectivity/articulation",
+    "biconnectivity/pairwise_connectivity",
     "biconnectivity/biconnect",
     "graphcut/normalized_cut"
 ]
