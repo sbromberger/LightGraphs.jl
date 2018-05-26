@@ -27,7 +27,7 @@ function mincut(
     bestweight = typemax(T)
     cutweight = zero(T)
     visited = zero(U)               ## number of vertices visited
-    pq =  DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
@@ -89,7 +89,7 @@ function maximum_adjacency_visit(
 ) where T<:Real
 
     U = eltype(g)
-    pq =  DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
