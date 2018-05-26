@@ -69,6 +69,7 @@ tests = [
 @testset "LightGraphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
+        print("$tp\n")
         include(tp)
     end
 end

@@ -2,7 +2,7 @@ __precompile__(true)
 module LightGraphs
 
 import CodecZlib
-using DataStructures
+import DataStructures
 using SimpleTraits
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,

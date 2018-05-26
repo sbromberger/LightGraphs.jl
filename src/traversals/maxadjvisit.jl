@@ -27,7 +27,7 @@ function mincut(
     bestweight = typemax(T)
     cutweight = zero(T)
     visited = zero(U)               ## number of vertices visited
-    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq =  DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
@@ -42,7 +42,7 @@ function mincut(
     pq[one(U)] = one(T)
 
     while !isempty(pq)
-        u = DataStructures.dequeue!(pq)
+        u =  DataStructures.dequeue!(pq)
         colormap[u] = 1
 
         for v in outneighbors(g, u)
@@ -89,7 +89,7 @@ function maximum_adjacency_visit(
 ) where T<:Real
 
     U = eltype(g)
-    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq =  DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
@@ -107,7 +107,7 @@ function maximum_adjacency_visit(
 
     #start traversing the graph
     while !isempty(pq)
-        u = dequeue!(pq)
+        u = DataStructures.dequeue!(pq)
         has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")

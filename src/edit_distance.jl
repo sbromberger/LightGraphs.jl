@@ -50,16 +50,16 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
   h(λ) = heuristic(λ, G₁, G₂)
 
   # initialize open set
-  OPEN = PriorityQueue{Vector{Tuple}, Float64}()
+  OPEN = DataStructures.PriorityQueue{Vector{Tuple}, Float64}()
   for v in 1:nv(G₂)
-    enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
+    DataStructures.enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
   end
-  enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
+  DataStructures.enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
 
   while true
     # minimum (partial) edit path
     λ, cost = DataStructures.peek(OPEN)
-    dequeue!(OPEN)
+    DataStructures.dequeue!(OPEN)
 
     if is_complete_path(λ, G₁, G₂)
       return cost, λ
@@ -70,15 +70,15 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
       if k < nv(G₁) # there are still vertices to process in G₁?
         for v in vs
           λ⁺ = [λ; (k + 1, v)]
-          enqueue!(OPEN, λ⁺, cost + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
+          DataStructures.enqueue!(OPEN, λ⁺, cost + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
         end
         λ⁺ = [λ; (k + 1, 0)]
-        enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
+        DataStructures.enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
       else
         # add remaining vertices of G₂ to the path
         λ⁺ = [λ; [(0, v) for v in vs]]
         total_insert_cost = sum(insert_cost, vs)
-        enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
+        DataStructures.enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
       end
     end
   end
