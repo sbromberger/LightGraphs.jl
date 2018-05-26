@@ -11,7 +11,7 @@ import LightGraphs: tree
         @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
     end
     for g in testgraphs(g6)
-        @test @inferred(gdistances(g, 2)) == [1, 0, 2, 1, 2]
+        @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
         @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
         @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
     end
@@ -28,7 +28,7 @@ import LightGraphs: tree
 
     # import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
 
-    function istree{T<:Integer}(parents::Vector{T}, maxdepth, n::T)
+    function istree(parents::Vector{T}, maxdepth, n::T) where T<:Integer
         flag = true
         for i in one(T):n
             s = i
@@ -59,25 +59,25 @@ import LightGraphs: tree
 
     gx = SimpleGraph(6)
     d = nv(gx)
-    for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3,5)]
+    for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3, 5)]
         add_edge!(gx, i, j)
     end
     for g in testgraphs(gx)  
         @test has_path(g, 1, 5)
         @test has_path(g, 1, 2)
-        @test has_path(g, 1, 5; exclude_vertices = [3])
-        @test has_path(g, 1, 5; exclude_vertices = [4])
-        @test !has_path(g, 1, 5; exclude_vertices = [3, 4])
+        @test has_path(g, 1, 5; exclude_vertices=[3])
+        @test has_path(g, 1, 5; exclude_vertices=[4])
+        @test !has_path(g, 1, 5; exclude_vertices=[3, 4])
         @test has_path(g, 5, 1)
-        @test has_path(g, 5, 1; exclude_vertices = [3])
-        @test has_path(g, 5, 1; exclude_vertices = [4])
-        @test !has_path(g, 5, 1; exclude_vertices = [3, 4])
+        @test has_path(g, 5, 1; exclude_vertices=[3])
+        @test has_path(g, 5, 1; exclude_vertices=[4])
+        @test !has_path(g, 5, 1; exclude_vertices=[3, 4])
         
         # Edge cases
         @test !has_path(g, 1, 6)
         @test !has_path(g, 6, 1)  
         @test has_path(g, 1, 1) # inseparable 
-        @test !has_path(g, 1, 2; exclude_vertices = [2])
-        @test !has_path(g, 1, 2; exclude_vertices = [1])
+        @test !has_path(g, 1, 2; exclude_vertices=[2])
+        @test !has_path(g, 1, 2; exclude_vertices=[1])
     end
 end

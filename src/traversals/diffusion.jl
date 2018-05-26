@@ -16,7 +16,6 @@ each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of sp
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
-
 function diffusion(g::AbstractGraph{T},
                    p::Real,
                    n::Integer;
@@ -27,7 +26,7 @@ function diffusion(g::AbstractGraph{T},
 
     # Initialize
     watch_set = Set{T}(watch)
-    infected_vertices = IntSet(initial_infections)
+    infected_vertices = BitSet(initial_infections)
     vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
 
     # Record initial infection

@@ -1,4 +1,4 @@
-@doc_str """
+"""
     closeness_centrality(g)
 
 Calculate the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality)
@@ -46,7 +46,7 @@ function parallel_closeness_centrality(
 
     closeness = SharedVector{Float64}(n_v)
 
-    @sync @parallel for u in vertices(g)
+    @sync @distributed for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else

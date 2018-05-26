@@ -1,5 +1,5 @@
 using Documenter
-include("../src/LightGraphs.jl")
+#include("../src/LightGraphs.jl")
 using LightGraphs
 
 # same for contributing and license

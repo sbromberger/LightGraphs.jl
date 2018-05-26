@@ -30,7 +30,6 @@ function floyd_warshall_shortest_paths(
     dists = fill(typemax(T), (Int(n_v), Int(n_v)))
     parents = zeros(U, (Int(n_v), Int(n_v)))
 
-    # fws = FloydWarshallState(Matrix{T}(), Matrix{Int}())
     for v in 1:n_v
         dists[v, v] = zero(T)
     end
@@ -48,15 +47,19 @@ function floyd_warshall_shortest_paths(
             parents[v, u] = v
         end
     end
-    for w in vertices(g), u in vertices(g), v in vertices(g)
-        if dists[u, w] == typemax(T) || dists[w, v] == typemax(T)
-            ans = typemax(T)
-        else
-            ans = dists[u, w] + dists[w, v]
-        end
-        if dists[u, v] > ans
-            dists[u, v] = dists[u, w] + dists[w, v]
-            parents[u, v] = parents[w, v]
+
+    for pivot in vertices(g)
+        for v in vertices(g)
+            d = dists[pivot, v]
+            d == typemax(T) && continue
+            p = parents[pivot, v]
+            for u in vertices(g)
+                ans = (dists[u, pivot] == typemax(T) ? typemax(T): dists[u, pivot] + d) 
+                if dists[u, v] > ans
+                    dists[u, v] = ans
+                    parents[u, v] = p
+                end
+            end
         end
     end
     fws = FloydWarshallState(dists, parents)

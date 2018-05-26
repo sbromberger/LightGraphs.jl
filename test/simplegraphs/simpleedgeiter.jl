@@ -24,6 +24,7 @@
     @test collect(SimpleEdge, edges(gb)) == edges(ga)
     @test Set{Edge}(collect(SimpleEdge, edges(gb))) == edges(ga)
     @test @inferred(edges(ga)) == Set{SimpleEdge}(collect(SimpleEdge, edges(gb)))
+    @test eltype(collect(edges(ga))) == edgetype(ga)
 
     ga = SimpleGraph(10)
     add_edge!(ga, 3, 2)

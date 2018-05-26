@@ -61,5 +61,5 @@ function articulation(g::AbstractGraph)
             visit!(state, g, u, u)
         end
     end
-    return find(state.articulation_points)
+    return findall(state.articulation_points)
 end

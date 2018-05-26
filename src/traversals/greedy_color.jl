@@ -22,7 +22,7 @@ function perm_greedy_color(
     ) where T <: Integer 
 
     nvg::T = nv(g)
-    cols = Vector{T}(nvg)  
+    cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
 
     for v in seq
@@ -68,7 +68,7 @@ function parallel_random_greedy_color(
     reps::Integer
 ) where T<:Integer 
 
-    best = @parallel (best_color) for i in 1:reps
+    best = @distributed (best_color) for i in 1:reps
         seq = shuffle(vertices(g))
         perm_greedy_color(g, seq)
     end
@@ -105,10 +105,10 @@ and choose the best coloring out of `reps` such random coloring.
 
 If parallel is true then the colorings are executed in parallel.
 """
-random_greedy_color{T<:Integer}(g::AbstractGraph{T}, reps::Integer = 1, parallel::Bool = false) =
+random_greedy_color(g::AbstractGraph{T}, reps::Integer = 1, parallel::Bool = false) where {T<:Integer} =
 parallel ? parallel_random_greedy_color(g, reps) : seq_random_greedy_color(g, reps)
 
-@doc_str """
+"""
     greedy_color(g; sort_degree=false, parallel=false, reps = 1)
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)
@@ -124,6 +124,6 @@ colors is chosen.
 
 If `parallel` is true then this function executes coloring in parallel.
 """
-greedy_color{U <: Integer}(g::AbstractGraph{U}; sort_degree::Bool=false, parallel::Bool =false, reps::Integer=1) =
+greedy_color(g::AbstractGraph{U}; sort_degree::Bool=false, parallel::Bool =false, reps::Integer=1) where {U <: Integer} =
 sort_degree ? degree_greedy_color(g) : random_greedy_color(g, reps, parallel)
 

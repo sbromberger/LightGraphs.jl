@@ -1,4 +1,5 @@
 using LightGraphs.LinAlg
+using IterativeEigensolvers
 
 const linalgtestdir = dirname(@__FILE__)
 

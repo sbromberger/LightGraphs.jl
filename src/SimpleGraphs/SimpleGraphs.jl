@@ -1,19 +1,22 @@
 module SimpleGraphs
 
+using SparseArrays
+using LinearAlgebra
+
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero, in
 
 import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    add_vertex!, add_edge!, rem_vertex!, rem_edge!,
     has_vertex, has_edge, inneighbors, outneighbors,
 
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
 
-export AbstractSimpleGraph, AbstractSimpleDiGraph, AbstractSimpleEdge,
-    SimpleEdge, SimpleGraph, SimpleGraphEdge,
-    SimpleDiGraph, SimpleDiGraphEdge
+export AbstractSimpleGraph, AbstractSimpleEdge,
+    SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
+    SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
+    add_vertex!, add_edge!, rem_vertex!, rem_edge!
 
 
 """
@@ -70,7 +73,7 @@ function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
     rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 
-@doc_str """
+"""
     rem_vertex!(g, v)
 
 Remove the vertex `v` from graph `g`. Return false if removal fails
