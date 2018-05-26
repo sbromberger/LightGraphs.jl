@@ -42,7 +42,7 @@ function mincut(
     pq[one(U)] = one(T)
 
     while !isempty(pq)
-        u =  DataStructures.dequeue!(pq)
+        u = DataStructures.dequeue!(pq)
         colormap[u] = 1
 
         for v in outneighbors(g, u)
