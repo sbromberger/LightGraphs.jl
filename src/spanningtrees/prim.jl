@@ -58,7 +58,7 @@ function visit!(
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-             DataStructures.heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+            DataStructures.heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
         end
     end
 end
