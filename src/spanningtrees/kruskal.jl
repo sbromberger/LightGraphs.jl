@@ -58,7 +58,7 @@ function kruskal_mst end
      DataStructures.heapify!(edge_list)
 
     while !isempty(edge_list)
-        heap_entry = heappop!(edge_list)
+        heap_entry = DataStructures.heappop!(edge_list)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
