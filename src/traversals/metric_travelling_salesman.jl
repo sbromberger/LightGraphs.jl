@@ -18,10 +18,10 @@ function dfs_short_circuit(g::AbstractGraph, s::T) where T <: Integer
     push!(tour, s)
     seen[s] = true
 
-    while !isempty(S)
+    @inbounds while !isempty(S)
         v = S[end]
         u = zero(T)
-        for n in neighbors(g, v)
+        for n in outneighbors(g, v)
             if !seen[n]
                 u = n
                 break
@@ -62,9 +62,12 @@ function metric_travelling_salesman(
 	g::AbstractGraph{T},
 	distmx::AbstractMatrix{U}
 	) where T<: Integer where U<: Real
+    
+    is_directed(g) && return Vector{Edge}()
 
     mst_tmp = prim_mst(g, distmx)
     #Prim returns Vector{Edge}, we require Vector{Edge{T}}
 	mst = SimpleGraphFromIterator([Edge{T}(e.src, e.dst) for e in mst_tmp])
+
     return dfs_short_circuit(mst, one(T))
 end

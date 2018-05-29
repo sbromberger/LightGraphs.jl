@@ -25,9 +25,11 @@ Perform [Approximate Metric Steiner Tree](lucatrevisan.wordpress.com/2011/01/13/
 """
 function metric_steiner_tree(
 	g::AbstractGraph{T},
-	distmx::AbstractMatrix{U},
-	term_vert::Vector
+	term_vert::Vector{<:Integer},
+	distmx::AbstractMatrix{U}=weights(g)
 	) where T <: Integer where U <: Real 
+
+	is_directed(g) && return Vector{Edge}()
 
 	term_to_actual = unique(term_vert)
 	nvg_t = size(term_to_actual)[1]
@@ -40,8 +42,8 @@ function metric_steiner_tree(
 
 	mst_t = kruskal_mst(CompleteGraph(nvg_t), distmx_t)
 
-	for (i,e) in enumerate(mst_t)
-		mst_t[i] = Edge(term_to_actual[e.src], term_to_actual[e.dst])
+	for (i, e) in enumerate(mst_t)
+		@inbounds mst_t[i] = Edge(term_to_actual[e.src], term_to_actual[e.dst])
 	end
 	return mst_t
 end

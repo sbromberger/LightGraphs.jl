@@ -79,7 +79,7 @@ function invalidate_distinct_colors!(
     valid_distinct_cols::Vector{Bool}
     ) where T <: Integer
     
-    for u in neighbors(g, v)
+    @inbounds @simd for u in neighbors(g, v)
         valid_distinct_cols[u] = false    
     end
 end
