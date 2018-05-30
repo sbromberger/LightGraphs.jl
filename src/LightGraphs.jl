@@ -1,17 +1,15 @@
 __precompile__(true)
 module LightGraphs
 
-using SharedArrays
-using Random
 import CodecZlib
 import DataStructures
-using SimpleTraits
 
+using SimpleTraits
+using SharedArrays
 using SparseArrays
 using LinearAlgebra
 using IterativeEigensolvers
 using SharedArrays
-using Random
 using Markdown
 using DelimitedFiles
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
