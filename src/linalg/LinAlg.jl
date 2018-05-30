@@ -1,9 +1,9 @@
 module LinAlg
 
 using SimpleTraits
-using SparseArrays
-using LinearAlgebra
-using IterativeEigensolvers
+import SparseArrays
+import LinearAlgebra
+import IterativeEigensolvers
 using ..LightGraphs
 
 import LightGraphs: IsDirected, AbstractGraph, inneighbors,

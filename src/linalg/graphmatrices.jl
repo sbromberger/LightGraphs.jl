@@ -1,4 +1,4 @@
-const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
+const SparseMatrix{T} = SparseArrays.SparseMatrixCSC{T,Int64}
 
 """
 	GraphMatrix{T}
@@ -85,14 +85,14 @@ function AveragingAdjacency(adjmat::CombinatorialAdjacency)
 	return AveragingAdjacency(adjmat, sf)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / norm(sqrt.(adjmat.A.D))
+perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / LinearAlgebra.norm(sqrt.(adjmat.A.D))
 
 struct PunchedAdjacency{T} <: Adjacency{T}
 	A::NormalizedAdjacency{T}
 	perron::Vector{T}
 end
 function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-            perron = sqrt.(adjmat.D) / norm(sqrt.(adjmat.D))
+            perron = sqrt.(adjmat.D) / LinearAlgebra.norm(sqrt.(adjmat.D))
             return PunchedAdjacency(NormalizedAdjacency(adjmat), perron)
 end
 
@@ -111,7 +111,7 @@ struct Noop end
 
 Base.broadcast(::typeof(*), ::Noop, x) = x
 
-Diagonal(::Noop) = Noop()
+LinearAlgebra.Diagonal(::Noop) = Noop()
 
 
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
@@ -197,7 +197,7 @@ convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 function sparse(lapl::M) where M<:Laplacian
 	adjmat = adjacency(lapl)
 	A = sparse(adjmat)
-	L = sparse(Diagonal(diag(lapl))) - A
+	L = sparse(LinearAlgebra.Diagonal(diag(lapl))) - A
 	return L
 end
 
@@ -207,7 +207,7 @@ end
 
 function sparse(adjmat::Adjacency)
     A = sparse(adjmat.A)
-    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
+    return LinearAlgebra.Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
 
@@ -215,7 +215,7 @@ end
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
 	adjmat = adjacency(lapl)
 	A = convert(SparseMatrix{T}, adjmat)
-	L = sparse(Diagonal(diag(lapl))) - A
+	L = sparse(LinearAlgebra.Diagonal(diag(lapl))) - A
 	return L
 end
 
@@ -236,7 +236,7 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T<:Number
     y = adjmat.A * x
-    return y - dot(adjmat.perron, y) * adjmat.perron
+    return y - LinearAlgebra.dot(adjmat.perron, y) * adjmat.perron
 end
 
 function mul!(Y, A::Adjacency, B)
@@ -245,10 +245,10 @@ function mul!(Y, A::Adjacency, B)
     # The last call to mul! must be (Y, postscalefactor, tmp)
     # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
     # and the first step (Y, prescalefactor, B)
-    tmp1 = Diagonal(prescalefactor(A)) * B
+    tmp1 = LinearAlgebra.Diagonal(prescalefactor(A)) * B
     tmp = similar(Y)
     mul!(tmp, A.A, tmp1)
-    return mul!(Y, Diagonal(postscalefactor(A)), tmp)
+    return mul!(Y, LinearAlgebra.Diagonal(postscalefactor(A)), tmp)
 end
 
 mul!(Y, A::CombinatorialAdjacency, B) = mul!(Y, A.A, B)
@@ -257,14 +257,14 @@ mul!(Y, A::CombinatorialAdjacency, B) = mul!(Y, A.A, B)
 # This is true for all Adjacency where the postscalefactor is a Noop
 # at time of writing this is just StochasticAdjacency and CombinatorialAdjacency
 function mul!(Y, A::StochasticAdjacency, B)
-    tmp = Diagonal(prescalefactor(A)) * B
+    tmp = LinearAlgebra.Diagonal(prescalefactor(A)) * B
     mul!(Y, A.A, tmp)
     return Y
 end
 
 function mul!(Y, adjmat::PunchedAdjacency, x)
     y = adjmat.A * x
-    Y[:] = y - dot(adjmat.perron, y) * adjmat.perron
+    Y[:] = y - LinearAlgebra.dot(adjmat.perron, y) * adjmat.perron
     return Y
 end
 
@@ -290,9 +290,9 @@ function symmetrize(A::SparseMatrix, which=:or)
     end
 	T = A
 	if which == :triu
-		T = triu(A)
+		T = LinearAlgebra.triu(A)
 	elseif which == :tril
-	    T = tril(A)
+	    T = LinearAlgebra.tril(A)
     elseif which == :sum
 	    T = A
     else

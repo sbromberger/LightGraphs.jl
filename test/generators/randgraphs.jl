@@ -185,13 +185,15 @@
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(outdegree(rd)) == 0
+    outdegree_rd = @inferred(outdegree(rd))
+    @test all(outdegree_rd .== outdegree_rd[1])
 
     rd = random_regular_digraph(1000, 4, dir=:in)
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(indegree(rd)) == 0
+    indegree_rd = @inferred(indegree(rd))
+    @test all(indegree_rd .== indegree_rd[1])
 
     rr = random_regular_graph(10, 8, seed=4)
     @test nv(rr) == 10
@@ -254,7 +256,7 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
     test_sbm(sbm, bp)
-    @test norm(collect(ratios)) < 0.25
+    @test LinearAlgebra.norm(collect(ratios)) < 0.25
 
     sizes = [200, 200, 100]
     internaldeg = 15
@@ -272,14 +274,14 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     test_sbm(sbm, bp)
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(collect(ratios)) < 0.25
+    @test LinearAlgebra.norm(collect(ratios)) < 0.25
 
     # check that average degree is not too high
     # factor of two is cushion for random process
     @test mean(degree(g)) <= 4//2*numedges/sum(sizes)
     # check that the internal degrees are higher than the external degrees
     # 5//4 is cushion for random process.
-    @test all(sum(bc-diagm(0=>diag(bc)), dims=1) .<= 5//4 .* diag(bc))
+    @test all(sum(bc-LinearAlgebra.diagm(0=>diag(bc)), dims=1) .<= 5//4 .* diag(bc))
 
 
     sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))

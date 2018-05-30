@@ -77,11 +77,11 @@ function parallel_eccentricity(
     distmx::AbstractMatrix{T} = weights(g)
 ) where T <: Real
     vlen = length(vs)
-    eccs = SharedVector{T}(vlen)
+    eccs = SharedArrays.SharedVector{T}(vlen)
     @sync @distributed for i = 1:vlen
         eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
-    d = sdata(eccs)
+    d = SharedArrays.sdata(eccs)
     maximum(d) == typemax(T) && warn("Infinite path length detected")
     return d
 end

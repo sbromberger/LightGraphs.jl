@@ -44,7 +44,7 @@ function parallel_closeness_centrality(
 
     n_v = Int(nv(g))
 
-    closeness = SharedVector{Float64}(n_v)
+    closeness = SharedArrays.SharedVector{Float64}(n_v)
 
     @sync @distributed for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
@@ -63,5 +63,5 @@ function parallel_closeness_centrality(
             end
         end
     end
-    return sdata(closeness)
+    return SharedArrays.sdata(closeness)
 end

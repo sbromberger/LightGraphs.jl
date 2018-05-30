@@ -119,7 +119,7 @@ vertex v ∈ G₂.
 `p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
-  (u, v) -> norm(μ₁[u] - μ₂[v], p)
+  (u, v) -> LinearAlgebra.norm(μ₁[u] - μ₂[v], p)
 end
 
 """
@@ -132,5 +132,5 @@ Return value similar to `MinkowskiCost`, but ensure costs smaller than 2τ.
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
-  (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
+  (u, v) -> 1 / (1 / (2τ) + exp(-LinearAlgebra.norm(μ₁[u] - μ₂[v], p)))
 end

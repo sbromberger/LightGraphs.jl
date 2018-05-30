@@ -17,10 +17,10 @@
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         @test adjmat.D == vec(sum(mat, dims=1))
         @test adjmat.A == mat
-        @test isa(sparse(mat), SparseMatrixCSC)
-        @test isa(sparse(stochmat), SparseMatrixCSC)
-        @test isa(sparse(adjhat), SparseMatrixCSC)
-        @test isa(sparse(avgmat), SparseMatrixCSC)
+        @test isa(sparse(mat), SparseArrays.SparseMatrixCSC)
+        @test isa(sparse(stochmat), SparseArrays.SparseMatrixCSC)
+        @test isa(sparse(adjhat), SparseArrays.SparseMatrixCSC)
+        @test isa(sparse(avgmat), SparseArrays.SparseMatrixCSC)
         @test isa(convert(CombinatorialAdjacency, adjmat), CombinatorialAdjacency)
         @test isa(convert(CombinatorialAdjacency, avgmat), CombinatorialAdjacency)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
@@ -94,13 +94,13 @@
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
         @test g(StochasticLaplacian(stochmat)) > 1e-13
 
-        @test eigs(adjmat, which=:LR)[1][1] > 1.0
-        @test eigs(stochmat, which=:LR)[1][1] ≈ 1.0
-        @test eigs(avgmat, which=:LR)[1][1] ≈ 1.0
-        @test eigs(lapl, which=:LR)[1][1] > 2.0
-        @test_throws MethodError eigs(lapl, which=:SM)[1][1] # --> greater_than(-0.0)
+        @test IterativeEigensolvers.eigs(adjmat, which=:LR)[1][1] > 1.0
+        @test IterativeEigensolvers.eigs(stochmat, which=:LR)[1][1] ≈ 1.0
+        @test IterativeEigensolvers.eigs(avgmat, which=:LR)[1][1] ≈ 1.0
+        @test IterativeEigensolvers.eigs(lapl, which=:LR)[1][1] > 2.0
+        @test_throws MethodError IterativeEigensolvers.eigs(lapl, which=:SM)[1][1] # --> greater_than(-0.0)
         lhat = NormalizedLaplacian(adjhat)
-        @test eigs(lhat, which=:LR)[1][1] < 2.0 + 1e-9
+        @test IterativeEigensolvers.eigs(lhat, which=:LR)[1][1] < 2.0 + 1e-9
     end
 
     function test_other(mat, n)
@@ -141,8 +141,8 @@
         @test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
         @test symmetrize(adjmat).A == adjmat.A
         # these tests are basically the code
-        @test symmetrize(adjmat, :triu).A == triu(adjmat.A) + triu(adjmat.A)'
-        @test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'
+        @test symmetrize(adjmat, :triu).A == LinearAlgebra.triu(adjmat.A) + LinearAlgebra.triu(adjmat.A)'
+        @test symmetrize(adjmat, :tril).A == LinearAlgebra.tril(adjmat.A) + LinearAlgebra.tril(adjmat.A)'
         @test symmetrize(adjmat, :sum).A == adjmat.A + adjmat.A
 
         @test_throws ArgumentError symmetrize(adjmat, :fake)
@@ -152,16 +152,16 @@
         adjmat = CombinatorialAdjacency(mat)
         ahatp  = PunchedAdjacency(adjmat)
         y = ahatp * perron(ahatp)
-        @test dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
+        @test LinearAlgebra.dot(y, ahatp.perron) ≈ 0.0 atol = 1.0e-8
         @test sum(abs, y) ≈ 0.0 atol = 1.0e-8
-        eval, evecs = eigs(ahatp, which=:LM)
+        eval, evecs = IterativeEigensolvers.eigs(ahatp, which=:LM)
         @test eval[1] - (1 + 1.0e-8)  <= 0
-        @test dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
+        @test LinearAlgebra.dot(perron(ahatp), evecs[:, 1]) ≈ 0.0 atol = 1e-8
         ahat = ahatp.A
         @test isa(ahat, NormalizedAdjacency)
 
         z = ahatp * perron(ahat)
-        @test norm(z) ≈ 0.0 atol = 1e-8
+        @test LinearAlgebra.norm(z) ≈ 0.0 atol = 1e-8
     end
 
 
@@ -183,7 +183,7 @@
 
     """Computes the stationary distribution of a random walk"""
     function stationarydistribution(R::StochasticAdjacency; kwargs...)
-        er = eigs(R, nev=1, which=:LR; kwargs...)
+        er = IterativeEigensolvers.eigs(R, nev=1, which=:LR; kwargs...)
         l1 = er[1][1]
         abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution") # TODO 0.7: should we change the error type to InexactError?
         p = real(er[2][:, 1])
@@ -204,7 +204,7 @@
     n = 100
     p = 16 / n
     M = sprand(n, n, p)
-    M.nzval[:] = 1.0
+    M.nzval[:] .= 1.0
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; ncv=10)
     @test all(sd .>= 0)

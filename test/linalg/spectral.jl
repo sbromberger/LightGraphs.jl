@@ -93,9 +93,9 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
             lmat = laplacian_matrix(g, Float64; dir=dir)
-            @test isa(amat, SparseMatrixCSC{Float64,T})
-            @test isa(lmat, SparseMatrixCSC{Float64,T})
-            evals = eigvals(Matrix(lmat))
+            @test isa(amat, SparseArrays.SparseMatrixCSC{Float64,T})
+            @test isa(lmat, SparseArrays.SparseMatrixCSC{Float64,T})
+            evals = LinearAlgebra.eigvals(Matrix(lmat))
             @test all(evals .>= -1e-15) # positive semidefinite
             @test (minimum(evals)) ≈ 0 atol = 1e-13
         end
@@ -133,20 +133,20 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         B, emap = non_backtracking_matrix(g)
         Bs = sparse(nbt)
         @test sparse(B) == Bs
-        @test eigs(nbt, nev=1)[1] ≈ eigs(B, nev=1)[1] atol = 1e-5
+        @test IterativeEigensolvers.eigs(nbt, nev=1)[1] ≈ IterativeEigensolvers.eigs(B, nev=1)[1] atol = 1e-5
 
         # check that matvec works
         x = ones(Float64, nbt.m)
         y = nbt * x
         z = B * x
-        @test norm(y - z) < 1e-8
+        @test LinearAlgebra.norm(y - z) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
 
-        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
+        @test LinearAlgebra.norm(nbt * Matrix{Float64}(LinearAlgebra.I, nbt.m, nbt.m) - B) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
+        @test LinearAlgebra.norm(nbt * Matrix{Float64}(LinearAlgebra.I, nbt.m, nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
@@ -156,7 +156,6 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test Matrix(B₁) == Matrix(B)
         @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
-        #   @test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8
         @test !issymmetric(B₁)
         @test eltype(B₁) == Float64
     end

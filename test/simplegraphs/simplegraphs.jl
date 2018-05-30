@@ -1,4 +1,4 @@
-using Random
+import Random
 
 @testset "SimpleGraphs" begin
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
@@ -194,8 +194,8 @@ using Random
             # We create an edge list, shuffle it and reverse half of its edges
             # using this edge list should result in the same graph
             edge_list = [e for e in edges(g)]
-            shuffle!(MersenneTwister(0), edge_list)
-            for i in rand(MersenneTwister(0), 1:length(edge_list), length(edge_list) ÷ 2)
+            Random.shuffle!(Random.MersenneTwister(0), edge_list)
+            for i in rand(Random.MersenneTwister(0), 1:length(edge_list), length(edge_list) ÷ 2)
                 e = edge_list[i]
                 Te = typeof(e)
                 edge_list[i] = Te(dst(e), src(e))
@@ -229,7 +229,7 @@ using Random
         for g in testdigraphs(g_dir)
             # We create an edge list and shuffle it
             edge_list = [e for e in edges(g)]
-            shuffle!(MersenneTwister(0), edge_list)
+            Random.shuffle!(Random.MersenneTwister(0), edge_list)
             
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
