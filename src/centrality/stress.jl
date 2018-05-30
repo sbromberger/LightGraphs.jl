@@ -43,7 +43,7 @@ function parallel_stress_centrality(
 
     # Parallel reduction
 
-    stress = @parallel (+) for s in vs
+    stress = @distributed (+) for s in vs
         temp_stress = zeros(Int, n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)

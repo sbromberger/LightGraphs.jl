@@ -2,7 +2,7 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-@doc_str """
+"""
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
     parallel_betweenness_centrality(g[, vs])
@@ -75,7 +75,7 @@ function parallel_betweenness_centrality(
 
     # Parallel reduction
 
-    betweenness = @parallel (+) for s in vs
+    betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)

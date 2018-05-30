@@ -35,12 +35,12 @@ struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
 end
 
 function CombinatorialAdjacency(A::SparseMatrix{T}) where T
-	D = vec(sum(A, 1))
+	D = vec(sum(A, dims=1))
 	return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
 end
 
 
-@doc_str """
+"""
 	NormalizedAdjacency{T}
 
 The normalized adjacency matrix is ``\\hat{A} = D^{-1/2} A D^{-1/2}``.
@@ -133,7 +133,7 @@ struct CombinatorialLaplacian{T} <: Laplacian{T}
 	A::CombinatorialAdjacency{T}
 end
 
-@doc_str """
+"""
 	NormalizedLaplacian{T}
 
 The normalized Laplacian is ``\\hat{L} = I - D^{-1/2} A D^{-1/2}``.
@@ -197,8 +197,12 @@ convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 function sparse(lapl::M) where M<:Laplacian
 	adjmat = adjacency(lapl)
 	A = sparse(adjmat)
-	L = spdiagm(diag(lapl)) - A
+	L = sparse(Diagonal(diag(lapl))) - A
 	return L
+end
+
+function SparseMatrix(lapl::M) where M<:GraphMatrix
+	return sparse(lapl)
 end
 
 function sparse(adjmat::Adjacency)
@@ -206,16 +210,12 @@ function sparse(adjmat::Adjacency)
     return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
-function convert(::Type{SparseMatrix{T}}, adjmat::Adjacency{T}) where T
-    A = sparse(adjmat.A)
-    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
-end
 
 
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
 	adjmat = adjacency(lapl)
 	A = convert(SparseMatrix{T}, adjmat)
-	L = spdiagm(diag(lapl)) - A
+	L = sparse(Diagonal(diag(lapl))) - A
 	return L
 end
 
@@ -239,37 +239,37 @@ function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T<:Number
     return y - dot(adjmat.perron, y) * adjmat.perron
 end
 
-function A_mul_B!(Y, A::Adjacency, B)
+function mul!(Y, A::Adjacency, B)
     # we need to do 3 matrix products
-    # Y and B can't overlap in any one call to A_mul_B!
-    # The last call to A_mul_B! must be (Y, postscalefactor, tmp)
+    # Y and B can't overlap in any one call to mul!
+    # The last call to mul! must be (Y, postscalefactor, tmp)
     # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
     # and the first step (Y, prescalefactor, B)
     tmp1 = Diagonal(prescalefactor(A)) * B
     tmp = similar(Y)
-    A_mul_B!(tmp, A.A, tmp1)
-    return A_mul_B!(Y, Diagonal(postscalefactor(A)), tmp)
+    mul!(tmp, A.A, tmp1)
+    return mul!(Y, Diagonal(postscalefactor(A)), tmp)
 end
 
-A_mul_B!(Y, A::CombinatorialAdjacency, B) = A_mul_B!(Y, A.A, B)
+mul!(Y, A::CombinatorialAdjacency, B) = mul!(Y, A.A, B)
 
 # You can compute the StochasticAdjacency product without allocating a similar of Y.
 # This is true for all Adjacency where the postscalefactor is a Noop
 # at time of writing this is just StochasticAdjacency and CombinatorialAdjacency
-function A_mul_B!(Y, A::StochasticAdjacency, B)
+function mul!(Y, A::StochasticAdjacency, B)
     tmp = Diagonal(prescalefactor(A)) * B
-    A_mul_B!(Y, A.A, tmp)
+    mul!(Y, A.A, tmp)
     return Y
 end
 
-function A_mul_B!(Y, adjmat::PunchedAdjacency, x)
+function mul!(Y, adjmat::PunchedAdjacency, x)
     y = adjmat.A * x
     Y[:] = y - dot(adjmat.perron, y) * adjmat.perron
     return Y
 end
 
-function A_mul_B!(Y, lapl::Laplacian, B)
-	A_mul_B!(Y, lapl.A, B)
+function mul!(Y, lapl::Laplacian, B)
+	mul!(Y, lapl.A, B)
 	z = diag(lapl) .* B
 	Y[:] = z - Y[:]
 	return Y
@@ -284,8 +284,8 @@ Return a symmetric version of graph (represented by sparse matrix `A`) as a spar
 """
 function symmetrize(A::SparseMatrix, which=:or)
 	if which == :or
-		M = A + A'
-		M.nzval[M.nzval .== 2] = 1
+		M = A + sparse(A')
+		M.nzval[M.nzval .== 2] .= 1
 		return M
     end
 	T = A
@@ -298,7 +298,7 @@ function symmetrize(A::SparseMatrix, which=:or)
     else
         throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
-	M = T + T'
+	M = T + sparse(T')
 	return M
 end
 
@@ -317,9 +317,9 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 
 
 # per #564
-@deprecate A_mul_B!(Y, A::Noop, B) None
+@deprecate mul!(Y, A::Noop, B) None
 @deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
-@deprecate convert(::Type{SparseMatrix}, adjmat::CombinatorialAdjacency) sparse(adjmat)
+@deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
 
 
 

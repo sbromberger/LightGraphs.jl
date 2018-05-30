@@ -317,7 +317,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     end
 
     # vector of weighted vertices (each node is repeated once for each adjacent edge)
-    weightedVs = Vector{Int}(2 * (n - n0) * k + 2 * ne(g))
+    weightedVs = Vector{Int}(undef, 2 * (n - n0) * k + 2 * ne(g))
 
     # initialize vector of weighted vertices
     offset = 0
@@ -330,7 +330,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     picked = fill(false, n)
 
     # vector of targets
-    targets = Vector{Int}(k)
+    targets = Vector{Int}(undef, k)
 
     for source in (n0 + 1):n
         # choose k targets from the existing vertices
@@ -357,7 +357,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
 end
 
 
-@doc_str """
+"""
     static_fitness_model(m, fitness)
 
 Generate a random graph with ``|fitness|`` vertices and `m` edges,
@@ -393,7 +393,7 @@ function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) wher
     return g
 end
 
-@doc_str """
+"""
     static_fitness_model(m, fitness_out, fitness_in)
 
 Generate a random graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
@@ -449,7 +449,7 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
     end
 end
 
-@doc_str """
+"""
     static_scale_free(n, m, α)
 
 Generate a random graph with `n` vertices, `m` edges and expected power-law
@@ -475,7 +475,7 @@ function static_scale_free(n::Integer, m::Integer, α::Real; seed::Int=-1, finit
     static_fitness_model(m, fitness, seed=seed)
 end
 
-@doc_str """
+"""
     static_scale_free(n, m, α_out, α_in)
 
 Generate a random graph with `n` vertices, `m` edges and expected power-law
@@ -523,7 +523,7 @@ function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
     return fitness
 end
 
-@doc_str """
+"""
     random_regular_graph(n, k)
 
 Create a random undirected
@@ -565,7 +565,7 @@ function random_regular_graph(n::Integer, k::Integer; seed::Int=-1)
     return g
 end
 
-@doc_str """
+"""
     random_configuration_model(n, ks)
 
 Create a random undirected graph according to the [configuration model]
@@ -605,7 +605,7 @@ function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check
     return g
 end
 
-@doc_str """
+"""
     random_regular_digraph(n, k)
 
 Create a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph)
@@ -633,12 +633,12 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     rng = getRNG(seed)
     cs = collect(2:n)
     i = 1
-    I = Vector{Int}(n * k)
-    J = Vector{Int}(n * k)
+    I = Vector{Int}(undef, n * k)
+    J = Vector{Int}(undef, n * k)
     V = fill(true, n * k)
     for r in 1:n
         l = ((r - 1) * k + 1):(r * k)
-        I[l] = r
+        I[l] .= r
         J[l] = sample!(rng, cs, k, exclude = r)
     end
 
@@ -649,7 +649,7 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     end
 end
 
-@doc_str """
+"""
     random_tournament_digraph(n)
 
 Create a random directed [tournament graph]
@@ -671,7 +671,7 @@ function random_tournament_digraph(n::Integer; seed::Int=-1)
     return g
 end
 
-@doc_str """
+"""
     stochastic_block_model(c, n)
 
 Return a Graph generated according to the Stochastic Block Model (SBM).
@@ -722,7 +722,7 @@ function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) wher
     return g
 end
 
-@doc_str """
+"""
     stochastic_block_model(cint, cext, n)
 
 Return a Graph generated according to the Stochastic Block Model (SBM), sampling
@@ -789,7 +789,7 @@ and external probabilities `externalp`.
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
-    B = diagm(internalp) + externalp * (ones(numblocks, numblocks) - I)
+    B = diagm(0=>internalp) + externalp * (ones(numblocks, numblocks) - I)
     return B
 end
 
@@ -813,7 +813,7 @@ end
 const biclique = ones(2, 2) - eye(2)
 
 #TODO: this documentation needs work. sbromberger 20170326
-@doc_str """
+"""
     nearbipartiteaffinity(sizes, between, intra)
 
 Construct the affinity matrix for a near bipartite SBM.
@@ -831,7 +831,7 @@ end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
 nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer =
-    nearbipartiteaffinity(sizes, between, inter) + noise
+    nearbipartiteaffinity(sizes, between, inter) .+ noise
 
 nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
     StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)

@@ -1,4 +1,4 @@
-@doc_str """
+"""
     edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)
 
 Compute the edit distance between graphs `G₁` and `G₂`. Return the minimum

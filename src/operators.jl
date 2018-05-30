@@ -62,8 +62,8 @@ function reverse! end
     return g
 end
 
-doc"""
-    blkdiag(g, h)
+"""
+    blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
 edges where the vertices an edges from graph `h` are appended to graph `g`.
@@ -72,7 +72,7 @@ edges where the vertices an edges from graph `h` are appended to graph `g`.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function blkdiag(g::T, h::T) where T<:AbstractGraph
+function blockdiag(g::T, h::T) where T<:AbstractGraph
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -181,7 +181,7 @@ end
 """
     join(g, h)
 
-Return a graph that combines graphs `g` and `h` using `blkdiag` and then
+Return a graph that combines graphs `g` and `h` using `blockdiag` and then
 adds all the edges between the vertices in `g` and those in `h`.
 
 ### Implementation Notes
@@ -189,7 +189,7 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function join(g::T, h::T) where T<:AbstractGraph
-    r = blkdiag(g, h)
+    r = blockdiag(g, h)
     for i in vertices(g)
         for j = (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
@@ -211,7 +211,7 @@ in the generated graph exceeds the eltype.
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function crosspath{T, AG<:AbstractGraph{T}}(len::Integer, g::AG::(!IsDirected))
+@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -378,7 +378,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
-    vmap = Vector{U}(length(vlist))
+    vmap = Vector{U}(undef, length(vlist))
     for (i, v) in enumerate(vlist)
         newvid[v] = U(i)
         vmap[i] = v
@@ -450,7 +450,7 @@ Determine how many elements of vs are less than i for all i in 1:n.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] = 1
+    tmp[x[2:end]] .= 1
     return cumsum!(tmp, tmp)
 end
 
@@ -468,7 +468,7 @@ function merge_vertices(g::AbstractGraph, vs)
     (v0, vm) = extrema(vs)
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[vs] = v0
+    labels[vs] .= v0
     shifts = compute_shifts(nv(g), vs[2:end])
     for v in vertices(g)
         if labels[v] != v0
@@ -501,12 +501,12 @@ Supports SimpleGraph only.
 """
 function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
-    merged_vertex = shift!(vs)
+    merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
-    x[vs] = 1
+    x[vs] .= 1
     new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
-    new_vertex_ids[vs] = merged_vertex
+    new_vertex_ids[vs] .= merged_vertex
 
     for i in vertices(g)
         # Adjust connections to merged vertices

@@ -21,7 +21,7 @@ function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::I
     k <= 1 && return (0, 0)
     neighs = neighbors(g, v)
     tcount = 0
-    storage[neighs] = true
+    storage[neighs] .= true
 
     @inbounds for i in neighs
         @inbounds for j in neighbors(g, i)
@@ -41,12 +41,12 @@ function local_clustering!(storage::AbstractVector{Bool},
     i = 0
     for (i, v) in enumerate(vs)
         ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
-        storage[neighbors(g, v)] = false
+        storage[neighbors(g, v)] .= false
     end
     return ntriang, nalltriang
 end
 
-@doc_str """
+"""
     local_clustering(g, v)
     local_clustering(g, vs)
 

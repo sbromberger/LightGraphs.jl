@@ -12,7 +12,7 @@ This algorithm is linear in the number of edges of the graph.
 """
 function connected_components! end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components!{T, AG<:AbstractGraph{T}}(label::AbstractVector, g::AG::(!IsDirected))
+@traitfn function connected_components!(label::AbstractVector, g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)
 
     for u in vertices(g)
@@ -21,7 +21,7 @@ function connected_components! end
         Q = Vector{T}()
         push!(Q, u)
         while !isempty(Q)
-            src = shift!(Q)
+            src = popfirst!(Q)
             for vertex in outneighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
@@ -85,7 +85,7 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 """
 function connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected))
+@traitfn function connected_components(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -131,7 +131,7 @@ The order of the components is not part of the API contract.
 """
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
@@ -231,7 +231,7 @@ Will throw an error if the graph is not strongly connected.
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function period{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function period(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
@@ -260,13 +260,13 @@ in the directed graph `g`. If `scc` is missing, generate the strongly
 connected components first.
 """
 function condensation end
-@traitfn function condensation{T<:Integer}(g::::IsDirected, scc::Vector{Vector{T}})
+@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T<:Integer
     h = DiGraph{T}(length(scc))
 
-    component = Vector{T}(nv(g))
+    component = Vector{T}(undef, nv(g))
 
     for (i, s) in enumerate(scc)
-        @inbounds component[s] = i
+        @inbounds component[s] .= i
     end
 
     @inbounds for e in edges(g)
@@ -290,7 +290,7 @@ connected components in which the components do not have any leaving edges.
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function attracting_components(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     scc  = strongly_connected_components(g)
     cond = condensation(g, scc)
 
@@ -334,7 +334,7 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
     dists = fill(typemax(U), nv(g))
     dists[v] = zero(U)
     while !isempty(Q)
-        src = shift!(Q)
+        src = popfirst!(Q)
         seen[src] && continue
         seen[src] = true
         currdist = dists[src]

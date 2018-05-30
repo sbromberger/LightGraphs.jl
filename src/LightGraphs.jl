@@ -1,20 +1,34 @@
 __precompile__(true)
 module LightGraphs
 
+using SharedArrays
+using Random
 import CodecZlib
 import DataStructures
 using SimpleTraits
 
+using SparseArrays
+using LinearAlgebra
+using IterativeEigensolvers
+using SharedArrays
+using Random
+using Markdown
+using DelimitedFiles
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
-            reverse, reverse!, blkdiag, isassigned, getindex, setindex!, show,
-            print, copy, in, sum, size, sparse, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, issymmetric, A_mul_B!,
-            Pair, Tuple, zero
+            reverse, reverse!, isassigned, getindex, setindex!, show,
+            print, copy, in, sum, size, eltype, length, ndims, transpose,
+            ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
+import Random: GLOBAL_RNG
+import Distributed: @distributed, @sync
+import SparseArrays: sparse, blockdiag
+import LinearAlgebra: issymmetric, mul!
+
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
-Edge, Graph, SimpleGraph, DiGraph, SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed, add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
+SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
+is_directed,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
@@ -22,6 +36,9 @@ is_ordered, add_vertices!, indegree, outdegree, degree,
 Δout, Δin, δout, δin, Δ, δ, degree_histogram,
 neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
+
+# simplegraphs
+add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!,
 
 # decomposition
 core_number, k_core, k_shell, k_crust, k_corona,
@@ -37,7 +54,7 @@ spectral_distance, edit_distance,
 MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
-complement, reverse, reverse!, blkdiag, union, intersect,
+complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
@@ -80,9 +97,9 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-has_negative_edge_cycle, enumerate_paths, floyd_warshall_shortest_paths,
-transitiveclosure!, transitiveclosure, yen_k_shortest_paths,
-parallel_multisource_dijkstra_shortest_paths,
+has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+yen_k_shortest_paths, parallel_multisource_dijkstra_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -200,6 +217,7 @@ include("edit_distance.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
+include("shortestpaths/johnson.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("linalg/LinAlg.jl")

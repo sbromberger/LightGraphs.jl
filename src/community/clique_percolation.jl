@@ -18,15 +18,15 @@ function clique_percolation end
   # vector for counting common nodes between two cliques efficiently
   x = falses(nv(g))
   for i = 1:nc
-    x[kcliques[i]] = true
+    x[kcliques[i]] .= true
     for j = i+1:nc
         sum(x[kcliques[j]]) >= k-1 && add_edge!(h, i, j)
     end
     # reset status
-    x[kcliques[i]] = false
+    x[kcliques[i]] .= false
   end
   components = connected_components(h)
-  communities = [IntSet() for i=1:length(components)]
+  communities = [BitSet() for i=1:length(components)]
   for (i,component) in enumerate(components)
     push!(communities[i], vcat(kcliques[component]...)...)
   end

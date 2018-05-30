@@ -1,8 +1,13 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
-using Base.Test
+using Test
+using SparseArrays
+using LinearAlgebra
+using DelimitedFiles
+using Base64
 
 const testdir = dirname(@__FILE__)
+
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -34,6 +39,7 @@ tests = [
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
+    "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
     "traversals/bfs",

@@ -23,7 +23,7 @@ function a_star_impl!(
             if colormap[v] < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
-                new_path = cat(1, path, Edge(u, v))
+                new_path = cat(path, Edge(u, v), dims=1)
                 path_cost = cost_so_far + dist
                 DataStructures.enqueue!(frontier,
                 (path_cost, new_path, v),
