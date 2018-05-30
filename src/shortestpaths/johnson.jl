@@ -8,7 +8,7 @@ struct JohnsonState{T<:Real, U<:Integer} <: AbstractPathState
     parents::Matrix{U}
 end
 
-@doc_str """
+@doc """
     johnson_shortest_paths(g, distmx=weights(g); parallel=false)
 
 ### Implementation Notes

@@ -60,7 +60,7 @@ end
 function _parse_header(s::AbstractString)
     addl_info = false
     nvstr, nestr, dirundir, graphname = split(s, r"s*,s*", limit=4)
-    if contains(graphname, ",") # version number and type
+    if occursin(",", graphname) # version number and type
         graphname, _ver, _dtype, graphcode = split(graphname, r"s*,s*")
         ver = parse(Int, _ver)
         dtype = eval(Symbol(_dtype))
