@@ -1,7 +1,7 @@
 const SparseMatrix{T} = SparseArrays.SparseMatrixCSC{T,Int64}
 
 """
-	GraphMatrix{T}
+    GraphMatrix{T}
 
 An abstract type to allow opertions on any type of graph matrix
 """
@@ -9,7 +9,7 @@ abstract type GraphMatrix{T} end
 
 
 """
-	Adjacency{T}
+    Adjacency{T}
 
 The core Adjacency matrix structure. Keeps the vertex degrees around.
 Subtypes are used to represent the different normalizations of the adjacency matrix.
@@ -25,71 +25,71 @@ abstract type Adjacency{T} <: GraphMatrix{T} end
 abstract type Laplacian{T} <: GraphMatrix{T} end
 
 """
-	CombinatorialAdjacency{T,S,V}
+    CombinatorialAdjacency{T,S,V}
 
 The standard adjacency matrix.
 """
 struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
-    	A::S
-    	D::V
+    A::S
+    D::V
 end
 
 function CombinatorialAdjacency(A::SparseMatrix{T}) where T
-    	D = vec(sum(A, dims=1))
-    	return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
+    D = vec(sum(A, dims=1))
+    return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
 end
 
 
 """
-	NormalizedAdjacency{T}
+    NormalizedAdjacency{T}
 
 The normalized adjacency matrix is ``\\hat{A} = D^{-1/2} A D^{-1/2}``.
 If A is symmetric, then the normalized adjacency is also symmetric
 with real eigenvalues bounded by [-1, 1].
 """
 struct NormalizedAdjacency{T} <: Adjacency{T}
-    	A::CombinatorialAdjacency{T}
-    	scalefactor::Vector{T}
+    A::CombinatorialAdjacency{T}
+    scalefactor::Vector{T}
 end
 function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
-    	sf = adjmat.D.^(-1 / 2)
-    	return NormalizedAdjacency(adjmat, sf)
+    sf = adjmat.D.^(-1 / 2)
+    return NormalizedAdjacency(adjmat, sf)
 end
 
 """
-	StochasticAdjacency{T}
+    StochasticAdjacency{T}
 
 A transition matrix for the random walk.
 """
 struct StochasticAdjacency{T} <: Adjacency{T}
-    	A::CombinatorialAdjacency{T}
-    	scalefactor::Vector{T}
+    A::CombinatorialAdjacency{T}
+    scalefactor::Vector{T}
 
 end
 function StochasticAdjacency(adjmat::CombinatorialAdjacency)
-    	sf = adjmat.D.^(-1)
-    	return StochasticAdjacency(adjmat, sf)
+    sf = adjmat.D.^(-1)
+    return StochasticAdjacency(adjmat, sf)
 end
 
 """
-	AveragingAdjacency{T}
+    AveragingAdjacency{T}
 
 The matrix whose action is to average over each neighborhood.
 """
 struct AveragingAdjacency{T} <: Adjacency{T}
-    	A::CombinatorialAdjacency{T}
-    	scalefactor::Vector{T}
+    A::CombinatorialAdjacency{T}
+    scalefactor::Vector{T}
 end
 function AveragingAdjacency(adjmat::CombinatorialAdjacency)
-    	sf = adjmat.D.^(-1)
-    	return AveragingAdjacency(adjmat, sf)
+    sf = adjmat.D.^(-1)
+    return AveragingAdjacency(adjmat, sf)
 end
 
 perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / LinearAlgebra.norm(sqrt.(adjmat.A.D))
 
 struct PunchedAdjacency{T} <: Adjacency{T}
-    	A::NormalizedAdjacency{T}
-    	perron::Vector{T}
+    A::NormalizedAdjacency{T}
+    perron::Vector{T}
 end
 function PunchedAdjacency(adjmat::CombinatorialAdjacency)
     perron = sqrt.(adjmat.D) / LinearAlgebra.norm(sqrt.(adjmat.D))
@@ -99,7 +99,7 @@ end
 perron(m::PunchedAdjacency) = m.perron
 
 """
-	Noop
+    Noop
 
 A type that represents no action.
 
@@ -130,41 +130,41 @@ prescalefactor(adjmat::StochasticAdjacency) = adjmat.scalefactor
 
 
 struct CombinatorialLaplacian{T} <: Laplacian{T}
-    	A::CombinatorialAdjacency{T}
+    A::CombinatorialAdjacency{T}
 end
 
 """
-	NormalizedLaplacian{T}
+    NormalizedLaplacian{T}
 
 The normalized Laplacian is ``\\hat{L} = I - D^{-1/2} A D^{-1/2}``.
 If A is symmetric, then the normalized Laplacian is also symmetric
 with positive eigenvalues bounded by 2.
 """
 struct NormalizedLaplacian{T} <: Laplacian{T}
-    	A::NormalizedAdjacency{T}
+    A::NormalizedAdjacency{T}
 end
 
 """
-	StochasticLaplacian{T}
+    StochasticLaplacian{T}
 
 Laplacian version of the StochasticAdjacency matrix.
 """
 struct StochasticLaplacian{T} <: Laplacian{T}
-    	A::StochasticAdjacency{T}
+    A::StochasticAdjacency{T}
 end
 
 """
-	AveragingLaplacian{T}
+    AveragingLaplacian{T}
 
 Laplacian version of the AveragingAdjacency matrix.
 """
 struct AveragingLaplacian{T} <: Laplacian{T}
-    	A::AveragingAdjacency{T}
+    A::AveragingAdjacency{T}
 end
 
 arrayfunctions = (:eltype, :length, :ndims, :size, :strides)
 for f in arrayfunctions
-    	@eval $f(a::GraphMatrix) = $f(a.A)
+    @eval $f(a::GraphMatrix) = $f(a.A)
 end
 LinearAlgebra.issymmetric(a::GraphMatrix) = LinearAlgebra.issymmetric(a.A)
 size(a::GraphMatrix, i::Integer) = size(a.A, i)
@@ -172,14 +172,14 @@ LinearAlgebra.issymmetric(::StochasticAdjacency) = false
 LinearAlgebra.issymmetric(::AveragingAdjacency) = false
 
 """
-	degrees(adjmat)
+    degrees(adjmat)
 
 Return the degrees of a graph represented by the [`CombinatorialAdjacency`](@ref) `adjmat`.
 """
 degrees(adjmat::CombinatorialAdjacency) = adjmat.D
 
 """
-	degrees(graphmx)
+    degrees(graphmx)
 
 Return the degrees of a graph represented by the graph matrix `graphmx`.
 """
@@ -195,14 +195,14 @@ convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
 
 function SparseArrays.sparse(lapl::M) where M <: Laplacian
-    	adjmat = adjacency(lapl)
-    	A = SparseArrays.sparse(adjmat)
-    	L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
-    	return L
+    adjmat = adjacency(lapl)
+    A = SparseArrays.sparse(adjmat)
+    L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
+    return L
 end
 
 function SparseMatrix(lapl::M) where M <: GraphMatrix
-    	return SparseArrays.sparse(lapl)
+    return SparseArrays.sparse(lapl)
 end
 
 function SparseArrays.sparse(adjmat::Adjacency)
@@ -213,10 +213,10 @@ end
 
 
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
-    	adjmat = adjacency(lapl)
-    	A = convert(SparseMatrix{T}, adjmat)
-    	L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
-    	return L
+    adjmat = adjacency(lapl)
+    A = convert(SparseMatrix{T}, adjmat)
+    L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
+    return L
 end
 
 SparseArrays.diag(lapl::CombinatorialLaplacian) = lapl.A.D
@@ -225,13 +225,13 @@ SparseArrays.diag(lapl::Laplacian) = ones(size(lapl)[2])
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
 *(adjmat::Adjacency{T}, x::AbstractVector{T}) where T <: Number =
-	postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
+    postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
 
 *(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T <: Number =
-	adjmat.A * x
+    adjmat.A * x
 
 *(lapl::Laplacian{T}, x::AbstractVector{T}) where T <: Number =
-	(SparseArrays.diag(lapl) .* x) - (adjacency(lapl) * x)
+    (SparseArrays.diag(lapl) .* x) - (adjacency(lapl) * x)
 
 
 function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T <: Number
@@ -269,41 +269,41 @@ function LinearAlgebra.mul!(Y, adjmat::PunchedAdjacency, x)
 end
 
 function LinearAlgebra.mul!(Y, lapl::Laplacian, B)
-    	LinearAlgebra.mul!(Y, lapl.A, B)
-    	z = SparseArrays.diag(lapl) .* B
-    	Y[:] = z - Y[:]
-    	return Y
+    LinearAlgebra.mul!(Y, lapl.A, B)
+    z = SparseArrays.diag(lapl) .* B
+    Y[:] = z - Y[:]
+    return Y
 end
 
 
 """
-	symmetrize(A::SparseMatrix, which=:or)
+    symmetrize(A::SparseMatrix, which=:or)
 
 Return a symmetric version of graph (represented by sparse matrix `A`) as a sparse matrix.
 `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`. Use `:sum` for weighted graphs.
 """
 function symmetrize(A::SparseMatrix, which=:or)
-    	if which == :or
-        		M = A + SparseArrays.sparse(A')
-        		M.nzval[M.nzval .== 2] .= 1
-        		return M
+    if which == :or
+        M = A + SparseArrays.sparse(A')
+        M.nzval[M.nzval .== 2] .= 1
+        return M
     end
-    	T = A
-    	if which == :triu
-        		T = LinearAlgebra.triu(A)
-    	elseif which == :tril
-        	    T = LinearAlgebra.tril(A)
+    T = A
+    if which == :triu
+        T = LinearAlgebra.triu(A)
+    elseif which == :tril
+            T = LinearAlgebra.tril(A)
     elseif which == :sum
-        	    T = A
+            T = A
     else
         throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
-    	M = T + SparseArrays.sparse(T')
-    	return M
+    M = T + SparseArrays.sparse(T')
+    return M
 end
 
 """
-	symmetrize(adjmat, which=:or)
+    symmetrize(adjmat, which=:or)
 
 Return a symmetric version of graph (represented by [`CombinatorialAdjacency`](@ref) `adjmat`)
 as a [`CombinatorialAdjacency`](@ref). `which` may be one of `:triu`, `:tril`, `:sum`, or `:or`.
@@ -313,7 +313,7 @@ Use `:sum` for weighted graphs.
 Only works on [`Adjacency`](@ref) because the normalizations don't commute with symmetrization.
 """
 symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
-	CombinatorialAdjacency(symmetrize(adjmat.A, which))
+    CombinatorialAdjacency(symmetrize(adjmat.A, which))
 
 
 # per #564
@@ -324,7 +324,7 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 
 
 """
-	LinAlg
+    LinAlg
 
 A package for using the type system to check types of graph matrices.
 """

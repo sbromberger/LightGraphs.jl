@@ -48,22 +48,22 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     #Weight transform not needed if all weights are positive.
     if type_distmx !=  LightGraphs.DefaultDistance
         for e in edges(g)
-            	distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
         end
     end
 
     if !parallel
         dists = Matrix{T}(undef, nvg, nvg)
         parents = Matrix{U}(undef, nvg, nvg)
-        	for v in vertices(g)
-            		dijk_state = dijkstra_shortest_paths(g, v, distmx)
-            		dists[v, :] = dijk_state.dists
-            		parents[v, :] = dijk_state.parents
-        	end
+        for v in vertices(g)
+            dijk_state = dijkstra_shortest_paths(g, v, distmx)
+            dists[v, :] = dijk_state.dists
+            parents[v, :] = dijk_state.parents
+        end
     else
-        	dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
-        	dists = dijk_state.dists
-        	parents = dijk_state.parents
+        dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
+        dists = dijk_state.dists
+        parents = dijk_state.parents
     end
 
     broadcast!(-, dists, dists, wt_transform)
