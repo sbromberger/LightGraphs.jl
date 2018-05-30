@@ -638,7 +638,7 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     V = fill(true, n * k)
     for r in 1:n
         l = ((r - 1) * k + 1):(r * k)
-        I[l] = r
+        I[l] .= r
         J[l] = sample!(rng, cs, k, exclude = r)
     end
 
