@@ -30,7 +30,7 @@ function bellman_ford_shortest_paths!(
     ) where R<:Real where T<:Integer
 
     active = Set{T}(sources)
-    state.dists[sources] = state.parents[sources] = 0
+    state.dists[sources] = state.parents[sources] .= 0
     no_changes = false
     for i in one(T):nv(graph)
         no_changes = true

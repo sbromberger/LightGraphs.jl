@@ -12,7 +12,7 @@ struct FloydWarshallState{T,U<:Integer} <: AbstractPathState
     parents::Matrix{U}
 end
 
-@doc_str """
+@doc """
 floyd_warshall_shortest_paths(g, distmx=weights(g))
 Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
@@ -54,7 +54,7 @@ function floyd_warshall_shortest_paths(
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (dists[u, pivot] == typemax(T) ? typemax(T): dists[u, pivot] + d) 
+                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d) 
                 if dists[u, v] > ans
                     dists[u, v] = ans
                     parents[u, v] = p
