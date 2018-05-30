@@ -36,9 +36,10 @@ function dijkstra_shortest_paths(
     preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = PriorityQueue{U,T}()
+    H = DataStructures.PriorityQueue{U,T}()
     dists[srcs] .= zero(T)
     pathcounts[srcs] .= 1
+
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
 
     sizehint!(closest_vertices, nvg)
@@ -49,7 +50,7 @@ function dijkstra_shortest_paths(
     end
 
     while !isempty(H)
-        hentry = dequeue_pair!(H)
+        hentry = DataStructures.dequeue_pair!(H)
             # info("Popped H - got $(hentry.vertex)")
         u = hentry[1]
 

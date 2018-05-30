@@ -55,10 +55,10 @@ function kruskal_mst end
     for e in edges(g)
         push!(edge_list, KruskalHeapEntry{T}(Edge(src(e), dst(e)), distmx[src(e), dst(e)]))
     end
-    heapify!(edge_list)
+     DataStructures.heapify!(edge_list)
 
     while !isempty(edge_list)
-        heap_entry = heappop!(edge_list)
+        heap_entry = DataStructures.heappop!(edge_list)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
