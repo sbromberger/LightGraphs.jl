@@ -292,9 +292,9 @@ function symmetrize(A::SparseMatrix, which=:or)
     if which == :triu
         T = LinearAlgebra.triu(A)
     elseif which == :tril
-            T = LinearAlgebra.tril(A)
+        T = LinearAlgebra.tril(A)
     elseif which == :sum
-            T = A
+        T = A
     else
         throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
