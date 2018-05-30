@@ -643,9 +643,9 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     end
 
     if dir == :out
-        return SimpleDiGraph(sparse(I, J, V, n, n))
+        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n))
     else
-        return SimpleDiGraph(sparse(I, J, V, n, n)')
+        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n)')
     end
 end
 
@@ -897,7 +897,7 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
-    Q = sparse(I, J, V)
+    Q = SparseArrays.sparse(I, J, V)
     # Q = Q / Q'Q
     # @show Q'Q# < 1e-6
     return (Q'A) * Q

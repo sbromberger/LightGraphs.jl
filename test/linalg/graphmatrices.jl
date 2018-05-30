@@ -17,10 +17,10 @@
         adjmat, stochmat, adjhat, avgmat = constructors(mat)
         @test adjmat.D == vec(sum(mat, dims=1))
         @test adjmat.A == mat
-        @test isa(sparse(mat), SparseArrays.SparseMatrixCSC)
-        @test isa(sparse(stochmat), SparseArrays.SparseMatrixCSC)
-        @test isa(sparse(adjhat), SparseArrays.SparseMatrixCSC)
-        @test isa(sparse(avgmat), SparseArrays.SparseMatrixCSC)
+        @test isa(SparseArrays.sparse(mat), SparseArrays.SparseMatrixCSC)
+        @test isa(SparseArrays.sparse(stochmat), SparseArrays.SparseMatrixCSC)
+        @test isa(SparseArrays.sparse(adjhat), SparseArrays.SparseMatrixCSC)
+        @test isa(SparseArrays.sparse(avgmat), SparseArrays.SparseMatrixCSC)
         @test isa(convert(CombinatorialAdjacency, adjmat), CombinatorialAdjacency)
         @test isa(convert(CombinatorialAdjacency, avgmat), CombinatorialAdjacency)
         @test prescalefactor(adjhat) == postscalefactor(adjhat)
@@ -60,7 +60,7 @@
         @test_throws MethodError AveragingLaplacian(lapl)
         @test_throws MethodError convert(CombinatorialAdjacency, lapl)
 
-        L = sparse(lapl)
+        L = SparseArrays.sparse(lapl)
 
         @test sum(abs, (sum(L, dims=1))) == 0
     end
@@ -88,7 +88,7 @@
         @test sum(abs, (adjmat * onevec)) > 0.0
         @test sum(abs, ((stochmat * onevec) / sum(onevec))) ≈ 1.0
         @test sum(abs, (lapl * onevec)) == 0
-        g(a) = sum(abs, (sum(sparse(a), dims=1)))
+        g(a) = sum(abs, (sum(SparseArrays.sparse(a), dims=1)))
 
         @test g(lapl) == 0
         @test g(NormalizedLaplacian(adjhat)) > 1e-13
@@ -112,20 +112,20 @@
 
         @test_throws MethodError symmetrize(StochasticAdjacency(adjmat))
         @test_throws MethodError symmetrize(AveragingAdjacency(adjmat))
-        @test !issymmetric(AveragingAdjacency(adjmat))
-        @test !issymmetric(StochasticAdjacency(adjmat))
+        @test !LinearAlgebra.issymmetric(AveragingAdjacency(adjmat))
+        @test !LinearAlgebra.issymmetric(StochasticAdjacency(adjmat))
         @test_throws MethodError symmetrize(NormalizedAdjacency(adjmat)).A # --> adjmat.A
 
         begin
             @test CombinatorialAdjacency(mat) == CombinatorialAdjacency(mat)
             S = StochasticAdjacency(CombinatorialAdjacency(mat))
             @test S.A == S.A
-            @test sparse(S) != S.A
+            @test SparseArrays.sparse(S) != S.A
             @test adjacency(S) == S.A
             @test NormalizedAdjacency(adjmat) != adjmat
             @test StochasticLaplacian(S) != adjmat
             @test_throws MethodError StochasticLaplacian(adjmat) # --> not(adjmat)
-            @test !issymmetric(S)
+            @test !LinearAlgebra.issymmetric(S)
         end
     end
 

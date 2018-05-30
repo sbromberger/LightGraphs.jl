@@ -23,7 +23,7 @@
         T = eltype(g)
         @test @inferred(bipartite_map(g)) == Vector{T}([ones(T, 10); 2 * ones(T, 10)])
 
-        h = blockdiag(g, g)
+        h = SparseArrays.blockdiag(g, g)
         @test @inferred(bipartite_map(h)) == Vector{T}([ones(T, 10); 2 * ones(T, 10); ones(T, 10); 2 * ones(T, 10)])
     end
 

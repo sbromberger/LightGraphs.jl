@@ -10,8 +10,6 @@ import LightGraphs: IsDirected, AbstractGraph, inneighbors,
 outneighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
 
 import Base: convert, size, eltype, ndims, ==, *, .*, length
-import SparseArrays: sparse, diag
-import LinearAlgebra: issymmetric, mul!, Diagonal
 
 export convert,
     SparseMatrix,

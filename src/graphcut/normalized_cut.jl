@@ -105,8 +105,8 @@ function _partition_weightmx(cut, W::SparseArrays.SparseMatrixCSC)
             end
         end
     end
-    W1 = sparse(I1, J1, V1)
-    W2 = sparse(I2, J2, V2)
+    W1 = SparseArrays.sparse(I1, J1, V1)
+    W2 = SparseArrays.sparse(I2, J2, V2)
     return (W1, W2, vmap1, vmap2)
 end
 

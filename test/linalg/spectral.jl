@@ -1,7 +1,7 @@
 import Base: Matrix
 
 # just so that we can assert equality of matrices
-Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
+Matrix(nbt::Nonbacktracking) = Matrix(SparseArrays.sparse(nbt))
 
 @testset "Spectral" begin
 
@@ -45,17 +45,17 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test length(em) == 2 * ne(g)
         @test size(B) == (2 * ne(g), 2 * ne(g))
         for i = 1:10
-          @test sum(B[:, i]) == 8
-          @test sum(B[i, :]) == 8
+            @test sum(B[:, i]) == 8
+            @test sum(B[i, :]) == 8
         end
-        @test !issymmetric(B)
+        @test !LinearAlgebra.issymmetric(B)
 
         v = ones(Float64, ne(g))
         z = zeros(Float64, nv(g))
         n10 = Nonbacktracking(g)
         @test size(n10) == (2 * ne(g), 2 * ne(g))
         @test eltype(n10) == Float64
-        @test !issymmetric(n10)
+        @test !LinearAlgebra.issymmetric(n10)
 
         contract!(z, n10, v)
 
@@ -131,8 +131,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     for g in testgraphs(pg)
         nbt = Nonbacktracking(g)
         B, emap = non_backtracking_matrix(g)
-        Bs = sparse(nbt)
-        @test sparse(B) == Bs
+        Bs = SparseArrays.sparse(nbt)
+        @test SparseArrays.sparse(B) == Bs
         @test IterativeEigensolvers.eigs(nbt, nev=1)[1] ≈ IterativeEigensolvers.eigs(B, nev=1)[1] atol = 1e-5
 
         # check that matvec works
@@ -156,7 +156,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test Matrix(B₁) == Matrix(B)
         @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
-        @test !issymmetric(B₁)
+        @test !LinearAlgebra.issymmetric(B₁)
         @test eltype(B₁) == Float64
     end
     # END tests for Nonbacktracking
@@ -165,8 +165,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     for n = 3:10
         polygon = random_regular_graph(n, 2)
         for g in testgraphs(polygon)
-            @test spectral_distance(g, g) ≈ 0 atol=1e-8
-            @test spectral_distance(g, g, 1) ≈ 0 atol=1e-8
+            @test spectral_distance(g, g) ≈ 0 atol = 1e-8
+            @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8
         end
     end
 end

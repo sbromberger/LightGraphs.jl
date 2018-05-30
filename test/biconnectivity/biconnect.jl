@@ -22,8 +22,8 @@
          [Edge(11, 12)]]
 
     for g in testgraphs(gint)
-      bcc = @inferred(biconnected_components(g))
-      @test bcc == a
+        bcc = @inferred(biconnected_components(g))
+        @test bcc == a
     end
 
     g = SimpleGraph(4)
@@ -38,13 +38,13 @@
     add_edge!(h, 3, 4)
     add_edge!(h, 1, 4)
 
-    gint = blockdiag(g, h)
+    gint = SparseArrays.blockdiag(g, h)
     add_edge!(gint, 4, 5)
 
     a = [[Edge(5, 8), Edge(7, 8), Edge(6, 7), Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4), Edge(3, 4), Edge(2, 3), Edge(1, 2)]]
 
     for g in testgraphs(gint)
-      bcc = @inferred(biconnected_components(g))
-      @test bcc == a
+        bcc = @inferred(biconnected_components(g))
+        @test bcc == a
     end
 end

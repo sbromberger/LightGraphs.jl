@@ -28,8 +28,8 @@ function radiality_centrality(g::AbstractGraph)::Vector{Float64}
         dmtr = max(dmtr, maximum(d.dists))
         meandists[v] = sum(d.dists) / (n_v - 1) # ignore the source vx
     end
-    meandists = (dmtr + 1).-(meandists)
-    return meandists./dmtr
+    meandists = (dmtr + 1) .- (meandists)
+    return meandists ./ dmtr
 end
 
 function parallel_radiality_centrality(g::AbstractGraph)::Vector{Float64}
@@ -39,12 +39,12 @@ function parallel_radiality_centrality(g::AbstractGraph)::Vector{Float64}
     meandists = SharedArrays.SharedVector{Float64}(Int(n_v))
     maxdists = SharedArrays.SharedVector{Float64}(Int(n_v))
 
-    @sync @distributed for i = 1:n_v
+    Distributed.@sync Distributed.@distributed for i = 1:n_v
         d = dijkstra_shortest_paths(g, vs[i])
         maxdists[i] = maximum(d.dists)
         meandists[i] = sum(d.dists) / (n_v - 1)
     end
     dmtr = maximum(maxdists)
     radialities = collect(meandists)
-    return ((dmtr + 1).-radialities)./dmtr
+    return ((dmtr + 1) .- radialities) ./ dmtr
 end
