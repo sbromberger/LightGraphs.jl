@@ -37,8 +37,8 @@ function dijkstra_shortest_paths(
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
     H = PriorityQueue{U,T}()
-    dists[srcs] = zero(T)
-    pathcounts[srcs] = 1
+    dists[srcs] .= zero(T)
+    pathcounts[srcs] .= 1
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
 
     sizehint!(closest_vertices, nvg)
@@ -97,8 +97,8 @@ function dijkstra_shortest_paths(
       end
     end
 
-    pathcounts[srcs] = 1
-    parents[srcs] = 0
+    pathcounts[srcs] .= 1
+    parents[srcs] .= 0
     for src in srcs
         preds[src] = []
     end
