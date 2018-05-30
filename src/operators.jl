@@ -450,7 +450,7 @@ Determine how many elements of vs are less than i for all i in 1:n.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] = 1
+    tmp[x[2:end]] .= 1
     return cumsum!(tmp, tmp)
 end
 
@@ -468,7 +468,7 @@ function merge_vertices(g::AbstractGraph, vs)
     (v0, vm) = extrema(vs)
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[vs] = v0
+    labels[vs] .= v0
     shifts = compute_shifts(nv(g), vs[2:end])
     for v in vertices(g)
         if labels[v] != v0
@@ -504,9 +504,9 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
-    x[vs] = 1
+    x[vs] .= 1
     new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
-    new_vertex_ids[vs] = merged_vertex
+    new_vertex_ids[vs] .= merged_vertex
 
     for i in vertices(g)
         # Adjust connections to merged vertices

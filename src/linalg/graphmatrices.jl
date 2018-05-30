@@ -285,7 +285,7 @@ Return a symmetric version of graph (represented by sparse matrix `A`) as a spar
 function symmetrize(A::SparseMatrix, which=:or)
 	if which == :or
 		M = A + sparse(A')
-		M.nzval[M.nzval .== 2] = 1
+		M.nzval[M.nzval .== 2] .= 1
 		return M
     end
 	T = A

@@ -5,7 +5,7 @@
         danglingnodes = outdegree(g) .== 0
         M = Matrix{Float64}(adjacency_matrix(g))
         M = M'
-        M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
+        M[:, danglingnodes] .= sum(danglingnodes) ./ nv(g)
         M = M * Diagonal(1 ./ sum(M, dims=1)[:])
         @assert all(1.01 .>= sum(M, dims=1).>=0.999)
        # v = inv(I-β*M) * ((1-β)/nv(g) * ones(nv(g), 1))
