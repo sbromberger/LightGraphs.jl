@@ -2,14 +2,14 @@
 	dfs_short_circuit(g, s)
 
 `g` is a spanning tree of some graph.
-Converts the spanning tree into a tour starting at `s`by
-performing depth first search on it but avoids traversing a node more than once.
+Convert a spanning tree of a Complete Graph into a tour starting at `s` outputing a permutation 
+formed by the inorder traversal of the spanning tree.
 The tour is represented by a permutation of the vertices of the graph. 
 """
 function dfs_short_circuit(g::AbstractGraph, s::T) where T <: Integer
 
-	nvg = nv(g)
-    seen = zeros(Bool, nvg)
+    nvg = nv(g)
+    seen = falses(nvg)
     S = Vector{T}()
     tour = Vector{T}()
     sizehint!(S, nvg)
@@ -20,20 +20,18 @@ function dfs_short_circuit(g::AbstractGraph, s::T) where T <: Integer
 
     @inbounds while !isempty(S)
         v = S[end]
-        u = zero(T)
+        found = false
         for n in outneighbors(g, v)
             if !seen[n]
                 u = n
+                seen[n] = true
+                push!(S, n)
+                push!(tour, n)
+                found = true
                 break
             end
         end
-        if u == zero(T)
-            pop!(S)
-        else
-            seen[u] = true
-            push!(S, u)
-            push!(tour, u)
-        end
+        found || pop!(S)
     end
     return tour
 end
@@ -47,24 +45,20 @@ Outputs an approximate minimum weight tour `g` represented by a permutation
 of the vertices of `g`.
 
 ### Performance
-O(|V|^2*log(|V|))
-
-### Approximation Factor
-2
-
-### Notes
-Triangular inequality: distmx[a, c] <= distmx[a, b] + distmx[b, c] for all vertices in `g`.
+Runtime: O(|V|^2*log(|V|))
+Approximation Factor: 2
 
 ### Implementation Notes
 Perfrom [Approximate Metric Travaelling Salesman](http://www.cs.tufts.edu/~cowen/advanced/2002/adv-lect3.pdf).
 """
-function metric_travelling_salesman(
-	g::AbstractGraph{T},
-	distmx::AbstractMatrix{U}
-	) where T<: Integer where U<: Real
-    
-    is_directed(g) && return Vector{Edge}()
+function metric_travelling_salesman end
 
+@traitfn function metric_travelling_salesman(
+    g::AG::(!IsDirected),
+    distmx::AbstractMatrix{U} = weights(g)
+) where {U<:Real, T, AG<:AbstractGraph{T}}
+    
+    
     mst_tmp = prim_mst(g, distmx)
     #Prim returns Vector{Edge}, we require Vector{Edge{T}}
 	mst = SimpleGraphFromIterator([Edge{T}(e.src, e.dst) for e in mst_tmp])

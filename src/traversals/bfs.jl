@@ -170,3 +170,53 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
     end
     return false
 end
+
+"""
+    get_path(g, u, v, exclude_vertices=Vector{T}())
+
+Modification of has_path(g, u, v)
+Return the intermediate vertices of the path from `u` to `v` that do not contain any 
+vertices in `exclude_vertices`.
+If such a path does not exist, it returns a vector containing 0.
+
+### Implementation Notes
+Assumes that `s` and `t` are the vertices of a `g`.
+"""
+function get_path(g::AbstractGraph{T}, 
+    u::Integer, 
+    v::Integer, 
+    exclude_vertices::AbstractVector = Vector{T}()
+    ) where T<:Integer
+    
+    nvg = nv(g)
+    seen = falses(nvg)
+    seen[exclude_vertices] .= true
+    parents = zeros(T, nvg)
+
+    next = Vector{T}()
+    sizehint!(next, nvg)
+    push!(next, u)
+    seen[u] = true
+    @inbounds while !isempty(next)
+        src = popfirst!(next) # get new element from queue
+        @inbounds @simd for vertex in outneighbors(g, src)
+            if !seen[vertex]
+                push!(next, vertex) # push onto queue
+                seen[vertex] = true
+                parents[vertex] = src
+            end
+        end
+        seen[v] && break
+    end
+    !seen[v] && (return zeros(T, 1))
+
+    vertex = parents[v]
+    path = Vector{T}()
+    sizehint!(path, nv(g))
+    while vertex != u
+        push!(path, vertex)
+        vertex = parents[vertex]
+    end
+
+    return reverse(path)
+end

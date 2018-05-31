@@ -66,7 +66,7 @@ discover_vertex!, close_vertex!,
 examine_neighbor!, traverse_graph,
 
 # bfs
-gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
+gdistances, gdistances!, bfs_tree, bfs_parents, has_path, get_path,
 
 # bipartition
 is_bipartite, bipartite_map,

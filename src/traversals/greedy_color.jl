@@ -13,12 +13,12 @@ best_color(c1::coloring, c2::coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 """
    get_distinct_colors(g, v, seen, max_col) 
 
-Get number of distinct colors adjacent to `v`.
+Get the number of distinct colors adjacent to `v`.
 Currently, the graph is colored by `max_col` vertices.
 `seen[i]` == true iff node `i` has been colored.
 """
 function get_distinct_colors(
-    g::AbstractGraph,
+    g::AbstractGraph{T},
     v::T, cols::Vector{T},
     seen::Vector{Bool},
     max_col::T
@@ -26,9 +26,9 @@ function get_distinct_colors(
 
     col_seen = zeros(Bool, max_col)
     num_distinct = zero(T)
-    for i in neighbors(g, v)
-        if seen[i]
-            col_seen[cols[i]] || (num_distinct += one(T))
+    @inbounds @simd for i in neighbors(g, v)
+        if seen[i] && !col_seen[cols[i]]
+            num_distinct += one(T)
             col_seen[cols[i]] = true
         end
     end
@@ -40,60 +40,56 @@ end
 
 Find the smallest color that none of the neighbors of `v` possess.
 Currently, the graph is colored by `max_col` vertices.
+`cols[i]` is the color of node `i`.
 `seen[i]` == true iff node `i` has been colored.
+Returns nothing if no valid color is present.
 """
 function smallest_valid_color(
-    g::AbstractGraph,
-    v::T, max_col::T,
+    g::AbstractGraph{T},
+    v::T, 
+    max_col::T,
     cols::Vector{T},
     seen::Vector{Bool}
     ) where T <: Integer 
 
     to_consider = min(degree(g, v), max_col)
-    colors_used = zeros(Bool, to_consider)
+    colors_used = zeros(Bool, to_consider+1)
     for w in neighbors(g, v)
         if seen[w] && cols[w] <= to_consider
             colors_used[cols[w]] = true
         end
     end
 
-    best_col = to_consider+one(T)
-    for i in one(T):to_consider
-        if !colors_used[i]
-            best_col = i
-            break
-        end
-    end
-    return best_col
+    best_col = findfirst(isequal(false), colors_used)
+    return (best_col == nothing) ? (max_col+one(T)): best_col
 end
 
 """
     invalidate_distinct_colors!(g, v, valid_distinct_cols)
 
-Set the `valid_distinct_cols` of the the neighbors of `v` to be invalid.
+Set the `valid_distinct_cols` of the the neighbors of `v` to be invalid (false).
 Used after assigning `v` its color. 
 """
-function invalidate_distinct_colors!(
-    g::AbstractGraph,
+invalidate_distinct_colors!(
+    g::AbstractGraph{T},
     v::T, 
     valid_distinct_cols::Vector{Bool}
-    ) where T <: Integer
-    
-    @inbounds @simd for u in neighbors(g, v)
-        valid_distinct_cols[u] = false    
-    end
-end
+    ) where T <: Integer = (valid_distinct_cols[neighbors(g, v)] .= false)
 
 """
     exchange_cols!(g, v, max_col, cols, valid_distinct_colors, distinct_colors, seen)
         
 Check which neighbors of `v` can change their color with increasing the number of colors used.
 Then assign `v` that color and change the neighbors's color.
+`cols[i]` is the color of vertex `i`.
+`distinct_colors[i]` is the number of distinct colors surrounding vertex `i`.
+valid_distinct_colors[i] is true if `distinct_colors[i]` is correct.
 Updates `seen` and `cols`.
 """
 function exchange_cols!(
-    g::AbstractGraph,
-    v::T, max_col::T,
+    g::AbstractGraph{T},
+    v::T, 
+    max_col::T,
     cols::Vector{T},
     valid_distinct_cols::Vector{Bool},
     distinct_cols::Vector{T},
@@ -108,18 +104,15 @@ function exchange_cols!(
             distinct_cols[u] = get_distinct_colors(g, u, cols, seen, max_col)
             valid_distinct_cols[u] = true
         end
-        #Condition to check exchange would help
-        (distinct_cols[u] > max_col-2) && (possible_cols[cols[u]] = false)
-    end
-
-    #Check if exchange could help
-    best_col = max_col+one(T)
-    for i in 1:max_col
-        if possible_cols[i]
-            best_col = i
-            break
+        #Condition to check exchange will help
+        if distinct_cols[u] > max_col-2 
+            possible_cols[cols[u]] = false
         end
     end
+
+    best_col = findfirst(isequal(true), possible_cols)
+    best_col = (best_col == nothing) ? (max_col+one(T)) : best_col
+    
     cols[v] = best_col
     invalidate_distinct_colors!(g, v, valid_distinct_cols)
     seen[v] = true
@@ -144,6 +137,7 @@ end
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 seq[i] = v imples that vertex v is the i<sup>th</sup> vertex to be colored.
 Assumes `seq` is a permutation of the vertices of `g`.
+
 ### Performance
 Runtime: O(|V|*|E|)
 This a cynical upper bound as it depends on the orientation of the edges
@@ -151,7 +145,7 @@ and the order of the coloring.
 Memory Overhead: O(|V|)
 """
 function perm_greedy_color_exchange(
-    g::AbstractGraph,
+    g::AbstractGraph{T},
     seq::Vector{T}
     ) where T <: Integer 
 
@@ -188,7 +182,7 @@ seq[i] = v imples that vertex v is the i<sup>th</sup> vertex to be colored.
 Assumes `seq` is a permutation of the vertices of `g`.
 """
 function perm_greedy_color_no_exchange(
-    g::AbstractGraph,
+    g::AbstractGraph{T},
     seq::Vector{T}
     ) where T <: Integer 
 
@@ -213,7 +207,7 @@ Color graph `g` according to an order specified by `seq` using a greedy heuristi
 If `exchange` is true then at every iteration, we will avoid introducing a new color
 into the partial coloring with changing the color of its neighbors.
 """
-perm_greedy_color(g::AbstractGraph, seq::Vector{T}, exchange::Bool) where T <: Integer = exchange ? 
+perm_greedy_color(g::AbstractGraph{T}, seq::Vector{T}, exchange::Bool) where T <: Integer = exchange ? 
 perm_greedy_color_exchange(g, seq) : perm_greedy_color_no_exchange(g, seq)
 
 """
@@ -236,7 +230,7 @@ function parallel_random_greedy_color(
     g::AbstractGraph{T},
     reps::Integer,
     exchange::Bool
-) where T<:Integer 
+    ) where T<:Integer 
 
     best = @distributed (best_color) for i in 1:reps
         seq = shuffle(vertices(g))
@@ -256,14 +250,12 @@ function seq_random_greedy_color(
     g::AbstractGraph{T}, 
     reps::Integer,
     exchange::Bool
-) where T <: Integer 
+    ) where T <: Integer 
 
-    seq = shuffle(vertices(g))
-    best = perm_greedy_color(g, seq, exchange)
+    best = perm_greedy_color(g, shuffle(vertices(g)), exchange)
 
     for i in 2:reps
-        shuffle!(seq)
-        best = best_color(best, perm_greedy_color(g, seq, exchange))
+        best = best_color(best, perm_greedy_color(g, shuffle(vertices(g)), exchange))
     end
     return best
 end
@@ -299,5 +291,5 @@ but will likely reduce the number of colors used.
 
 If `parallel` is true then this function executes coloring in parallel.
 """
-greedy_color(g::AbstractGraph{U}; sort_degree::Bool=false, parallel::Bool =false, exchange=false, reps::Integer=1) where {U <: Integer} =
+greedy_color(g::AbstractGraph{T}; sort_degree::Bool=false, parallel::Bool =false, exchange=false, reps::Integer=1) where {T <: Integer} =
 sort_degree ? degree_greedy_color(g, exchange) : random_greedy_color(g, reps, exchange, parallel)
