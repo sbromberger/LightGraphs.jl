@@ -8,7 +8,7 @@
         @test nv(c) == 5
         @test ne(c) == 6
 
-        gb = @inferred(blockdiag(g, g))
+        gb = @inferred(SparseArrays.blockdiag(g, g))
         @test nv(gb) == 10
         @test ne(gb) == 8
 
@@ -138,7 +138,7 @@
         T = eltype(g)
         hc = CompleteGraph(2)
         h = Graph{T}(hc)
-        z = @inferred(blockdiag(g, h))
+        z = @inferred(SparseArrays.blockdiag(g, h))
         @test nv(z) == nv(g) + nv(h)
         @test ne(z) == ne(g) + ne(h)
         @test has_edge(z, 1, 2)
@@ -173,10 +173,10 @@
         @test size(p, 3) == 1
         @test sum(p, 1) == sum(p, 2)
         @test_throws ArgumentError sum(p, 3)
-        @test sparse(p) == adjacency_matrix(p)
+        @test SparseArrays.sparse(p) == adjacency_matrix(p)
         @test length(p) == 100
         @test ndims(p) == 2
-        @test issymmetric(p)
+        @test LinearAlgebra.issymmetric(p)
     end
 
     gx = SimpleDiGraph(4)
@@ -186,7 +186,7 @@
         @test sum(g, 1) ==  [0, 1, 2, 1]
         @test sum(g, 2) ==  [2, 1, 1, 0]
         @test sum(g) == 4
-        @test @inferred(!issymmetric(g))
+        @test @inferred(!LinearAlgebra.issymmetric(g))
     end
 
     nx = 20; ny = 21
@@ -204,7 +204,7 @@
         m = nv(h)
         for i in 1:(len - 1)
             k = nv(g)
-            g = blockdiag(g, h)
+            g = SparseArrays.blockdiag(g, h)
             for v in 1:m
                 add_edge!(g, v + (k - m), v + k)
             end

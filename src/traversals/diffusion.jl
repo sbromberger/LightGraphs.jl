@@ -54,7 +54,7 @@ function diffusion(g::AbstractGraph{T},
                     local_p = p
                 end
 
-                randsubseq!(randsubseq_buf, outn, local_p)
+                Random.randsubseq!(randsubseq_buf, outn, local_p)
                 union!(new_infections, randsubseq_buf)
             end
         end
