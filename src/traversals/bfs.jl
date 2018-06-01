@@ -149,6 +149,7 @@ is in `excluded_vertices`.
 """
 function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
         exclude_vertices::AbstractVector = Vector{T}()) where T
+
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true

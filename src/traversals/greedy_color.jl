@@ -19,12 +19,13 @@ Currently, the graph is colored by `max_col` vertices.
 """
 function get_distinct_colors(
     g::AbstractGraph{T},
-    v::T, cols::Vector{T},
-    seen::Vector{Bool},
+    v::T, 
+    cols::Vector{T},
+    seen::BitArray{1},
     max_col::T
     ) where T <: Integer 
 
-    col_seen = zeros(Bool, max_col)
+    col_seen = falses(max_col)
     num_distinct = zero(T)
     @inbounds @simd for i in neighbors(g, v)
         if seen[i] && !col_seen[cols[i]]
@@ -49,11 +50,11 @@ function smallest_valid_color(
     v::T, 
     max_col::T,
     cols::Vector{T},
-    seen::Vector{Bool}
+    seen::BitArray{1}
     ) where T <: Integer 
 
     to_consider = min(degree(g, v), max_col)
-    colors_used = zeros(Bool, to_consider+1)
+    colors_used = falses(to_consider+1)
     for w in neighbors(g, v)
         if seen[w] && cols[w] <= to_consider
             colors_used[cols[w]] = true
@@ -73,7 +74,7 @@ Used after assigning `v` its color.
 invalidate_distinct_colors!(
     g::AbstractGraph{T},
     v::T, 
-    valid_distinct_cols::Vector{Bool}
+    valid_distinct_cols::BitArray{1}
     ) where T <: Integer = (valid_distinct_cols[neighbors(g, v)] .= false)
 
 """
@@ -91,9 +92,9 @@ function exchange_cols!(
     v::T, 
     max_col::T,
     cols::Vector{T},
-    valid_distinct_cols::Vector{Bool},
+    valid_distinct_cols::BitArray{1},
     distinct_cols::Vector{T},
-    seen::Vector{Bool}
+    seen::BitArray{1}
     )  where T <: Integer
 
 
@@ -151,9 +152,9 @@ function perm_greedy_color_exchange(
 
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
-    seen = zeros(Bool, nvg)
+    seen = falses(nvg)
     distinct_cols = zeros(T, nvg)
-    valid_distinct_cols = zeros(Bool, nvg) #Check if number of distinct_colors must be recalculated.
+    valid_distinct_cols = falses(nvg) #Check if number of distinct_colors must be recalculated.
     max_col = one(T)
 
     for v in seq
@@ -188,7 +189,7 @@ function perm_greedy_color_no_exchange(
 
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
-    seen = zeros(Bool, nvg)
+    seen = falses(nvg)
     max_col = one(T)
 
     for v in seq
@@ -233,8 +234,7 @@ function parallel_random_greedy_color(
     ) where T<:Integer 
 
     best = @distributed (best_color) for i in 1:reps
-        seq = shuffle(vertices(g))
-        perm_greedy_color(g, seq, exchange)
+        perm_greedy_color(g, shuffle(vertices(g)), exchange)
     end
 
     return convert(coloring{T} ,best)
