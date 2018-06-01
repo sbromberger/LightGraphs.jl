@@ -195,9 +195,9 @@ function _suitable(edges::Set{Edge}, potential_edges::Dict{T,T}) where T<:Intege
     return false
 end
 
-_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
+_try_creation(n::Integer, k::Integer, rng::Random.AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
-function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T<:Integer
+function _try_creation(n::T, k::Vector{T}, rng::Random.AbstractRNG) where T<:Integer
     edges = Set{Edge}()
     m = 0
     stubs = zeros(T, sum(k))
@@ -211,7 +211,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T<:Integer
 
     while !isempty(stubs)
         potential_edges =  Dict{T,T}()
-        shuffle!(rng, stubs)
+        Random.shuffle!(rng, stubs)
         for i in 1:2:length(stubs)
             s1, s2 = stubs[i:(i + 1)]
             if (s1 > s2)
@@ -298,7 +298,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     n0 == n && return g
 
     # seed random number generator
-    seed > 0 && srand(seed)
+    seed > 0 && Random.srand(seed)
 
     # add missing vertices
     sizehint!(g.fadjlist, n)
@@ -503,7 +503,7 @@ function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64;
     fitness_out = _construct_fitness(n, α_out, finite_size_correction)
     fitness_in = _construct_fitness(n, α_in, finite_size_correction)
     # eliminate correlation
-    shuffle!(fitness_in)
+    Random.shuffle!(fitness_in)
     static_fitness_model(m, fitness_out, fitness_in, seed=seed)
 end
 
@@ -643,9 +643,9 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     end
 
     if dir == :out
-        return SimpleDiGraph(sparse(I, J, V, n, n))
+        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n))
     else
-        return SimpleDiGraph(sparse(I, J, V, n, n)')
+        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n)')
     end
 end
 
@@ -755,7 +755,7 @@ mutable struct StochasticBlockModel{T<:Integer,P<:Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
-    rng::MersenneTwister
+    rng::Random.MersenneTwister
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
@@ -789,7 +789,7 @@ and external probabilities `externalp`.
 function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
-    B = diagm(0=>internalp) + externalp * (ones(numblocks, numblocks) - I)
+    B = LinearAlgebra.diagm(0=>internalp) + externalp * (ones(numblocks, numblocks) - LinearAlgebra.I)
     return B
 end
 
@@ -810,7 +810,7 @@ function StochasticBlockModel(internalp::Vector{T}, externalp::Real,
 end
 
 
-const biclique = ones(2, 2) - eye(2)
+const biclique = ones(2, 2) - Matrix{Float64}(LinearAlgebra.I, 2, 2)
 
 #TODO: this documentation needs work. sbromberger 20170326
 """
@@ -826,7 +826,7 @@ The blocks are connected with probability `between`.
 """
 function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T<:Integer
     numblocks = div(length(sizes), 2)
-    return kron(between * eye(numblocks), biclique) + eye(2numblocks) * intra
+    return kron(between * Matrix{Float64}(LinearAlgebra.I, numblocks, numblocks), biclique) + Matrix{Float64}(LinearAlgebra.I, 2*numblocks, 2*numblocks) * intra
 end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
@@ -841,7 +841,7 @@ nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
 
 Generate a stream of random pairs in `1:n` using random number generator `RNG`.
 """
-function random_pair(rng::AbstractRNG, n::Integer)
+function random_pair(rng::Random.AbstractRNG, n::Integer)
     f(ch) = begin
         while true
             put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
@@ -897,7 +897,7 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
-    Q = sparse(I, J, V)
+    Q = SparseArrays.sparse(I, J, V)
     # Q = Q / Q'Q
     # @show Q'Q# < 1e-6
     return (Q'A) * Q
@@ -938,10 +938,10 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
         ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
     end
 
-    p = randperm(N)
+    p = Random.randperm(N)
     ij = p[ij]
 
-    p = randperm(M)
+    p = Random.randperm(M)
     ij = ij[p, :]
 
     g = SimpleDiGraph(N)

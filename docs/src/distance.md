@@ -11,8 +11,8 @@ Pages   = ["distance.md"]
 ```@autodocs
 Modules = [LightGraphs]
 Pages   = [
-	"distance.jl",
-	"transitivity.jl"
+    "distance.jl",
+    "transitivity.jl"
 ]
 Private = false
 ```

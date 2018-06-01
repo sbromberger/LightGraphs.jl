@@ -17,8 +17,8 @@
         y  = @inferred(betweenness_centrality(g, endpoints=true, normalize=false))
         yp = parallel_betweenness_centrality(g, endpoints=true, normalize=false)
         @test all(isapprox(y, yp))
-        @test round.(y[1:3], 4) ==
-            round.([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
+        @test round.(y[1:3], digits=4) ==
+            round.([122.10760591498584, 159.0072453120582, 176.39547945994505], digits=4)
 
 
 

@@ -5,7 +5,7 @@ const SimpleGraphEdge = SimpleEdge
 
 A type representing an undirected graph.
 """
-mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
+mutable struct SimpleGraph{T <: Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 end
@@ -13,7 +13,7 @@ end
 eltype(x::SimpleGraph{T}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
-function SimpleGraph{T}(n::Integer = 0) where T<:Integer
+function SimpleGraph{T}(n::Integer=0) where T <: Integer
     fadjlist = [Vector{T}() for _ = one(T):n]
     return SimpleGraph{T}(0, fadjlist)
 end
@@ -22,26 +22,26 @@ end
 SimpleGraph() = SimpleGraph{Int}()
 
 # SimpleGraph(6), SimpleGraph(0x5)
-SimpleGraph(n::T) where T<:Integer = SimpleGraph{T}(n)
+SimpleGraph(n::T) where T <: Integer = SimpleGraph{T}(n)
 
 # SimpleGraph(UInt8)
-SimpleGraph(::Type{T}) where T<:Integer = SimpleGraph{T}(zero(T))
+SimpleGraph(::Type{T}) where T <: Integer = SimpleGraph{T}(zero(T))
 
 # Graph{UInt8}(adjmx)
-function SimpleGraph{T}(adjmx::AbstractMatrix) where T<:Integer
+function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
-    issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
+    LinearAlgebra.issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
-    @inbounds for i in findall(triu(adjmx).!=0)
+    @inbounds for i in findall(triu(adjmx) .!= 0)
         add_edge!(g, i[1], i[2])
     end
     return g
 end
 
 # converts Graph{Int} to Graph{Int32}
-function SimpleGraph{T}(g::SimpleGraph) where T<:Integer
+function SimpleGraph{T}(g::SimpleGraph) where T <: Integer
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     return SimpleGraph(ne(g), h_fadj)
 end
@@ -71,7 +71,7 @@ function SimpleGraph(g::SimpleDiGraph)
     return SimpleGraph(edgect ÷ 2, newfadj)
 end
 
-@inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T<:Integer
+@inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T <: Integer
     neg = 0
     for v in 1:length(fadjlist)
         if !issorted(fadjlist[v])
@@ -90,7 +90,7 @@ end
     return neg ÷ 2
 end
 
-function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T<:Integer
+function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     nvg = zero(T)
     @inbounds(
     for e in edge_list
@@ -136,10 +136,10 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T<:Integer
 end
 
 
-@inbounds function add_to_fadjlist!(fadjlist::Vector{Vector{T}}, s::T, d::T) where T<:Integer
+@inbounds function add_to_fadjlist!(fadjlist::Vector{Vector{T}}, s::T, d::T) where T <: Integer
     nvg = length(fadjlist)
     nvg_new = max(nvg, s, d)
-    for v = (nvg+1):nvg_new
+    for v = (nvg + 1):nvg_new
         push!(fadjlist, Vector{T}())
     end
 
@@ -174,7 +174,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     return g
 end
 
-function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T<:Integer
+function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T <: Integer
     fadjlist = Vector{Vector{T}}() 
     @inbounds(
     for e in iter
@@ -209,7 +209,7 @@ function SimpleGraphFromIterator(iter)::SimpleGraph
 end
 
 
-edgetype(::SimpleGraph{T}) where T<:Integer = SimpleGraphEdge{T}
+edgetype(::SimpleGraph{T}) where T <: Integer = SimpleGraphEdge{T}
 
 """
     badj(g::SimpleGraph[, v::Integer])

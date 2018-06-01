@@ -61,7 +61,7 @@ Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
 represented in the domain of ``B`` and represents them in the domain of the
 adjacency matrix of `g`.
 """
-struct Nonbacktracking{G<:AbstractGraph}
+struct Nonbacktracking{G <: AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -85,9 +85,9 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-issymmetric(nbt::Nonbacktracking) = false
+LinearAlgebra.issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
+function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
@@ -100,7 +100,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     end
     return y
 end
-function mul!(C, nbt::Nonbacktracking, B)
+function LinearAlgebra.mul!(C, nbt::Nonbacktracking, B)
     # computs C = A * B
     for i in 1:size(B, 2)
         C[:, i] = nbt * B[:, i]
@@ -126,7 +126,7 @@ function coo_sparse(nbt::Nonbacktracking)
     return I, J, 1.0
 end
 
-sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
+SparseArrays.sparse(nbt::Nonbacktracking) = SparseArrays.sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zero(x)
