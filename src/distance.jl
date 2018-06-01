@@ -5,7 +5,7 @@
 
 An array-like structure that provides distance values of `1` for any `src, dst` combination.
 """
-struct DefaultDistance<:AbstractMatrix{Int}
+struct DefaultDistance <: AbstractMatrix{Int}
     nv::Int
     DefaultDistance(nv::Int=typemax(Int)) = new(nv)
 end
@@ -50,38 +50,32 @@ store, and pass the eccentricities if multiple distance measures are desired.
 
 An infinite path length is represented by the `typemax` of the distance matrix.
 """
-function eccentricity(
-    g::AbstractGraph,
+function eccentricity(g::AbstractGraph,
     v::Integer,
-    distmx::AbstractMatrix{T} = weights(g)
-) where T <: Real
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && warn("Infinite path length detected for vertex $v")
 
     return e
 end
 
-eccentricity(
-    g::AbstractGraph,
-    vs::AbstractVector = vertices(g),
-    distmx::AbstractMatrix = weights(g)
-) = [eccentricity(g, v, distmx) for v in vs]
+eccentricity(g::AbstractGraph,
+    vs::AbstractVector=vertices(g),
+    distmx::AbstractMatrix=weights(g)) = [eccentricity(g, v, distmx) for v in vs]
 
 
 eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
 
-function parallel_eccentricity(
-    g::AbstractGraph,
-    vs::AbstractVector = vertices(g),
-    distmx::AbstractMatrix{T} = weights(g)
-) where T <: Real
+function parallel_eccentricity(g::AbstractGraph,
+    vs::AbstractVector=vertices(g),
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
     vlen = length(vs)
-    eccs = SharedVector{T}(vlen)
-    @sync @distributed for i = 1:vlen
+    eccs = SharedArrays.SharedVector{T}(vlen)
+    Distributed.@sync Distributed.@distributed for i = 1:vlen
         eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
-    d = sdata(eccs)
+    d = SharedArrays.sdata(eccs)
     maximum(d) == typemax(T) && warn("Infinite path length detected")
     return d
 end
@@ -98,9 +92,9 @@ Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
-diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     maximum(eccentricity(g, distmx))
-parallel_diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+parallel_diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     maximum(parallel_eccentricity(g, distmx))
 
 """
@@ -118,10 +112,10 @@ function periphery(eccentricities::Vector)
     return filter(x -> eccentricities[x] == diam, 1:length(eccentricities))
 end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) = 
+periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = 
     periphery(eccentricity(g, distmx))
 
-parallel_periphery(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+parallel_periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     periphery(parallel_eccentricity(g, distmx))
 
 """
@@ -134,9 +128,9 @@ Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the minimum eccentricity of the graph.
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
-radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     minimum(eccentricity(g, distmx))
-parallel_radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+parallel_radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     minimum(parallel_eccentricity(g, distmx))
 
 """
@@ -153,8 +147,8 @@ function center(eccentricities::Vector)
     return filter(x -> eccentricities[x] == rad, 1:length(eccentricities))
 end
 
-center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     center(eccentricity(g, distmx))
 
-parallel_center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
+parallel_center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     center(parallel_eccentricity(g, distmx))

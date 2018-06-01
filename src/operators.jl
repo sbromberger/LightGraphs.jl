@@ -24,9 +24,9 @@ function complement(g::DiGraph)
     gnv = nv(g)
     h = SimpleDiGraph(gnv)
     for i in vertices(g), j in vertices(g)
-      if i != j && !has_edge(g, i, j)
-        add_edge!(h, i, j)
-      end
+        if i != j && !has_edge(g, i, j)
+            add_edge!(h, i, j)
+        end
     end
     return h
 end
@@ -72,7 +72,7 @@ edges where the vertices an edges from graph `h` are appended to graph `g`.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function blockdiag(g::T, h::T) where T<:AbstractGraph
+function SparseArrays.blockdiag(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -93,7 +93,7 @@ Return a graph with edges that are only in both graph `g` and graph `h`.
 This function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
-function intersect(g::T, h::T) where T<:AbstractGraph
+function intersect(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -113,7 +113,7 @@ Return a graph with edges in graph `g` that are not in graph `h`.
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
 """
-function difference(g::T, h::T) where T<:AbstractGraph
+function difference(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -135,7 +135,7 @@ Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function symmetric_difference(g::T, h::T) where T<:AbstractGraph
+function symmetric_difference(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -159,7 +159,7 @@ of all vertices and edges.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function union(g::T, h::T) where T<:AbstractGraph
+function union(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -188,8 +188,8 @@ adds all the edges between the vertices in `g` and those in `h`.
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function join(g::T, h::T) where T<:AbstractGraph
-    r = blockdiag(g, h)
+function join(g::T, h::T) where T <: AbstractGraph
+    r = SparseArrays.blockdiag(g, h)
     for i in vertices(g)
         for j = (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
@@ -211,7 +211,7 @@ in the generated graph exceeds the eltype.
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
     p = PathGraph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -221,7 +221,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
 # """
-function *(g::Graph, v::Vector{T}) where T<:Real
+function *(g::Graph, v::Vector{T}) where T <: Real
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -233,7 +233,7 @@ function *(g::Graph, v::Vector{T}) where T<:Real
     return y
 end
 
-function *(g::DiGraph, v::Vector{T}) where T<:Real
+function *(g::DiGraph, v::Vector{T}) where T <: Real
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -276,11 +276,11 @@ sum(g::AbstractGraph) = ne(g)
 
 Return the default adjacency matrix of `g`.
 """
-sparse(g::AbstractGraph) = adjacency_matrix(g)
+SparseArrays.sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
-issymmetric(g::AbstractGraph) = !is_directed(g)
+LinearAlgebra.issymmetric(g::AbstractGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)
@@ -292,7 +292,7 @@ of `g` and `h`.
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function cartesian_product(g::G, h::G) where G<:AbstractGraph
+function cartesian_product(g::G, h::G) where G <: AbstractGraph
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
@@ -321,7 +321,7 @@ of `g` and `h`.
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
-function tensor_product(g::G, h::G) where G<:AbstractGraph
+function tensor_product(g::G, h::G) where G <: AbstractGraph
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e1 in edges(g)
@@ -374,7 +374,7 @@ julia> sg, vmap = induced_subgraph(g, elist)
 julia> @assert sg == g[elist]
 ```
 """
-function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph where U<:Integer
+function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGraph where U <: Integer
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
@@ -398,7 +398,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T<:AbstractGraph
 end
 
 
-function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG<:AbstractGraph{T} where T where U<:AbstractEdge
+function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractGraph{T} where T where U <: AbstractEdge
     h = zero(g)
     newvid = Dict{T,T}()
     vmap = Vector{T}()
@@ -450,7 +450,7 @@ Determine how many elements of vs are less than i for all i in 1:n.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] = 1
+    tmp[x[2:end]] .= 1
     return cumsum!(tmp, tmp)
 end
 
@@ -463,12 +463,12 @@ function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
     sort!(vs)
-    nvnew = nv(g) - length(unique(vs)) +1
+    nvnew = nv(g) - length(unique(vs)) + 1
     nvnew <= nv(g) || return g
     (v0, vm) = extrema(vs)
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[vs] = v0
+    labels[vs] .= v0
     shifts = compute_shifts(nv(g), vs[2:end])
     for v in vertices(g)
         if labels[v] != v0
@@ -504,20 +504,20 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
-    x[vs] = 1
+    x[vs] .= 1
     new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
-    new_vertex_ids[vs] = merged_vertex
+    new_vertex_ids[vs] .= merged_vertex
 
     for i in vertices(g)
         # Adjust connections to merged vertices
         if (i != merged_vertex) && !insorted(i, vs)
             nbrs_to_rewire = Set{T}()
             for j in outneighbors(g, i)
-               if insorted(j, vs)
-                  push!(nbrs_to_rewire, merged_vertex)
-               else
-                 push!(nbrs_to_rewire, new_vertex_ids[j])
-               end
+                if insorted(j, vs)
+                    push!(nbrs_to_rewire, merged_vertex)
+                else
+                    push!(nbrs_to_rewire, new_vertex_ids[j])
+                end
             end
             g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
 

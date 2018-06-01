@@ -3,12 +3,12 @@
     struct JohnsonState{T, U}
 An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 """
-struct JohnsonState{T<:Real, U<:Integer} <: AbstractPathState
+struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-@doc_str """
+@doc """
     johnson_shortest_paths(g, distmx=weights(g); parallel=false)
 
 ### Implementation Notes
@@ -31,11 +31,10 @@ bellman_ford_shortest_paths
 parallel_multisource_dijkstra_shortest_paths
 dijkstra_shortest_paths
 """
-function johnson_shortest_paths(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T} = weights(g);
-    parallel::Bool = false
-) where T<:Real where U<:Integer
+function johnson_shortest_paths(g::AbstractGraph{U},
+    distmx::AbstractMatrix{T}=weights(g);
+    parallel::Bool=false
+) where T <: Real where U <: Integer
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -43,28 +42,28 @@ function johnson_shortest_paths(
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
     
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
-        distmx = sparse(distmx) #Change reference, not value
+        distmx = SparseArrays.sparse(distmx) #Change reference, not value
     end
 
     #Weight transform not needed if all weights are positive.
     if type_distmx !=  LightGraphs.DefaultDistance
         for e in edges(g)
-        	distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
         end
     end
 
     if !parallel
         dists = Matrix{T}(undef, nvg, nvg)
         parents = Matrix{U}(undef, nvg, nvg)
-    	for v in vertices(g)
-    		dijk_state = dijkstra_shortest_paths(g, v, distmx)
-    		dists[v, :] = dijk_state.dists
-      		parents[v, :] = dijk_state.parents
-    	end
+        for v in vertices(g)
+            dijk_state = dijkstra_shortest_paths(g, v, distmx)
+            dists[v, :] = dijk_state.dists
+            parents[v, :] = dijk_state.parents
+        end
     else
-    	dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
-    	dists = dijk_state.dists
-    	parents = dijk_state.parents
+        dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
+        dists = dijk_state.dists
+        parents = dijk_state.parents
     end
 
     broadcast!(-, dists, dists, wt_transform)
@@ -81,7 +80,7 @@ function johnson_shortest_paths(
     return JohnsonState(dists, parents)
 end
 
-function enumerate_paths(s::JohnsonState{T, U}, v::Integer) where T<:Real where U<:Integer
+function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where U <: Integer
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
