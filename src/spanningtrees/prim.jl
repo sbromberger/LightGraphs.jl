@@ -26,7 +26,7 @@ function prim_mst end
     visit!(g, 1, marked, pq, distmx)
 
     while !isempty(pq)
-        heap_entry = heappop!(pq)
+        heap_entry = DataStructures.heappop!(pq)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
@@ -58,7 +58,7 @@ function visit!(
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+             DataStructures.heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
         end
     end
 end

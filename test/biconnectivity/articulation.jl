@@ -19,21 +19,21 @@
     add_edge!(gint, 7, 12)
 
     for g in testgraphs(gint)
-      art = @inferred(articulation(g))
-      ans = [1, 7, 8, 12]
-      @test art == ans
+        art = @inferred(articulation(g))
+        ans = [1, 7, 8, 12]
+        @test art == ans
     end
     for level in 1:6
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
-          artpts = @inferred(articulation(tree))
-          @test artpts == collect(1:(2^(level - 1) - 1))
+            artpts = @inferred(articulation(tree))
+            @test artpts == collect(1:(2^(level - 1) - 1))
         end
     end
 
-    hint = LightGraphs.blockdiag(WheelGraph(5), WheelGraph(5))
+    hint = SparseArrays.blockdiag(WheelGraph(5), WheelGraph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
-      @test @inferred(articulation(h)) == [5, 6]
+        @test @inferred(articulation(h)) == [5, 6]
     end
 end
