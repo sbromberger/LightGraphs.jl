@@ -5,6 +5,7 @@ using Distributions
 using LightGraphs
 using StatsBase
 using Base.Test
+import Random
 
 import Base: -
 import LightGraphs: randbn
@@ -37,7 +38,7 @@ function binomial_test(n, p, s)
     @show dσ - lσ
     @test abs(dσ - lσ) / dσ < .10
 end
-srand(1234)
+Random.srand(1234)
 n = 10000
 p = 0.3
 s = 100000

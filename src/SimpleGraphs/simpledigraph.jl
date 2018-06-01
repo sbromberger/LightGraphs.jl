@@ -31,7 +31,7 @@ SimpleDiGraph(n::T) where T<:Integer = SimpleDiGraph{T}(n)
 SimpleDiGraph(::Type{T}) where T<:Integer = SimpleDiGraph{T}(zero(T))
 
 # sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
-function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T<:Integer where U<:Real
+function SimpleDiGraph{T}(adjmx::SparseArrays.SparseMatrixCSC{U}) where T<:Integer where U<:Real
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 

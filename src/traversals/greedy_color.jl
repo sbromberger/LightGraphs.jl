@@ -68,8 +68,8 @@ function parallel_random_greedy_color(
     reps::Integer
 ) where T<:Integer 
 
-    best = @distributed (best_color) for i in 1:reps
-        seq = shuffle(vertices(g))
+    best = Distributed.@distributed (best_color) for i in 1:reps
+        seq = Random.shuffle(vertices(g))
         perm_greedy_color(g, seq)
     end
 
@@ -87,11 +87,11 @@ function seq_random_greedy_color(
     reps::Integer
 ) where T <: Integer 
 
-    seq = shuffle(vertices(g))
+    seq = Random.shuffle(vertices(g))
     best = perm_greedy_color(g, seq)
 
     for i in 2:reps
-        shuffle!(seq)
+        Random.shuffle!(seq)
         best = best_color(best, perm_greedy_color(g, seq))
     end
     return best
