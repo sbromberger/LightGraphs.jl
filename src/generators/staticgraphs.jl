@@ -222,7 +222,7 @@ Create a double complete binary tree with `k` levels.
 function DoubleBinaryTree(k::Integer)
     gl = BinaryTree(k)
     gr = BinaryTree(k)
-    g = blockdiag(gl, gr)
+    g = SparseArrays.blockdiag(gl, gr)
     add_edge!(g, 1, nv(gl) + 1)
     return g
 end
@@ -241,7 +241,7 @@ function RoachGraph(k::Integer)
     nopole = SimpleGraph(2)
     antannae = crosspath(k, nopole)
     body = crosspath(k, dipole)
-    roach = blockdiag(antannae, body)
+    roach = SparseArrays.blockdiag(antannae, body)
     add_edge!(roach, nv(antannae) - 1, nv(antannae) + 1)
     add_edge!(roach, nv(antannae), nv(antannae) + 2)
     return roach

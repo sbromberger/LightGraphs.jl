@@ -266,7 +266,7 @@ function condensation end
     component = Vector{T}(undef, nv(g))
 
     for (i, s) in enumerate(scc)
-        @inbounds component[s] = i
+        @inbounds component[s] .= i
     end
 
     @inbounds for e in edges(g)

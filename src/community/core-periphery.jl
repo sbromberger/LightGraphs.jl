@@ -22,6 +22,6 @@ function core_periphery_deg end
         end
     end
     c = fill(2, nv(g))
-    c[p[1:kbest]] = 1
+    c[p[1:kbest]] .= 1
     c
 end

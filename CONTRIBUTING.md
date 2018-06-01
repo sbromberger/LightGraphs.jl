@@ -60,17 +60,17 @@ Locate the section for your github remote in the `.git/config` file. It looks li
 
 ```
 [remote "origin"]
-	fetch = +refs/heads/*:refs/remotes/origin/*
-	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    url = git@github.com:JuliaGraphs/LightGraphs.jl.git
 ```
 
 Now add the line `fetch = +refs/pull/*/head:refs/remotes/origin/pr/*` to this section. Obviously, change the github url to match your project's URL. It ends up looking like this:
 
 ```
 [remote "origin"]
-	fetch = +refs/heads/*:refs/remotes/origin/*
-	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
-	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 ```
 
 Now fetch all the pull requests:

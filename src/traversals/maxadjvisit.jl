@@ -107,7 +107,7 @@ function maximum_adjacency_visit(
 
     #start traversing the graph
     while !isempty(pq)
-        u = dequeue!(pq)
+        u = DataStructures.dequeue!(pq)
         has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")

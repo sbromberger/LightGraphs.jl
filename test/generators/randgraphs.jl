@@ -1,6 +1,6 @@
 @testset "Randgraphs" begin
-    r1 = SimpleGraph(10,20)
-    r2 = SimpleDiGraph(5,10)
+    r1 = SimpleGraph(10, 20)
+    r2 = SimpleDiGraph(5, 10)
 
     @test nv(r1) == 10
     @test ne(r1) == 20
@@ -11,15 +11,15 @@
 
     @test eltype(Graph(0x5, 0x2)) == eltype(Graph(0x5, 2)) == UInt8
     for T in [UInt8, Int8, UInt16, Int16, UInt32, Int32, UInt, Int]
-        @test eltype(Graph{T}(5,2)) == T
-        @test eltype(DiGraph{T}(5,2)) == T
+        @test eltype(Graph{T}(5, 2)) == T
+        @test eltype(DiGraph{T}(5, 2)) == T
     end
 
-    @test SimpleGraph(10,20,seed=3) == SimpleGraph(10,20,seed=3)
-    @test SimpleDiGraph(10,20,seed=3) == SimpleDiGraph(10,20,seed=3)
-    @test SimpleGraph(10,20,seed=3) == erdos_renyi(10,20,seed=3)
-    @test ne(Graph(10,40,seed=3)) == 40
-    @test ne(DiGraph(10,80,seed=3)) == 80
+    @test SimpleGraph(10, 20, seed=3) == SimpleGraph(10, 20, seed=3)
+    @test SimpleDiGraph(10, 20, seed=3) == SimpleDiGraph(10, 20, seed=3)
+    @test SimpleGraph(10, 20, seed=3) == erdos_renyi(10, 20, seed=3)
+    @test ne(Graph(10, 40, seed=3)) == 40
+    @test ne(DiGraph(10, 80, seed=3)) == 80
 
     er = erdos_renyi(10, 0.5)
     @test nv(er) == 10
@@ -32,20 +32,20 @@
     @test nv(er) == 10
     @test is_directed(er) == false
 
-    cl = expected_degree_graph(zeros(10), seed = 17)
+    cl = expected_degree_graph(zeros(10), seed=17)
     @test nv(cl) == 10
     @test ne(cl) == 0
     @test is_directed(cl) == false
 
-    cl = expected_degree_graph([3, 2, 1, 2], seed = 17)
+    cl = expected_degree_graph([3, 2, 1, 2], seed=17)
     @test nv(cl) == 4
     @test is_directed(cl) == false
 
-    cl = expected_degree_graph(fill(99, 100), seed = 17)
+    cl = expected_degree_graph(fill(99, 100), seed=17)
     @test nv(cl) == 100
     @test all(degree(cl) .> 90)
 
-    ws = watts_strogatz(10,4,0.2)
+    ws = watts_strogatz(10, 4, 0.2)
     @test nv(ws) == 10
     @test ne(ws) == 20
     @test is_directed(ws) == false
@@ -140,7 +140,7 @@
     @test ne(rr) == 0
     @test is_directed(rr) == false
 
-    rd = random_regular_digraph(10,0)
+    rd = random_regular_digraph(10, 0)
     @test nv(rd) == 10
     @test ne(rd) == 0
     @test is_directed(rd)
@@ -158,7 +158,7 @@
         @test degree(rr, v) == 50
     end
 
-    rr = random_configuration_model(10, repeat([2,4] ,5), seed=3)
+    rr = random_configuration_model(10, repeat([2,4], 5), seed=3)
     @test nv(rr) == 10
     @test ne(rr) == 15
     @test is_directed(rr) == false
@@ -171,7 +171,7 @@
     @test num4 == 5
     @test num2 == 5
 
-    rr = random_configuration_model(1000, zeros(Int,1000))
+    rr = random_configuration_model(1000, zeros(Int, 1000))
     @test nv(rr) == 1000
     @test ne(rr) == 0
     @test is_directed(rr) == false
@@ -185,13 +185,15 @@
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(outdegree(rd)) == 0
+    outdegree_rd = @inferred(outdegree(rd))
+    @test all(outdegree_rd .== outdegree_rd[1])
 
     rd = random_regular_digraph(1000, 4, dir=:in)
     @test nv(rd) == 1000
     @test ne(rd) == 4000
     @test is_directed(rd)
-    @test std(indegree(rd)) == 0
+    indegree_rd = @inferred(indegree(rd))
+    @test all(indegree_rd .== indegree_rd[1])
 
     rr = random_regular_graph(10, 8, seed=4)
     @test nv(rr) == 10
@@ -254,13 +256,13 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
     test_sbm(sbm, bp)
-    @test norm(collect(ratios)) < 0.25
+    @test LinearAlgebra.norm(collect(ratios)) < 0.25
 
     sizes = [200, 200, 100]
     internaldeg = 15
     externaldeg = 6
-    internalp = Float64[internaldeg/i for i in sizes]
-    externalp = externaldeg/sum(sizes)
+    internalp = Float64[internaldeg / i for i in sizes]
+    externalp = externaldeg / sum(sizes)
     numedges = internaldeg + externaldeg #+ sum(externaldeg.*sizes[2:end])
     numedges *= div(sum(sizes), 2)
     sbm = StochasticBlockModel(internalp, externalp, sizes)
@@ -272,23 +274,23 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     test_sbm(sbm, bp)
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test norm(collect(ratios)) < 0.25
+    @test LinearAlgebra.norm(collect(ratios)) < 0.25
 
     # check that average degree is not too high
     # factor of two is cushion for random process
-    @test mean(degree(g)) <= 4//2*numedges/sum(sizes)
+    @test mean(degree(g)) <= 4 // 2 * numedges / sum(sizes)
     # check that the internal degrees are higher than the external degrees
     # 5//4 is cushion for random process.
-    @test all(sum(bc-diagm(0=>diag(bc)), dims=1) .<= 5//4 .* diag(bc))
+    @test all(sum(bc - LinearAlgebra.diagm(0 => SparseArrays.diag(bc)), dims=1) .<= 5 // 4 .* SparseArrays.diag(bc))
 
 
-    sbm2 = StochasticBlockModel(0.5*ones(4), 0.3, 10*ones(Int,4))
+    sbm2 = StochasticBlockModel(0.5 * ones(4), 0.3, 10 * ones(Int, 4))
     sbm  = StochasticBlockModel(0.5, 0.3, 10, 4)
     @test sbm == sbm2
     sbm.affinities[1,1] = 0
     @test sbm != sbm2
 
-    kg = @inferred kronecker(5,5)
+    kg = @inferred kronecker(5, 5)
     @test nv(kg) == 32
     @test is_directed(kg)
 end
