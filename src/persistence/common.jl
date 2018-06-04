@@ -52,7 +52,7 @@ function auto_decompress(io::IO)
     end
     reset(io)
     if format == :gzip
-        io = CodecZlib.GzipDecompressorStream(io)
+        io = GzipDecompressorStream(io)
     end
     return io
 end
@@ -74,7 +74,7 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
     io = open(fn, "w")
     try
         if compress
-            io = CodecZlib.GzipCompressorStream(io)
+            io = GzipCompressorStream(io)
         end
         return savegraph(io, g, gname, format)
     catch
@@ -100,11 +100,11 @@ Return the number of graphs written.
 Will only work if the file format supports multiple graph types.
 """
 function savegraph(fn::AbstractString, d::Dict{T,U},
-    format::AbstractGraphFormat; compress=true) where T<:AbstractString where U<:AbstractGraph
+    format::AbstractGraphFormat; compress=true) where T <: AbstractString where U <: AbstractGraph
     io = open(fn, "w")
     try
         if compress
-            io = CodecZlib.GzipCompressorStream(io)
+            io = GzipCompressorStream(io)
         end
         return savegraph(io, d, format)
     catch

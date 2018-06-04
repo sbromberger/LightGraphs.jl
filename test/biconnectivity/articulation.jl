@@ -31,7 +31,7 @@
         end
     end
 
-    hint = SparseArrays.blockdiag(WheelGraph(5), WheelGraph(5))
+    hint = blockdiag(WheelGraph(5), WheelGraph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(articulation(h)) == [5, 6]

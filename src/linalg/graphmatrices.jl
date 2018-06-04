@@ -1,4 +1,4 @@
-const SparseMatrix{T} = SparseArrays.SparseMatrixCSC{T,Int64}
+const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
 
 """
     GraphMatrix{T}
@@ -85,14 +85,14 @@ function AveragingAdjacency(adjmat::CombinatorialAdjacency)
     return AveragingAdjacency(adjmat, sf)
 end
 
-perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / LinearAlgebra.norm(sqrt.(adjmat.A.D))
+perron(adjmat::NormalizedAdjacency) = sqrt.(adjmat.A.D) / norm(sqrt.(adjmat.A.D))
 
 struct PunchedAdjacency{T} <: Adjacency{T}
     A::NormalizedAdjacency{T}
     perron::Vector{T}
 end
 function PunchedAdjacency(adjmat::CombinatorialAdjacency)
-    perron = sqrt.(adjmat.D) / LinearAlgebra.norm(sqrt.(adjmat.D))
+    perron = sqrt.(adjmat.D) / norm(sqrt.(adjmat.D))
     return PunchedAdjacency(NormalizedAdjacency(adjmat), perron)
 end
 
@@ -111,7 +111,7 @@ struct Noop end
 
 Broadcast.broadcasted(::typeof(*), ::Noop, x) = x
 
-LinearAlgebra.Diagonal(::Noop) = Noop()
+Diagonal(::Noop) = Noop()
 
 
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
@@ -166,10 +166,10 @@ arrayfunctions = (:eltype, :length, :ndims, :size, :strides)
 for f in arrayfunctions
     @eval $f(a::GraphMatrix) = $f(a.A)
 end
-LinearAlgebra.issymmetric(a::GraphMatrix) = LinearAlgebra.issymmetric(a.A)
+issymmetric(a::GraphMatrix) = issymmetric(a.A)
 size(a::GraphMatrix, i::Integer) = size(a.A, i)
-LinearAlgebra.issymmetric(::StochasticAdjacency) = false
-LinearAlgebra.issymmetric(::AveragingAdjacency) = false
+issymmetric(::StochasticAdjacency) = false
+issymmetric(::AveragingAdjacency) = false
 
 """
     degrees(adjmat)
@@ -194,20 +194,20 @@ convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
 convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
 
-function SparseArrays.sparse(lapl::M) where M <: Laplacian
+function sparse(lapl::M) where M <: Laplacian
     adjmat = adjacency(lapl)
-    A = SparseArrays.sparse(adjmat)
-    L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
+    A = sparse(adjmat)
+    L = sparse(Diagonal(diag(lapl))) - A
     return L
 end
 
 function SparseMatrix(lapl::M) where M <: GraphMatrix
-    return SparseArrays.sparse(lapl)
+    return sparse(lapl)
 end
 
-function SparseArrays.sparse(adjmat::Adjacency)
-    A = SparseArrays.sparse(adjmat.A)
-    return LinearAlgebra.Diagonal(prescalefactor(adjmat)) * (A * LinearAlgebra.Diagonal(postscalefactor(adjmat)))
+function sparse(adjmat::Adjacency)
+    A = sparse(adjmat.A)
+    return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
 
@@ -215,12 +215,12 @@ end
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
     adjmat = adjacency(lapl)
     A = convert(SparseMatrix{T}, adjmat)
-    L = SparseArrays.sparse(LinearAlgebra.Diagonal(SparseArrays.diag(lapl))) - A
+    L = sparse(Diagonal(diag(lapl))) - A
     return L
 end
 
-SparseArrays.diag(lapl::CombinatorialLaplacian) = lapl.A.D
-SparseArrays.diag(lapl::Laplacian) = ones(size(lapl)[2])
+diag(lapl::CombinatorialLaplacian) = lapl.A.D
+diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
@@ -231,46 +231,46 @@ SparseArrays.diag(lapl::Laplacian) = ones(size(lapl)[2])
     adjmat.A * x
 
 *(lapl::Laplacian{T}, x::AbstractVector{T}) where T <: Number =
-    (SparseArrays.diag(lapl) .* x) - (adjacency(lapl) * x)
+    (diag(lapl) .* x) - (adjacency(lapl) * x)
 
 
 function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T <: Number
     y = adjmat.A * x
-    return y - LinearAlgebra.dot(adjmat.perron, y) * adjmat.perron
+    return y - dot(adjmat.perron, y) * adjmat.perron
 end
 
-function LinearAlgebra.mul!(Y, A::Adjacency, B)
+function mul!(Y, A::Adjacency, B)
     # we need to do 3 matrix products
     # Y and B can't overlap in any one call to mul!
     # The last call to mul! must be (Y, postscalefactor, tmp)
     # so we need to write to tmp in the second step  must be (tmp, A.A, Y)
     # and the first step (Y, prescalefactor, B)
-    tmp1 = LinearAlgebra.Diagonal(prescalefactor(A)) * B
+    tmp1 = Diagonal(prescalefactor(A)) * B
     tmp = similar(Y)
-    LinearAlgebra.mul!(tmp, A.A, tmp1)
-    return LinearAlgebra.mul!(Y, LinearAlgebra.Diagonal(postscalefactor(A)), tmp)
+    mul!(tmp, A.A, tmp1)
+    return mul!(Y, Diagonal(postscalefactor(A)), tmp)
 end
 
-LinearAlgebra.mul!(Y, A::CombinatorialAdjacency, B) = LinearAlgebra.mul!(Y, A.A, B)
+mul!(Y, A::CombinatorialAdjacency, B) = mul!(Y, A.A, B)
 
 # You can compute the StochasticAdjacency product without allocating a similar of Y.
 # This is true for all Adjacency where the postscalefactor is a Noop
 # at time of writing this is just StochasticAdjacency and CombinatorialAdjacency
-function LinearAlgebra.mul!(Y, A::StochasticAdjacency, B)
-    tmp = LinearAlgebra.Diagonal(prescalefactor(A)) * B
-    LinearAlgebra.mul!(Y, A.A, tmp)
+function mul!(Y, A::StochasticAdjacency, B)
+    tmp = Diagonal(prescalefactor(A)) * B
+    mul!(Y, A.A, tmp)
     return Y
 end
 
-function LinearAlgebra.mul!(Y, adjmat::PunchedAdjacency, x)
+function mul!(Y, adjmat::PunchedAdjacency, x)
     y = adjmat.A * x
-    Y[:] = y - LinearAlgebra.dot(adjmat.perron, y) * adjmat.perron
+    Y[:] = y - dot(adjmat.perron, y) * adjmat.perron
     return Y
 end
 
-function LinearAlgebra.mul!(Y, lapl::Laplacian, B)
-    LinearAlgebra.mul!(Y, lapl.A, B)
-    z = SparseArrays.diag(lapl) .* B
+function mul!(Y, lapl::Laplacian, B)
+    mul!(Y, lapl.A, B)
+    z = diag(lapl) .* B
     Y[:] = z - Y[:]
     return Y
 end
@@ -284,21 +284,21 @@ Return a symmetric version of graph (represented by sparse matrix `A`) as a spar
 """
 function symmetrize(A::SparseMatrix, which=:or)
     if which == :or
-        M = A + SparseArrays.sparse(A')
+        M = A + sparse(A')
         M.nzval[M.nzval .== 2] .= 1
         return M
     end
     T = A
     if which == :triu
-        T = LinearAlgebra.triu(A)
+        T = triu(A)
     elseif which == :tril
-        T = LinearAlgebra.tril(A)
+        T = tril(A)
     elseif which == :sum
         T = A
     else
         throw(ArgumentError("$which is not a supported method of symmetrizing a matrix"))
     end
-    M = T + SparseArrays.sparse(T')
+    M = T + sparse(T')
     return M
 end
 
@@ -317,9 +317,9 @@ symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
 
 
 # per #564
-# @deprecate LinearAlgebra.mul!(Y, A::Noop, B) None
+# @deprecate mul!(Y, A::Noop, B) None
 @deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
-@deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) SparseArrays.sparse(adjmat)
+@deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
 
 
 
