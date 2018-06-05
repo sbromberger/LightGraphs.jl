@@ -33,7 +33,7 @@ function yen_k_shortest_paths(
     dists = Array{T,1}()
     push!(dists, dj.dists[target])
     A = [path]
-    B = PriorityQueue()
+    B = DataStructures.PriorityQueue()
     gcopy = deepcopy(g)
 
     for k = 1:(K - 1)
@@ -81,7 +81,7 @@ function yen_k_shortest_paths(
                 distpath  = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B, pathtotal)
-                    enqueue!(B, pathtotal, distpath)
+                    DataStructures.enqueue!(B, pathtotal, distpath)
                 end
             end
 
@@ -96,7 +96,7 @@ function yen_k_shortest_paths(
         # The path with minimum distance in B is higher than maxdist
         mindistB > maxdist && break
         push!(dists, DataStructures.peek(B)[2])
-        push!(A, dequeue!(B))
+        push!(A, DataStructures.dequeue!(B))
     end
 
     return YenState{T,U}(dists, A)

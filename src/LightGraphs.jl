@@ -1,28 +1,24 @@
 __precompile__(true)
 module LightGraphs
 
-using SharedArrays
-using Random
-import CodecZlib
-using Base64
-using DataStructures
 using SimpleTraits
 
-using SparseArrays
-using LinearAlgebra
-using IterativeEigensolvers
-using SharedArrays
-using Random
-using Markdown
-using DelimitedFiles
+import CodecZlib
+import DataStructures
+import DelimitedFiles
+import Distributed
+import IterativeEigensolvers
+import LinearAlgebra
+import Markdown
+import Random
+import SharedArrays
+import SparseArrays
+
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
             ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
-import Random: GLOBAL_RNG
-import Distributed: @distributed, @sync
-import SparseArrays: sparse, blockdiag
-import LinearAlgebra: issymmetric, mul!
+
 
 export
 # Interface

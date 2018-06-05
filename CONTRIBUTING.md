@@ -14,9 +14,9 @@ Please include version numbers of all relevant libraries and Julia itself.
 - Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
 - Minimize dependencies on external packages, and avoid introducing new dependencies. In general,
 
-    - PRs introducing dependencies on core Julia packages are ok.
-    - PRs introducing dependencies on non-core "leaf" packages (no subdependencies except for core Julia packages) are less ok.
-    - PRs introducing dependencies on non-core non-leaf packages require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
+    - PRs introducing dependencies on Julia Base or the packages in the Julia Standard Library are ok.
+    - PRs introducing dependencies on third-party non-core "leaf" packages (no subdependencies except for Julia Base / Standard Library packages) are less ok.
+    - PRs introducing dependencies on third-party non-core non-leaf packages (that is, third-party packages that have dependencies on one or more other third-party packages) require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
 
 - Put type assertions on all function arguments where conflict may arise (use abstract types, Union, or Any if necessary).
 - If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
@@ -60,17 +60,17 @@ Locate the section for your github remote in the `.git/config` file. It looks li
 
 ```
 [remote "origin"]
-	fetch = +refs/heads/*:refs/remotes/origin/*
-	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    url = git@github.com:JuliaGraphs/LightGraphs.jl.git
 ```
 
 Now add the line `fetch = +refs/pull/*/head:refs/remotes/origin/pr/*` to this section. Obviously, change the github url to match your project's URL. It ends up looking like this:
 
 ```
 [remote "origin"]
-	fetch = +refs/heads/*:refs/remotes/origin/*
-	url = git@github.com:JuliaGraphs/LightGraphs.jl.git
-	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    url = git@github.com:JuliaGraphs/LightGraphs.jl.git
+    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 ```
 
 Now fetch all the pull requests:
