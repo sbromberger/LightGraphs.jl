@@ -14,19 +14,19 @@ Return a vector of edges.
 """
 function prim_mst end
 @traitfn function prim_mst(
-    g::::(!IsDirected),
-    distmx::AbstractMatrix = weights(g)
-    )
-    pq = Vector{PrimHeapEntry}()
+    g::AG::(!IsDirected),
+    distmx::AbstractMatrix{T} = weights(g)
+    ) where {T<:Real, U, AG<:AbstractGraph{U}}
+    pq = Vector{PrimHeapEntry{T}}()
     mst = Vector{Edge}()
     marked = zeros(Bool, nv(g))
 
     sizehint!(pq, ne(g))
-    sizehint!(mst, ne(g))
+    sizehint!(mst, nv(g) - 1)
     visit!(g, 1, marked, pq, distmx)
 
     while !isempty(pq)
-        heap_entry = heappop!(pq)
+        heap_entry = DataStructures.heappop!(pq)
         v = src(heap_entry.edge)
         w = dst(heap_entry.edge)
 
@@ -54,11 +54,11 @@ function visit!(
     distmx::AbstractMatrix
 )
     marked[v] = true
-    for w in out_neighbors(g, v)
+    for w in outneighbors(g, v)
         if !marked[w]
             x = min(v, w)
             y = max(v, w)
-            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+             DataStructures.heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
         end
     end
 end

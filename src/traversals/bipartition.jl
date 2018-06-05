@@ -12,9 +12,9 @@ An empty graph will return an empty vector but is bipartite.
 function bipartite_map(g::AbstractGraph{T}) where T
     nvg = nv(g)
     if !is_directed(g)
-        ccs = filter(x -> length(x) > 2, connected_components(g))
+        ccs = filter(x -> length(x) >= 2, connected_components(g))
     else
-        ccs = filter(x -> length(x) > 2, weakly_connected_components(g))
+        ccs = filter(x -> length(x) >= 2, weakly_connected_components(g))
     end
     seen = zeros(Bool, nvg)
     colors = zeros(Bool, nvg)
@@ -24,8 +24,8 @@ function bipartite_map(g::AbstractGraph{T}) where T
         push!(Q, s)
         bipartitemap = zeros(UInt8, nvg)
         while !isempty(Q)
-            u = shift!(Q)
-            for v in out_neighbors(g, u)
+            u = popfirst!(Q)
+            for v in outneighbors(g, u)
                 if !seen[v]
                     colors[v] = !colors[u]
                     push!(Q, v)
@@ -36,7 +36,7 @@ function bipartite_map(g::AbstractGraph{T}) where T
             end
         end
     end
-    return UInt8.(colors) + one(UInt8)
+    return UInt8.(colors).+(one(UInt8))
 end
 
 """

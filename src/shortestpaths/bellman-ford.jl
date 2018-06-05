@@ -30,13 +30,13 @@ function bellman_ford_shortest_paths!(
     ) where R<:Real where T<:Integer
 
     active = Set{T}(sources)
-    state.dists[sources] = state.parents[sources] = 0
+    state.dists[sources] = state.parents[sources] .= 0
     no_changes = false
     for i in one(T):nv(graph)
         no_changes = true
         new_active = Set{T}()
         for u in active
-            for v in out_neighbors(graph, u)
+            for v in outneighbors(graph, u)
                 edist = distmx[u, v]
                 if state.dists[v] > state.dists[u] + edist
                     state.dists[v] = state.dists[u] + edist
@@ -94,7 +94,7 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integ
     parents = state.parents
 
     num_vs = length(vs)
-    all_paths = Vector{Vector{T}}(num_vs)
+    all_paths = Vector{Vector{T}}(undef, num_vs)
     for i = 1:num_vs
         all_paths[i] = Vector{T}()
         index = vs[i]

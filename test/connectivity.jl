@@ -128,12 +128,12 @@
 
     # figure 2 example
     fig2 = spzeros(5, 5)
-    fig2[[3, 10, 11, 13, 14, 17, 18, 19, 22]] = 1
+    fig2[[3, 10, 11, 13, 14, 17, 18, 19, 22]] .= 1
     fig2 = SimpleDiGraph(fig2)
 
     # figure 3 example
     fig3 = spzeros(8, 8)
-    fig3[[1, 7, 9, 13, 14, 15, 18, 20, 23, 27, 28, 31, 33, 34, 37, 45, 46, 49, 57, 63, 64]] = 1
+    fig3[[1, 7, 9, 13, 14, 15, 18, 20, 23, 27, 28, 31, 33, 34, 37, 45, 46, 49, 57, 63, 64]] .= 1
     fig3 = SimpleDiGraph(fig3)
     scc_fig3 = Vector[[3, 4], [2, 5, 6], [8], [1, 7]]
     fig3_cond = SimpleDiGraph(4);
@@ -143,15 +143,13 @@
 
     # construct a n-number edge ring graph (period = n)
     n = 10
-    n_ring_m = spdiagm(ones(n - 1), 1, n, n); n_ring_m[end, 1] = 1
-    n_ring = SimpleDiGraph(n_ring_m)
-
+    n_ring = CycleDiGraph(n)
     n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut, 1, 4)
 
 
     # figure 8 example
     fig8 = spzeros(6, 6)
-    fig8[[2, 10, 13, 21, 24, 27, 35]] = 1
+    fig8[[2, 10, 13, 21, 24, 27, 35]] .= 1
     fig8 = SimpleDiGraph(fig8)
 
     @test Set(@inferred(strongly_connected_components(fig1))) == Set(scc_fig1)

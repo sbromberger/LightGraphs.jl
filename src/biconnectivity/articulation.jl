@@ -29,7 +29,7 @@ function visit!(state::Articulations, g::AbstractGraph, u::Integer, v::Integer)
     state.depth[v] = state.id
     state.low[v] = state.depth[v]
 
-    for w in out_neighbors(g, v)
+    for w in outneighbors(g, v)
         if state.depth[w] == 0
             children += 1
             visit!(state, g, v, w)
@@ -61,5 +61,5 @@ function articulation(g::AbstractGraph)
             visit!(state, g, u, u)
         end
     end
-    return find(state.articulation_points)
+    return findall(state.articulation_points)
 end

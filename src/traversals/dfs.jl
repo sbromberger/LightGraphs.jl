@@ -12,7 +12,7 @@ Uses DFS.
 function is_cyclic end
 @traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function is_cyclic{T,AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     for v in vertices(g)
         vcolor[v] != 0 && continue
@@ -21,7 +21,7 @@ function is_cyclic end
         while !isempty(S)
             u = S[end]
             w = 0
-            for n in out_neighbors(g, u)
+            for n in outneighbors(g, u)
                 if vcolor[n] == 1
                     return true
                 elseif vcolor[n] == 0
@@ -50,7 +50,7 @@ graph `g` as a vector of vertices in topological order.
 """
 function toplogical_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function topological_sort_by_dfs{T, AG<:AbstractGraph{T}}(g::AG::IsDirected)
+@traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     for v in vertices(g)
@@ -60,7 +60,7 @@ function toplogical_sort_by_dfs end
         while !isempty(S)
             u = S[end]
             w = 0
-            for n in out_neighbors(g, u)
+            for n in outneighbors(g, u)
                 if vcolor[n] == 1
                     error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
                 elseif vcolor[n] == 0
@@ -100,7 +100,7 @@ use the corresponding edge direction (`:in` and `:out` are acceptable values).
 This version of DFS is iterative.
 """
 dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
-(dir == :out) ? _dfs_parents(g, s, out_neighbors) : _dfs_parents(g, s, in_neighbors)
+(dir == :out) ? _dfs_parents(g, s, outneighbors) : _dfs_parents(g, s, inneighbors)
 
 function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
     parents = zeros(T, nv(g))

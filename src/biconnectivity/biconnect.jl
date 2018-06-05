@@ -28,7 +28,7 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     state.depth[v] = state.id
     state.low[v] = state.depth[v]
 
-    for w in out_neighbors(g, v)
+    for w in outneighbors(g, v)
         if state.depth[w] == 0
             children += 1
             push!(state.stack, Edge(min(v, w), max(v, w)))
@@ -53,7 +53,7 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     end
 end
 
-@doc_str """
+"""
     biconnected_components(g)
 
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)

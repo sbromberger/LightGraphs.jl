@@ -13,7 +13,7 @@ function randomwalk(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g, currs)
+        nbrs = outneighbors(g, currs)
         length(nbrs) == 0 && break
         currs = rand(nbrs)
     end
@@ -29,7 +29,7 @@ vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::(!IsDirected), s::Integer, niter::Integer)
+@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -39,7 +39,7 @@ function non_backtracking_randomwalk end
 
     push!(visited, currs)
     i += 1
-    nbrs = out_neighbors(g, currs)
+    nbrs = outneighbors(g, currs)
     length(nbrs) == 0 && return visited[1:(i - 1)]
     prev = currs
     currs = rand(nbrs)
@@ -47,7 +47,7 @@ function non_backtracking_randomwalk end
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g, currs)
+        nbrs = outneighbors(g, currs)
         length(nbrs) == 1 && break
         idnext = rand(1:(length(nbrs) - 1))
         next = nbrs[idnext]
@@ -61,7 +61,7 @@ function non_backtracking_randomwalk end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk{T, AG<:AbstractGraph{T}}(g::AG::IsDirected, s::Integer, niter::Integer)
+@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -72,7 +72,7 @@ end
     while i <= niter
         push!(visited, currs)
         i += 1
-        nbrs = out_neighbors(g, currs)
+        nbrs = outneighbors(g, currs)
         length(nbrs) == 0 && break
         next = rand(nbrs)
         if next == prev
@@ -107,7 +107,7 @@ function saw(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} whe
         push!(visited, currs)
         push!(svisited, currs)
         i += 1
-        nbrs = setdiff(Set(out_neighbors(g, currs)), svisited)
+        nbrs = setdiff(Set(outneighbors(g, currs)), svisited)
         length(nbrs) == 0 && break
         currs = rand(collect(nbrs))
     end

@@ -1,5 +1,5 @@
 
-@doc_str """
+"""
     non_backtracking_matrix(g)
 
 Return a non-backtracking matrix `B` and an edgemap storing the oriented
@@ -30,7 +30,7 @@ function non_backtracking_matrix(g::AbstractGraph)
 
     for (e, u) in edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(g, i)
+        for k in inneighbors(g, i)
             k == j && continue
             v = edgeidmap[Edge(k, i)]
             B[v, u] = 1
@@ -40,7 +40,7 @@ function non_backtracking_matrix(g::AbstractGraph)
     return B, edgeidmap
 end
 
-@doc_str """
+"""
     Nonbacktracking{G}
 
 A compact representation of the nonbacktracking operator.
@@ -61,7 +61,7 @@ Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
 represented in the domain of ``B`` and represents them in the domain of the
 adjacency matrix of `g`.
 """
-struct Nonbacktracking{G<:AbstractGraph}
+struct Nonbacktracking{G <: AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -85,14 +85,14 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-issymmetric(nbt::Nonbacktracking) = false
+LinearAlgebra.issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
+function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g, i)
+        for k in inneighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             y[v] += x[u]
@@ -100,7 +100,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
     end
     return y
 end
-function A_mul_B!(C, nbt::Nonbacktracking, B)
+function LinearAlgebra.mul!(C, nbt::Nonbacktracking, B)
     # computs C = A * B
     for i in 1:size(B, 2)
         C[:, i] = nbt * B[:, i]
@@ -114,7 +114,7 @@ function coo_sparse(nbt::Nonbacktracking)
     I, J = zeros(Int, 0), zeros(Int, 0)
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
-        for k in in_neighbors(nbt.g, i)
+        for k in inneighbors(nbt.g, i)
             k == j && continue
             v = nbt.edgeidmap[Edge(k, i)]
             #= J[u] = v =#
@@ -126,10 +126,10 @@ function coo_sparse(nbt::Nonbacktracking)
     return I, J, 1.0
 end
 
-sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
+SparseArrays.sparse(nbt::Nonbacktracking) = SparseArrays.sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
-    y = zeros(x)
+    y = zero(x)
     for i in 1:nbt.m
         y[:, i] = nbt * x[:, i]
     end

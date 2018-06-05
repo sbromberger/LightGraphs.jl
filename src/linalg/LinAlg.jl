@@ -1,13 +1,15 @@
 module LinAlg
 
 using SimpleTraits
+import SparseArrays
+import LinearAlgebra
+import IterativeEigensolvers
 using ..LightGraphs
 
-import LightGraphs: IsDirected, adjacency_matrix, laplacian_matrix, laplacian_spectrum, AbstractGraph, in_neighbors,
-out_neighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
+import LightGraphs: IsDirected, AbstractGraph, inneighbors,
+outneighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
 
-import Base: convert, sparse, size, diag, eltype, ndims, ==, *, .*, issymmetric, A_mul_B!, length, Diagonal
-
+import Base: convert, size, eltype, ndims, ==, *, .*, length
 
 export convert,
     SparseMatrix,

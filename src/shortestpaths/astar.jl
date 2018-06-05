@@ -13,19 +13,19 @@ function a_star_impl!(
     )
 
     while !isempty(frontier)
-        (cost_so_far, path, u) = dequeue!(frontier)
+        (cost_so_far, path, u) = DataStructures.dequeue!(frontier)
         if u == t
             return path
         end
 
-        for v in LightGraphs.out_neighbors(g, u)
+        for v in LightGraphs.outneighbors(g, u)
 
             if colormap[v] < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
-                new_path = cat(1, path, Edge(u, v))
+                new_path = cat(path, Edge(u, v), dims=1)
                 path_cost = cost_so_far + dist
-                enqueue!(frontier,
+                DataStructures.enqueue!(frontier,
                 (path_cost, new_path, v),
                 path_cost + heuristic(v))
             end
@@ -53,7 +53,7 @@ function a_star(
     heuristic::Function = n -> 0
     ) where T where U
     # heuristic (under)estimating distance to target
-    frontier = PriorityQueue{Tuple{T,Vector{Edge},U}, T}()
+    frontier = DataStructures.PriorityQueue{Tuple{T,Vector{Edge},U}, T}()
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(g))
     colormap[s] = 1

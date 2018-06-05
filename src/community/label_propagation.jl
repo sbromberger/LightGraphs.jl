@@ -12,10 +12,10 @@ the second is the convergence history for each node. Will return after
 function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
     n = nv(g)
     label = collect(one(T):n)
-    active_vs = IntSet(vertices(g))
+    active_vs = BitSet(vertices(g))
     c = NeighComm(collect(one(T):n), fill(-1, n), one(T))
     convergence_hist = Vector{Int}()
-    random_order = Vector{T}(n)
+    random_order = Vector{T}(undef, n)
     i = 0
     while !isempty(active_vs) && i < maxiter
         num_active = length(active_vs)
@@ -32,7 +32,7 @@ function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
             old_comm = label[u]
             label[u] = vote!(g, label, c, u)
             if old_comm != label[u]
-                for v in out_neighbors(g, u)
+                for v in outneighbors(g, u)
                     push!(active_vs, v)
                 end
             else
@@ -85,7 +85,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     c.neigh_cnt[c.neigh_pos[1]] = 0
     c.neigh_last = 2
     max_cnt = 0
-    for neigh in out_neighbors(g, u)
+    for neigh in outneighbors(g, u)
         neigh_comm = m[neigh]
         if c.neigh_cnt[neigh_comm] < 0
             c.neigh_cnt[neigh_comm] = 0

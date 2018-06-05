@@ -1,7 +1,7 @@
-import Base: full
+import Base: Matrix
 
 # just so that we can assert equality of matrices
-full(nbt::Nonbacktracking) = full(sparse(nbt))
+Matrix(nbt::Nonbacktracking) = Matrix(SparseArrays.sparse(nbt))
 
 @testset "Spectral" begin
 
@@ -36,8 +36,8 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     g = copy(g5)
     add_edge!(g, 1, 1)
     @test adjacency_matrix(g)[1, 1] == 1
-    @test indegree(g) == sum(adjacency_matrix(g), 1)[1, :]
-    @test outdegree(g) == sum(adjacency_matrix(g), 2)[:, 1]
+    @test indegree(g) == sum(adjacency_matrix(g), dims=1)[1, :]
+    @test outdegree(g) == sum(adjacency_matrix(g), dims=2)[:, 1]
 
     g10 = CompleteGraph(10)
     for g in testgraphs(g10)
@@ -45,17 +45,17 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
         @test length(em) == 2 * ne(g)
         @test size(B) == (2 * ne(g), 2 * ne(g))
         for i = 1:10
-          @test sum(B[:, i]) == 8
-          @test sum(B[i, :]) == 8
+            @test sum(B[:, i]) == 8
+            @test sum(B[i, :]) == 8
         end
-        @test !issymmetric(B)
+        @test !LinearAlgebra.issymmetric(B)
 
         v = ones(Float64, ne(g))
         z = zeros(Float64, nv(g))
         n10 = Nonbacktracking(g)
         @test size(n10) == (2 * ne(g), 2 * ne(g))
         @test eltype(n10) == Float64
-        @test !issymmetric(n10)
+        @test !LinearAlgebra.issymmetric(n10)
 
         contract!(z, n10, v)
 
@@ -93,9 +93,9 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
             lmat = laplacian_matrix(g, Float64; dir=dir)
-            @test isa(amat, SparseMatrixCSC{Float64,T})
-            @test isa(lmat, SparseMatrixCSC{Float64,T})
-            evals = eigvals(full(lmat))
+            @test isa(amat, SparseArrays.SparseMatrixCSC{Float64,T})
+            @test isa(lmat, SparseArrays.SparseMatrixCSC{Float64,T})
+            evals = LinearAlgebra.eigvals(Matrix(lmat))
             @test all(evals .>= -1e-15) # positive semidefinite
             @test (minimum(evals)) ≈ 0 atol = 1e-13
         end
@@ -131,32 +131,32 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     for g in testgraphs(pg)
         nbt = Nonbacktracking(g)
         B, emap = non_backtracking_matrix(g)
-        Bs = sparse(nbt)
-        @test sparse(B) == Bs
-        @test eigs(nbt, nev=1)[1] ≈ eigs(B, nev=1)[1] atol = 1e-5
+        Bs = SparseArrays.sparse(nbt)
+        @test SparseArrays.sparse(B) == Bs
+        @test IterativeEigensolvers.eigs(nbt, nev=1)[1] ≈ IterativeEigensolvers.eigs(B, nev=1)[1] atol = 1e-5
 
         # check that matvec works
         x = ones(Float64, nbt.m)
         y = nbt * x
         z = B * x
-        @test norm(y - z) < 1e-8
+        @test LinearAlgebra.norm(y - z) < 1e-8
 
-        #check that matmat works and full(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        #check that matmat works and Matrix(nbt) == B
 
-        #check that matmat works and full(nbt) == B
-        @test norm(nbt * eye(nbt.m) - B) < 1e-8
+        @test LinearAlgebra.norm(nbt * Matrix{Float64}(LinearAlgebra.I, nbt.m, nbt.m) - B) < 1e-8
+
+        #check that matmat works and Matrix(nbt) == B
+        @test LinearAlgebra.norm(nbt * Matrix{Float64}(LinearAlgebra.I, nbt.m, nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
 
         B₁ = Nonbacktracking(g10)
 
-        @test full(B₁) == full(B)
+        @test Matrix(B₁) == Matrix(B)
         @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
-        #   @test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8
-        @test !issymmetric(B₁)
+        @test !LinearAlgebra.issymmetric(B₁)
         @test eltype(B₁) == Float64
     end
     # END tests for Nonbacktracking
@@ -165,8 +165,8 @@ full(nbt::Nonbacktracking) = full(sparse(nbt))
     for n = 3:10
         polygon = random_regular_graph(n, 2)
         for g in testgraphs(polygon)
-            @test spectral_distance(g, g) ≈ 0 atol=1e-8
-            @test spectral_distance(g, g, 1) ≈ 0 atol=1e-8
+            @test spectral_distance(g, g) ≈ 0 atol = 1e-8
+            @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8
         end
     end
 end

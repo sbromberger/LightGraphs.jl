@@ -7,7 +7,7 @@
 
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
-    c = vec(readcsv(joinpath(testdir, "testdata", "graph-50-500-bc.txt")))
+    c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-bc.txt"), ','))
     for g in testdigraphs(gint)
         z  = @inferred(betweenness_centrality(g))
         zp = @inferred(parallel_betweenness_centrality(g))
@@ -17,8 +17,8 @@
         y  = @inferred(betweenness_centrality(g, endpoints=true, normalize=false))
         yp = parallel_betweenness_centrality(g, endpoints=true, normalize=false)
         @test all(isapprox(y, yp))
-        @test round.(y[1:3], 4) ==
-            round.([122.10760591498584, 159.0072453120582, 176.39547945994505], 4)
+        @test round.(y[1:3], digits=4) ==
+            round.([122.10760591498584, 159.0072453120582, 176.39547945994505], digits=4)
 
 
 

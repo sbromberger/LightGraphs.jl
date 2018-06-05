@@ -1,8 +1,8 @@
 #computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = 0
-    for j in indices(W, 2)
-        for i in indices(W, 1)
+    for j in axes(W, 2)
+        for i in axes(W, 1)
             if cut[i] != cut[j]
                 cut_cost += W[i, j]
             end
@@ -12,13 +12,13 @@ function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     return cut_cost/sum(D*cut) + cut_cost/sum(D*(.~cut))
 end
 
-function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
+function _normalized_cut_cost(cut, W::SparseArrays.SparseMatrixCSC, D)
     cut_cost = 0
-    rows = rowvals(W)
-    vals = nonzeros(W)
+    rows = SparseArrays.rowvals(W)
+    vals = SparseArrays.nonzeros(W)
     n = size(W, 2)
     for i = 1:n
-        for j in nzrange(W, i)
+        for j in SparseArrays.nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
                 cut_cost += vals[j]/2
@@ -32,9 +32,9 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     nv = length(cut)
     nv2 = sum(cut)
     nv1 = nv - nv2
-    newvid = Vector{Int}(nv)
-    vmap1 = Vector{Int}(nv1)
-    vmap2 = Vector{Int}(nv2)
+    newvid = Vector{Int}(undef, nv)
+    vmap1 = Vector{Int}(undef, nv1)
+    vmap2 = Vector{Int}(undef, nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
@@ -52,8 +52,8 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     W1 = similar(W, (nv1, nv1))
     W2 = similar(W, (nv2, nv2))
 
-    for j in indices(W, 2)
-        for i in indices(W, 1)
+    for j in axes(W, 2)
+        for i in axes(W, 1)
             if cut[i] == cut[j] == false
                 W1[newvid[i], newvid[j]] = W[i, j]
             elseif cut[i] == cut[j] == true
@@ -65,13 +65,13 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     return (W1, W2, vmap1, vmap2)
 end
 
-function _partition_weightmx(cut, W::SparseMatrixCSC)
+function _partition_weightmx(cut, W::SparseArrays.SparseMatrixCSC)
     nv = length(cut)
     nv2 = sum(cut)
     nv1 = nv - nv2
-    newvid = Vector{Int}(nv)
-    vmap1 = Vector{Int}(nv1)
-    vmap2 = Vector{Int}(nv2)
+    newvid = Vector{Int}(undef, nv)
+    vmap1 = Vector{Int}(undef, nv1)
+    vmap2 = Vector{Int}(undef, nv2)
     j1 = 1
     j2 = 1
     for i in eachindex(cut)
@@ -86,13 +86,13 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
         end
     end
 
-    rows = rowvals(W)
-    vals = nonzeros(W)
+    rows = SparseArrays.rowvals(W)
+    vals = SparseArrays.nonzeros(W)
     I1 = Vector{Int}(); I2 = Vector{Int}()
     J1 = Vector{Int}(); J2 = Vector{Int}()
     V1 = Vector{Float64}(); V2 = Vector{Float64}()
     for i = 1:nv
-        for j in nzrange(W, i)
+        for j in SparseArrays.nzrange(W, i)
             row = rows[j]
             if cut[i] == cut[row] == false
                 push!(I1, newvid[i])
@@ -105,32 +105,32 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
             end
         end
     end
-    W1 = sparse(I1, J1, V1)
-    W2 = sparse(I2, J2, V2)
+    W1 = SparseArrays.sparse(I1, J1, V1)
+    W2 = SparseArrays.sparse(I2, J2, V2)
     return (W1, W2, vmap1, vmap2)
 end
 
 function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m, n = size(W)
-    D = Diagonal(vec(sum(W, 2)))
+    D = LinearAlgebra.Diagonal(vec(sum(W, dims=2)))
 
     m == 1 && return [1]
 
     #get eigenvector corresponding to second smallest eigenvalue
-    # v = eigs(D-W, D, nev=2, which=:SR)[2][:,2]
+    # v = IterativeEigensolvers.eigs(D-W, D, nev=2, which=:SR)[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 10
-        ret = eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
+        ret = IterativeEigensolvers.eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
     else
-        ret = eigfact(full(invDroot'*(D-W)*invDroot))[:vectors][:,2]
+        ret = LinearAlgebra.eigen(Matrix(invDroot'*(D-W)*invDroot)).vectors[:,2]
     end
     v = invDroot*ret
 
     #perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
-    for t in linspace(minimum(v), maximum(v), num_cuts)
+    for t in range(minimum(v), stop=maximum(v), length=num_cuts)
         cut = v.>t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost
@@ -146,7 +146,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
         labels2 = _recursive_normalized_cut(W2, thres, num_cuts)
 
-        labels = Vector{Int}(m)
+        labels = Vector{Int}(undef, m)
         offset = maximum(labels1)
 
         for i in eachindex(labels1)

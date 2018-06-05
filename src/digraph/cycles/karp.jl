@@ -16,7 +16,7 @@ function _karp_minimum_cycle_mean(
     F[1, 1] = 0.
     for i in 2:n+1
         for (j, v) in enumerate(component)
-            for u in in_neighbors(g, v)
+            for u in inneighbors(g, v)
                 k = get(v2j, u, 0)
                 if !iszero(k)
                     F[i, j] = min(F[i, j], F[i-1, k] + distmx[u, v])
@@ -60,7 +60,7 @@ function _karp_minimum_cycle_mean(
     for i in n:-1:1
         v = component[walk[i+1]]
         dmin = Inf
-        for u in in_neighbors(g, v)
+        for u in inneighbors(g, v)
             j = get(v2j, u, 0)
             if !iszero(j)
                 dcur = F[i, j] + distmx[u, v]

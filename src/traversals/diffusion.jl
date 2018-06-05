@@ -12,11 +12,10 @@ are infected at the start of the simulation.
 specifying `watch` limits reporting to a specific set of vertices reached
 during the simulation. If left empty, all vertices will be watched.
 - `normalize=false`: if `false`, set the probability of spread from a vertex ``i`` to
-each of the out_neighbors of ``i`` to ``p``. If `true`, set the probability of spread
-from a vertex ``i`` to each of the `out_neighbors` of ``i`` to
+each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of spread
+from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
-
 function diffusion(g::AbstractGraph{T},
                    p::Real,
                    n::Integer;
@@ -27,7 +26,7 @@ function diffusion(g::AbstractGraph{T},
 
     # Initialize
     watch_set = Set{T}(watch)
-    infected_vertices = IntSet(initial_infections)
+    infected_vertices = BitSet(initial_infections)
     vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
 
     # Record initial infection
@@ -45,7 +44,7 @@ function diffusion(g::AbstractGraph{T},
         new_infections = Set{T}()
 
         for i in infected_vertices
-            outn = out_neighbors(g, i)
+            outn = outneighbors(g, i)
             outd = length(outn)
 
             if outd > 0
@@ -55,7 +54,7 @@ function diffusion(g::AbstractGraph{T},
                     local_p = p
                 end
 
-                randsubseq!(randsubseq_buf, outn, local_p)
+                Random.randsubseq!(randsubseq_buf, outn, local_p)
                 union!(new_infections, randsubseq_buf)
             end
         end

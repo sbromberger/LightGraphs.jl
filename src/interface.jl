@@ -124,37 +124,6 @@ Return true if the graph is a directed graph; false otherwise.
 """
 is_directed(g) = _NI("is_directed")
 is_directed(::Type{T}) where T = _NI("is_directed")
-"""
-    add_vertex!(g)
-
-Add a new vertex to the graph `g`.
-Return true if the vertex was added successfully, false otherwise.
-"""
-add_vertex!(x) = _NI("add_vertex!")
-
-"""
-    add_edge!(g, e)
-
-Add a new edge `e` to `g`. Return false if add fails
-(e.g., if vertices are not in the graph, or edge already exists), true otherwise.
-"""
-add_edge!(x, e) = _NI("add_edge!")
-
-"""
-    rem_vertex!(g, v)
-
-Remove the vertex `v` from graph `g`. Return false if removal fails
-(e.g., if vertex is not in the graph), true otherwise.
-"""
-rem_vertex!(x, v) = _NI("rem_vertex!")
-
-"""
-    rem_edge!(g, e)
-
-Remove the edge `e` from `g`. Return false if edge removal fails
-(e.g., if edge does not exist), true otherwise.
-"""
-rem_edge!(x, e) = _NI("rem_edge!")
 
 """
     has_vertex(g, v)
@@ -174,24 +143,24 @@ calls to `has_edge`, c.f. [`edges`](@ref).
 has_edge(x, e) = _NI("has_edge")
 
 """
-    in_neighbors(g, v)
+    inneighbors(g, v)
 
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(x, v) = _NI("in_neighbors")
+inneighbors(x, v) = _NI("inneighbors")
 
 """
-    out_neighbors(g, v)
+    outneighbors(g, v)
 
 Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-out_neighbors(x, v) = _NI("out_neighbors")
+outneighbors(x, v) = _NI("outneighbors")
 
 """
     zero(g)
