@@ -84,9 +84,6 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
     end
 end
 
-savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString="graph", format=LGFormat(); compress=true) =
-    savegraph(fn, g, gname, LGFormat, compress=compress)
-
 savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=true) =
     savegraph(fn, g, "graph", format, compress=compress)
 """
@@ -100,7 +97,7 @@ Return the number of graphs written.
 Will only work if the file format supports multiple graph types.
 """
 function savegraph(fn::AbstractString, d::Dict{T,U},
-    format::AbstractGraphFormat; compress=true) where T<:AbstractString where U<:AbstractGraph
+    format::AbstractGraphFormat; compress=true) where T <: AbstractString where U <: AbstractGraph
     io = open(fn, "w")
     try
         if compress
