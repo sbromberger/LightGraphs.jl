@@ -84,11 +84,13 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
     end
 end
 
-savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString="graph", format=LGFormat(); compress=true) =
-    savegraph(fn, g, gname, LGFormat, compress=compress)
-
+# without graph name
 savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=true) =
     savegraph(fn, g, "graph", format, compress=compress)
+
+# without format - default to LGFormat()
+savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=true) = savegraph(fn, g, "graph", LGFormat(), compress=compress)
+
 """
     savegraph(file, g, d, format=LGFormat; compress=true)
 
