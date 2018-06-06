@@ -37,7 +37,7 @@ makedocs(
 )
 
 deploydocs(
-    deps        = Deps.pip("mkdocs"),
+    deps        = nothing,
     make        = nothing,
     repo        = "github.com/JuliaGraphs/LightGraphs.jl.git",
     target      = "build",
