@@ -57,7 +57,7 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
     enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
 
     while true
-    # minimum (partial) edit path
+        # minimum (partial) edit path
         λ, cost = peek(OPEN)
         dequeue!(OPEN)
 
@@ -75,7 +75,7 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                 λ⁺ = [λ; (k + 1, 0)]
                 enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
             else
-        # add remaining vertices of G₂ to the path
+                # add remaining vertices of G₂ to the path
                 λ⁺ = [λ; [(0, v) for v in vs]]
                 total_insert_cost = sum(insert_cost, vs)
                 enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
