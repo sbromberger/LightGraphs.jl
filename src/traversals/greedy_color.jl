@@ -16,9 +16,7 @@ best_color(c1::coloring, c2::coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 seq[i] = v imples that vertex v is the i<sup>th</sup> vertex to be colored.
 """
-function perm_greedy_color(g::AbstractGraph,
-    seq::Vector{T}) where T <: Integer 
-
+function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where T <: Integer 
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
