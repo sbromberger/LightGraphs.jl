@@ -41,7 +41,7 @@ deploydocs(
     make        = nothing,
     repo        = "github.com/JuliaGraphs/LightGraphs.jl.git",
     target      = "build",
-    julia       = "0.6",
+    julia       = "nightly",
     osname      = "linux"
 )
 
