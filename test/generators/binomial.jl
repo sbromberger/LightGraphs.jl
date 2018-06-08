@@ -12,8 +12,7 @@ import LightGraphs: randbn
 import StatsBase: SummaryStats
 
 function -(s::SummaryStats, t::SummaryStats)
-    return SummaryStats(
-        s.mean - t.mean,
+    return SummaryStats(s.mean - t.mean,
         s.min - t.min,
         s.q25 - t.q25,
         s.median - t.median,
@@ -38,7 +37,7 @@ function binomial_test(n, p, s)
     @show dσ - lσ
     @test abs(dσ - lσ) / dσ < .10
 end
-Random.srand(1234)
+srand(1234)
 n = 10000
 p = 0.3
 s = 100000

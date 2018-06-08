@@ -31,7 +31,7 @@ SimpleGraph(::Type{T}) where T <: Integer = SimpleGraph{T}(zero(T))
 function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
-    LinearAlgebra.issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
+    issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
     @inbounds for i in findall(triu(adjmx) .!= 0)

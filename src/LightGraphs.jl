@@ -3,16 +3,17 @@ module LightGraphs
 
 using SimpleTraits
 
-import CodecZlib
-import DataStructures
-import DelimitedFiles
-import Distributed
-import IterativeEigensolvers
-import LinearAlgebra
-import Markdown
-import Random
-import SharedArrays
-import SparseArrays
+using CodecZlib: GzipCompressorStream, GzipDecompressorStream
+using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
+using Distributed: @distributed
+using IterativeEigensolvers: eigs
+using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+import LinearAlgebra: Diagonal, issymmetric, mul!
+# import Markdown
+using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, shuffle, shuffle!, srand
+using SharedArrays: SharedMatrix, SharedVector, sdata
+using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+import SparseArrays: blockdiag, sparse
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
@@ -25,7 +26,7 @@ export
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed,
+is_directed, IsDirected,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
