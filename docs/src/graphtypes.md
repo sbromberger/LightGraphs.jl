@@ -4,8 +4,7 @@ In addition to providing `SimpleGraph` and `SimpleDiGraph` implementations, Ligh
 
 - [SimpleWeightedGraphs](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl) provides a structure for (un)directed graphs with the ability to specify weights on edges.
 - [MetaGraphs](https://github.com/JuliaGraphs/MetaGraphs.jl) provides a structure (un)directed graphs that supports user-defined properties on the graph, vertices, and edges.
-- [StaticGraphs](https://github.com/JuliaGraphs/StaticGraphs.jl) supports very large graph structures in a space- and time-efficient manner, but as the name implies, does not allow modification of the graph once
-created.
+- [StaticGraphs](https://github.com/JuliaGraphs/StaticGraphs.jl) supports very large graph structures in a space- and time-efficient manner, but as the name implies, does not allow modification of the graph once created.
 
 ### Which Graph Type Should I Use?
 
