@@ -40,10 +40,10 @@ end
     smallest_valid_color(g, v, max_col, cols, seen)
 
 Find the smallest color that none of the neighbors of `v` possess.
-Currently, the graph is colored by `max_col` vertices.
+Currently, the graph is colored by colors in `1:max_cols`.
 `cols[i]` is the color of node `i`.
 `seen[i]` == true iff node `i` has been colored.
-Returns nothing if no valid color is present.
+Returns `max_col+1` if no valid color is present.
 """
 function smallest_valid_color(
     g::AbstractGraph{T},
@@ -69,7 +69,7 @@ end
     invalidate_distinct_colors!(g, v, valid_distinct_cols)
 
 Set the `valid_distinct_cols` of the the neighbors of `v` to be invalid (false).
-Used after assigning `v` its color. 
+May be used after assigning `v` its color. 
 """
 invalidate_distinct_colors!(
     g::AbstractGraph{T},
@@ -97,8 +97,8 @@ function exchange_cols!(
     seen::BitArray{1}
     )  where T <: Integer
 
-
-    possible_cols = ones(Bool, max_col)
+    #Find the colors that can be exchanged to avoid introducing a new color.
+    possible_exchange = trues(max_col)
     for u in neighbors(g, v)
         seen[u] || continue
         if !valid_distinct_cols[u]
@@ -107,11 +107,10 @@ function exchange_cols!(
         end
         #Condition to check exchange will help
         if distinct_cols[u] > max_col-2 
-            possible_cols[cols[u]] = false
+            possible_exchange[cols[u]] = false
         end
     end
-
-    best_col = findfirst(isequal(true), possible_cols)
+    best_col = findfirst(isequal(true), possible_exchange)
     best_col = (best_col == nothing) ? (max_col+one(T)) : best_col
     
     cols[v] = best_col

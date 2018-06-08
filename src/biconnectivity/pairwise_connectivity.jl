@@ -26,7 +26,7 @@ function lower_bound_pairwise_connectivity(
 
     while true
         path = get_path(g, s, t, excluded) #s and t are valid
-        path[1] == 0 && break
+        path[1] == 0 && break #Check if the 2 vertices are disconnected
         connectivity += one(T)
         append!(excluded, path)
     end
