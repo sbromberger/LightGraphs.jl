@@ -42,7 +42,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
     
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
-        distmx = SparseArrays.sparse(distmx) #Change reference, not value
+        distmx = sparse(distmx) #Change reference, not value
     end
 
     #Weight transform not needed if all weights are positive.
