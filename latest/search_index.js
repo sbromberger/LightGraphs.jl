@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Choosing A Graph Type",
     "title": "Graph Types",
     "category": "section",
-    "text": "In addition to providing SimpleGraph and SimpleDiGraph implementations, LightGraphs also serves as a framework for other graph types. Currently, there are several alternative graph types, each with its own package:SimpleWeightedGraphs provides a structure for (un)directed graphs with the ability to specify weights on edges.\nMetaGraphs provides a structure (un)directed graphs that supports user-defined properties on the graph, vertices, and edges.\nStaticGraphs supports very large graph structures in a space- and time-efficient manner, but as the name implies, does not allow modification of the graph oncecreated."
+    "text": "In addition to providing SimpleGraph and SimpleDiGraph implementations, LightGraphs also serves as a framework for other graph types. Currently, there are several alternative graph types, each with its own package:SimpleWeightedGraphs provides a structure for (un)directed graphs with the ability to specify weights on edges.\nMetaGraphs provides a structure (un)directed graphs that supports user-defined properties on the graph, vertices, and edges.\nStaticGraphs supports very large graph structures in a space- and time-efficient manner, but as the name implies, does not allow modification of the graph once created."
 },
 
 {
@@ -1621,7 +1621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.adjacency_spectrum",
     "category": "function",
-    "text": "Return the eigenvalues of the adjacency matrix for a graph g, indexed by vertex. Default values for T are the same as those in adjacency_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse IterativeEigensolvers.eigs(adjacency_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
+    "text": "Return the eigenvalues of the adjacency matrix for a graph g, indexed by vertex. Default values for T are the same as those in adjacency_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse eigs(adjacency_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
 },
 
 {
@@ -1645,7 +1645,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.laplacian_spectrum",
     "category": "function",
-    "text": "laplacian_spectrum(g[, T=Int; dir=:unspec])\n\nReturn the eigenvalues of the Laplacian matrix for a graph g, indexed by vertex. Default values for T are the same as those in laplacian_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse IterativeEigensolvers.eigs(laplacian_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
+    "text": "laplacian_spectrum(g[, T=Int; dir=:unspec])\n\nReturn the eigenvalues of the Laplacian matrix for a graph g, indexed by vertex. Default values for T are the same as those in laplacian_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse eigs(laplacian_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
 },
 
 {
