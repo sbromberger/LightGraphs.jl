@@ -1,3 +1,8 @@
+using Random
+
+using LightGraphs:
+    getRNG, sample!
+
 function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
@@ -15,8 +20,8 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integ
     return g
 end
 
-Graph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
-    Graph{T}(nv, ne, seed=seed)
+SimpleGraph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
+    SimpleGraph{T}(nv, ne, seed=seed)
 
 function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
@@ -108,11 +113,11 @@ from the expected values are likely.
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 """
 function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T <: Real
-    g = Graph(length(ω))
+    g = SimpleGraph(length(ω))
     expected_degree_graph!(g, ω, seed=seed)
 end
 
-function expected_degree_graph!(g::Graph, ω::Vector{T}; seed::Int=-1) where T <: Real
+function expected_degree_graph!(g::SimpleGraph, ω::Vector{T}; seed::Int=-1) where T <: Real
     n = length(ω)
     @assert all(zero(T) .<= ω .<= n - one(T)) "Elements of ω needs to be at least 0 and at most n-1"
 
@@ -185,12 +190,12 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{Edge}, potential_edges::Dict{T,T}) where T <: Integer
+function _suitable(edges::Set{SimpleEdge}, potential_edges::Dict{T,T}) where T <: Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
         s1 >= s2 && continue
-        (Edge(s1, s2) ∉ edges) && return true
+        (SimpleEdge(s1, s2) ∉ edges) && return true
     end
     return false
 end
@@ -198,7 +203,7 @@ end
 _try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
 function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
-    edges = Set{Edge}()
+    edges = Set{SimpleEdge}()
     m = 0
     stubs = zeros(T, sum(k))
     for i = one(T):n
@@ -217,7 +222,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
             if (s1 > s2)
                 s1, s2 = s2, s1
             end
-            e = Edge(s1, s2)
+            e = SimpleEdge(s1, s2)
             if s1 != s2 && ∉(e, edges)
                 push!(edges, e)
             else
@@ -227,7 +232,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
         end
 
         if !_suitable(edges, potential_edges)
-            return Set{Edge}()
+            return Set{SimpleEdge}()
         end
 
         stubs = Vector{Int}()
@@ -442,7 +447,7 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
         target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
         # skip if loop edge
         (source == target) && continue
-        edge = Edge(source, target)
+        edge = SimpleEdge(source, target)
         # is there already an edge? If so, try again
         add_edge!(g, edge) || continue
         m -= 1
@@ -665,7 +670,7 @@ function random_tournament_digraph(n::Integer; seed::Int=-1)
     g = SimpleDiGraph(n)
 
     for i = 1:n, j = i + 1:n
-        rand(rng, Bool) ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
+        rand(rng, Bool) ? add_edge!(g, SimpleEdge(i, j)) : add_edge!(g, SimpleEdge(j, i))
     end
 
     return g
@@ -844,7 +849,7 @@ Generate a stream of random pairs in `1:n` using random number generator `RNG`.
 function random_pair(rng::AbstractRNG, n::Integer)
     f(ch) = begin
         while true
-            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+            put!(ch, SimpleEdge(rand(rng, 1:n), rand(rng, 1:n)))
         end
     end
     return f
@@ -858,7 +863,7 @@ Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=SimpleEdge, csize=32)
     edges(ch) = begin
         for e in pairs
             i, j = Tuple(e)
@@ -869,7 +874,7 @@ function make_edgestream(sbm::StochasticBlockModel)
             end
         end
     end
-    return Channel(edges, ctype=Edge, csize=32)
+    return Channel(edges, ctype=SimpleEdge, csize=32)
 end
 
 function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
@@ -883,7 +888,7 @@ function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
     return g
 end
 
-Graph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
+SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
     SimpleGraph(nvg, neg, make_edgestream(sbm))
 
 #TODO: this documentation needs work. sbromberger 20170326
