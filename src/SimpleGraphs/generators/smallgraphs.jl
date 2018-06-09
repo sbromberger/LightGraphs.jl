@@ -5,7 +5,7 @@
 function _make_simple_undirected_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
     g = SimpleGraph(n)
     for (s, d) in edgelist
-        add_edge!(g, Edge(s, d))
+        add_edge!(g, SimpleGraphEdge(s, d))
     end
     return g
 end
@@ -13,7 +13,7 @@ end
 function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
     g = SimpleDiGraph(n)
     for (s, d) in edgelist
-        add_edge!(g, Edge(s, d))
+        add_edge!(g, SimpleDiGraphEdge(s, d))
     end
     return g
 end
@@ -226,8 +226,8 @@ end
 
 function HouseXGraph()
     g = HouseGraph()
-    add_edge!(g, Edge(1, 4))
-    add_edge!(g, Edge(2, 3))
+    add_edge!(g, SimpleEdge(1, 4))
+    add_edge!(g, SimpleEdge(2, 3))
     return g
 end
 
