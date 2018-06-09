@@ -10,6 +10,11 @@ struct FloydWarshallState{T,U<:Integer} <: AbstractPathState
     parents::Matrix{U}
 end
 
+"""
+    seq_floyd_warshall_shortest_paths(g, distmx)
+
+Sequential implementation of [`LightGraphs.floyd_warshall_shortest_paths`](@ref).
+"""
 function seq_floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T}
@@ -55,6 +60,7 @@ function seq_floyd_warshall_shortest_paths(
     return fws
 end
 
+#Helper function used due to performance bug in @threads. 
 function _loopbody!(
     pivot::U, 
     nvg::U,
@@ -66,7 +72,7 @@ function _loopbody!(
         d = dists[pivot, v]
         if d != typemax(T) && v != pivot
             p = parents[pivot, v]
-            for u in one(U):nvg
+            @inbounds for u in one(U):nvg
                 ans = (dists[u, pivot] == typemax(T) || u == pivot ? typemax(T) : dists[u, pivot] + d) 
                 if dists[u, v] > ans
                     dists[u, v] = ans
@@ -77,6 +83,11 @@ function _loopbody!(
     end
 end
 
+"""
+    parallel_floyd_warshall_shortest_paths(g, distmx)
+
+Parallel implementation of [`LightGraphs.floyd_warshall_shortest_paths`](@ref).
+"""
 function parallel_floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T}
@@ -105,7 +116,7 @@ function parallel_floyd_warshall_shortest_paths(
     end
 
     for pivot in vertices(g)
-        _loopbody!(pivot, nvg, dists, parents)
+        _loopbody!(pivot, nvg, dists, parents) #Due to bug in @threads
     end
     fws = FloydWarshallState(dists, parents)
     return fws
