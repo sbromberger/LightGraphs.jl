@@ -9,6 +9,8 @@
 #
 ###################################################################
 
+using Base.Threads
+
 struct NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
@@ -17,30 +19,37 @@ struct NegativeCycleError <: Exception end
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 """
-struct BellmanFordState{T<:Number,U<:Integer} <: AbstractPathState
+struct BellmanFordState{T<:Real, U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
 
-function bellman_ford_shortest_paths!(
-    graph::AbstractGraph,
-    sources::AbstractVector{T},
-    distmx::AbstractMatrix{R},
-    state::BellmanFordState
-    ) where R<:Real where T<:Integer
+"""
+    seq_bellman_ford_shortest_paths(g, sources, distmx)
 
-    active = Set{T}(sources)
-    state.dists[sources] = state.parents[sources] .= 0
+Sequential implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
+
+"""
+function seq_bellman_ford_shortest_paths(
+    graph::AbstractGraph{U},
+    sources::AbstractVector{<:Integer},
+    distmx::AbstractMatrix{T}
+    ) where T<:Real where U<:Integer
+
+    active = Set{U}(sources)
+    dists = fill(typemax(T), nv(graph))
+    parents = zeros(U, nv(graph))
+    dists[sources] .= 0
     no_changes = false
-    for i in one(T):nv(graph)
+    for i in one(U):nv(graph)
         no_changes = true
-        new_active = Set{T}()
+        new_active = Set{U}()
         for u in active
             for v in outneighbors(graph, u)
-                edist = distmx[u, v]
-                if state.dists[v] > state.dists[u] + edist
-                    state.dists[v] = state.dists[u] + edist
-                    state.parents[v] = u
+                relax_dist = distmx[u, v] + dists[u]
+                if dists[v] > relax_dist
+                    dists[v] = relax_dist
+                    parents[v] = u
                     no_changes = false
                     push!(new_active, v)
                 end
@@ -52,38 +61,136 @@ function bellman_ford_shortest_paths!(
         active = new_active
     end
     no_changes || throw(NegativeCycleError())
-    return state
+    return BellmanFordState(parents, dists)
+end
+
+#Helper function used due to performance bug in @threads.
+function _loop_body!(
+    g::AbstractGraph{U},
+    distmx::AbstractMatrix{T},
+    dists::Vector{T},
+    parents::Vector{U},
+    active::Vector{U},
+    n_threads::Integer,
+    dists_t::Vector{Vector{T}},
+    parents_t::Vector{Vector{U}},
+    active_t::Vector{Set{U}},
+    ) where T<:Real where U<:Integer
+
+
+    #Perform edge relaxations in parallel on the edges starting from active vertices.
+    #but thread i only updates (dists_t[i], parents_t[i], active_t[i])
+    @threads for v in active
+        local_dists = dists_t[threadid()]
+        local_parents = parents_t[threadid()]
+        local_active = active_t[threadid()]        
+        #Reminder: Changes made to local_dists reflect on dists_t[threadid()]
+
+        v_neighbors = outneighbors(g, v)
+        d = dists[v]
+        for u in v_neighbors
+            relax_dist = d + distmx[v, u]
+            if relax_dist < dists[u] && relax_dist < local_dists[u]
+                local_dists[u] = relax_dist
+                local_parents[u] = v
+                push!(local_active, u)
+            end
+        end
+    end
+
+    #Update dists, parents, active from dists_t, parents_t, active_t
+    for i in 1:n_threads
+        local_dists = dists_t[i]
+        local_parents = parents_t[i]
+        local_active = active_t[i] 
+        for v in local_active
+            if local_dists[v] < dists[v]
+                dists[v] = local_dists[v]
+                parents[v] = local_parents[v]
+            end
+        end
+    end
 end
 
 """
-    bellman_ford_shortest_paths(g, s, distmx=weights(g))
-    bellman_ford_shortest_paths(g, ss, distmx=weights(g))
+    parallel_floyd_warshall_shortest_paths(g, sources, distmx)
+
+Parallel implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
+
+### Performance
+Memory: O(nthreads()*|V|).
+Approximately nthreads()*|V|*(size(U)+size(T))
+"""
+function parallel_bellman_ford_shortest_paths(
+    g::AbstractGraph{U},
+    sources::AbstractVector{<:Integer},
+    distmx::AbstractMatrix{T}=weights(g)
+    ) where T<:Real where U<:Integer
+
+    nvg = nv(g)
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
+    dists[sources] .= zero(T) 
+    active = Vector{U}(undef, length(sources))
+    active .= sources
+
+    
+    #Auxillary memory used for multi-threading.
+    #Thread i will have access to (dists_t[i], parents_t[i], active_t[i])    
+    n_threads = nthreads()
+    dists_t = [dists[:] for i in 1:n_threads]
+    parents_t = fill(zeros(U, nvg), n_threads)
+    active_t = fill(Set{U}(), n_threads)
+
+    for i in one(U):nvg
+        _loop_body!(g, distmx, dists, parents, active, n_threads, dists_t, parents_t, active_t)
+        
+        active = collect(reduce(union, Set{U}(), active_t))#Cobine active_t into active
+        isempty(active) && break
+        for i in 1:n_threads
+            empty!(active_t[i])
+        end
+    end
+
+    isempty(active) || throw(NegativeCycleError())
+    return BellmanFordState(parents, dists)
+end
+
+"""
+    bellman_ford_shortest_paths(g, s, distmx=weights(g); parallel=false)
+    bellman_ford_shortest_paths(g, ss, distmx=weights(g); parallel=false)
 
 Compute shortest paths between a source `s` (or list of sources `ss`) and all
 other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
 Return a [`LightGraphs.BellmanFordState`](@ref) with relevant traversal information.
+
+### Optional Arguments
+- `allpaths=false`: If true, the algorithm runs in parallel.
 """
-function bellman_ford_shortest_paths(
-    graph::AbstractGraph,
-    sources::AbstractVector{U},
-    distmx::AbstractMatrix{T} = weights(graph)
-    ) where T where U<:Integer
-    nvg = nv(graph)
-    state = BellmanFordState(zeros(U, nvg), fill(typemax(T), nvg))
-    bellman_ford_shortest_paths!(graph, sources, distmx, state)
-end
+bellman_ford_shortest_paths(
+    graph::AbstractGraph{U},
+    sources::AbstractVector{<:Integer},
+    distmx::AbstractMatrix{T} = weights(graph);
+    parallel=false
+    ) where T<:Real where U<:Integer = (parallel ? 
+    parallel_bellman_ford_shortest_paths(graph, sources, distmx) : seq_bellman_ford_shortest_paths(graph, sources, distmx))
 
 bellman_ford_shortest_paths(
-    graph::AbstractGraph,
+    graph::AbstractGraph{U},
     v::Integer,
-    distmx::AbstractMatrix = weights(graph)
-    ) = bellman_ford_shortest_paths(graph, [v], distmx)
+    distmx::AbstractMatrix{T} = weights(graph);
+    parallel=false
+    ) where T<:Real where U<:Integer = bellman_ford_shortest_paths(graph, [v], distmx, parallel=parallel)
 
-has_negative_edge_cycle(g::AbstractGraph) = false
+has_negative_edge_cycle(g::AbstractGraph; parallel=false) = false
 
-function has_negative_edge_cycle(g::AbstractGraph, distmx::AbstractMatrix)
+function has_negative_edge_cycle(
+    g::AbstractGraph{U}, 
+    distmx::AbstractMatrix{T}; 
+    parallel=false
+    ) where T<:Real where U<:Integer
     try
-        bellman_ford_shortest_paths(g, vertices(g), distmx)
+        bellman_ford_shortest_paths(g, vertices(g), distmx, parallel=parallel)
     catch e
         isa(e, NegativeCycleError) && return true
     end
