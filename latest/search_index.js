@@ -1173,7 +1173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.floyd_warshall_shortest_paths",
     "category": "function",
-    "text": "floydwarshallshortestpaths(g, distmx=weights(g)) Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshallalgorithm) to compute the shortest paths between all pairs of vertices in graph g using an optional distance matrix distmx. Return a LightGraphs.FloydWarshallState with relevant traversal information.\n\nPerformance\n\nSpace complexity is on the order of mathcalO(V^2).\n\n\n\n\n\n"
+    "text": "floyd_warshall_shortest_paths(g, distmx=weights(g); parallel=false)\n\nUse the Floyd-Warshall algorithm to compute the shortest paths between all pairs of vertices in graph g using an optional distance matrix distmx. Return a LightGraphs.FloydWarshallState with relevant traversal information.\n\nPerformance\n\nSpace complexity is on the order of mathcalO(V^2).\n\nOptional Arguments\n\nparallel=false: If true, the algorithm runs in parallel.\n\n\n\n\n\n"
 },
 
 {
