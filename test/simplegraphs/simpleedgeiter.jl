@@ -2,7 +2,7 @@
     ga = @inferred(SimpleGraph(10, 20; seed=1))
     gb = @inferred(SimpleGraph(10, 20; seed=1))
     @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
-    @test sprint(show, start(edges(ga))) == "SimpleEdgeIterState [1, 1]"
+    @test sprint(show, iterate(edges(ga))[2]) == "SimpleEdgeIterState [1, 1]"
 
     @test length(collect(edges(Graph(0, 0)))) == 0
 
@@ -46,7 +46,7 @@
     end
 
     eit = edges(ga)
-    es = @inferred(start(eit))
+    es = @inferred(iterate(eit)[2])
 
     @test es.s == 2
     @test es.di == 1
@@ -73,7 +73,7 @@
     end
 
     eit = @inferred(edges(ga))
-    es = @inferred(start(eit))
+    es = @inferred(iterate(eit)[2])
 
     @test es.s == 3
     @test es.di == 1

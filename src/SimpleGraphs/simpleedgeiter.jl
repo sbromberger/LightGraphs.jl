@@ -46,10 +46,17 @@ function edge_next(g::AbstractSimpleGraph,
     return e, SimpleEdgeIterState(zero(T), 1)
 end
 
-start(eit::SimpleEdgeIter) = edge_start(eit.g)
-done(eit::SimpleEdgeIter, state::SimpleEdgeIterState{T}) where T = state.s == zero(T)
+function iterate(eit::SimpleEdgeIter{AbstractSimpleGraph{T}}) where T
+    state = edge_start(eit.g)
+    return iterate(eit, state)
+end
+
+function iterate(eit::SimpleEdgeIter{AbstractSimpleGraph{T}}, state::SimpleEdgeIterState{T}) where T
+    state.s == zero(T) && return nothing
+    return edge_next(eit.g, state)
+end
+
 length(eit::SimpleEdgeIter) = ne(eit.g)
-next(eit::SimpleEdgeIter, state::SimpleEdgeIterState) = edge_next(eit.g, state)
 
 function _isequal(e1::SimpleEdgeIter, e2)
     k = 0
