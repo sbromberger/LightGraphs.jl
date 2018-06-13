@@ -46,12 +46,12 @@ function edge_next(g::AbstractSimpleGraph,
     return e, SimpleEdgeIterState(zero(T), 1)
 end
 
-function iterate(eit::SimpleEdgeIter{AbstractSimpleGraph{T}}) where T
+function iterate(eit::SimpleEdgeIter{G}) where {G<:AbstractSimpleGraph}
     state = edge_start(eit.g)
     return iterate(eit, state)
 end
 
-function iterate(eit::SimpleEdgeIter{AbstractSimpleGraph{T}}, state::SimpleEdgeIterState{T}) where T
+function iterate(eit::SimpleEdgeIter{G}, state::SimpleEdgeIterState{T}) where {T,G<:AbstractSimpleGraph{T}}
     state.s == zero(T) && return nothing
     return edge_next(eit.g, state)
 end
