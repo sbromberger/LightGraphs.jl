@@ -8,24 +8,24 @@ function _normalized_cut_cost(cut, W::AbstractMatrix, D)
             end
         end
     end
-    cut_cost/=2
-    return cut_cost/sum(D*cut) + cut_cost/sum(D*(.~cut))
+    cut_cost /= 2
+    return cut_cost / sum(D * cut) + cut_cost / sum(D * (.~cut))
 end
 
-function _normalized_cut_cost(cut, W::SparseArrays.SparseMatrixCSC, D)
+function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
     cut_cost = 0
-    rows = SparseArrays.rowvals(W)
-    vals = SparseArrays.nonzeros(W)
+    rows = rowvals(W)
+    vals = nonzeros(W)
     n = size(W, 2)
     for i = 1:n
-        for j in SparseArrays.nzrange(W, i)
+        for j in nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
-                cut_cost += vals[j]/2
+                cut_cost += vals[j] / 2
             end
         end
     end
-    return cut_cost/sum(D*cut) + cut_cost/sum(D*(.~cut))
+    return cut_cost / sum(D * cut) + cut_cost / sum(D * (.~cut))
 end
 
 function _partition_weightmx(cut, W::AbstractMatrix)
@@ -41,11 +41,11 @@ function _partition_weightmx(cut, W::AbstractMatrix)
         if cut[i] == false
             newvid[i] = j1
             vmap1[j1] = i
-            j1+=1
+            j1 += 1
         else
             newvid[i] = j2
             vmap2[j2] = i
-            j2+=1
+            j2 += 1
         end
     end
 
@@ -65,7 +65,7 @@ function _partition_weightmx(cut, W::AbstractMatrix)
     return (W1, W2, vmap1, vmap2)
 end
 
-function _partition_weightmx(cut, W::SparseArrays.SparseMatrixCSC)
+function _partition_weightmx(cut, W::SparseMatrixCSC)
     nv = length(cut)
     nv2 = sum(cut)
     nv1 = nv - nv2
@@ -78,21 +78,21 @@ function _partition_weightmx(cut, W::SparseArrays.SparseMatrixCSC)
         if cut[i] == false
             newvid[i] = j1
             vmap1[j1] = i
-            j1+=1
+            j1 += 1
         else
             newvid[i] = j2
             vmap2[j2] = i
-            j2+=1
+            j2 += 1
         end
     end
 
-    rows = SparseArrays.rowvals(W)
-    vals = SparseArrays.nonzeros(W)
+    rows = rowvals(W)
+    vals = nonzeros(W)
     I1 = Vector{Int}(); I2 = Vector{Int}()
     J1 = Vector{Int}(); J2 = Vector{Int}()
     V1 = Vector{Float64}(); V2 = Vector{Float64}()
     for i = 1:nv
-        for j in SparseArrays.nzrange(W, i)
+        for j in nzrange(W, i)
             row = rows[j]
             if cut[i] == cut[row] == false
                 push!(I1, newvid[i])
@@ -105,33 +105,33 @@ function _partition_weightmx(cut, W::SparseArrays.SparseMatrixCSC)
             end
         end
     end
-    W1 = SparseArrays.sparse(I1, J1, V1)
-    W2 = SparseArrays.sparse(I2, J2, V2)
+    W1 = sparse(I1, J1, V1)
+    W2 = sparse(I2, J2, V2)
     return (W1, W2, vmap1, vmap2)
 end
 
 function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m, n = size(W)
-    D = LinearAlgebra.Diagonal(vec(sum(W, dims=2)))
+    D = Diagonal(vec(sum(W, dims=2)))
 
     m == 1 && return [1]
 
     #get eigenvector corresponding to second smallest eigenvalue
-    # v = IterativeEigensolvers.eigs(D-W, D, nev=2, which=:SR)[2][:,2]
+    # v = eigs(D-W, D, nev=2, which=:SR)[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 10
-        ret = IterativeEigensolvers.eigs(invDroot'*(D-W)*invDroot, nev=2, which=:SR)[2][:,2]
+        ret = eigs(invDroot' * (D - W) * invDroot, nev=2, which=:SR)[2][:,2]
     else
-        ret = LinearAlgebra.eigen(Matrix(invDroot'*(D-W)*invDroot)).vectors[:,2]
+        ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
     end
-    v = invDroot*ret
+    v = invDroot * ret
 
     #perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
     for t in range(minimum(v), stop=maximum(v), length=num_cuts)
-        cut = v.>t
+        cut = v .> t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost
             min_cost = cost
@@ -141,7 +141,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
 
     if min_cost < thres
         #split graph, compute normalized_cut for each subgraph recursively and merge indices.
-        cut = v.>best_thres
+        cut = v .> best_thres
         W1, W2, vmap1, vmap2 = _partition_weightmx(cut, W)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
         labels2 = _recursive_normalized_cut(W2, thres, num_cuts)
@@ -178,12 +178,10 @@ It is important to identify a good threshold for your application. A bisection s
 ### References
 "Normalized Cuts and Image Segmentation" - Jianbo Shi and Jitendra Malik
 """
-function normalized_cut(
-    g::AbstractGraph,
+function normalized_cut(g::AbstractGraph,
     thres::Real,
     W::AbstractMatrix{T}=adjacency_matrix(g),
-    num_cuts::Int = 10
-    ) where T <: Real
+    num_cuts::Int=10) where T <: Real
 
     return _recursive_normalized_cut(W, thres, num_cuts)
 end

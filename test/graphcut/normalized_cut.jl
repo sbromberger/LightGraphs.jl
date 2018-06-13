@@ -33,7 +33,7 @@
       @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
 
-    w = SparseArrays.SparseMatrixCSC(w)
+    w = SparseMatrixCSC(w)
     for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 1, w))
       @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
@@ -53,7 +53,7 @@
       @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
 
-    w = SparseArrays.SparseMatrixCSC(w)
+    w = SparseMatrixCSC(w)
     for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 0.1, w))
       @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]

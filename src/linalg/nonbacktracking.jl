@@ -85,7 +85,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
-LinearAlgebra.issymmetric(nbt::Nonbacktracking) = false
+issymmetric(nbt::Nonbacktracking) = false
 
 function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
     length(x) == nbt.m || error("dimension mismatch")
@@ -100,7 +100,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
     end
     return y
 end
-function LinearAlgebra.mul!(C, nbt::Nonbacktracking, B)
+function mul!(C, nbt::Nonbacktracking, B)
     # computs C = A * B
     for i in 1:size(B, 2)
         C[:, i] = nbt * B[:, i]
@@ -126,7 +126,7 @@ function coo_sparse(nbt::Nonbacktracking)
     return I, J, 1.0
 end
 
-SparseArrays.sparse(nbt::Nonbacktracking) = SparseArrays.sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
+sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zero(x)
