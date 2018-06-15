@@ -253,39 +253,49 @@ is_directed(::Type{SimpleGraph}) = false
 is_directed(::Type{SimpleGraph{T}}) where T = false
 is_directed(g::SimpleGraph) = false
 
-function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
-    u, v = Tuple(e)
-    (u > nv(g) || v > nv(g)) && return false
-    if degree(g, u) > degree(g, v)
-        u, v = v, u
-    end
-    return insorted(v, fadj(g, u))
+
+function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s]
+    index = searchsortedfirst(list, d)
+    @inbounds return (index <= length(list) && list[index] == d)
 end
+
 
 function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false
-    inserted = _insert_and_dedup!(g.fadjlist[s], d)
-    if inserted
-        g.ne += 1
-    end
-    if s != d
-        inserted = _insert_and_dedup!(g.fadjlist[d], s)
-    end
-    return inserted
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds 
+    @inbounds list = g.fadjlist[s]
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
+    insert!(list, index, d)
+
+    g.ne += 1
+    s == d && return true  # selfloop
+
+    @inbounds list = g.fadjlist[d]
+    index = searchsortedfirst(list, s)
+    insert!(list, index, s)
+    return true  # edge successfully added
 end
 
-function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
-    i = searchsorted(g.fadjlist[src(e)], dst(e))
-    isempty(i) && return false   # edge not in graph
-    j = first(i)
-    deleteat!(g.fadjlist[src(e)], j)
-    if src(e) != dst(e)     # not a self loop
-        j = searchsortedfirst(g.fadjlist[dst(e)], src(e))
-        deleteat!(g.fadjlist[dst(e)], j)
-    end
+
+function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s] 
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
+    deleteat!(list, index)
+
     g.ne -= 1
-    return true # edge successfully removed
+    s == d && return true  # selfloop
+
+    @inbounds list = g.fadjlist[d] 
+    index = searchsortedfirst(list, s)
+    deleteat!(list, index)
+    return true  # edge successfully removed
 end
 
 

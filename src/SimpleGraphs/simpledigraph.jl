@@ -246,26 +246,47 @@ is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
 is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
-function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+
+function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false
-    inserted = _insert_and_dedup!(g.fadjlist[s], d)
-    if inserted
-        g.ne += 1
-    end
-    return inserted && _insert_and_dedup!(g.badjlist[d], s)
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s]
+    index = searchsortedfirst(list, d)
+    @inbounds return (index <= length(list) && list[index] == d)
 end
 
 
-function rem_edge!(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    i = searchsorted(g.fadjlist[src(e)], dst(e))
-    isempty(i) && return false # edge doesn't exist
-    j = first(i)
-    deleteat!(g.fadjlist[src(e)], j)
-    j = searchsortedfirst(g.badjlist[dst(e)], src(e))
-    deleteat!(g.badjlist[dst(e)], j)
+function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s]
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
+    insert!(list, index, d)
+
+    g.ne += 1
+
+    @inbounds list = g.badjlist[d]
+    index = searchsortedfirst(list, s)
+    insert!(list, index, s)
+    return true  # edge successfully added
+end
+
+
+function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s] 
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) || return false   # edge not in graph
+    deleteat!(list, index)
+
     g.ne -= 1
-    return true
+
+    @inbounds list = g.badjlist[d] 
+    index = searchsortedfirst(list, s)
+    deleteat!(list, index)
+    return true # edge successfully removed
 end
 
 
@@ -275,15 +296,4 @@ function add_vertex!(g::SimpleDiGraph{T}) where T
     push!(g.fadjlist, Vector{T}())
 
     return true
-end
-
-
-function has_edge(g::SimpleDiGraph, e::SimpleDiGraphEdge)
-    u, v = Tuple(e)
-    (u > nv(g) || v > nv(g)) && return false
-    if degree(g, u) < degree(g, v)
-        return insorted(v, fadj(g, u))
-    else
-        return insorted(u, badj(g, v))
-    end
 end
