@@ -250,9 +250,17 @@ is_directed(::Type{SimpleDiGraph{T}}) where T = true
 function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s]
-    index = searchsortedfirst(list, d)
-    @inbounds return (index <= length(list) && list[index] == d)
+    @inbounds fadjlist = g.fadjlist[s]
+    @inbounds badjlist = g.badjlist[d]
+    fadjlen = length(fadjlist)
+    badjlen = length(badjlist)
+    if fadjlen < badjlen
+        index = searchsortedfirst(fadjlist, d)
+        @inbounds return (index <= fadjlen && fadjlist[index] == d)
+    else
+        index = searchsortedfirst(badjlist, s)
+        @inbounds return (index <= badjlen && badjlist[index] == s)
+    end
 end
 
 
