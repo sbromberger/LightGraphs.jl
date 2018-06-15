@@ -2,7 +2,9 @@
     ga = @inferred(SimpleGraph(10, 20; seed=1))
     gb = @inferred(SimpleGraph(10, 20; seed=1))
     @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
-    @test sprint(show, start(edges(ga))) == "SimpleEdgeIterState [1, 1]"
+    # note: we don't get the first iterator state,
+    #since iterate returns the state after taking the first value
+    @test sprint(show, iterate(edges(ga))[2]) == "SimpleEdgeIterState [1, 2]"
 
     @test length(collect(edges(Graph(0, 0)))) == 0
 
@@ -46,10 +48,11 @@
     end
 
     eit = edges(ga)
-    es = @inferred(start(eit))
+    # @inferred not valid for new interface anymore (return type is a Union)
+    es = iterate(eit)[2]
 
-    @test es.s == 2
-    @test es.di == 1
+    @test es.s == 3
+    @test es.di == 2
 
     @test [e for e in eit] == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
@@ -73,10 +76,10 @@
     end
 
     eit = @inferred(edges(ga))
-    es = @inferred(start(eit))
+    es = iterate(eit)[2]
 
     @test es.s == 3
-    @test es.di == 1
+    @test es.di == 2
 
     @test [e for e in eit] == [
       SimpleEdge(3, 2), SimpleEdge(3, 10),
