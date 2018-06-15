@@ -49,7 +49,7 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
         colpt[j + 1] = colpt[j] + length(dsts)
         append!(rowval, sort!(dsts))
     end
-    spmx = SparseArrays.SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
+    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
@@ -80,7 +80,7 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseArrays.SparseMatrixCSC{T,U}, LinearAlgebra.Diagonal(SparseArrays.sparse(sum(A, dims=2)[:])))
+    D = convert(SparseMatrixCSC{T,U}, Diagonal(sparse(sum(A, dims=2)[:])))
     return D - A
 end
 
@@ -98,10 +98,10 @@ by vertex. Default values for `T` are the same as those in
 Converts the matrix to dense with ``nv^2`` memory usage.
 
 ### Implementation Notes
-Use `IterativeEigensolvers.eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
+Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
-laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = LinearAlgebra.eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
+laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
 """
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
@@ -115,14 +115,14 @@ by vertex. Default values for `T` are the same as those in
 Converts the matrix to dense with ``nv^2`` memory usage.
 
 ### Implementation Notes
-Use `IterativeEigensolvers.eigs(adjacency_matrix(g);  kwargs...)` to compute some of the
+Use `eigs(adjacency_matrix(g);  kwargs...)` to compute some of the
 eigenvalues/eigenvectors.
 """
 function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
     if dir == :unspec
         dir = is_directed(g) ?  :both : :out
     end
-    return LinearAlgebra.eigvals(Matrix(adjacency_matrix(g, T; dir=dir)))
+    return eigvals(Matrix(adjacency_matrix(g, T; dir=dir)))
 end
 
 """
@@ -162,7 +162,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
         end
     end
 
-    spmx = SparseArrays.SparseMatrixCSC(n_v, n_e, colpt, rowval, nzval)
+    spmx = SparseMatrixCSC(n_v, n_e, colpt, rowval, nzval)
     return spmx
 end
 
@@ -183,8 +183,8 @@ function spectral_distance end
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁) - 1 ? IterativeEigensolvers.eigs(A₁, nev=k, which=:LR)[1] : LinearAlgebra.eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
-    λ₂ = k < nv(G₂) - 1 ? IterativeEigensolvers.eigs(A₂, nev=k, which=:LR)[1] : LinearAlgebra.eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
+    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
+    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
 
     return sum(abs, (λ₁ - λ₂))
 end

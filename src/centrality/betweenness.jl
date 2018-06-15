@@ -27,10 +27,9 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 ### References
 - Brandes 2001 & Brandes 2008
 """
-function betweenness_centrality(
-    g::AbstractGraph,
-    vs::AbstractVector = vertices(g),
-    distmx::AbstractMatrix = weights(g);
+function betweenness_centrality(g::AbstractGraph,
+    vs::AbstractVector=vertices(g),
+    distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false)
 
@@ -40,7 +39,7 @@ function betweenness_centrality(
 
     betweenness = zeros(n_v)
     for s in vs
-        if degree(g,s) > 0  # this might be 1?
+        if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
@@ -62,10 +61,9 @@ end
 betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
     betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
-function parallel_betweenness_centrality(
-    g::AbstractGraph,
-    vs::AbstractVector = vertices(g),
-    distmx::AbstractMatrix = weights(g);
+function parallel_betweenness_centrality(g::AbstractGraph,
+    vs::AbstractVector=vertices(g),
+    distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false)::Vector{Float64}
 
@@ -75,7 +73,7 @@ function parallel_betweenness_centrality(
 
     # Parallel reduction
 
-    betweenness = Distributed.@distributed (+) for s in vs
+    betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
@@ -100,12 +98,10 @@ end
 parallel_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
     parallel_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
-function _accumulate_basic!(
-    betweenness::Vector{Float64},
+function _accumulate_basic!(betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer
-    )
+    si::Integer)
 
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(n_v)
@@ -130,12 +126,10 @@ function _accumulate_basic!(
     return nothing
 end
 
-function _accumulate_endpoints!(
-    betweenness::Vector{Float64},
+function _accumulate_endpoints!(betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer
-    )
+    si::Integer)
 
     n_v = nv(g) # this is the ttl number of vertices
     δ = zeros(n_v)

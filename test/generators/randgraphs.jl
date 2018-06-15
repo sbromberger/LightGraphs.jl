@@ -256,7 +256,7 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
     test_sbm(sbm, bp)
-    @test LinearAlgebra.norm(collect(ratios)) < 0.25
+    @test norm(collect(ratios)) < 0.25
 
     sizes = [200, 200, 100]
     internaldeg = 15
@@ -274,14 +274,14 @@
     bp = blockfractions(sbm, g) ./ (sizes * sizes')
     test_sbm(sbm, bp)
     ratios = bp ./ (sbm.affinities ./ sum(sbm.affinities))
-    @test LinearAlgebra.norm(collect(ratios)) < 0.25
+    @test norm(collect(ratios)) < 0.25
 
     # check that average degree is not too high
     # factor of two is cushion for random process
     @test mean(degree(g)) <= 4 // 2 * numedges / sum(sizes)
     # check that the internal degrees are higher than the external degrees
     # 5//4 is cushion for random process.
-    @test all(sum(bc - LinearAlgebra.diagm(0 => SparseArrays.diag(bc)), dims=1) .<= 5 // 4 .* SparseArrays.diag(bc))
+    @test all(sum(bc - diagm(0 => diag(bc)), dims=1) .<= 5 // 4 .* diag(bc))
 
 
     sbm2 = StochasticBlockModel(0.5 * ones(4), 0.3, 10 * ones(Int, 4))

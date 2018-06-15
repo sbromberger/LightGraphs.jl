@@ -5,6 +5,7 @@ using SparseArrays
 using LinearAlgebra
 using DelimitedFiles
 using Base64
+using Random
 
 const testdir = dirname(@__FILE__)
 
