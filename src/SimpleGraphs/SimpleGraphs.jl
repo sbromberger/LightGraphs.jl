@@ -5,7 +5,7 @@ using LinearAlgebra
 using LightGraphs
 
 import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero, in
+    eltype, show, ==, Pair, Tuple, copy, length, issubset, zero, in, iterate
 
 import LightGraphs:
     _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
