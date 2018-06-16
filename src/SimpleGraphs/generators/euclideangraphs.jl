@@ -34,7 +34,7 @@ function euclidean_graph(points::Matrix;
     L=1., p=2., cutoff=-1., bc=:open)
     d, N = size(points)
     g = SimpleGraph(N)
-    weights = Dict{Edge,Float64}()
+    weights = Dict{SimpleEdge,Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))
     if bc == :periodic
         maximum(points) > L && throw(ArgumentError("Some points are outside the box of size $L")) # TODO 0.7: change to DomainError with text.
@@ -51,7 +51,7 @@ function euclidean_graph(points::Matrix;
             end
             dist = norm(Δ, p)
             if dist < cutoff
-                e = Edge(i, j)
+                e = SimpleEdge(i, j)
                 add_edge!(g, e)
                 weights[e] = dist
             end

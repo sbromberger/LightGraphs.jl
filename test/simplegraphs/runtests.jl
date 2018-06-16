@@ -10,7 +10,11 @@ const simplegraphtestdir = dirname(@__FILE__)
 tests = [
     "simplegraphs",
     "simpleedge",
-    "simpleedgeiter"
+    "simpleedgeiter",
+    "generators/randgraphs",
+    "generators/staticgraphs",
+    "generators/smallgraphs",
+    "generators/euclideangraphs"
 ]
 
 @testset "LightGraphs.SimpleGraphs" begin
