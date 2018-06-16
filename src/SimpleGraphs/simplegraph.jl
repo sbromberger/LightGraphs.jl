@@ -57,19 +57,22 @@ function SimpleGraph(g::SimpleDiGraph)
     newfadj = deepcopy(g.fadjlist)
     @inbounds for i in vertices(g)
         for j in badj(g, i)
-            if (_insert_and_dedup!(newfadj[i], j))
-                edgect += 2     # this is a new edge only in badjlist
-            else
+            index = searchsortedfirst(newfadj[i], j)
+            if index <= length(newfadj[i]) && newfadj[i][index] == j
                 edgect += 1     # this is an existing edge - we already have it
                 if i == j
                     edgect += 1 # need to count self loops
                 end
+            else
+                insert!(newfadj[i], index, j)
+                edgect += 2      # this is a new edge only in badjlist
             end
         end
     end
     iseven(edgect) || throw(AssertionError("invalid edgect in graph creation - please file bug report"))
     return SimpleGraph(edgect ÷ 2, newfadj)
 end
+
 
 @inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T <: Integer
     neg = 0
