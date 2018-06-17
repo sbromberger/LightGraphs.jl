@@ -52,4 +52,7 @@ Return true if `item` is in sorted collection `collection`.
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-insorted(item, collection) = !isempty(searchsorted(collection, item))
+function insorted(item, collection)
+    index = searchsortedfirst(collection, item)
+    @inbounds return (index <= length(collection) && collection[index] == item)
+end

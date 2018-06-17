@@ -249,24 +249,22 @@ is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
 function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
-    @inbounds fadjlist = g.fadjlist[s]
-    @inbounds badjlist = g.badjlist[d]
-    fadjlen = length(fadjlist)
-    badjlen = length(badjlist)
-    if fadjlen < badjlen
-        index = searchsortedfirst(fadjlist, d)
-        @inbounds return (index <= fadjlen && fadjlist[index] == d)
-    else
-        index = searchsortedfirst(badjlist, s)
-        @inbounds return (index <= badjlen && badjlist[index] == s)
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s]
+    @inbounds list_backedge = g.badjlist[d]
+    if length(list) > length(list_backedge)
+        d = s
+        list = list_backedge
     end
+    return insorted(d, list)
 end
 
 
 function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list = g.fadjlist[s]
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
@@ -283,7 +281,8 @@ end
 
 function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false  # edge out of bounds
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list = g.fadjlist[s] 
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) || return false   # edge not in graph
