@@ -11,10 +11,6 @@
 
 using Base.Threads
 
-export parallel_bellman_ford_shortest_paths_2, parallel_bellman_ford_shortest_paths, 
-seq_bellman_ford_shortest_paths, parallel_bellman_ford_shortest_paths_3,
-parallel_bellman_ford_shortest_paths_4, seq_bellman_ford_shortest_paths
-
 struct NegativeCycleError <: Exception end
 
 # AbstractPathState is defined in core
@@ -28,62 +24,9 @@ struct BellmanFordState{T<:Real, U<:Integer} <: AbstractPathState
     dists::Vector{T}
 end
 
-export seq_get_parents
-function seq_get_parents(
-    g::AbstractGraph{U}, 
-    distmx::AbstractMatrix{T},
-    dists::Array{T}
-    ) where T <: Real where U <: Integer
-#parents of sources/unreachable nodes will be 0. 
-    parents = zeros(U, nv(g))
 
-    for v in vertices(g)
-        d = dists[v]
-        d >= typemax(T) && continue
-        for u in outneighbors(g, v)
-            if d + distmx[v, u] <= dists[u] #This is the relaxed edge
-                parents[u] = v
-            end
-        end
-    end
-    return parents
-end
-
-
-export seq_bellman_ford_shortest_paths_2
-function seq_bellman_ford_shortest_paths_2(
-    graph::AbstractGraph{U},
-    sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}
-    ) where T<:Real where U<:Integer
-
-    active = Set{U}(sources)
-    dists = fill(typemax(T), nv(graph))
-    dists[sources] .= 0
-    no_changes = false
-    for i in one(U):nv(graph)
-        no_changes = true
-        new_active = Set{U}()
-        for u in active
-            for v in outneighbors(graph, u)
-                relax_dist = distmx[u, v] + dists[u]
-                if dists[v] > relax_dist
-                    dists[v] = relax_dist
-                    no_changes = false
-                    push!(new_active, v)
-                end
-            end
-        end
-        if no_changes
-            break
-        end
-        active = new_active
-    end
-    #no_changes || throw(NegativeCycleError())
-    return BellmanFordState(seq_get_parents(graph, distmx, dists), dists)
-end
-
-
+export seq_bellman_ford_shortest_paths, parallel_bellman_ford_shortest_paths, 
+parallel_bellman_ford_shortest_paths_2, parallel_bellman_ford_shortest_paths_3
 """
     seq_bellman_ford_shortest_paths(g, sources, distmx)
 
@@ -120,7 +63,7 @@ function seq_bellman_ford_shortest_paths(
         end
         active = new_active
     end
-    #no_changes || throw(NegativeCycleError())
+    no_changes || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
 end
 
@@ -175,7 +118,7 @@ function _loop_body!(
 end
 
 """
-    parallel_floyd_warshall_shortest_paths(g, sources, distmx)
+    parallel_bellman_ford_shortest_paths(g, sources, distmx)
 
 Parallel implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
 
@@ -214,11 +157,10 @@ function parallel_bellman_ford_shortest_paths(
         end
     end
 
-    #isempty(active) || throw(NegativeCycleError())
+    isempty(active) || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
 end
 
-#=
 function _loop_body!_2(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
@@ -255,6 +197,8 @@ function _loop_body!_2(
     # you can just do with two lists to maintain prev_dists and dists
 end
 
+
+# Parallel bellman ford: Does extra work to avoid locking
 function parallel_bellman_ford_shortest_paths_2(
     g::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
@@ -276,71 +220,9 @@ function parallel_bellman_ford_shortest_paths_2(
         isempty(active) && break
     end
 
-    #isempty(active) || throw(NegativeCycleError())
+    isempty(active) || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
 end
-
-function _loop_body!_3(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T},
-    dists::Vector{T},
-    parents::Vector{U},
-    active::Vector{U},
-    locks::Vector{Mutex}
-    ) where T<:Real where U<:Integer
-
-
-    #Perform edge relaxations in parallel on the edges starting from active vertices.
-    #but thread i only updates (dists_t[i], parents_t[i], active_t[i])
-
-    prev_dists = deepcopy(dists)
-    active_vec = collect(active)
-    empty!(active)
-
-    @threads for v in collect(active_vec)
-        d = prev_dists[v]
-        for u in outneighbors(g, v)
-            relax_dist = d + distmx[v, u]
-            if relax_dist < prev_dists[u]
-                lock(locks[u])
-                if relax_dist < dists[u]
-                    dists[u] = relax_dist
-                    parents[u] = v
-                    push!(active, u)
-                end
-                unlock(locks[u])
-            end
-        end
-    end
-
-    
-end
-
-function parallel_bellman_ford_shortest_paths_3(
-    g::AbstractGraph{U},
-    sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(g)
-    ) where T<:Real where U<:Integer
-
-    nvg = nv(g)
-    dists = fill(typemax(T), nvg)
-    parents = zeros(U, nvg)
-    dists[sources] .= zero(T) 
-    active = Vector{U}(undef, length(sources))
-    active .= sources
-    locks = [Mutex() for i in vertices(g)]    
-
-    for i in one(U):nvg
-        _loop_body!_3(g, distmx, dists, parents, active, locks)
-        
-        isempty(active) && break
-    end
-
-    #isempty(active) || throw(NegativeCycleError())
-    return BellmanFordState(parents, dists)
-end
-=#
-
 
 
 function get_parallel_bellman_ford_parents(
@@ -363,7 +245,7 @@ function get_parallel_bellman_ford_parents(
     return [p[] for p in parents]
 end
 
-function _loop_body!_2(
+function _loop_body!_3(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
     dists::Vector{Atomic{T}},
@@ -380,7 +262,7 @@ function _loop_body!_2(
 
 end
 
-function parallel_bellman_ford_shortest_paths_2(
+function parallel_bellman_ford_shortest_paths_3(
     g::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T}=weights(g)
@@ -399,7 +281,7 @@ function parallel_bellman_ford_shortest_paths_2(
     for i in one(U):nvg
         prev_dists .= [d[] for d in dists]
 
-        _loop_body!_2(g, distmx, dists, active, prev_dists)
+        _loop_body!_3(g, distmx, dists, active, prev_dists)
 
         empty!(active)
         for v in vertices(g)
