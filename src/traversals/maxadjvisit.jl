@@ -16,10 +16,8 @@ values that determines the partition in `g` (1 or 2) and `bestcut` is the
 weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
-function mincut(
-    g::AbstractGraph,
-    distmx::AbstractMatrix{T}=weights(g)
-) where T <: Real
+function mincut(g::AbstractGraph,
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
 
     U = eltype(g)
     colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
@@ -27,7 +25,7 @@ function mincut(
     bestweight = typemax(T)
     cutweight = zero(T)
     visited = zero(U)               ## number of vertices visited
-    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq = PriorityQueue{U,T}(Base.Order.Reverse)
 
     # Set number of visited neighbors for all vertices to 0
     for v in vertices(g)
@@ -42,7 +40,7 @@ function mincut(
     pq[one(U)] = one(T)
 
     while !isempty(pq)
-        u = DataStructures.dequeue!(pq)
+        u = dequeue!(pq)
         colormap[u] = 1
 
         for v in outneighbors(g, u)
@@ -81,15 +79,13 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 `io`, which defaults to `STDOUT`; otherwise, no event information will be
 displayed.
 """
-function maximum_adjacency_visit(
-    g::AbstractGraph,
+function maximum_adjacency_visit(g::AbstractGraph,
     distmx::AbstractMatrix{T},
     log::Bool=false,
-    io::IO=stdout
-) where T<:Real
+    io::IO=stdout) where T <: Real
 
     U = eltype(g)
-    pq = DataStructures.PriorityQueue{U, T}(Base.Order.Reverse)
+    pq = PriorityQueue{U,T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
     sizehint!(vertices_order, nv(g))
@@ -107,7 +103,7 @@ function maximum_adjacency_visit(
 
     #start traversing the graph
     while !isempty(pq)
-        u = DataStructures.dequeue!(pq)
+        u = dequeue!(pq)
         has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")
@@ -123,9 +119,7 @@ function maximum_adjacency_visit(
     return vertices_order
 end
 
-maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(
-    g,
+maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(g,
     weights(g),
     false,
-    stdout
-)
+    stdout)

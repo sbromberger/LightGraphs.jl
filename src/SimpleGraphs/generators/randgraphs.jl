@@ -1,4 +1,10 @@
-function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Integer
+using Random:
+    AbstractRNG, MersenneTwister, randperm, shuffle!, srand
+
+using LightGraphs:
+    getRNG, sample!
+
+function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
@@ -15,10 +21,10 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T <: Int
     return g
 end
 
-Graph(nv::T, ne::Integer; seed::Int = -1) where T<: Integer =
-    Graph{T}(nv, ne, seed=seed)
+SimpleGraph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
+    SimpleGraph{T}(nv, ne, seed=seed)
 
-function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Integer
+function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
@@ -34,7 +40,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where T<:Int
     return g
 end
 
-SimpleDiGraph(nv::T, ne::Integer; seed::Int = -1) where T<:Integer =
+SimpleDiGraph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
     SimpleDiGraph{Int}(nv, ne, seed=seed)
 
 """
@@ -107,36 +113,36 @@ from the expected values are likely.
 - Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu and Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 """
-function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T<:Real
-    g = Graph(length(ω))
+function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T <: Real
+    g = SimpleGraph(length(ω))
     expected_degree_graph!(g, ω, seed=seed)
 end
 
-function expected_degree_graph!(g::Graph, ω::Vector{T}; seed::Int=-1) where T<:Real
+function expected_degree_graph!(g::SimpleGraph, ω::Vector{T}; seed::Int=-1) where T <: Real
     n = length(ω)
-    @assert all(zero(T) .<= ω .<= n-one(T)) "Elements of ω needs to be at least 0 and at most n-1"
+    @assert all(zero(T) .<= ω .<= n - one(T)) "Elements of ω needs to be at least 0 and at most n-1"
 
     π = sortperm(ω, rev=true)
     rng = getRNG(seed)
 
     S = sum(ω)
 
-    for u=1:(n-1)
-       v = u+1
-       p = min(ω[π[u]]*ω[π[v]]/S, one(T))
-       while v <= n && p > zero(p)
-          if p != one(T)
-             v += floor(Int, log(rand(rng))/log(one(T)-p))
-          end
-          if v <= n
-             q = min(ω[π[u]]*ω[π[v]]/S, one(T))
-             if rand(rng) < q/p
-                 add_edge!(g, π[u], π[v])
-             end
-             p = q
-             v += 1
-          end
-       end
+    for u = 1:(n - 1)
+        v = u + 1
+        p = min(ω[π[u]] * ω[π[v]] / S, one(T))
+        while v <= n && p > zero(p)
+            if p != one(T)
+                v += floor(Int, log(rand(rng)) / log(one(T) - p))
+            end
+            if v <= n
+                q = min(ω[π[u]] * ω[π[v]] / S, one(T))
+                if rand(rng) < q / p
+                    add_edge!(g, π[u], π[v])
+                end
+                p = q
+                v += 1
+            end
+        end
     end
     return g
 end
@@ -153,7 +159,7 @@ randomized per the model based on probability `β`.
 - `is_directed=false`: if true, return a directed graph.
 - `seed=-1`: set the RNG seed.
 """
-function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int = -1)
+function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
     @assert k < n / 2
     if is_directed
         g = SimpleDiGraph(n)
@@ -185,20 +191,20 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{Edge}, potential_edges::Dict{T,T}) where T<:Integer
+function _suitable(edges::Set{SimpleEdge}, potential_edges::Dict{T,T}) where T <: Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
         s1 >= s2 && continue
-        (Edge(s1, s2) ∉ edges) && return true
+        (SimpleEdge(s1, s2) ∉ edges) && return true
     end
     return false
 end
 
-_try_creation(n::Integer, k::Integer, rng::Random.AbstractRNG) = _try_creation(n, fill(k, n), rng)
+_try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
-function _try_creation(n::T, k::Vector{T}, rng::Random.AbstractRNG) where T<:Integer
-    edges = Set{Edge}()
+function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
+    edges = Set{SimpleEdge}()
     m = 0
     stubs = zeros(T, sum(k))
     for i = one(T):n
@@ -211,13 +217,13 @@ function _try_creation(n::T, k::Vector{T}, rng::Random.AbstractRNG) where T<:Int
 
     while !isempty(stubs)
         potential_edges =  Dict{T,T}()
-        Random.shuffle!(rng, stubs)
+        shuffle!(rng, stubs)
         for i in 1:2:length(stubs)
             s1, s2 = stubs[i:(i + 1)]
             if (s1 > s2)
                 s1, s2 = s2, s1
             end
-            e = Edge(s1, s2)
+            e = SimpleEdge(s1, s2)
             if s1 != s2 && ∉(e, edges)
                 push!(edges, e)
             else
@@ -227,7 +233,7 @@ function _try_creation(n::T, k::Vector{T}, rng::Random.AbstractRNG) where T<:Int
         end
 
         if !_suitable(edges, potential_edges)
-            return Set{Edge}()
+            return Set{SimpleEdge}()
         end
 
         stubs = Vector{Int}()
@@ -269,14 +275,14 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `complete=false`: if true, use a complete graph for the initial graph.
 - `seed=-1`: set the RNG seed.
 """
-function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool = false, complete::Bool = false, seed::Int = -1)
+function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool=false, complete::Bool=false, seed::Int=-1)
     if complete
         g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
     else
         g = is_directed ? SimpleDiGraph(n0) : SimpleGraph(n0)
     end
 
-    barabasi_albert!(g, n, k; seed = seed)
+    barabasi_albert!(g, n, k; seed=seed)
     return g
 end
 
@@ -298,7 +304,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     n0 == n && return g
 
     # seed random number generator
-    seed > 0 && Random.srand(seed)
+    seed > 0 && srand(seed)
 
     # add missing vertices
     sizehint!(g.fadjlist, n)
@@ -373,7 +379,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
-function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T<:Real
+function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness)
     m == 0 && return SimpleGraph(n)
@@ -409,7 +415,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 """
-function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T<:Real where S<:Real
+function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T <: Real where S <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness_out)
     length(fitness_in) != n && throw(ArgumentError("fitness_in must have the same size as fitness_out"))
@@ -433,7 +439,7 @@ function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Ve
     return g
 end
 
-function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int) where T<:Real where S<:Real
+function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, seed::Int) where T <: Real where S <: Real
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -442,7 +448,7 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
         target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
         # skip if loop edge
         (source == target) && continue
-        edge = Edge(source, target)
+        edge = SimpleEdge(source, target)
         # is there already an edge? If so, try again
         add_edge!(g, edge) || continue
         m -= 1
@@ -503,7 +509,7 @@ function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64;
     fitness_out = _construct_fitness(n, α_out, finite_size_correction)
     fitness_in = _construct_fitness(n, α_in, finite_size_correction)
     # eliminate correlation
-    Random.shuffle!(fitness_in)
+    shuffle!(fitness_in)
     static_fitness_model(m, fitness_out, fitness_in, seed=seed)
 end
 
@@ -513,7 +519,7 @@ function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
     j = float(n)
     if finite_size_correction && α < -0.5
         # See the Cho et al paper, first page first column + footnote 7
-        j += n^(1 + 1 / 2α) * (10sqrt(2) * (1 + α))^(-1 / α) - 1
+        j += n^(1 + 1 / 2 * α) * (10 * sqrt(2) * (1 + α))^(-1 / α) - 1
     end
     j = max(j, n)
     @inbounds for i = 1:n
@@ -582,7 +588,7 @@ Time complexity is approximately ``\\mathcal{O}(n \\bar{k}^2)``.
 ### Implementation Notes
 Allocates an array of ``n \\bar{k}`` `Int`s.
 """
-function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check_graphical::Bool=false) where T<:Integer
+function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check_graphical::Bool=false) where T <: Integer
     n != length(k) && throw(ArgumentError("a degree sequence of length n must be provided"))
     m = sum(k)
     !iseven(m) && throw(ArgumentError("sum(k) must be even"))
@@ -639,13 +645,13 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol=:out, seed::
     for r in 1:n
         l = ((r - 1) * k + 1):(r * k)
         I[l] .= r
-        J[l] = sample!(rng, cs, k, exclude = r)
+        J[l] = sample!(rng, cs, k, exclude=r)
     end
 
     if dir == :out
-        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n))
+        return SimpleDiGraph(sparse(I, J, V, n, n))
     else
-        return SimpleDiGraph(SparseArrays.sparse(I, J, V, n, n)')
+        return SimpleDiGraph(sparse(I, J, V, n, n)')
     end
 end
 
@@ -664,8 +670,8 @@ function random_tournament_digraph(n::Integer; seed::Int=-1)
     rng = getRNG(seed)
     g = SimpleDiGraph(n)
 
-    for i = 1:n, j = i+1:n
-        rand(rng, Bool) ? add_edge!(g, Edge(i, j)) : add_edge!(g, Edge(j, i))
+    for i = 1:n, j = i + 1:n
+        rand(rng, Bool) ? add_edge!(g, SimpleEdge(i, j)) : add_edge!(g, SimpleEdge(j, i))
     end
 
     return g
@@ -687,7 +693,7 @@ Return a Graph generated according to the Stochastic Block Model (SBM).
 For a dynamic version of the SBM see the [`StochasticBlockModel`](@ref) type and
 related functions.
 """
-function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
+function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int=-1) where T <: Real where U <: Integer
     size(c, 1) == size(c, 2) == length(n) || throw(ArgumentError("matrix-vector size mismatch"))
 
     # init dsfmt generator without altering GLOBAL_RNG
@@ -728,7 +734,7 @@ end
 Return a Graph generated according to the Stochastic Block Model (SBM), sampling
 from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
 """
-function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T<:Real where U<:Integer
+function stochastic_block_model(cint::T, cext::T, n::Vector{U}; seed::Int=-1) where T <: Real where U <: Integer
     K = length(n)
     c = [ifelse(a == b, cint, cext) for a = 1:K, b = 1:K]
     stochastic_block_model(c, n, seed=seed)
@@ -751,11 +757,11 @@ block `k` and any vertex in block `l`.
 Graphs are generated by taking random ``i,j ∈ V`` and
 flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
-mutable struct StochasticBlockModel{T<:Integer,P<:Real}
+mutable struct StochasticBlockModel{T <: Integer,P <: Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
-    rng::Random.MersenneTwister
+    rng::MersenneTwister
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
@@ -765,7 +771,7 @@ end
 # A constructor for StochasticBlockModel that uses the sizes of the blocks
 # and the affinity matrix. This construction implies that consecutive
 # vertices will be in the same blocks, except for the block boundaries.
-function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; seed::Int = -1)
+function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; seed::Int=-1)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
@@ -786,10 +792,10 @@ end
 Produce the sbm affinity matrix with internal probabilities `internalp`
 and external probabilities `externalp`.
 """
-function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T<:Real where U<:Integer
+function sbmaffinity(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where T <: Real where U <: Integer
     numblocks = length(sizes)
     numblocks == length(internalp) || throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
-    B = LinearAlgebra.diagm(0=>internalp) + externalp * (ones(numblocks, numblocks) - LinearAlgebra.I)
+    B = diagm(0 => internalp) + externalp * (ones(numblocks, numblocks) - I)
     return B
 end
 
@@ -797,20 +803,20 @@ function StochasticBlockModel(internalp::Real,
                               externalp::Real,
                               size::Integer,
                               numblocks::Integer;
-                              seed::Int = -1)
+                              seed::Int=-1)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
     StochasticBlockModel(sizes, B, seed=seed)
 end
 
 function StochasticBlockModel(internalp::Vector{T}, externalp::Real,
-    sizes::Vector{U}; seed::Int = -1) where T<:Real where U<:Integer
+    sizes::Vector{U}; seed::Int=-1) where T <: Real where U <: Integer
     B = sbmaffinity(internalp, externalp, sizes)
     return StochasticBlockModel(sizes, B, seed=seed)
 end
 
 
-const biclique = ones(2, 2) - Matrix{Float64}(LinearAlgebra.I, 2, 2)
+const biclique = ones(2, 2) - Matrix{Float64}(I, 2, 2)
 
 #TODO: this documentation needs work. sbromberger 20170326
 """
@@ -824,16 +830,16 @@ This is a specific type of SBM with ``\\frac{k}{2} blocks each with two halves.
 Each half is connected as a random bipartite graph with probability `intra`
 The blocks are connected with probability `between`.
 """
-function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T<:Integer
+function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T <: Integer
     numblocks = div(length(sizes), 2)
-    return kron(between * Matrix{Float64}(LinearAlgebra.I, numblocks, numblocks), biclique) + Matrix{Float64}(LinearAlgebra.I, 2*numblocks, 2*numblocks) * intra
+    return kron(between * Matrix{Float64}(I, numblocks, numblocks), biclique) + Matrix{Float64}(I, 2 * numblocks, 2 * numblocks) * intra
 end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
-nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T<:Integer =
+nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T <: Integer =
     nearbipartiteaffinity(sizes, between, inter) .+ noise
 
-nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
+nearbipartiteSBM(sizes, between, inter, noise; seed::Int=-1) =
     StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
 
 """
@@ -841,10 +847,10 @@ nearbipartiteSBM(sizes, between, inter, noise; seed::Int = -1) =
 
 Generate a stream of random pairs in `1:n` using random number generator `RNG`.
 """
-function random_pair(rng::Random.AbstractRNG, n::Integer)
+function random_pair(rng::AbstractRNG, n::Integer)
     f(ch) = begin
         while true
-            put!(ch, Edge(rand(rng, 1:n), rand(rng, 1:n)))
+            put!(ch, SimpleEdge(rand(rng, 1:n), rand(rng, 1:n)))
         end
     end
     return f
@@ -858,7 +864,7 @@ Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
 function make_edgestream(sbm::StochasticBlockModel)
-    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=Edge, csize=32)
+    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=SimpleEdge, csize=32)
     edges(ch) = begin
         for e in pairs
             i, j = Tuple(e)
@@ -869,7 +875,7 @@ function make_edgestream(sbm::StochasticBlockModel)
             end
         end
     end
-    return Channel(edges, ctype=Edge, csize=32)
+    return Channel(edges, ctype=SimpleEdge, csize=32)
 end
 
 function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
@@ -883,7 +889,7 @@ function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
     return g
 end
 
-Graph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
+SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
     SimpleGraph(nvg, neg, make_edgestream(sbm))
 
 #TODO: this documentation needs work. sbromberger 20170326
@@ -897,7 +903,7 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
-    Q = SparseArrays.sparse(I, J, V)
+    Q = sparse(I, J, V)
     # Q = Q / Q'Q
     # @show Q'Q# < 1e-6
     return (Q'A) * Q
@@ -938,10 +944,10 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
         ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
     end
 
-    p = Random.randperm(N)
+    p = randperm(N)
     ij = p[ij]
 
-    p = Random.randperm(M)
+    p = randperm(M)
     ij = ij[p, :]
 
     g = SimpleDiGraph(N)

@@ -3,7 +3,7 @@
 
 Store number of colors used and mapping from vertex to color
 """
-struct coloring{T<:Integer} <: Any
+struct coloring{T <: Integer} <: Any
     num_colors::T
     colors::Vector{T}
 end
@@ -234,9 +234,10 @@ function parallel_random_greedy_color(
 
     best = Distributed.@distributed (best_color) for i in 1:reps
         perm_greedy_color(g, Random.shuffle(vertices(g)), exchange)
+
     end
 
-    return convert(coloring{T} ,best)
+    return convert(coloring{T}, best)
 end
 
 """
@@ -270,8 +271,9 @@ If parallel is true then the colorings are executed in parallel.
 random_greedy_color(g::AbstractGraph{T}, reps::Integer, exchange::Bool, parallel::Bool) where {T<:Integer} =
 parallel ? parallel_random_greedy_color(g, reps, exchange) : seq_random_greedy_color(g, reps, exchange)
 
+
 """
-    greedy_color(g; sort_degree=false, parallel=false, reps = 1)
+    greedy_color(g; sort_degree=false, parallel=false, exchange=false, reps = 1)
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)
 
