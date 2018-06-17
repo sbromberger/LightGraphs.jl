@@ -8,7 +8,7 @@ import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, zero, in, iterate
 
 import LightGraphs:
-    _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
+    _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors,
 
