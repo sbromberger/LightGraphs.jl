@@ -138,7 +138,7 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst, prim_mst,
+kruskal_mst, parallel_kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
 articulation, biconnected_components,
@@ -241,6 +241,7 @@ include("community/clustering.jl")
 include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
+include("spanningtrees/parallel_kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
