@@ -8,7 +8,6 @@
 #   The type that capsulates the state of Bellman Ford algorithm
 #
 ###################################################################
-
 using Base.Threads
 
 struct NegativeCycleError <: Exception end
@@ -24,14 +23,10 @@ struct BellmanFordState{T<:Real, U<:Integer} <: AbstractPathState
     dists::Vector{T}
 end
 
-
-export seq_bellman_ford_shortest_paths, parallel_bellman_ford_shortest_paths, 
-parallel_bellman_ford_shortest_paths_2, parallel_bellman_ford_shortest_paths_3
 """
     seq_bellman_ford_shortest_paths(g, sources, distmx)
 
 Sequential implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
-
 """
 function seq_bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
@@ -40,10 +35,12 @@ function seq_bellman_ford_shortest_paths(
     ) where T<:Real where U<:Integer
 
     active = Set{U}(sources)
+    sizehint!(active, nv(graph))
     dists = fill(typemax(T), nv(graph))
     parents = zeros(U, nv(graph))
     dists[sources] .= 0
     no_changes = false
+
     for i in one(U):nv(graph)
         no_changes = true
         new_active = Set{U}()
@@ -73,111 +70,17 @@ function _loop_body!(
     distmx::AbstractMatrix{T},
     dists::Vector{T},
     parents::Vector{U},
-    active::Vector{U},
-    n_threads::Integer,
-    dists_t::Vector{Vector{T}},
-    parents_t::Vector{Vector{U}},
-    active_t::Vector{Set{U}},
-    ) where T<:Real where U<:Integer
-
-
-    #Perform edge relaxations in parallel on the edges starting from active vertices.
-    #but thread i only updates (dists_t[i], parents_t[i], active_t[i])
-
-    @threads for v in active
-        local_dists = dists_t[threadid()]
-        local_parents = parents_t[threadid()]
-        local_active = active_t[threadid()]        
-        #Reminder: Changes made to local_dists reflect on dists_t[threadid()]
-
-        #v_neighbors = outneighbors(g, v)
-        d = dists[v]
-        outneigh = outneighbors(g, v)
-        for u in outneigh
-            relax_dist = d + distmx[v, u]
-            if relax_dist < dists[u] && relax_dist < local_dists[u]
-                local_dists[u] = relax_dist
-                local_parents[u] = v
-                push!(local_active, u)
-            end
-        end
-    end
-
-    #Update dists, parents, active from dists_t, parents_t, active_t
-    for i in 1:n_threads
-        local_dists = dists_t[i]
-        local_parents = parents_t[i]
-        local_active = active_t[i] 
-        for v in local_active
-            if local_dists[v] < dists[v]
-                dists[v] = local_dists[v]
-                parents[v] = local_parents[v]
-            end
-        end
-    end
-end
-
-"""
-    parallel_bellman_ford_shortest_paths(g, sources, distmx)
-
-Parallel implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
-
-### Performance
-Memory: O(nthreads()*|V|).
-Approximately nthreads()*|V|*(size(U)+size(T))
-"""
-function parallel_bellman_ford_shortest_paths(
-    g::AbstractGraph{U},
-    sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(g)
-    ) where T<:Real where U<:Integer
-
-    nvg = nv(g)
-    dists = fill(typemax(T), nvg)
-    parents = zeros(U, nvg)
-    dists[sources] .= zero(T) 
-    active = Vector{U}(undef, length(sources))
-    active .= sources
-
-    
-    #Auxillary memory used for multi-threading.
-    #Thread i will have access to (dists_t[i], parents_t[i], active_t[i])    
-    n_threads = nthreads()
-    dists_t = [dists[:] for i in 1:n_threads]
-    parents_t = fill(zeros(U, nvg), n_threads)
-    active_t = fill(Set{U}([]), n_threads)
-
-    for i in one(U):nvg
-        _loop_body!(g, distmx, dists, parents, active, n_threads, dists_t, parents_t, active_t)
-        
-        active = collect(reduce(union, Set{U}([]), active_t))#Cobine active_t into active
-        isempty(active) && break
-        for i in 1:n_threads
-            empty!(active_t[i])
-        end
-    end
-
-    isempty(active) || throw(NegativeCycleError())
-    return BellmanFordState(parents, dists)
-end
-
-function _loop_body!_2(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T},
-    dists::Vector{T},
-    parents::Vector{U},
     active::Set{U}
     ) where T<:Real where U<:Integer
 
-    # first initialisation to active will also change to (allVertices-sources)
-
-    prev_dists = deepcopy(dists) # find a function which does this if deepcopy doesn't exist
+    
+    prev_dists = deepcopy(dists)
     
     tmp_active = collect(active)
     @threads for v in tmp_active
         prev_dist_vertex = prev_dists[v]
         for u in inneighbors(g, v)
-                relax_dist = prev_dists[u] == typemax(T) ? typemax(T) : prev_dists[u] + distmx[u,v]
+                relax_dist = (prev_dists[u] == typemax(T) ? typemax(T) : prev_dists[u] + distmx[u,v])
                 if prev_dist_vertex > relax_dist
                     prev_dist_vertex = relax_dist
                     parents[v] = u
@@ -192,21 +95,22 @@ function _loop_body!_2(
             union!(active, outneighbors(g, v))
         end
     end
-
-    # compare prev_dists and dists to see if any vertex changed and push changed vertices into new active
-    # you can just do with two lists to maintain prev_dists and dists
 end
 
+"""
+    parallel_bellman_ford_shortest_paths(g, sources, distmx)
 
-# Parallel bellman ford: Does extra work to avoid locking
-function parallel_bellman_ford_shortest_paths_2(
+Parallel implementation of [`LightGraphs.bellman_ford_shortest_paths`](@ref).
+"""
+function parallel_bellman_ford_shortest_paths(
     g::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(g)
+    distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
 
     nvg = nv(g)
     active = Set{U}()
+    sizehint!(active, nv(g))
     for s in sources
         union!(active, outneighbors(g, s))
     end
@@ -215,7 +119,7 @@ function parallel_bellman_ford_shortest_paths_2(
     dists[sources] .= 0
 
     for i in one(U):nvg
-        _loop_body!_2(g, distmx, dists, parents, active)
+        _loop_body!(g, distmx, dists, parents, active)
 
         isempty(active) && break
     end
@@ -225,91 +129,16 @@ function parallel_bellman_ford_shortest_paths_2(
 end
 
 
-function get_parallel_bellman_ford_parents(
-    g::AbstractGraph{U}, 
-    distmx::AbstractMatrix{T},
-    dists::Array{T}
-    ) where T <: Real where U <: Integer
- 
-    parents = [Atomic{U}(0) for i in 1: nv(g)]
-    active = findall((x)-> x!=typemax(T), dists)
-
-    @threads for v in active #To be multi-threaded
-        d = dists[v]
-        for u in outneighbors(g, v)
-            if d + distmx[v, u] <= dists[u] #This is the relaxed edge
-                atomic_cas!(parents[u], zero(U), v)
-            end
-        end
-    end
-    return [p[] for p in parents]
-end
-
-function _loop_body!_3(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T},
-    dists::Vector{Atomic{T}},
-    active::Vector{U},
-    prev_dists::Vector{T}
-    ) where T<:Real where U<:Integer
-
-    for v in active #To be multi-threaded
-        d = prev_dists[v]
-        for u in outneighbors(g, v)
-           atomic_min!(dists[u], d + distmx[v, u]) 
-        end
-    end
-
-end
-
-function parallel_bellman_ford_shortest_paths_3(
-    g::AbstractGraph{U},
-    sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(g)
-    ) where T<:Real where U<:Integer
-
-    nvg = nv(g)
-
-    dists = [Atomic{T}(typemax(T)) for i = 1:nvg]
-    dists[sources] .= Atomic{T}(zero(T))
-
-    active = Vector{U}(undef, length(sources)) #Make type U
-    active .= sources
-    sizehint!(active, nvg)
-
-    prev_dists = Vector{T}(undef, nvg)
-    for i in one(U):nvg
-        prev_dists .= [d[] for d in dists]
-
-        _loop_body!_3(g, distmx, dists, active, prev_dists)
-
-        empty!(active)
-        for v in vertices(g)
-            if dists[v][] < prev_dists[v] 
-                push!(active, v)
-            end
-        end
-
-        isempty(active) && break
-    end
-    #isempty(active) || throw(NegativeCycleError())
-
-    dists = [d[] for d in dists]
-    parents = get_parallel_bellman_ford_parents(g, distmx, dists)
-    return BellmanFordState(parents, dists)
-end
-
-
 """
-    bellman_ford_shortest_paths(g, s, distmx=weights(g); parallel=false)
-    bellman_ford_shortest_paths(g, ss, distmx=weights(g); parallel=false)
+    bellman_ford_shortest_paths(g, s, distmx=weights(g))
+    bellman_ford_shortest_paths(g, ss, distmx=weights(g))
 
 Compute shortest paths between a source `s` (or list of sources `ss`) and all
 other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
 Return a [`LightGraphs.BellmanFordState`](@ref) with relevant traversal information.
 
 ### Optional Arguments
-- `allpaths=false`: If true, the algorithm runs in parallel.
+- `parallel=false`: If true, the algorithm runs in parallel.
 """
 bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
