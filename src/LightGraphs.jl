@@ -18,7 +18,7 @@ import SparseArrays: blockdiag, sparse
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
+            ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
 
 
 export
@@ -222,10 +222,6 @@ include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
-include("generators/staticgraphs.jl")
-include("generators/randgraphs.jl")
-include("generators/euclideangraphs.jl")
-include("generators/smallgraphs.jl")
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")
