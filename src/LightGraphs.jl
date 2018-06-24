@@ -3,10 +3,12 @@ module LightGraphs
 
 using SimpleTraits
 
+### Remove the following line once #915 is closed
+using Arpack: eigs
+
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
 using Distributed: @distributed
-using IterativeEigensolvers: eigs
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 # import Markdown
@@ -19,7 +21,6 @@ import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
             ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
-
 
 export
 # Interface
