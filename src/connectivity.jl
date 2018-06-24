@@ -12,7 +12,7 @@ This algorithm is linear in the number of edges of the graph.
 """
 function connected_components! end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components!(label::AbstractVector, g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+@traitfn function connected_components!(label::AbstractVector, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
     nvg = nv(g)
 
     for u in vertices(g)
@@ -41,7 +41,7 @@ Convert an array of labels to a map of component id to vertices, and return
 a map with each key corresponding to a given component id
 and each value containing the vertices associated with that component.
 """
-function components_dict(labels::Vector{T}) where T<:Integer
+function components_dict(labels::Vector{T}) where T <: Integer
     d = Dict{T,Vector{T}}()
     for (v, l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
@@ -57,7 +57,7 @@ end
 Given a vector of component labels, return a vector of vectors representing the vertices associated
 with a given component id.
 """
-function components(labels::Vector{T}) where T<:Integer
+function components(labels::Vector{T}) where T <: Integer
     d = Dict{T,T}()
     c = Vector{Vector{T}}()
     i = one(T)
@@ -85,7 +85,7 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 """
 function connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+@traitfn function connected_components(g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -131,7 +131,7 @@ The order of the components is not part of the API contract.
 """
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
@@ -231,7 +231,7 @@ Will throw an error if the graph is not strongly connected.
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function period(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
@@ -260,7 +260,7 @@ in the directed graph `g`. If `scc` is missing, generate the strongly
 connected components first.
 """
 function condensation end
-@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T<:Integer
+@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T <: Integer
     h = DiGraph{T}(length(scc))
 
     component = Vector{T}(undef, nv(g))
@@ -290,7 +290,7 @@ connected components in which the components do not have any leaving edges.
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     scc  = strongly_connected_components(g)
     cond = condensation(g, scc)
 
@@ -306,26 +306,34 @@ end
 
 """
     neighborhood(g, v, d, distmx=weights(g))
-    neighborhood_dists(g, v, d, distmx=weights(g))
+    
 
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
 may be specified by `distmx`. 
-
-For `neighborhood_dists`, return a tuple of each vertex with its distance from `v`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
 """
-neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
+neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
     first.(neighborhood_dists(g, v, d, distmx; dir=dir))
 
-neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T<:Integer where U<:Real =
+"""
+    neighborhood_dists(g, v, d, distmx=weights(g))
+
+Return a tuple of each vertex at a geodesic distance less than or equal to `d`, where distances
+may be specified by `distmx`, along with its distance from `v`.
+
+### Optional Arguments
+- `dir=:out`: If `g` is directed, this argument specifies the edge direction
+with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
+"""
+neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
     (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) : _neighborhood(g, v, d, distmx, inneighbors)
 
 
-function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T<:Integer where U<:Real
-    d < 0 && return Vector{Tuple{T, U}}()
+function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
+    d < 0 && return Vector{Tuple{T,U}}()
     neighs = Vector{T}()
     push!(neighs, v)
     Q = Vector{T}()
