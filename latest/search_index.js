@@ -265,6 +265,78 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.SimpleGraph",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.SimpleGraph",
+    "category": "type",
+    "text": "SimpleGraph{T}\n\nA type representing an undirected graph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.SimpleDiGraph",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.SimpleDiGraph",
+    "category": "type",
+    "text": "SimpleDiGraph{T}\n\nA type representing a directed graph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.Edge",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.Edge",
+    "category": "type",
+    "text": "Edge\n\nA datastruture representing an edge between two vertices in a Graph or DiGraph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.add_edge!",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.add_edge!",
+    "category": "function",
+    "text": "add_edge!(g, e)\n\nAdd an edge e to graph g. Return true if edge was added successfully, otherwise return false.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.rem_edge!",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.rem_edge!",
+    "category": "function",
+    "text": "rem_edge!(g, e)\n\nRemove an edge e from graph g. Return true if edge was removed successfully, otherwise return false.\n\nImplementation Notes\n\nIf rem_edge! returns false, the graph may be in an indeterminate state, as there are multiple points where the function can exit with false.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.add_vertex!",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.add_vertex!",
+    "category": "function",
+    "text": "add_vertex!(g)\n\nAdd a new vertex to the graph g. Return true if addition was successful.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.add_vertices!",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.add_vertices!",
+    "category": "function",
+    "text": "add_vertices!(g, n)\n\nAdd n new vertices to the graph g. Return the number of vertices that were added successfully.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.rem_vertex!",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.rem_vertex!",
+    "category": "function",
+    "text": "rem_vertex!(g, v)\n\nRemove the vertex v from graph g. Return false if removal fails (e.g., if vertex is not in the graph); true otherwise.\n\nPerformance\n\nTime complexity is mathcalO(k^2), where k is the max of the degrees of vertex v and vertex V.\n\nImplementation Notes\n\nThis operation has to be performed carefully if one keeps external data structures indexed by edges or vertices in the graph, since internally the removal is performed swapping the vertices v  and V, and removing the last vertex V from the graph. After removal the vertices in g will be indexed by 1V-1.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#Base.zero",
+    "page": "Making and Modifying Graphs",
+    "title": "Base.zero",
+    "category": "function",
+    "text": "zero(g)\n\nReturn a zero-vertex, zero-edge version of the same type of graph as g.\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#Modifying-graphs-1",
     "page": "Making and Modifying Graphs",
     "title": "Modifying graphs",
@@ -713,6 +785,142 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.is_connected",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.is_connected",
+    "category": "function",
+    "text": "is_connected(g)\n\nReturn true if graph g is connected. For directed graphs, use is_weakly_connected or is_strongly_connected.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.is_strongly_connected",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.is_strongly_connected",
+    "category": "function",
+    "text": "is_strongly_connected(g)\n\nReturn true if directed graph g is strongly connected.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.is_weakly_connected",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.is_weakly_connected",
+    "category": "function",
+    "text": "is_weakly_connected(g)\n\nReturn true if the directed graph g is connected.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.connected_components",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.connected_components",
+    "category": "function",
+    "text": "connected_components(g)\n\nReturn the connected components of an undirected graph g as a vector of components, with each element a vector of vertices belonging to the component.\n\nFor directed graphs, see strongly_connected_components and weakly_connected_components.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.strongly_connected_components",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.strongly_connected_components",
+    "category": "function",
+    "text": "strongly_connected_components(g)\n\nCompute the strongly connected components of a directed graph g.\n\nReturn an array of arrays, each of which is the entire connected component.\n\nImplementation Notes\n\nThe order of the components is not part of the API contract.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.weakly_connected_components",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.weakly_connected_components",
+    "category": "function",
+    "text": "weakly_connected_components(g)\n\nReturn the weakly connected components of the directed graph g. This is equivalent to the connected components of the undirected equivalent of g.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.has_self_loops",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.has_self_loops",
+    "category": "function",
+    "text": "has_self_loops(g)\n\nReturn true if g has any self loops.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.attracting_components",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.attracting_components",
+    "category": "function",
+    "text": "attracting_components(g)\n\nReturn a vector of vectors of integers representing lists of attracting components in the directed graph g.\n\nThe attracting components are a subset of the strongly connected components in which the components do not have any leaving edges.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.is_bipartite",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.is_bipartite",
+    "category": "function",
+    "text": "is_bipartite(g)\n\nReturn true if graph g is bipartite.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.bipartite_map",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.bipartite_map",
+    "category": "function",
+    "text": "bipartite_map(g)\n\nFor a bipartite graph g, return a vector c of size V containing the assignment of each vertex to one of the two sets (c_i == 1 or c_i == 2`). Ifg` is not bipartite, return an empty vector.\n\nImplementation Notes\n\nNote that an empty vector does not necessarily indicate non-bipartiteness. An empty graph will return an empty vector but is bipartite.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.biconnected_components",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.biconnected_components",
+    "category": "function",
+    "text": "biconnected_components(g)\n\nCompute the biconnected components of an undirected graph gand return a vector of vectors containing each biconnected component.\n\nPerformance: Time complexity is mathcalO(V).\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.condensation",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.condensation",
+    "category": "function",
+    "text": "condensation(g[, scc])\n\nReturn the condensation graph of the strongly connected components scc in the directed graph g. If scc is missing, generate the strongly connected components first.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.neighborhood",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.neighborhood",
+    "category": "function",
+    "text": "neighborhood(g, v, d, distmx=weights(g))\n\nReturn a vector of each vertex in g at a geodesic distance less than or equal to d, where distances may be specified by distmx. \n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.neighborhood_dists",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.neighborhood_dists",
+    "category": "function",
+    "text": "neighborhood_dists(g, v, d, distmx=weights(g))\n\nReturn a tuple of each vertex at a geodesic distance less than or equal to d, where distances may be specified by distmx, along with its distance from v.\n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.articulation",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.articulation",
+    "category": "function",
+    "text": "articulation(g)\n\nCompute the articulation points of a connected graph g and return an array containing all cut vertices.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.period",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.period",
+    "category": "function",
+    "text": "period(g)\n\nReturn the (common) period for all vertices in a strongly connected directed graph. Will throw an error if the graph is not strongly connected.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.isgraphical",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.isgraphical",
+    "category": "function",
+    "text": "isgraphical(degs)\n\nReturn true if the degree sequence degs is graphical, according to Erdös-Gallai condition.\n\nPerformance\n\nTime complexity: ``\\mathcal{O}(|degs|^2)``\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#Connectivity-/-Bipartiteness-1",
     "page": "Path and Traversal",
     "title": "Connectivity / Bipartiteness",
@@ -733,7 +941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.maxsimplecycles",
     "category": "function",
-    "text": "maxsimplecycles(dg::::IsDirected, byscc::Bool = true)\n\nCompute the theoretical maximum number of cycles in the directed graph dg.\n\nThe computation can be performed assuming the graph is complete or taking into account the decomposition in strongly connected components (byscc parameter). The formula is coming from Johnson, 1973.\n\nPerformance\n\nA more efficient version is possible.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "maxsimplecycles(dg::::IsDirected, byscc::Bool = true)\n\nCompute the theoretical maximum number of cycles in the directed graph dg.\n\nThe computation can be performed assuming the graph is complete or taking into account the decomposition in strongly connected components (byscc parameter).\n\nPerformance\n\nA more efficient version is possible.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
@@ -741,7 +949,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.simplecycles",
     "category": "function",
-    "text": "simplecycles(dg::::IsDirected)\n\nCompute all cycles of the given directed graph, using Johnson, 1973\'s algorithm and return them.\n\nPerformance\n\nThe number of cycles grows more than exponentially with the number of vertices, you might want to use the algorithm with a ceiling – getcycles – on large directed graphs (slightly slower). If you want to have an idea of the possible number of cycles, look at function maxsimplecycles(dg::DiGraph, byscc::Bool = true).\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "simplecycles(dg::::IsDirected)\n\nCompute and return all cycles of the given directed graph using Johnson\'s algorithm.\n\nPerformance\n\nThe number of cycles grows more than exponentially with the number of vertices, you might want to use the algorithm with a ceiling – getcycles – on large directed graphs (slightly slower). If you want to have an idea of the possible number of cycles, look at function maxsimplecycles(dg::DiGraph, byscc::Bool = true).\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
@@ -749,7 +957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.simplecycles_iter",
     "category": "function",
-    "text": "simplecycles_iter(dg::DiGraph, ceiling = 10^6)\n\nSearch all cycles of the given directed graph, using Johnson, 1973\'s algorithm, up to the ceiling (avoid memory overload).\n\nIf the graph is small, the ceiling will not be reached and simplecycles(dgDiGraph) is more efficient. It avoids the overhead of the counting and testing if the ceiling is reached. It returns all the cycles of the directed graph if the ceiling is not reached, a subset of them otherwise.\n\nTo get an idea of the possible number of cycles, using function maxsimplecycles(dg::DiGraph, byscc::Bool = true) on the directed graph.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "simplecycles_iter(dg::DiGraph, ceiling = 10^6)\n\nSearch all cycles of the given directed graph, using Johnson\'s algorithm, up to the ceiling (to avoid memory overload).\n\nImplementation Notes\n\nIf the graph is small, the ceiling will not be reached and simplecycles(dg::DiGraph) is more efficient. It avoids the overhead of the counting and testing if the ceiling is reached. It returns all the cycles of the directed graph if the ceiling is not reached, a subset of them otherwise.\n\nTo get an idea of the possible number of cycles, use function `maxsimplecycles(dg::DiGraph, byscc::Bool = true) on the directed graph.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
@@ -765,7 +973,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.simplecyclescount",
     "category": "function",
-    "text": "simplecyclescount(dg::DiGraph, ceiling = 10^6)\n\nCount the number of cycles in a directed graph, using Johnson, 1973\'s algorithm.\n\nThe ceiling is here to avoid memory overload if there are a lot of cycles in the graph. Default value is 10^6, but it can be higher or lower. You can use the function maxsimplecycles(dg::DiGraph, byscc::Bool = true) to get an idea of the theoretical maximum number or cycles.\n\nReturns the minimum of the ceiling and the number of cycles.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "simplecyclescount(dg::DiGraph, ceiling = 10^6)\n\nCount the number of cycles in a directed graph, using Johnson\'s algorithm. Return the minimum of the ceiling and the number of cycles.\n\nImplementation Notes\n\nThe ceiling is here to avoid memory overload if there are a lot of cycles in the graph. Default value is 10^6, but it can be higher or lower. You can use the function maxsimplecycles(dg::DiGraph, byscc::Bool = true) to get an idea of the theoretical maximum number or cycles.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
@@ -773,7 +981,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.simplecycleslength",
     "category": "function",
-    "text": "simplecycleslength(dg::DiGraph, ceiling = 10^6)\n\nSearch all cycles of the given directed graph, using Johnson, 1973\'s algorithm, and return their length.\n\nTo get an idea of the possible number of cycles, using function maxsimplecycles(dg::DiGraph, byscc::Bool = true) on the directed graph.\n\nIt returns cyclelengths and ncycles, the lengths of all cycles and the  number of cycles. The index in the array is the length of the cycle.  If the ceiling is reached (ncycles = ceiling), the output is only a subset of the cycles lengths.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "simplecycleslength(dg::DiGraph, ceiling = 10^6)\n\nSearch all cycles of the given directed graph, using Johnson\'s algorithm,  and return a tuple representing the cycle length and the number of cycles.\n\nImplementation Notes\n\nTo get an idea of the possible number of cycles, using function maxsimplecycles(dg::DiGraph, byscc::Bool = true) on the directed graph.\n\nIf the ceiling is reached (ncycles = ceiling), the output is only a subset of the cycles lengths.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
