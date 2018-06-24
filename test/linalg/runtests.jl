@@ -1,5 +1,5 @@
 using LightGraphs.LinAlg
-using IterativeEigensolvers
+using Arpack
 using Random
 using SparseArrays
 using LinearAlgebra
