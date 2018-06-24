@@ -11,7 +11,7 @@ function CompleteGraph(n::Integer)
     g = SimpleGraph(n)
     for i = 1:n, j = 1:n
         if i < j
-            add_edge!(g, Edge(i, j))
+            add_edge!(g, SimpleEdge(i, j))
         end
     end
     return g
@@ -27,7 +27,7 @@ with `n1 + n2` vertices.
 function CompleteBipartiteGraph(n1::Integer, n2::Integer)
     g = SimpleGraph(n1 + n2)
     for i = 1:n1, j = (n1 + 1):(n1 + n2)
-        add_edge!(g, Edge(i, j))
+        add_edge!(g, SimpleEdge(i, j))
     end
     return g
 end
@@ -42,7 +42,7 @@ function CompleteDiGraph(n::Integer)
     g = SimpleDiGraph(n)
     for i = 1:n, j = 1:n
         if i != j
-            add_edge!(g, Edge(i, j))
+            add_edge!(g, SimpleEdge(i, j))
         end
     end
     return g
@@ -57,7 +57,7 @@ with `n` vertices.
 function StarGraph(n::Integer)
     g = SimpleGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(1, i))
+        add_edge!(g, SimpleEdge(1, i))
     end
     return g
 end
@@ -71,7 +71,7 @@ with `n` vertices.
 function StarDiGraph(n::Integer)
     g = SimpleDiGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(1, i))
+        add_edge!(g, SimpleEdge(1, i))
     end
     return g
 end
@@ -85,7 +85,7 @@ with `n` vertices.
 function PathGraph(n::Integer)
     g = SimpleGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(i - 1, i))
+        add_edge!(g, SimpleEdge(i - 1, i))
     end
     return g
 end
@@ -99,7 +99,7 @@ with `n` vertices.
 function PathDiGraph(n::Integer)
     g = SimpleDiGraph(n)
     for i = 2:n
-        add_edge!(g, Edge(i - 1, i))
+        add_edge!(g, SimpleEdge(i - 1, i))
     end
     return g
 end
@@ -113,9 +113,9 @@ with `n` vertices.
 function CycleGraph(n::Integer)
     g = SimpleGraph(n)
     for i = 1:(n - 1)
-        add_edge!(g, Edge(i, i + 1))
+        add_edge!(g, SimpleEdge(i, i + 1))
     end
-    add_edge!(g, Edge(n, 1))
+    add_edge!(g, SimpleEdge(n, 1))
     return g
 end
 
@@ -128,9 +128,9 @@ with `n` vertices.
 function CycleDiGraph(n::Integer)
     g = SimpleDiGraph(n)
     for i = 1:(n - 1)
-        add_edge!(g, Edge(i, i + 1))
+        add_edge!(g, SimpleEdge(i, i + 1))
     end
-    add_edge!(g, Edge(n, 1))
+    add_edge!(g, SimpleEdge(n, 1))
     return g
 end
 
@@ -144,10 +144,10 @@ with `n` vertices.
 function WheelGraph(n::Integer)
     g = StarGraph(n)
     for i = 3:n
-        add_edge!(g, Edge(i - 1, i))
+        add_edge!(g, SimpleEdge(i - 1, i))
     end
     if n != 2
-        add_edge!(g, Edge(n, 2))
+        add_edge!(g, SimpleEdge(n, 2))
     end
     return g
 end
@@ -161,10 +161,10 @@ with `n` vertices.
 function WheelDiGraph(n::Integer)
     g = StarDiGraph(n)
     for i = 3:n
-        add_edge!(g, Edge(i - 1, i))
+        add_edge!(g, SimpleEdge(i - 1, i))
     end
     if n != 2
-        add_edge!(g, Edge(n, 2))
+        add_edge!(g, SimpleEdge(n, 2))
     end
     return g
 end
@@ -222,7 +222,7 @@ Create a double complete binary tree with `k` levels.
 function DoubleBinaryTree(k::Integer)
     gl = BinaryTree(k)
     gr = BinaryTree(k)
-    g = SparseArrays.blockdiag(gl, gr)
+    g = blockdiag(gl, gr)
     add_edge!(g, 1, nv(gl) + 1)
     return g
 end
@@ -241,7 +241,7 @@ function RoachGraph(k::Integer)
     nopole = SimpleGraph(2)
     antannae = crosspath(k, nopole)
     body = crosspath(k, dipole)
-    roach = SparseArrays.blockdiag(antannae, body)
+    roach = blockdiag(antannae, body)
     add_edge!(roach, nv(antannae) - 1, nv(antannae) + 1)
     add_edge!(roach, nv(antannae), nv(antannae) + 2)
     return roach

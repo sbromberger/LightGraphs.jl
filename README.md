@@ -10,6 +10,7 @@
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.6.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
+[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.7.svg)](http://pkg.julialang.org/detail/LightGraphs)
 
 LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for

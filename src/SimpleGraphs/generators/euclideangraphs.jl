@@ -8,7 +8,7 @@ a matrix with the points' positions.
 function euclidean_graph(N::Int, d::Int;
     L=1., seed = -1, kws...)
     rng = LightGraphs.getRNG(seed)
-    points = LinearAlgebra.rmul!(rand(rng, d, N), L)
+    points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
 
@@ -34,7 +34,7 @@ function euclidean_graph(points::Matrix;
     L=1., p=2., cutoff=-1., bc=:open)
     d, N = size(points)
     g = SimpleGraph(N)
-    weights = Dict{Edge,Float64}()
+    weights = Dict{SimpleEdge,Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))
     if bc == :periodic
         maximum(points) > L && throw(ArgumentError("Some points are outside the box of size $L")) # TODO 0.7: change to DomainError with text.
@@ -49,9 +49,9 @@ function euclidean_graph(points::Matrix;
             else
                 throw(ArgumentError("$bc is not a valid boundary condition"))
             end
-            dist = LinearAlgebra.norm(Δ, p)
+            dist = norm(Δ, p)
             if dist < cutoff
-                e = Edge(i, j)
+                e = SimpleEdge(i, j)
                 add_edge!(g, e)
                 weights[e] = dist
             end

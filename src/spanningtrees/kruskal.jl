@@ -5,12 +5,10 @@ distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wi
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst(
-    g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T} = weights(g)
-) where {T<:Real, U, AG<:AbstractGraph{U}}
+@traitfn function kruskal_mst(g::AG::(!IsDirected),
+    distmx::AbstractMatrix{T}=weights(g)) where {T <: Real, U, AG <: AbstractGraph{U}}
 
-    connected_vs = DataStructures.IntDisjointSets(nv(g))
+    connected_vs = IntDisjointSets(nv(g))
 
     mst = Vector{Edge}()
     sizehint!(mst, nv(g) - 1)
@@ -23,8 +21,8 @@ function kruskal_mst end
     end
 
     for e in edge_list[sortperm(weights)]
-        if !DataStructures.in_same_set(connected_vs, e.src, e.dst)
-            DataStructures.union!(connected_vs, e.src, e.dst)
+        if !in_same_set(connected_vs, e.src, e.dst)
+            union!(connected_vs, e.src, e.dst)
             push!(mst, e)
             (length(mst) >= nv(g) - 1) && break
         end
