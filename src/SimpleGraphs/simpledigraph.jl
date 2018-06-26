@@ -217,11 +217,10 @@ function SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     if Base.IteratorEltype(iter) == Base.EltypeUnknown()
         return _SimpleDiGraphFromIterator(iter)
     end
-    # if the eltype of iter is known but is a proper supertype of SimpleDiGraphEdge
-    if !(eltype(iter) <: SimpleDiGraphEdge) && SimpleDiGraphEdge <: eltype(iter)
-        return _SimpleDiGraphFromIterator(iter)
+    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
+        return _SimpleDiGraphFromIterator(iter, eltype(iter))
     end
-    return _SimpleDiGraphFromIterator(iter, eltype(iter))
+    return _SimpleDiGraphFromIterator(iter)
 end
 
 

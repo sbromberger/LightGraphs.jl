@@ -191,7 +191,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     return g
 end
 
-function _suitable(edges::Set{SimpleEdge}, potential_edges::Dict{T,T}) where T <: Integer
+function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where T <: Integer
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -204,7 +204,7 @@ end
 _try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
 function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
-    edges = Set{SimpleEdge}()
+    edges = Set{SimpleEdge{T}}()
     m = 0
     stubs = zeros(T, sum(k))
     for i = one(T):n
@@ -233,7 +233,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
         end
 
         if !_suitable(edges, potential_edges)
-            return Set{SimpleEdge}()
+            return Set{SimpleEdge{T}}()
         end
 
         stubs = Vector{Int}()
@@ -603,11 +603,10 @@ function random_configuration_model(n::Integer, k::Array{T}; seed::Int=-1, check
         edges = _try_creation(n, k, rng)
     end
 
-    g = SimpleGraph(n)
-    for edge in edges
-        add_edge!(g, edge)
+    g = SimpleGraphFromIterator(edges)
+    if nv(g) < n
+        add_vertices!(g, n - nv(g))
     end
-
     return g
 end
 

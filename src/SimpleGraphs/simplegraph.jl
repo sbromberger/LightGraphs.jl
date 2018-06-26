@@ -204,11 +204,10 @@ function SimpleGraphFromIterator(iter)::SimpleGraph
     if Base.IteratorEltype(iter) == Base.EltypeUnknown()
         return _SimpleGraphFromIterator(iter)
     end
-    # if the eltype of iter is know but is a proper supertype of SimpleDiEdge
-    if !(eltype(iter) <: SimpleGraphEdge) && SimpleGraphEdge <: eltype(iter)
-        return _SimpleGraphFromIterator(iter)
+    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
+        return _SimpleGraphFromIterator(iter, eltype(iter))
     end
-    return _SimpleGraphFromIterator(iter, eltype(iter))
+    return _SimpleGraphFromIterator(iter)
 end
 
 
