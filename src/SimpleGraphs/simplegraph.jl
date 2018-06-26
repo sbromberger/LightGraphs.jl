@@ -204,11 +204,10 @@ function SimpleGraphFromIterator(iter)::SimpleGraph
     if Base.IteratorEltype(iter) == Base.EltypeUnknown()
         return _SimpleGraphFromIterator(iter)
     end
-    # if the eltype of iter is know but is a proper supertype of SimpleDiEdge
-    if !(eltype(iter) <: SimpleGraphEdge) && SimpleGraphEdge <: eltype(iter)
-        return _SimpleGraphFromIterator(iter)
+    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
+        return _SimpleGraphFromIterator(iter, eltype(iter))
     end
-    return _SimpleGraphFromIterator(iter, eltype(iter))
+    return _SimpleGraphFromIterator(iter)
 end
 
 
@@ -270,7 +269,12 @@ function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     return insorted(d, list_s)
 end
 
+"""
+    add_edge!(g, e)
 
+Add an edge `e` to graph `g`. Return `true` if edge was added successfully,
+otherwise return `false`.
+"""
 function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
@@ -289,7 +293,16 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     return true  # edge successfully added
 end
 
+"""
+    rem_edge!(g, e)
 
+Remove an edge `e` from graph `g`. Return `true` if edge was removed successfully,
+otherwise return `false`.
+
+### Implementation Notes
+If `rem_edge!` returns `false`, the graph may be in an indeterminate state, as
+there are multiple points where the function can exit with `false`.
+"""
 function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)

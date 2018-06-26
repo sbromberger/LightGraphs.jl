@@ -1,50 +1,65 @@
 @testset "Static graphs" begin
     g = @inferred(CompleteDiGraph(5))
     @test nv(g) == 5 && ne(g) == 20
+    @test isvalid_simplegraph(g)
     g = @inferred(CompleteGraph(5))
     @test nv(g) == 5 && ne(g) == 10
+    @test isvalid_simplegraph(g)
 
     g = @inferred(CompleteBipartiteGraph(5, 8))
     @test nv(g) == 13 && ne(g) == 40
+    @test isvalid_simplegraph(g)
 
     g = @inferred(StarDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
+    @test isvalid_simplegraph(g)
     g = @inferred(StarGraph(5))
     @test nv(g) == 5 && ne(g) == 4
+    @test isvalid_simplegraph(g)
     g = @inferred(StarGraph(1))
     @test nv(g) == 1 && ne(g) == 0
+    @test isvalid_simplegraph(g)
 
     g = @inferred(PathDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
+    @test isvalid_simplegraph(g)
     g = @inferred(PathGraph(5))
     @test nv(g) == 5 && ne(g) == 4
+    @test isvalid_simplegraph(g)
 
     g = @inferred(CycleDiGraph(5))
     @test nv(g) == 5 && ne(g) == 5
+    @test isvalid_simplegraph(g)
     g = @inferred(CycleGraph(5))
     @test nv(g) == 5 && ne(g) == 5
+    @test isvalid_simplegraph(g)
 
     g = @inferred(WheelDiGraph(5))
     @test nv(g) == 5 && ne(g) == 8
+    @test isvalid_simplegraph(g)
     g = @inferred(WheelGraph(5))
     @test nv(g) == 5 && ne(g) == 8
+    @test isvalid_simplegraph(g)
 
     g = @inferred(Grid([3, 3, 4]))
     @test nv(g) == 3 * 3 * 4
     @test ne(g) == 75
     @test Δ(g) == 6
     @test δ(g) == 3
+    @test isvalid_simplegraph(g)
 
     g = @inferred(Grid([3, 3, 4], periodic=true))
     @test nv(g) == 3 * 3 * 4
     @test ne(g) == 108
     @test Δ(g) == 6
     @test δ(g) == 6
+    @test isvalid_simplegraph(g)
 
 
     g = @inferred(CliqueGraph(3, 5))
     @test nv(g) == 15 && ne(g) == 20
     @test g[1:3] == CompleteGraph(3)
+    @test isvalid_simplegraph(g)
 
     g = @inferred(crosspath(3, BinaryTree(2)))
     # f = Vector{Vector{Int}}[[2 3 4];
@@ -62,6 +77,7 @@
     V = ones(Int, length(I))
     Adj = sparse(I, J, V)
     @test Adj == sparse(g)
+    @test isvalid_simplegraph(g)
 
     g = @inferred(DoubleBinaryTree(3))
     # [[3, 2, 8]
@@ -83,6 +99,7 @@
     V = ones(Int, length(I))
     Adj = sparse(I, J, V)
     @test Adj == sparse(g)
+    @test isvalid_simplegraph(g)
 
     rg3 = @inferred(RoachGraph(3))
     # [3]
@@ -102,4 +119,5 @@
     V = ones(Int, length(I))
     Adj = sparse(I, J, V)
     @test Adj == sparse(rg3)
+    @test isvalid_simplegraph(g)
 end
