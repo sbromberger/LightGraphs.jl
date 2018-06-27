@@ -4,7 +4,7 @@
     for g in testgraphs(g10)
         z = copy(g)
         for k = 2:5
-            z = SparseArrays.blockdiag(z, g)
+            z = blockdiag(z, g)
             add_edge!(z, (k - 1) * n, k * n)
             c, ch = @inferred(label_propagation(z))
             a = collect(n:n:(k * n))

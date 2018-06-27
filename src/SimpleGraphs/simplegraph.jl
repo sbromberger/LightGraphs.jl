@@ -31,7 +31,7 @@ SimpleGraph(::Type{T}) where T <: Integer = SimpleGraph{T}(zero(T))
 function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
-    LinearAlgebra.issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
+    issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
 
     g = SimpleGraph(T(dima))
     @inbounds for i in findall(triu(adjmx) .!= 0)
@@ -57,19 +57,22 @@ function SimpleGraph(g::SimpleDiGraph)
     newfadj = deepcopy(g.fadjlist)
     @inbounds for i in vertices(g)
         for j in badj(g, i)
-            if (_insert_and_dedup!(newfadj[i], j))
-                edgect += 2     # this is a new edge only in badjlist
-            else
+            index = searchsortedfirst(newfadj[i], j)
+            if index <= length(newfadj[i]) && newfadj[i][index] == j
                 edgect += 1     # this is an existing edge - we already have it
                 if i == j
                     edgect += 1 # need to count self loops
                 end
+            else
+                insert!(newfadj[i], index, j)
+                edgect += 2      # this is a new edge only in badjlist
             end
         end
     end
     iseven(edgect) || throw(AssertionError("invalid edgect in graph creation - please file bug report"))
     return SimpleGraph(edgect ÷ 2, newfadj)
 end
+
 
 @inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T <: Integer
     neg = 0
@@ -201,11 +204,10 @@ function SimpleGraphFromIterator(iter)::SimpleGraph
     if Base.IteratorEltype(iter) == Base.EltypeUnknown()
         return _SimpleGraphFromIterator(iter)
     end
-    # if the eltype of iter is know but is a proper supertype of SimpleDiEdge
-    if !(eltype(iter) <: SimpleGraphEdge) && SimpleGraphEdge <: eltype(iter)
-        return _SimpleGraphFromIterator(iter)
+    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
+        return _SimpleGraphFromIterator(iter, eltype(iter))
     end
-    return _SimpleGraphFromIterator(iter, eltype(iter))
+    return _SimpleGraphFromIterator(iter)
 end
 
 
@@ -253,39 +255,70 @@ is_directed(::Type{SimpleGraph}) = false
 is_directed(::Type{SimpleGraph{T}}) where T = false
 is_directed(g::SimpleGraph) = false
 
-function has_edge(g::SimpleGraph, e::SimpleGraphEdge)
-    u, v = Tuple(e)
-    (u > nv(g) || v > nv(g)) && return false
-    if degree(g, u) > degree(g, v)
-        u, v = v, u
+
+function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
+    @inbounds list_s = g.fadjlist[s]
+    @inbounds list_d = g.fadjlist[d]
+    if length(list_s) > length(list_d)
+        d = s
+        list_s = list_d
     end
-    return insorted(v, fadj(g, u))
+    return insorted(d, list_s)
 end
 
+"""
+    add_edge!(g, e)
+
+Add an edge `e` to graph `g`. Return `true` if edge was added successfully,
+otherwise return `false`.
+"""
 function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
-    (s in vertices(g) && d in vertices(g)) || return false
-    inserted = _insert_and_dedup!(g.fadjlist[s], d)
-    if inserted
-        g.ne += 1
-    end
-    if s != d
-        inserted = _insert_and_dedup!(g.fadjlist[d], s)
-    end
-    return inserted
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s]
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
+    insert!(list, index, d)
+
+    g.ne += 1
+    s == d && return true  # selfloop
+
+    @inbounds list = g.fadjlist[d]
+    index = searchsortedfirst(list, s)
+    insert!(list, index, s)
+    return true  # edge successfully added
 end
 
-function rem_edge!(g::SimpleGraph, e::SimpleGraphEdge)
-    i = searchsorted(g.fadjlist[src(e)], dst(e))
-    isempty(i) && return false   # edge not in graph
-    j = first(i)
-    deleteat!(g.fadjlist[src(e)], j)
-    if src(e) != dst(e)     # not a self loop
-        j = searchsortedfirst(g.fadjlist[dst(e)], src(e))
-        deleteat!(g.fadjlist[dst(e)], j)
-    end
+"""
+    rem_edge!(g, e)
+
+Remove an edge `e` from graph `g`. Return `true` if edge was removed successfully,
+otherwise return `false`.
+
+### Implementation Notes
+If `rem_edge!` returns `false`, the graph may be in an indeterminate state, as
+there are multiple points where the function can exit with `false`.
+"""
+function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    verts = vertices(g)
+    (s in verts && d in verts) || return false  # edge out of bounds
+    @inbounds list = g.fadjlist[s] 
+    index = searchsortedfirst(list, d)
+    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
+    deleteat!(list, index)
+
     g.ne -= 1
-    return true # edge successfully removed
+    s == d && return true  # selfloop
+
+    @inbounds list = g.fadjlist[d] 
+    index = searchsortedfirst(list, s)
+    deleteat!(list, index)
+    return true  # edge successfully removed
 end
 
 

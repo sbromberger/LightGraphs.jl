@@ -14,7 +14,7 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 - Barabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell's functional organization. Nat Rev Genet 5 (2004) 101-113
 - Shimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.
 """
-function stress_centrality(g::AbstractGraph, vs::AbstractVector = vertices(g))
+function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
@@ -33,9 +33,8 @@ stress_centrality(g::AbstractGraph, k::Integer) =
     stress_centrality(g, sample(vertices(g), k))
 
 
-function parallel_stress_centrality(
-    g::AbstractGraph,
-    vs::AbstractVector = vertices(g))::Vector{Int}
+function parallel_stress_centrality(g::AbstractGraph,
+    vs::AbstractVector=vertices(g))::Vector{Int}
 
     n_v = nv(g)
     k = length(vs)
@@ -43,7 +42,7 @@ function parallel_stress_centrality(
 
     # Parallel reduction
 
-    stress = Distributed.@distributed (+) for s in vs
+    stress = @distributed (+) for s in vs
         temp_stress = zeros(Int, n_v)
         if degree(g, s) > 0  # this might be 1?
             state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
@@ -58,12 +57,10 @@ parallel_stress_centrality(g::AbstractGraph, k::Integer) =
     parallel_stress_centrality(g, sample(vertices(g), k))
 
 
-function _stress_accumulate_basic!(
-    stress::Vector{Int},
+function _stress_accumulate_basic!(stress::Vector{Int},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer
-    )
+    si::Integer)
 
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(Int, n_v)

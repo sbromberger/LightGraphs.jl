@@ -1,13 +1,16 @@
 module LinAlg
 
+### Remove this line after #915 is closed
+using Arpack: eigs
+
 using SimpleTraits
-import SparseArrays
-import LinearAlgebra
-import IterativeEigensolvers
+using SparseArrays: SparseMatrixCSC
+import SparseArrays: blockdiag, sparse
+using LinearAlgebra: I, Symmetric, diagm, dot, eigen, eigvals, norm, rmul!, tril, triu
+import LinearAlgebra: Diagonal, diag, issymmetric, mul!
+
 using ..LightGraphs
 
-import LightGraphs: IsDirected, AbstractGraph, inneighbors,
-outneighbors, all_neighbors, is_directed, nv, ne, has_edge, vertices
 
 import Base: convert, size, eltype, ndims, ==, *, .*, length
 

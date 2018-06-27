@@ -3,29 +3,31 @@ module LightGraphs
 
 using SimpleTraits
 
-import CodecZlib
-import DataStructures
-import DelimitedFiles
-import Distributed
-import IterativeEigensolvers
-import LinearAlgebra
-import Markdown
-import Random
-import SharedArrays
-import SparseArrays
+### Remove the following line once #915 is closed
+using Arpack: eigs
+
+using CodecZlib: GzipCompressorStream, GzipDecompressorStream
+using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
+using Distributed: @distributed
+using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+import LinearAlgebra: Diagonal, issymmetric, mul!
+# import Markdown
+using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, shuffle, shuffle!, srand
+using SharedArrays: SharedMatrix, SharedVector, sdata
+using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+import SparseArrays: blockdiag, sparse
 
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
-
+            ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
 
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed,
+is_directed, IsDirected,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
@@ -221,10 +223,6 @@ include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
-include("generators/staticgraphs.jl")
-include("generators/randgraphs.jl")
-include("generators/euclideangraphs.jl")
-include("generators/smallgraphs.jl")
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")

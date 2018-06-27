@@ -42,9 +42,9 @@ function parallel_closeness_centrality(g::AbstractGraph,
 
     n_v = Int(nv(g))
 
-    closeness = SharedArrays.SharedVector{Float64}(n_v)
+    closeness = SharedVector{Float64}(n_v)
 
-    Distributed.@sync Distributed.@distributed for u in vertices(g)
+    @sync @distributed for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
@@ -61,5 +61,5 @@ function parallel_closeness_centrality(g::AbstractGraph,
             end
         end
     end
-    return SharedArrays.sdata(closeness)
+    return sdata(closeness)
 end
