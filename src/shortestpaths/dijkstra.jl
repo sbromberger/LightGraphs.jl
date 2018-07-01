@@ -23,8 +23,8 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 predecessors of a given vertex.
 
 ### Performance
-Use a [row-major matrix](https://en.wikipedia.org/wiki/Row-_and_column-major_order) type for 
-`distmx` for better run-time.
+Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order) 
+for better run-time.
 Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
 instead of `SparseMatrixCSC{Int64,Int64}`.
 """
