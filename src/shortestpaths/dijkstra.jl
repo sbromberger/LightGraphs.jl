@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
-struct DijkstraState{T<:Real,U<:Integer} <: AbstractPathState
+struct DijkstraState{T <: Real,U <: Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -22,13 +22,12 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 - `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
 """
-function dijkstra_shortest_paths(
-    g::AbstractGraph,
+function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false
-    ) where T <: Real where U<:Integer
+    ) where T <: Real where U <: Integer
 
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
@@ -36,7 +35,7 @@ function dijkstra_shortest_paths(
     preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = DataStructures.PriorityQueue{U,T}()
+    H = PriorityQueue{U,T}()
     dists[srcs] .= zero(T)
     pathcounts[srcs] .= 1
 
@@ -49,13 +48,14 @@ function dijkstra_shortest_paths(
         visited[v] = true
     end
 
-    while !isempty(H)
-        hentry = DataStructures.dequeue_pair!(H)
+    for u in vertices(g)
+#    while !isempty(H)
+#        hentry = dequeue_pair!(H)
             # info("Popped H - got $(hentry.vertex)")
-        u = hentry[1]
+#        u = hentry[1]
 
         if trackvertices
-          push!(closest_vertices, u)
+            push!(closest_vertices, u)
         end
 
         for v in outneighbors(g, u)
@@ -91,11 +91,11 @@ function dijkstra_shortest_paths(
     end
 
     if trackvertices
-      for s in vertices(g)
-        if !visited[s]
-          push!(closest_vertices, s)
+        for s in vertices(g)
+            if !visited[s]
+                push!(closest_vertices, s)
+            end
         end
-      end
     end
 
     pathcounts[srcs] .= 1
@@ -107,7 +107,8 @@ function dijkstra_shortest_paths(
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix = weights(g); allpaths=false, trackvertices=false) =
+
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false) =
 dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)
 
 """
@@ -115,7 +116,7 @@ dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trac
 
 An [`AbstractPathState`](@ref) designed for multisource_dijkstra_shortest_paths calculation.
 """
-struct MultipleDijkstraState{T<:Real,U<:Integer} <: AbstractPathState
+struct MultipleDijkstraState{T <: Real,U <: Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -128,11 +129,9 @@ Compute the shortest paths between all pairs of vertices in graph `g` by running
 an optional distance matrix `distmx`. Return a [`MultipleDijkstraState`](@ref) with relevant
 traversal information.
 """
-function parallel_multisource_dijkstra_shortest_paths(
-    g::AbstractGraph{U},
-    sources::AbstractVector = vertices(g),
-    distmx::AbstractMatrix{T} = weights(g)
-    ) where T <: Real where U
+function parallel_multisource_dijkstra_shortest_paths(g::AbstractGraph{U},
+    sources::AbstractVector=vertices(g),
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U
 
     n_v = nv(g)
     r_v = length(sources)
@@ -142,11 +141,102 @@ function parallel_multisource_dijkstra_shortest_paths(
     parents = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
-      state = dijkstra_shortest_paths(g, sources[i], distmx)
-      dists[i, :] = state.dists
-      parents[i, :] = state.parents
+        state = dijkstra_shortest_paths(g, sources[i], distmx)
+        dists[i, :] = state.dists
+        parents[i, :] = state.parents
     end
 
     result = MultipleDijkstraState(sdata(dists), sdata(parents))
     return result
+end
+
+export parallel_dijkstra_shortest_paths
+function parallel_dijkstra_shortest_paths(g::AbstractGraph,
+    srcs::Vector{U},
+    distmx::AbstractMatrix{T}=weights(g);
+    allpaths=false,
+    trackvertices=false
+    ) where T <: Real where U <: Integer
+
+    nvg = nv(g)
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
+    preds = fill(Vector{U}(), nvg)
+    visited = zeros(Bool, nvg)
+    pathcounts = zeros(Int, nvg)
+    dists[srcs] .= zero(T)
+    visited[srcs] .= true
+    pathcounts[srcs] .= 1
+
+    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
+    sizehint!(closest_vertices, nvg)
+
+    H = BatchPriorityQueue(nvg, T)
+    for s in srcs
+        enqueue!(H, Pair{U, T}(s, zero(T)))
+    end
+
+    buffer_vertices = Vector{U}()
+    sizehint!(buffer_vertices, maximum(degree(g)))
+
+    for u in vertices(g)
+#    while !isempty(H)
+#        hentry = dequeue_pair!(H)
+            # info("Popped H - got $(hentry.vertex)")
+#        u = hentry[1]
+
+        if trackvertices
+            push!(closest_vertices, u)
+        end
+
+        batch_size = 0
+        for v in outneighbors(g, u)
+            alt = (dists[u] == typemax(T)) ? typemax(T) : dists[u] + distmx[u, v]
+
+            if !visited[v]
+                dists[v] = alt
+                parents[v] = u
+                pathcounts[v] += pathcounts[u]
+                visited[v] = true
+                if allpaths
+                    preds[v] = [u;]
+                end
+                enqueue!(H, Pair{U, T}(v, dists[v]))
+            else
+                if alt < dists[v]
+                    dists[v] = alt
+                    parents[v] = u
+                    #615
+                    pathcounts[v] = 0
+                    preds[v] = []
+
+                    push!(buffer_vertices, v)
+                end
+                if alt == dists[v]
+                    pathcounts[v] += pathcounts[u]
+                    if allpaths
+                        push!(preds[v], u)
+                    end
+                end
+            end
+            batch_decrease_key!(H, buffer_vertices, dists)
+            empty!(buffer_vertices) 
+        end
+    end
+
+    if trackvertices
+        for s in vertices(g)
+            if !visited[s]
+                push!(closest_vertices, s)
+            end
+        end
+    end
+
+    pathcounts[srcs] .= 1
+    parents[srcs] .= 0
+    for src in srcs
+        preds[src] = []
+    end
+
+    return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
