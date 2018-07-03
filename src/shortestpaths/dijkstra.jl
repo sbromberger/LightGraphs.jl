@@ -21,6 +21,12 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 ### Optional Arguments
 - `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
+
+### Performance
+Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order) 
+for better run-time.
+Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
+instead of `SparseMatrixCSC{Int64,Int64}`.
 """
 function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
