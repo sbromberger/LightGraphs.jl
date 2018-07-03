@@ -1045,7 +1045,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.dijkstra_shortest_paths",
     "category": "function",
-    "text": "dijkstra_shortest_paths(g, srcs, distmx=weights(g));\n\nPerform Dijkstra\'s algorithm on a graph, computing shortest distances between srcs and all other vertices. Return a LightGraphs.DijkstraState that contains various traversal information.\n\nOptional Arguments\n\nallpaths=false: If true, returns a LightGraphs.DijkstraState that keeps track of all\n\npredecessors of a given vertex.\n\n\n\n\n\n"
+    "text": "dijkstra_shortest_paths(g, srcs, distmx=weights(g));\n\nPerform Dijkstra\'s algorithm on a graph, computing shortest distances between srcs and all other vertices. Return a LightGraphs.DijkstraState that contains various traversal information.\n\nOptional Arguments\n\nallpaths=false: If true, returns a LightGraphs.DijkstraState that keeps track of all\n\npredecessors of a given vertex.\n\nPerformance\n\nUse a matrix type for distmx that is implemented in row-major matrix format  for better run-time. Eg. Set the type of distmx to Transpose{Int64, SparseMatrixCSC{Int64,Int64}}  instead of SparseMatrixCSC{Int64,Int64}.\n\n\n\n\n\n"
 },
 
 {
