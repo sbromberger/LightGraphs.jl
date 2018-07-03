@@ -106,7 +106,7 @@ indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
 parallel_betweenness_centrality, parallel_closeness_centrality,
-parallel_stress_centrality, parallel_radiality_centrality,
+parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
