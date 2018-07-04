@@ -33,11 +33,10 @@ Set `bc=:periodic` to impose periodic boundary conditions in the box ``[0,L]^d``
 function euclidean_graph(points::Matrix;
     L=1., p=2., cutoff=-1., bc=:open)
     d, N = size(points)
-    g = SimpleGraph(N)
-    weights = Dict{Edge,Float64}()
+    weights = Dict{SimpleEdge{Int},Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))
     if bc == :periodic
-        maximum(points) > L && throw(ArgumentError("Some points are outside the box of size $L")) # TODO 0.7: change to DomainError with text.
+        maximum(points) > L && throw(DomainError(maximum(points), "Some points are outside the box of size $L"))
     end
     for i = 1:N
         for j = (i + 1):N
@@ -51,11 +50,14 @@ function euclidean_graph(points::Matrix;
             end
             dist = norm(Δ, p)
             if dist < cutoff
-                e = Edge(i, j)
-                add_edge!(g, e)
+                e = SimpleEdge(i, j)
                 weights[e] = dist
             end
         end
+    end
+    g = LightGraphs.SimpleGraphs._SimpleGraphFromIterator(keys(weights), SimpleEdge{Int})
+    if nv(g) < N
+        add_vertices!(g, N - nv(g))
     end
     return g, weights
 end

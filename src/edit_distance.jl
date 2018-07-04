@@ -41,66 +41,66 @@ if involved costs are equivalent.
 - Júlio Hoffimann Mendes (juliohm@stanford.edu)
 """
 function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
-                       insert_cost::Function = v -> 1.0,
-                       delete_cost::Function = u -> 1.0,
-                       subst_cost::Function= (u, v) -> 0.5,
-                       heuristic::Function=DefaultEditHeuristic)
+                        insert_cost::Function=v -> 1.0,
+                        delete_cost::Function=u -> 1.0,
+                        subst_cost::Function=(u, v) -> 0.5,
+                        heuristic::Function=DefaultEditHeuristic)
 
   # A* search heuristic
-  h(λ) = heuristic(λ, G₁, G₂)
+    h(λ) = heuristic(λ, G₁, G₂)
 
   # initialize open set
-  OPEN = DataStructures.PriorityQueue{Vector{Tuple}, Float64}()
-  for v in 1:nv(G₂)
-    DataStructures.enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
-  end
-  DataStructures.enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
-
-  while true
-    # minimum (partial) edit path
-    λ, cost = DataStructures.peek(OPEN)
-    DataStructures.dequeue!(OPEN)
-
-    if is_complete_path(λ, G₁, G₂)
-      return cost, λ
-    else
-      k, _ = λ[end]
-      vs = setdiff(1:nv(G₂), [v for (u, v) in λ])
-
-      if k < nv(G₁) # there are still vertices to process in G₁?
-        for v in vs
-          λ⁺ = [λ; (k + 1, v)]
-          DataStructures.enqueue!(OPEN, λ⁺, cost + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
-        end
-        λ⁺ = [λ; (k + 1, 0)]
-        DataStructures.enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
-      else
-        # add remaining vertices of G₂ to the path
-        λ⁺ = [λ; [(0, v) for v in vs]]
-        total_insert_cost = sum(insert_cost, vs)
-        DataStructures.enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
-      end
+    OPEN = PriorityQueue{Vector{Tuple},Float64}()
+    for v in 1:nv(G₂)
+        enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
     end
-  end
+    enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
+
+    while true
+        # minimum (partial) edit path
+        λ, cost = peek(OPEN)
+        dequeue!(OPEN)
+
+        if is_complete_path(λ, G₁, G₂)
+            return cost, λ
+        else
+            k, _ = λ[end]
+            vs = setdiff(1:nv(G₂), [v for (u, v) in λ])
+
+            if k < nv(G₁) # there are still vertices to process in G₁?
+                for v in vs
+                    λ⁺ = [λ; (k + 1, v)]
+                    enqueue!(OPEN, λ⁺, cost + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
+                end
+                λ⁺ = [λ; (k + 1, 0)]
+                enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
+            else
+                # add remaining vertices of G₂ to the path
+                λ⁺ = [λ; [(0, v) for v in vs]]
+                total_insert_cost = sum(insert_cost, vs)
+                enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
+            end
+        end
+    end
 end
 
 function is_complete_path(λ, G₁, G₂)
-  us = Set(); vs = Set()
-  for (u, v) in λ
-    push!(us, u)
-    push!(vs, v)
-  end
-  delete!(us, 0)
-  delete!(vs, 0)
+      us = Set(); vs = Set()
+    for (u, v) in λ
+        push!(us, u)
+        push!(vs, v)
+    end
+    delete!(us, 0)
+    delete!(vs, 0)
 
-  return length(us) == nv(G₁) && length(vs) == nv(G₂)
+    return length(us) == nv(G₁) && length(vs) == nv(G₂)
 end
 
 function DefaultEditHeuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
-  vs = Set([v for (u, v) in λ])
-  delete!(vs, 0)
+    vs = Set([v for (u, v) in λ])
+    delete!(vs, 0)
 
-  return nv(G₂) - length(vs)
+    return nv(G₂) - length(vs)
 end
 
 
@@ -119,7 +119,7 @@ vertex v ∈ G₂.
 `p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
-  (u, v) -> norm(μ₁[u] - μ₂[v], p)
+    (u, v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
 """
@@ -132,5 +132,5 @@ Return value similar to `MinkowskiCost`, but ensure costs smaller than 2τ.
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
-  (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
+    (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end

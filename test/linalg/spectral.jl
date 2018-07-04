@@ -45,8 +45,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test length(em) == 2 * ne(g)
         @test size(B) == (2 * ne(g), 2 * ne(g))
         for i = 1:10
-          @test sum(B[:, i]) == 8
-          @test sum(B[i, :]) == 8
+            @test sum(B[:, i]) == 8
+            @test sum(B[i, :]) == 8
         end
         @test !issymmetric(B)
 
@@ -143,10 +143,10 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
         #check that matmat works and Matrix(nbt) == B
 
-        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
+        @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
         #check that matmat works and Matrix(nbt) == B
-        @test norm(nbt * LightGraphs.eye(nbt.m) - B) < 1e-8
+        @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
         #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
@@ -156,7 +156,6 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test Matrix(B₁) == Matrix(B)
         @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
-        #   @test norm(eigs(B₁)[1] - eigs(B)[1]) ≈ 0.0 atol=1e-8
         @test !issymmetric(B₁)
         @test eltype(B₁) == Float64
     end
@@ -166,8 +165,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     for n = 3:10
         polygon = random_regular_graph(n, 2)
         for g in testgraphs(polygon)
-            @test spectral_distance(g, g) ≈ 0 atol=1e-8
-            @test spectral_distance(g, g, 1) ≈ 0 atol=1e-8
+            @test spectral_distance(g, g) ≈ 0 atol = 1e-8
+            @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8
         end
     end
 end

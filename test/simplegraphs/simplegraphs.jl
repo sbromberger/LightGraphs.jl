@@ -1,4 +1,4 @@
-using Random
+import Random
 
 @testset "SimpleGraphs" begin
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
@@ -268,7 +268,7 @@ using Random
         g_undir = SimpleGraph(0)
         for g in testgraphs(g_undir)
             T = edgetype(g)
-            edge_list = T.([(4,4),(1,2),(4,4),(1,2),(4,4),(2,1),(0,1),(1,0),(0,0)])
+            edge_list = T.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -294,7 +294,7 @@ using Random
         g_dir = SimpleDiGraph(0)
         for g in testdigraphs(g_dir)
             T = edgetype(g)
-            edge_list = T.([(4,4),(1,2),(4,4),(1,2),(4,4),(2,1),(0,1),(1,0),(0,0)])
+            edge_list = T.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -322,8 +322,8 @@ using Random
         g_undir = SimpleGraph(0)
         for g in testgraphs(g_undir)
             T = edgetype(g)
-            edge_list_good = Any[ T.(1,2), T.(3,4) ]
-            edge_list_bad =  Any[ T.(1,2), Int64(1) ]
+            edge_list_good = Any[ T.(1, 2), T.(3, 4) ]
+            edge_list_bad =  Any[ T.(1, 2), Int64(1) ]
 
             g1 = SimpleGraphFromIterator(edge_list_good)
             @test edgetype(g1) == T
@@ -332,8 +332,8 @@ using Random
         g_dir = SimpleDiGraph(0)
         for g in testdigraphs(g_dir)
             T = edgetype(g)
-            edge_list_good = Any[ T.(1,2), T.(3,4) ]
-            edge_list_bad =  Any[ T.(1,2), Int64(1) ]
+            edge_list_good = Any[ T.(1, 2), T.(3, 4) ]
+            edge_list_bad =  Any[ T.(1, 2), Int64(1) ]
 
             g1 = SimpleDiGraphFromIterator(edge_list_good)
             @test edgetype(g1) == T
@@ -342,8 +342,8 @@ using Random
 
         # If there are edges of multiple types, they should be propagated
         # to a common supertype
-        edge_list_1 = Any[Edge{Int8}(1,2), Edge{Int16}(3,4)]
-        edge_list_2 = Any[Edge{Int16}(1,2), Edge{Int8}(3,4)]
+        edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
+        edge_list_2 = Any[Edge{Int16}(1, 2), Edge{Int8}(3, 4)]
         g1_undir = SimpleGraphFromIterator(edge_list_1)
         g2_undir = SimpleGraphFromIterator(edge_list_2)
         g1_dir = SimpleGraphFromIterator(edge_list_1)

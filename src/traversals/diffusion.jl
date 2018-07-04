@@ -17,12 +17,12 @@ from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
 function diffusion(g::AbstractGraph{T},
-                   p::Real,
-                   n::Integer;
-                   watch::AbstractVector=Vector{Int}(),
-                   initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
-                   normalize::Bool=false
-                   ) where T
+                    p::Real,
+                    n::Integer;
+                    watch::AbstractVector=Vector{Int}(),
+                    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
+                    normalize::Bool=false
+                    ) where T
 
     # Initialize
     watch_set = Set{T}(watch)
@@ -61,11 +61,11 @@ function diffusion(g::AbstractGraph{T},
 
         # Record only new infections
         setdiff!(new_infections, infected_vertices)
-            if !isempty(watch_set)
-                vertices_per_step[step] = T.(collect(intersect(new_infections, watch_set)))
-            else
-                vertices_per_step[step] = collect(new_infections)
-            end
+        if !isempty(watch_set)
+            vertices_per_step[step] = T.(collect(intersect(new_infections, watch_set)))
+        else
+            vertices_per_step[step] = collect(new_infections)
+        end
 
         # Add new to master set of infected
         union!(infected_vertices, new_infections)
@@ -88,9 +88,6 @@ diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
     initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
     watch::AbstractVector=Vector{Int}(),
     normalize::Bool=false
-    ) = diffusion_rate(
-           diffusion(g, p, n,
-           initial_infections=initial_infections,
-           watch=watch, normalize=normalize
-           )
-)
+    ) = diffusion_rate(diffusion(g, p, n,
+            initial_infections=initial_infections,
+            watch=watch, normalize=normalize))

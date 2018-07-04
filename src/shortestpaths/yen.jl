@@ -3,7 +3,7 @@
 
 Designed for yen k-shortest-paths calculations.
 """
-struct YenState{T,U<:Integer} <: AbstractPathState
+struct YenState{T,U <: Integer} <: AbstractPathState
     dists::Vector{T}
     paths::Vector{Vector{U}}
 end
@@ -16,8 +16,7 @@ Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
 on a graph, computing k-shortest distances between `source` and `target` other vertices.
 Return a [`YenState`](@ref) that contains distances and paths.
 """
-function yen_k_shortest_paths(
-    g::AbstractGraph,
+function yen_k_shortest_paths(g::AbstractGraph,
     source::U,
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
@@ -33,7 +32,7 @@ function yen_k_shortest_paths(
     dists = Array{T,1}()
     push!(dists, dj.dists[target])
     A = [path]
-    B = DataStructures.PriorityQueue()
+    B = PriorityQueue()
     gcopy = deepcopy(g)
 
     for k = 1:(K - 1)
@@ -81,7 +80,7 @@ function yen_k_shortest_paths(
                 distpath  = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B, pathtotal)
-                    DataStructures.enqueue!(B, pathtotal, distpath)
+                    enqueue!(B, pathtotal, distpath)
                 end
             end
 
@@ -92,11 +91,11 @@ function yen_k_shortest_paths(
 
         # No more paths in B
         isempty(B) && break
-        mindistB = DataStructures.peek(B)[2]
+        mindistB = peek(B)[2]
         # The path with minimum distance in B is higher than maxdist
         mindistB > maxdist && break
-        push!(dists, DataStructures.peek(B)[2])
-        push!(A, DataStructures.dequeue!(B))
+        push!(dists, peek(B)[2])
+        push!(A, dequeue!(B))
     end
 
     return YenState{T,U}(dists, A)

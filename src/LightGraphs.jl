@@ -1,32 +1,33 @@
 __precompile__(true)
 module LightGraphs
 
-import CodecZlib
-import DataStructures
-
 using SimpleTraits
-using SharedArrays
-using SparseArrays
-using LinearAlgebra
-using IterativeEigensolvers
-using SharedArrays
-using Markdown
-using DelimitedFiles
+
+### Remove the following line once #915 is closed
+using Arpack: eigs
+
+using CodecZlib: GzipCompressorStream, GzipDecompressorStream
+using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
+using Distributed: @distributed
+using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+import LinearAlgebra: Diagonal, issymmetric, mul!
+# import Markdown
+using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, shuffle, shuffle!, srand
+using SharedArrays: SharedMatrix, SharedVector, sdata
+using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+import SparseArrays: blockdiag, sparse
+
 import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            ctranspose, join, start, next, done, eltype, get, Pair, Tuple, zero
-import Random: GLOBAL_RNG
-import Distributed: @distributed, @sync
-import SparseArrays: sparse, blockdiag
-import LinearAlgebra: issymmetric, mul!
+            ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
 
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed,
+is_directed, IsDirected,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
@@ -196,6 +197,7 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+include("DataStructures/batch_priority_queue.jl")
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")
@@ -222,10 +224,6 @@ include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
-include("generators/staticgraphs.jl")
-include("generators/randgraphs.jl")
-include("generators/euclideangraphs.jl")
-include("generators/smallgraphs.jl")
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")

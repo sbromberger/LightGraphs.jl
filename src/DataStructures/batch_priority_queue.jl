@@ -3,15 +3,19 @@ import Base: isempty
 
 using Base: Ordering, Forward, lt
 
-export BatchPriorityQueue, batch_decrease_key!, peek, dequeue!, dequeue_pair!, peek, isempty
+export BatchPriorityQueue, batch_decrease_key!, peek, dequeue!, dequeue_pair!, 
+peek, isempty, queue_decrease_key!
 
 mutable struct BatchPriorityQueue{K,V,O}
     # Binary heap of (element, priority) pairs.
     num_universe::K     #vertices(g)
     num_threads::Integer    #nthreads()
     pqs::Vector{PriorityQueue{K,V,O}}
+    buffer_key::Vector{Vector{K}}
+    buffer_key_ind::Vector{K}
     best_pq_ind::Integer
     o::Ordering
+    max_pq_size::Integer
 end
 
 function BatchPriorityQueue(
@@ -28,83 +32,42 @@ function BatchPriorityQueue(
         sizehint!(pqs[i].xs, max_size) #Reallocation is not thread-safe
         sizehint!(pqs[i].index, max_size)
     end
+    buffer_key = [Vector{K}(undef, max_size) for _ in 1:num_threads]
+    buffer_key_ind = zeros(K, num_threads)
 
-    return BatchPriorityQueue(num_universe, num_threads, pqs, 0, o)
+    return BatchPriorityQueue(num_universe, num_threads, pqs, buffer_key, buffer_key_ind, 1, o, max_size)
 end
 
 function batch_decrease_key!(
-    bpq::BatchPriorityQueue{K, V}, 
-    key_list::Vector{K}, 
+    bpq::BatchPriorityQueue{K, V},
     key_to_val::Vector{V},
     ) where K where V
 
-    @threads for thread_id in 1:(bpq.num_threads)
+    for thread_id in 1:(bpq.num_threads)
         @inbounds pq = bpq.pqs[thread_id]
+        key_list = bpq.buffer_key[thread_id]
+        num_keys = bpq.buffer_key_ind[thread_id]
 
-        @inbounds for k in key_list
-            (mod(k, bpq.num_threads)+1 == thread_id) || continue
-            
+        @inbounds for k in Iterators.take(key_list, num_keys)
             ind = pq.index[k]
             pq.xs[ind] = Pair{K, V}(k, key_to_val[k])
-            percolate_up!(pq, ind)
+            percolate_up!(pq, ind) #Cannot use setindex due to throw and push!
         end
+        bpq.buffer_key_ind[thread_id] = zero(K)
     end
 end
 
-
-
-#=
-function batch_push!(
-    bpq::BatchPriorityQueue{K, V}, 
-    keys::Vector{K}, 
-    vals::Vector{V},
-    len_batch::Integer = min(length(keys), length(vals))
-    ) where K where V
-
-#=
-    @threads for thread_id in 1:(bpq.num_threads)
-        @inbounds local_pq = bpq.pqs[thread_id]
-        pq_id = thread_id-1
-
-        @inbounds for i in 1:len_batch
-            if pq_id == mod(keys[i], bpq.num_threads)
-                local_pq[keys[i]] = vals[i]
-            end
+function update_best_ind(bpq::BatchPriorityQueue{K, V}) where K where V
+    best_ind = 1
+    best_val = (bpq.o == Forward ? typemax(V) : typemin(V))
+    for (i, pq) in enumerate(bpq.pqs)
+        if !isempty(pq) && lt(bpq.o, peek(pq).second, best_val)
+            best_val = peek(pq).second
+            best_ind = i
         end
     end
-=#
-
-    @inbounds for i in 1:len_batch
-        bpq.pqs[mod(keys[i], bpq.num_threads)+1][keys[i]] = vals[i]
-    end
-
-
-    ind = 0
-    best = (bpq.o == Forward ? typemax(V) : typemin(V))
-    @inbounds for (i, pq) in enumerate(bpq.pqs)
-        if !isempty(pq) && lt(bpq.o, peek(pq).second, best)
-            ind = i
-            best = peek(pq).second
-        end
-    end
-    bpq.best_pq_ind = ind
-
+    bpq.best_pq_ind = best_ind
 end
-=#
-
-#=
-function ind_next(bpq::BatchPriorityQueue{K, V}) where K where V
-    ind = 0
-    best = (bpq.o == Forward ? typemax(V) : typemin(V))
-    @inbounds for (i, pq) in enumerate(bpq.pqs)
-        if !isempty(pq) && lt(bpq.o, peek(pq).second, best)
-            ind = i
-            best = peek(pq).second
-        end
-    end
-    return ind
-end 
-=#
 
 dequeue!(bpq::BatchPriorityQueue) = dequeue!(bpq.pqs[bpq.best_pq_ind])
 
@@ -112,11 +75,13 @@ dequeue_pair!(bpq::BatchPriorityQueue) = dequeue_pair!(bpq.pqs[bpq.best_pq_ind])
 
 peek!(bpq::BatchPriorityQueue) = peek(bpq.pqs[bpq.best_pq_ind])
 
-isempty(bpq::BatchPriorityQueue) = (bpq.best_pq_ind <= 0)
+isempty(bpq::BatchPriorityQueue) = isempty(bpq.pqs[bpq.best_pq_ind])
 
-function enqueue!(bpq::BatchPriorityQueue{K, V}, pair::Pair{K, V}) where V where K
-    if bpq.best_pq_ind == 0 || lt(bpq.o, pair.second, peek(bpq.pqs[bpq.best_pq_ind]).second)
-        bpq.best_pq_ind = mod(pair.first, bpq.num_threads)+1
-    end
+function enqueue!(bpq::BatchPriorityQueue{K, V}, pair::Pair{K, V}) where K where V
     enqueue!(bpq.pqs[mod(pair.first, bpq.num_threads)+1], pair)
+end
+
+function queue_decrease_key!(bpq::BatchPriorityQueue{K, V}, Key::K) where K where V 
+    ind = mod(Key, bpq.num_threads)+1
+    bpq.buffer_key[ind][ (bpq.buffer_key_ind[ind] += 1) ] = Key
 end

@@ -5,14 +5,14 @@ using Distributions
 using LightGraphs
 using StatsBase
 using Base.Test
+import Random
 
 import Base: -
 import LightGraphs: randbn
 import StatsBase: SummaryStats
 
 function -(s::SummaryStats, t::SummaryStats)
-    return SummaryStats(
-        s.mean - t.mean,
+    return SummaryStats(s.mean - t.mean,
         s.min - t.min,
         s.q25 - t.q25,
         s.median - t.median,

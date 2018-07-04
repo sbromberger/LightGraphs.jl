@@ -48,11 +48,10 @@ function dijkstra_shortest_paths(g::AbstractGraph,
         visited[v] = true
     end
 
-    for u in vertices(g)
-#    while !isempty(H)
-#        hentry = dequeue_pair!(H)
+    while !isempty(H)
+        hentry = dequeue_pair!(H)
             # info("Popped H - got $(hentry.vertex)")
-#        u = hentry[1]
+        u = hentry[1]
 
         if trackvertices
             push!(closest_vertices, u)
@@ -88,6 +87,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
                 end
             end
         end
+        println(length(H))
     end
 
     if trackvertices
@@ -179,17 +179,15 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
     buffer_vertices = Vector{U}()
     sizehint!(buffer_vertices, maximum(degree(g)))
 
-    for u in vertices(g)
-#    while !isempty(H)
-#        hentry = dequeue_pair!(H)
-            # info("Popped H - got $(hentry.vertex)")
-#        u = hentry[1]
+    update_best_ind(H) ###################################
+    while !isempty(H)
+        hentry = dequeue_pair!(H)
+        u = hentry[1]
 
         if trackvertices
             push!(closest_vertices, u)
         end
 
-        batch_size = 0
         for v in outneighbors(g, u)
             alt = (dists[u] == typemax(T)) ? typemax(T) : dists[u] + distmx[u, v]
 
@@ -201,7 +199,7 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
                 if allpaths
                     preds[v] = [u;]
                 end
-                enqueue!(H, Pair{U, T}(v, dists[v]))
+                enqueue!(H, Pair{U, T}(v, dists[v])) ###############################3
             else
                 if alt < dists[v]
                     dists[v] = alt
@@ -210,7 +208,7 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
                     pathcounts[v] = 0
                     preds[v] = []
 
-                    push!(buffer_vertices, v)
+                    queue_decrease_key!(H, v) #################################3
                 end
                 if alt == dists[v]
                     pathcounts[v] += pathcounts[u]
@@ -219,8 +217,8 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
                     end
                 end
             end
-            batch_decrease_key!(H, buffer_vertices, dists)
-            empty!(buffer_vertices) 
+            batch_decrease_key!(H, dists) ##########################
+            update_best_ind(H)  #############################
         end
     end
 

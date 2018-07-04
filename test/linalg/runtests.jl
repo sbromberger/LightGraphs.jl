@@ -1,6 +1,8 @@
 using LightGraphs.LinAlg
-using IterativeEigensolvers
-
+using Arpack
+using Random
+using SparseArrays
+using LinearAlgebra
 const linalgtestdir = dirname(@__FILE__)
 
 tests = [

@@ -3,17 +3,15 @@
 
 # A* shortest-path algorithm
 
-function a_star_impl!(
-    g::AbstractGraph,# the graph
+function a_star_impl!(g::AbstractGraph,# the graph
     t::Integer, # the end vertex
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
     distmx::AbstractMatrix,
-    heuristic::Function    # heuristic fn (under)estimating distance to target
-    )
+    heuristic::Function)
 
     while !isempty(frontier)
-        (cost_so_far, path, u) = DataStructures.dequeue!(frontier)
+        (cost_so_far, path, u) = dequeue!(frontier)
         if u == t
             return path
         end
@@ -25,7 +23,7 @@ function a_star_impl!(
                 colormap[v] = 1
                 new_path = cat(path, Edge(u, v), dims=1)
                 path_cost = cost_so_far + dist
-                DataStructures.enqueue!(frontier,
+                enqueue!(frontier,
                 (path_cost, new_path, v),
                 path_cost + heuristic(v))
             end
@@ -44,16 +42,14 @@ An optional heuristic function and edge distance matrix may be supplied. If miss
 the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heuristic is set to
 `n -> 0`.
 """
-function a_star(
-    g::AbstractGraph{U},  # the g
+function a_star(g::AbstractGraph{U},  # the g
 
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
-    distmx::AbstractMatrix{T} = weights(g),
-    heuristic::Function = n -> 0
-    ) where T where U
+    distmx::AbstractMatrix{T}=weights(g),
+    heuristic::Function=n -> 0) where T where U
     # heuristic (under)estimating distance to target
-    frontier = DataStructures.PriorityQueue{Tuple{T,Vector{Edge},U}, T}()
+    frontier = PriorityQueue{Tuple{T,Vector{Edge},U},T}()
     frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
     colormap = zeros(Int, nv(g))
     colormap[s] = 1

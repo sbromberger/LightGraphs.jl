@@ -204,7 +204,7 @@
     n = 100
     p = 16 / n
     M = sprand(n, n, p)
-    M.nzval[:] = 1.0
+    M.nzval[:] .= 1.0
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; ncv=10)
     @test all(sd .>= 0)

@@ -61,7 +61,7 @@ Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
 represented in the domain of ``B`` and represents them in the domain of the
 adjacency matrix of `g`.
 """
-struct Nonbacktracking{G<:AbstractGraph}
+struct Nonbacktracking{G <: AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -87,7 +87,7 @@ size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking, x::Vector{T}) where T<:Number
+function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
