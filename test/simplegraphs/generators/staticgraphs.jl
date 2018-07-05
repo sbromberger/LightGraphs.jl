@@ -2,44 +2,166 @@
     g = @inferred(CompleteDiGraph(5))
     @test nv(g) == 5 && ne(g) == 20
     @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = CompleteDiGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteDiGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = CompleteDiGraph(2)
+    @test nv(g) == 2 && ne(g) == 2
+    g = @inferred CompleteDiGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127 * (127 - 1)
+    @test eltype(g) == Int8
+
     g = @inferred(CompleteGraph(5))
     @test nv(g) == 5 && ne(g) == 10
     @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = CompleteGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = CompleteGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    g = @inferred CompleteGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127 * (127 - 1) ÷ 2
+    @test eltype(g) == Int8
+
 
     g = @inferred(CompleteBipartiteGraph(5, 8))
     @test nv(g) == 13 && ne(g) == 40
     @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = CompleteBipartiteGraph(0,0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteBipartiteGraph(5,0)
+    @test nv(g) == 5 && ne(g) == 0
+    g = CompleteBipartiteGraph(0,5)
+    @test nv(g) == 5 && ne(g) == 0
+    g = @inferred CompleteBipartiteGraph(Int8(100), Int8(27))
+    @test nv(g) == 127 && ne(g) == 100 * 27
+    @test eltype(g) == Int8
+    g = CompleteBipartiteGraph(Int8(127), Int8(0))
+    @test nv(g) == 127 && ne(g) == 0
+    g = CompleteBipartiteGraph(Int8(0), Int8(127))
+    @test nv(g) == 127 && ne(g) == 0
+
+
+    g = @inferred(StarGraph(5))
+    @test nv(g) == 5 && ne(g) == 4
+    @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = StarGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = StarGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = StarGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    g = @inferred StarGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127 - 1
+    @test eltype(g) == Int8
 
     g = @inferred(StarDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
     @test isvalid_simplegraph(g)
-    g = @inferred(StarGraph(5))
-    @test nv(g) == 5 && ne(g) == 4
-    @test isvalid_simplegraph(g)
-    g = @inferred(StarGraph(1))
+    # tests for extreme values
+    g = StarDiGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = StarDiGraph(1)
     @test nv(g) == 1 && ne(g) == 0
-    @test isvalid_simplegraph(g)
+    g = StarDiGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    @test first(edges(g)) == Edge(1, 2) # edges should point outwards from vertex 1
+    g = @inferred StarDiGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127 - 1
+    @test eltype(g) == Int8
 
     g = @inferred(PathDiGraph(5))
     @test nv(g) == 5 && ne(g) == 4
     @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = PathDiGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = PathDiGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = @inferred PathDiGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 126
+    @test eltype(g) == Int8
+
     g = @inferred(PathGraph(5))
     @test nv(g) == 5 && ne(g) == 4
     @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = PathGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = PathGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = @inferred PathGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 126
+    @test eltype(g) == Int8
 
     g = @inferred(CycleDiGraph(5))
     @test nv(g) == 5 && ne(g) == 5
     @test isvalid_simplegraph(g)
+     # tests for extreme values
+    g = CycleDiGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = CycleDiGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = CycleDiGraph(2)
+    @test nv(g) == 2 && ne(g) == 2
+    g = @inferred CycleDiGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127
+    @test eltype(g) == Int8
+
+
     g = @inferred(CycleGraph(5))
     @test nv(g) == 5 && ne(g) == 5
     @test isvalid_simplegraph(g)
+     # tests for extreme values
+    g = CycleGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = CycleGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = CycleGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    g = @inferred CycleGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 127
+    @test eltype(g) == Int8
 
     g = @inferred(WheelDiGraph(5))
     @test nv(g) == 5 && ne(g) == 8
     @test isvalid_simplegraph(g)
+      # tests for extreme values
+    g = WheelDiGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = WheelDiGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = WheelDiGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    g = WheelDiGraph(3)
+    @test nv(g) == 3 && ne(g) == 4
+    g = @inferred WheelDiGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 2 * 126
+    @test eltype(g) == Int8
+
+
+
     g = @inferred(WheelGraph(5))
     @test nv(g) == 5 && ne(g) == 8
     @test isvalid_simplegraph(g)
+      # tests for extreme values
+    g = WheelGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = WheelGraph(1)
+    @test nv(g) == 1 && ne(g) == 0
+    g = WheelGraph(2)
+    @test nv(g) == 2 && ne(g) == 1
+    g = WheelGraph(3)
+    @test nv(g) == 3 && ne(g) == 3
+    g = @inferred WheelGraph(Int8(127))
+    @test nv(g) == 127 && ne(g) == 2 * 126
+    @test eltype(g) == Int8
 
     g = @inferred(Grid([3, 3, 4]))
     @test nv(g) == 3 * 3 * 4
