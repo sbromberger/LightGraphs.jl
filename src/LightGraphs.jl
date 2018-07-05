@@ -81,6 +81,9 @@ diffusion, diffusion_rate,
 # coloring
 greedy_color,
 
+# dominatingset
+degree_dominating_set, random_minimal_dominating_set,
+
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
@@ -141,11 +144,20 @@ euclidean_graph,
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
 
+#independentset
+degree_independent_set, random_maximal_independent_set,
+
+#matching
+augment_matching, random_maximal_matching,
+
 #biconnectivity and articulation points
 articulation, biconnected_components, lower_bound_pairwise_connectivity,
 
 #graphcut
-normalized_cut
+normalized_cut,
+
+#vertexcover
+degree_vertex_cover, random_vertex_cover
 
 """
     LightGraphs
@@ -202,6 +214,8 @@ include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")
 include("digraph/cycles/hadwick-james.jl")
 include("digraph/cycles/karp.jl")
+include("dominatingset/degree_dom_set.jl")
+include("dominatingset/random_minimal_dom_set.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
@@ -220,6 +234,10 @@ include("shortestpaths/johnson.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("linalg/LinAlg.jl")
+include("independentset/degree_ind_set.jl")
+include("independentset/random_maximal_ind_set.jl")
+include("matching/augment_matching.jl")
+include("matching/random_maximal_matching.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
@@ -243,5 +261,7 @@ include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("biconnectivity/pairwise_connectivity.jl")
 include("graphcut/normalized_cut.jl")
+include("vertexcover/degree_vertex_cover.jl")
+include("vertexcover/random_vertex_cover.jl")
 using .LinAlg
 end # module

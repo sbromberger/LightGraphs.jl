@@ -30,6 +30,8 @@ tests = [
     "digraph/cycles/hadwick-james",
     "digraph/cycles/johnson",
     "digraph/cycles/karp",
+    "dominatingset/degree_dom_set",
+    "dominatingset/random_minimal_dom_set",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
@@ -39,6 +41,10 @@ tests = [
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
+    "independentset/degree_ind_set",
+    "independentset/random_maximal_ind_set",
+    "matching/augment_matching",
+    "matching/random_maximal_matching",
     "traversals/bfs",
     "traversals/parallel_bfs",
     "traversals/bipartition",
@@ -67,9 +73,10 @@ tests = [
     "biconnectivity/articulation",
     "biconnectivity/pairwise_connectivity",
     "biconnectivity/biconnect",
-    "graphcut/normalized_cut"
+    "graphcut/normalized_cut",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover"
 ]
-tests = ["traversals/greedy_color"]
 
 @testset "LightGraphs" begin
     for t in tests
