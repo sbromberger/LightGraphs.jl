@@ -200,6 +200,7 @@
     Adj = sparse(I, J, V)
     @test Adj == sparse(g)
     @test isvalid_simplegraph(g)
+    @test_throws DomainError BinaryTree(Int8(8))
 
     g = @inferred(DoubleBinaryTree(3))
     # [[3, 2, 8]
