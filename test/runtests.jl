@@ -5,6 +5,7 @@ using SparseArrays
 using LinearAlgebra
 using DelimitedFiles
 using Base64
+using Random
 
 const testdir = dirname(@__FILE__)
 
@@ -32,10 +33,6 @@ tests = [
     "edit_distance",
     "connectivity",
     "persistence/persistence",
-    "generators/randgraphs",
-    "generators/staticgraphs",
-    "generators/smallgraphs",
-    "generators/euclideangraphs",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
@@ -72,6 +69,7 @@ tests = [
     "biconnectivity/biconnect",
     "graphcut/normalized_cut"
 ]
+tests = ["traversals/greedy_color"]
 
 @testset "LightGraphs" begin
     for t in tests

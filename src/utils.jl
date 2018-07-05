@@ -9,7 +9,7 @@ Sample `k` element from array `a` without repetition and eventually excluding el
 ### Implementation Notes
 Changes the order of the elements in `a`. For a non-mutating version, see [`sample`](@ref).
 """
-function sample!(rng::Random.AbstractRNG, a::AbstractVector, k::Integer; exclude = ())
+function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
     minsize = k + length(exclude)
     length(a) < minsize && throw(ArgumentError("vector must be at least size $minsize"))
     res = Vector{eltype(a)}()
@@ -27,7 +27,7 @@ function sample!(rng::Random.AbstractRNG, a::AbstractVector, k::Integer; exclude
     res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
+sample!(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), a, k; exclude=exclude)
 
 """
     sample([rng,] r, k)
@@ -40,9 +40,9 @@ Sample `k` element from unit range `r` without repetition and eventually excludi
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::UnitRange, k::Integer; exclude = ()) = sample!(getRNG(), collect(a), k; exclude = exclude)
+sample(a::UnitRange, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
 
-getRNG(seed::Integer = -1) = seed >= 0 ? Random.MersenneTwister(seed) : Random.GLOBAL_RNG
+getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
     insorted(item, collection)
@@ -52,4 +52,7 @@ Return true if `item` is in sorted collection `collection`.
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-insorted(item, collection) = !isempty(searchsorted(collection, item))
+function insorted(item, collection)
+    index = searchsortedfirst(collection, item)
+    @inbounds return (index <= length(collection) && collection[index] == item)
+end

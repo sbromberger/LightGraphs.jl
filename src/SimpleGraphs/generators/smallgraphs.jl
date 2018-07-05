@@ -2,22 +2,6 @@
 # STATIC SMALL GRAPHS
 #####################
 
-function _make_simple_undirected_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
-    g = SimpleGraph(n)
-    for (s, d) in edgelist
-        add_edge!(g, Edge(s, d))
-    end
-    return g
-end
-
-function _make_simple_directed_graph(n::T, edgelist::Vector{Tuple{T,T}}) where T<:Integer
-    g = SimpleDiGraph(n)
-    for (s, d) in edgelist
-        add_edge!(g, Edge(s, d))
-    end
-    return g
-end
-
 """
     smallgraph(s)
     smallgraph(s)
@@ -91,16 +75,14 @@ function smallgraph(s::AbstractString)
 end
 
 
-DiamondGraph() =
-_make_simple_undirected_graph(4, [(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)])
+DiamondGraph() = SimpleGraph( SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]) )
 
 
-BullGraph() =
-_make_simple_undirected_graph(5, [(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)])
+BullGraph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
 
 
 function ChvatalGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 5), (1, 7), (1, 10),
     (2, 3), (2, 6), (2, 8),
     (3, 4), (3, 7), (3, 9),
@@ -111,26 +93,25 @@ function ChvatalGraph()
     (8, 9), (8, 12),
     (9, 11),
     (10, 11), (10, 12)
-    ]
-    return _make_simple_undirected_graph(12, e)
+   ])
+    return SimpleGraph(e)
 end
 
-
 function CubicalGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 4), (1, 5),
     (2, 3), (2, 8),
     (3, 4), (3, 7),
     (4, 6), (5, 6), (5, 8),
     (6, 7),
     (7, 8)
-    ]
-    return _make_simple_undirected_graph(8, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function DesarguesGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 6), (1, 20),
     (2, 3), (2, 17),
     (3, 4), (3, 12),
@@ -150,13 +131,13 @@ function DesarguesGraph()
     (17, 18),
     (18, 19),
     (19, 20)
-    ]
-    return _make_simple_undirected_graph(20, e)
+   ])
+    return SimpleGraph(e)
 end
 
 
 function DodecahedralGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 11), (1, 20),
     (2, 3), (2, 9),
     (3, 4), (3, 7),
@@ -176,13 +157,13 @@ function DodecahedralGraph()
     (17, 18),
     (18, 19),
     (19, 20)
-    ]
-    return _make_simple_undirected_graph(20, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function FruchtGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 7), (1, 8),
     (2, 3), (2, 8),
     (3, 4), (3, 9),
@@ -193,13 +174,13 @@ function FruchtGraph()
     (8, 12),
     (9, 10), (9, 12),
     (11, 12)
-    ]
-    return _make_simple_undirected_graph(12, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function HeawoodGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 6), (1, 14),
     (2, 3), (2, 11),
     (3, 4), (3, 8),
@@ -213,27 +194,27 @@ function HeawoodGraph()
     (11, 12),
     (12, 13),
     (13, 14)
-    ]
-    return _make_simple_undirected_graph(14, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function HouseGraph()
-    e = [(1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5)]
-    return _make_simple_undirected_graph(5, e)
+    e = SimpleEdge.([(1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5)])
+    return SimpleGraph(e)
 end
 
 
 function HouseXGraph()
     g = HouseGraph()
-    add_edge!(g, Edge(1, 4))
-    add_edge!(g, Edge(2, 3))
+    add_edge!(g, SimpleEdge(1, 4))
+    add_edge!(g, SimpleEdge(2, 3))
     return g
 end
 
 
 function IcosahedralGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 6), (1, 8), (1, 9), (1, 12),
     (2, 3), (2, 6), (2, 7), (2, 9),
     (3, 4), (3, 7), (3, 9), (3, 10),
@@ -243,13 +224,13 @@ function IcosahedralGraph()
     (8, 9), (8, 10), (8, 11), (8, 12),
     (9, 10),
     (10, 11), (11, 12)
-    ]
-    return _make_simple_undirected_graph(12, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function KrackhardtKiteGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4), (1, 6),
     (2, 4), (2, 5), (2, 7),
     (3, 4), (3, 6),
@@ -259,13 +240,13 @@ function KrackhardtKiteGraph()
     (7, 8),
     (8, 9),
     (9, 10)
-    ]
-    return _make_simple_undirected_graph(10, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function MoebiusKantorGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 6), (1, 16),
     (2, 3), (2, 13),
     (3, 4), (3, 8),
@@ -281,25 +262,25 @@ function MoebiusKantorGraph()
     (13, 14),
     (14, 15),
     (15, 16)
-    ]
-    return _make_simple_undirected_graph(16, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function OctahedralGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4), (1, 5),
     (2, 3), (2, 4), (2, 6),
     (3, 5), (3, 6),
     (4, 5), (4, 6),
     (5, 6)
-    ]
-    return _make_simple_undirected_graph(6, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function PappusGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 6), (1, 18),
     (2, 3), (2, 9),
     (3, 4), (3, 14),
@@ -317,13 +298,13 @@ function PappusGraph()
     (15, 16),
     (16, 17),
     (17, 18)
-    ]
-    return _make_simple_undirected_graph(18, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function PetersenGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 5), (1, 6),
     (2, 3), (2, 7),
     (3, 4), (3, 8),
@@ -332,29 +313,29 @@ function PetersenGraph()
     (6, 8), (6, 9),
     (7, 9), (7, 10),
     (8, 10)
-    ]
-    return _make_simple_undirected_graph(10, e)
+    ])
+    return SimpleGraph(e)
 end
 
 function SedgewickMazeGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 3),
     (1, 6), (1, 8),
     (2, 8),
     (3, 7),
     (4, 5), (4, 6),
     (5, 6), (5, 7), (5, 8)
-    ]
-    return _make_simple_undirected_graph(8, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 TetrahedralGraph() =
-_make_simple_undirected_graph(4, [(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)])
+SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]))
 
 
 function TruncatedCubeGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 5),
     (2, 12), (2, 15),
     (3, 4), (3, 5),
@@ -377,13 +358,13 @@ function TruncatedCubeGraph()
     (21, 22),
     (22, 23),
     (23, 24)
-    ]
-    return _make_simple_undirected_graph(24, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function TruncatedTetrahedronGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 10),
     (2, 3), (2, 7),
     (3, 4),
@@ -395,13 +376,13 @@ function TruncatedTetrahedronGraph()
     (9, 10), (9, 11),
     (10, 11),
     (11, 12)
-    ]
-    return _make_simple_undirected_graph(12, e)
+    ])
+    return SimpleGraph(e)
 end
 
 
 function TruncatedTetrahedronDiGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 10),
     (2, 3), (2, 7),
     (3, 4),
@@ -413,13 +394,13 @@ function TruncatedTetrahedronDiGraph()
     (9, 10), (9, 11),
     (10, 11),
     (11, 12)
-    ]
-    return _make_simple_directed_graph(12, e)
+    ])
+    return SimpleDiGraph(e)
 end
 
 
 function TutteGraph()
-    e = [
+    e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4),
     (2, 5), (2, 27),
     (3, 11), (3, 12),
@@ -460,6 +441,6 @@ function TutteGraph()
     (42, 43),
     (43, 44), (43, 46),
     (44, 45)
-    ]
-    return _make_simple_undirected_graph(46, e)
+    ])
+    return SimpleGraph(e)
 end

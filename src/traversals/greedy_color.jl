@@ -3,12 +3,10 @@
 
 Store number of colors used and mapping from vertex to color
 """
-struct coloring{T<:Integer} <: Any
+struct coloring{T <: Integer} <: Any
     num_colors::T
     colors::Vector{T}
 end
-
-best_color(c1::coloring, c2::coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 
 """
    get_distinct_colors(g, v, seen, max_col) 
@@ -62,7 +60,7 @@ function smallest_valid_color(
     end
 
     best_col = findfirst(isequal(false), colors_used)
-    return (best_col == nothing) ? (max_col+one(T)): best_col
+    return (best_col == nothing) ? (max_col+one(T)) : best_col
 end
 
 """
@@ -201,77 +199,27 @@ function perm_greedy_color_no_exchange(
 end
 
 """
-    perm_greedy_color(g, seq, exchange)
+    perm_greedy_color(g, exchange, seq=shuffle(vertices(g)))
 
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 If `exchange` is true then at every iteration, we will avoid introducing a new color
 into the partial coloring with changing the color of its neighbors.
 """
-perm_greedy_color(g::AbstractGraph{T}, seq::Vector{T}, exchange::Bool) where T <: Integer = exchange ? 
+perm_greedy_color(g::AbstractGraph{T}, exchange::Bool, seq::Vector{T}=shuffle(vertices(g))) where T <: Integer = exchange ? 
 perm_greedy_color_exchange(g, seq) : perm_greedy_color_no_exchange(g, seq)
 
 """
     degree_greedy_color(g, exchange)
 
-Color graph `g` iteratively in the descending order of the degree of the vertices.
+Color graph `g` iteratively in the reverse sorted order of the degree of the vertices.
 """
 function degree_greedy_color(g::AbstractGraph{T}, exchange::Bool) where T<:Integer 
     seq = convert(Vector{T}, sortperm(degree(g) , rev=true)) 
-    return perm_greedy_color(g, seq, exchange)
+    return perm_greedy_color(g, exchange, seq)
 end
 
 """
-    parallel_random_greedy_color(g, reps, exchange)
-
-Color graph `g` iteratively in a random order using a greedy heuristic and
-choose the best coloring out of `reps` number of colorings computed in parallel.
-"""
-function parallel_random_greedy_color(
-    g::AbstractGraph{T},
-    reps::Integer,
-    exchange::Bool
-    ) where T<:Integer 
-
-    best = Distributed.@distributed (best_color) for i in 1:reps
-        perm_greedy_color(g, Random.shuffle(vertices(g)), exchange)
-    end
-
-    return convert(coloring{T} ,best)
-end
-
-"""
-    seq_random_greedy_color(g, reps, exchange)
-
-Color graph `g` iteratively in a random order using a greedy heuristic
-and choose the best coloring out of `reps` such random coloring.
-"""
-function seq_random_greedy_color(
-    g::AbstractGraph{T}, 
-    reps::Integer,
-    exchange::Bool
-    ) where T <: Integer 
-
-    best = perm_greedy_color(g, Random.shuffle(vertices(g)), exchange)
-
-    for i in 2:reps
-        best = best_color(best, perm_greedy_color(g, Random.shuffle(vertices(g)), exchange))
-    end
-    return best
-end
-
-"""
-    random_greedy_color(g, reps=1, exchange=false, parallel=false)
-
-Color graph `g` iteratively in a random order using a greedy heruistic
-and choose the best coloring out of `reps` such random coloring.
-
-If parallel is true then the colorings are executed in parallel.
-"""
-random_greedy_color(g::AbstractGraph{T}, reps::Integer, exchange::Bool, parallel::Bool) where {T<:Integer} =
-parallel ? parallel_random_greedy_color(g, reps, exchange) : seq_random_greedy_color(g, reps, exchange)
-
-"""
-    greedy_color(g; sort_degree=false, parallel=false, reps = 1)
+    greedy_color(g; sort_degree=false, exchange=false)
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)
 
@@ -279,16 +227,13 @@ The heuristics can be described as choosing a permutation of the vertices and as
 lowest color index available iteratively in that order.
 
 If `sort_degree` is true then the permutation is chosen in reverse sorted order of the degree of the vertices.
-`parallel` and `reps` are irrelevant in this case.
 
-If `sort_degree` is false then `reps` colorings are obtained based on random permutations and the one using least
+If `sort_degree` is false then a colorings are obtained based on random permutations and the one using least
 colors is chosen.
 
 If 'exchange' is true then at every iteration, if a new color must be introduced, then the algorithm will attempt
 to avoid introducing a new color by changing the colors of its neighbors. It requires much more computation
 but will likely reduce the number of colors used.
-
-If `parallel` is true then this function executes coloring in parallel.
 """
-greedy_color(g::AbstractGraph{T}; sort_degree::Bool=false, parallel::Bool =false, exchange=false, reps::Integer=1) where {T <: Integer} =
-sort_degree ? degree_greedy_color(g, exchange) : random_greedy_color(g, reps, exchange, parallel)
+greedy_color(g::AbstractGraph{T}; sort_degree::Bool=false, exchange=false) where {T <: Integer} =
+sort_degree ? degree_greedy_color(g, exchange) : perm_greedy_color(g, exchange)

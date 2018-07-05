@@ -2,12 +2,13 @@ module SimpleGraphs
 
 using SparseArrays
 using LinearAlgebra
+using LightGraphs
 
 import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, start, next, done, issubset, zero, in
+    eltype, show, ==, Pair, Tuple, copy, length, issubset, zero, in, iterate
 
 import LightGraphs:
-    _NI, _insert_and_dedup!, AbstractGraph, AbstractEdge, AbstractEdgeIter,
+    _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors,
 
@@ -16,7 +17,21 @@ import LightGraphs:
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
     SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
-    add_vertex!, add_edge!, rem_vertex!, rem_edge!
+    add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+    # randgraphs
+    erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
+    random_regular_digraph, random_configuration_model, random_tournament_digraph, 
+    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, 
+    blockfractions, stochastic_block_model, barabasi_albert,
+    barabasi_albert!, static_fitness_model, static_scale_free, kronecker,
+    #generators
+    CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+    CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
+    WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
+    #smallgraphs
+    smallgraph,
+    # Euclidean graphs
+    euclidean_graph
 
 
 """
@@ -152,5 +167,9 @@ include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
 include("./simpleedgeiter.jl")
+include("./generators/staticgraphs.jl")
+include("./generators/randgraphs.jl")
+include("./generators/euclideangraphs.jl")
+include("./generators/smallgraphs.jl")
 
 end # module

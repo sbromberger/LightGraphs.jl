@@ -72,7 +72,7 @@ edges where the vertices an edges from graph `h` are appended to graph `g`.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
 """
-function SparseArrays.blockdiag(g::T, h::T) where T <: AbstractGraph
+function blockdiag(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -189,7 +189,7 @@ Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
 """
 function join(g::T, h::T) where T <: AbstractGraph
-    r = SparseArrays.blockdiag(g, h)
+    r = blockdiag(g, h)
     for i in vertices(g)
         for j = (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
@@ -276,11 +276,11 @@ sum(g::AbstractGraph) = ne(g)
 
 Return the default adjacency matrix of `g`.
 """
-SparseArrays.sparse(g::AbstractGraph) = adjacency_matrix(g)
+sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 length(g::AbstractGraph) = nv(g) * nv(g)
 ndims(g::AbstractGraph) = 2
-LinearAlgebra.issymmetric(g::AbstractGraph) = !is_directed(g)
+issymmetric(g::AbstractGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)

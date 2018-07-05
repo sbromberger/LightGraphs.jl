@@ -38,7 +38,7 @@
     add_edge!(h, 3, 4)
     add_edge!(h, 1, 4)
 
-    gint = SparseArrays.blockdiag(g, h)
+    gint = blockdiag(g, h)
     add_edge!(gint, 4, 5)
 
     a = [[Edge(5, 8), Edge(7, 8), Edge(6, 7), Edge(5, 6)], [Edge(4, 5)], [Edge(1, 4), Edge(3, 4), Edge(2, 3), Edge(1, 2)]]

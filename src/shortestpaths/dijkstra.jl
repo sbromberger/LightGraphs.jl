@@ -21,6 +21,12 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 ### Optional Arguments
 - `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
+
+### Performance
+Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order) 
+for better run-time.
+Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
+instead of `SparseMatrixCSC{Int64,Int64}`.
 """
 function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
@@ -35,7 +41,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
     pathcounts = zeros(Int, nvg)
-    H = DataStructures.PriorityQueue{U,T}()
+    H = PriorityQueue{U,T}()
     dists[srcs] .= zero(T)
     pathcounts[srcs] .= 1
 
@@ -49,7 +55,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     end
 
     while !isempty(H)
-        hentry = DataStructures.dequeue_pair!(H)
+        hentry = dequeue_pair!(H)
             # info("Popped H - got $(hentry.vertex)")
         u = hentry[1]
 
@@ -135,15 +141,15 @@ function parallel_multisource_dijkstra_shortest_paths(g::AbstractGraph{U},
     r_v = length(sources)
 
     # TODO: remove `Int` once julialang/#23029 / #23032 are resolved
-    dists   = SharedArrays.SharedMatrix{T}(Int(r_v), Int(n_v))
-    parents = SharedArrays.SharedMatrix{U}(Int(r_v), Int(n_v))
+    dists   = SharedMatrix{T}(Int(r_v), Int(n_v))
+    parents = SharedMatrix{U}(Int(r_v), Int(n_v))
 
-    Distributed.@sync Distributed.@distributed for i in 1:r_v
+    @sync @distributed for i in 1:r_v
         state = dijkstra_shortest_paths(g, sources[i], distmx)
         dists[i, :] = state.dists
         parents[i, :] = state.parents
     end
 
-    result = MultipleDijkstraState(SharedArrays.sdata(dists), SharedArrays.sdata(parents))
+    result = MultipleDijkstraState(sdata(dists), sdata(parents))
     return result
 end

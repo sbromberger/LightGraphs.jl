@@ -3,16 +3,16 @@
     g3 = StarGraph(10)
 
     for g in testgraphs(g3)
-        for op_exchange in (true, false), op_sort in (true, false), op_parallel in (false, true)
-            C = @inferred(greedy_color(g, exchange=op_exchange, reps=5, sort_degree=op_sort, parallel=op_parallel))
+        for op_exchange in (true, false), op_sort in (true, false)
+            C = @inferred(greedy_color(g, exchange=op_exchange, sort_degree=op_sort))
             @test C.num_colors == 2
         end
     end
     
     g4 = PathGraph(20)
     for g in testgraphs(g4)
-        for op_exchange in (true, false), op_sort in (true, false), op_parallel in (false, true)
-            C = @inferred(greedy_color(g, exchange=op_exchange, reps=5, sort_degree=op_sort, parallel=op_parallel))
+        for op_exchange in (true, false), op_sort in (true, false)
+            C = @inferred(greedy_color(g, exchange=op_exchange, sort_degree=op_sort))
         
             @test C.num_colors <= maximum(degree(g))+1 #Propert of greedy coloring
             correct = true
@@ -26,8 +26,8 @@
     
     g5 = CompleteGraph(20)
     for g in testgraphs(g5)
-        for op_exchange in (true, false), op_sort in (true, false), op_parallel in (false, true)
-            C = @inferred(greedy_color(g, exchange=op_exchange, reps=5, sort_degree=op_sort, parallel=op_parallel))
+        for op_exchange in (true, false), op_sort in (true, false)
+            C = @inferred(greedy_color(g, exchange=op_exchange, sort_degree=op_sort))
         
             @test C.num_colors <= maximum(degree(g))+1
             correct = true
