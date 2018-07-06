@@ -66,7 +66,15 @@ tests = [
     "spanningtrees/prim",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
-    "graphcut/normalized_cut"
+    "graphcut/normalized_cut",
+    "dominatingset/degree_dom_set",
+    "dominatingset/random_minimal_dom_set",
+    "independentset/degree_ind_set",
+    "independentset/random_maximal_ind_set",
+    "matching/random_maximal_matching",
+    "matching/augment_matching",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover"
 ]
 
 @testset "LightGraphs" begin
