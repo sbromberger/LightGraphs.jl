@@ -16,22 +16,20 @@ function degree_vertex_cover(
     g::AbstractGraph{T}
     ) where T <: Integer 
 
-    nvg::T = nv(g)  
-    cover = Vector{T}()  
-    deleted = falses(nvg)
+    nvg = nv(g)    
+    in_cover = falses(nvg)
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g)))
 
     while !isempty(degree_queue) && peek(degree_queue)[2] > 0
         v = dequeue!(degree_queue)
+        in_cover[v] = true
 
-        deleted[v] = true
-        push!(cover, v)
         @inbounds @simd for u in neighbors(g, v)
-            if !deleted[u] 
+            if !in_cover[u] 
                 degree_queue[u] -= 1
             end
         end
     end
 
-    return cover
+    return [v for v in vertices(g) if in_cover[v]]
 end

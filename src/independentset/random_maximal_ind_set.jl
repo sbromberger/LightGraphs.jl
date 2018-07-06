@@ -17,16 +17,16 @@ function random_maximal_independent_set(
     g::AbstractGraph{T}
     ) where T <: Integer 
   
-    ind_set = Vector{T}()  
+    ind_set = Vector{T}()
+    sizehint!(ind_set, nv(g))  
     deleted = falses(nv(g))
 
     for v in shuffle(vertices(g))
         deleted[v] && continue
+
         deleted[v] = true
         push!(ind_set, v)
-        @inbounds @simd for u in neighbors(g, v)
-            deleted[u] = true
-        end
+        deleted[neighbors(g, v)] .= true
     end
 
     return ind_set

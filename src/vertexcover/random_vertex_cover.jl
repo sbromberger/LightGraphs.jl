@@ -19,15 +19,15 @@ function random_vertex_cover(
 
     nvg::T = nv(g)  
     cover = Vector{T}()  
-    seen = falses(nvg)
+    in_cover = falses(nvg)
 
     @inbounds for e in shuffle(collect(edges(g)))
-        if !(seen[e.src] || seen[e.dst])
-            seen[e.src] = seen[e.dst] = true
+        if !(in_cover[e.src] || in_cover[e.dst])
+            in_cover[e.src] = in_cover[e.dst] = true
             push!(cover, e.src)
             push!(cover, e.dst)
         end
     end
 
-    return cover
+    return [v for v in vertices(g) if in_cover[v]]
 end

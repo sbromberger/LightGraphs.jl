@@ -78,12 +78,12 @@ invalidate_distinct_colors!(
 """
     exchange_cols!(g, v, max_col, cols, valid_distinct_colors, distinct_colors, seen)
         
-Check which neighbors of `v` can change their color with increasing the number of colors used.
-Then assign `v` that color and change the neighbors's color.
+Check which neighbors N of `v` can change their colors to avoid increasing the number of colors used.
+Assign `v` those N's colors and find new colors for N.
 `cols[i]` is the color of vertex `i`.
 `distinct_colors[i]` is the number of distinct colors surrounding vertex `i`.
-valid_distinct_colors[i] is true if `distinct_colors[i]` is correct.
-Updates `seen` and `cols`.
+`valid_distinct_colors[i]` is true if `distinct_colors[i]` stores the correct value.
+Update `seen` and `cols`.
 """
 function exchange_cols!(
     g::AbstractGraph{T},
@@ -168,12 +168,12 @@ function perm_greedy_color_exchange(
         max_col = max(max_col, cols[v])
     end
 
-    return coloring{T}(maximum(cols), cols)
+    return coloring{T}(max_col, cols)
 end
 
 
 """
-    perm_greedy_color(g, seq)
+    perm_greedy_color_no_exchange(g, seq)
 
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 seq[i] = v imples that vertex v is the i<sup>th</sup> vertex to be colored.
@@ -195,7 +195,7 @@ function perm_greedy_color_no_exchange(
         max_col = max(max_col, cols[v])
     end
 
-    return coloring{T}(maximum(cols), cols)
+    return coloring{T}(max_col, cols)
 end
 
 """

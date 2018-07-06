@@ -18,8 +18,9 @@ function degree_independent_set(
     g::AbstractGraph{T}
     ) where T <: Integer 
 
-    nvg::T = nv(g)  
-    ind_set = Vector{T}()  
+    nvg = nv(g)  
+    ind_set = Vector{T}()
+    sizehint!(ind_set, nvg)  
     deleted = falses(nvg)
     degree_queue = PriorityQueue(enumerate(degree(g)))
 

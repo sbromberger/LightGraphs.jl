@@ -18,7 +18,8 @@ function random_maximal_matching(
     ) where T <: Integer 
 
     nvg = nv(g)  
-    matching = Vector{Edge{T}}()  
+    matching = Vector{Edge{T}}()
+    sizehint!(matching, div(nvg, 2))  
     seen = falses(nvg)
 
     @inbounds for e in shuffle(collect(edges(g)))

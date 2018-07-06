@@ -77,6 +77,18 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover"
 ]
+tests = [
+    "traversals/greedy_color",
+    "biconnectivity/pairwise_connectivity",
+    "dominatingset/degree_dom_set",
+    "dominatingset/random_minimal_dom_set",
+    "independentset/degree_ind_set",
+    "independentset/random_maximal_ind_set",
+    "matching/augment_matching",
+    "matching/random_maximal_matching",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover"
+]
 
 @testset "LightGraphs" begin
     for t in tests

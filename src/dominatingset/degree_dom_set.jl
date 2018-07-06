@@ -1,5 +1,5 @@
 """
-    update_dominated(degree_queue, v, dominated, deleted)
+    update_dominated(degree_queue, v, dominated, in_dom_set)
 
 Check if a vertex is already dominated.
 If not, make it dominated and update `degree_queue` by decreasing
@@ -10,16 +10,16 @@ function update_dominated(
     degree_queue::PriorityQueue,
     v::Integer,
     dominated::BitArray{1},
-    deleted::BitArray{1}
+    in_dom_set::BitArray{1}
     ) where T <: Integer
 
     @inbounds if !dominated[v]
         dominated[v] = true
-        if !deleted[v] 
+        if !in_dom_set[v] 
             degree_queue[v] -= 1
         end
         @inbounds @simd for u in neighbors(g, v)
-            if !deleted[u] 
+            if !in_dom_set[u] 
                 degree_queue[u] -= 1
             end
         end
@@ -46,20 +46,18 @@ function degree_dominating_set(
     ) where T <: Integer 
 
     nvg = nv(g)  
-    dom_set = Vector{T}()  
-    deleted = falses(nvg)
+    in_dom_set = falses(nvg)
     dominated = falses(nvg)
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g) .+ 1))
 
     while !isempty(degree_queue) && peek(degree_queue)[2] > 0
         v = dequeue!(degree_queue)
-        deleted[v] = true
-        push!(dom_set, v)
+        in_dom_set[v] = true
 
-        update_dominated(g, degree_queue, v, dominated, deleted)
+        update_dominated(g, degree_queue, v, dominated, in_dom_set)
         for u in neighbors(g, v)
-            update_dominated(g, degree_queue, u, dominated, deleted)
+            update_dominated(g, degree_queue, u, dominated, in_dom_set)
         end
     end
-    return dom_set
+    return [v for v in vertices(g) if in_dom_set[v]]
 end

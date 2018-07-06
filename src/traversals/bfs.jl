@@ -173,17 +173,17 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
 end
 
 """
-    get_path(g, u, v, exclude_vertices=Vector{T}())
+    min_hop_path(g, u, v, exclude_vertices=Vector{T}())
 
-Modification of has_path(g, u, v)
+Find the minimum hop path from `u` to `v` that does not have any vertices in `exclude_vertices`.
+The minimum hop path is the path with the fewest vertices. 
+
+### Implementation Notes
 Return the intermediate vertices of the path from `u` to `v` that do not contain any 
 vertices in `exclude_vertices`.
 If such a path does not exist, it returns a vector containing 0.
-
-### Implementation Notes
-Assumes that `s` and `t` are the vertices of a `g`.
 """
-function get_path(g::AbstractGraph{T}, 
+function min_hop_path(g::AbstractGraph{T}, 
     u::Integer, 
     v::Integer, 
     exclude_vertices::AbstractVector = Vector{T}()

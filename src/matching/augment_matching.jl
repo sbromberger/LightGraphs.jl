@@ -41,7 +41,7 @@ function bfs_augment!(g::AbstractGraph{T}, s::T,
 end
 
 """
-    augment_graph!(g, partner, parents, t)
+    augment_path!(g, partner, parents, t)
 
 Augment the matching using the path ending at `t`.`
 The path is represented using the predecessor relation, `parents`.
@@ -90,39 +90,28 @@ function augment_matching(g::AbstractGraph{T},
         partner[e.dst] = e.src
         partner[e.src] = e.dst
     end
-    unpartnered = Vector{T}()
-    sizehint!(unpartnered, nvg-size(init_matching)[1])
-    for v in vertices(g)
-        if partner[v] == zero(T)
-            push!(unpartnered, v)
-        end
-    end
-    shuffle!(unpartnered)
+    unpartnered = [v for v in vertices(g) if partner[v] == zero(T)]
 
     parents = zeros(T, nvg)
-    for num_it in 1:reps_augment
+    for _ in 1:reps_augment
         (length(unpartnered) < 2) && break
         t = s = zero(T)
+        
         for v in unpartnered
             t = bfs_augment!(g, v, partner, parents)
-            if t != zero(T)
+            if t != zero(T) # An augmenting path was found.
                 s = v
                 break
             end
         end
-        if t == zero(T)
+        
+        if t == zero(T) # An augmenting path does not exist.
             break
         else
             filter!(e->!(e in [s, t]), unpartnered)
             augment_path!(g, partner, parents, t)
         end
     end
-    matching = Vector{Edge}()
-    for v in vertices(g)
-        p = partner[v]
-        if p != zero(T) && p < v
-            push!(matching, Edge(p, v))
-        end 
-    end
-    return matching
+
+    return [Edge{T}(v, p) for (v, p) in enumerate(partner) if p > v]
 end

@@ -19,24 +19,23 @@ function random_minimal_dominating_set(
     ) where T <: Integer 
 
     nvg = nv(g)  
-    is_dom = trues(nvg)  
+    in_dom_set = trues(nvg)  
     dom_degree = degree(g)
-    dom_size = nvg
-
     for v in shuffle(vertices(g))
-    	(dom_degree[v] == 0) && continue
-    	safe = true
+    	(dom_degree[v] == 0) && continue #It is not adjacent to any dominating vertex
+    	
+        safe_to_remove = true
     	for u in neighbors(g, v)
-        	@inbounds if !is_dom[u] && dom_degree[u] <= 1
-        		safe = false
+        	@inbounds if !in_dom_set[u] && dom_degree[u] <= 1
+        		safe_to_remove = false
         		break
         	end
         end
-        safe || continue
-        is_dom[v] = false
-        dom_size -= 1
+        safe_to_remove || continue
+        
+        in_dom_set[v] = false
         dom_degree[neighbors(g, v)] .-= 1
     end
 
-    return [v for v in vertices(g) if is_dom[v]]
+    return [v for v in vertices(g) if in_dom_set[v]]
 end
