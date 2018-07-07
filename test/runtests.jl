@@ -65,6 +65,7 @@ tests = [
     "spanningtrees/kruskal",
     "spanningtrees/prim",
     "biconnectivity/articulation",
+    "biconnectivity/pairwise_connectivity",
     "biconnectivity/biconnect",
     "graphcut/normalized_cut"
 ]

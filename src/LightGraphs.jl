@@ -64,7 +64,7 @@ discover_vertex!, close_vertex!,
 examine_neighbor!, traverse_graph,
 
 # bfs
-gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
+gdistances, gdistances!, bfs_tree, bfs_parents, has_path, get_path,
 
 # bipartition
 is_bipartite, bipartite_map,
@@ -142,7 +142,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, lower_bound_pairwise_connectivity,
 
 #graphcut
 normalized_cut
@@ -241,7 +241,7 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/pairwise_connectivity.jl")
 include("graphcut/normalized_cut.jl")
-
 using .LinAlg
 end # module
