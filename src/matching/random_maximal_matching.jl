@@ -30,3 +30,12 @@ function random_maximal_matching(
     end
     return matching
 end
+
+"""
+    parallel_random_maximal_matching(g, Reps)
+
+Perform [`LightGraphs.random_maximal_matching`](@ref) `Reps` times in parallel 
+and return the solution with the most edges.
+"""
+parallel_random_maximal_matching(g::AbstractGraph{T}, Reps::Integer) where T <: Integer = 
+parallel_generate_max_set(g, random_maximal_matching, Reps)

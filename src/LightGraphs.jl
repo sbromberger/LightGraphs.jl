@@ -79,10 +79,10 @@ randomwalk, saw, non_backtracking_randomwalk,
 diffusion, diffusion_rate,
 
 # coloring
-greedy_color,
+greedy_color, parallel_random_greedy_color,
 
 # dominatingset
-degree_dominating_set, random_minimal_dominating_set,
+degree_dominating_set, random_minimal_dominating_set, parallel_random_minimal_dominating_set,
 
 # connectivity
 connected_components, strongly_connected_components, weakly_connected_components,
@@ -145,10 +145,10 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #independentset
-degree_independent_set, random_maximal_independent_set,
+degree_independent_set, random_maximal_independent_set, parallel_random_maximal_independent_set,
 
 #matching
-augment_matching, random_maximal_matching,
+augment_matching, random_maximal_matching, parallel_random_maximal_matching,
 
 #biconnectivity and articulation points
 articulation, biconnected_components, lower_bound_pairwise_connectivity,
@@ -157,7 +157,7 @@ articulation, biconnected_components, lower_bound_pairwise_connectivity,
 normalized_cut,
 
 #vertexcover
-degree_vertex_cover, random_vertex_cover
+degree_vertex_cover, random_vertex_cover, parallel_random_vertex_cover 
 
 """
     LightGraphs
@@ -209,6 +209,7 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+include("approx.jl")
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")

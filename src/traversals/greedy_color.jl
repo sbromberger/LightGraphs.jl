@@ -226,14 +226,24 @@ Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/w
 The heuristics can be described as choosing a permutation of the vertices and assigning the 
 lowest color index available iteratively in that order.
 
-If `sort_degree` is true then the permutation is chosen in reverse sorted order of the degree of the vertices.
+### Optional Arguements
+If `sort_degree` is `true` then the permutation is chosen in reverse sorted order of the degree of the vertices.
 
-If `sort_degree` is false then a colorings are obtained based on random permutations and the one using least
+If `sort_degree` is `false` then a colorings are obtained based on random permutations and the one using least
 colors is chosen.
 
-If 'exchange' is true then at every iteration, if a new color must be introduced, then the algorithm will attempt
+If 'exchange' is `true` then at every iteration, if a new color must be introduced, then the algorithm will attempt
 to avoid introducing a new color by changing the colors of its neighbors. It requires much more computation
 but will likely reduce the number of colors used.
 """
 greedy_color(g::AbstractGraph{T}; sort_degree::Bool=false, exchange=false) where {T <: Integer} =
 sort_degree ? degree_greedy_color(g, exchange) : perm_greedy_color(g, exchange)
+
+"""
+    parallel_random_greedy_color(g, Reps; exchange=false)
+
+Perform [`LightGraphs.perm_greedy_color`](@ref) `Reps` times in parallel 
+and return the solution with the fewest colors.
+"""
+parallel_random_greedy_color(g::AbstractGraph{T}, Reps::Integer; exchange=false) where {T <: Integer} = 
+mapreduce((g)->perm_greedy_color(g, exchange), (c1, c2)->-c1.num_colors < c2.num_colors ? c1 : c2, Iterators.repeated(g, Reps))

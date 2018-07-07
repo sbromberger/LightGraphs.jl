@@ -31,3 +31,12 @@ function random_maximal_independent_set(
 
     return ind_set
 end
+
+"""
+    parallel_random_maximal_independent_set(g, Reps)
+
+Perform [`LightGraphs.random_maximal_independent_set`](@ref) `Reps` times in parallel 
+and return the solution with the most vertices.
+"""
+parallel_random_maximal_independent_set(g::AbstractGraph{T}, Reps::Integer) where T <: Integer = 
+parallel_generate_max_set(g, random_maximal_independent_set, Reps)

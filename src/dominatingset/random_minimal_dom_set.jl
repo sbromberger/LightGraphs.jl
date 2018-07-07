@@ -39,3 +39,12 @@ function random_minimal_dominating_set(
 
     return [v for v in vertices(g) if in_dom_set[v]]
 end
+
+"""
+    parallel_random_minimal_dominating_set(g, Reps)
+
+Perform [`LightGraphs.random_minimal_dominating_set`](@ref) `Reps` times in parallel 
+and return the solution with the fewest vertices.
+"""
+parallel_random_minimal_dominating_set(g::AbstractGraph{T}, Reps::Integer) where T <: Integer = 
+parallel_generate_min_set(g, random_minimal_dominating_set, Reps)
