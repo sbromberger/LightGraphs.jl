@@ -209,7 +209,7 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
-include("approx.jl")
+include("generate_reduce.jl")
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("digraph/cycles/johnson.jl")

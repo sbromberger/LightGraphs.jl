@@ -246,4 +246,4 @@ Perform [`LightGraphs.perm_greedy_color`](@ref) `Reps` times in parallel
 and return the solution with the fewest colors.
 """
 parallel_random_greedy_color(g::AbstractGraph{T}, Reps::Integer; exchange=false) where {T <: Integer} = 
-mapreduce((g)->perm_greedy_color(g, exchange), (c1, c2)->-c1.num_colors < c2.num_colors ? c1 : c2, Iterators.repeated(g, Reps))
+generate_min_colors(g, (g)->perm_greedy_color(g, exchange), Reps)

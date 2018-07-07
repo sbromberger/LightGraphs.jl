@@ -39,4 +39,4 @@ Perform [`LightGraphs.random_vertex_cover`](@ref) `Reps` times in parallel
 and return the solution with the fewest vertices.
 """
 parallel_random_vertex_cover(g::AbstractGraph{T}, Reps::Integer) where T <: Integer = 
-parallel_generate_min_set(g, random_vertex_cover, Reps)
+generate_min_set(g, random_vertex_cover, Reps)

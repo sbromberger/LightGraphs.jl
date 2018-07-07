@@ -39,4 +39,4 @@ Perform [`LightGraphs.random_maximal_independent_set`](@ref) `Reps` times in par
 and return the solution with the most vertices.
 """
 parallel_random_maximal_independent_set(g::AbstractGraph{T}, Reps::Integer) where T <: Integer = 
-parallel_generate_max_set(g, random_maximal_independent_set, Reps)
+generate_max_set(g, random_maximal_independent_set, Reps)
