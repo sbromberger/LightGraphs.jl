@@ -89,7 +89,7 @@ isgraphical,
 
 # cycles
 simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
-simplecyclescount, simplecycleslength, karp_minimum_cycle_mean,
+simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -199,9 +199,10 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
-include("digraph/cycles/johnson.jl")
-include("digraph/cycles/hadwick-james.jl")
-include("digraph/cycles/karp.jl")
+include("cycles/johnson.jl")
+include("cycles/hadwick-james.jl")
+include("cycles/karp.jl")
+include("cycles/basis.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
