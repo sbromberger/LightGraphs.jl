@@ -27,8 +27,8 @@
 
     # Graph with one cycle
     ex = Graph(5)
-    edges = [(1,2),(2,3),(3,4),(4,1),(1,5)]
-    for e in edges
+    edgs = [(1,2),(2,3),(3,4),(4,1),(1,5)]
+    for e in edgs
         add_edge!(ex, e)
     end
     expected_cyclebasis = Array{Int64,1}[
@@ -40,8 +40,8 @@
 
     # Graph with 2 of 3 cycles forming a basis
     ex = Graph(4)
-    edges = [(1,2),(1,3),(2,3),(2,4),(3,4)]
-    for e in edges
+    edgs = [(1,2),(1,3),(2,3),(2,4),(3,4)]
+    for e in edgs
         add_edge!(ex, e)
     end
     expected_cyclebasis = Array{Int64,1}[
@@ -54,8 +54,8 @@
 
     # Testing root argument
     ex = Graph(6)
-    edges = [(1,2),(1,3),(2,3),(2,4),(3,4),(1,5),(5,6),(6,4)]
-    for e in edges
+    edgs = [(1,2),(1,3),(2,3),(2,4),(3,4),(1,5),(5,6),(6,4)]
+    for e in edgs
         add_edge!(ex, e)
     end
     expected_cyclebasis = Array{Int64,1}[

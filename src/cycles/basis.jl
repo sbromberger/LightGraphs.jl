@@ -19,10 +19,10 @@ using Kirchhoff's Laws.
 # Example
 ```jldoctest
 julia> nodes = [1,2,3,4,5]
-julia> edges = [(1,2),(2,3),(3,4),(4,1),(1,5)]
+julia> edgs = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)]
 julia> g = Graph(length(nodes))
-julia> for e in edges add_edge!(G, e) end
-julia> cycle_basis(g)::Union{Int64, Void}
+julia> for e in edgs add_edge!(g, e) end
+julia> cycle_basis(g)
 2-element Array{Array{Int64,1},1}:
  [2, 3, 4]
  [2, 1, 3]
