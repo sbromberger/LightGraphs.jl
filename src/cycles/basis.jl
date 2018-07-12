@@ -14,10 +14,8 @@ using Kirchhoff's Laws.
 
 Example:
 ```jldoctest
-julia> nlist = [1,2,3,4,5]
 julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)]
-julia> g = SimpleGraph(length(nlist))
-julia> for e in elist add_edge!(g, e) end
+julia> g = SimpleGraph(SimpleEdge.(elist))
 julia> cycle_basis(g)
 2-element Array{Array{Int64,1},1}:
  [2, 3, 4]
