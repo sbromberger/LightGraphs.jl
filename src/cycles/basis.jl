@@ -27,24 +27,28 @@ julia> cycle_basis(g)
 ### References
 * Paton, K. An algorithm for finding a fundamental set of cycles of a graph. Comm. ACM 12, 9 (Sept 1969), 514-518. [https://dl.acm.org/citation.cfm?id=363232]
 """
-function cycle_basis(g::SimpleGraph, root=nothing)
+function cycle_basis(g::AbstractSimpleGraph, root=nothing)
     gnodes = Set(vertices(g))
-    cycles = Array{eltype(g),1}[]
+    cycles = Vector{Vector{eltype(g)}}()
     while !isempty(gnodes)
         if root == nothing
             root = pop!(gnodes)
         end
         stack = [root]
         pred = Dict(root => root)
+        keys_pred = Set(root)
         used = Dict(root => [])
+        keys_used = Set(root)
         while !isempty(stack)
             z = pop!(stack)
             zused = used[z]
             for nbr in neighbors(g,z)
-                if !in(nbr, keys(used))
+                if !in(nbr, keys_used)
                     pred[nbr] = z
+                    push!(keys_pred, nbr)
                     push!(stack,nbr)
                     used[nbr] = [z]
+                    push!(keys_used, nbr)
                 elseif nbr == z
                     push!(cycles, [z])
                 elseif !in(nbr, zused)
@@ -58,10 +62,10 @@ function cycle_basis(g::SimpleGraph, root=nothing)
                     push!(cycle,p)
                     push!(cycles,cycle)
                     push!(used[nbr], z)
-                end    
+                end
             end
-        end    
-        setdiff!(gnodes,keys(pred))
+        end  
+        setdiff!(gnodes,keys_pred)
         root = nothing
     end
     return cycles
