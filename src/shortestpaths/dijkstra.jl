@@ -38,58 +38,58 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    preds = fill(Vector{U}(), nvg)
     visited = zeros(Bool, nvg)
+
     pathcounts = zeros(Int, nvg)
+    preds = fill(Vector{U}(), nvg)
     H = PriorityQueue{U,T}()
-    dists[srcs] .= zero(T)
-    pathcounts[srcs] .= 1
+    # fill creates only one array.
 
-    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
-
-    sizehint!(closest_vertices, nvg)
-
-    for v in srcs
-        H[v] = dists[v]
-        visited[v] = true
+    for src in srcs
+        dists[src] = zero(T)
+        visited[src] = true
+        pathcounts[src] = 1
+        H[src] = zero(T)
     end
 
+    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
+    sizehint!(closest_vertices, nvg)
+
     while !isempty(H)
-        hentry = dequeue_pair!(H)
-            # info("Popped H - got $(hentry.vertex)")
-        u = hentry[1]
+        u = dequeue!(H)
 
         if trackvertices
             push!(closest_vertices, u)
         end
 
+        d = dists[u] # Cannot be typemax if `u` is in the queue
         for v in outneighbors(g, u)
-            alt = (dists[u] == typemax(T)) ? typemax(T) : dists[u] + distmx[u, v]
+            alt = d + distmx[u, v]
 
             if !visited[v]
+                visited[v] = true
                 dists[v] = alt
                 parents[v] = u
+
                 pathcounts[v] += pathcounts[u]
-                visited[v] = true
                 if allpaths
                     preds[v] = [u;]
                 end
                 H[v] = alt
-                # info("Pushed $v")
-            else
-                if alt < dists[v]
-                    dists[v] = alt
-                    parents[v] = u
-                    #615
-                    pathcounts[v] = 0
-                    preds[v] = []
-                    H[v] = alt
+            elseif alt < dists[v]
+                dists[v] = alt
+                parents[v] = u
+                #615
+                pathcounts[v] = pathcounts[u]
+                if allpaths
+                    resize!(preds[v], 1)
+                    preds[v][1] = u
                 end
-                if alt == dists[v]
-                    pathcounts[v] += pathcounts[u]
-                    if allpaths
-                        push!(preds[v], u)
-                    end
+                H[v] = alt
+            elseif alt == dists[v]
+                pathcounts[v] += pathcounts[u]
+                if allpaths
+                    push!(preds[v], u)
                 end
             end
         end
@@ -103,10 +103,10 @@ function dijkstra_shortest_paths(g::AbstractGraph,
         end
     end
 
-    pathcounts[srcs] .= 1
-    parents[srcs] .= 0
     for src in srcs
-        preds[src] = []
+        pathcounts[src] = 1
+        parents[src] = 0
+        empty!(preds[src])
     end
 
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
