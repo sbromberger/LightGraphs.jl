@@ -17,8 +17,8 @@
     end
 
     # Only one self-edge
-    ex = Graph(1)
-    add_edge!(ex, 1,1)
+    elist = [(1,1)]
+    ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[[1]]
     for g in testgraphs(ex)
         ex_cyclebasis = cycle_basis(g)
@@ -26,11 +26,8 @@
     end
 
     # Graph with one cycle
-    ex = Graph(5)
-    edgs = [(1,2),(2,3),(3,4),(4,1),(1,5)]
-    for e in edgs
-        add_edge!(ex, e)
-    end
+    elist = [(1,2),(2,3),(3,4),(4,1),(1,5)]
+    ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [1,2,3,4] ]
     for g in testgraphs(ex)
@@ -39,11 +36,8 @@
     end    
 
     # Graph with 2 of 3 cycles forming a basis
-    ex = Graph(4)
-    edgs = [(1,2),(1,3),(2,3),(2,4),(3,4)]
-    for e in edgs
-        add_edge!(ex, e)
-    end
+    elist = [(1,2),(1,3),(2,3),(2,4),(3,4)]
+    ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [2,3,4],
         [2,1,3] ]
@@ -53,11 +47,8 @@
     end
 
     # Testing root argument
-    ex = Graph(6)
-    edgs = [(1,2),(1,3),(2,3),(2,4),(3,4),(1,5),(5,6),(6,4)]
-    for e in edgs
-        add_edge!(ex, e)
-    end
+    elist = [(1,2),(1,3),(2,3),(2,4),(3,4),(1,5),(5,6),(6,4)]
+    ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [2, 4, 3],
         [1, 5, 6, 4, 3],
