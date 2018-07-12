@@ -12,7 +12,7 @@
     ex = Graph(1)
     expected_cyclebasis = Array{Int64,1}[]
     for g in testgraphs(ex)
-        ex_cyclebasis = cycle_basis(g)
+        ex_cyclebasis = @inferred cycle_basis(g)
         @test isempty(ex_cyclebasis)
     end
 
@@ -63,7 +63,7 @@
         [1, 5, 6, 4, 3],
         [1, 2, 3] ]
     for g in testgraphs(ex)
-        ex_cyclebasis = cycle_basis(g,3)
+        ex_cyclebasis = @inferred cycle_basis(g,3)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end
 end
