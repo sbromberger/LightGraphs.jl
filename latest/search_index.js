@@ -789,7 +789,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_connected",
     "category": "function",
-    "text": "is_connected(g)\n\nReturn true if graph g is connected. For directed graphs, use is_weakly_connected or is_strongly_connected.\n\n\n\n\n\n"
+    "text": "is_connected(g)\n\nReturn true if graph g is connected. For directed graphs, return true if graph g is weakly connected.\n\n\n\n\n\n"
 },
 
 {
@@ -805,7 +805,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_weakly_connected",
     "category": "function",
-    "text": "is_weakly_connected(g)\n\nReturn true if the directed graph g is connected.\n\n\n\n\n\n"
+    "text": "is_weakly_connected(g)\n\nReturn true if the graph g is weakly connected. If g is undirected, this function is equivalent to is_connected(g).\n\n\n\n\n\n"
 },
 
 {
@@ -829,7 +829,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.weakly_connected_components",
     "category": "function",
-    "text": "weakly_connected_components(g)\n\nReturn the weakly connected components of the directed graph g. This is equivalent to the connected components of the undirected equivalent of g.\n\n\n\n\n\n"
+    "text": "weakly_connected_components(g)\n\nReturn the weakly connected components of the graph g. This is equivalent to the connected components of the undirected equivalent of g. For undirected graphs this is equivalent to the connected components of g.\n\n\n\n\n\n"
 },
 
 {
