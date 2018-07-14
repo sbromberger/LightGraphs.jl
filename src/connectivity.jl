@@ -104,8 +104,9 @@ function is_connected end
 """
     weakly_connected_components(g)
 
-Return the weakly connected components of the directed graph `g`. This
+Return the weakly connected components of the graph `g`. This
 is equivalent to the connected components of the undirected equivalent of `g`.
+For undirected graphs this is equivalent to the connected components of `g`.
 """
 function weakly_connected_components(g)
     connected_components(g)
