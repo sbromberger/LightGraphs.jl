@@ -94,7 +94,10 @@ end
 Return `true` if graph `g` is connected. For directed graphs, return `true`
 if graph `g` is weakly connected.
 """
-is_connected(g::::(!IsDirected)) = ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+function is_connected(g::AbstractGraph)
+    mult = is_directed(g) ? 2 : 1
+    return mult * ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+end
 
 """
     weakly_connected_components(g)
@@ -111,12 +114,7 @@ weakly_connected_components(g) = connected_components(g)
 Return `true` if the graph `g` is weakly connected. If `g` is undirected,
 this function is equivalent to `is_connected(g)`.
 """
-function is_weakly_connected(g)
-    mult = is_directed(g) ? 2 : 1
-    return mult*ne(g) + 1 >= nv(g) && length(weakly_connected_components(g)) == 1
-end
-
-
+is_weakly_connected(g) = is_connected(g)
 
 """
     strongly_connected_components(g)
