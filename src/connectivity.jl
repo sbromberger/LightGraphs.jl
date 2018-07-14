@@ -22,7 +22,7 @@ function connected_components! end
         push!(Q, u)
         while !isempty(Q)
             src = popfirst!(Q)
-            for vertex in outneighbors(g, src)
+            for vertex in all_neighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
                     label[vertex] = u
@@ -107,16 +107,20 @@ function is_connected end
 Return the weakly connected components of the directed graph `g`. This
 is equivalent to the connected components of the undirected equivalent of `g`.
 """
-function weakly_connected_components end
-@traitfn weakly_connected_components(g::::IsDirected) = connected_components(Graph(g))
+function weakly_connected_components(g)
+    connected_components(g)
+end
 
 """
     is_weakly_connected(g)
 
 Return `true` if the directed graph `g` is connected.
 """
-function is_weakly_connected end
-@traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
+function is_weakly_connected(g)
+    mult = is_directed(g) ? 2 : 1
+    return mult*ne(g) + 1 >= nv(g) && length(weakly_connected_components(g)) == 1
+end
+
 
 
 """
