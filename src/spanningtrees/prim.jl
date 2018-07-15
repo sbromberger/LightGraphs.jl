@@ -1,10 +1,3 @@
-struct PrimHeapEntry{T <: Real}
-    edge::Edge
-    dist::T
-end
-
-isless(e1::PrimHeapEntry, e2::PrimHeapEntry) = e1.dist < e2.dist
-
 """
     prim_mst(g, distmx=weights(g))
 
@@ -15,46 +8,31 @@ Return a vector of edges.
 function prim_mst end
 @traitfn function prim_mst(g::AG::(!IsDirected),
     distmx::AbstractMatrix{T}=weights(g)) where {T <: Real, U, AG <: AbstractGraph{U}}
-    pq = Vector{PrimHeapEntry{T}}()
-    mst = Vector{Edge}()
-    marked = zeros(Bool, nv(g))
+    
+    nvg = nv(g)
 
-    sizehint!(pq, ne(g))
-    sizehint!(mst, nv(g) - 1)
-    visit!(g, 1, marked, pq, distmx)
+    pq = PriorityQueue{U, T}()
+    finished = zeros(Bool, nvg)
+    wt = fill(typemax(T), nvg) #Faster access time
+    parents = zeros(U, nv(g))
+
+    pq[1] = typemin(T)
+    wt[1] = typemin(T)
 
     while !isempty(pq)
-        heap_entry = heappop!(pq)
-        v = src(heap_entry.edge)
-        w = dst(heap_entry.edge)
+        v = dequeue!(pq)
+        finished[v] = true
 
-        marked[v] && marked[w] && continue
-        push!(mst, heap_entry.edge)
-
-        !marked[v] && visit!(g, v, marked, pq, distmx)
-        !marked[w] && visit!(g, w, marked, pq, distmx)
-    end
-
-    return mst
-end
-
-"""
-    visit!(g, v, marked, pq, distmx)
-
-Mark the vertex `v` of graph `g` true in the array `marked` and enter all its
-edges into priority queue `pq` with its `distmx` values as a PrimHeapEntry.
-"""
-function visit!(g::AbstractGraph,
-    v::Integer,
-    marked::AbstractVector{Bool},
-    pq::AbstractVector,
-    distmx::AbstractMatrix)
-    marked[v] = true
-    for w in outneighbors(g, v)
-        if !marked[w]
-            x = min(v, w)
-            y = max(v, w)
-            heappush!(pq, PrimHeapEntry(Edge(x, y), distmx[x, y]))
+        for u in neighbors(g, v)
+            finished[u] && continue
+            
+            if wt[u] > distmx[u, v]
+                wt[u] = distmx[u, v] 
+                pq[u] = wt[u]
+                parents[u] = v
+            end
         end
     end
+
+    return [Edge{U}(parents[v], v) for v in vertices(g) if parents[v] != 0]
 end
