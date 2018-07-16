@@ -10,9 +10,7 @@ to each vertex. The component value is the smallest vertex ID in the component.
 ### Performance
 This algorithm is linear in the number of edges of the graph.
 """
-function connected_components! end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components!(label::AbstractVector, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
     nvg = nv(g)
 
     for u in vertices(g)
@@ -22,7 +20,7 @@ function connected_components! end
         push!(Q, u)
         while !isempty(Q)
             src = popfirst!(Q)
-            for vertex in outneighbors(g, src)
+            for vertex in all_neighbors(g, src)
                 if label[vertex] == zero(T)
                     push!(Q, vertex)
                     label[vertex] = u
@@ -83,9 +81,7 @@ belonging to the component.
 For directed graphs, see [`strongly_connected_components`](@ref) and
 [`weakly_connected_components`](@ref).
 """
-function connected_components end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components(g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+function connected_components(g::AbstractGraph{T}) where T
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -95,29 +91,30 @@ end
 """
     is_connected(g)
 
-Return `true` if graph `g` is connected. For directed graphs, use
-[`is_weakly_connected`](@ref) or [`is_strongly_connected`](@ref).
+Return `true` if graph `g` is connected. For directed graphs, return `true`
+if graph `g` is weakly connected.
 """
-function is_connected end
-@traitfn is_connected(g::::(!IsDirected)) = ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+function is_connected(g::AbstractGraph)
+    mult = is_directed(g) ? 2 : 1
+    return mult * ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+end
 
 """
     weakly_connected_components(g)
 
-Return the weakly connected components of the directed graph `g`. This
+Return the weakly connected components of the graph `g`. This
 is equivalent to the connected components of the undirected equivalent of `g`.
+For undirected graphs this is equivalent to the connected components of `g`.
 """
-function weakly_connected_components end
-@traitfn weakly_connected_components(g::::IsDirected) = connected_components(Graph(g))
+weakly_connected_components(g) = connected_components(g)
 
 """
     is_weakly_connected(g)
 
-Return `true` if the directed graph `g` is connected.
+Return `true` if the graph `g` is weakly connected. If `g` is undirected,
+this function is equivalent to `is_connected(g)`.
 """
-function is_weakly_connected end
-@traitfn is_weakly_connected(g::::IsDirected) = length(weakly_connected_components(g)) == 1
-
+is_weakly_connected(g) = is_connected(g)
 
 """
     strongly_connected_components(g)
