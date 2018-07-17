@@ -1329,11 +1329,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "centrality.html#LightGraphs.pagerank",
+    "location": "centrality.html#LightGraphs.pagerank-Union{Tuple{AbstractGraph{U}}, Tuple{U}, Tuple{AbstractGraph{U},Any}, Tuple{AbstractGraph{U},Any,Any}, Tuple{AbstractGraph{U},Any,Any,Any}} where U<:Integer",
     "page": "Centrality Measures",
     "title": "LightGraphs.pagerank",
-    "category": "function",
-    "text": "pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\n\nCalculate the PageRank of the graph g parameterized by damping factor α, number of iterations  n, and convergence threshold ϵ. Return a vector representing the centrality calculated for each node in g, or an error if convergence is not reached within n iterations.\n\n\n\n\n\n"
+    "category": "method",
+    "text": "pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\nparallel_pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\n\nCalculate the PageRank of the graph g parameterized by damping factor α, number of iterations  n, and convergence threshold ϵ. Return a vector representing the centrality calculated for each node in g, or an error if convergence is not reached within n iterations.\n\n\n\n\n\n"
 },
 
 {
@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1493,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
