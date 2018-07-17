@@ -92,7 +92,7 @@ isgraphical,
 
 # cycles
 simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
-simplecyclescount, simplecycleslength, karp_minimum_cycle_mean,
+simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -109,7 +109,7 @@ indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
 parallel_betweenness_centrality, parallel_closeness_centrality,
-parallel_stress_centrality, parallel_radiality_centrality,
+parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -212,11 +212,12 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 include("generate_reduce.jl")
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
-include("digraph/cycles/johnson.jl")
-include("digraph/cycles/hadwick-james.jl")
-include("digraph/cycles/karp.jl")
 include("dominatingset/degree_dom_set.jl")
 include("dominatingset/random_minimal_dom_set.jl")
+include("cycles/johnson.jl")
+include("cycles/hadwick-james.jl")
+include("cycles/karp.jl")
+include("cycles/basis.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
