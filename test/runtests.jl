@@ -27,6 +27,8 @@ tests = [
     "degeneracy",
     "distance",
     "digraph/transitivity",
+    "dominatingset/degree_dom_set",
+    "dominatingset/random_minimal_dom_set",
     "cycles/hadwick-james",
     "cycles/johnson",
     "cycles/karp",
@@ -40,6 +42,10 @@ tests = [
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
+    "independentset/degree_ind_set",
+    "independentset/random_maximal_ind_set",
+    "matching/augment_matching",
+    "matching/random_maximal_matching",
     "traversals/bfs",
     "traversals/parallel_bfs",
     "traversals/bipartition",
@@ -66,8 +72,11 @@ tests = [
     "spanningtrees/kruskal",
     "spanningtrees/prim",
     "biconnectivity/articulation",
+    "biconnectivity/pairwise_connectivity",
     "biconnectivity/biconnect",
-    "graphcut/normalized_cut"
+    "graphcut/normalized_cut",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover"
 ]
 
 @testset "LightGraphs" begin
