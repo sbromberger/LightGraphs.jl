@@ -285,7 +285,7 @@ issymmetric(g::AbstractGraph) = !is_directed(g)
 """
     cartesian_product(g, h)
 
-Return the (cartesian product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+Return the (cartesian product)[https://en.wikipedia.org/wiki/Cartesian_product_of_graphs]
 of `g` and `h`.
 
 ### Implementation Notes
@@ -324,11 +324,15 @@ in the generated graph exceeds the eltype.
 function tensor_product(g::G, h::G) where G <: AbstractGraph
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
     for e1 in edges(g)
         i1, i2 = Tuple(e1)
         for e2 in edges(h)
             j1, j2 = Tuple(e2)
             add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
         end
     end
     return z
