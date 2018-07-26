@@ -6,9 +6,9 @@ using LinearAlgebra
 using DelimitedFiles
 using Base64
 using Random
+using Statistics: mean
 
 const testdir = dirname(@__FILE__)
-
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
