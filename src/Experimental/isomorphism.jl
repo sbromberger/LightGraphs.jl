@@ -7,15 +7,6 @@ const IsomorphismProblem = IsomorphismProblemType()
 const SubGraphIsomorphismProblem = SubGraphIsomorphismProblemType()
 const InducedSubGraphIsomorphismProblem = InducedSubGraphIsomorphismProblemType()
 
-
-"""
-    Box{T}
-A struct for passing references to functions
-"""
-mutable struct Box{T}
-    value::T
-end
-
 """
     has_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
@@ -52,11 +43,11 @@ function has_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
                                  edge_relation::Union{Nothing, Function}=nothing,
                                  alg=:vf2)::Bool
     if alg == :vf2
-        boolbox = Box(false)
-        callback(vmap) = (boolbox.value = true; return false)
+        result = false
+        callback(vmap) = (result = true; return false)
         vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem;
                        vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return boolbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -98,11 +89,11 @@ function has_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
                                  edge_relation::Union{Nothing, Function}=nothing,
                                 alg=:vf2)::Bool
     if alg == :vf2
-        boolbox = Box(false)
-        callback(vmap) = (boolbox.value = true; return false)
+        result = false
+        callback(vmap) = (result = true; return false)
         vf2(callback, g1, g2, SubGraphIsomorphismProblem;
                        vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return boolbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -144,12 +135,12 @@ function has_iso(g1::AbstractGraph, g2::AbstractGraph;
                          edge_relation::Union{Nothing, Function}=nothing,
                          alg=:vf2)::Bool
     if alg == :vf2
-        boolbox = Box(false)
-        callback(vmap) = (boolbox.value = true; return false)
+        result = false
+        callback(vmap) = (result = true; return false)
         vf2(callback, g1, g2, IsomorphismProblem,
                        vertex_relation=vertex_relation,
                        edge_relation=edge_relation)
-        return boolbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -191,12 +182,12 @@ function count_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
                                    edge_relation::Union{Nothing, Function}=nothing,
                                    alg=:vf2)::Int
     if alg == :vf2
-        intbox = Box(0)
-        callback(vmap) = (intbox.value += 1; return true)
+        result = 0
+        callback(vmap) = (result += 1; return true)
         vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem,
                        vertex_relation=vertex_relation,
                        edge_relation=edge_relation)
-        return intbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -238,10 +229,10 @@ function count_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
                                    edge_relation::Union{Nothing, Function}=nothing,
                                    alg=:vf2)::Int
     if alg == :vf2
-        intbox = Box(0)
-        callback(vmap) = (intbox.value += 1; return true)
+        result = 0
+        callback(vmap) = (result += 1; return true)
         vf2(callback, g1, g2, SubGraphIsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return intbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -283,10 +274,10 @@ function count_iso(g1::AbstractGraph, g2::AbstractGraph;
                            edge_relation::Union{Nothing, Function}=nothing,
                            alg=:vf2)::Int
     if alg == :vf2
-        intbox = Box(0)
-        callback(vmap) = (intbox.value += 1; return true)
+        result = 0
+        callback(vmap) = (result += 1; return true)
         vf2(callback, g1, g2, IsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return intbox.value
+        return result
     else
         throw(ArgumentError("Keyword argument alg must be :vf2"))
     end
@@ -512,9 +503,9 @@ If the algorithm should look for another isomorphism, then this function should 
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 """
-function vf2(callback, g1::G, g2::G, problemtype; 
-                        vertex_relation=nothing, 
-                        edge_relation=nothing) where {G <: AbstractSimpleGraph}
+function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblemType; 
+             vertex_relation::Union{Nothing, Function}=nothing, 
+             edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractSimpleGraph}
     if has_self_loops(g1) || has_self_loops(g2)
         throw(ArgumentError("vf2 does not support self-loops at the moment"))
     end
