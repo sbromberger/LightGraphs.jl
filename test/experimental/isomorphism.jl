@@ -100,4 +100,30 @@ end
     @test isempty(all_subgraphiso(CompleteGraph(4), CompleteGraph(3), edge_relation=erel))
     @test isempty(all_induced_subgraphiso(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel))
     @test isempty(all_induced_subgraphiso(CompleteGraph(4), CompleteGraph(3), edge_relation=erel))
+
+    # this tests triggers the shortcut in the vf2 algorithm if the first graph is smaller than the second one
+    @test has_iso(CompleteGraph(3), CompleteGraph(4)) == false
+
+    # this test is mainly to cover a certain branch of vf2
+    # TODO cover directed graphs better
+    gd = SimpleDiGraph(Edge.([(2,1)]))
+    @test has_iso(gd, gd, alg=:vf2) == true
+
+    # Tests for when the argument alg is not some valid value
+    @test_throws ArgumentError has_iso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError count_iso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError all_iso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError has_subgraphiso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError count_subgraphiso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError all_subgraphiso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError has_induced_subgraphiso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError count_induced_subgraphiso(g, g, alg=:some_nonsense)
+    @test_throws ArgumentError all_induced_subgraphiso(g, g, alg=:some_nonsense)
+
+    # Test if vf2 returns an error if a graph has self-loops
+    # TODO remove when vf2 can handle self-loops
+    gs = SimpleGraph(1)
+    add_edge!(gs, 1, 1)
+    @test_throws ArgumentError has_iso(gs, gs, alg=:vf2)
+
 end

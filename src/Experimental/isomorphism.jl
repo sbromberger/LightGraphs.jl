@@ -516,7 +516,7 @@ function vf2(callback, g1::G, g2::G, problemtype;
                         vertex_relation=nothing, 
                         edge_relation=nothing) where {G <: AbstractSimpleGraph}
     if has_self_loops(g1) || has_self_loops(g2)
-        error("vf2 does not support self-loops at the moment")
+        throw(ArgumentError("vf2 does not support self-loops at the moment"))
     end
 
     if nv(g1) < nv(g2) || (problemtype == IsomorphismProblem && nv(g1) != nv(g2))
@@ -848,7 +848,7 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
     end
     if v != 0
         @inbounds for u = 1:n1
-            if state.in_1[u] != 0 && state.in_1[u] == 0
+            if state.in_1[u] != 0 && state.core_1[u] == 0
                 found_pair = true
                 if vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
                     vf2update_state!(state, u, v, depth)
