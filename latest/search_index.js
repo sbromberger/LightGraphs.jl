@@ -129,11 +129,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "types.html#LightGraphs.has_edge-Tuple{Any,Any}",
+    "location": "types.html#LightGraphs.has_edge-Tuple{Any,Any,Any}",
     "page": "LightGraphs Types",
     "title": "LightGraphs.has_edge",
     "category": "method",
-    "text": "has_edge(g, e)\ne ∈ edges(g)\n\nReturn true if the graph g has an edge e.  The expressions e in edges(g) and e ∈ edges(ga) evaluate as calls to has_edge, c.f. edges.\n\n\n\n\n\n"
+    "text": "has_edge(g, s, d)\n\nReturn true if the graph g has an edge from node s to node d.\n\nAn optional has_edge(g, e) can be implemented to check if an edge belongs to a graph, including any data other than source and destination node.\n\ne ∈ edges(g) or e ∈ edges(g) evaluate as calls to has_edge, c.f. edges.\n\n\n\n\n\n"
 },
 
 {
@@ -229,7 +229,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Accessing Properties",
     "title": "Graph Properties:",
     "category": "section",
-    "text": "nv: Returns number of vertices in graph.\nne: Returns number of edges in graph.\nvertices: Iterable object of all graph vertices.\nedges: Iterable object of all graph edges.\nhas_vertex: Checks for whether graph includes a vertex.\nhas_edge: Checks for whether graph includes an edge.\nhas_self_loops Checks for self-loops.\nis_directed Checks if graph is directed.\neltype Returns element type of graphs."
+    "text": "nv: Returns number of vertices in graph.\nne: Returns number of edges in graph.\nvertices: Iterable object of all graph vertices.\nedges: Iterable object of all graph edges.\nhas_vertex: Checks for whether graph includes a vertex.\nhas_edge(g, s, d): Checks for whether graph includes an edge from a given source s to a given destination d.\nhas_edge(g, e) will return true if there is an edge in g that satisfies e == f for any f ∈ edges(g). This is a strict equality test that may require all properties of e are the same. This definition of equality depends on the implementation. For testing whether an edge exists between two vertices s,d use has_edge(g, s, d).Note: to use the has_edge(g, e) method safely, it is important to understand the conditions under which edges are equal to each other. These conditions are defined by the has_edge(g::G,e) method as defined by the graph type G. The default behavior is to check has_edge(g,src(e),dst(e)). This distinction exists to allow new graph types such as MetaGraphs or MultiGraphs to distinguish between edges with the same source and destination but potentially different properties.has_self_loops Checks for self-loops.\nis_directed Checks if graph is directed.\neltype Returns element type of graphs."
 },
 
 {
