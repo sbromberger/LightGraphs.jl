@@ -8,7 +8,7 @@ The following is an overview of functions for accessing graph properties. For fu
 - `vertices`: Iterable object of all graph vertices.
 - `edges`: Iterable object of all graph edges.
 - `has_vertex`: Checks for whether graph includes a vertex.
-- `has_edge`: Checks for whether graph includes an edge.
+- `has_edge`: Checks for whether graph includes an edge from a given source to a given desination.
 - `has_self_loops` Checks for self-loops.
 - `is_directed` Checks if graph is directed.
 - `eltype` Returns element type of graphs.

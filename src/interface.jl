@@ -130,17 +130,21 @@ is_directed(::Type{T}) where T = _NI("is_directed")
 
 Return true if `v` is a vertex of `g`.
 """
-has_vertex(x, v) = _NI("has_vertex")
+has_vertex(g, v) = _NI("has_vertex")
 
 """
-    has_edge(g, e)
-    e ∈ edges(g)
+    has_edge(g, i, j)
 
-Return true if the graph `g` has an edge `e`. 
-The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+Return true if the graph `g` has an edge from node `i` to node `j`.
+
+An optional `has_edge(g, e)` can be implemented to check if an edge belongs
+to a graph, including any data other than source and destination node.
+
+`e ∈ edges(g)` or `e ∈ edges(g)` evaluate as
 calls to `has_edge`, c.f. [`edges`](@ref).
 """
-has_edge(x, e) = _NI("has_edge")
+has_edge(g, i, j) = _NI("has_edge")
+has_edge(g, e) = has_edge(g, src(e), dst(e))
 
 """
     inneighbors(g, v)
@@ -150,7 +154,7 @@ Return a list of all neighbors connected to vertex `v` by an incoming edge.
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-inneighbors(x, v) = _NI("inneighbors")
+inneighbors(g, v) = _NI("inneighbors")
 
 """
     outneighbors(g, v)
@@ -160,7 +164,7 @@ Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 # Implementation Notes
 Returns a reference, not a copy. Do not modify result.
 """
-outneighbors(x, v) = _NI("outneighbors")
+outneighbors(g, v) = _NI("outneighbors")
 
 """
     zero(g)
