@@ -58,6 +58,20 @@ function insorted(item, collection)
 end
 
 """
+    generate_min_set(g, gen_func, Reps)
+Generate a vector `Reps` times using `gen_func(g)` and return the vector with the least elements.
+"""
+generate_min_set(g::AbstractGraph{T}, gen_func, Reps::Integer) where T<: Integer =
+mapreduce(gen_func, (x, y)->length(x)<length(y) ? x : y, Iterators.repeated(g, Reps))
+
+"""
+    generate_max_set(g, gen_func, Reps)
+Generate a vector `Reps` times using `gen_func(g)` and return the vector with the most elements.
+"""
+generate_max_set(g::AbstractGraph{T}, gen_func, Reps::Integer) where T<: Integer =
+mapreduce(gen_func, (x, y)->length(x)>length(y) ? x : y, Iterators.repeated(g, Reps))
+
+"""
     greedy_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
 Partition `1:num_items` into atmost `required_partitions` number of contiguous partitions with 
