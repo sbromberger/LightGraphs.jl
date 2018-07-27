@@ -244,6 +244,7 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("experimental/experimental.jl")
 
 using .LinAlg
 end # module
