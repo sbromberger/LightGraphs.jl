@@ -1,5 +1,6 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
+using LightGraphs.Experimental
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -67,7 +68,8 @@ tests = [
     "spanningtrees/prim",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
-    "graphcut/normalized_cut"
+    "graphcut/normalized_cut",
+    "experimental/experimental"
 ]
 
 @testset "LightGraphs" begin

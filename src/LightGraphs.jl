@@ -5,6 +5,7 @@ using SimpleTraits
 
 ### Remove the following line once #915 is closed
 using Arpack: eigs
+using Statistics: mean
 
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
@@ -243,6 +244,7 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("experimental/experimental.jl")
 
 using .LinAlg
 end # module
