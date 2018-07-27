@@ -8,7 +8,9 @@ The following is an overview of functions for accessing graph properties. For fu
 - `vertices`: Iterable object of all graph vertices.
 - `edges`: Iterable object of all graph edges.
 - `has_vertex`: Checks for whether graph includes a vertex.
-- `has_edge`: Checks for whether graph includes an edge from a given source to a given destination. `has_edge` can also check whether a graph includes an edge `e` that is equal to another edge in the graph (equality being defined by the specific graph type).
+- `has_edge(g, s, d)`: Checks for whether graph includes an edge from a given source `s` to a given destination `d`.
+-  `has_edge(g, e)` will return true if there is an edge in g that satisfies `e == f` for any `f ∈ edges(g)`. This is a strict equality test that may not limit itself for testing that just there exists any edge between the source and destination.
+Note: to use the `has_edge(g, e)` method safely, it is important to understand the conditions under which edges are equal to each other. This will necessarily vary among edge types and defaults to `src(e) == src(f) && dst(e) == dst(f)`.
 - `has_self_loops` Checks for self-loops.
 - `is_directed` Checks if graph is directed.
 - `eltype` Returns element type of graphs.
