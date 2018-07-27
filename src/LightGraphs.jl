@@ -170,8 +170,8 @@ and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
 LightGraphs
-include("utils.jl")
 include("interface.jl")
+include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
