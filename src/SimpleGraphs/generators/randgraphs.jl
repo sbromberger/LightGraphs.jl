@@ -1,5 +1,6 @@
 using Random:
     AbstractRNG, MersenneTwister, randperm, shuffle!, srand
+using Statistics: mean
 
 using LightGraphs:
     getRNG, sample!
