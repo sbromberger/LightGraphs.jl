@@ -255,9 +255,7 @@ is_directed(::Type{SimpleGraph}) = false
 is_directed(::Type{SimpleGraph{T}}) where T = false
 is_directed(g::SimpleGraph) = false
 
-
-function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
-    s, d = T.(Tuple(e))
+function has_edge(g::SimpleGraph{T}, s, d) where T
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list_s = g.fadjlist[s]
@@ -267,6 +265,11 @@ function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
         list_s = list_d
     end
     return insorted(d, list_s)
+end
+
+function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    return has_edge(g, s, d)
 end
 
 """

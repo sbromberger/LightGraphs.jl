@@ -245,9 +245,7 @@ is_directed(g::SimpleDiGraph) = true
 is_directed(::Type{SimpleDiGraph}) = true
 is_directed(::Type{SimpleDiGraph{T}}) where T = true
 
-
-function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
-    s, d = T.(Tuple(e))
+function has_edge(g::SimpleDiGraph{T}, s, d) where T
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list = g.fadjlist[s]
@@ -257,6 +255,11 @@ function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
         list = list_backedge
     end
     return insorted(d, list)
+end
+
+function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+    s, d = T.(Tuple(e))
+    return has_edge(g, s, d)
 end
 
 function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
