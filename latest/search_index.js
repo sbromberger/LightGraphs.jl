@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1493,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1750,6 +1750,38 @@ var documenterSearchIndex = {"docs": [
     "title": "Metis.jl",
     "category": "section",
     "text": "The Metis graph partitioning package can interface with LightGraphs.jl:julia> using LightGraphs\n\njulia> g = SimpleGraph(100,1000)\n{100, 1000} undirected graph\n\njulia> partGraphKway(g, 6)  # 6 partitions"
+},
+
+{
+    "location": "experimental.html#",
+    "page": "Experimental Functionality",
+    "title": "Experimental Functionality",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "experimental.html#Experimental-Graph-Algorithms-1",
+    "page": "Experimental Functionality",
+    "title": "Experimental Graph Algorithms",
+    "category": "section",
+    "text": "LightGraphs.Experimental is a module for graph algorithms that are newer or less stable. We can adopt algorithms before we finalize an interface for using them or if we feel that full support cannot be provided to the current implementation. You can expect new developments to land here before they make it into the main module. This enables the development to keep advancing without being risk averse because of stability guarantees. You can think of this module as a 0.X semantic version space; it is a place where you can play around with new algorithms, perspectives, and interfaces without fear of breaking critical code."
+},
+
+{
+    "location": "experimental.html#A-Note-To-Users-1",
+    "page": "Experimental Functionality",
+    "title": "A Note To Users",
+    "category": "section",
+    "text": "Code in this module is unstable and subject to change. Do not use any code in this module in production environments without understanding the (large) risks involved. However, we welcome bug reports and issues via the normal channels.."
+},
+
+{
+    "location": "experimental.html#Graph-Isomorphism-1",
+    "page": "Experimental Functionality",
+    "title": "Graph Isomorphism",
+    "category": "section",
+    "text": "Here is the documentation for graph isomorphism functions."
 },
 
 {
