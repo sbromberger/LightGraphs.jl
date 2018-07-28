@@ -52,6 +52,9 @@ end
 ```
 This gives users the option of reusing memory and improving performance.
 
+### Minimizing use of internal struct fields
+Since LightGraphs supports multiple implementations of the graph datastructure using the `AbstractGraph` [type](https://juliagraphs.github.io/LightGraphs.jl/latest/types.html#AbstractGraph-Type-1) you should refrain as much as reasonably practicable from using the internal fields of structs such as `fadjlist`. Instead, you should use the functions provided in the api. Code that is instrumental to defining a concrete graph type can use the internal structure of that type for example graph generators in `/src/StaticGraphs/generators/staticgraphs.jl` use the `fadjlist` field in order to construct graphs efficiently.
+
 ## Git usage
 
 In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at `$HOME/.julia/v0.6/LightGraphs/.git/config`. Follow the instructions [here]( https://gist.github.com/piscisaureus/3342247).

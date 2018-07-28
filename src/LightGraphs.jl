@@ -5,6 +5,7 @@ using SimpleTraits
 
 ### Remove the following line once #915 is closed
 using Arpack: eigs
+using Statistics: mean
 
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
@@ -170,8 +171,8 @@ and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
 LightGraphs
-include("utils.jl")
 include("interface.jl")
+include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
@@ -243,6 +244,7 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("Experimental/Experimental.jl")
 
 using .LinAlg
 end # module
