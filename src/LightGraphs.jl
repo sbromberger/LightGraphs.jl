@@ -5,6 +5,7 @@ using SimpleTraits
 
 ### Remove the following line once #915 is closed
 using Arpack: eigs
+using Statistics: mean
 
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
@@ -89,7 +90,7 @@ isgraphical,
 
 # cycles
 simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
-simplecyclescount, simplecycleslength, karp_minimum_cycle_mean,
+simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -106,7 +107,7 @@ indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
 parallel_betweenness_centrality, parallel_closeness_centrality,
-parallel_stress_centrality, parallel_radiality_centrality,
+parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -170,8 +171,8 @@ and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
 LightGraphs
-include("utils.jl")
 include("interface.jl")
+include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
@@ -199,9 +200,10 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
-include("digraph/cycles/johnson.jl")
-include("digraph/cycles/hadwick-james.jl")
-include("digraph/cycles/karp.jl")
+include("cycles/johnson.jl")
+include("cycles/hadwick-james.jl")
+include("cycles/karp.jl")
+include("cycles/basis.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
@@ -242,6 +244,7 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("Experimental/Experimental.jl")
 
 using .LinAlg
 end # module

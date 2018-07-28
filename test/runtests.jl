@@ -1,14 +1,15 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
+using LightGraphs.Experimental
 using Test
 using SparseArrays
 using LinearAlgebra
 using DelimitedFiles
 using Base64
 using Random
+using Statistics: mean
 
 const testdir = dirname(@__FILE__)
-
 
 testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -27,9 +28,10 @@ tests = [
     "degeneracy",
     "distance",
     "digraph/transitivity",
-    "digraph/cycles/hadwick-james",
-    "digraph/cycles/johnson",
-    "digraph/cycles/karp",
+    "cycles/hadwick-james",
+    "cycles/johnson",
+    "cycles/karp",
+    "cycles/basis",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
@@ -66,7 +68,8 @@ tests = [
     "spanningtrees/prim",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
-    "graphcut/normalized_cut"
+    "graphcut/normalized_cut",
+    "experimental/experimental"
 ]
 
 @testset "LightGraphs" begin

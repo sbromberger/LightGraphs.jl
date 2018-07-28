@@ -220,11 +220,17 @@
 
         h = @inferred(tensor_product(g, g))
         @test nv(h) == 4
-        @test ne(h) == 1
+        @test ne(h) == 2
     end
     g2 = CompleteGraph(2)
     for g in testgraphs(g2)
         @test crosspath_slow(2, g) == crosspath(2, g)
+    end
+    for i in 3:4
+        gx = PathGraph(i)
+        for g in testgraphs(gx)
+            @test length(connected_components(tensor_product(g, g))) == 2
+        end
     end
 
     ## test subgraphs ##
