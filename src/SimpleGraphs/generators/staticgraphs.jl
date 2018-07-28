@@ -293,7 +293,7 @@ of depth `k`.
 function BinaryTree(k::T) where {T <: Integer}
     k <= 0 && return SimpleGraph(0)
     k == 1 && return SimpleGraph(1)
-    if !(isa(k, BigInt) || BigInt(2) ^ k - 1 <= typemax(k)) # TODO check for other possible infinite Integer types
+    if LightGraphs.isbounded(k) && BigInt(2) ^ k - 1 > typemax(k)
         throw(DomainError(k, "2^k - 1 not representable by type $T"))
     end
     n = T(2^k - 1)
