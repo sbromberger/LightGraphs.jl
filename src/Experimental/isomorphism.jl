@@ -502,6 +502,9 @@ If the algorithm should look for another isomorphism, then this function should 
     isomorphism only exists if this function returns `true` for all matched vertices.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
+### References
+Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
+“A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs”
 """
 function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblemType; 
              vertex_relation::Union{Nothing, Function}=nothing, 
