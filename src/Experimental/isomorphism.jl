@@ -10,7 +10,7 @@ const InducedSubGraphIsomorphismProblem = InducedSubGraphIsomorphismProblemType(
 """
     has_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns `true` if the graph `g1` contains a vertex induced subgraph that is isomorphic to `g2`.
+Return `true` if the graph `g1` contains a vertex induced subgraph that is isomorphic to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -56,7 +56,7 @@ end
 """
     has_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
+Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -102,7 +102,7 @@ end
 """
     has_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns `true` if the graph `g1` is isomorphic to `g2`.
+Return `true` if the graph `g1` is isomorphic to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -149,7 +149,7 @@ end
 """
     count_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns the number of vertex induced subgraphs of the graph `g1` that are isomorphic to `g2`.
+Return the number of vertex induced subgraphs of the graph `g1` that are isomorphic to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -196,7 +196,7 @@ end
 """
     count_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
+Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -241,7 +241,7 @@ end
 """
     count_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns the number of isomorphism from graph `g1` to `g2`.
+Return the number of isomorphism from graph `g1` to `g2`.
 
 ### Optional Arguments
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
@@ -286,7 +286,7 @@ end
 """
     all_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns all isomoprhism from vertex induced subgraphs of  `g1` to `g2`.
+Return all isomoprhism from vertex induced subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
@@ -341,7 +341,7 @@ end
 """
     all_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns all isomorphism from  subgraphs of  `g1` to `g2`.
+Return all isomorphism from  subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
@@ -399,7 +399,7 @@ end
 """
     all_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
-Returns all isomorphism from `g1` to `g2`.
+Return all isomorphism from `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
@@ -459,6 +459,7 @@ end
 
 """
     VF2State{G, T}
+
 Structure that is internally used by vf2
 """
 struct VF2State{G, T}
@@ -487,7 +488,8 @@ end
 
 """
     vf2(callback, g1, g2, problemtype; vertex_relation=nothing, edge_relation=nothing)
-Iterates over all isomorphism between the graphs `g1` (or subgraphs thereof) and `g2`.
+
+Iterate over all isomorphism between the graphs `g1` (or subgraphs thereof) and `g2`.
 The problem that is solved depends on the value of `problemtype`:
 - IsomorphismProblem: Only isomorphisms between the whole graph `g1` and `g2` are considered.
 - SubGraphIsomorphismProblem: All isomorphism between subgraphs of `g1` and `g2` are considered.
@@ -502,6 +504,7 @@ If the algorithm should look for another isomorphism, then this function should 
     isomorphism only exists if this function returns `true` for all matched vertices.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
+
 ### References
 Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
 “A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs”
@@ -525,7 +528,7 @@ end
 """
     vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
 
-Function that is used by vf2match! to check whether two vertices of G₁ and G₂ can be matched
+Check whether two vertices of G₁ and G₂ can be matched. Used by [`vf2match!`](@ref).
 """
 function vf2check_feasibility(u, v, state::VF2State, problemtype,
                               vertex_relation::Union{Nothing, Function},
@@ -732,7 +735,8 @@ end
 
 """
     vf2update_state!(state, u, v, depth)
-Helper function for vf2match! that updates the state before recursing.
+
+Update state before recursing. Helper function for [`vf2match!`](@ref).
 """
 function vf2update_state!(state::VF2State, u, v, depth)
 @inbounds begin
@@ -763,7 +767,8 @@ end
 
 """
     vf2reset_state!(state, u, v, depth)
-Helper function for vf2match! that resets the state after returnin from recursing.
+
+Reset state after returning from recursion. Helper function for [`vf2match!`](@ref).
 """
 function vf2reset_state!(state::VF2State, u, v, depth)
 @inbounds begin
@@ -794,7 +799,8 @@ end
 
 """
     vf2match!(state, detph, callback, problemtype, vertex_relation, edge_relation)
-The recursing function that is called by vf2
+
+Perform ismorphic subgraph matching. Called by [`vf2`](@ref).
 """
 function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismProblemType,
                    vertex_relation, edge_relation)
