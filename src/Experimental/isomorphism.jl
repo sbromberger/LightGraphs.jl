@@ -798,9 +798,9 @@ end
 end
 
 """
-    vf2match!(state, detph, callback, problemtype, vertex_relation, edge_relation)
+    vf2match!(state, depth, callback, problemtype, vertex_relation, edge_relation)
 
-Perform ismorphic subgraph matching. Called by [`vf2`](@ref).
+Perform isomorphic subgraph matching. Called by [`vf2`](@ref).
 """
 function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismProblemType,
                    vertex_relation, edge_relation)
