@@ -523,6 +523,7 @@ function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem
     start_state = VF2State(g1, g2)
     start_depth = 1
     vf2match!(start_state, start_depth, callback, problemtype, vertex_relation, edge_relation)
+    return
 end
 
 """
