@@ -39,11 +39,10 @@ function pagerank(
             xlast[v] = (1 - α + α * dangling_sum) * p[v]
         end
         # flow from edges
-        for edge in edges(g)
-            u, v = src(edge), dst(edge)
-            xlast[v] += α * x[u] / outdegree(g, u)
-            if !is_directed(g)
-                xlast[u] += α * x[v] / outdegree(g, v)
+        
+        for v in vertices(g)
+            for u in inneighbors(g, v)
+                xlast[v] += α * x[u] / outdegree(g, u)
             end
         end
         # l1 change in solution convergence criterion
