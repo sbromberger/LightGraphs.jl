@@ -1293,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.betweenness_centrality",
     "category": "function",
-    "text": "betweenness_centrality(g[, vs])\nbetweenness_centrality(g, k)\nparallel_betweenness_centrality(g[, vs])\nparallel_betweenness_centrality(g, k)\n\nCalculate the betweenness centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the betweenness values by the\n\ntotal number of possible distinct paths between all pairs in the graphs. For an undirected graph, this number is frac(V-1)(V-2)2 and for a directed graph, (V-1)(V-2).\n\nendpoints=false: If true, include endpoints in the shortest path count.\n\nBetweenness centrality is defined as: bc(v) = frac1mathcalN sum_s neq t neq v fracsigma_st(v)sigma_st.\n\nReferences\n\nBrandes 2001 & Brandes 2008\n\n\n\n\n\n"
+    "text": "betweenness_centrality(g[, vs])\nbetweenness_centrality(g, k)\n\nCalculate the betweenness centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the betweenness values by the\n\ntotal number of possible distinct paths between all pairs in the graphs. For an undirected graph, this number is frac(V-1)(V-2)2 and for a directed graph, (V-1)(V-2).\n\nendpoints=false: If true, include endpoints in the shortest path count.\n\nBetweenness centrality is defined as: bc(v) = frac1mathcalN sum_s neq t neq v fracsigma_st(v)sigma_st.\n\nReferences\n\nBrandes 2001 & Brandes 2008\n\n\n\n\n\n"
 },
 
 {
@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1493,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1797,7 +1797,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Parallel Algorithms",
     "title": "Parallel Graph Algorithms",
     "category": "section",
-    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = Graph(10)\nv = 1\npaths = Parallel.dijkstra_shortest_paths(g, v)"
+    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = PathGraph(10)\nbc = Parallel.betweenness_centrality(g)Note that after importing or using LightGraphs.Parallel, you must fully qualify the version of the function you wish to use (using, e.g., LightGraphs.betweenness_centrality(g) for the sequential version and Parallel.betweenness_centrality(g) for the parallel version.)The following is a current list of parallel algorithms:Parallel.betweenness_centrality"
 },
 
 {
