@@ -16,6 +16,22 @@
     for e in s
         @test 3 <= e <= 10
     end
+
+    # tests if isbounded has the correct behaviour
+    bounded_int_types = [Int8, Int16, Int32, Int64, Int128, 
+                         UInt8, UInt16, UInt32, UInt64, UInt128,
+                         Int, Bool]
+    unbounded_int_types = [BigInt, Signed, Unsigned, Integer, Union{Int8, UInt8}]
+    for T in bounded_int_types
+        @test LightGraphs.isbounded(T) == true
+        @test LightGraphs.isbounded(T(0)) == true
+    end
+    for T in unbounded_int_types
+        @test LightGraphs.isbounded(T) == false
+        if isconcretetype(T)
+            @test LightGraphs.isbounded(T(0)) == false
+        end
+    end
 end
 
 @testset "Generate Reduce" begin

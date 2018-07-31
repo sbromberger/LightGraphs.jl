@@ -10,12 +10,11 @@ with `n` vertices.
 function CompleteGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph{T}(0)
     ne = Int(n * (n - 1) ÷ 2)
-
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds @simd for u = 1:n
         listu = Vector{T}(undef, n-1)
-        listu[1:(u-1)] = UnitRange{T}(1, u - 1)
-        listu[u:(n-1)] = UnitRange{T}(u + 1, n)
+        listu[1:(u-1)] = 1:(u - 1)
+        listu[u:(n-1)] = (u + 1):n
         fadjlist[u] = listu
     end
     return SimpleGraph(ne, fadjlist)
@@ -32,13 +31,13 @@ function CompleteBipartiteGraph(n1::T, n2::T) where {T <: Integer}
     (n1 < 0 || n2 < 0) && return SimpleGraph{T}(0)
     Tw = widen(T)
     nw = Tw(n1) + Tw(n2)
-    n = T(n1 + n2)  # checks if T is large enough for n1 + n2
+    n = T(nw)  # checks if T is large enough for n1 + n2
 
     ne = Int(n1) * Int(n2)
 
     fadjlist = Vector{Vector{T}}(undef, n)
-    range1 = UnitRange{T}(1, n1)
-    range2 = UnitRange{T}(n1 + 1, n)
+    range1 = 1:n1
+    range2 = (n1 + 1):n
     @inbounds @simd for u in range1
         fadjlist[u] = Vector{T}(range2)
     end
@@ -61,10 +60,10 @@ function CompleteDiGraph(n::T) where {T <: Integer}
     ne = Int(n * (n - 1))
     fadjlist = Vector{Vector{T}}(undef, n)
     badjlist = Vector{Vector{T}}(undef, n)
-    @inbounds @simd for u = one(T):n
+    @inbounds @simd for u = 1:n
         listu = Vector{T}(undef, n-1)
-        listu[1:(u-1)] = UnitRange{T}(1, u - 1)
-        listu[u:(n-1)] = UnitRange{T}(u + 1, n)
+        listu[1:(u-1)] = 1:(u - 1)
+        listu[u:(n-1)] = (u + 1):n
         fadjlist[u] = listu
         badjlist[u] = deepcopy(listu)
     end
@@ -161,13 +160,19 @@ end
 Create an undirected [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
 with `n` vertices.
 """
-function CycleGraph(n::Integer)
-    g = SimpleGraph(n)
-    for i = 1:(n - 1)
-        add_edge!(g, SimpleEdge(i, i + 1))
+function CycleGraph(n::T) where {T <: Integer}
+    n <= 1 && return SimpleGraph(n)
+    n == 2 && return SimpleGraph(Edge{T}.([(1, 2)]))
+
+    ne = Int(n)
+    fadjlist = Vector{Vector{T}}(undef, n)
+    @inbounds fadjlist[1] = T[2, n]
+    @inbounds fadjlist[n] = T[1, n-1]
+
+    @inbounds @simd for u = 2:(n-1)
+        fadjlist[u] = T[u-1, u+1]
     end
-    add_edge!(g, SimpleEdge(n, 1))
-    return g
+    return SimpleGraph(ne, fadjlist)
 end
 
 """
@@ -177,8 +182,8 @@ Create a directed [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
 with `n` vertices.
 """
 function CycleDiGraph(n::T) where {T <: Integer}
-    n <= 0 && return SimpleDiGraph(n)  # check if correct
-    n == 1 && return SimpleDiGraph(Edge{T}.([(1, 2)]))
+    n <= 1 && return SimpleDiGraph(n)
+    n == 2 && return SimpleDiGraph(Edge{T}.([(1, 2), (2, 1)]))
 
     ne = Int(n)
     fadjlist = Vector{Vector{T}}(undef, n)
@@ -288,8 +293,10 @@ of depth `k`.
 function BinaryTree(k::T) where {T <: Integer}
     k <= 0 && return SimpleGraph(0)
     k == 1 && return SimpleGraph(1)
-    Tw = widen(T)
-    n = T(Tw(2)^Tw(k) - Tw(1))  # checks if T is large enough for 2^k
+    if LightGraphs.isbounded(k) && BigInt(2) ^ k - 1 > typemax(k)
+        throw(DomainError(k, "2^k - 1 not representable by type $T"))
+    end
+    n = T(2^k - 1)
 
     ne = Int(n - 1)
     fadjlist = Vector{Vector{T}}(undef, n)
