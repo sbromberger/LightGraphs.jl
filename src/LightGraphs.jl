@@ -245,6 +245,7 @@ include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
 include("Experimental/Experimental.jl")
+include("Parallel/Parallel.jl")
 
 using .LinAlg
 end # module
