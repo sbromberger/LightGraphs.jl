@@ -22,6 +22,7 @@ testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 tests = [
     "simplegraphs/runtests",
     "linalg/runtests",
+    "parallel/runtests",
     "interface",
     "core",
     "operators",
@@ -69,8 +70,7 @@ tests = [
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
-    "experimental/experimental",
-    "parallel/parallel"
+    "experimental/experimental"
 ]
 
 @testset "LightGraphs" begin
