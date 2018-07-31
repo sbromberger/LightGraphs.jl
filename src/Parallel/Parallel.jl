@@ -1,7 +1,10 @@
 module Parallel
 
-export description
+using LightGraphs
+using LightGraphs: sample
+using Distributed: @distributed
 
-description = "This module contains parallel graph algorithms."
+# export betweenness_centrality
 
+include("centrality/betweenness.jl")
 end
