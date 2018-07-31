@@ -98,7 +98,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
-yen_k_shortest_paths, parallel_multisource_dijkstra_shortest_paths,
+yen_k_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,

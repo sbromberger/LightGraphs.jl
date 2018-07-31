@@ -5,6 +5,7 @@ using LightGraphs.Parallel
 
 tests = [
     "distance",
+    "shortestpaths/dijkstra",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/radiality",
