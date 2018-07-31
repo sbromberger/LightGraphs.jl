@@ -1,6 +1,5 @@
 """
     radiality_centrality(g)
-    parallel_radiality_centrality(g)
 
 Calculate the [radiality centrality](http://www.cbmc.it/fastcent/doc/Radiality.htm)
 of a graph `g` across all vertices. Return a vector representing the centrality
@@ -30,21 +29,4 @@ function radiality_centrality(g::AbstractGraph)::Vector{Float64}
     end
     meandists = (dmtr + 1) .- (meandists)
     return meandists ./ dmtr
-end
-
-function parallel_radiality_centrality(g::AbstractGraph)::Vector{Float64}
-    n_v = nv(g)
-    vs = vertices(g)
-    n = ne(g)
-    meandists = SharedVector{Float64}(Int(n_v))
-    maxdists = SharedVector{Float64}(Int(n_v))
-
-    @sync @distributed for i = 1:n_v
-        d = dijkstra_shortest_paths(g, vs[i])
-        maxdists[i] = maximum(d.dists)
-        meandists[i] = sum(d.dists) / (n_v - 1)
-    end
-    dmtr = maximum(maxdists)
-    radialities = collect(meandists)
-    return ((dmtr + 1) .- radialities) ./ dmtr
 end

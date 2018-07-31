@@ -45,7 +45,6 @@ core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
-parallel_eccentricity, parallel_diameter, parallel_periphery, parallel_radius, parallel_center,
 
 # distance between graphs
 spectral_distance, edit_distance,
@@ -106,7 +105,7 @@ betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
-parallel_closeness_centrality, parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
+parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
