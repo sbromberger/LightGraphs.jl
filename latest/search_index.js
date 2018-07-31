@@ -1785,6 +1785,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "parallel.html#",
+    "page": "Parallel Algorithms",
+    "title": "Parallel Algorithms",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "parallel.html#Parallel-Graph-Algorithms-1",
+    "page": "Parallel Algorithms",
+    "title": "Parallel Graph Algorithms",
+    "category": "section",
+    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = Graph(10)\nv = 1\npaths = Parallel.dijkstra_shortest_paths(g, v)"
+},
+
+{
     "location": "contributing.html#",
     "page": "Contributing",
     "title": "Contributing",
