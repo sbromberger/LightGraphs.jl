@@ -1,6 +1,5 @@
 @testset "Parallel.Betweenness" begin
 
-    print("in parallel betweenness tests")
     s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
     s1 = SimpleGraph(s2)

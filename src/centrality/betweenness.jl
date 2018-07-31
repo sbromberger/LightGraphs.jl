@@ -5,8 +5,6 @@
 """
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
-    parallel_betweenness_centrality(g[, vs])
-    parallel_betweenness_centrality(g, k)
 
 Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
 of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`

@@ -4,7 +4,6 @@ function betweenness_centrality(g::AbstractGraph,
     normalize=true,
     endpoints=false)::Vector{Float64}
 
-    print("in parallel betweenness")
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
