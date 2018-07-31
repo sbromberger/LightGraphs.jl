@@ -16,3 +16,12 @@ Note that after `import`ing or `using` `LightGraphs.Parallel`, you must fully qu
 
 The following is a current list of parallel algorithms:
 - `Parallel.betweenness_centrality`
+- `Parallel.closeness_centrality`
+- `Parallel.radiality_centrality`
+- `Parallel.stress_centrality`
+- `Parallel.center`
+- `Parallel.diameter`
+- `Parallel.eccentricity`
+- `Parallel.radius`
+
+
