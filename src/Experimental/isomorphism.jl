@@ -512,10 +512,6 @@ Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
 function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblemType; 
              vertex_relation::Union{Nothing, Function}=nothing, 
              edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractSimpleGraph}
-    if has_self_loops(g1) || has_self_loops(g2)
-        throw(ArgumentError("vf2 does not support self-loops at the moment"))
-    end
-
     if nv(g1) < nv(g2) || (problemtype == IsomorphismProblem && nv(g1) != nv(g2))
         return 
     end
@@ -534,12 +530,12 @@ Check whether two vertices of G₁ and G₂ can be matched. Used by [`vf2match!`
 function vf2check_feasibility(u, v, state::VF2State, problemtype,
                               vertex_relation::Union{Nothing, Function},
                               edge_relation::Union{Nothing, Function})
-    # TODO handle self-loops
     @inline function vf2rule_pred(u, v, state::VF2State, problemtype)
         if problemtype != SubGraphIsomorphismProblem
             @inbounds for u2 in inneighbors(state.g1, u)
                 if state.core_1[u2] != 0
                     found = false
+                    # TODO can probably be replaced with has_edge for better performance
                     for v2 in inneighbors(state.g2, v)
                         if state.core_1[u2] == v2
                             found = true
@@ -707,12 +703,24 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
         return count1 >= count2
     end
 
+    @inline function vf2rule_self_loops(u, v, state, problemtype)
+        u_selflooped = has_edge(state.g1, u, u)
+        v_selflooped = has_edge(state.g2, v, v)
+
+        if problemtype == SubGraphIsomorphismProblem
+            return u_selflooped || !v_selflooped
+        end
+        return u_selflooped == v_selflooped
+    end
+
     syntactic_feasability = vf2rule_pred(u, v, state, problemtype) && 
                             vf2rule_succ(u, v, state, problemtype) && 
                             vf2rule_in(u, v, state, problemtype)   && 
                             vf2rule_out(u, v, state, problemtype)  && 
-                            vf2rule_new(u, v, state, problemtype)
+                            vf2rule_new(u, v, state, problemtype)  &&
+                            vf2rule_self_loops(u, v, state, problemtype)
     syntactic_feasability || return false
+
 
     if vertex_relation != nothing
         vertex_relation(u, v) || return false
@@ -817,7 +825,7 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
     # by an edge going out of the set M(s) of already matched vertices
     found_pair = false
     v = 0
-     @inbounds for j = 1:n2
+    @inbounds for j = 1:n2
         if state.out_2[j] != 0 && state.core_2[j] == 0
             v = j
             break

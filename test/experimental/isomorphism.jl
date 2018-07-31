@@ -120,10 +120,22 @@ end
     @test_throws ArgumentError count_induced_subgraphiso(g, g, alg=:some_nonsense)
     @test_throws ArgumentError all_induced_subgraphiso(g, g, alg=:some_nonsense)
 
-    # Test if vf2 returns an error if a graph has self-loops
-    # TODO remove when vf2 can handle self-loops
-    gs = SimpleGraph(1)
-    add_edge!(gs, 1, 1)
-    @test_throws ArgumentError has_iso(gs, gs, alg=:vf2)
+    # Test for correct handling of self-loops
+    g1 = SimpleGraph(1)
+    add_edge!(g1, 1, 1)
+    g2 = SimpleGraph(1)
+    @test has_iso(g1, g1) == true
+    @test has_iso(g1, g2) == false
+    @test has_iso(g2, g1) == false
+    @test has_iso(g1, g1) == true
 
+    @test has_induced_subgraphiso(g1, g1) == true
+    @test has_induced_subgraphiso(g1, g2) == false
+    @test has_induced_subgraphiso(g2, g1) == false
+    @test has_induced_subgraphiso(g2, g2) == true
+
+    @test has_subgraphiso(g1, g1) == true
+    @test has_subgraphiso(g1, g2) == true
+    @test has_subgraphiso(g2, g1) == false
+    @test has_subgraphiso(g2, g2) == true
 end
