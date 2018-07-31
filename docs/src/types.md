@@ -12,6 +12,8 @@ Graphs are created using `SimpleGraph()` or `SimpleDiGraph()`; there are several
 
 Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will not raise an error. This event can be detected using the return value of `add_edge!`.
 
+Note that graphs in which the number of vertices equals or approaches the `typemax` of the underlying graph element (_e.g._, a `SimpleGraph{UInt8}` with 127 vertices) may encounter arithmetic overflow errors in some functions, which should be reported as bugs. To be safe, please ensure that your graph is sized with some spare capacity.
+
 ## AbstractGraph Type
 
 To encourage experimentation and development within the JuliaGraphs ecosystem, *LightGraphs.jl* defines the `AbstractGraph` type, which is used by libraries like [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) (for graphs with associated meta-data) and [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl) (for weighted graphs). All types that are a subset of `AbstractGraph` must implement the following functions (most of which are described in more detail in [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref)):
