@@ -70,6 +70,7 @@ tests = [
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
     "experimental/experimental"
+    "parallel/parallel"
 ]
 
 @testset "LightGraphs" begin
