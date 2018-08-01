@@ -8,7 +8,7 @@ const SubGraphIsomorphismProblem = SubGraphIsomorphismProblemType()
 const InducedSubGraphIsomorphismProblem = InducedSubGraphIsomorphismProblemType()
 
 """
-    has_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return `true` if the graph `g1` contains a vertex induced subgraph that is isomorphic to `g2`.
 
@@ -22,23 +22,23 @@ Return `true` if the graph `g1` contains a vertex induced subgraph that is isomo
 
 ### Examples
 ```doctest.jl
-julia> has_induced_subgraphiso(CompleteGraph(5), CompleteGraph(4))
+julia> has_induced_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
 true
-julia> has_induced_subgraphiso(CompleteGraph(5), CycleGraph(4))
+julia> has_induced_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
 false
 
 julia> g1 = PathDiGraph(3); color1 = [1, 1, 1]
 julia> g2 = PathDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> has_induced_subgraphiso(g1, g2)
+julia> has_induced_subgraphisomorph(g1, g2)
 true
-julia> has_induced_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> has_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
 ### See also 
-[`has_subgraphiso`](@ref), [`has_iso`](@ref), [`count_induced_subgraphiso`](@ref), [`all_induced_subgraphiso`](@ref)
+[`has_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
-function has_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
                                  edge_relation::Union{Nothing, Function}=nothing,
                                  alg=:vf2)::Bool
@@ -54,7 +54,7 @@ function has_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    has_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 
@@ -68,23 +68,23 @@ Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> has_subgraphiso(CompleteGraph(5), CompleteGraph(4))
+julia> has_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
 true
-julia> has_subgraphiso(CompleteGraph(5), CycleGraph(4))
+julia> has_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
 true
 
 julia> g1 = PathDiGraph(3); color1 = [1, 1, 1]
 julia> g2 = PathDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> has_subgraphiso(g1, g2)
+julia> has_subgraphisomorph(g1, g2)
 true
-julia> has_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> has_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
 ### See also 
-[`has_induced_subgraphiso`](@ref), [`has_iso`](@ref), [`count_subgraphiso`](@ref), [`all_subgraphiso`](@ref)
+[`has_induced_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function has_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
                                  edge_relation::Union{Nothing, Function}=nothing,
                                 alg=:vf2)::Bool
@@ -100,7 +100,7 @@ function has_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    has_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return `true` if the graph `g1` is isomorphic to `g2`.
 
@@ -114,23 +114,23 @@ Return `true` if the graph `g1` is isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> has_iso(CompleteGraph(3), CycleGraph(3))
+julia> has_isomorph(CompleteGraph(3), CycleGraph(3))
 true
-julia> has_iso(CompleteGraph(4), CycleGraph(4))
+julia> has_isomorph(CompleteGraph(4), CycleGraph(4))
 false
 
 julia> g1 = PathDiGraph(4); color1 = [1, 2, 1, 1]
 julia> g2 = PathDiGraph(4); color2 = [1, 2, 2, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> has_iso(g1, g2)
+julia> has_isomorph(g1, g2)
 true
-julia> has_iso(g1, g2, vertex_relation=color_rel)
+julia> has_isomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
 ### See also 
-[`has_induced_subgraphiso`](@ref), [`has_subgraphiso`](@ref), [`count_subgraphiso`](@ref), [`all_subgraphiso`](@ref)
+[`has_induced_subgraphisomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function has_iso(g1::AbstractGraph, g2::AbstractGraph;
+function has_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                          vertex_relation::Union{Nothing, Function}=nothing,
                          edge_relation::Union{Nothing, Function}=nothing,
                          alg=:vf2)::Bool
@@ -147,7 +147,7 @@ function has_iso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    count_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return the number of vertex induced subgraphs of the graph `g1` that are isomorphic to `g2`.
 
@@ -161,23 +161,23 @@ Return the number of vertex induced subgraphs of the graph `g1` that are isomorp
 
 ### Examples
 ```doctest.jl
-julia> count_induced_subgraphiso(CompleteGraph(5), CompleteGraph(4))
+julia> count_induced_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
 120
-julia> count_induced_subgraphiso(CompleteGraph(5), CycleGraph(4))
+julia> count_induced_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
 0
 
 julia> g1 = PathGraph(3); color1 = [1, 1, 2]
 julia> g2 = PathGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> count_induced_subgraphiso(g1, g2)
+julia> count_induced_subgraphisomorph(g1, g2)
 2
-julia> count_induced_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> count_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1
 ```
 ### See also 
-[`count_subgraphiso`](@ref), [`count_iso`](@ref), [`has_induced_subgraphiso`](@ref), [`all_induced_subgraphiso`](@ref)
+[`count_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
-function count_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                    vertex_relation::Union{Nothing, Function}=nothing,
                                    edge_relation::Union{Nothing, Function}=nothing,
                                    alg=:vf2)::Int
@@ -194,7 +194,7 @@ function count_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    count_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 
@@ -208,23 +208,23 @@ Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> count_subgraphiso(CompleteGraph(5), CompleteGraph(4))
+julia> count_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
 120
-julia> count_subgraphiso(CompleteGraph(5), CycleGraph(4))
+julia> count_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
 120
 
 julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
 julia> g2 = SimpleDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> count_subgraphiso(g1, g2)
+julia> count_subgraphisomorph(g1, g2)
 6
-julia> count_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> count_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 2
 ```
 ### See also 
-[`count_induced_subgraphiso`](@ref), [`count_iso`](@ref), [`has_subgraphiso`](@ref), [`all_subgraphiso`](@ref)
+[`count_induced_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function count_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                    vertex_relation::Union{Nothing, Function}=nothing,
                                    edge_relation::Union{Nothing, Function}=nothing,
                                    alg=:vf2)::Int
@@ -239,7 +239,7 @@ function count_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    count_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return the number of isomorphism from graph `g1` to `g2`.
 
@@ -253,23 +253,23 @@ Return the number of isomorphism from graph `g1` to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> count_iso(CycleGraph(5), CycleGraph(5))
+julia> count_isomorph(CycleGraph(5), CycleGraph(5))
 10
-julia> count_iso(CompleteGraph(5), CycleGraph(5))
+julia> count_isomorph(CompleteGraph(5), CycleGraph(5))
 0
 
 julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
 julia> g2 = CycleDiGraph(3); color2 = [1, 1, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> count_iso(g1, g2)
+julia> count_isomorph(g1, g2)
 3
-julia> count_iso(g1, g2, vertex_relation=color_rel)
+julia> count_isomorph(g1, g2, vertex_relation=color_rel)
 0
 ```
 ### See also 
-[`count_induced_subgraphiso`](@ref), [`count_subgraphiso`](@ref), [`has_iso`](@ref), [`all_iso`](@ref)
+[`count_induced_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`all_isomorph`](@ref)
 """
-function count_iso(g1::AbstractGraph, g2::AbstractGraph;
+function count_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                            vertex_relation::Union{Nothing, Function}=nothing,
                            edge_relation::Union{Nothing, Function}=nothing,
                            alg=:vf2)::Int
@@ -284,7 +284,7 @@ function count_iso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    all_induced_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return all isomoprhism from vertex induced subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -301,7 +301,7 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_induced_subgraphiso(PathGraph(3), SimpleGraph(2)) |> collect
+julia> all_induced_subgraphisomorph(PathGraph(3), SimpleGraph(2)) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (3, 2)]
  [(3, 1), (1, 2)]
@@ -309,18 +309,18 @@ julia> all_induced_subgraphiso(PathGraph(3), SimpleGraph(2)) |> collect
 julia> g1 = PathDiGraph(3); color1 = [1, 1, 2]
 julia> g2 = PathDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> all_induced_subgraphiso(g1, g2) |> collect
+julia> all_induced_subgraphisomorph(g1, g2) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
  [(2, 1), (3, 2)]
-julia> all_induced_subgraphiso(g1, g2, vertex_relation=color_rel) |> collect
+julia> all_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel) |> collect
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
 ```
 ### See also 
-[`all_subgraphiso`](@ref), [`all_iso`](@ref), [`has_induced_subgraphiso`](@ref), [`count_induced_subgraphiso`](@ref)
+[`all_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`count_induced_subgraphisomorph`](@ref)
 """
-function all_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
                                  edge_relation::Union{Nothing, Function}=nothing,
                                  alg=:vf2)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
@@ -339,7 +339,7 @@ function all_induced_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    all_subgraphiso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return all isomorphism from  subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -356,7 +356,7 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_subgraphiso(PathGraph(3), PathGraph(2)) |> collect
+julia> all_subgraphisomorph(PathGraph(3), PathGraph(2)) |> collect
 4-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
  [(2, 1), (1, 2)]
@@ -366,18 +366,18 @@ julia> all_subgraphiso(PathGraph(3), PathGraph(2)) |> collect
 julia> g1 = PathDiGraph(3); color1 = [1, 1, 2]
 julia> g2 = PathDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> all_subgraphiso(g1, g2) |> collect
+julia> all_subgraphisomorph(g1, g2) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
  [(2, 1), (3, 2)]
-julia> all_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(2, 1), (3, 2)]
 ```
 ### See also 
-[`all_induced_subgraphiso`](@ref), [`all_iso`](@ref), [`has_subgraphiso`](@ref), [`count_subgraphiso`](@ref)
+[`all_induced_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref)
 """
-function all_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
+function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                          vertex_relation::Union{Nothing, Function}=nothing,
                          edge_relation::Union{Nothing, Function}=nothing,
                          alg=:vf2)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
@@ -397,7 +397,7 @@ function all_subgraphiso(g1::AbstractGraph, g2::AbstractGraph;
 end
 
 """
-    all_iso(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return all isomorphism from `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -414,7 +414,7 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_iso(StarGraph(4), StarGraph(4)) |> collect
+julia> all_isomorph(StarGraph(4), StarGraph(4)) |> collect
 6-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2), (3, 3), (4, 4)]
  [(1, 1), (2, 2), (4, 3), (3, 4)]
@@ -426,19 +426,19 @@ julia> all_iso(StarGraph(4), StarGraph(4)) |> collect
 julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
 julia> g2 = CycleDiGraph(3); color2 = [2, 1, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
-julia> all_iso(g1, g2) |> collect
+julia> all_isomorph(g1, g2) |> collect
 3-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2), (3, 3)]
  [(2, 1), (3, 2), (1, 3)]
  [(3, 1), (1, 2), (2, 3)]
-julia> all_subgraphiso(g1, g2, vertex_relation=color_rel)
+julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(3, 1), (1, 2), (2, 3)]
 ```
 ### See also 
-[`all_induced_subgraphiso`](@ref), [`all_subgraphiso`](@ref), [`has_iso`](@ref), [`count_iso`](@ref)
+[`all_induced_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_isomorph`](@ref)
 """
-function all_iso(g1::AbstractGraph, g2::AbstractGraph;
+function all_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                  vertex_relation::Union{Nothing, Function}=nothing,
                  edge_relation::Union{Nothing, Function}=nothing,
                  alg=:vf2)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
