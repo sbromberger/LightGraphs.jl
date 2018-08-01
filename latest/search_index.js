@@ -1033,54 +1033,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "pathing.html#LightGraphs.a_star",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.a_star",
-    "category": "function",
-    "text": "a_star(g, s, t[, distmx][, heuristic])\n\nReturn a vector of edges comprising the shortest path between vertices s and t using the A* search algorithm. An optional heuristic function and edge distance matrix may be supplied. If missing, the distance matrix is set to LightGraphs.DefaultDistance and the heuristic is set to n -> 0.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.dijkstra_shortest_paths",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.dijkstra_shortest_paths",
-    "category": "function",
-    "text": "dijkstra_shortest_paths(g, srcs, distmx=weights(g));\n\nPerform Dijkstra\'s algorithm on a graph, computing shortest distances between srcs and all other vertices. Return a LightGraphs.DijkstraState that contains various traversal information.\n\nOptional Arguments\n\nallpaths=false: If true, returns a LightGraphs.DijkstraState that keeps track of all\n\npredecessors of a given vertex.\n\nPerformance\n\nUse a matrix type for distmx that is implemented in row-major matrix format  for better run-time. Eg. Set the type of distmx to Transpose{Int64, SparseMatrixCSC{Int64,Int64}}  instead of SparseMatrixCSC{Int64,Int64}.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.bellman_ford_shortest_paths",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.bellman_ford_shortest_paths",
-    "category": "function",
-    "text": "bellman_ford_shortest_paths(g, s, distmx=weights(g))\nbellman_ford_shortest_paths(g, ss, distmx=weights(g))\n\nCompute shortest paths between a source s (or list of sources ss) and all other nodes in graph g using the Bellman-Ford algorithm. Return a LightGraphs.BellmanFordState with relevant traversal information.\n\nOptional Arguments\n\nparallel=false: If true, the algorithm runs in parallel.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.floyd_warshall_shortest_paths",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.floyd_warshall_shortest_paths",
-    "category": "function",
-    "text": "floyd_warshall_shortest_paths(g, distmx=weights(g); parallel=false)\n\nUse the Floyd-Warshall algorithm to compute the shortest paths between all pairs of vertices in graph g using an optional distance matrix distmx. Return a LightGraphs.FloydWarshallState with relevant traversal information.\n\nPerformance\n\nSpace complexity is on the order of mathcalO(V^2).\n\nOptional Arguments\n\nparallel=false: If true, the algorithm runs in parallel.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.yen_k_shortest_paths",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.yen_k_shortest_paths",
-    "category": "function",
-    "text": "yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);\n\nPerform Yen\'s algorithm on a graph, computing k-shortest distances between source and target other vertices. Return a YenState that contains distances and paths.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.parallel_multisource_dijkstra_shortest_paths",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.parallel_multisource_dijkstra_shortest_paths",
-    "category": "function",
-    "text": "parallel_multisource_dijkstra_shortest_paths(g, sources=vertices(g), distmx=weights(g))\n\nCompute the shortest paths between all pairs of vertices in graph g by running [dijkstra_shortest_paths] for every vertex and using an optional list of source vertex sources and an optional distance matrix distmx. Return a MultipleDijkstraState with relevant traversal information.\n\n\n\n\n\n"
-},
-
-{
     "location": "pathing.html#General-properties-of-shortest-path-algorithms-1",
     "page": "Path and Traversal",
     "title": "General properties of shortest path algorithms",
@@ -1205,7 +1157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.center",
     "category": "method",
-    "text": "center(eccentricities)\ncenter(g, distmx=weights(g))\nparallel_center(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s radius (that is, the set of vertices with the smallest eccentricity).\n\n\n\n\n\n"
+    "text": "center(eccentricities)\ncenter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s radius (that is, the set of vertices with the smallest eccentricity).\n\n\n\n\n\n"
 },
 
 {
@@ -1213,7 +1165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.diameter",
     "category": "method",
-    "text": "diameter(eccentricities)\ndiameter(g, distmx=weights(g))\nparallel_diameter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the maximum eccentricity of the graph.\n\n\n\n\n\n"
+    "text": "diameter(eccentricities)\ndiameter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the maximum eccentricity of the graph.\n\n\n\n\n\n"
 },
 
 {
@@ -1221,7 +1173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.eccentricity",
     "category": "method",
-    "text": "eccentricity(g[, v][, distmx])\neccentricity(g[, vs][, distmx])\nparallel_eccentricity(g[, vs][, distmx])\n\nReturn the eccentricity[ies] of a vertex / vertex list v or a set of vertices  vs defaulting to the entire graph. An optional matrix of edge distances may be supplied; if missing, edge distances default to 1.\n\nThe eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.\n\nThe output is either a single float (when a single vertex is provided) or a vector of floats corresponding to the vertex vector. If no vertex vector is provided, the vector returned corresponds to each vertex in the graph.\n\nPerformance\n\nBecause this function must calculate shortest paths for all vertices supplied in the argument list, it may take a long time.\n\nImplementation Notes\n\nThe eccentricity vector returned by eccentricity() may be used as input for the rest of the distance measures below. If an eccentricity vector is provided, it will be used. Otherwise, an eccentricity vector will be calculated for each call to the function. It may therefore be more efficient to calculate, store, and pass the eccentricities if multiple distance measures are desired.\n\nAn infinite path length is represented by the typemax of the distance matrix.\n\n\n\n\n\n"
+    "text": "eccentricity(g[, v][, distmx])\neccentricity(g[, vs][, distmx])\n\nReturn the eccentricity[ies] of a vertex / vertex list v or a set of vertices  vs defaulting to the entire graph. An optional matrix of edge distances may be supplied; if missing, edge distances default to 1.\n\nThe eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.\n\nThe output is either a single float (when a single vertex is provided) or a vector of floats corresponding to the vertex vector. If no vertex vector is provided, the vector returned corresponds to each vertex in the graph.\n\nPerformance\n\nBecause this function must calculate shortest paths for all vertices supplied in the argument list, it may take a long time.\n\nImplementation Notes\n\nThe eccentricity vector returned by eccentricity() may be used as input for the rest of the distance measures below. If an eccentricity vector is provided, it will be used. Otherwise, an eccentricity vector will be calculated for each call to the function. It may therefore be more efficient to calculate, store, and pass the eccentricities if multiple distance measures are desired.\n\nAn infinite path length is represented by the typemax of the distance matrix.\n\n\n\n\n\n"
 },
 
 {
@@ -1237,7 +1189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.periphery",
     "category": "method",
-    "text": "periphery(eccentricities)\nperiphery(g, distmx=weights(g))\nparallel_periphery(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s diameter (that is, the set of vertices with the largest eccentricity).\n\n\n\n\n\n"
+    "text": "periphery(eccentricities)\nperiphery(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s diameter (that is, the set of vertices with the largest eccentricity).\n\n\n\n\n\n"
 },
 
 {
@@ -1245,7 +1197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.radius",
     "category": "method",
-    "text": "radius(eccentricities)\nradius(g, distmx=weights(g))\nparallel_radius(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the minimum eccentricity of the graph.\n\n\n\n\n\n"
+    "text": "radius(eccentricities)\nradius(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the minimum eccentricity of the graph.\n\n\n\n\n\n"
 },
 
 {
@@ -1341,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.stress_centrality",
     "category": "function",
-    "text": "stress_centrality(g[, vs])\nstress_centrality(g, k)\nparallel_stress_centrality(g[, vs])\nparallel_stress_centrality(g, k)\n\nCalculate the stress centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe stress centrality of a vertex n is defined as the number of shortest paths passing through n.\n\nReferences\n\nBarabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell\'s functional organization. Nat Rev Genet 5 (2004) 101-113\nShimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.\n\n\n\n\n\n"
+    "text": "stress_centrality(g[, vs])\nstress_centrality(g, k)\n\nCalculate the stress centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe stress centrality of a vertex n is defined as the number of shortest paths passing through n.\n\nReferences\n\nBarabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell\'s functional organization. Nat Rev Genet 5 (2004) 101-113\nShimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.\n\n\n\n\n\n"
 },
 
 {
@@ -1349,7 +1301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.radiality_centrality",
     "category": "method",
-    "text": "radiality_centrality(g)\nparallel_radiality_centrality(g)\n\nCalculate the radiality centrality of a graph g across all vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe radiality centrality R_u of a vertex u is defined as R_u = fracD_g + 1 - fracsum_vVd_uvV-1D_g\n\nwhere D_g is the diameter of the graph and d_uv is the  length of the shortest path from u to v.\n\nReferences\n\nBrandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177\n\n\n\n\n\n"
+    "text": "radiality_centrality(g)\n\nCalculate the radiality centrality of a graph g across all vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe radiality centrality R_u of a vertex u is defined as R_u = fracD_g + 1 - fracsum_vVd_uvV-1D_g\n\nwhere D_g is the diameter of the graph and d_uv is the  length of the shortest path from u to v.\n\nReferences\n\nBrandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177\n\n\n\n\n\n"
 },
 
 {
@@ -1797,7 +1749,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Parallel Algorithms",
     "title": "Parallel Graph Algorithms",
     "category": "section",
-    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = PathGraph(10)\nbc = Parallel.betweenness_centrality(g)Note that after importing or using LightGraphs.Parallel, you must fully qualify the version of the function you wish to use (using, e.g., LightGraphs.betweenness_centrality(g) for the sequential version and Parallel.betweenness_centrality(g) for the parallel version.)The following is a current list of parallel algorithms:Parallel.betweenness_centrality"
+    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = PathGraph(10)\nbc = Parallel.betweenness_centrality(g)The arguments to parallel versions of functions match as closely as possible their serial versions  with potential addition default or keyword arguments to control parallel execution.  One exception is that for algorithms that cannot be meaningfully parallelized for  certain types of arguments a MethodError will be raised. For example, dijkstra_shortest_paths works for either a single or multiple source argument, but since the parallel version is slower when given only a single source, it will raise a MethodError.g = Graph(10)\n# these work\nLightGraphs.dijkstra_shortest_paths(g,1)\nLightGraphs.dijkstra_shortest_paths(g, [1,2])\nParallel.dijkstra_shortest_paths(g, [1,2])\n# this doesn\'t\nParallel.dijkstra_shortest_paths(g,1)Note that after importing or using LightGraphs.Parallel, you must fully qualify the version of the function you wish to use (using, e.g., LightGraphs.betweenness_centrality(g) for the sequential version and Parallel.betweenness_centrality(g) for the parallel version.)The following is a current list of parallel algorithms:Parallel.betweenness_centrality\nParallel.closeness_centrality\nParallel.radiality_centrality\nParallel.stress_centrality\nParallel.center\nParallel.diameter\nParallel.eccentricity\nParallel.radius"
 },
 
 {
