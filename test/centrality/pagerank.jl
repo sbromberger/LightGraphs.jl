@@ -30,12 +30,19 @@
     g6 = SimpleGraph(4)
     add_edge!(g6, 1, 2); add_edge!(g6, 2, 3); add_edge!(g6, 1, 3); add_edge!(g6, 3, 4)
     for α in [0.75, 0.85]
+
         for g in testdigraphs(g5)
             @test pagerank(g)[3] ≈ 0.318 atol = 0.001
             @test length(@inferred(pagerank(g))) == nv(g)
             @test_throws ErrorException pagerank(g, 2)
             @test_throws ErrorException pagerank(g, α, 2)
             @test isapprox(pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
+
+            @test parallel_pagerank(g)[3] ≈ 0.318 atol = 0.001
+            @test length(@inferred(parallel_pagerank(g))) == nv(g)
+            @test_throws ErrorException parallel_pagerank(g, 2)
+            @test_throws ErrorException parallel_pagerank(g, α, 2)
+            @test isapprox(parallel_pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
 
         for g in testgraphs(g6)
@@ -43,6 +50,11 @@
             @test_throws ErrorException pagerank(g, 2)
             @test_throws ErrorException pagerank(g, α, 2)
             @test isapprox(pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
+
+            @test length(@inferred(parallel_pagerank(g))) == nv(g)
+            @test_throws ErrorException parallel_pagerank(g, 2)
+            @test_throws ErrorException parallel_pagerank(g, α, 2)
+            @test isapprox(parallel_pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
     end
 end

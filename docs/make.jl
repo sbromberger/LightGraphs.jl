@@ -29,6 +29,8 @@ makedocs(
         "Community Structures"              => "community.md",
         "Degeneracy"                        => "degeneracy.md",
         "Integration with other packages"   => "integration.md",
+        "Experimental Functionality"        => "experimental.md",
+        "Parallel Algorithms"               => "parallel.md",
         "Contributing"                      => "contributing.md",
         "Developer Notes"                   => "developing.md",
         "License Information"               => "license.md",
