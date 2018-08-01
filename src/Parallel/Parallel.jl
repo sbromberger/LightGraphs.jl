@@ -1,7 +1,16 @@
 module Parallel
 
-export description
+using LightGraphs
+using LightGraphs: sample, AbstractPathState, JohnsonState
+using Distributed: @distributed
+using SharedArrays: SharedMatrix, SharedVector, sdata
+import SparseArrays: sparse
 
-description = "This module contains parallel graph algorithms."
-
+include("shortestpaths/dijkstra.jl")
+include("shortestpaths/johnson.jl")
+include("centrality/betweenness.jl")
+include("centrality/closeness.jl")
+include("centrality/radiality.jl")
+include("centrality/stress.jl")
+include("distance.jl")
 end
