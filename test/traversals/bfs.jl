@@ -14,9 +14,10 @@ import LightGraphs: tree
     for g in testgraphs(g6)
         z = @inferred(gdistances(g, 1))
         t = @inferred(gdistances(g, [1, 2]))
+        w = @inferred(gdistances(g, 2))
         @test z == [0, 1, 1, 2, 2]
         @test t == [0, 0, 1, 1, 2]
-        @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
+        @test w == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
         @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
     end
 
