@@ -13,10 +13,8 @@ import LightGraphs: tree
     for g in testgraphs(g6)
         t1 = @inferred(gdistances(g, 2))
         t2 = @inferred(gdistances(g, [1, 2]))
-        t3 = @inferred(gdistances(g, []))
         @test t1 == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
         @test t2 == [0, 0, 1, 1, 2]
-        @test t3 == fill(typemax(eltype(g)), 5)
     end
 
     gx = SimpleGraph(5)
