@@ -92,7 +92,7 @@ the best of the algorithms built into Julia Base. However, passing a `RadixSort`
 [SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
 significant performance improvements on larger graphs.
 """
-function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where T
+function gdistances!(g::AbstractGraph{T}, sources::AbstractVector{T}, vert_level::AbstractVector{T}; sort_alg = QuickSort) where T
     n = nv(g)
     visited = falses(n)
     n_level = one(T)
@@ -100,7 +100,7 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSo
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
-    @inbounds for s in source
+    @inbounds for s in sources
         vert_level[s] = zero(T)
         visited[s] = true
         push!(cur_level, s)
@@ -138,7 +138,8 @@ the best of the algorithms built into Julia Base. However, passing a `RadixSort`
 [SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
 significant performance improvements on larger graphs.
 """
-gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg = sort_alg)
+gdistances(g::AbstractGraph{T}, sources::AbstractVector; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, T.(sources), fill(typemax(T), nv(g)); sort_alg = sort_alg)
+gdistances(g::AbstractGraph{T}, source::Int; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, [T(source)], fill(typemax(T), nv(g)); sort_alg = sort_alg)
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
