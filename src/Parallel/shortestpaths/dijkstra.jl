@@ -20,7 +20,6 @@ function dijkstra_shortest_paths(g::AbstractGraph{U},
     sources::AbstractVector=vertices(g),
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U
 
-    info("in Parallel.dijkstra_shortest_paths")
     n_v = nv(g)
     r_v = length(sources)
 
