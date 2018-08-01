@@ -43,7 +43,7 @@ function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
-    for s in source
+    @inbounds for s in source
         visited[s] = true
         push!(cur_level, s)
         parents[s] = s
