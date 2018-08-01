@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "AbstractGraph Type",
     "category": "section",
-    "text": "To encourage experimentation and development within the JuliaGraphs ecosystem, LightGraphs.jl defines the AbstractGraph type, which is used by libraries like MetaGraphs.jl (for graphs with associated meta-data) and SimpleWeightedGraphs.jl (for weighted graphs). All types that are a subset of AbstractGraph must implement the following functions (most of which are described in more detail in Accessing Graph Properties and Making and Modifying Graphs):Order = [:type, :function]\nPages   = [\"types.md\"]"
+    "text": "LightGraphs.jl is structured around a few abstract types developers can base their types on. See Developing Alternate Graph Types for the minimal methods to implement.Order = [:type]\nPages   = [\"types.md\"]To encourage experimentation and development within the JuliaGraphs ecosystem, LightGraphs.jl defines the AbstractGraph type, which is used by libraries like MetaGraphs.jl (for graphs with associated meta-data) and SimpleWeightedGraphs.jl (for weighted graphs). All types that are a subset of AbstractGraph must implement the following functions (most of which are described in more detail in Accessing Graph Properties and Making and Modifying Graphs):Order = [:function]\nPages   = [\"types.md\"]"
 },
 
 {
@@ -201,9 +201,9 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "types.html#Full-Docs-for-AbstractGraph-Functions-1",
+    "location": "types.html#Full-Docs-for-AbstractGraph-types-and-functions-1",
     "page": "LightGraphs Types",
-    "title": "Full Docs for AbstractGraph Functions",
+    "title": "Full Docs for AbstractGraph types and functions",
     "category": "section",
     "text": "Modules = [LightGraphs]\nPages   = [\"interface.jl\"]\nPrivate = false"
 },
@@ -1813,7 +1813,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Developer Notes",
     "title": "Developing Alternate Graph Types",
     "category": "section",
-    "text": "This section is designed to guide developers who wish to write their own graph structures.All LightGraphs functions rely on a standard API to function. As long as your graph structure is a subtype of AbstractGraph and implements the following API functions with the given return values, all functions within the LightGraphs package should just work:edges\neltype\nhas_edge\nhas_vertex\ninneighbors\nis_directed: Note that since we use traits to determine directedness, is_directed for a CustomGraph type should have the following signatures:\nis_directed(::Type{CustomGraph})::Bool\nis_directed(g::CustomGraph)::Bool\nne\nnv\noutneighbors\nverticesIf the graph structure is designed to represent weights on edges, the weights function should also be defined. Note that the output does not necessarily have to be a dense matrix, but it must be indexable via [u, v]."
+    "text": "This section is designed to guide developers who wish to write their own graph structures.All LightGraphs functions rely on a standard API to function. As long as your graph structure is a subtype of AbstractGraph and implements the following API functions with the given return values, all functions within the LightGraphs package should just work:edges\nBase.eltype\nhas_edge\nhas_vertex\ninneighbors\nne\nnv\noutneighbors\nvertices\nis_directed: Note that since we use traits to determine directedness, is_directed for a CustomGraph type should be implemented with any of the following signatures:\nis_directed(::Type{CustomGraph})::Bool\nis_directed(g::CustomGraph)::BoolIf the graph structure is designed to represent weights on edges, the weights function should also be defined. Note that the output does not necessarily have to be a dense matrix, but it must be indexable via [u, v]."
 },
 
 {
