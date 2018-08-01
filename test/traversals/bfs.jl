@@ -11,9 +11,12 @@ import LightGraphs: tree
         @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
     end
     for g in testgraphs(g6)
-        @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
-        @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
-        @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
+        t1 = @inferred(gdistances(g, 2))
+        t2 = @inferred(gdistances(g, [1, 2]))
+        t3 = @inferred(gdistances(g, []))
+        @test t1 == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
+        @test t2 == [0, 0, 1, 1, 2]
+        @test t3 == fill(typemax(eltype(g)), 5)
     end
 
     gx = SimpleGraph(5)
@@ -62,7 +65,7 @@ import LightGraphs: tree
     for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3, 5)]
         add_edge!(gx, i, j)
     end
-    for g in testgraphs(gx)  
+    for g in testgraphs(gx)
         @test has_path(g, 1, 5)
         @test has_path(g, 1, 2)
         @test has_path(g, 1, 5; exclude_vertices=[3])
@@ -72,11 +75,11 @@ import LightGraphs: tree
         @test has_path(g, 5, 1; exclude_vertices=[3])
         @test has_path(g, 5, 1; exclude_vertices=[4])
         @test !has_path(g, 5, 1; exclude_vertices=[3, 4])
-        
+
         # Edge cases
         @test !has_path(g, 1, 6)
-        @test !has_path(g, 6, 1)  
-        @test has_path(g, 1, 1) # inseparable 
+        @test !has_path(g, 6, 1)
+        @test has_path(g, 1, 1) # inseparable
         @test !has_path(g, 1, 2; exclude_vertices=[2])
         @test !has_path(g, 1, 2; exclude_vertices=[1])
     end
