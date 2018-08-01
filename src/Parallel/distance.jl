@@ -6,7 +6,7 @@ function eccentricity(g::AbstractGraph,
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
     @sync @distributed for i = 1:vlen
-        eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
+        eccs[i] = maximum(LightGraphs.dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
     maximum(d) == typemax(T) && warn("Infinite path length detected")

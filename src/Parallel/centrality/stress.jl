@@ -9,7 +9,7 @@ function stress_centrality(g::AbstractGraph,
     stress = @distributed (+) for s in vs
         temp_stress = zeros(Int, n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = LightGraphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
             LightGraphs._stress_accumulate_basic!(temp_stress, state, g, s)
         end
         temp_stress

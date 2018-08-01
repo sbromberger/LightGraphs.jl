@@ -6,7 +6,7 @@ function radiality_centrality(g::AbstractGraph)::Vector{Float64}
     maxdists = SharedVector{Float64}(Int(n_v))
 
     @sync @distributed for i = 1:n_v
-        d = dijkstra_shortest_paths(g, vs[i])
+        d = LightGraphs.dijkstra_shortest_paths(g, vs[i])
         maxdists[i] = maximum(d.dists)
         meandists[i] = sum(d.dists) / (n_v - 1)
     end

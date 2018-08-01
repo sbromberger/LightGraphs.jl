@@ -9,7 +9,7 @@ function closeness_centrality(g::AbstractGraph,
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dijkstra_shortest_paths(g, u, distmx).dists
+            d = LightGraphs.dijkstra_shortest_paths(g, u, distmx).dists
             δ = filter(x -> x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
