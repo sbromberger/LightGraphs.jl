@@ -7,18 +7,16 @@ All LightGraphs functions rely on a standard API to function. As long as your gr
 within the LightGraphs package should just work:
 
 - [`edges`](@ref)
-- [`eltype`](@ref)
+- [Base.eltype](https://docs.julialang.org/en/stable/stdlib/collections/#Base.eltype)
 - [`has_edge`](@ref)
 - [`has_vertex`](@ref)
 - [`inneighbors`](@ref)
-- [`is_directed`](@ref): Note that since we use traits to determine directedness, `is_directed` for a `CustomGraph` type should have the following signatures:
-  - `is_directed(::Type{CustomGraph})::Bool`
-  - `is_directed(g::CustomGraph)::Bool`
-
 - [`ne`](@ref)
 - [`nv`](@ref)
 - [`outneighbors`](@ref)
 - [`vertices`](@ref)
+- [`is_directed`](@ref): Note that since we use traits to determine directedness, `is_directed` for a `CustomGraph` type should be implemented with any of the following signatures:
+  - `is_directed(::Type{CustomGraph})::Bool`
+  - `is_directed(g::CustomGraph)::Bool`
 
 If the graph structure is designed to represent weights on edges, the [`weights`](@ref) function should also be defined. Note that the output does not necessarily have to be a dense matrix, but it must be indexable via `[u, v]`.
-
