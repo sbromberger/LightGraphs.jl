@@ -16,14 +16,21 @@ Note that graphs in which the number of vertices equals or approaches the `typem
 
 ## AbstractGraph Type
 
-To encourage experimentation and development within the JuliaGraphs ecosystem, *LightGraphs.jl* defines the `AbstractGraph` type, which is used by libraries like [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) (for graphs with associated meta-data) and [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl) (for weighted graphs). All types that are a subset of `AbstractGraph` must implement the following functions (most of which are described in more detail in [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref)):
+*LightGraphs.jl* is structured around a few abstract types developers can base their types on. See [Developing Alternate Graph Types](@ref) for the minimal methods to implement.
 
 ```@index
-Order = [:type, :function]
+Order = [:type]
 Pages   = ["types.md"]
 ```
 
-## Full Docs for AbstractGraph Functions
+To encourage experimentation and development within the JuliaGraphs ecosystem, *LightGraphs.jl* defines the `AbstractGraph` type, which is used by libraries like [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) (for graphs with associated meta-data) and [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl) (for weighted graphs). All types that are a subset of `AbstractGraph` must implement the following functions (most of which are described in more detail in [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref)):
+
+```@index
+Order = [:function]
+Pages   = ["types.md"]
+```
+
+## Full Docs for AbstractGraph types and functions
 
 ```@autodocs
 Modules = [LightGraphs]
