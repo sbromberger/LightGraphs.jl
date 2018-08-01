@@ -5,6 +5,7 @@ using SimpleTraits
 
 ### Remove the following line once #915 is closed
 using Arpack: eigs
+using Statistics: mean
 
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
@@ -105,8 +106,7 @@ betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
-parallel_betweenness_centrality, parallel_closeness_centrality,
-parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
+parallel_closeness_centrality, parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -243,6 +243,8 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("Experimental/Experimental.jl")
+include("Parallel/Parallel.jl")
 
 using .LinAlg
 end # module

@@ -199,3 +199,20 @@ function optimal_contiguous_partition(
 
     return partitions
 end
+
+"""
+    isbounded(n)
+
+Returns true if `typemax(n)` of an integer `n` exists.
+"""
+isbounded(n::Integer) = true
+isbounded(n::BigInt) = false
+
+"""
+    isbounded(T)
+
+Returns true if `typemax(T)` of a type `T <: Integer` exists.
+"""
+isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
+isbounded(::Type{BigInt}) = false
+
