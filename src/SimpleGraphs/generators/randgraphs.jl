@@ -899,7 +899,6 @@ SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
 Count the number of edges that go between each block.
 """
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
-    # info("making Q")
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
