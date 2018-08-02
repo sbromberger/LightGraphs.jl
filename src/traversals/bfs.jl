@@ -32,7 +32,7 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-bfs_parents(g::AbstractGraph, s::Integer; dir = :out) = 
+bfs_parents(g::AbstractGraph, s::Integer; dir = :out) =
     (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
 
 function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
@@ -79,7 +79,7 @@ bfs_tree(g::AbstractGraph, s::Integer; dir = :out) = tree(bfs_parents(g, s; dir 
     gdistances!(g, source, dists; sort_alg=QuickSort)
 
 Fill `dists` with the geodesic distances of vertices in `g` from source vertex (or
-collection of vertices) `source`. `dists` should be a vector of length `nv(g)` 
+collection of vertices) `source`. `dists` should be a vector of length `nv(g)`
 filled with `typemax(T)`. Return `dists`.
 
 For vertices in disconnected components the default distance is `typemax(T)`.
@@ -93,6 +93,7 @@ the best of the algorithms built into Julia Base. However, passing a `RadixSort`
 significant performance improvements on larger graphs.
 """
 function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where T
+    length(source) == 0 && return vert_level 
     n = nv(g)
     visited = falses(n)
     n_level = one(T)
@@ -145,9 +146,9 @@ gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T 
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `excluded_vertices`. 
+is in `excluded_vertices`.
 """
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
         exclude_vertices::AbstractVector = Vector{T}()) where T
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
