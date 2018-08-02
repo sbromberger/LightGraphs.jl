@@ -11,6 +11,7 @@ import LightGraphs: tree
         @test nv(z) == 4 && ne(z) == 3 && !has_edge(z, 2, 3)
     end
     for g in testgraphs(g6)
+        @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
         @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
         @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
     end
