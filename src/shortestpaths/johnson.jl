@@ -9,32 +9,29 @@ struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
 end
 
 @doc """
-    johnson_shortest_paths(g, distmx=weights(g); parallel=false)
+    johnson_shortest_paths(g, distmx=weights(g))
 
-### Implementation Notes
+
 Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
 optional distance matrix `distmx`.
+
+### Implementation Notes
 If the parameter parallel is set true, dijkstra_shortest_paths will run in parallel.
 Parallel bellman_ford_shortest_paths is currently unavailable
 Return a [`LightGraphs.JohnsonState`](@ref) with relevant
 traversal information.
 Behaviour in case of negative cycle depends on bellman_ford_shortest_paths.
 Throws NegativeCycleError() if a negative cycle is present.
+
 ### Performance
 Complexity: O(|V|*|E|)
 If distmx is not mutable or of type, DefaultDistance than a sparse matrix will be produced using distmx.
 In the case that distmx is immutable, to reduce memory overhead,  
 if edge (a, b) does not exist in g then distmx[a, b] should be set to 0.
-### Dependencies from LightGraphs
-bellman_ford_shortest_paths
-parallel_multisource_dijkstra_shortest_paths
-dijkstra_shortest_paths
 """
 function johnson_shortest_paths(g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g);
-    parallel::Bool=false
-) where T <: Real where U <: Integer
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -52,18 +49,13 @@ function johnson_shortest_paths(g::AbstractGraph{U},
         end
     end
 
-    if !parallel
-        dists = Matrix{T}(undef, nvg, nvg)
-        parents = Matrix{U}(undef, nvg, nvg)
-        for v in vertices(g)
-            dijk_state = dijkstra_shortest_paths(g, v, distmx)
-            dists[v, :] = dijk_state.dists
-            parents[v, :] = dijk_state.parents
-        end
-    else
-        dijk_state = parallel_multisource_dijkstra_shortest_paths(g, vertices(g), distmx)
-        dists = dijk_state.dists
-        parents = dijk_state.parents
+
+    dists = Matrix{T}(undef, nvg, nvg)
+    parents = Matrix{U}(undef, nvg, nvg)
+    for v in vertices(g)
+        dijk_state = dijkstra_shortest_paths(g, v, distmx)
+        dists[v, :] = dijk_state.dists
+        parents[v, :] = dijk_state.parents
     end
 
     broadcast!(-, dists, dists, wt_transform)

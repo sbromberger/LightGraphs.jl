@@ -1,8 +1,6 @@
 """
     stress_centrality(g[, vs])
     stress_centrality(g, k)
-    parallel_stress_centrality(g[, vs])
-    parallel_stress_centrality(g, k)
 
 Calculate the [stress centrality](http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.7/#stressDist)
 of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
@@ -31,31 +29,6 @@ end
 
 stress_centrality(g::AbstractGraph, k::Integer) =
     stress_centrality(g, sample(vertices(g), k))
-
-
-function parallel_stress_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g))::Vector{Int}
-
-    n_v = nv(g)
-    k = length(vs)
-    isdir = is_directed(g)
-
-    # Parallel reduction
-
-    stress = @distributed (+) for s in vs
-        temp_stress = zeros(Int, n_v)
-        if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
-            _stress_accumulate_basic!(temp_stress, state, g, s)
-        end
-        temp_stress
-    end
-    return stress
-end
-
-parallel_stress_centrality(g::AbstractGraph, k::Integer) =
-    parallel_stress_centrality(g, sample(vertices(g), k))
-
 
 function _stress_accumulate_basic!(stress::Vector{Int},
     state::DijkstraState,

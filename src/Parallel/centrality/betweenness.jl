@@ -13,7 +13,7 @@ function betweenness_centrality(g::AbstractGraph,
     betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+            state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
             if endpoints
                 LightGraphs._accumulate_endpoints!(temp_betweenness, state, g, s)
             else
