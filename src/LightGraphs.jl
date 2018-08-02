@@ -45,7 +45,6 @@ core_number, k_core, k_shell, k_crust, k_corona,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
-parallel_eccentricity, parallel_diameter, parallel_periphery, parallel_radius, parallel_center,
 
 # distance between graphs
 spectral_distance, edit_distance,
@@ -99,14 +98,14 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
-yen_k_shortest_paths, parallel_multisource_dijkstra_shortest_paths,
+yen_k_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
-parallel_closeness_centrality, parallel_stress_centrality, parallel_radiality_centrality, parallel_pagerank,
+parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
