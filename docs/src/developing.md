@@ -15,7 +15,7 @@ within the LightGraphs package should just work:
 - [`nv`](@ref)
 - [`outneighbors`](@ref)
 - [`vertices`](@ref)
-- [`is_directed`](@ref): Note that since we use traits to determine directedness, `is_directed` for a `CustomGraph` type should be implemented with any of the following signatures:
+- [`is_directed`](@ref): Note that since we use traits to determine directedness, `is_directed` for a `CustomGraph` type should be implemented with **both** of the following signatures:
   - `is_directed(::Type{CustomGraph})::Bool`
   - `is_directed(g::CustomGraph)::Bool`
 
