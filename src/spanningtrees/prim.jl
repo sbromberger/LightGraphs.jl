@@ -46,43 +46,36 @@ function parallel_prim_mst end
     nvg = nv(g)
 
     bpq = BatchPriorityQueue(nvg, T)
-    mst = Vector{Edge}()
-    sizehint!(mst, nvg - 1)
-
-    visited = zeros(Bool, nvg)
-    wt = fill(typemax(T), nvg)
     finished = zeros(Bool, nvg)
+    visited = zeros(Bool, nvg)
+    wt = fill(typemax(T), nvg) #Faster access time
+    parents = zeros(U, nv(g))
 
-    enqueue!(bpq, Pair{U, T}(one(U), zero(T)))
+
+    enqueue!(bpq, Pair{U, T}(one(U), typemin(T)))
     visited[1] = true
-    wt[1] = 0
-    finished[1] = true
+    wt[1] = typemin(T)
 
-    edge_partner = zeros(U, nv(g))
 
     update_best_ind(bpq)
     while !isempty(bpq)
         v = dequeue!(bpq)
-        w = edge_partner[v]
 
         finished[v] = true
 
-        if has_vertex(g, w)
-            push!(mst, Edge(w, v))
-        end
-
+       
         for u in neighbors(g, v)
 
             finished[u] && continue
 
             if !visited[u]
                 enqueue!(bpq, Pair{U, T}(u, distmx[u, v]))
-                edge_partner[u] = v
                 visited[u] = true
+                parents[u] = v
             else
                 if wt[u] > distmx[u, v]
                     wt[u] = distmx[u, v]
-                    edge_partner[u] = v
+                    parents[u] = v
                     queue_decrease_key!(bpq, u)
                 end 
             end
@@ -91,5 +84,5 @@ function parallel_prim_mst end
         update_best_ind(bpq)
     end
 
-    return mst
+    return [Edge{U}(parents[v], v) for v in vertices(g) if parents[v] != 0]
 end

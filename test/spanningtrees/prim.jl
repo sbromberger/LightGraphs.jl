@@ -1,4 +1,15 @@
 @testset "Prim" begin
+
+    function get_wt(mst, distmx::AbstractMatrix) where U<:Integer
+        wt = zero(eltype(distmx))
+
+        for e in mst
+            wt += distmx[e.src, e.dst]
+        end
+        return wt
+    end
+
+
     g4 = CompleteGraph(4)
 
     distmx = [
@@ -12,7 +23,9 @@
     for g in testgraphs(g4)
         # Testing Prim's algorithm
         mst = @inferred(prim_mst(g, distmx))
+        p_mst = @inferred(parallel_prim_mst(g, distmx))
         @test mst == vec_mst
+        @test get_wt(p_mst, distmx) == get_wt(mst, distmx)
     end
 
     #second test

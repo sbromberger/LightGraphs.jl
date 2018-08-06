@@ -87,7 +87,6 @@ function dijkstra_shortest_paths(g::AbstractGraph,
                 end
             end
         end
-        println(length(H))
     end
 
     if trackvertices
@@ -151,8 +150,8 @@ function parallel_multisource_dijkstra_shortest_paths(g::AbstractGraph{U},
 end
 
 export parallel_dijkstra_shortest_paths
-function parallel_dijkstra_shortest_paths(g::AbstractGraph,
-    srcs::Vector{U},
+function parallel_dijkstra_shortest_paths(g::AbstractGraph{U},
+    srcs::Vector,
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false
@@ -173,7 +172,7 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
 
     H = BatchPriorityQueue(nvg, T)
     for s in srcs
-        enqueue!(H, Pair{U, T}(s, zero(T)))
+        enqueue!(H, Pair{U, T}(convert(U, s), zero(T)))
     end
 
     buffer_vertices = Vector{U}()
@@ -238,3 +237,7 @@ function parallel_dijkstra_shortest_paths(g::AbstractGraph,
 
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
+
+
+parallel_dijkstra_shortest_paths(g::AbstractGraph{U}, src, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false) where U<:Integer =
+parallel_dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)

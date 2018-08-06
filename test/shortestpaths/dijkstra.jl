@@ -4,8 +4,16 @@
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
 
     for g in testdigraphs(g4)
+        U = eltype(g)
+
         y = @inferred(dijkstra_shortest_paths(g, 2, d1))
         z = @inferred(dijkstra_shortest_paths(g, 2, d2))
+
+        p_y = @inferred(parallel_dijkstra_shortest_paths(g, convert(U, 2), d1))
+        p_z = @inferred(parallel_dijkstra_shortest_paths(g, convert(U, 2), d2))
+
+        p_y.dists == y.dists
+        p_z.dists == z.dists
 
         @test y.parents == z.parents == [0, 0, 2, 3, 4]
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -13,6 +21,10 @@
         y = @inferred(dijkstra_shortest_paths(g, 2, d1; allpaths=true))
         z = @inferred(dijkstra_shortest_paths(g, 2, d2; allpaths=true))
         @test z.predecessors[3] == y.predecessors[3] == [2]
+
+        p_y = @inferred(parallel_dijkstra_shortest_paths(g, 2, d1; allpaths=true))
+        p_z = @inferred(parallel_dijkstra_shortest_paths(g, 2, d2; allpaths=true))
+        @test p_z.predecessors[3] == p_y.predecessors[3] == [2]
 
         @test @inferred(enumerate_paths(z)) == enumerate_paths(y)
         @test @inferred(enumerate_paths(z))[4] ==
@@ -26,8 +38,11 @@
     d[2, 3] = 100
     for g in testgraphs(gx)
         z = @inferred(dijkstra_shortest_paths(g, 1, d))
+        p_z = @inferred(parallel_dijkstra_shortest_paths(g, 1, d))
         @test z.dists == [0, 1, 3, 2, 3]
         @test z.parents == [0, 1, 4, 2, 4]
+        @test p_z.dists == z.dists
+        @test p_z.parents == z.parents
     end
 
     # small function to reconstruct the shortest path; I copied it from somewhere, can't find the original source to give the credits
