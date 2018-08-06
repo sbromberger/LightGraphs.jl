@@ -71,6 +71,7 @@ function parallel_prim_mst end
             if !visited[u]
                 enqueue!(bpq, Pair{U, T}(u, distmx[u, v]))
                 visited[u] = true
+                wt[u] = distmx[u, v]
                 parents[u] = v
             else
                 if wt[u] > distmx[u, v]

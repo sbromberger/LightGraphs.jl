@@ -1,15 +1,5 @@
 @testset "Prim" begin
 
-    function get_wt(mst, distmx::AbstractMatrix) where U<:Integer
-        wt = zero(eltype(distmx))
-
-        for e in mst
-            wt += distmx[e.src, e.dst]
-        end
-        return wt
-    end
-
-
     g4 = CompleteGraph(4)
 
     distmx = [
@@ -44,6 +34,8 @@
     gx = SimpleGraph(distmx_sec)
     for g in testgraphs(gx)
         mst2 = @inferred(prim_mst(g, distmx_sec))
+        p_mst2 = @inferred(parallel_prim_mst(g, distmx_sec))
         @test mst2 == vec2
+        @test p_mst2 == mst2
     end
 end
