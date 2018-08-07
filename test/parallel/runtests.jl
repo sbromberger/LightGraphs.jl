@@ -4,13 +4,14 @@ using LightGraphs.Parallel
 @test length(description()) > 1
 
 tests = [
-    "distance",
-    "shortestpaths/dijkstra",
-    "shortestpaths/johnson",
     "centrality/betweenness",
     "centrality/closeness",
+    "centrality/pagerank",
     "centrality/radiality",
     "centrality/stress",
+    "distance",
+    "shortestpaths/dijkstra",
+    "shortestpaths/johnson"
 ]
 
 @testset "LightGraphs.Parallel" begin
