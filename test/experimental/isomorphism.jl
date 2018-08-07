@@ -26,9 +26,9 @@ cubic_graphs = [SimpleGraph(Edge.([(1,2), (1,3), (1,8), (2,3), (2,4), (3,4),
                ]
 # vertex permutated versions of cubic_graphs
 cubic_graphs_perm = []
-global rng = MersenneTwister(1)
+_rng = MersenneTwister(1)
 for i = 1:length(cubic_graphs)
-    push!(cubic_graphs_perm, shuffle_vertices(cubic_graphs[i], randperm(rng, 8)))
+    push!(cubic_graphs_perm, shuffle_vertices(cubic_graphs[i], randperm(_rng, 8)))
 end
 
 @testset "Isomorphism" begin
@@ -71,8 +71,7 @@ end
 
     # The frucht-graph is a 3-regular graph that has only one automorphism
     g = smallgraph(:frucht)
-    rng = MersenneTwister(1)
-    perm = randperm(rng, 12)
+    perm = randperm(_rng, 12)
     g2 = shuffle_vertices(g, perm)
     perm_reconstructed = map(uv -> first(uv), first(all_isomorph(g2, g)))
     @test perm == perm_reconstructed

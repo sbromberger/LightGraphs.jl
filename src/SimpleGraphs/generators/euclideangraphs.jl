@@ -7,8 +7,8 @@ a matrix with the points' positions.
 """
 function euclidean_graph(N::Int, d::Int;
     L=1., seed = -1, kws...)
-    rng = LightGraphs.getRNG(seed)
-    points = rmul!(rand(rng, d, N), L)
+    _rng = LightGraphs.getRNG(seed)
+    points = rmul!(rand(_rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
 
