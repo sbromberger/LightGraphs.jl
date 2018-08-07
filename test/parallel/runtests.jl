@@ -1,6 +1,6 @@
 using LightGraphs
 using LightGraphs.Parallel
-
+using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 
 tests = [
@@ -14,6 +14,7 @@ tests = [
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",
     "shortestpaths/johnson",
+    "traversals/bfs",
     "traversals/greedy_color"
 ]
 

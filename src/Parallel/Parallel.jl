@@ -3,11 +3,12 @@ module Parallel
 using LightGraphs
 using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
 using Distributed: @distributed
-using Base.Threads: @threads, nthreads
+using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using Arpack: eigs
 using Random:shuffle
 import SparseArrays: sparse
+import Base: push!, popfirst!, isempty, getindex
 
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
@@ -19,5 +20,6 @@ include("centrality/pagerank.jl")
 include("centrality/radiality.jl")
 include("centrality/stress.jl")
 include("distance.jl")
+include("traversals/bfs.jl")
 include("traversals/greedy_color.jl")
 end
