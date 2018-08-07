@@ -1,3 +1,4 @@
+__precompile__(true)
 module LightGraphs
 
 using SimpleTraits
