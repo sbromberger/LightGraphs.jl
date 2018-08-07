@@ -1,5 +1,5 @@
 @testset "Parallel.Pagerank" begin
-    print("in test parallel.pagerank")
+    info("in test parallel.pagerank")
     function dense_pagerank_solver(g::AbstractGraph, α=0.85::Real)
         # M = google_matrix(g, α)
         p = fill(1 / nv(g), nv(g))

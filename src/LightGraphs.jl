@@ -1,4 +1,3 @@
-__precompile__(true)
 module LightGraphs
 
 using SimpleTraits
@@ -104,8 +103,6 @@ yen_k_shortest_paths,
 betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
-
-parallel_pagerank,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,

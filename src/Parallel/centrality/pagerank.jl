@@ -5,7 +5,7 @@ function pagerank(
     ϵ=1.0e-6
     ) where U <: Integer
     
-    print("in parallel.pagerank")
+    info("in parallel.pagerank")
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
     partitions = optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
