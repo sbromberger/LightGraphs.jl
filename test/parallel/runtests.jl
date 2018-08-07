@@ -10,8 +10,10 @@ tests = [
     "centrality/radiality",
     "centrality/stress",
     "distance",
+    "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
-    "shortestpaths/johnson"
+    "shortestpaths/johnson",
+    "traversals/greedy_color"
 ]
 
 @testset "LightGraphs.Parallel" begin
