@@ -12,6 +12,7 @@ tests = [
     "distance",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
+    "shortestpaths/floyd-warshall",
     "shortestpaths/johnson",
     "traversals/greedy_color"
 ]

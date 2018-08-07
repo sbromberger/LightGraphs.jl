@@ -1,7 +1,7 @@
 module Parallel
 
 using LightGraphs
-using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState
+using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads
 using SharedArrays: SharedMatrix, SharedVector, sdata
@@ -11,6 +11,7 @@ import SparseArrays: sparse
 
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
+include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/johnson.jl")
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
