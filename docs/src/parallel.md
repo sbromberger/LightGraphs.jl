@@ -32,13 +32,29 @@ Note that after `import`ing or `using` `LightGraphs.Parallel`, you must fully qu
 `Parallel.betweenness_centrality(g)` for the parallel version.)
 
 The following is a current list of parallel algorithms:
-- `Parallel.betweenness_centrality`
-- `Parallel.closeness_centrality`
-- `Parallel.radiality_centrality`
-- `Parallel.stress_centrality`
-- `Parallel.center`
-- `Parallel.diameter`
-- `Parallel.eccentricity`
-- `Parallel.radius`
+- Centrality measures:
+    - `Parallel.betweenness_centrality`
+    - `Parallel.closeness_centrality`
+    - `Parallel.pagerank`
+    - `Parallel.radiality_centrality`
+    - `Parallel.stress_centrality`
 
+
+- Distance measures:
+    - `Parallel.center`
+    - `Parallel.diameter`
+    - `Parallel.eccentricity`
+    - `Parallel.radius`
+
+- Shortest paths algorithms:
+    - `Parallel.bellman_ford_shortest_paths`
+    - `Parallel.dijkstra_shortest_paths`
+    - `Parallel.floyd_warshall_shortest_paths`
+    - `Paralell.johnson_shortest_paths`
+
+- Traversal algorithms:
+    - `Parallel.bfs`
+    - `Parallel.greedy_color`
+
+Also note that in some cases, the arguments for the parallel versions may differ from the serial (standard) versions. As an example, parallel Dijkstra shortest paths takes advantage of multiple processors to execute centrality from multiple source vertices. It is an error to pass a single source vertex into the parallel version of dijkstra_shortest_paths.
 

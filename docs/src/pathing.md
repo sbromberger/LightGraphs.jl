@@ -113,7 +113,6 @@ dijkstra_shortest_paths
 bellman_ford_shortest_paths
 floyd_warshall_shortest_paths
 yen_k_shortest_paths
-parallel_multisource_dijkstra_shortest_paths
 ```
 
 ## Path discovery / enumeration

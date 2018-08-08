@@ -1,7 +1,7 @@
 using LightGraphs.SimpleGraphs
 
 import LightGraphs.SimpleGraphs: fadj, badj, adj
-
+using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
 
