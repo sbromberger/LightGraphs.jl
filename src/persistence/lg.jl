@@ -93,9 +93,7 @@ function loadlg_mult(io::IO)
     graphs = Dict{String,AbstractGraph}()
     while !eof(io)
         line = strip(chomp(readline(io)))
-        if startswith(line, "#") || line == ""
-            next
-        else
+        if !(startswith(line, "#") || line == "")
             header = _parse_header(line)
             g = _lg_read_one_graph(io, header)
             graphs[header.name] = g

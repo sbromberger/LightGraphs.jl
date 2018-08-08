@@ -37,7 +37,7 @@ function binomial_test(n, p, s)
     @show dσ - lσ
     @test abs(dσ - lσ) / dσ < .10
 end
-srand(1234)
+seed!(1234)
 n = 10000
 p = 0.3
 s = 100000
