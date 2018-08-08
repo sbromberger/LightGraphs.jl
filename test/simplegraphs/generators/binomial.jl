@@ -4,7 +4,7 @@
 using Distributions
 using LightGraphs
 using StatsBase
-using Base.Test
+using Test
 import Random
 
 import Base: -
