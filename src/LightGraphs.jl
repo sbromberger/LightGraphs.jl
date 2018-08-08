@@ -17,10 +17,10 @@ using SharedArrays: SharedMatrix, SharedVector, sdata
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 
-import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
+import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
+            join, iterate, eltype, get, Pair, Tuple, zero
 
 export
 # Interface
