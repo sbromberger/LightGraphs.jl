@@ -8,6 +8,34 @@ const SubGraphIsomorphismProblem = SubGraphIsomorphismProblemType()
 const InducedSubGraphIsomorphismProblem = InducedSubGraphIsomorphismProblemType()
 
 """
+    could_have_isomorph(g1, g2)
+
+Run quick test to check if `g1 and `g2` could be isomorphic.
+
+If the result is `false`, then `g1` and `g2` are definitely not isomorphic,
+but if the result is `true` this is not guaranteed.
+"""
+function could_have_isomorph(g1::AbstractGraph, g2::AbstractGraph)
+    nv(g1) == nv(g2) || return false
+
+    indegs1 = indegree(g1)
+    indegs2 = indegree(g2)
+    sort!(indegs1)
+    sort!(indegs2)
+    indegs1 == indegs2 || return false
+
+    if LightGraphs.is_directed(g1) || LightGraphs.is_directed(g2)
+        outdegs1 = outdegree(g1)
+        outdegs2 = outdegree(g2)
+        sort!(outdegs1)
+        sort!(outdegs2)
+        outdegs1 == outdegs2 || return false
+    end
+
+    return true
+end
+
+"""
     has_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
 
 Return `true` if the graph `g1` contains a vertex induced subgraph that is isomorphic to `g2`.
@@ -135,6 +163,10 @@ function has_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                          edge_relation::Union{Nothing, Function}=nothing,
                          alg=:vf2)::Bool
     if alg == :vf2
+        if !could_have_isomorph(g1, g2)
+            return false
+        end
+
         result = false
         callback(vmap) = (result = true; return false)
         vf2(callback, g1, g2, IsomorphismProblem,
@@ -274,6 +306,10 @@ function count_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                            edge_relation::Union{Nothing, Function}=nothing,
                            alg=:vf2)::Int
     if alg == :vf2
+        if !could_have_isomorph(g1, g2)
+            return 0
+        end
+
         result = 0
         callback(vmap) = (result += 1; return true)
         vf2(callback, g1, g2, IsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
@@ -444,8 +480,12 @@ function all_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                  alg=:vf2)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
 
     if alg == :vf2
-        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
         T = Vector{Tuple{eltype(g1), eltype(g2)}}
+        if !could_have_isomorph(g1, g2)
+            return T(0)
+        end
+
+        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
         ch::Channel{T} = Channel(ctype=T) do c
             vf2(make_callback(c), g1, g2, IsomorphismProblem, 
                            vertex_relation=vertex_relation,
