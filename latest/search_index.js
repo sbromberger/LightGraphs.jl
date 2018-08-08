@@ -673,78 +673,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "pathing.html#LightGraphs.bfs_tree",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.bfs_tree",
-    "category": "function",
-    "text": "bfs_tree(g, s[; dir=:out])\n\nProvide a breadth-first traversal of the graph g starting with source vertex s, and return a directed acyclic graph of vertices in the order they were discovered. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\nbfs_tree(LevelSynchronousBFS(), g, s, nv)\n\nProvide a parallel breadth-first traversal of the graph g starting with source vertex s, and return a directed acyclic graph of vertices in the order they were discovered using a frontier based parallel approach.\n\nImplementation Notes\n\nThis function uses @threads for parallelism which depends on the JULIA_NUM_THREADS environment variable to decide the number of threads to use. Refer @threads documentation for more details. This function is a high level wrapper around LightGraphs.bfs_tree!; use that function for more performance.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.bfs_tree!",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.bfs_tree!",
-    "category": "function",
-    "text": "bfs_tree!(LevelSynchronousBFS(), g, src, parents)\n\nProvide a parallel breadth-first traversal of the graph g starting with source vertex s, and return a parents array. The returned array is an Array of Atomic integers.\n\nImplementation Notes\n\nThis function uses @threads for parallelism which depends on the JULIA_NUM_THREADS environment variable to decide the number of threads to use. Refer @threads documentation for more details.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.dfs_tree",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.dfs_tree",
-    "category": "function",
-    "text": "dfs_tree(g, s)\n\nReturn an ordered vector of vertices representing a directed acylic graph based on depth-first traversal of the graph g starting with source vertex s.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.maximum_adjacency_visit",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.maximum_adjacency_visit",
-    "category": "function",
-    "text": "maximum_adjacency_visit(g[, distmx][, log][, io])\n\nReturn the vertices in g traversed by maximum adjacency search. An optional distmx matrix may be specified; if omitted, edge distances are assumed to be 1. If log (default false) is true, visitor events will be printed to io, which defaults to STDOUT; otherwise, no event information will be displayed.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.bfs_parents",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.bfs_parents",
-    "category": "function",
-    "text": "bfs_parents(g, s[; dir=:out])\n\nPerform a breadth-first search of graph g starting from vertex s. Return a vector of parent vertices indexed by vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\nPerformance\n\nThis implementation is designed to perform well on large graphs. There are implementations which are marginally faster in practice for smaller graphs, but the performance improvements using this implementation on large graphs can be significant.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.has_path",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.has_path",
-    "category": "function",
-    "text": "has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())\n\nReturn true if there is a path from u to v in g (while avoiding vertices in exclude_vertices) or u == v. Return false if there is no such path or if u or v is in excluded_vertices. \n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.diffusion",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.diffusion",
-    "category": "function",
-    "text": "diffusion(g, p, n)\n\nRun diffusion simulation on g for n steps with spread probabilities based on p. Return a vector with the set of new vertices reached at each step of the simulation.\n\nOptional Arguments\n\ninitial_infections=sample(vertices(g), 1): A list of vertices that\n\nare infected at the start of the simulation.\n\nwatch=Vector(): While simulation is always run on the full graph,\n\nspecifying watch limits reporting to a specific set of vertices reached during the simulation. If left empty, all vertices will be watched.\n\nnormalize=false: if false, set the probability of spread from a vertex i to\n\neach of the outneighbors of i to p. If true, set the probability of spread from a vertex i to each of the outneighbors of i to fracpoutdegreee(g i).\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.diffusion_rate",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.diffusion_rate",
-    "category": "function",
-    "text": "diffusion_rate(results)\ndiffusion_rate(g, p, n; ...)\n\nGiven the results of a diffusion output or the parameters to the diffusion simulation itself, (run and) return the rate of diffusion as a vector representing the cumulative number of vertices infected at each simulation step, restricted to vertices included in watch, if specified.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.mincut",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.mincut",
-    "category": "function",
-    "text": "mincut(g, distmx=weights(g))\n\nReturn a tuple (parity, bestcut), where parity is a vector of integer values that determines the partition in g (1 or 2) and bestcut is the weight of the cut that makes this partition. An optional distmx matrix may be specified; if omitted, edge distances are assumed to be 1.\n\n\n\n\n\n"
-},
-
-{
     "location": "pathing.html#Graph-Traversal-1",
     "page": "Path and Traversal",
     "title": "Graph Traversal",
@@ -1033,11 +961,51 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.a_star",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.a_star",
+    "category": "function",
+    "text": "a_star(g, s, t[, distmx][, heuristic])\n\nReturn a vector of edges comprising the shortest path between vertices s and t using the A* search algorithm. An optional heuristic function and edge distance matrix may be supplied. If missing, the distance matrix is set to LightGraphs.DefaultDistance and the heuristic is set to n -> 0.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.dijkstra_shortest_paths",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.dijkstra_shortest_paths",
+    "category": "function",
+    "text": "dijkstra_shortest_paths(g, srcs, distmx=weights(g));\n\nPerform Dijkstra\'s algorithm on a graph, computing shortest distances between srcs and all other vertices. Return a LightGraphs.DijkstraState that contains various traversal information.\n\nOptional Arguments\n\nallpaths=false: If true, returns a LightGraphs.DijkstraState that keeps track of all\n\npredecessors of a given vertex.\n\nPerformance\n\nUse a matrix type for distmx that is implemented in row-major matrix format  for better run-time. Eg. Set the type of distmx to Transpose{Int64, SparseMatrixCSC{Int64,Int64}}  instead of SparseMatrixCSC{Int64,Int64}.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.bellman_ford_shortest_paths",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.bellman_ford_shortest_paths",
+    "category": "function",
+    "text": "bellman_ford_shortest_paths(g, s, distmx=weights(g))\nbellman_ford_shortest_paths(g, ss, distmx=weights(g))\n\nCompute shortest paths between a source s (or list of sources ss) and all other nodes in graph g using the Bellman-Ford algorithm. Return a LightGraphs.BellmanFordState with relevant traversal information.\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.floyd_warshall_shortest_paths",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.floyd_warshall_shortest_paths",
+    "category": "function",
+    "text": "floyd_warshall_shortest_paths(g, distmx=weights(g))\n\nUse the Floyd-Warshall algorithm to compute the shortest paths between all pairs of vertices in graph g using an optional distance matrix distmx. Return a LightGraphs.FloydWarshallState with relevant traversal information.\n\nPerformance\n\nSpace complexity is on the order of mathcalO(V^2).\n\n\n\n\n\n"
+},
+
+{
+    "location": "pathing.html#LightGraphs.yen_k_shortest_paths",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.yen_k_shortest_paths",
+    "category": "function",
+    "text": "yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);\n\nPerform Yen\'s algorithm on a graph, computing k-shortest distances between source and target other vertices. Return a YenState that contains distances and paths.\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#General-properties-of-shortest-path-algorithms-1",
     "page": "Path and Traversal",
     "title": "General properties of shortest path algorithms",
     "category": "section",
-    "text": "The distance from a vertex to itself is always 0.\nThe distance between two vertices with no connecting edge is always Inf.a_star\ndijkstra_shortest_paths\nbellman_ford_shortest_paths\nfloyd_warshall_shortest_paths\nyen_k_shortest_paths\nparallel_multisource_dijkstra_shortest_paths"
+    "text": "The distance from a vertex to itself is always 0.\nThe distance between two vertices with no connecting edge is always Inf.a_star\ndijkstra_shortest_paths\nbellman_ford_shortest_paths\nfloyd_warshall_shortest_paths\nyen_k_shortest_paths"
 },
 
 {
@@ -1285,7 +1253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.pagerank",
     "category": "method",
-    "text": "pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\nparallel_pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\n\nCalculate the PageRank of the graph g parameterized by damping factor α, number of iterations  n, and convergence threshold ϵ. Return a vector representing the centrality calculated for each node in g, or an error if convergence is not reached within n iterations.\n\n\n\n\n\n"
+    "text": "pagerank(g, α=0.85, n=100, ϵ=1.0e-6)\n\nCalculate the PageRank of the graph g parameterized by damping factor α, number of iterations  n, and convergence threshold ϵ. Return a vector representing the centrality calculated for each node in g, or an error if convergence is not reached within n iterations.\n\n\n\n\n\n"
 },
 
 {
@@ -1749,7 +1717,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Parallel Algorithms",
     "title": "Parallel Graph Algorithms",
     "category": "section",
-    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = PathGraph(10)\nbc = Parallel.betweenness_centrality(g)The arguments to parallel versions of functions match as closely as possible their serial versions  with potential addition default or keyword arguments to control parallel execution.  One exception is that for algorithms that cannot be meaningfully parallelized for  certain types of arguments a MethodError will be raised. For example, dijkstra_shortest_paths works for either a single or multiple source argument, but since the parallel version is slower when given only a single source, it will raise a MethodError.g = Graph(10)\n# these work\nLightGraphs.dijkstra_shortest_paths(g,1)\nLightGraphs.dijkstra_shortest_paths(g, [1,2])\nParallel.dijkstra_shortest_paths(g, [1,2])\n# this doesn\'t\nParallel.dijkstra_shortest_paths(g,1)Note that after importing or using LightGraphs.Parallel, you must fully qualify the version of the function you wish to use (using, e.g., LightGraphs.betweenness_centrality(g) for the sequential version and Parallel.betweenness_centrality(g) for the parallel version.)The following is a current list of parallel algorithms:Parallel.betweenness_centrality\nParallel.closeness_centrality\nParallel.radiality_centrality\nParallel.stress_centrality\nParallel.center\nParallel.diameter\nParallel.eccentricity\nParallel.radius"
+    "text": "LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:using LightGraphs\nimport LightGraphs.Parallel\n\ng = PathGraph(10)\nbc = Parallel.betweenness_centrality(g)The arguments to parallel versions of functions match as closely as possible their serial versions  with potential addition default or keyword arguments to control parallel execution.  One exception is that for algorithms that cannot be meaningfully parallelized for  certain types of arguments a MethodError will be raised. For example, dijkstra_shortest_paths works for either a single or multiple source argument, but since the parallel version is slower when given only a single source, it will raise a MethodError.g = Graph(10)\n# these work\nLightGraphs.dijkstra_shortest_paths(g,1)\nLightGraphs.dijkstra_shortest_paths(g, [1,2])\nParallel.dijkstra_shortest_paths(g, [1,2])\n# this doesn\'t\nParallel.dijkstra_shortest_paths(g,1)Note that after importing or using LightGraphs.Parallel, you must fully qualify the version of the function you wish to use (using, e.g., LightGraphs.betweenness_centrality(g) for the sequential version and Parallel.betweenness_centrality(g) for the parallel version.)The following is a current list of parallel algorithms:Centrality measures:\nParallel.betweenness_centrality\nParallel.closeness_centrality\nParallel.pagerank\nParallel.radiality_centrality\nParallel.stress_centralityDistance measures:\nParallel.center\nParallel.diameter\nParallel.eccentricity\nParallel.radius\nShortest paths algorithms:\nParallel.bellman_ford_shortest_paths\nParallel.dijkstra_shortest_paths\nParallel.floyd_warshall_shortest_paths\nParalell.johnson_shortest_paths\nTraversal algorithms:\nParallel.bfs\nParallel.greedy_colorAlso note that in some cases, the arguments for the parallel versions may differ from the serial (standard) versions. As an example, parallel Dijkstra shortest paths takes advantage of multiple processors to execute centrality from multiple source vertices. It is an error to pass a single source vertex into the parallel version of dijkstrashortestpaths."
 },
 
 {
