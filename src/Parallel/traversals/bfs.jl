@@ -8,15 +8,6 @@
 # Parallel frontier based Breadth-first search approach
 #
 #################################################
-
-using Base.Threads
-
-import Base: push!, popfirst!, isempty, getindex
-
-export bfs_tree, LevelSynchronousBFS
-
-struct LevelSynchronousBFS end
-
 """
     ThreadQueue
 
@@ -56,7 +47,6 @@ end
 
 # Traverses the vertices in the queue and adds newly found successors to the queue.
 function bfskernel(
-        alg::LevelSynchronousBFS,
         next::ThreadQueue, # Thread safe queue to add vertices to
         g::AbstractGraph, # The graph
         parents::Array{Atomic{T}}, # Parents array
@@ -75,7 +65,7 @@ function bfskernel(
 end
 
 """
-    bfs_tree!(LevelSynchronousBFS(), g, src, parents)
+    bfs_tree!(g, src, parents)
 
 Provide a parallel breadth-first traversal of the graph `g` starting with source vertex `s`,
 and return a parents array. The returned array is an Array of `Atomic` integers.
@@ -86,7 +76,6 @@ environment variable to decide the number of threads to use. Refer `@threads` do
 for more details.
 """
 function bfs_tree!(
-        alg::LevelSynchronousBFS,
         next::ThreadQueue, # Thread safe queue to add vertices to
         g::AbstractGraph, # The graph
         source::T, # Source vertex
@@ -97,32 +86,19 @@ function bfs_tree!(
     while !isempty(next)
         level = next[next.head[]:(next.tail[] - 1)] # Get vertices in the frontier
         next.head[] = next.tail[] # reset the queue
-        bfskernel(alg, next, g, parents, level) # Find new frontier
+        bfskernel(next, g, parents, level) # Find new frontier
     end
     return parents
 end
 
-"""
-    bfs_tree(LevelSynchronousBFS(), g, s, nv)
-
-Provide a parallel breadth-first traversal of the graph `g` starting with source vertex `s`,
-and return a directed acyclic graph of vertices in the order they were discovered
-using a frontier based parallel approach.
-
-### Implementation Notes
-This function uses `@threads` for parallelism which depends on the `JULIA_NUM_THREADS`
-environment variable to decide the number of threads to use. Refer `@threads` documentation
-for more details.
-This function is a high level wrapper around [`LightGraphs.bfs_tree!`](@ref); use that function for more performance.
-"""
-function bfs_tree(alg::LevelSynchronousBFS, g::AbstractGraph, source::T, nv::T) where T <: Integer
+function bfs_tree(g::AbstractGraph, source::T, nv::T) where T <: Integer
     next = ThreadQueue(T, nv) # Initialize threadqueue
     parents = [Atomic{T}(0) for i = 1:nv] # Create parents array
-    bfs_tree!(alg, next, g, source, parents)
-    tree([i[] for i in parents])
+    Parallel.bfs_tree!(next, g, source, parents)
+    LightGraphs.tree([i[] for i in parents])
 end
 
-function bfs_tree(alg::LevelSynchronousBFS, g::AbstractGraph, source::T) where T <: Integer
+function bfs_tree(g::AbstractGraph, source::T) where T <: Integer
     nvg = nv(g)
-    bfs_tree(alg, g, source, nvg)
+    Parallel.bfs_tree(g, source, nvg)
 end
