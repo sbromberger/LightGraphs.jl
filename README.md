@@ -57,7 +57,7 @@ julia> Pkg.add("LightGraphs")
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
 * Julia 0.6: LightGraphs versions in the 0.8 through 0.12 series are designed to work with Julia 0.6.
-* Julia 0.7: LightGraphs versions in the 0.14 series are designed to work with Julia 0.7.
+* Julia 0.7: LightGraphs versions in the 1.0 series are designed to work with Julia 0.7.
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs

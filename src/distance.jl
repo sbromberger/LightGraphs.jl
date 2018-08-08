@@ -19,7 +19,7 @@ getindex(::DefaultDistance, s::Integer, d::Integer) = 1
 getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
 size(d::DefaultDistance) = (d.nv, d.nv)
 transpose(d::DefaultDistance) = d
-ctranspose(d::DefaultDistance) = d
+adjoint(d::DefaultDistance) = d
 
 """
     eccentricity(g[, v][, distmx])

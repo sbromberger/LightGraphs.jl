@@ -1,4 +1,3 @@
-__precompile__(true)
 module LightGraphs
 
 using SimpleTraits
@@ -13,15 +12,15 @@ using Distributed: @distributed
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 # import Markdown
-using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, shuffle, shuffle!, srand
+using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 
-import Base: write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
+import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            ctranspose, join, iterate, eltype, get, Pair, Tuple, zero
+            join, iterate, eltype, get, Pair, Tuple, zero
 
 export
 # Interface
