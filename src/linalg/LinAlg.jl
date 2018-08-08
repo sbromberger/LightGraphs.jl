@@ -1,6 +1,5 @@
 module LinAlg
 
-### Remove this line after #915 is closed
 using Arpack: eigs
 
 using SimpleTraits

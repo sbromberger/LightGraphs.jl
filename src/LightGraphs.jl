@@ -104,8 +104,6 @@ betweenness_centrality, closeness_centrality, degree_centrality,
 indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
 eigenvector_centrality, stress_centrality, radiality_centrality,
 
-parallel_pagerank,
-
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
 non_backtracking_matrix, incidence_matrix, nonbacktrack_embedding, Nonbacktracking,
@@ -204,7 +202,6 @@ include("cycles/basis.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
-include("traversals/parallel_bfs.jl")
 include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")

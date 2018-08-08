@@ -1,16 +1,21 @@
 using LightGraphs
 using LightGraphs.Parallel
-
+using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 
 tests = [
-    "distance",
-    "shortestpaths/dijkstra",
-    "shortestpaths/johnson",
     "centrality/betweenness",
     "centrality/closeness",
+    "centrality/pagerank",
     "centrality/radiality",
     "centrality/stress",
+    "distance",
+    "shortestpaths/bellman-ford",
+    "shortestpaths/dijkstra",
+    "shortestpaths/floyd-warshall",
+    "shortestpaths/johnson",
+    "traversals/bfs",
+    "traversals/greedy_color"
 ]
 
 @testset "LightGraphs.Parallel" begin

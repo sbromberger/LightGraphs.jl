@@ -31,7 +31,6 @@ function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where T <: Integer
             end
         end
 
-     
         for i in one(T):nvg
             if colors_used[i] == false
                 cols[v] = i
@@ -53,30 +52,14 @@ function degree_greedy_color(g::AbstractGraph{T}) where T <: Integer
     return perm_greedy_color(g, seq)
 end
 
-"""
-    parallel_random_greedy_color(g, reps)
-
-Color graph `g` iteratively in a random order using a greedy heuristic and
-choose the best coloring out of `reps` number of colorings computed in parallel.
-"""
-function parallel_random_greedy_color(g::AbstractGraph{T},
-    reps::Integer) where T <: Integer 
-
-    best = @distributed (best_color) for i in 1:reps
-        seq = shuffle(vertices(g))
-        perm_greedy_color(g, seq)
-    end
-
-    return convert(coloring{T}, best)
-end
 
 """
-    seq_random_greedy_color(g, reps)
+    random_greedy_color(g, reps=1)
 
-Color graph `g` iteratively in a random order using a greedy heuristic
+Color graph `g` iteratively in a random order using a greedy heruistic
 and choose the best coloring out of `reps` such random coloring.
 """
-function seq_random_greedy_color(g::AbstractGraph{T}, 
+function random_greedy_color(g::AbstractGraph{T}, 
     reps::Integer) where T <: Integer 
 
     seq = shuffle(vertices(g))
@@ -90,18 +73,7 @@ function seq_random_greedy_color(g::AbstractGraph{T},
 end
 
 """
-    random_greedy_color(g, reps=1, parallel=false)
-
-Color graph `g` iteratively in a random order using a greedy heruistic
-and choose the best coloring out of `reps` such random coloring.
-
-If parallel is true then the colorings are executed in parallel.
-"""
-random_greedy_color(g::AbstractGraph{T}, reps::Integer=1, parallel::Bool=false) where {T <: Integer} =
-parallel ? parallel_random_greedy_color(g, reps) : seq_random_greedy_color(g, reps)
-
-"""
-    greedy_color(g; sort_degree=false, parallel=false, reps = 1)
+    greedy_color(g; sort_degree=false, reps = 1)
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)
 
@@ -113,9 +85,7 @@ If `sort_degree` is true then the permutation is chosen in reverse sorted order 
 
 If `sort_degree` is false then `reps` colorings are obtained based on random permutations and the one using least
 colors is chosen.
-
-If `parallel` is true then this function executes coloring in parallel.
 """
-greedy_color(g::AbstractGraph{U}; sort_degree::Bool=false, parallel::Bool=false, reps::Integer=1) where {U <: Integer} =
-sort_degree ? degree_greedy_color(g) : random_greedy_color(g, reps, parallel)
+greedy_color(g::AbstractGraph{U}; sort_degree::Bool=false, reps::Integer=1) where {U <: Integer} =
+sort_degree ? degree_greedy_color(g) : random_greedy_color(g, reps)
 
