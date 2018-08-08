@@ -482,7 +482,7 @@ function all_isomorph(g1::AbstractGraph, g2::AbstractGraph;
     if alg == :vf2
         T = Vector{Tuple{eltype(g1), eltype(g2)}}
         if !could_have_isomorph(g1, g2)
-            return T(0)
+            return Channel(_ -> return, ctype=T)
         end
 
         make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
