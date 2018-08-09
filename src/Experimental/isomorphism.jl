@@ -306,10 +306,7 @@ function count_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                            edge_relation::Union{Nothing, Function}=nothing,
                            alg=:vf2)::Int
     if alg == :vf2
-        if !could_have_isomorph(g1, g2)
-            return 0
-        end
-
+        !could_have_isomorph(g1, g2) && return 0
         result = 0
         callback(vmap) = (result += 1; return true)
         vf2(callback, g1, g2, IsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
@@ -481,10 +478,7 @@ function all_isomorph(g1::AbstractGraph, g2::AbstractGraph;
 
     if alg == :vf2
         T = Vector{Tuple{eltype(g1), eltype(g2)}}
-        if !could_have_isomorph(g1, g2)
-            return Channel(_ -> return, ctype=T)
-        end
-
+        !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
         make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
         ch::Channel{T} = Channel(ctype=T) do c
             vf2(make_callback(c), g1, g2, IsomorphismProblem, 
@@ -663,9 +657,8 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        if problemtype == IsomorphismProblem
-            return count1 == count2   
-        end
+        problemtype == IsomorphismProblem && return count1 == count2   
+
         return count1 >= count2   
     end
 
@@ -700,9 +693,8 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        if problemtype == IsomorphismProblem
-            return count1 == count2   
-        end
+        problemtype == IsomorphismProblem && return count1 == count2   
+
         return count1 >= count2   
     end
 
@@ -737,9 +729,8 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        if problemtype == IsomorphismProblem
-            return count1 == count2   
-        end
+        problemtype == IsomorphismProblem && return count1 == count2   
+    
         return count1 >= count2
     end
 
