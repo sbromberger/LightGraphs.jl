@@ -163,9 +163,7 @@ function has_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                          edge_relation::Union{Nothing, Function}=nothing,
                          alg=:vf2)::Bool
     if alg == :vf2
-        if !could_have_isomorph(g1, g2)
-            return false
-        end
+        !could_have_isomorph(g1, g2) && return false
 
         result = false
         callback(vmap) = (result = true; return false)
