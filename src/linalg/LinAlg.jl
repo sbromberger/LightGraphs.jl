@@ -11,7 +11,7 @@ import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 using ..LightGraphs
 
 
-import Base: convert, size, eltype, ndims, ==, *, .*, length
+import Base: convert, size, eltype, ndims, ==, *, length
 
 export convert,
     SparseMatrix,
