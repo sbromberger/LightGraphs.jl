@@ -9,7 +9,7 @@ function eccentricity(g::AbstractGraph,
         eccs[i] = maximum(LightGraphs.dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
-    maximum(d) == typemax(T) && warn("Infinite path length detected")
+    maximum(d) == typemax(T) && @warn("Infinite path length detected")
     return d
 end
 
