@@ -37,12 +37,6 @@
             @test_throws ErrorException pagerank(g, 2)
             @test_throws ErrorException pagerank(g, α, 2)
             @test isapprox(pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
-
-            @test parallel_pagerank(g)[3] ≈ 0.318 atol = 0.001
-            @test length(@inferred(parallel_pagerank(g))) == nv(g)
-            @test_throws ErrorException parallel_pagerank(g, 2)
-            @test_throws ErrorException parallel_pagerank(g, α, 2)
-            @test isapprox(parallel_pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
 
         for g in testgraphs(g6)
@@ -50,11 +44,6 @@
             @test_throws ErrorException pagerank(g, 2)
             @test_throws ErrorException pagerank(g, α, 2)
             @test isapprox(pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
-
-            @test length(@inferred(parallel_pagerank(g))) == nv(g)
-            @test_throws ErrorException parallel_pagerank(g, 2)
-            @test_throws ErrorException parallel_pagerank(g, α, 2)
-            @test isapprox(parallel_pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
     end
 end

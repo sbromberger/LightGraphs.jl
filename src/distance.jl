@@ -19,12 +19,11 @@ getindex(::DefaultDistance, s::Integer, d::Integer) = 1
 getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length(s))
 size(d::DefaultDistance) = (d.nv, d.nv)
 transpose(d::DefaultDistance) = d
-ctranspose(d::DefaultDistance) = d
+adjoint(d::DefaultDistance) = d
 
 """
     eccentricity(g[, v][, distmx])
     eccentricity(g[, vs][, distmx])
-    parallel_eccentricity(g[, vs][, distmx])
 
 Return the eccentricity[ies] of a vertex / vertex list `v` or a set of vertices 
 `vs` defaulting to the entire graph. An optional matrix of edge distances may
@@ -67,26 +66,9 @@ eccentricity(g::AbstractGraph,
 eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     eccentricity(g, vertices(g), distmx)
 
-function parallel_eccentricity(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
-    vlen = length(vs)
-    eccs = SharedVector{T}(vlen)
-    @sync @distributed for i = 1:vlen
-        eccs[i] = maximum(dijkstra_shortest_paths(g, vs[i], distmx).dists)
-    end
-    d = sdata(eccs)
-    maximum(d) == typemax(T) && warn("Infinite path length detected")
-    return d
-end
-
-parallel_eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
-    parallel_eccentricity(g, vertices(g), distmx)
-
 """
     diameter(eccentricities)
     diameter(g, distmx=weights(g))
-    parallel_diameter(g, distmx=weights(g))
     
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
@@ -94,13 +76,10 @@ eccentricities, return the maximum eccentricity of the graph.
 diameter(eccentricities::Vector) = maximum(eccentricities)
 diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     maximum(eccentricity(g, distmx))
-parallel_diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    maximum(parallel_eccentricity(g, distmx))
 
 """
     periphery(eccentricities)
     periphery(g, distmx=weights(g))
-    parallel_periphery(g, distmx=weights(g))
     
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is
@@ -115,29 +94,21 @@ end
 periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = 
     periphery(eccentricity(g, distmx))
 
-parallel_periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    periphery(parallel_eccentricity(g, distmx))
-
 """
     radius(eccentricities)
     radius(g, distmx=weights(g))
-    parallel_radius(g, distmx=weights(g))
     
-
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the minimum eccentricity of the graph.
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
 radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     minimum(eccentricity(g, distmx))
-parallel_radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    minimum(parallel_eccentricity(g, distmx))
 
 """
     center(eccentricities)
     center(g, distmx=weights(g))
-    parallel_center(g, distmx=weights(g))
-
+    
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is equal
 to the graph's radius (that is, the set of vertices with the smallest eccentricity).
@@ -149,6 +120,3 @@ end
 
 center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     center(eccentricity(g, distmx))
-
-parallel_center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    center(parallel_eccentricity(g, distmx))

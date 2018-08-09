@@ -43,7 +43,6 @@ tests = [
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
     "traversals/bfs",
-    "traversals/parallel_bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
     "traversals/dfs",

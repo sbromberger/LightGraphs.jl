@@ -1,5 +1,5 @@
 using Random:
-    AbstractRNG, MersenneTwister, randperm, shuffle!, srand
+    AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
 using Statistics: mean
 
 using LightGraphs:
@@ -305,7 +305,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     n0 == n && return g
 
     # seed random number generator
-    seed > 0 && srand(seed)
+    seed > 0 && seed!(seed)
 
     # add missing vertices
     sizehint!(g.fadjlist, n)
@@ -899,7 +899,6 @@ SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
 Count the number of edges that go between each block.
 """
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
-    # info("making Q")
     I = collect(1:sbm.n)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)

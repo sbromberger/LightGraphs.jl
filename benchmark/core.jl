@@ -7,7 +7,7 @@ function bench_iteredges(g::AbstractGraph)
 end
 
 function bench_has_edge(g::AbstractGraph)
-    srand(1)
+    seed!(1)
     nvg = nv(g)
     srcs = rand([1:nvg;], cld(nvg, 4))
     dsts = rand([1:nvg;], cld(nvg, 4))
