@@ -8,6 +8,21 @@ const SubGraphIsomorphismProblem = SubGraphIsomorphismProblemType()
 const InducedSubGraphIsomorphismProblem = InducedSubGraphIsomorphismProblemType()
 
 """
+    IsomorphismAlgorithm
+
+An abstract type used for method dispatch on isomorphism functions.
+"""
+abstract type IsomorphismAlgorithm end
+
+"""
+    VF2
+
+An empty concrete type used to dispatch to [`vf2`](@ref) isomorphism functions.
+"""
+struct VF2 <: IsomorphismAlgorithm end
+
+
+"""
     could_have_isomorph(g1, g2)
 
 Run quick test to check if `g1 and `g2` could be isomorphic.
@@ -36,7 +51,7 @@ function could_have_isomorph(g1::AbstractGraph, g2::AbstractGraph)
 end
 
 """
-    has_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg::IsomorphismAlgorithm=VF2())
 
 Return `true` if the graph `g1` contains a vertex induced subgraph that is isomorphic to `g2`.
 
@@ -46,7 +61,7 @@ Return `true` if the graph `g1` contains a vertex induced subgraph that is isomo
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -69,20 +84,24 @@ false
 function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
                                  edge_relation::Union{Nothing, Function}=nothing,
-                                 alg=:vf2)::Bool
-    if alg == :vf2
+                                 alg::IsomorphismAlgorithm=VF2())::Bool
+
+        has_induced_subgraphisomorph(alg, g1,g2; vertex_relation=vertex_relation, edge_relation=edge_relation)
+
+end
+
+function has_induced_subgraphisomorph(alg,g1::AbstractGraph, g2::AbstractGraph;
+                                 vertex_relation::Union{Nothing, Function}=nothing,
+                                 edge_relation::Union{Nothing, Function}=nothing)::Bool
         result = false
         callback(vmap) = (result = true; return false)
         vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem;
                        vertex_relation=vertex_relation, edge_relation=edge_relation)
         return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
 end
 
 """
-    has_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 
@@ -92,7 +111,7 @@ Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -115,20 +134,24 @@ false
 function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
                                  edge_relation::Union{Nothing, Function}=nothing,
-                                alg=:vf2)::Bool
-    if alg == :vf2
-        result = false
-        callback(vmap) = (result = true; return false)
-        vf2(callback, g1, g2, SubGraphIsomorphismProblem;
-                       vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
+                                 alg::IsomorphismAlgorithm=VF2())::Bool
+    has_subgraphisomorph(alg, g1, g2;
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+end
+
+function has_subgraphisomorph(alg::VF2,g1::AbstractGraph, g2::AbstractGraph;
+                                 vertex_relation::Union{Nothing, Function}=nothing,
+                                 edge_relation::Union{Nothing, Function}=nothing,)::Bool
+    result = false
+    callback(vmap) = (result = true; return false)
+    vf2(callback, g1, g2, SubGraphIsomorphismProblem;
+        vertex_relation=vertex_relation, edge_relation=edge_relation)
+    return result
 end
 
 """
-    has_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    has_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return `true` if the graph `g1` is isomorphic to `g2`.
 
@@ -138,7 +161,7 @@ Return `true` if the graph `g1` is isomorphic to `g2`.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -161,23 +184,28 @@ false
 function has_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                          vertex_relation::Union{Nothing, Function}=nothing,
                          edge_relation::Union{Nothing, Function}=nothing,
-                         alg=:vf2)::Bool
-    if alg == :vf2
-        !could_have_isomorph(g1, g2) && return false
+                         alg::IsomorphismAlgorithm=VF2())::Bool
+    has_isomorph(alg, g1, g2;
+                  vertex_relation=vertex_relation,
+                  edge_relation=edge_relation)
+end
 
-        result = false
-        callback(vmap) = (result = true; return false)
-        vf2(callback, g1, g2, IsomorphismProblem,
-                       vertex_relation=vertex_relation,
-                       edge_relation=edge_relation)
-        return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
+function has_isomorph(alg::VF2, g1::AbstractGraph, g2::AbstractGraph;
+                         vertex_relation::Union{Nothing, Function}=nothing,
+                         edge_relation::Union{Nothing, Function}=nothing)::Bool
+
+    !could_have_isomorph(g1, g2) && return false
+
+    result = false
+    callback(vmap) = (result = true; return false)
+    vf2(callback, g1, g2, IsomorphismProblem,
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+    return result
 end
 
 """
-    count_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return the number of vertex induced subgraphs of the graph `g1` that are isomorphic to `g2`.
 
@@ -187,7 +215,7 @@ Return the number of vertex induced subgraphs of the graph `g1` that are isomorp
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -210,21 +238,25 @@ julia> count_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                    vertex_relation::Union{Nothing, Function}=nothing,
                                    edge_relation::Union{Nothing, Function}=nothing,
-                                   alg=:vf2)::Int
-    if alg == :vf2
-        result = 0
-        callback(vmap) = (result += 1; return true)
-        vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem,
-                       vertex_relation=vertex_relation,
-                       edge_relation=edge_relation)
-        return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
+                                   alg::IsomorphismAlgorithm=VF2())::Int
+    count_induced_subgraphisomorph(alg,g1,g2;
+                                   vertex_relation=vertex_relation,
+                                   edge_relation=edge_relation)
+end
+
+function count_induced_subgraphisomorph(alg::VF2, g1::AbstractGraph, g2::AbstractGraph;
+                                   vertex_relation::Union{Nothing, Function}=nothing,
+                                   edge_relation::Union{Nothing, Function}=nothing)::Int
+    result = 0
+    callback(vmap) = (result += 1; return true)
+    vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem,
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+    return result
 end
 
 """
-    count_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 
@@ -234,7 +266,7 @@ Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -257,19 +289,24 @@ julia> count_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                                    vertex_relation::Union{Nothing, Function}=nothing,
                                    edge_relation::Union{Nothing, Function}=nothing,
-                                   alg=:vf2)::Int
-    if alg == :vf2
-        result = 0
-        callback(vmap) = (result += 1; return true)
-        vf2(callback, g1, g2, SubGraphIsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
+                                   alg::IsomorphismAlgorithm=VF2())::Int
+
+     count_subgraphisomorph(alg,g1::AbstractGraph, g2::AbstractGraph;
+                            vertex_relation=vertex_relation,
+                            edge_relation=edge_relation)
+end
+
+function count_subgraphisomorph(alg::VF2,g1::AbstractGraph, g2::AbstractGraph;
+                                vertex_relation::Union{Nothing, Function}=nothing,
+                                edge_relation::Union{Nothing, Function}=nothing)::Int
+    result = 0
+    callback(vmap) = (result += 1; return true)
+    vf2(callback, g1, g2, SubGraphIsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
+    return result
 end
 
 """
-    count_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    count_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return the number of isomorphism from graph `g1` to `g2`.
 
@@ -279,7 +316,7 @@ Return the number of isomorphism from graph `g1` to `g2`.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -300,22 +337,26 @@ julia> count_isomorph(g1, g2, vertex_relation=color_rel)
 [`count_induced_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`all_isomorph`](@ref)
 """
 function count_isomorph(g1::AbstractGraph, g2::AbstractGraph;
-                           vertex_relation::Union{Nothing, Function}=nothing,
-                           edge_relation::Union{Nothing, Function}=nothing,
-                           alg=:vf2)::Int
-    if alg == :vf2
-        !could_have_isomorph(g1, g2) && return 0
-        result = 0
-        callback(vmap) = (result += 1; return true)
-        vf2(callback, g1, g2, IsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return result
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
-    end
+                        vertex_relation::Union{Nothing, Function}=nothing,
+                        edge_relation::Union{Nothing, Function}=nothing,
+                        alg::IsomorphismAlgorithm=VF2())::Int
+    count_isomorph(alg, g1, g2;
+                   vertex_relation=vertex_relation,
+                   edge_relation=edge_relation)
+end
+
+function count_isomorph(alg::VF2, g1::AbstractGraph, g2::AbstractGraph;
+                        vertex_relation::Union{Nothing, Function}=nothing,
+                        edge_relation::Union{Nothing, Function}=nothing)::Int
+    !could_have_isomorph(g1, g2) && return 0
+    result = 0
+    callback(vmap) = (result += 1; return true)
+    vf2(callback, g1, g2, IsomorphismProblem, vertex_relation=vertex_relation, edge_relation=edge_relation)
+    return result
 end
 
 """
-    all_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return all isomoprhism from vertex induced subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -328,7 +369,7 @@ mapped to v ∈ g2.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -352,25 +393,28 @@ julia> all_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel) |> collec
 [`all_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`count_induced_subgraphisomorph`](@ref)
 """
 function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
+                                      vertex_relation::Union{Nothing, Function}=nothing,
+                                      edge_relation::Union{Nothing, Function}=nothing,
+                                      alg::IsomorphismAlgorithm=VF2())::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    all_induced_subgraphisomorph(alg, g1, g2;  
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+end
+
+function all_induced_subgraphisomorph(alg::VF2,g1::AbstractGraph, g2::AbstractGraph;
                                  vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing,
-                                 alg=:vf2)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    if alg == :vf2
+                                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
         make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-        T = Vector{Tuple{eltype(g1), eltype(g2)}}
-        ch::Channel{T} = Channel(ctype=T) do c
-            vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem, 
-                           vertex_relation=vertex_relation,
-                           edge_relation=edge_relation)
-        end
-        return ch
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
+    T = Vector{Tuple{eltype(g1), eltype(g2)}}
+    ch::Channel{T} = Channel(ctype=T) do c
+        vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem, 
+                       vertex_relation=vertex_relation,
+                       edge_relation=edge_relation)
     end
 end
 
 """
-    all_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return all isomorphism from  subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -383,7 +427,7 @@ mapped to v ∈ g2.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -411,24 +455,29 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph;
                          vertex_relation::Union{Nothing, Function}=nothing,
                          edge_relation::Union{Nothing, Function}=nothing,
-                         alg=:vf2)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
+                         alg::IsomorphismAlgorithm=VF2())::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
 
-    if alg == :vf2
-        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-        T = Vector{Tuple{eltype(g1), eltype(g2)}}
-        ch::Channel{T} = Channel(ctype=T) do c
-            vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem, 
-                           vertex_relation=vertex_relation,
-                           edge_relation=edge_relation)
-        end
-        return ch
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
+    all_subgraphisomorph(alg, g1, g2;
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+end
+
+function all_subgraphisomorph(alg::VF2,g1::AbstractGraph, g2::AbstractGraph;
+                              vertex_relation::Union{Nothing, Function}=nothing,
+                              edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
+
+    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
+    T = Vector{Tuple{eltype(g1), eltype(g2)}}
+    ch::Channel{T} = Channel(ctype=T) do c
+        vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem, 
+            vertex_relation=vertex_relation,
+            edge_relation=edge_relation)
     end
+    return ch
 end
 
 """
-    all_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=:vf2)
+    all_isomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
 Return all isomorphism from `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
@@ -441,7 +490,7 @@ mapped to v ∈ g2.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
     isomorphism only exists if this function returns `true` for all matched edges.
 - `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `:vf2` at the moment.
+    `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -472,21 +521,25 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 function all_isomorph(g1::AbstractGraph, g2::AbstractGraph;
                  vertex_relation::Union{Nothing, Function}=nothing,
                  edge_relation::Union{Nothing, Function}=nothing,
-                 alg=:vf2)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+                 alg::IsomorphismAlgorithm=VF2())::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
 
-    if alg == :vf2
-        T = Vector{Tuple{eltype(g1), eltype(g2)}}
-        !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
-        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-        ch::Channel{T} = Channel(ctype=T) do c
-            vf2(make_callback(c), g1, g2, IsomorphismProblem, 
-                           vertex_relation=vertex_relation,
-                           edge_relation=edge_relation)
-        end
-        return ch
-    else
-        throw(ArgumentError("Keyword argument alg must be :vf2"))
+    all_isomorph(alg, g1, g2;
+        vertex_relation=vertex_relation,
+        edge_relation=edge_relation)
+end
+
+function all_isomorph(alg::VF2, g1::AbstractGraph, g2::AbstractGraph;
+                 vertex_relation::Union{Nothing, Function}=nothing,
+                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    T = Vector{Tuple{eltype(g1), eltype(g2)}}
+    !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
+    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
+    ch::Channel{T} = Channel(ctype=T) do c
+        vf2(make_callback(c), g1, g2, IsomorphismProblem, 
+            vertex_relation=vertex_relation,
+            edge_relation=edge_relation)
     end
+    return ch
 end
 
 """
