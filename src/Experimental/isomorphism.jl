@@ -358,7 +358,7 @@ end
 """
     all_induced_subgraphisomorph(g1, g2; vertex_relation=nothing, edge_relation=nothing, alg=VF2())
 
-Return all isomoprhism from vertex induced subgraphs of `g1` to `g2`.
+Return all isomorphism from vertex induced subgraphs of `g1` to `g2`.
 The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
