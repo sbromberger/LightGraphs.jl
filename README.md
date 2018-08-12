@@ -46,9 +46,9 @@ Documentation for methods is also available via the Julia REPL help system.
 Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 
 ## Installation
-Installation is straightforward:
+Installation is straightforward: enter Pkg mode by hitting `]`, and then
 ```julia-repl
-julia> Pkg.add("LightGraphs")
+(v1.0) pkg> add LightGraphs
 ```
 
 ## Supported Versions
