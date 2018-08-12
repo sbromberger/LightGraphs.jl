@@ -5,7 +5,28 @@ Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
 of a graph
 
 ### Implementation Notes
-Preserves the eltype of the input graph.
+Preserves the `eltype` of the input graph.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> foreach(println, edges(complement(g)))
+Edge 1 => 3
+Edge 1 => 4
+Edge 1 => 5
+Edge 2 => 1
+Edge 2 => 4
+Edge 2 => 5
+Edge 3 => 2
+Edge 3 => 5
+Edge 4 => 1
+Edge 4 => 2
+Edge 4 => 3
+Edge 5 => 1
+Edge 5 => 2
+Edge 5 => 3
+```
 """
 function complement(g::Graph)
     gnv = nv(g)
@@ -39,6 +60,19 @@ original directed graph.
 
 ### Implementation Notes
 Preserves the eltype of the input graph.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> foreach(println, edges(reverse(g)))
+Edge 1 => 3
+Edge 2 => 1
+Edge 3 => 2
+Edge 4 => 3
+Edge 4 => 5
+Edge 5 => 4
+```
 """
 function reverse end
 @traitfn function reverse(g::::IsDirected)
@@ -55,6 +89,7 @@ end
     reverse!(g)
 
 In-place reverse of a directed graph (modifies the original graph).
+See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
 @traitfn function reverse!(g::::IsDirected)
@@ -66,11 +101,32 @@ end
     blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
-edges where the vertices an edges from graph `h` are appended to graph `g`.
+edges where the vertices and edges from graph `h` are appended to graph `g`.
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the
-number of vertices in the generated graph exceeds the eltype.
+number of vertices in the generated graph exceeds the `eltype`.
+
+# Examples
+```jldoctest
+julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> blockdiag(g1, g2)
+{8, 9} directed simple Int64 graph
+
+julia> foreach(println, edges(blockdiag(g1, g2)))
+Edge 1 => 2
+Edge 2 => 3
+Edge 3 => 1
+Edge 3 => 4
+Edge 4 => 5
+Edge 5 => 4
+Edge 6 => 7
+Edge 7 => 8
+Edge 8 => 6
+```
 """
 function blockdiag(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
@@ -92,6 +148,18 @@ Return a graph with edges that are only in both graph `g` and graph `h`.
 ### Implementation Notes
 This function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph.
+
+# Examples
+```jldoctest
+julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> foreach(println, edges(intersect(g1, g2)))
+Edge 1 => 2
+Edge 2 => 3
+Edge 3 => 1
+```
 """
 function intersect(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
@@ -111,7 +179,19 @@ Return a graph with edges in graph `g` that are not in graph `h`.
 
 ### Implementation Notes
 Note that this function may produce a graph with 0-degree vertices.
-Preserves the eltype of the input graph.
+Preserves the `eltype` of the input graph.
+
+# Examples
+```jldoctest
+julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> foreach(println, edges(difference(g1, g2)))
+Edge 3 => 4
+Edge 4 => 5
+Edge 5 => 4
+```
 """
 function difference(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
@@ -248,6 +328,27 @@ end
     sum(g, i)
 
 Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> sum(g, 2)
+5-element Array{Int64,1}:
+ 1
+ 1
+ 2
+ 1
+ 1
+
+julia> sum(g, 1)
+5-element Array{Int64,1}:
+ 1
+ 1
+ 1
+ 2
+ 1
+```
 """
 function sum(g::AbstractGraph, dim::Int)
     dim == 1 && return indegree(g, vertices(g))
@@ -267,7 +368,15 @@ size(g::Graph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 """
     sum(g)
 
-Return the number of edges in `g`
+Return the number of edges in `g`.
+
+# Examples
+```jldoctest
+julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia> sum(g)
+2
+```
 """
 sum(g::AbstractGraph) = ne(g)
 

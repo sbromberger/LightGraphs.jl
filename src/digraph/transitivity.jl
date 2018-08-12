@@ -8,7 +8,8 @@ algorithm. If `selflooped` is true, add self loops to the graph.
 Time complexity is \\mathcal{O}(|V|^3).
 
 ### Implementation Notes
-This version of the function modifies the original graph.
+This version of the function modifies the original graph. See
+[`transitiveclosure](@ref) for a non-modifying version.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
@@ -30,6 +31,27 @@ is `true`, add self loops to the graph.
 
 ### Performance
 Time complexity is \\mathcal{O}(|V|^3).
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> foreach(println, edges(transitiveclosure(g)))
+Edge 1 => 2
+Edge 1 => 3
+Edge 1 => 4
+Edge 1 => 5
+Edge 2 => 1
+Edge 2 => 3
+Edge 2 => 4
+Edge 2 => 5
+Edge 3 => 1
+Edge 3 => 2
+Edge 3 => 4
+Edge 3 => 5
+Edge 4 => 5
+Edge 5 => 4
+```
 """
 function transitiveclosure(g::DiGraph, selflooped = false)
     copyg = copy(g)
@@ -47,6 +69,19 @@ of size one will be preserved.
 
 ### Performance
 Time complexity is \\mathcal{O}(|V||E|).
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> foreach(println, edges(transitivereduction(g)))
+Edge 1 => 2
+Edge 1 => 4
+Edge 2 => 3
+Edge 3 => 1
+Edge 4 => 5
+Edge 5 => 4
+```
 """
 function transitivereducion end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)

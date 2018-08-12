@@ -39,6 +39,16 @@ if involved costs are equivalent.
 
 ### Author
 - Júlio Hoffimann Mendes (juliohm@stanford.edu)
+
+# Examples
+```jldoctest
+julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> edit_distance(g1, g2)
+(3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])
+```
 """
 function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                         insert_cost::Function=v -> 1.0,
@@ -125,7 +135,7 @@ end
 """
     BoundedMinkowskiCost(μ₁, μ₂)
 
-Return value similar to `MinkowskiCost`, but ensure costs smaller than 2τ.
+Return value similar to [`MinkowskiCost`](@ref), but ensure costs smaller than 2τ.
 
 ### Optional Arguments
 `p=1`: the p value for p-norm calculation.
