@@ -10,7 +10,7 @@ function kruskal_mst end
 
     connected_vs = IntDisjointSets(nv(g))
 
-    mst = Vector{AbstractEdge}()
+    mst = Vector{edgetype(g}}()
     sizehint!(mst, nv(g) - 1)
 
     weights = Vector{T}()
