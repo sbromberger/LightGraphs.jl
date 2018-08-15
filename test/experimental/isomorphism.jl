@@ -112,18 +112,7 @@ end
     # this test is mainly to cover a certain branch of vf2
     # TODO cover directed graphs better
     gd = SimpleDiGraph(Edge.([(2,1)]))
-    @test has_isomorph(gd, gd, alg=VF2()) == true
-
-    # Tests for when the argument alg is not some valid value
-    @test_throws TypeError has_isomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError count_isomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError all_isomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError has_subgraphisomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError count_subgraphisomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError all_subgraphisomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError has_induced_subgraphisomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError count_induced_subgraphisomorph(g, g, alg=:some_nonsense)
-    @test_throws TypeError all_induced_subgraphisomorph(g, g, alg=:some_nonsense)
+    @test has_isomorph(gd, gd, VF2()) == true
 
     # Test for correct handling of self-loops
     g1 = SimpleGraph(1)
