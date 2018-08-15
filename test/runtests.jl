@@ -20,55 +20,55 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
-    #= "simplegraphs/runtests", =#
-    #= "linalg/runtests", =#
-    #= "parallel/runtests", =#
-    #= "interface", =#
-    #= "core", =#
-    #= "operators", =#
-    #= "degeneracy", =#
-    #= "distance", =#
-    #= "digraph/transitivity", =#
-    #= "cycles/hadwick-james", =#
-    #= "cycles/johnson", =#
-    #= "cycles/karp", =#
-    #= "cycles/basis", =#
-    #= "edit_distance", =#
-    #= "connectivity", =#
-    #= "persistence/persistence", =#
-    #= "shortestpaths/astar", =#
-    #= "shortestpaths/bellman-ford", =#
-    #= "shortestpaths/dijkstra", =#
-    #= "shortestpaths/johnson", =#
-    #= "shortestpaths/floyd-warshall", =#
-    #= "shortestpaths/yen", =#
-    #= "traversals/bfs", =#
-    #= "traversals/bipartition", =#
-    #= "traversals/greedy_color", =#
-    #= "traversals/dfs", =#
-    #= "traversals/maxadjvisit", =#
-    #= "traversals/randomwalks", =#
-    #= "traversals/diffusion", =#
-    #= "community/cliques", =#
-    #= "community/core-periphery", =#
-    #= "community/label_propagation", =#
-    #= "community/modularity", =#
-    #= "community/clustering", =#
-    #= "community/clique_percolation", =#
-    #= "centrality/betweenness", =#
-    #= "centrality/closeness", =#
-    #= "centrality/degree", =#
-    #= "centrality/katz", =#
-    #= "centrality/pagerank", =#
-    #= "centrality/eigenvector", =#
-    #= "centrality/stress", =#
-    #= "centrality/radiality", =#
-    #= "utils", =#
-    #= "spanningtrees/kruskal", =#
-    #= "spanningtrees/prim", =#
-    #= "biconnectivity/articulation", =#
-    #= "biconnectivity/biconnect", =#
-    #= "graphcut/normalized_cut", =#
+    "simplegraphs/runtests",
+    "linalg/runtests",
+    "parallel/runtests",
+    "interface",
+    "core",
+    "operators",
+    "degeneracy",
+    "distance",
+    "digraph/transitivity",
+    "cycles/hadwick-james",
+    "cycles/johnson",
+    "cycles/karp",
+    "cycles/basis",
+    "edit_distance",
+    "connectivity",
+    "persistence/persistence",
+    "shortestpaths/astar",
+    "shortestpaths/bellman-ford",
+    "shortestpaths/dijkstra",
+    "shortestpaths/johnson",
+    "shortestpaths/floyd-warshall",
+    "shortestpaths/yen",
+    "traversals/bfs",
+    "traversals/bipartition",
+    "traversals/greedy_color",
+    "traversals/dfs",
+    "traversals/maxadjvisit",
+    "traversals/randomwalks",
+    "traversals/diffusion",
+    "community/cliques",
+    "community/core-periphery",
+    "community/label_propagation",
+    "community/modularity",
+    "community/clustering",
+    "community/clique_percolation",
+    "centrality/betweenness",
+    "centrality/closeness",
+    "centrality/degree",
+    "centrality/katz",
+    "centrality/pagerank",
+    "centrality/eigenvector",
+    "centrality/stress",
+    "centrality/radiality",
+    "utils",
+    "spanningtrees/kruskal",
+    "spanningtrees/prim",
+    "biconnectivity/articulation",
+    "biconnectivity/biconnect",
+    "graphcut/normalized_cut",
     "experimental/experimental"
 ]
 
