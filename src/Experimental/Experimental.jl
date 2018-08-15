@@ -13,5 +13,6 @@ export description,
 description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
+include("vf2.jl") # Julian implementation of VF2 algorithm
 
 end

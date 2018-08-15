@@ -10,7 +10,6 @@ An abstract type used for method dispatch on isomorphism functions.
 """
 abstract type IsomorphismAlgorithm end
 
-include("vf2.jl") # Julian implementation of VF2 algorithm
 
 """
     could_have_isomorph(g1, g2)
@@ -79,16 +78,6 @@ function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg:
 
 end
 
-function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Bool
-        result = false
-        callback(vmap) = (result = true; return false)
-        vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem();
-                       vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return result
-end
-
 """
     has_subgraphisomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
@@ -126,16 +115,6 @@ function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::Isomorp
     has_subgraphisomorph(g1, g2, alg;
         vertex_relation=vertex_relation,
         edge_relation=edge_relation)
-end
-
-function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing,)::Bool
-    result = false
-    callback(vmap) = (result = true; return false)
-    vf2(callback, g1, g2, SubGraphIsomorphismProblem();
-        vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
 end
 
 """
@@ -177,20 +156,6 @@ function has_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgo
                   edge_relation=edge_relation)
 end
 
-function has_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                         vertex_relation::Union{Nothing, Function}=nothing,
-                         edge_relation::Union{Nothing, Function}=nothing)::Bool
-
-    !could_have_isomorph(g1, g2) && return false
-
-    result = false
-    callback(vmap) = (result = true; return false)
-    vf2(callback, g1, g2, IsomorphismProblem(),
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
-    return result
-end
-
 """
     count_induced_subgraphisomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
@@ -226,17 +191,6 @@ function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, al
     count_induced_subgraphisomorph(g1,g2, alg;
                                    vertex_relation=vertex_relation,
                                    edge_relation=edge_relation)
-end
-
-function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                   vertex_relation::Union{Nothing, Function}=nothing,
-                                   edge_relation::Union{Nothing, Function}=nothing)::Int
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem(),
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
-    return result
 end
 
 """
@@ -279,15 +233,6 @@ function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::Isomo
                             edge_relation=edge_relation)
 end
 
-function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                vertex_relation::Union{Nothing, Function}=nothing,
-                                edge_relation::Union{Nothing, Function}=nothing)::Int
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, SubGraphIsomorphismProblem(), vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
-end
-
 """
     count_isomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
@@ -325,16 +270,6 @@ function count_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAl
     count_isomorph(g1, g2, alg;
                    vertex_relation=vertex_relation,
                    edge_relation=edge_relation)
-end
-
-function count_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                        vertex_relation::Union{Nothing, Function}=nothing,
-                        edge_relation::Union{Nothing, Function}=nothing)::Int
-    !could_have_isomorph(g1, g2) && return 0
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, IsomorphismProblem(), vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
 end
 
 """
@@ -380,18 +315,6 @@ function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg:
     all_induced_subgraphisomorph(g1, g2, alg;  
         vertex_relation=vertex_relation,
         edge_relation=edge_relation)
-end
-
-function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem(), 
-                       vertex_relation=vertex_relation,
-                       edge_relation=edge_relation)
-    end
 end
 
 """
@@ -440,20 +363,6 @@ function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::Isomorp
     all_subgraphisomorph(g1, g2, alg;
         vertex_relation=vertex_relation,
         edge_relation=edge_relation)
-end
-
-function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                              vertex_relation::Union{Nothing, Function}=nothing,
-                              edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
-
-    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem(), 
-            vertex_relation=vertex_relation,
-            edge_relation=edge_relation)
-    end
-    return ch
 end
 
 """
@@ -506,18 +415,3 @@ function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgo
         vertex_relation=vertex_relation,
         edge_relation=edge_relation)
 end
-
-function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                 vertex_relation::Union{Nothing, Function}=nothing,
-                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
-    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, IsomorphismProblem(), 
-            vertex_relation=vertex_relation,
-            edge_relation=edge_relation)
-    end
-    return ch
-end
-
