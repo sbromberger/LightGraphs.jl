@@ -1049,38 +1049,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "pathing.html#LightGraphs.DijkstraState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.DijkstraState",
-    "category": "type",
-    "text": "struct DijkstraState{T, U}\n\nAn AbstractPathState designed for Dijkstra shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.BellmanFordState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.BellmanFordState",
-    "category": "type",
-    "text": "BellmanFordState{T, U}\n\nAn AbstractPathState designed for Bellman-Ford shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.FloydWarshallState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.FloydWarshallState",
-    "category": "type",
-    "text": "struct FloydWarshallState{T, U}\n\nAn AbstractPathState designed for Floyd-Warshall shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.YenState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.YenState",
-    "category": "type",
-    "text": "struct YenState{T, U}\n\nDesigned for yen k-shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
     "location": "pathing.html#Path-States-1",
     "page": "Path and Traversal",
     "title": "Path States",
@@ -1405,7 +1373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1413,7 +1381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
