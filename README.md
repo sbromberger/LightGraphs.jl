@@ -46,9 +46,9 @@ Documentation for methods is also available via the Julia REPL help system.
 Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 
 ## Installation
-Installation is straightforward:
+Installation is straightforward: enter Pkg mode by hitting `]`, and then
 ```julia-repl
-julia> Pkg.add("LightGraphs")
+(v1.0) pkg> add LightGraphs
 ```
 
 ## Supported Versions
@@ -57,7 +57,7 @@ julia> Pkg.add("LightGraphs")
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
 * Julia 0.6: LightGraphs versions in the 0.8 through 0.12 series are designed to work with Julia 0.6.
-* Julia 0.7: LightGraphs versions in the 1.0 series are designed to work with Julia 0.7.
+* Julia 0.7 / 1.0: LightGraphs versions in the 1.0 series are designed to work with Julia 0.7 and Julia 1.0.
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs
