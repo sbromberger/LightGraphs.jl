@@ -24,6 +24,47 @@
         @test SimpleEdge(t1) == SimpleEdge{UInt8}(t1) == SimpleEdge{Int16}(t1)
         @test SimpleEdge{Int64}(ep1) == e
 
+        # test for <, isless relation
+        @test SimpleEdge{T}(1, 1) < SimpleEdge{T}(2, 2)
+        @test SimpleEdge(1, 1) < SimpleEdge{T}(2, 2)
+        @test SimpleEdge{T}(1, 1) < SimpleEdge(2, 2)
+
+        @test SimpleEdge{T}(1, 1) < SimpleEdge{T}(2, 1)
+        @test SimpleEdge(1, 1) < SimpleEdge{T}(2, 1)
+        @test SimpleEdge{T}(1, 1) < SimpleEdge(2, 1)
+
+        @test SimpleEdge{T}(1, 2) < SimpleEdge{T}(2, 1)
+        @test SimpleEdge(1, 2) < SimpleEdge{T}(2, 1)
+        @test SimpleEdge{T}(1, 2) < SimpleEdge(2, 1)
+
+        @test SimpleEdge{T}(1, 1) < SimpleEdge{T}(1, 2)
+        @test SimpleEdge(1, 1) < SimpleEdge{T}(1, 2)
+        @test SimpleEdge{T}(1, 1) < SimpleEdge(1, 2)
+
+        @test !(SimpleEdge{T}(1, 1) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge(1, 1) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge{T}(1, 1) < SimpleEdge(1, 1))
+
+        @test !(SimpleEdge{T}(1, 2) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge(1, 2) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge{T}(1, 2) < SimpleEdge(1, 1))
+
+        @test !(SimpleEdge{T}(2, 1) < SimpleEdge{T}(1, 2))
+        @test !(SimpleEdge(2, 1) < SimpleEdge{T}(1, 2))
+        @test !(SimpleEdge{T}(2, 1) < SimpleEdge(1, 2))
+
+        @test !(SimpleEdge{T}(2, 1) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge(2, 1) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge{T}(2, 1) < SimpleEdge(1, 1))
+
+        @test !(SimpleEdge{T}(2, 2) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge(2, 2) < SimpleEdge{T}(1, 1))
+        @test !(SimpleEdge{T}(2, 2) < SimpleEdge(1, 1))
+
+        # sort uses isless
+        @test sort(SimpleEdge{T}.([(2,1), (1, 1), (1, 2), (2, 2), (1, 1)])) ==
+                   SimpleEdge{T}.([(1,1), (1, 1), (1, 2), (2, 1), (2, 2)])
+
         @test Pair(e) == p
         @test Tuple(e) == t1
         @test reverse(ep1) == re
