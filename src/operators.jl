@@ -41,7 +41,7 @@ original directed graph.
 Preserves the eltype of the input graph.
 """
 function reverse end
-@traitfn function reverse(g::::IsDirected)
+@traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
@@ -57,7 +57,7 @@ end
 In-place reverse of a directed graph (modifies the original graph).
 """
 function reverse! end
-@traitfn function reverse!(g::::IsDirected)
+@traitfn function reverse!(g::G::IsDirected) where G<:AbstractSimpleGraph
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
