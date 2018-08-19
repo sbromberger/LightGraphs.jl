@@ -153,6 +153,16 @@ Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
 Returns a reference, not a copy. Do not modify result.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> inneighbors(g, 4)
+2-element Array{Int64,1}:
+ 3
+ 5
+```
 """
 inneighbors(x, v) = _NI("inneighbors")
 
@@ -163,6 +173,15 @@ Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
 Returns a reference, not a copy. Do not modify result.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> outneighbors(g, 4)
+1-element Array{Int64,1}:
+ 5
+```
 """
 outneighbors(x, v) = _NI("outneighbors")
 
@@ -170,5 +189,13 @@ outneighbors(x, v) = _NI("outneighbors")
     zero(g)
 
 Return a zero-vertex, zero-edge version of the same type of graph as `g`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> zero(g)
+{0, 0} directed simple Int64 graph
+```
 """
 zero(g::AbstractGraph) = _NI("zero")
