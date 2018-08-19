@@ -97,7 +97,7 @@ function _accumulate_endpoints!(betweenness::Vector{Float64},
     δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
-    v1 = [1:n_v;]
+    v1 = collect(Base.OneTo(n_v))
     v2 = state.dists
     S = reverse(state.closest_vertices)
     s = vertices(g)[si]
@@ -135,9 +135,8 @@ function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, di
         if k > 0
             scale = scale * n / k
         end
-        for v = 1:length(betweenness)
-            betweenness[v] *= scale
-        end
+        betweenness .*= scale
+        
     end
     return nothing
 end
