@@ -5,7 +5,7 @@ using LinearAlgebra
 using LightGraphs
 
 import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, issubset, zero, in, iterate
+    eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
 
 import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
@@ -159,7 +159,7 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 end
 
 zero(g::T) where T<:AbstractSimpleGraph = T()
-
+    
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
