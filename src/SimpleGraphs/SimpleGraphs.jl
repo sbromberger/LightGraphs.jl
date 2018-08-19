@@ -51,7 +51,7 @@ function show(io::IO, g::AbstractSimpleGraph{T}) where T
 end
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
-vertices(g::AbstractSimpleGraph{T}) where T = one(T):nv(g)
+vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
 
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
@@ -74,11 +74,8 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
-function issubset(g::T, h::T) where T<:AbstractSimpleGraph
-    (gmin, gmax) = extrema(vertices(g))
-    (hmin, hmax) = extrema(vertices(h))
-    return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
-end
+issubset(g::T, h::T) where T<:AbstractSimpleGraph =
+    (nv(g) <= nv(h)) && issubset(edges(g), edges(h))
 
 has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
