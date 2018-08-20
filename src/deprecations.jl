@@ -1,2 +1,2 @@
-# deprecations should also include a comment stating the version
-# for which the deprecation should be removed.
+@deprecate in_neighbors inneighbors
+@deprecate out_neighbors outneighbors

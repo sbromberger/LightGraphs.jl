@@ -25,6 +25,35 @@ of graph `g`. Return a vector representing the centrality calculated for each no
 
 ### Optional Arguments
 - `normalize=true`: If true, normalize each centrality measure by ``\\frac{1}{|V|-1}``.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> degree_centrality(g)
+5-element Array{Float64,1}:
+ 0.5
+ 0.5
+ 0.75
+ 0.75
+ 0.5
+
+julia> indegree_centrality(g)
+5-element Array{Float64,1}:
+ 0.25
+ 0.25
+ 0.25
+ 0.5
+ 0.25
+
+julia> outdegree_centrality(g)
+5-element Array{Float64,1}:
+ 0.25
+ 0.25
+ 0.5
+ 0.25
+ 0.25
+```
 """
 degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
 indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)

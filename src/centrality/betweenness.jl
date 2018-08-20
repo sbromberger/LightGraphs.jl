@@ -5,6 +5,8 @@
 """
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
+    parallel_betweenness_centrality(g[, vs])
+    parallel_betweenness_centrality(g, k)
 
 Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
 of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
@@ -24,6 +26,19 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 
 ### References
 - Brandes 2001 & Brandes 2008
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> betweenness_centrality(g)
+5-element Array{Float64,1}:
+ 0.08333333333333333
+ 0.25
+ 0.41666666666666663
+ 0.25
+ 0.0
+``
 """
 function betweenness_centrality(g::AbstractGraph,
     vs::AbstractVector=vertices(g),
@@ -59,6 +74,42 @@ end
 betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
     betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
+function parallel_betweenness_centrality(g::AbstractGraph,
+    vs::AbstractVector=vertices(g),
+    distmx::AbstractMatrix=weights(g);
+    normalize=true,
+    endpoints=false)::Vector{Float64}
+
+    n_v = nv(g)
+    k = length(vs)
+    isdir = is_directed(g)
+
+    # Parallel reduction
+
+    betweenness = @distributed (+) for s in vs
+        temp_betweenness = zeros(n_v)
+        if degree(g, s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+            if endpoints
+                _accumulate_endpoints!(temp_betweenness, state, g, s)
+            else
+                _accumulate_basic!(temp_betweenness, state, g, s)
+            end
+        end
+        temp_betweenness
+    end
+
+    _rescale!(betweenness,
+    n_v,
+    normalize,
+    isdir,
+    k)
+
+    return betweenness
+end
+
+parallel_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
+    parallel_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
 function _accumulate_basic!(betweenness::Vector{Float64},
     state::DijkstraState,

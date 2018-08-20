@@ -23,5 +23,18 @@ eigenvector of the adjacency matrix \$\\mathbf{A}\$.
     http://www.leonidzhukov.net/hse/2014/socialnetworks/papers/Bonacich-Centrality.pdf
 - Mark E. J. Newman: Networks: An Introduction.
        Oxford University Press, USA, 2010, pp. 169.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> eigenvector_centrality(g)
+5-element Array{Float64,1}:
+ 0.301511344577763
+ 0.30151134457776335
+ 0.3015113445777637
+ 0.6030226891555275
+ 0.6030226891555271
+```
 """
 eigenvector_centrality(g::AbstractGraph) = abs.(vec(eigs(adjacency_matrix(g), nev=1)[2]))::Vector{Float64}

@@ -8,6 +8,19 @@ of the graph `g`. Return a vector representing the centrality calculated for eac
 - `normalize=true`: If true, normalize the centrality value of each
 node `n` by ``\\frac{|δ_n|}{|V|-1}``, where ``δ_n`` is the set of vertices reachable
 from node `n`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> closeness_centrality(g)
+5-element Array{Float64,1}:
+ 0.4
+ 0.5
+ 0.6666666666666666
+ 0.25
+ 0.25
+```
 """
 function closeness_centrality(g::AbstractGraph,
     distmx::AbstractMatrix=weights(g);
@@ -34,4 +47,32 @@ function closeness_centrality(g::AbstractGraph,
         end
     end
     return closeness
+end
+
+function parallel_closeness_centrality(g::AbstractGraph,
+    distmx::AbstractMatrix=weights(g);
+    normalize=true)::Vector{Float64}
+
+    n_v = Int(nv(g))
+
+    closeness = SharedVector{Float64}(n_v)
+
+    @sync @distributed for u in vertices(g)
+        if degree(g, u) == 0     # no need to do Dijkstra here
+            closeness[u] = 0.0
+        else
+            d = dijkstra_shortest_paths(g, u, distmx).dists
+            δ = filter(x -> x != typemax(x), d)
+            σ = sum(δ)
+            l = length(δ) - 1
+            if σ > 0
+                closeness[u] = l / σ
+                if normalize
+                    n = l * 1.0 / (n_v - 1)
+                    closeness[u] *= n
+                end
+            end
+        end
+    end
+    return sdata(closeness)
 end

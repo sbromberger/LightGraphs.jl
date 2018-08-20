@@ -26,6 +26,19 @@
 Calculate the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
 of the graph `g` optionally parameterized by `α`. Return a vector representing
 the centrality calculated for each node in `g`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> katz_centrality(g)
+5-element Array{Float64,1}:
+ 0.4090807026240629
+ 0.4090807026240629
+ 0.4090807026240629
+ 0.5439424727199078
+ 0.44953923365281634
+```
 """
 function katz_centrality(g::AbstractGraph, α::Real=0.3)
     nvg = nv(g)
