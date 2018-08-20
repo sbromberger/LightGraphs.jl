@@ -80,6 +80,22 @@ belonging to the component.
 
 For directed graphs, see [`strongly_connected_components`](@ref) and
 [`weakly_connected_components`](@ref).
+
+# Examples
+```jldoctest
+julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia> connected_components(g)
+1-element Array{Array{Int64,1},1}:
+ [1, 2, 3]
+
+julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> connected_components(g)
+2-element Array{Array{Int64,1},1}:
+ [1, 2, 3]
+ [4, 5]
+```
 """
 function connected_components(g::AbstractGraph{T}) where T
     label = zeros(T, nv(g))
@@ -93,6 +109,24 @@ end
 
 Return `true` if graph `g` is connected. For directed graphs, return `true`
 if graph `g` is weakly connected.
+
+# Examples
+```jldoctest
+julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia> is_connected(g)
+true
+
+julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> is_connected(g)
+false
+
+julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> is_connected(g)
+true
+```
 """
 function is_connected(g::AbstractGraph)
     mult = is_directed(g) ? 2 : 1
@@ -104,7 +138,16 @@ end
 
 Return the weakly connected components of the graph `g`. This
 is equivalent to the connected components of the undirected equivalent of `g`.
-For undirected graphs this is equivalent to the connected components of `g`.
+For undirected graphs this is equivalent to the [`connected_components`](@ref) of `g`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia> weakly_connected_components(g)
+1-element Array{Array{Int64,1},1}:
+ [1, 2, 3]
+```
 """
 weakly_connected_components(g) = connected_components(g)
 
@@ -112,7 +155,26 @@ weakly_connected_components(g) = connected_components(g)
     is_weakly_connected(g)
 
 Return `true` if the graph `g` is weakly connected. If `g` is undirected,
-this function is equivalent to `is_connected(g)`.
+this function is equivalent to [`is_connected(g)`](@ref).
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> is_weakly_connected(g)
+true
+
+julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia> is_connected(g)
+true
+
+julia> is_strongly_connected(g)
+false
+
+julia> is_weakly_connected(g)
+true
+```
 """
 is_weakly_connected(g) = is_connected(g)
 
@@ -125,6 +187,16 @@ Return an array of arrays, each of which is the entire connected component.
 
 ### Implementation Notes
 The order of the components is not part of the API contract.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia> strongly_connected_components(g)
+2-element Array{Array{Int64,1},1}:
+ [3]
+ [1, 2]
+```
 """
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
@@ -216,6 +288,14 @@ end
     is_strongly_connected(g)
 
 Return `true` if directed graph `g` is strongly connected.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> is_strongly_connected(g)
+true
+```
 """
 function is_strongly_connected end
 @traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
@@ -225,6 +305,14 @@ function is_strongly_connected end
 
 Return the (common) period for all vertices in a strongly connected directed graph.
 Will throw an error if the graph is not strongly connected.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia> period(g)
+3
+```
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
@@ -255,6 +343,20 @@ end
 Return the condensation graph of the strongly connected components `scc`
 in the directed graph `g`. If `scc` is missing, generate the strongly
 connected components first.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
+{5, 6} directed simple Int64 graph
+
+julia> strongly_connected_components(g)
+2-element Array{Array{Int64,1},1}:
+ [4, 5]
+ [1, 2, 3]
+
+julia> foreach(println, edges(condensation(g)))
+Edge 2 => 1
+```
 """
 function condensation end
 @traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T <: Integer
@@ -284,6 +386,21 @@ components in the directed graph `g`.
 
 The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
+{5, 6} directed simple Int64 graph
+
+julia> strongly_connected_components(g)
+2-element Array{Array{Int64,1},1}:
+ [4, 5]
+ [1, 2, 3]
+
+julia> attracting_components(g)
+1-element Array{Array{Int64,1},1}:
+ [4, 5]
+```
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
@@ -311,6 +428,32 @@ may be specified by `distmx`.
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> neighborhood(g, 1, 2)
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+
+julia> neighborhood(g, 1, 3)
+4-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+
+julia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
+5-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+ 5
+```
 """
 neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
     first.(neighborhood_dists(g, v, d, distmx; dir=dir))
@@ -324,6 +467,39 @@ may be specified by `distmx`, along with its distance from `v`.
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
 with respect to `v` of the edges to be considered. Possible values: `:in` or `:out`.
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> neighborhood_dists(g, 1, 3)
+4-element Array{Tuple{Int64,Int64},1}:
+ (1, 0)
+ (2, 1)
+ (3, 2)
+ (4, 3)
+
+julia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
+5-element Array{Tuple{Int64,Float64},1}:
+ (1, 0.0)
+ (2, 1.0)
+ (3, 2.0)
+ (4, 2.25)
+ (5, 2.5)
+
+julia> neighborhood_dists(g, 4, 3)
+2-element Array{Tuple{Int64,Int64},1}:
+ (4, 0)
+ (5, 1)
+
+julia> neighborhood_dists(g, 4, 3, dir=:in)
+5-element Array{Tuple{Int64,Int64},1}:
+ (4, 0)
+ (3, 1)
+ (5, 1)
+ (2, 2)
+ (1, 3)
+```
 """
 neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
     (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) : _neighborhood(g, v, d, distmx, inneighbors)
