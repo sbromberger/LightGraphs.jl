@@ -75,7 +75,7 @@ Edge 5 => 4
 ```
 """
 function reverse end
-@traitfn function reverse(g::::IsDirected)
+@traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
@@ -92,7 +92,7 @@ In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
-@traitfn function reverse!(g::::IsDirected)
+@traitfn function reverse!(g::G::IsDirected) where G<:AbstractSimpleGraph
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
