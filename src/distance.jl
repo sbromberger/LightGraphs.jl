@@ -48,6 +48,24 @@ for each call to the function. It may therefore be more efficient to calculate,
 store, and pass the eccentricities if multiple distance measures are desired.
 
 An infinite path length is represented by the `typemax` of the distance matrix.
+
+# Examples
+```jldoctest
+julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia> eccentricity(g, 1)
+2
+
+julia> eccentricity(g, [1; 2])
+2-element Array{Int64,1}:
+ 2
+ 1
+
+julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
+2-element Array{Float64,1}:
+ 2.5
+ 0.5
+```
 """
 function eccentricity(g::AbstractGraph,
     v::Integer,
