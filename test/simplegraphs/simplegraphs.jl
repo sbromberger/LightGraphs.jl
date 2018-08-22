@@ -166,6 +166,16 @@ import Random
         @test @inferred(has_edge(g, e))
     end
 
+    gx = CompleteGraph(4)
+    for g in testgraphs(gx)
+        h = Graph(g)
+        @test g == h
+        @test rem_vertex!(g, 2)
+        @test nv(g) == 3 && ne(g) == 3
+        @test g != h
+    end
+
+
     gdx = CompleteDiGraph(4)
     for g in testdigraphs(gdx)
         h = DiGraph(g)
