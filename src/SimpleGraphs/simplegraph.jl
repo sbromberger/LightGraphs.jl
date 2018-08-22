@@ -21,6 +21,9 @@ end
 # SimpleGraph()
 SimpleGraph() = SimpleGraph{Int}()
 
+# SimpleGraph of a SimpleGraph
+SimpleGraph(g::SimpleGraph) = copy(g)
+
 # SimpleGraph(6), SimpleGraph(0x5)
 SimpleGraph(n::T) where T <: Integer = SimpleGraph{T}(n)
 
