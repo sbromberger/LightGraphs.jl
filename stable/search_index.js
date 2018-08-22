@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.inneighbors",
     "category": "method",
-    "text": "inneighbors(g, v)\n\nReturn a list of all neighbors connected to vertex v by an incoming edge.\n\nImplementation Notes\n\nReturns a reference, not a copy. Do not modify result.\n\n\n\n\n\n"
+    "text": "inneighbors(g, v)\n\nReturn a list of all neighbors connected to vertex v by an incoming edge.\n\nImplementation Notes\n\nReturns a reference, not a copy. Do not modify result.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> inneighbors(g, 4)\n2-element Array{Int64,1}:\n 3\n 5\n\n\n\n\n\n"
 },
 
 {
@@ -181,7 +181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.outneighbors",
     "category": "method",
-    "text": "outneighbors(g, v)\n\nReturn a list of all neighbors connected to vertex v by an outgoing edge.\n\nImplementation Notes\n\nReturns a reference, not a copy. Do not modify result.\n\n\n\n\n\n"
+    "text": "outneighbors(g, v)\n\nReturn a list of all neighbors connected to vertex v by an outgoing edge.\n\nImplementation Notes\n\nReturns a reference, not a copy. Do not modify result.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> outneighbors(g, 4)\n1-element Array{Int64,1}:\n 5\n\n\n\n\n\n"
 },
 
 {
@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "Base.zero",
     "category": "function",
-    "text": "zero(g)\n\nReturn a zero-vertex, zero-edge version of the same type of graph as g.\n\n\n\n\n\n"
+    "text": "zero(g)\n\nReturn a zero-vertex, zero-edge version of the same type of graph as g.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> zero(g)\n{0, 0} directed simple Int64 graph\n\n\n\n\n\n"
 },
 
 {
@@ -469,7 +469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "Base.intersect",
     "category": "method",
-    "text": "intersect(g, h)\n\nReturn a graph with edges that are only in both graph g and graph h.\n\nImplementation Notes\n\nThis function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph.\n\n\n\n\n\n"
+    "text": "intersect(g, h)\n\nReturn a graph with edges that are only in both graph g and graph h.\n\nImplementation Notes\n\nThis function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph.\n\nExamples\n\njulia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> foreach(println, edges(intersect(g1, g2)))\nEdge 1 => 2\nEdge 2 => 3\nEdge 3 => 1\n\n\n\n\n\n"
 },
 
 {
@@ -485,7 +485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "Base.reverse",
     "category": "function",
-    "text": "reverse(g)\n\nReturn a directed graph where all edges are reversed from the original directed graph.\n\nImplementation Notes\n\nPreserves the eltype of the input graph.\n\n\n\n\n\n"
+    "text": "reverse(g)\n\nReturn a directed graph where all edges are reversed from the original directed graph.\n\nImplementation Notes\n\nPreserves the eltype of the input graph.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> foreach(println, edges(reverse(g)))\nEdge 1 => 3\nEdge 2 => 1\nEdge 3 => 2\nEdge 4 => 3\nEdge 4 => 5\nEdge 5 => 4\n\n\n\n\n\n"
 },
 
 {
@@ -493,7 +493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "Base.reverse!",
     "category": "function",
-    "text": "reverse!(g)\n\nIn-place reverse of a directed graph (modifies the original graph).\n\n\n\n\n\n"
+    "text": "reverse!(g)\n\nIn-place reverse of a directed graph (modifies the original graph). See reverse for a non-modifying version.\n\n\n\n\n\n"
 },
 
 {
@@ -517,7 +517,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.complement",
     "category": "method",
-    "text": "complement(g)\n\nReturn the graph complement of a graph\n\nImplementation Notes\n\nPreserves the eltype of the input graph.\n\n\n\n\n\n"
+    "text": "complement(g)\n\nReturn the graph complement of a graph\n\nImplementation Notes\n\nPreserves the eltype of the input graph.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> foreach(println, edges(complement(g)))\nEdge 1 => 3\nEdge 1 => 4\nEdge 1 => 5\nEdge 2 => 1\nEdge 2 => 4\nEdge 2 => 5\nEdge 3 => 2\nEdge 3 => 5\nEdge 4 => 1\nEdge 4 => 2\nEdge 4 => 3\nEdge 5 => 1\nEdge 5 => 2\nEdge 5 => 3\n\n\n\n\n\n"
 },
 
 {
@@ -533,7 +533,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.difference",
     "category": "method",
-    "text": "difference(g, h)\n\nReturn a graph with edges in graph g that are not in graph h.\n\nImplementation Notes\n\nNote that this function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph.\n\n\n\n\n\n"
+    "text": "difference(g, h)\n\nReturn a graph with edges in graph g that are not in graph h.\n\nImplementation Notes\n\nNote that this function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph.\n\nExamples\n\njulia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> foreach(println, edges(difference(g1, g2)))\nEdge 3 => 4\nEdge 4 => 5\nEdge 5 => 4\n\n\n\n\n\n"
 },
 
 {
@@ -589,7 +589,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "SparseArrays.blockdiag",
     "category": "method",
-    "text": "blockdiag(g, h)\n\nReturn a graph with V(g) + V(h) vertices and E(g) + E(h) edges where the vertices an edges from graph h are appended to graph g.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "blockdiag(g, h)\n\nReturn a graph with V(g) + V(h) vertices and E(g) + E(h) edges where the vertices and edges from graph h are appended to graph g.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> blockdiag(g1, g2)\n{8, 9} directed simple Int64 graph\n\njulia> foreach(println, edges(blockdiag(g1, g2)))\nEdge 1 => 2\nEdge 2 => 3\nEdge 3 => 1\nEdge 3 => 4\nEdge 4 => 5\nEdge 5 => 4\nEdge 6 => 7\nEdge 7 => 8\nEdge 8 => 6\n\n\n\n\n\n"
 },
 
 {
@@ -717,7 +717,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_connected",
     "category": "function",
-    "text": "is_connected(g)\n\nReturn true if graph g is connected. For directed graphs, return true if graph g is weakly connected.\n\n\n\n\n\n"
+    "text": "is_connected(g)\n\nReturn true if graph g is connected. For directed graphs, return true if graph g is weakly connected.\n\nExamples\n\njulia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);\n\njulia> is_connected(g)\ntrue\n\njulia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> is_connected(g)\nfalse\n\njulia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> is_connected(g)\ntrue\n\n\n\n\n\n"
 },
 
 {
@@ -725,7 +725,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_strongly_connected",
     "category": "function",
-    "text": "is_strongly_connected(g)\n\nReturn true if directed graph g is strongly connected.\n\n\n\n\n\n"
+    "text": "is_strongly_connected(g)\n\nReturn true if directed graph g is strongly connected.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> is_strongly_connected(g)\ntrue\n\n\n\n\n\n"
 },
 
 {
@@ -733,7 +733,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_weakly_connected",
     "category": "function",
-    "text": "is_weakly_connected(g)\n\nReturn true if the graph g is weakly connected. If g is undirected, this function is equivalent to is_connected(g).\n\n\n\n\n\n"
+    "text": "is_weakly_connected(g)\n\nReturn true if the graph g is weakly connected. If g is undirected, this function is equivalent to is_connected(g).\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> is_weakly_connected(g)\ntrue\n\njulia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);\n\njulia> is_connected(g)\ntrue\n\njulia> is_strongly_connected(g)\nfalse\n\njulia> is_weakly_connected(g)\ntrue\n\n\n\n\n\n"
 },
 
 {
@@ -741,7 +741,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.connected_components",
     "category": "function",
-    "text": "connected_components(g)\n\nReturn the connected components of an undirected graph g as a vector of components, with each element a vector of vertices belonging to the component.\n\nFor directed graphs, see strongly_connected_components and weakly_connected_components.\n\n\n\n\n\n"
+    "text": "connected_components(g)\n\nReturn the connected components of an undirected graph g as a vector of components, with each element a vector of vertices belonging to the component.\n\nFor directed graphs, see strongly_connected_components and weakly_connected_components.\n\nExamples\n\njulia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);\n\njulia> connected_components(g)\n1-element Array{Array{Int64,1},1}:\n [1, 2, 3]\n\njulia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> connected_components(g)\n2-element Array{Array{Int64,1},1}:\n [1, 2, 3]\n [4, 5]\n\n\n\n\n\n"
 },
 
 {
@@ -749,7 +749,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.strongly_connected_components",
     "category": "function",
-    "text": "strongly_connected_components(g)\n\nCompute the strongly connected components of a directed graph g.\n\nReturn an array of arrays, each of which is the entire connected component.\n\nImplementation Notes\n\nThe order of the components is not part of the API contract.\n\n\n\n\n\n"
+    "text": "strongly_connected_components(g)\n\nCompute the strongly connected components of a directed graph g.\n\nReturn an array of arrays, each of which is the entire connected component.\n\nImplementation Notes\n\nThe order of the components is not part of the API contract.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);\n\njulia> strongly_connected_components(g)\n2-element Array{Array{Int64,1},1}:\n [3]\n [1, 2]\n\n\n\n\n\n"
 },
 
 {
@@ -757,7 +757,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.weakly_connected_components",
     "category": "function",
-    "text": "weakly_connected_components(g)\n\nReturn the weakly connected components of the graph g. This is equivalent to the connected components of the undirected equivalent of g. For undirected graphs this is equivalent to the connected components of g.\n\n\n\n\n\n"
+    "text": "weakly_connected_components(g)\n\nReturn the weakly connected components of the graph g. This is equivalent to the connected components of the undirected equivalent of g. For undirected graphs this is equivalent to the connected_components of g.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);\n\njulia> weakly_connected_components(g)\n1-element Array{Array{Int64,1},1}:\n [1, 2, 3]\n\n\n\n\n\n"
 },
 
 {
@@ -773,7 +773,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.attracting_components",
     "category": "function",
-    "text": "attracting_components(g)\n\nReturn a vector of vectors of integers representing lists of attracting components in the directed graph g.\n\nThe attracting components are a subset of the strongly connected components in which the components do not have any leaving edges.\n\n\n\n\n\n"
+    "text": "attracting_components(g)\n\nReturn a vector of vectors of integers representing lists of attracting components in the directed graph g.\n\nThe attracting components are a subset of the strongly connected components in which the components do not have any leaving edges.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])\n{5, 6} directed simple Int64 graph\n\njulia> strongly_connected_components(g)\n2-element Array{Array{Int64,1},1}:\n [4, 5]\n [1, 2, 3]\n\njulia> attracting_components(g)\n1-element Array{Array{Int64,1},1}:\n [4, 5]\n\n\n\n\n\n"
 },
 
 {
@@ -805,7 +805,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.condensation",
     "category": "function",
-    "text": "condensation(g[, scc])\n\nReturn the condensation graph of the strongly connected components scc in the directed graph g. If scc is missing, generate the strongly connected components first.\n\n\n\n\n\n"
+    "text": "condensation(g[, scc])\n\nReturn the condensation graph of the strongly connected components scc in the directed graph g. If scc is missing, generate the strongly connected components first.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])\n{5, 6} directed simple Int64 graph\n\njulia> strongly_connected_components(g)\n2-element Array{Array{Int64,1},1}:\n [4, 5]\n [1, 2, 3]\n\njulia> foreach(println, edges(condensation(g)))\nEdge 2 => 1\n\n\n\n\n\n"
 },
 
 {
@@ -813,7 +813,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.neighborhood",
     "category": "function",
-    "text": "neighborhood(g, v, d, distmx=weights(g))\n\nReturn a vector of each vertex in g at a geodesic distance less than or equal to d, where distances may be specified by distmx. \n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\n\n\n\n\n"
+    "text": "neighborhood(g, v, d, distmx=weights(g))\n\nReturn a vector of each vertex in g at a geodesic distance less than or equal to d, where distances may be specified by distmx. \n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> neighborhood(g, 1, 2)\n3-element Array{Int64,1}:\n 1\n 2\n 3\n\njulia> neighborhood(g, 1, 3)\n4-element Array{Int64,1}:\n 1\n 2\n 3\n 4\n\njulia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])\n5-element Array{Int64,1}:\n 1\n 2\n 3\n 4\n 5\n\n\n\n\n\n"
 },
 
 {
@@ -821,7 +821,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.neighborhood_dists",
     "category": "function",
-    "text": "neighborhood_dists(g, v, d, distmx=weights(g))\n\nReturn a tuple of each vertex at a geodesic distance less than or equal to d, where distances may be specified by distmx, along with its distance from v.\n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\n\n\n\n\n"
+    "text": "neighborhood_dists(g, v, d, distmx=weights(g))\n\nReturn a tuple of each vertex at a geodesic distance less than or equal to d, where distances may be specified by distmx, along with its distance from v.\n\nOptional Arguments\n\ndir=:out: If g is directed, this argument specifies the edge direction\n\nwith respect to v of the edges to be considered. Possible values: :in or :out.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> neighborhood_dists(g, 1, 3)\n4-element Array{Tuple{Int64,Int64},1}:\n (1, 0)\n (2, 1)\n (3, 2)\n (4, 3)\n\njulia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])\n5-element Array{Tuple{Int64,Float64},1}:\n (1, 0.0)\n (2, 1.0)\n (3, 2.0)\n (4, 2.25)\n (5, 2.5)\n\njulia> neighborhood_dists(g, 4, 3)\n2-element Array{Tuple{Int64,Int64},1}:\n (4, 0)\n (5, 1)\n\njulia> neighborhood_dists(g, 4, 3, dir=:in)\n5-element Array{Tuple{Int64,Int64},1}:\n (4, 0)\n (3, 1)\n (5, 1)\n (2, 2)\n (1, 3)\n\n\n\n\n\n"
 },
 
 {
@@ -837,7 +837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.period",
     "category": "function",
-    "text": "period(g)\n\nReturn the (common) period for all vertices in a strongly connected directed graph. Will throw an error if the graph is not strongly connected.\n\n\n\n\n\n"
+    "text": "period(g)\n\nReturn the (common) period for all vertices in a strongly connected directed graph. Will throw an error if the graph is not strongly connected.\n\nExamples\n\njulia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> period(g)\n3\n\n\n\n\n\n"
 },
 
 {
@@ -1049,38 +1049,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "pathing.html#LightGraphs.DijkstraState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.DijkstraState",
-    "category": "type",
-    "text": "struct DijkstraState{T, U}\n\nAn AbstractPathState designed for Dijkstra shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.BellmanFordState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.BellmanFordState",
-    "category": "type",
-    "text": "BellmanFordState{T, U}\n\nAn AbstractPathState designed for Bellman-Ford shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.FloydWarshallState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.FloydWarshallState",
-    "category": "type",
-    "text": "struct FloydWarshallState{T, U}\n\nAn AbstractPathState designed for Floyd-Warshall shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
-    "location": "pathing.html#LightGraphs.YenState",
-    "page": "Path and Traversal",
-    "title": "LightGraphs.YenState",
-    "category": "type",
-    "text": "struct YenState{T, U}\n\nDesigned for yen k-shortest-paths calculations.\n\n\n\n\n\n"
-},
-
-{
     "location": "pathing.html#Path-States-1",
     "page": "Path and Traversal",
     "title": "Path States",
@@ -1141,7 +1109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.eccentricity",
     "category": "method",
-    "text": "eccentricity(g[, v][, distmx])\neccentricity(g[, vs][, distmx])\n\nReturn the eccentricity[ies] of a vertex / vertex list v or a set of vertices  vs defaulting to the entire graph. An optional matrix of edge distances may be supplied; if missing, edge distances default to 1.\n\nThe eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.\n\nThe output is either a single float (when a single vertex is provided) or a vector of floats corresponding to the vertex vector. If no vertex vector is provided, the vector returned corresponds to each vertex in the graph.\n\nPerformance\n\nBecause this function must calculate shortest paths for all vertices supplied in the argument list, it may take a long time.\n\nImplementation Notes\n\nThe eccentricity vector returned by eccentricity() may be used as input for the rest of the distance measures below. If an eccentricity vector is provided, it will be used. Otherwise, an eccentricity vector will be calculated for each call to the function. It may therefore be more efficient to calculate, store, and pass the eccentricities if multiple distance measures are desired.\n\nAn infinite path length is represented by the typemax of the distance matrix.\n\n\n\n\n\n"
+    "text": "eccentricity(g[, v][, distmx])\neccentricity(g[, vs][, distmx])\n\nReturn the eccentricity[ies] of a vertex / vertex list v or a set of vertices  vs defaulting to the entire graph. An optional matrix of edge distances may be supplied; if missing, edge distances default to 1.\n\nThe eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.\n\nThe output is either a single float (when a single vertex is provided) or a vector of floats corresponding to the vertex vector. If no vertex vector is provided, the vector returned corresponds to each vertex in the graph.\n\nPerformance\n\nBecause this function must calculate shortest paths for all vertices supplied in the argument list, it may take a long time.\n\nImplementation Notes\n\nThe eccentricity vector returned by eccentricity() may be used as input for the rest of the distance measures below. If an eccentricity vector is provided, it will be used. Otherwise, an eccentricity vector will be calculated for each call to the function. It may therefore be more efficient to calculate, store, and pass the eccentricities if multiple distance measures are desired.\n\nAn infinite path length is represented by the typemax of the distance matrix.\n\nExamples\n\njulia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);\n\njulia> eccentricity(g, 1)\n2\n\njulia> eccentricity(g, [1; 2])\n2-element Array{Int64,1}:\n 2\n 1\n\njulia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])\n2-element Array{Float64,1}:\n 2.5\n 0.5\n\n\n\n\n\n"
 },
 
 {
@@ -1149,7 +1117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.edit_distance",
     "category": "method",
-    "text": "edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)\n\nCompute the edit distance between graphs G₁ and G₂. Return the minimum edit cost and edit path to transform graph G₁ into graph G₂. An edit path consists of a sequence of pairs of vertices(u,v) ∈ [0,|G₁|] × [0,|G₂|]` representing vertex operations:\n\n(0v): insertion of vertex v  G₂\n(u0): deletion of vertex u  G₁\n(u0v0): substitution of vertex u  G₁ by vertex v  G₂\n\nOptional Arguments\n\ninsert_cost::Function=v->1.0\ndelete_cost::Function=u->1.0\nsubst_cost::Function=(u,v)->0.5\n\nBy default, the algorithm uses constant operation costs. The user can provide classical Minkowski costs computed from vertex labels μ₁ (for G₁) and μ₂ (for G₂) in order to further guide the search, for example:\n\nedit_distance(G₁, G₂, subst_cost=MinkowskiCost(μ₁, μ₂))\n\nheuristic::Function=DefaultEditHeuristic: a custom heuristic provided to the A*\n\nsearch in case the default heuristic is not satisfactory.\n\nPerformance\n\nGiven two graphs G₁  G₂, edit_distance(G₁, G₂) is faster to\n\ncompute than edit_distance(G₂, G₁). Consider swapping the arguments if involved costs are equivalent.\n\nThe use of simple Minkowski costs can improve performance considerably.\nExploit vertex attributes when designing operation costs.\n\nReferences\n\nRIESEN, K., 2015. Structural Pattern Recognition with Graph Edit Distance: Approximation Algorithms and Applications. (Chapter 2)\n\nAuthor\n\nJúlio Hoffimann Mendes (juliohm@stanford.edu)\n\n\n\n\n\n"
+    "text": "edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)\n\nCompute the edit distance between graphs G₁ and G₂. Return the minimum edit cost and edit path to transform graph G₁ into graph G₂. An edit path consists of a sequence of pairs of vertices(u,v) ∈ [0,|G₁|] × [0,|G₂|]` representing vertex operations:\n\n(0v): insertion of vertex v  G₂\n(u0): deletion of vertex u  G₁\n(u0v0): substitution of vertex u  G₁ by vertex v  G₂\n\nOptional Arguments\n\ninsert_cost::Function=v->1.0\ndelete_cost::Function=u->1.0\nsubst_cost::Function=(u,v)->0.5\n\nBy default, the algorithm uses constant operation costs. The user can provide classical Minkowski costs computed from vertex labels μ₁ (for G₁) and μ₂ (for G₂) in order to further guide the search, for example:\n\nedit_distance(G₁, G₂, subst_cost=MinkowskiCost(μ₁, μ₂))\n\nheuristic::Function=DefaultEditHeuristic: a custom heuristic provided to the A*\n\nsearch in case the default heuristic is not satisfactory.\n\nPerformance\n\nGiven two graphs G₁  G₂, edit_distance(G₁, G₂) is faster to\n\ncompute than edit_distance(G₂, G₁). Consider swapping the arguments if involved costs are equivalent.\n\nThe use of simple Minkowski costs can improve performance considerably.\nExploit vertex attributes when designing operation costs.\n\nReferences\n\nRIESEN, K., 2015. Structural Pattern Recognition with Graph Edit Distance: Approximation Algorithms and Applications. (Chapter 2)\n\nAuthor\n\nJúlio Hoffimann Mendes (juliohm@stanford.edu)\n\nExamples\n\njulia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);\n\njulia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);\n\njulia> edit_distance(g1, g2)\n(3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])\n\n\n\n\n\n"
 },
 
 {
@@ -1405,7 +1373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1413,7 +1381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
