@@ -5,6 +5,23 @@ using Statistics: mean
 using LightGraphs:
     getRNG, sample!
 
+"""
+    SimpleGraph{T}(nv, ne; seed=-1)
+
+Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
+The graph is sampled uniformly from all such graphs.
+If `seed >= 0`, a random generator is seeded with this value.
+If not specified, the element type `T` is the type of `nv`.
+
+### See also
+[`erdos_renyi`](@ref)
+
+## Examples
+```jldoctest
+julia> SimpleGraph(5, 7)
+{5, 7} undirected simple Int64 graph
+```
+"""
 function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
@@ -25,6 +42,23 @@ end
 SimpleGraph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
     SimpleGraph{T}(nv, ne, seed=seed)
 
+"""
+    SimpleDiGraph{T}(nv, ne; seed=-1)
+
+Construct a random `SimpleDiGraph{T}` with `nv` vertices and `ne` edges.
+The graph is sampled uniformly from all such graphs.
+If `seed >= 0`, a random generator is seeded with this value.
+If not specified, the element type `T` is the type of `nv`.
+
+### See also
+[`erdos_renyi`](@ref)
+
+## Examples
+```jldoctest
+julia> SimpleDiGraph(5, 7)
+{5, 7} directed simple Int64 graph
+```
+"""
 function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integer
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
@@ -878,6 +912,14 @@ function make_edgestream(sbm::StochasticBlockModel)
     return Channel(edges, ctype=SimpleEdge, csize=32)
 end
 
+"""
+    SimpleGraph{T}(nv, ne, edgestream::Channel)
+
+Construct a `SimpleGraph{T}` with `nv` vertices and `ne` edges from `edgestream`.
+Can result in less than `ne` edges if the channel `edgestream` is closed prematurely.
+Duplicate edges are only counted once.
+The element type is the type of `nv`.
+"""
 function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
     g = SimpleGraph(nvg)
     # println(g)
@@ -889,6 +931,13 @@ function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
     return g
 end
 
+"""
+    SimpleGraph{T}(nv, ne, smb::StochasticBlockModel)
+
+Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
+The graph is sampled according to the stochastic block model `smb`.
+The element type is the type of `nv`.
+"""
 SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
     SimpleGraph(nvg, neg, make_edgestream(sbm))
 
