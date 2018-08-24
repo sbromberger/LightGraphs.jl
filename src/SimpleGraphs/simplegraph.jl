@@ -13,22 +13,63 @@ end
 eltype(x::SimpleGraph{T}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
+"""
+    SimpleGraph{T}(n=0)
+
+Construct a `SimpleGraph{T}` with `n` vertices and 0 edges.
+If not specified, the element type `T` is the type of `n`.
+
+## Examples
+```jldoctest
+julia> SimpleGraph(UInt8(10))
+{10, 0} undirected simple UInt8 graph
+```
+"""
 function SimpleGraph{T}(n::Integer=0) where T <: Integer
     fadjlist = [Vector{T}() for _ = one(T):n]
     return SimpleGraph{T}(0, fadjlist)
 end
 
-# SimpleGraph()
-SimpleGraph() = SimpleGraph{Int}()
-
-# SimpleGraph of a SimpleGraph
-SimpleGraph(g::SimpleGraph) = copy(g)
-
 # SimpleGraph(6), SimpleGraph(0x5)
 SimpleGraph(n::T) where T <: Integer = SimpleGraph{T}(n)
 
+# SimpleGraph()
+SimpleGraph() = SimpleGraph{Int}()
+
 # SimpleGraph(UInt8)
+"""
+    SimpleGraph(::Type{T})
+
+Construct an empty `SimpleGraph{T}` with 0 vertices and 0 edges.
+
+## Examples
+```jldoctest
+julia> SimpleGraph(UInt8)
+{0, 0} undirected simple UInt8 graph
+```
+"""
 SimpleGraph(::Type{T}) where T <: Integer = SimpleGraph{T}(zero(T))
+
+# SimpleGraph(adjmx)
+"""
+    SimpleGraph{T}(adjm::AbstractMatrix)
+
+Construct a `SimpleGraph{T}` from the adjacency matrix `adjm`.
+If `adjm[i][j] != 0`, an edge `(i, j)` is inserted. `adjm` must be a square and symmetric matrix.
+The element type `T` can be omitted.
+
+## Examples
+```jldoctest
+julia> A1 = [false true; true false]
+julia> SimpleGraph(A1)
+{2, 1} undirected simple Int64 graph
+
+julia> A2 = [2 7; 7 0]
+julia> SimpleGraph{Int16}(A2)
+{2, 2} undirected simple Int16 graph
+```
+"""
+SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
 
 # Graph{UInt8}(adjmx)
 function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
@@ -43,6 +84,23 @@ function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
     return g
 end
 
+# SimpleGraph of a SimpleGraph
+"""
+    SimpleGraph{T}(g::SimpleGraph)
+
+Construct a copy of g.
+If the element type `T` is specified, the vertices of `g` are converted to this type.
+Otherwise the element type is the same as for `g`.
+
+## Examples
+```jldoctest
+julia> g = CompleteGraph(5)
+julia> SimpleGraph{UInt8}(g)
+{5, 10} undirected simple UInt8 graph
+```
+"""
+SimpleGraph(g::SimpleGraph) = copy(g)
+
 # converts Graph{Int} to Graph{Int32}
 function SimpleGraph{T}(g::SimpleGraph) where T <: Integer
     h_fadj = [Vector{T}(x) for x in fadj(g)]
@@ -50,10 +108,22 @@ function SimpleGraph{T}(g::SimpleGraph) where T <: Integer
 end
 
 
-# SimpleGraph(adjmx)
-SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
 
 # SimpleGraph(digraph)
+"""
+    SimpleGraph(g::SimpleDiGraph)
+
+Construct an undirected `SimpleGraph` from a directed `SimpleDiGraph`.
+Every directed edge in `g` is added as an undirected edge.
+The element type is the same as for `g`.
+
+## Examples
+```jldoctest
+julia> g = PathDiGraph(Int8(5))
+julia> SimpleGraph(g)
+{5, 4} undirected simple Int8 graph
+```
+"""
 function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
     edgect = 0
@@ -96,6 +166,28 @@ end
     return neg ÷ 2
 end
 
+"""
+    SimpleGraph(edge_list::Vector)
+
+Construct a `SimpleGraph` from a vector of edges.
+The element type is taken from the edges in `edge_list`.
+The number of vertices is the highest that is used in an edge in `edge_list`.
+
+### Implementation Notes
+This constructor works the fastest when `edge_list` is sorted
+by the lexical ordering and does not contain any duplicates.
+
+### See also
+[`SimpleGraphFromIterator`](@ref)
+
+## Examples
+```jldoctest
+
+julia> el = Edge.([ (1, 2), (1, 5) ])
+julia> SimpleGraph(el)
+{5, 2} undirected simple Int64 graph
+```
+"""
 function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     nvg = zero(T)
     @inbounds(
