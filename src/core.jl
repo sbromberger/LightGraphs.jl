@@ -201,7 +201,7 @@ can accommodate all vertices.
 """
 function squash(g::AbstractGraph)
     gtype = is_directed(g) ? DiGraph : Graph
-    validtypes = [UInt8, UInt16, UInt32, UInt64, Int]
+    validtypes = [UInt8, UInt16, UInt32, UInt64, Int32, Int64]
     nvg = nv(g)
     for T in validtypes
         nvg < typemax(T) && return gtype{T}(g)
