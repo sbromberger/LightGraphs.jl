@@ -10,7 +10,7 @@ function betweenness_centrality(g::AbstractGraph,
 
     # Parallel reduction
 
-    betweenness = @distributed (+) for s in vs
+    betweenness = @distributed (+) for s in Int.(vs)
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
             state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
