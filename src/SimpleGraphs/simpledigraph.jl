@@ -15,20 +15,65 @@ end
 eltype(x::SimpleDiGraph{T}) where T = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
+"""
+    SimpleDiGraph{T}(n=0)
+
+Construct a `SimpleDiGraph{T}` with `n` vertices and 0 edges.
+If not specified, the element type `T` is the type of `n`.
+
+## Examples
+```jldoctest
+julia> SimpleDiGraph(UInt8(10))
+{10, 0} directed simple UInt8 graph
+```
+"""
 function SimpleDiGraph{T}(n::Integer=0) where T <: Integer
     fadjlist = [Vector{T}() for _ = one(T):n]
     badjlist = [Vector{T}() for _ = one(T):n]
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
-# SimpleDiGraph()
-SimpleDiGraph() = SimpleDiGraph{Int}()
-
 # SimpleDiGraph(6), SimpleDiGraph(0x5)
 SimpleDiGraph(n::T) where T <: Integer = SimpleDiGraph{T}(n)
 
+# SimpleDiGraph()
+SimpleDiGraph() = SimpleDiGraph{Int}()
+
 # SimpleDiGraph(UInt8)
+"""
+    SimpleDiGraph(::Type{T})
+
+Construct an empty `SimpleDiGraph{T}` with 0 vertices and 0 edges.
+
+## Examples
+```jldoctest
+julia> SimpleDiGraph(UInt8)
+{0, 0} directed simple UInt8 graph
+```
+"""
 SimpleDiGraph(::Type{T}) where T <: Integer = SimpleDiGraph{T}(zero(T))
+
+
+# SimpleDiGraph(adjmx)
+"""
+    SimpleDiGraph{T}(adjm::AbstractMatrix)
+
+Construct a `SimpleDiGraph{T}` from the adjacency matrix `adjm`.
+If `adjm[i][j] != 0`, an edge `(i, j)` is inserted. `adjm` must be a square matrix.
+The element type `T` can be omitted.
+
+## Examples
+```jldoctest
+julia> A1 = [false true; false false]
+julia> SimpleDiGraph(A1)
+{2, 1} directed simple Int64 graph
+
+julia> A2 = [2 7; 5 0]
+julia> SimpleDiGraph{Int16}(A2)
+{2, 3} directed simple Int16 graph
+```
+"""
+SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
 function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T <: Integer where U <: Real
@@ -61,10 +106,21 @@ function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where T <: Integer where U <
     return g
 end
 
-# SimpleDiGraph(adjmx)
-SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
-
 # converts DiGraph{Int} to DiGraph{Int32}
+"""
+    SimpleDiGraph{T}(g::SimpleDiGraph)
+
+Construct a copy of g.
+If the element type `T` is specified, the vertices of `g` are converted to this type.
+Otherwise the element type is the same as for `g`.
+
+## Examples
+```jldoctest
+julia> g = CompleteDiGraph(5)
+julia> SimpleDiGraph{UInt8}(g)
+{5, 20} directed simple UInt8 graph
+```
+"""
 function SimpleDiGraph{T}(g::SimpleDiGraph) where T <: Integer
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
@@ -74,6 +130,19 @@ end
 SimpleDiGraph(g::SimpleDiGraph) = copy(g)
 
 # constructor from abstract graph: SimpleDiGraph(graph)
+"""
+    SimpleDiGraph(g::AbstractSimpleGraph)
+
+Construct an directed `SimpleDiGraph` from a graph `g`.
+The element type is the same as for `g`.
+
+## Examples
+```jldoctest
+julia> g = PathGraph(Int8(5))
+julia> SimpleDiGraph(g)
+{5, 8} directed simple Int8 graph
+```
+"""
 function SimpleDiGraph(g::AbstractSimpleGraph)
     h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)
@@ -100,6 +169,28 @@ end
     return neg
 end
 
+"""
+    SimpleDiGraph(edge_list::Vector)
+
+Construct a `SimpleDiGraph` from a vector of edges.
+The element type is taken from the edges in `edge_list`.
+The number of vertices is the highest that is used in an edge in `edge_list`.
+
+### Implementation Notes
+This constructor works the fastest when `edge_list` is sorted
+by the lexical ordering and does not contain any duplicates.
+
+### See also
+[`SimpleDiGraphFromIterator`](@ref)
+
+## Examples
+```jldoctest
+
+julia> el = Edge.([ (1, 3), (1, 5), (3, 1) ])
+julia> SimpleDiGraph(el)
+{5, 3} directed simple Int64 graph
+```
+"""
 function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integer
     nvg = zero(T)
     @inbounds(

@@ -74,7 +74,7 @@ end
 function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter) 
     g = e1.g
     h = e2.g
-    g.ne == g.ne || return false
+    ne(g) == ne(h) || return false
     m = min(nv(g), nv(h))
     for i in 1:m
         fadj(g, i) == fadj(h, i) || return false
