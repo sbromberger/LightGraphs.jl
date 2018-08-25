@@ -20,7 +20,7 @@ struct LGHeader
     ne::Int
     is_directed::Bool
     name::String
-    ver::Int
+    ver::Int64
     dtype::DataType
     code::String
 end
@@ -29,7 +29,7 @@ function show(io::IO, h::LGHeader)
     print(io, "$(h.nv),$(h.ne),$isdir,$(h.name),$(h.ver),$(h.dtype),$(h.code)")
 end
 
-LGHeader(nv::Int, ne::Int, is_directed::Bool, name::AbstractString) = 
+LGHeader(nv::Int, ne::Int, is_directed::Bool, name::AbstractString) =
     LGHeader(nv, ne, is_directed, name, 1, Int64, "simplegraph")
 
 function _lg_read_one_graph(f::IO, header::LGHeader)
@@ -83,7 +83,7 @@ end
 
 
 
-    
+
 """
     loadlg_mult(io)
 

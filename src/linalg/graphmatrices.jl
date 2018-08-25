@@ -1,4 +1,4 @@
-const SparseMatrix{T} = SparseMatrixCSC{T,Int64}
+const SparseMatrix{T} = SparseMatrixCSC{T,Int}
 
 """
     GraphMatrix{T}

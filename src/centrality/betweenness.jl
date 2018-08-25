@@ -115,7 +115,7 @@ function _accumulate_endpoints!(betweenness::Vector{Float64},
     return nothing
 end
 
-function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Int)
+function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Integer)
     if normalize
         if n <= 2
             do_scale = false
@@ -136,7 +136,7 @@ function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, di
             scale = scale * n / k
         end
         betweenness .*= scale
-        
+
     end
     return nothing
 end

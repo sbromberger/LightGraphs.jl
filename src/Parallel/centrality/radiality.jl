@@ -9,6 +9,7 @@ function radiality_centrality(g::AbstractGraph)::Vector{Float64}
         d = LightGraphs.dijkstra_shortest_paths(g, vs[i])
         maxdists[i] = maximum(d.dists)
         meandists[i] = sum(d.dists) / (n_v - 1)
+        nothing
     end
     dmtr = maximum(maxdists)
     radialities = collect(meandists)
