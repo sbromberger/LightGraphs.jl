@@ -1,4 +1,11 @@
-function stress_centrality(g::AbstractGraph,
+stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g); parallel=:distributed) =
+parallel == :distributed ? distr_stress_centrality(g, vs) : threaded_stress_centrality(g, vs)
+
+stress_centrality(g::AbstractGraph, k::Integer; parallel=:distributed) =
+parallel == :distributed ? distr_stress_centrality(g, sample(vertices(g), k)) : 
+threaded_stress_centrality(g, sample(vertices(g), k))
+
+function distr_stress_centrality(g::AbstractGraph,
     vs::AbstractVector=vertices(g))::Vector{Int64}
 
     n_v = nv(g)
@@ -17,5 +24,21 @@ function stress_centrality(g::AbstractGraph,
     return stress
 end
 
-stress_centrality(g::AbstractGraph, k::Integer) =
-    stress_centrality(g, sample(vertices(g), k))
+function threaded_stress_centrality(g::AbstractGraph,
+    vs::AbstractVector=vertices(g))::Vector{Int64}
+
+    n_v = nv(g)
+    k = length(vs)
+    isdir = is_directed(g)
+
+    # Parallel reduction
+    local_stress = [zeros(Int, n_v) for _ in 1:nthreads()]
+
+    Base.Threads.@threads for s in vs
+        if degree(g, s) > 0  # this might be 1?
+            state = LightGraphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            LightGraphs._stress_accumulate_basic!(local_stress[Base.Threads.threadid()], state, g, s)
+        end
+    end
+    return reduce(+, local_stress)
+end
