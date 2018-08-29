@@ -57,7 +57,7 @@ Since LightGraphs supports multiple implementations of the graph datastructure u
 
 ## Git usage
 
-In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at `$HOME/.julia/v0.6/LightGraphs/.git/config`. Follow the instructions [here]( https://gist.github.com/piscisaureus/3342247).
+In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at `$HOME/.julia/v0.6/LightGraphs/.git/config`. Follow the instructions [here](https://gist.github.com/piscisaureus/3342247).
 
 Locate the section for your github remote in the `.git/config` file. It looks like this:
 
