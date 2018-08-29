@@ -7,41 +7,61 @@
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
     for g in testdigraphs(gint)
         z  = @inferred(LightGraphs.betweenness_centrality(g))
-        zp = @inferred(Parallel.betweenness_centrality(g))
-        @test all(isapprox.(z, zp))
+        zt = @inferred(Parallel.betweenness_centrality(g; parallel=:threads))
+        @test all(isapprox.(z, zt))
+        zd = @inferred(Parallel.betweenness_centrality(g; parallel=:distributed))
+        @test all(isapprox.(z, zd))
 
         y  = LightGraphs.betweenness_centrality(g, endpoints=true, normalize=false)
-        yp = Parallel.betweenness_centrality(g, endpoints=true, normalize=false)
-        @test all(isapprox(y, yp))
+        yt = Parallel.betweenness_centrality(g, endpoints=true, normalize=false, parallel=:threads)
+        @test all(isapprox(y, yt))
+        yd = Parallel.betweenness_centrality(g, endpoints=true, normalize=false, parallel=:distributed)
+        @test all(isapprox(y, yd))
 
-        xp = Parallel.betweenness_centrality(g, 3)
-        xp2 = Parallel.betweenness_centrality(g, collect(1:20))
 
-        @test length(xp) == 50
-        @test length(xp2) == 50
+        xt = Parallel.betweenness_centrality(g, 3; parallel=:threads)
+        @test length(xt) == 50
+        xd = Parallel.betweenness_centrality(g, 3; parallel=:distributed)
+        @test length(xd) == 50
+
+        xt2 = Parallel.betweenness_centrality(g, collect(1:20); parallel=:threads)
+        @test length(xt2) == 50
+        xd2 = Parallel.betweenness_centrality(g, collect(1:20); parallel=:distributed)
+        @test length(xd2) == 50
     end
-    @test @inferred(Parallel.betweenness_centrality(s1)) == [0, 1, 0]
-    @test Parallel.betweenness_centrality(s2)   == [0, 0.5, 0]
+    @test @inferred(Parallel.betweenness_centrality(s1; parallel=:threads)) == [0, 1, 0]
+    @test @inferred(Parallel.betweenness_centrality(s1; parallel=:distributed)) == [0, 1, 0]
+
+    @test Parallel.betweenness_centrality(s2; parallel=:threads) == [0, 0.5, 0]
+    @test Parallel.betweenness_centrality(s2; parallel=:distributed) == [0, 0.5, 0]
 
     g = SimpleGraph(2)
     add_edge!(g, 1, 2)
     z  = LightGraphs.betweenness_centrality(g; normalize=true)
-    zp = Parallel.betweenness_centrality(g; normalize=true)
-    @test all(isapprox(z, zp))
     @test z[1] == z[2] == 0.0
+    zt = Parallel.betweenness_centrality(g; normalize=true, parallel=:threads)
+    @test all(isapprox(z, zt))
+    zd = Parallel.betweenness_centrality(g; normalize=true, parallel=:distributed)
+    @test all(isapprox(z, zd))
+
     z2  = LightGraphs.betweenness_centrality(g, vertices(g))
-    zp2 = Parallel.betweenness_centrality(g, vertices(g))
-    @test all(isapprox(z2, zp2))
+    zt2 = Parallel.betweenness_centrality(g, vertices(g); parallel=:threads)
+    @test all(isapprox(z2, zt2))
+    zd2 = Parallel.betweenness_centrality(g, vertices(g); parallel=:distributed)
+    @test all(isapprox(z2, zd2))
+
     z3  = LightGraphs.betweenness_centrality(g, [vertices(g);])
-    zp3 = Parallel.betweenness_centrality(g, [vertices(g);])
-    @test all(isapprox(z3, zp3))
+    zt3 = Parallel.betweenness_centrality(g, [vertices(g);]; parallel=:threads)
+    @test all(isapprox(z3, zt3))
+    zd3 = Parallel.betweenness_centrality(g, [vertices(g);]; parallel=:distributed)
+    @test all(isapprox(z3, zd3))
 
     @test z == z2 == z3
 
     z  = LightGraphs.betweenness_centrality(g3; normalize=false)
-    zp = Parallel.betweenness_centrality(g3; normalize=false)
-    @test all(isapprox(z, zp))
+    zt = Parallel.betweenness_centrality(g3; normalize=false, parallel=:threads)
+    @test all(isapprox(z, zt))
+    zd = Parallel.betweenness_centrality(g3; normalize=false, parallel=:distributed)
+    @test all(isapprox(z, zd))
     @test z[1] == z[5] == 0.0
-
-
 end
