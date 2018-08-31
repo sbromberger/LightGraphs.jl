@@ -30,7 +30,7 @@ end
 stress_centrality(g::AbstractGraph, k::Integer) =
     stress_centrality(g, sample(vertices(g), k))
 
-function _stress_accumulate_basic!(stress::Vector{Int},
+function _stress_accumulate_basic!(stress::Vector{<:Integer},
     state::DijkstraState,
     g::AbstractGraph,
     si::Integer)
