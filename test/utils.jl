@@ -53,6 +53,17 @@ end
     end
 end
 
+@testset "Unweighted Contiguous Partition" begin
+
+    p = @inferred(LightGraphs.unweighted_contiguous_partition(4, 2))
+    @test p == [1:2, 3:4]
+
+    p = @inferred(LightGraphs.unweighted_contiguous_partition(10, 3))
+    @test p == [1:3, 4:6, 7:10]
+
+    p = @inferred(LightGraphs.unweighted_contiguous_partition(4, 4))
+    @test p == [1:1, 2:2, 3:3, 4:4]
+end
 
 @testset "Greedy Contiguous Partition" begin
 

@@ -15,6 +15,7 @@ tests = [
     "shortestpaths/floyd-warshall",
     "shortestpaths/johnson",
     "traversals/bfs",
+    "traversals/gdistances",
     "traversals/greedy_color"
 ]
 
