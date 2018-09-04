@@ -87,7 +87,7 @@ condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
 
 # cycles
-simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
+simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 
 # maximum_adjacency_visit
@@ -196,7 +196,7 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("cycles/johnson.jl")
-include("cycles/hadwick-james.jl")
+include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("traversals/bfs.jl")

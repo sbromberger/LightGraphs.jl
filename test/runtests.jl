@@ -29,7 +29,7 @@ tests = [
     "degeneracy",
     "distance",
     "digraph/transitivity",
-    "cycles/hadwick-james",
+    "cycles/hawick-james",
     "cycles/johnson",
     "cycles/karp",
     "cycles/basis",
