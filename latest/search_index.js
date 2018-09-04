@@ -1305,11 +1305,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "pathing.html#LightGraphs.simplecycles_hadwick_james",
+    "location": "pathing.html#LightGraphs.simplecycles_hawick_james",
     "page": "Path and Traversal",
-    "title": "LightGraphs.simplecycles_hadwick_james",
+    "title": "LightGraphs.simplecycles_hawick_james",
     "category": "function",
-    "text": "simplecycles_hadwick_james(g)\n\nFind circuits (including self-loops) in g using the algorithm of Hadwick & James.\n\nReferences\n\nHadwick & James, \"Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs\", 2008\n\n\n\n\n\n"
+    "text": "simplecycles_hawick_james(g)\n\nFind circuits (including self-loops) in g using the algorithm of Hawick & James.\n\nReferences\n\nHawick & James, \"Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs\", 2008\n\n\n\n\n\n"
 },
 
 {
@@ -1341,7 +1341,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "Cycle Detection",
     "category": "section",
-    "text": "In graph theory, a cycle is defined to be a path that starts from some vertex v and ends up at v.is_cyclic\nmaxsimplecycles\nsimplecycles\nsimplecycles_iter\nsimplecycles_hadwick_james\nsimplecyclescount\nsimplecycleslength\nkarp_minimum_cycle_mean"
+    "text": "In graph theory, a cycle is defined to be a path that starts from some vertex v and ends up at v.is_cyclic\nmaxsimplecycles\nsimplecycles\nsimplecycles_iter\nsimplecycles_hawick_james\nsimplecyclescount\nsimplecycleslength\nkarp_minimum_cycle_mean"
 },
 
 {
