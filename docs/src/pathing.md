@@ -85,7 +85,7 @@ is_cyclic
 maxsimplecycles
 simplecycles
 simplecycles_iter
-simplecycles_hadwick_james
+simplecycles_hawick_james
 simplecyclescount
 simplecycleslength
 karp_minimum_cycle_mean
