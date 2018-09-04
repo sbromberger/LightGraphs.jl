@@ -69,6 +69,7 @@ tests = [
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
+    "graphcut/karger_min_cut",
     "experimental/experimental"
 ]
 
