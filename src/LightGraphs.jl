@@ -87,7 +87,7 @@ condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
 
 # cycles
-simplecycles_hadwick_james, maxsimplecycles, simplecycles, simplecycles_iter,
+simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 
 # maximum_adjacency_visit
@@ -141,7 +141,7 @@ kruskal_mst, prim_mst,
 articulation, biconnected_components,
 
 #graphcut
-normalized_cut
+normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges
 
 """
     LightGraphs
@@ -196,7 +196,7 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
 include("cycles/johnson.jl")
-include("cycles/hadwick-james.jl")
+include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("traversals/bfs.jl")
@@ -238,6 +238,7 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
+include("graphcut/karger_min_cut.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 

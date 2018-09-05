@@ -29,7 +29,7 @@ tests = [
     "degeneracy",
     "distance",
     "digraph/transitivity",
-    "cycles/hadwick-james",
+    "cycles/hawick-james",
     "cycles/johnson",
     "cycles/karp",
     "cycles/basis",
@@ -69,6 +69,7 @@ tests = [
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
+    "graphcut/karger_min_cut",
     "experimental/experimental"
 ]
 
