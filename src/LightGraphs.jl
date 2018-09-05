@@ -89,6 +89,7 @@ isgraphical,
 # cycles
 simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
+simplecycles_limited_length,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
@@ -199,6 +200,7 @@ include("cycles/johnson.jl")
 include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
+include("cycles/limited_length.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")

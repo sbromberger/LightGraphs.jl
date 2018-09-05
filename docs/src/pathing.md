@@ -88,6 +88,7 @@ simplecycles_iter
 simplecycles_hawick_james
 simplecyclescount
 simplecycleslength
+simplecycles_limited_length
 karp_minimum_cycle_mean
 ```
 
