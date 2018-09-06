@@ -1293,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.simplecycles",
     "category": "function",
-    "text": "simplecycles(dg::::IsDirected)\n\nCompute and return all cycles of the given directed graph using Johnson\'s algorithm.\n\nPerformance\n\nThe number of cycles grows more than exponentially with the number of vertices, you might want to use the algorithm with a ceiling – getcycles – on large directed graphs (slightly slower). If you want to have an idea of the possible number of cycles, look at function maxsimplecycles(dg::DiGraph, byscc::Bool = true).\n\nReferences\n\nJohnson\n\n\n\n\n\n"
+    "text": "simplecycles(dg::::IsDirected)\n\nCompute and return all cycles of the given directed graph using Johnson\'s algorithm.\n\nPerformance\n\nThe number of cycles grows more than exponentially with the number of vertices, you might want to use the algorithm with a ceiling – simplecycles_iter – on large directed graphs (slightly slower). If you want to have an idea of the possible number of cycles, look at function maxsimplecycles(dg::DiGraph, byscc::Bool = true). If you only need short cycles of a limited length, simplecycles_limited_length can be more efficient.\n\nReferences\n\nJohnson\n\n\n\n\n\n"
 },
 
 {
@@ -1329,6 +1329,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.simplecycles_limited_length",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.simplecycles_limited_length",
+    "category": "function",
+    "text": "simplecycles_limited_length(g, n, ceiling=10^6)\n\nCompute and return at most ceiling cycles of length at most n of the given graph. Both directed and undirected graphs are supported.\n\nPerformance\n\nThe number of cycles grows very fast with the number of vertices and the allowed length of the cycles. This function is intended for finding short cycles. If you want to find cycles of any length in a directed graph, simplecycles or simplecycles_iter may be more efficient.\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#LightGraphs.karp_minimum_cycle_mean",
     "page": "Path and Traversal",
     "title": "LightGraphs.karp_minimum_cycle_mean",
@@ -1341,7 +1349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "Cycle Detection",
     "category": "section",
-    "text": "In graph theory, a cycle is defined to be a path that starts from some vertex v and ends up at v.is_cyclic\nmaxsimplecycles\nsimplecycles\nsimplecycles_iter\nsimplecycles_hawick_james\nsimplecyclescount\nsimplecycleslength\nkarp_minimum_cycle_mean"
+    "text": "In graph theory, a cycle is defined to be a path that starts from some vertex v and ends up at v.is_cyclic\nmaxsimplecycles\nsimplecycles\nsimplecycles_iter\nsimplecycles_hawick_james\nsimplecyclescount\nsimplecycleslength\nsimplecycles_limited_length\nkarp_minimum_cycle_mean"
 },
 
 {
