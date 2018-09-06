@@ -33,6 +33,7 @@ tests = [
     "cycles/johnson",
     "cycles/karp",
     "cycles/basis",
+    "cycles/limited_length",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
