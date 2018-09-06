@@ -11,31 +11,29 @@ finding short cycles. If you want to find cycles of any length in a
 directed graph, `simplecycles` or `simplecycles_iter` may be more
 efficient.
 """
-function simplecycles_limited_length(graph::AbstractGraph, n::Integer,
-                                     ceiling = 10^6)
-    cycles = Vector{Int}[]
+function simplecycles_limited_length(graph::AbstractGraph{T}, n::Int,
+                                     ceiling = 10^6) where {T}
+    cycles = Vector{Vector{T}}()
     n < 1 && return cycles
-    cycle = Int[]
-    for v = 1:nv(graph)
-        push!(cycle, v)
-        simplecycles_limited_length!(graph, n, ceiling, cycles, cycle)
-        pop!(cycle)
+    cycle = Vector{T}(undef, n)
+    @inbounds for v in vertices(graph)
+        cycle[1] = v
+        simplecycles_limited_length!(graph, n, ceiling, cycles, cycle, 1)
         length(cycles) >= ceiling && break
     end
     return cycles
 end
 
-function simplecycles_limited_length!(graph, n, ceiling, cycles, cycle)
+function simplecycles_limited_length!(graph, n, ceiling, cycles, cycle, i)
     length(cycles) >= ceiling && return
-    for v in outneighbors(graph, cycle[end])
+    for v in outneighbors(graph, cycle[i])
         if v == cycle[1]
-            push!(cycles, copy(cycle))
-        elseif (length(cycle) < n
+            push!(cycles, cycle[1:i])
+        elseif (i < n
                 && v > cycle[1]
-                && !repeated_vertex(v, cycle, 2, length(cycle)))
-            push!(cycle, v)
-            simplecycles_limited_length!(graph, n, ceiling, cycles, cycle)
-            pop!(cycle)
+                && !repeated_vertex(v, cycle, 2, i))
+            cycle[i + 1] = v
+            simplecycles_limited_length!(graph, n, ceiling, cycles, cycle, i + 1)
         end
     end
 end
@@ -45,9 +43,7 @@ end
 # faster.
 function repeated_vertex(v, cycle, n1, n2)
     for k = n1:n2
-        if cycle[k] == v
-            return true
-        end
+        cycle[k] == v && return true
     end
     return false
 end
