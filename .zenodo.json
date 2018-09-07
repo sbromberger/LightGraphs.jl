@@ -1,6 +1,6 @@
 {
     "description": "LightGraphs: An Optimized Graphs Package for the Julia Programming Language",
-    "license": "BSD 2-clause",
+    "license": "BSD-2-Clause",
     "title": "JuliaGraphs/LightGraphs.jl",
     "upload_type": "software",
     "publication_date": "2017-09-16",
