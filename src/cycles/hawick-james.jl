@@ -55,7 +55,7 @@ function circuit_recursive! end
             push!(cycles, copy(stack))
             f = true
         elseif !blocked[w]
-            f = circuit_recursive!(g, v1, w, blocked, B, stack, cycles)
+            f |= circuit_recursive!(g, v1, w, blocked, B, stack, cycles)
         end
     end
     if f
@@ -83,7 +83,9 @@ function unblock!(v::T, blocked::AbstractVector, B::Vector{Vector{T}}) where T
     Bv = B[v]
     while wPos <= length(Bv)
         w = Bv[wPos]
-        wPos += 1 - (length(Bv) - length(filter!(v -> v == w, Bv)))
+        old_length = length(Bv)
+        filter!(v -> v != w, Bv)
+        wPos += 1 - (old_length - length(Bv))
         if blocked[w]
             unblock!(w, blocked, B)
         end

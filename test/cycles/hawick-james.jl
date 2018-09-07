@@ -55,4 +55,16 @@
         ex4_output = simplecycles_hawick_james(g)
         @test [1, 2] ∈ ex4_output && [8, 9] ∈ ex4_output
     end
+
+    # These test cases cover a bug that occurred in a previous version
+    for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
+        g = erdos_renyi(n, k, is_directed=true, seed=seed)
+        cycles1 = simplecycles(g)
+        cycles2 = simplecycles_hawick_james(g)
+        foreach(sort!, cycles1)
+        foreach(sort!, cycles2)
+        sort!(cycles1)
+        sort!(cycles2)
+        @test cycles1 == cycles2
+    end
 end
