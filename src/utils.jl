@@ -71,6 +71,31 @@ Generate a vector `Reps` times using `gen_func(g)` and return the vector with th
 generate_max_set(g::AbstractGraph{T}, gen_func, Reps::Integer) where T<: Integer =
 mapreduce(gen_func, (x, y)->length(x)>length(y) ? x : y, Iterators.repeated(g, Reps))
 
+
+"""
+    unweighted_contiguous_partition(num_items, required_partitions)
+
+Partition `1:num_items` into `required_partitions` number of partitions such that the
+difference in length of the largest and smallest partition is atmost 1.
+
+### Performance
+Time: O(required_partitions)
+"""
+function unweighted_contiguous_partition(
+    num_items::Integer,
+    required_partitions::Integer
+    )
+
+    left = 1
+    part = Vector{UnitRange}(undef, required_partitions)
+    for i in 1:required_partitions
+        len = fld(num_items+i-1, required_partitions)
+        part[i] = left:(left+len-1)
+        left += len
+    end
+    return part
+end
+
 """
     greedy_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
