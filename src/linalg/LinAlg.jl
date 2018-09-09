@@ -51,8 +51,6 @@ export convert,
     eigs
 
 function eigs(A; kwargs...)
-    # @show kwargs[:which]
-    # @show typeof(kwargs[:which])
     schr =partialschur(A; kwargs...)
     vals, vectors = partialeigen(schr[1])
     reved = (kwargs[:which] == LR() || kwargs[:which] == LM())

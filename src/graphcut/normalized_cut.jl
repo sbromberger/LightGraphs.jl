@@ -123,7 +123,6 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 10
         λ, Q = eigs(invDroot' * (D - W) * invDroot, nev=8, which=SR())
-        @show λ
         ret = real(Q[:,2])
     else
         ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]

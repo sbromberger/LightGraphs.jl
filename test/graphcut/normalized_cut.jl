@@ -93,6 +93,11 @@
 
     @test issorted(num_subgraphs) == true
 
-    labels = @inferred(normalized_cut(g, 0.1))
-    @test sort(unique(labels)) == [1, 2, 3, 4]
+
+    # for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    let t = 0.1
+      labels = @inferred(normalized_cut(g, t))
+      @test sort(unique(labels)) == [1, 2, 3, 4]
+    end
+
 end
