@@ -20,7 +20,7 @@ testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 
 tests = [
-    # "simplegraphs/runtests",
+    "simplegraphs/runtests",
     "linalg/runtests",
     "parallel/runtests",
     "interface",
@@ -77,7 +77,6 @@ tests = [
 @testset "LightGraphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
-        println(tp)
         include(tp)
     end
 end

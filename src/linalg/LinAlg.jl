@@ -70,7 +70,6 @@ include("./graphmatrices.jl")
 include("./spectral.jl")
 include("./nonbacktracking.jl")
 
-print(eigs)
 
 end
 

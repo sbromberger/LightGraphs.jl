@@ -13,7 +13,6 @@ tests = [
 @testset "LightGraphs.LinAlg" begin
     for t in tests
         tp = joinpath(linalgtestdir, "$(t).jl")
-        println(tp)
         include(tp)
     end
 end
