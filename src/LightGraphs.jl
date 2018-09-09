@@ -3,7 +3,7 @@ module LightGraphs
 using SimpleTraits
 
 ### Remove the following line once #915 is closed
-using Arpack: eigs
+using ArnoldiMethod
 using Statistics: mean
 
 using CodecZlib: GzipCompressorStream, GzipDecompressorStream
