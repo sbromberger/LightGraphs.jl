@@ -1,15 +1,15 @@
 """
-    simplecycles_hadwick_james(g)
+    simplecycles_hawick_james(g)
 
 Find circuits (including self-loops) in `g` using the algorithm
-of Hadwick & James.
+of Hawick & James.
 
 ### References
-- Hadwick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
+- Hawick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
 """
-function simplecycles_hadwick_james end
+function simplecycles_hawick_james end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function simplecycles_hadwick_james(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function simplecycles_hawick_james(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)
     B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)
@@ -55,7 +55,7 @@ function circuit_recursive! end
             push!(cycles, copy(stack))
             f = true
         elseif !blocked[w]
-            f = circuit_recursive!(g, v1, w, blocked, B, stack, cycles)
+            f |= circuit_recursive!(g, v1, w, blocked, B, stack, cycles)
         end
     end
     if f
@@ -83,7 +83,9 @@ function unblock!(v::T, blocked::AbstractVector, B::Vector{Vector{T}}) where T
     Bv = B[v]
     while wPos <= length(Bv)
         w = Bv[wPos]
-        wPos += 1 - (length(Bv) - length(filter!(v -> v == w, Bv)))
+        old_length = length(Bv)
+        filter!(v -> v != w, Bv)
+        wPos += 1 - (old_length - length(Bv))
         if blocked[w]
             unblock!(w, blocked, B)
         end

@@ -40,7 +40,7 @@ Other notorious graphs and integration with the `MatrixDepot.jl` package are ava
 ### All Generators
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [LightGraphs.SimpleGraphs]
 Pages   = [
     "generators/randgraphs.jl",
     "generators/staticgraphs.jl",

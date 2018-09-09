@@ -21,7 +21,9 @@ include("centrality/radiality.jl")
 include("centrality/stress.jl")
 include("distance.jl")
 include("traversals/bfs.jl")
+include("traversals/gdistances.jl")
 include("traversals/greedy_color.jl")
+include("utils.jl")
 
 # Overload until https://github.com/JuliaLang/julia/pull/28651
 import Distributed: splitrange

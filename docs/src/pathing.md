@@ -29,9 +29,9 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 * `DepthFirst`, and
 * `MaximumAdjacency`.
 
+
 ```@docs
 bfs_tree
-LightGraphs.bfs_tree!
 dfs_tree
 maximum_adjacency_visit
 bfs_parents
@@ -85,9 +85,10 @@ is_cyclic
 maxsimplecycles
 simplecycles
 simplecycles_iter
-simplecycles_hadwick_james
+simplecycles_hawick_james
 simplecyclescount
 simplecycleslength
+simplecycles_limited_length
 karp_minimum_cycle_mean
 ```
 
@@ -136,7 +137,6 @@ return states that contain various  information about the graph
 learned during traversal. 
 
 ```@docs
-
 LightGraphs.DijkstraState
 LightGraphs.BellmanFordState
 LightGraphs.FloydWarshallState
