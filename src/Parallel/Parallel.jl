@@ -5,7 +5,7 @@ using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, Fl
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
-using Arpack: eigs
+using ArnoldiMethod
 using Random:shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex

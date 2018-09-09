@@ -1,8 +1,10 @@
 import Base: Matrix
+import Base: size
+using ArnoldiMethod
 
+#using LightGraphs.LinAlg: eigs
 # just so that we can assert equality of matrices
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
-
 @testset "Spectral" begin
 
     g3 = PathGraph(5)
@@ -54,6 +56,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         z = zeros(Float64, nv(g))
         n10 = Nonbacktracking(g)
         @test size(n10) == (2 * ne(g), 2 * ne(g))
+        @test size(n10,1) == n10.m
+        @test size(n10,2) == n10.m
         @test eltype(n10) == Float64
         @test !issymmetric(n10)
 
@@ -133,7 +137,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         B, emap = non_backtracking_matrix(g)
         Bs = sparse(nbt)
         @test sparse(B) == Bs
-        @test eigs(nbt, nev=1)[1] ≈ eigs(B, nev=1)[1] atol = 1e-5
+        @test eigs(nbt, which=LR(), nev=1)[1] ≈ eigs(B, which=LR(), nev=1)[1] atol = 1e-5
 
         # check that matvec works
         x = ones(Float64, nbt.m)

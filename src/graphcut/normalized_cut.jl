@@ -1,3 +1,4 @@
+using ArnoldiMethod
 #computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = 0
@@ -117,11 +118,13 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m == 1 && return [1]
 
     #get eigenvector corresponding to second smallest eigenvalue
-    # v = eigs(D-W, D, nev=2, which=:SR)[2][:,2]
+    # v = eigs(D-W, D, nev=2, which=SR())[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
-    if n > 10
-        ret = eigs(invDroot' * (D - W) * invDroot, nev=2, which=:SR)[2][:,2]
+    if n > 12
+        λ, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
+        ret = real(Q[:,2])
+        @show ret
     else
         ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
     end
