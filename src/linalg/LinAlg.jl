@@ -57,6 +57,7 @@ function eigs(A; kwargs...)
     vals, vectors = partialeigen(schr[1])
     reved = (kwargs[:which] == LR() || kwargs[:which] == LM())
     k = get(kwargs, :nev, length(vals))
+    k = min(k, length(vals))
     perm = 1:k
     if vals[1] isa(Real)
         perm = sortperm(vals, rev=reved)
