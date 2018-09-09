@@ -16,7 +16,8 @@ tests = [
     "shortestpaths/johnson",
     "traversals/bfs",
     "traversals/gdistances",
-    "traversals/greedy_color"
+    "traversals/greedy_color",
+    "utils"
 ]
 
 @testset "LightGraphs.Parallel" begin
