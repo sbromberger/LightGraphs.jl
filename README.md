@@ -1,7 +1,6 @@
 # LightGraphs
 
 ## Important Note
-Until [an issue with one of our dependencies](https://github.com/JuliaLinearAlgebra/Arpack.jl/issues/5) is resolved, LightGraphs will not work with any Julia 0.7 or 1.0 version that has been built from source on OSX or other systems with a compiler more modern than GCC7. If you use LightGraphs with Julia 0.7 or 1.0, please [download a Julia binary](https://julialang.org/downloads/).
 
 [![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
@@ -57,7 +56,7 @@ Installation is straightforward: enter Pkg mode by hitting `]`, and then
 * Julia 0.4: LightGraphs versions in the 0.6 series are designed to work with Julia 0.4.
 * Julia 0.5: LightGraphs versions in the 0.7 series are designed to work with Julia 0.5.
 * Julia 0.6: LightGraphs versions in the 0.8 through 0.12 series are designed to work with Julia 0.6.
-* Julia 0.7 / 1.0: LightGraphs versions in the 1.0 series are designed to work with Julia 0.7 and Julia 1.0.
+* Julia 0.7 / 1.0: LightGraphs versions in the 1.x series are designed to work with Julia 0.7 and Julia 1.0.
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs

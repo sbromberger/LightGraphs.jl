@@ -1,5 +1,4 @@
 using LightGraphs.LinAlg
-using Arpack
 using Random
 using SparseArrays
 using LinearAlgebra

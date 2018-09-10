@@ -1,5 +1,7 @@
 # This file provides reexported functions.
 
+using ArnoldiMethod
+
 """
     adjacency_matrix(g[, T=Int; dir=:out])
 
@@ -183,8 +185,8 @@ function spectral_distance end
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=:LR)[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
-    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=:LR)[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
+    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=LR())[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
+    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=LR())[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
 
     return sum(abs, (λ₁ - λ₂))
 end

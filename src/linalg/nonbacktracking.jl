@@ -1,4 +1,4 @@
-
+import Base: size
 """
     non_backtracking_matrix(g)
 
@@ -84,6 +84,7 @@ function Nonbacktracking(g::AbstractGraph)
 end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
+size(nbt::Nonbacktracking, i::Number) = size(nbt)[i]
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
