@@ -26,14 +26,17 @@ function floyd_warshall_shortest_paths(
     distmx::AbstractMatrix{T}=weights(g)
 ) where T<:Real where U<:Integer
     nvg = nv(g)
+    # if we do checkbounds here, we can use @inbounds later
+    checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
+
     dists = fill(typemax(T), (Int(nvg), Int(nvg)))
     parents = zeros(U, (Int(nvg), Int(nvg)))
 
-    for v in 1:nvg
+    @inbounds for v in vertices(g)
         dists[v, v] = zero(T)
     end
     undirected = !is_directed(g)
-    for e in edges(g)
+    @inbounds for e in edges(g)
         u = src(e)
         v = dst(e)
 
