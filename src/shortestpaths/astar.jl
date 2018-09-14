@@ -4,13 +4,13 @@
 # A* shortest-path algorithm
 
 function a_star_impl!(g::AbstractGraph,# the graph
-    t::Integer, # the end vertex
+    t, # the end vertex
     frontier,               # an initialized heap containing the active vertices
-    colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
+    colormap::Vector{UInt8},  # an (initialized) color-map to indicate status of vertices
     distmx::AbstractMatrix,
     heuristic::Function)
 
-    while !isempty(frontier)
+    @inbounds while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
         if u == t
             return path
@@ -18,20 +18,31 @@ function a_star_impl!(g::AbstractGraph,# the graph
 
         for v in LightGraphs.outneighbors(g, u)
 
-            if colormap[v] < 2
+            if get(colormap, v, 0) < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
                 new_path = cat(path, Edge(u, v), dims=1)
                 path_cost = cost_so_far + dist
                 enqueue!(frontier,
-                (path_cost, new_path, v),
-                path_cost + heuristic(v))
+                    (path_cost, new_path, v),
+                    path_cost + heuristic(v)
+                )
             end
         end
         colormap[u] = 2
     end
     Vector{Edge}()
 end
+
+"""
+    empty_colormap(nv)
+
+Return a collection that maps vertices of type `typof(nv)` to UInt8.
+In case `nv` is an integer type, this will be a vector of zeros. Currently does
+not work for other types. The idea is, that this can be extended to arbitrary
+vertex types in the future.
+"""
+empty_colormap(nv::Integer) = zeros(UInt8, nv)
 
 """
     a_star(g, s, t[, distmx][, heuristic])
@@ -43,15 +54,17 @@ the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heur
 `n -> 0`.
 """
 function a_star(g::AbstractGraph{U},  # the g
-
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
     distmx::AbstractMatrix{T}=weights(g),
-    heuristic::Function=n -> 0) where T where U
+    heuristic::Function=n -> zero(T)) where {T, U}
+
+    # if we do checkbounds here, we can use @inbounds in a_star_impl!
+    checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
     # heuristic (under)estimating distance to target
     frontier = PriorityQueue{Tuple{T,Vector{Edge},U},T}()
-    frontier[(zero(T), Vector{Edge}(), s)] = zero(T)
-    colormap = zeros(Int, nv(g))
+    frontier[(zero(T), Vector{Edge}(), U(s))] = zero(T)
+    colormap = empty_colormap(nv(g))
     colormap[s] = 1
-    a_star_impl!(g, t, frontier, colormap, distmx, heuristic)
+    a_star_impl!(g, U(t), frontier, colormap, distmx, heuristic)
 end
