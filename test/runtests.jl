@@ -71,6 +71,8 @@ tests = [
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
     "graphcut/karger_min_cut",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover",
     "experimental/experimental"
 ]
 

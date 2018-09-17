@@ -81,7 +81,6 @@ function unweighted_contiguous_partition(
     return part
 end
 
-
 """
     greedy_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
