@@ -24,6 +24,7 @@ include("traversals/bfs.jl")
 include("traversals/gdistances.jl")
 include("traversals/greedy_color.jl")
 include("utils.jl")
+include("vertexcover/random_vertex_cover.jl")
 
 # Overload until https://github.com/JuliaLang/julia/pull/28651
 import Distributed: splitrange

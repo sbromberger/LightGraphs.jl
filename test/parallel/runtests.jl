@@ -17,6 +17,7 @@ tests = [
     "traversals/bfs",
     "traversals/gdistances",
     "traversals/greedy_color",
+    "vertexcover/random_vertex_cover",
     "utils"
 ]
 

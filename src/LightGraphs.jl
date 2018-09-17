@@ -142,7 +142,10 @@ kruskal_mst, prim_mst,
 articulation, biconnected_components,
 
 #graphcut
-normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges
+normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
+
+#vertexcover
+vertex_cover
 
 """
     LightGraphs
@@ -241,6 +244,8 @@ include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
+include("vertexcover/degree_vertex_cover.jl")
+include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 
