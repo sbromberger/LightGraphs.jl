@@ -8,9 +8,11 @@
     (f, fio) = mktemp()
     # test :lg
     @test savegraph(f, p1) == 1
-    @test savegraph(f, p1; compress=true) == 1
-    @test savegraph(f, p1, LGFormat(); compress=true) == 1
-    @test savegraph(f, p2; compress=true) == 1
+    @test_deprecated savegraph(f, p1; compress=true)
+    @test savegraph(f, p1) == 1
+    @test_deprecated @test savegraph(f, p1, LGFormat(); compress=true)
+    @test savegraph(f, p1, LGFormat()) == 1
+    @test savegraph(f, p2) == 1
     @test (ne(p2), nv(p2)) == (9, 10)
     
     g2 = loadgraph(f)
@@ -30,8 +32,6 @@
 
     d = Dict{String,AbstractGraph}("p1" => p1, "p2" => p2)
     @test savegraph(f, d) == 2
-    # test try block (#701)
-    @test_throws TypeError savegraph(f, d; compress=nothing)
     
     close(fio)
     rm(f)
