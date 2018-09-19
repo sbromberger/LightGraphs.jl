@@ -13,10 +13,13 @@ An empty graph will return an empty vector but is bipartite.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph();
+julia> g = SimpleGraph(3);
 
 julia> bipartite_map(g)
-0-element Array{UInt8,1}
+3-element Array{UInt8,1}:
+ 0x01
+ 0x01
+ 0x01
 
 julia> add_vertices!(g, 3);
 
