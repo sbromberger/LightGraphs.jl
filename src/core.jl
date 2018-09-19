@@ -40,9 +40,7 @@ graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = DiGraph();
-
-julia> add_vertices!(g, 3);
+julia> g = DiGraph(3);
 
 julia> add_edge!(g, 2, 3);
 
@@ -68,9 +66,7 @@ graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = DiGraph();
-
-julia> add_vertices!(g, 3);
+julia> g = DiGraph(3);
 
 julia> add_edge!(g, 2, 3);
 
@@ -97,9 +93,7 @@ For undirected graphs, it equals the connected edges.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = DiGraph();
-
-julia> add_vertices!(g, 3);
+julia> g = DiGraph(3);
 
 julia> add_edge!(g, 2, 3);
 
@@ -208,9 +202,7 @@ Returns a reference, not a copy. Do not modify result.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = DiGraph();
-
-julia> add_vertices!(g, 3);
+julia> g = DiGraph(3);
 
 julia> add_edge!(g, 2, 3);
 
@@ -243,9 +235,7 @@ Returns a reference, not a copy. Do not modify result.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = DiGraph();
-
-julia> add_vertices!(g, 3);
+julia> g = DiGraph(3);
 
 julia> add_edge!(g, 2, 3);
 
