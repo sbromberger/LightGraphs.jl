@@ -317,7 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.add_vertices!",
     "category": "function",
-    "text": "add_vertices!(g, n)\n\nAdd n new vertices to the graph g. Return the number of vertices that were added successfully.\n\n\n\n\n\n"
+    "text": "add_vertices!(g, n)\n\nAdd n new vertices to the graph g. Return the number of vertices that were added successfully.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph()\n{0, 0} undirected simple Int64 graph\n\njulia> add_vertices!(g, 2)\n2\n\n\n\n\n\n"
 },
 
 {
@@ -1181,7 +1181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.has_self_loops",
     "category": "function",
-    "text": "has_self_loops(g)\n\nReturn true if g has any self loops.\n\n\n\n\n\n"
+    "text": "has_self_loops(g)\n\nReturn true if g has any self loops.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> has_self_loops(g)\nfalse\n\njulia> add_edge!(g, 1, 1);\n\njulia> has_self_loops(g)\ntrue\n\n\n\n\n\n"
 },
 
 {
@@ -1197,7 +1197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.is_bipartite",
     "category": "function",
-    "text": "is_bipartite(g)\n\nReturn true if graph g is bipartite.\n\n\n\n\n\n"
+    "text": "is_bipartite(g)\n\nReturn true if graph g is bipartite.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 3);\n\njulia> is_bipartite(g)\ntrue\n\njulia> add_edge!(g, 1, 3);\n\njulia> is_bipartite(g)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -1205,7 +1205,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.bipartite_map",
     "category": "function",
-    "text": "bipartite_map(g)\n\nFor a bipartite graph g, return a vector c of size V containing the assignment of each vertex to one of the two sets (c_i == 1 or c_i == 2`). Ifg` is not bipartite, return an empty vector.\n\nImplementation Notes\n\nNote that an empty vector does not necessarily indicate non-bipartiteness. An empty graph will return an empty vector but is bipartite.\n\n\n\n\n\n"
+    "text": "bipartite_map(g) -> Vector{UInt8}\n\nFor a bipartite graph g, return a vector c of size V containing the assignment of each vertex to one of the two sets (c_i == 1 or c_i == 2`). Ifg` is not bipartite, return an empty vector.\n\nImplementation Notes\n\nNote that an empty vector does not necessarily indicate non-bipartiteness. An empty graph will return an empty vector but is bipartite.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x01\n 0x01\n\njulia> add_vertices!(g, 3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x02\n 0x01\n\n\n\n\n\n"
 },
 
 {
