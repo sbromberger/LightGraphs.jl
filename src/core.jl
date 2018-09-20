@@ -9,6 +9,18 @@ abstract type AbstractPathState end
     is_ordered(e)
 Return true if the source vertex of edge `e` is less than or equal to
 the destination vertex.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = DiGraph(2);
+
+julia> add_edge!(g, 2, 1);
+
+julia> is_ordered(first(edges(g)))
+false
+```
 """
 is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
