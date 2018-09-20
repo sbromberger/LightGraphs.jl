@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "Base.reverse",
     "category": "method",
-    "text": "reverse(e)\n\nCreate a new edge from e with source and destination vertices reversed.\n\n\n\n\n\n"
+    "text": "reverse(e)\n\nCreate a new edge from e with source and destination vertices reversed.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleDiGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> reverse(first(edges(g)))\nEdge 2 => 1\n\n\n\n\n\n"
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.dst",
     "category": "method",
-    "text": "dst(e)\n\nReturn the destination vertex of edge e.\n\n\n\n\n\n"
+    "text": "dst(e)\n\nReturn the destination vertex of edge e.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> dst(first(edges(g)))\n2\n\n\n\n\n\n"
 },
 
 {
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.edges",
     "category": "method",
-    "text": "edges(g)\n\nReturn (an iterator to or collection of) the edges of a graph. For AbstractSimpleGraphs it returns a SimpleEdgeIter. The expressions e in edges(g) and e ∈ edges(ga) evaluate as calls to has_edge.\n\nImplementation Notes\n\nA returned iterator is valid for one pass over the edges, and is invalidated by changes to g.\n\n\n\n\n\n"
+    "text": "edges(g)\n\nReturn (an iterator to or collection of) the edges of a graph. For AbstractSimpleGraphs it returns a SimpleEdgeIter. The expressions e in edges(g) and e ∈ edges(ga) evaluate as calls to has_edge.\n\nImplementation Notes\n\nA returned iterator is valid for one pass over the edges, and is invalidated by changes to g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(3);\n\njulia> collect(edges(g))\n2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n\n\n\n\n\n"
 },
 
 {
@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.has_edge",
     "category": "method",
-    "text": "has_edge(g, s, d)\n\nReturn true if the graph g has an edge from node s to node d.\n\nAn optional has_edge(g, e) can be implemented to check if an edge belongs to a graph, including any data other than source and destination node.\n\ne ∈ edges(g) or e ∈ edges(g) evaluate as calls to has_edge, c.f. edges.\n\n\n\n\n\n"
+    "text": "has_edge(g, s, d)\n\nReturn true if the graph g has an edge from node s to node d.\n\nAn optional has_edge(g, e) can be implemented to check if an edge belongs to a graph, including any data other than source and destination node.\n\ne ∈ edges(g) or e ∈ edges(g) evaluate as calls to has_edge, c.f. edges.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleDiGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> has_edge(g, 1, 2)\ntrue\n\njulia> has_edge(g, 2, 1)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -141,7 +141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.has_vertex",
     "category": "method",
-    "text": "has_vertex(g, v)\n\nReturn true if v is a vertex of g.\n\n\n\n\n\n"
+    "text": "has_vertex(g, v)\n\nReturn true if v is a vertex of g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> has_vertex(SimpleGraph(2), 1)\ntrue\n\njulia> has_vertex(SimpleGraph(2), 3)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.is_directed",
     "category": "method",
-    "text": "is_directed(g)\n\nReturn true if the graph is a directed graph; false otherwise.\n\n\n\n\n\n"
+    "text": "is_directed(g)\n\nReturn true if the graph is a directed graph; false otherwise.\n\nExamples\n\njulia> using LightGraphs\n\njulia> is_directed(SimpleGraph(2))\nfalse\n\njulia> is_directed(SimpleDiGraph(2))\ntrue\n\n\n\n\n\n"
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.ne",
     "category": "method",
-    "text": "ne(g)\n\nReturn the number of edges in g.\n\n\n\n\n\n"
+    "text": "ne(g)\n\nReturn the number of edges in g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(3);\n\njulia> ne(g)\n2\n\n\n\n\n\n"
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.nv",
     "category": "method",
-    "text": "nv(g)\n\nReturn the number of vertices in g.\n\n\n\n\n\n"
+    "text": "nv(g)\n\nReturn the number of vertices in g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> nv(SimpleGraph(3))\n3\n\n\n\n\n\n"
 },
 
 {
@@ -189,7 +189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.src",
     "category": "method",
-    "text": "src(e)\n\nReturn the source vertex of edge e.\n\n\n\n\n\n"
+    "text": "src(e)\n\nReturn the source vertex of edge e.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> src(first(edges(g)))\n1\n\n\n\n\n\n"
 },
 
 {
@@ -197,7 +197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs.vertices",
     "category": "method",
-    "text": "vertices(g)\n\nReturn (an iterator to or collection of) the vertices of a graph.\n\nImplementation Notes\n\nA returned iterator is valid for one pass over the edges, and is invalidated by changes to g.\n\n\n\n\n\n"
+    "text": "vertices(g)\n\nReturn (an iterator to or collection of) the vertices of a graph.\n\nImplementation Notes\n\nA returned iterator is valid for one pass over the edges, and is invalidated by changes to g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> collect(vertices(SimpleGraph(4)))\n4-element Array{Int64,1}:\n 1\n 2\n 3\n 4\n\n\n\n\n\n"
 },
 
 {
@@ -325,7 +325,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.rem_vertex!",
     "category": "function",
-    "text": "rem_vertex!(g, v)\n\nRemove the vertex v from graph g. Return false if removal fails (e.g., if vertex is not in the graph); true otherwise.\n\nPerformance\n\nTime complexity is mathcalO(k^2), where k is the max of the degrees of vertex v and vertex V.\n\nImplementation Notes\n\nThis operation has to be performed carefully if one keeps external data structures indexed by edges or vertices in the graph, since internally the removal is performed swapping the vertices v  and V, and removing the last vertex V from the graph. After removal the vertices in g will be indexed by 1V-1.\n\n\n\n\n\n"
+    "text": "rem_vertex!(g, v)\n\nRemove the vertex v from graph g. Return false if removal fails (e.g., if vertex is not in the graph); true otherwise.\n\nPerformance\n\nTime complexity is mathcalO(k^2), where k is the max of the degrees of vertex v and vertex V.\n\nImplementation Notes\n\nThis operation has to be performed carefully if one keeps external data structures indexed by edges or vertices in the graph, since internally the removal is performed swapping the vertices v  and V, and removing the last vertex V from the graph. After removal the vertices in g will be indexed by 1V-1.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> rem_vertex!(g, 2)\ntrue\n\njulia> rem_vertex!(g, 2)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -1829,7 +1829,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1837,7 +1837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
