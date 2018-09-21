@@ -1557,7 +1557,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.center",
     "category": "method",
-    "text": "center(eccentricities)\ncenter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s radius (that is, the set of vertices with the smallest eccentricity).\n\n\n\n\n\n"
+    "text": "center(eccentricities)\ncenter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s radius (that is, the set of vertices with the smallest eccentricity).\n\nExamples\n\njulia> using LightGraphs\n\njulia> center(StarGraph(5))\n1-element Array{Int64,1}:\n 1\n\njulia> center(PathGraph(5))\n1-element Array{Int64,1}:\n 3\n\n\n\n\n\n"
 },
 
 {
@@ -1565,7 +1565,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.diameter",
     "category": "method",
-    "text": "diameter(eccentricities)\ndiameter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the maximum eccentricity of the graph.\n\n\n\n\n\n"
+    "text": "diameter(eccentricities)\ndiameter(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the maximum eccentricity of the graph.\n\nExamples\n\njulia> using LightGraphs\n\njulia> diameter(StarGraph(5))\n2\n\njulia> diameter(PathGraph(5))\n4\n\n\n\n\n\n"
 },
 
 {
@@ -1589,7 +1589,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.periphery",
     "category": "method",
-    "text": "periphery(eccentricities)\nperiphery(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s diameter (that is, the set of vertices with the largest eccentricity).\n\n\n\n\n\n"
+    "text": "periphery(eccentricities)\nperiphery(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph\'s diameter (that is, the set of vertices with the largest eccentricity).\n\nExamples\n\njulia> using LightGraphs\n\njulia> periphery(StarGraph(5))\n4-element Array{Int64,1}:\n 2\n 3\n 4\n 5\n\njulia> periphery(PathGraph(5))\n2-element Array{Int64,1}:\n 1\n 5\n\n\n\n\n\n"
 },
 
 {
@@ -1597,7 +1597,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.radius",
     "category": "method",
-    "text": "radius(eccentricities)\nradius(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the minimum eccentricity of the graph.\n\n\n\n\n\n"
+    "text": "radius(eccentricities)\nradius(g, distmx=weights(g))\n\nGiven a graph and optional distance matrix, or a vector of precomputed eccentricities, return the minimum eccentricity of the graph.\n\nExamples\n\njulia> using LightGraphs\n\njulia> radius(StarGraph(5))\n1\n\njulia> radius(PathGraph(5))\n2\n\n\n\n\n\n"
 },
 
 {
@@ -1837,7 +1837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1845,7 +1845,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
