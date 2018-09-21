@@ -53,7 +53,15 @@ var documenterSearchIndex = {"docs": [
     "page": "LightGraphs Types",
     "title": "LightGraphs Types",
     "category": "page",
-    "text": "#LightGraphs TypesLightGraphs.jl supports both the AbstractGraph type and two concrete simple graph types- - SimpleGraph for undirected graphs and SimpleDiGraph for directed graphs – that are subtypes of AbstractGraph."
+    "text": ""
+},
+
+{
+    "location": "types.html#LightGraphs-Types-1",
+    "page": "LightGraphs Types",
+    "title": "LightGraphs Types",
+    "category": "section",
+    "text": "LightGraphs.jl supports both the AbstractGraph type and two concrete simple graph types – SimpleGraph for undirected graphs and SimpleDiGraph for directed graphs – that are subtypes of AbstractGraph."
 },
 
 {
@@ -293,7 +301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.add_edge!",
     "category": "function",
-    "text": "add_edge!(g, e)\n\nAdd an edge e to graph g. Return true if edge was added successfully, otherwise return false.\n\n\n\n\n\n"
+    "text": "add_edge!(g, e)\n\nAdd an edge e to graph g. Return true if edge was added successfully, otherwise return false.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> add_edge!(g, 1, 2)\ntrue\n\njulia> add_edge!(g, 2, 3)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -301,7 +309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.rem_edge!",
     "category": "function",
-    "text": "rem_edge!(g, e)\n\nRemove an edge e from graph g. Return true if edge was removed successfully, otherwise return false.\n\nImplementation Notes\n\nIf rem_edge! returns false, the graph may be in an indeterminate state, as there are multiple points where the function can exit with false.\n\n\n\n\n\n"
+    "text": "rem_edge!(g, e)\n\nRemove an edge e from graph g. Return true if edge was removed successfully, otherwise return false.\n\nImplementation Notes\n\nIf rem_edge! returns false, the graph may be in an indeterminate state, as there are multiple points where the function can exit with false.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> rem_edge!(g, 1, 2)\ntrue\n\njulia> rem_edge!(g, 1, 2)\nfalse\n\n\n\n\n\n"
 },
 
 {
@@ -309,7 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.add_vertex!",
     "category": "function",
-    "text": "add_vertex!(g)\n\nAdd a new vertex to the graph g. Return true if addition was successful.\n\n\n\n\n\n"
+    "text": "add_vertex!(g)\n\nAdd a new vertex to the graph g. Return true if addition was successful.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(Int8(typemax(Int8) - 1))\n{126, 0} undirected simple Int8 graph\n\njulia> add_vertex!(g)\ntrue\n\njulia> add_vertex!(g)\nfalse\n\n\n\n\n\n"
 },
 
 {
