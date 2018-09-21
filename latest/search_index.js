@@ -1645,7 +1645,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.betweenness_centrality",
     "category": "function",
-    "text": "betweenness_centrality(g[, vs])\nbetweenness_centrality(g, k)\n\nCalculate the betweenness centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the betweenness values by the\n\ntotal number of possible distinct paths between all pairs in the graphs. For an undirected graph, this number is frac(V-1)(V-2)2 and for a directed graph, (V-1)(V-2).\n\nendpoints=false: If true, include endpoints in the shortest path count.\n\nBetweenness centrality is defined as: bc(v) = frac1mathcalN sum_s neq t neq v fracsigma_st(v)sigma_st.\n\nReferences\n\nBrandes 2001 & Brandes 2008\n\n\n\n\n\n"
+    "text": "betweenness_centrality(g[, vs])\nbetweenness_centrality(g, k)\n\nCalculate the betweenness centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the betweenness values by the\n\ntotal number of possible distinct paths between all pairs in the graphs. For an undirected graph, this number is frac(V-1)(V-2)2 and for a directed graph, (V-1)(V-2).\n\nendpoints=false: If true, include endpoints in the shortest path count.\n\nBetweenness centrality is defined as: bc(v) = frac1mathcalN sum_s neq t neq v fracsigma_st(v)sigma_st.\n\nReferences\n\nBrandes 2001 & Brandes 2008\n\nExamples\n\njulia> using LightGraphs\n\njulia> betweenness_centrality(StarGraph(3))\n3-element Array{Float64,1}:\n 1.0\n 0.0\n 0.0\n\njulia> betweenness_centrality(PathGraph(4))\n4-element Array{Float64,1}:\n 0.0\n 0.6666666666666666\n 0.6666666666666666\n 0.0\n\n\n\n\n\n"
 },
 
 {
@@ -1653,7 +1653,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.closeness_centrality",
     "category": "function",
-    "text": "closeness_centrality(g)\n\nCalculate the closeness centrality of the graph g. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the centrality value of each\n\nnode n by fracδ_nV-1, where δ_n is the set of vertices reachable from node n.\n\n\n\n\n\n"
+    "text": "closeness_centrality(g, distmx=weights(g); normalize=true)\n\nCalculate the closeness centrality of the graph g. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize the centrality value of each\n\nnode n by fracδ_nV-1, where δ_n is the set of vertices reachable from node n.\n\nExamples\n\njulia> using LightGraphs\n\njulia> closeness_centrality(StarGraph(5))\n5-element Array{Float64,1}:\n 1.0\n 0.5714285714285714\n 0.5714285714285714\n 0.5714285714285714\n 0.5714285714285714\n\njulia> closeness_centrality(PathGraph(4))\n4-element Array{Float64,1}:\n 0.5\n 0.75\n 0.75\n 0.5\n\n\n\n\n\n"
 },
 
 {
@@ -1661,7 +1661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.degree_centrality",
     "category": "method",
-    "text": "degree_centrality(g)\nindegree_centrality(g)\noutdegree_centrality(g)\n\nCalculate the degree centrality of graph g. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize each centrality measure by frac1V-1.\n\n\n\n\n\n"
+    "text": "degree_centrality(g)\nindegree_centrality(g)\noutdegree_centrality(g)\n\nCalculate the degree centrality of graph g. Return a vector representing the centrality calculated for each node in g.\n\nOptional Arguments\n\nnormalize=true: If true, normalize each centrality measure by frac1V-1.\n\nExamples\n\njulia> using LightGraphs\n\njulia> degree_centrality(StarGraph(4))\n4-element Array{Float64,1}:\n 1.0               \n 0.3333333333333333\n 0.3333333333333333\n 0.3333333333333333\n\njulia> degree_centrality(PathGraph(3))\n3-element Array{Float64,1}:\n 0.5\n 1.0\n 0.5\n\n\n\n\n\n"
 },
 
 {
@@ -1693,7 +1693,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.stress_centrality",
     "category": "function",
-    "text": "stress_centrality(g[, vs])\nstress_centrality(g, k)\n\nCalculate the stress centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe stress centrality of a vertex n is defined as the number of shortest paths passing through n.\n\nReferences\n\nBarabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell\'s functional organization. Nat Rev Genet 5 (2004) 101-113\nShimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.\n\n\n\n\n\n"
+    "text": "stress_centrality(g[, vs])\nstress_centrality(g, k)\n\nCalculate the stress centrality of a graph g across all vertices, a specified subset of vertices vs, or a random subset of k vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe stress centrality of a vertex n is defined as the number of shortest paths passing through n.\n\nReferences\n\nBarabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell\'s functional organization. Nat Rev Genet 5 (2004) 101-113\nShimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.\n\nExamples\n\njulia> using LightGraphs\n\njulia> stress_centrality(StarGraph(3))\n3-element Array{Int64,1}:\n 2\n 0\n 0\n\njulia> stress_centrality(CycleGraph(4))\n4-element Array{Int64,1}:\n 2\n 2\n 2\n 2\n\n\n\n\n\n"
 },
 
 {
@@ -1701,7 +1701,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Centrality Measures",
     "title": "LightGraphs.radiality_centrality",
     "category": "method",
-    "text": "radiality_centrality(g)\n\nCalculate the radiality centrality of a graph g across all vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe radiality centrality R_u of a vertex u is defined as R_u = fracD_g + 1 - fracsum_vVd_uvV-1D_g\n\nwhere D_g is the diameter of the graph and d_uv is the  length of the shortest path from u to v.\n\nReferences\n\nBrandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177\n\n\n\n\n\n"
+    "text": "radiality_centrality(g)\n\nCalculate the radiality centrality of a graph g across all vertices. Return a vector representing the centrality calculated for each node in g.\n\nThe radiality centrality R_u of a vertex u is defined as R_u = fracD_g + 1 - fracsum_vVd_uvV-1D_g\n\nwhere D_g is the diameter of the graph and d_uv is the  length of the shortest path from u to v.\n\nReferences\n\nBrandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177\n\nExamples\n\njulia> using LightGraphs\n\njulia> radiality_centrality(StarGraph(4))\n4-element Array{Float64,1}:\n 1.0               \n 0.6666666666666666\n 0.6666666666666666\n 0.6666666666666666\n\njulia> radiality_centrality(PathGraph(3))\n3-element Array{Float64,1}:\n 0.75\n 1.0 \n 0.75\n\n\n\n\n\n"
 },
 
 {
@@ -1837,7 +1837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1845,7 +1845,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
