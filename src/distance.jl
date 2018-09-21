@@ -90,6 +90,17 @@ eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
     
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> diameter(StarGraph(5))
+2
+
+julia> diameter(PathGraph(5))
+4
+```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
 diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
@@ -103,6 +114,23 @@ Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is
 equal to the graph's diameter (that is, the set of vertices with the
 largest eccentricity).
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> periphery(StarGraph(5))
+4-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+
+julia> periphery(PathGraph(5))
+2-element Array{Int64,1}:
+ 1
+ 5
+```
 """
 function periphery(eccentricities::Vector)
     diam = maximum(eccentricities)
@@ -118,6 +146,17 @@ periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the minimum eccentricity of the graph.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> radius(StarGraph(5))
+1
+
+julia> radius(PathGraph(5))
+2
+```
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
 radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
@@ -130,6 +169,19 @@ radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is equal
 to the graph's radius (that is, the set of vertices with the smallest eccentricity).
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> center(StarGraph(5))
+1-element Array{Int64,1}:
+ 1
+
+julia> center(PathGraph(5))
+1-element Array{Int64,1}:
+ 3
+```
 """
 function center(eccentricities::Vector)
     rad = radius(eccentricities)
