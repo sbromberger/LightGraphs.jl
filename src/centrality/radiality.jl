@@ -15,6 +15,24 @@ length of the shortest path from ``u`` to ``v``.
 
 ### References
 - Brandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> radiality_centrality(StarGraph(4))
+4-element Array{Float64,1}:
+ 1.0               
+ 0.6666666666666666
+ 0.6666666666666666
+ 0.6666666666666666
+
+julia> radiality_centrality(PathGraph(3))
+3-element Array{Float64,1}:
+ 0.75
+ 1.0 
+ 0.75
+```
 """
 function radiality_centrality(g::AbstractGraph)::Vector{Float64}
     n_v = nv(g)
