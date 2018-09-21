@@ -25,6 +25,24 @@ of graph `g`. Return a vector representing the centrality calculated for each no
 
 ### Optional Arguments
 - `normalize=true`: If true, normalize each centrality measure by ``\\frac{1}{|V|-1}``.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> degree_centrality(StarGraph(4))
+4-element Array{Float64,1}:
+ 1.0               
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.3333333333333333
+
+julia> degree_centrality(PathGraph(3))
+3-element Array{Float64,1}:
+ 0.5
+ 1.0
+ 0.5
+```
 """
 degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
 indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
