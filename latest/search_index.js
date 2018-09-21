@@ -1221,7 +1221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.biconnected_components",
     "category": "function",
-    "text": "biconnected_components(g)\n\nCompute the biconnected components of an undirected graph gand return a vector of vectors containing each biconnected component.\n\nPerformance: Time complexity is mathcalO(V).\n\n\n\n\n\n"
+    "text": "biconnected_components(g)\n\nCompute the biconnected components of an undirected graph gand return a vector of vectors containing each biconnected component.\n\nPerformance: Time complexity is mathcalO(V).\n\nExamples\n\njulia> using LightGraphs\n\njulia> biconnected_components(StarGraph(5))\n4-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:\n [Edge 1 => 3]\n [Edge 1 => 4]\n [Edge 1 => 5]\n [Edge 1 => 2]\n\njulia> biconnected_components(CycleGraph(5))\n1-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:\n [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]\n\n\n\n\n\n"
 },
 
 {
@@ -1253,7 +1253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.articulation",
     "category": "function",
-    "text": "articulation(g)\n\nCompute the articulation points of a connected graph g and return an array containing all cut vertices.\n\n\n\n\n\n"
+    "text": "articulation(g)\n\nCompute the articulation points of a connected graph g and return an array containing all cut vertices.\n\nExamples\n\njulia> using LightGraphs\n\njulia> articulation(StarGraph(5))\n1-element Array{Int64,1}:\n 1\n\njulia> articulation(PathGraph(5))\n3-element Array{Int64,1}:\n 2\n 3\n 4\n\n\n\n\n\n"
 },
 
 {
