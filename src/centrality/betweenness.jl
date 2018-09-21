@@ -24,6 +24,24 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 
 ### References
 - Brandes 2001 & Brandes 2008
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> betweenness_centrality(StarGraph(3))
+3-element Array{Float64,1}:
+ 1.0
+ 0.0
+ 0.0
+
+julia> betweenness_centrality(PathGraph(4))
+4-element Array{Float64,1}:
+ 0.0
+ 0.6666666666666666
+ 0.6666666666666666
+ 0.0
+```
 """
 function betweenness_centrality(g::AbstractGraph,
     vs::AbstractVector=vertices(g),

@@ -11,6 +11,24 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 ### References
 - Barabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell's functional organization. Nat Rev Genet 5 (2004) 101-113
 - Shimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> stress_centrality(StarGraph(3))
+3-element Array{Int64,1}:
+ 2
+ 0
+ 0
+
+julia> stress_centrality(CycleGraph(4))
+4-element Array{Int64,1}:
+ 2
+ 2
+ 2
+ 2
+```
 """
 function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
     n_v = nv(g)
