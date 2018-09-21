@@ -372,6 +372,19 @@ end
 
 Add an edge `e` to graph `g`. Return `true` if edge was added successfully,
 otherwise return `false`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(2);
+
+julia> add_edge!(g, 1, 2)
+true
+
+julia> add_edge!(g, 2, 3)
+false
+```
 """
 function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
@@ -400,6 +413,21 @@ otherwise return `false`.
 ### Implementation Notes
 If `rem_edge!` returns `false`, the graph may be in an indeterminate state, as
 there are multiple points where the function can exit with `false`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(2);
+
+julia> add_edge!(g, 1, 2);
+
+julia> rem_edge!(g, 1, 2)
+true
+
+julia> rem_edge!(g, 1, 2)
+false
+```
 """
 function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
@@ -424,6 +452,20 @@ end
     add_vertex!(g)
 
 Add a new vertex to the graph `g`. Return `true` if addition was successful.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(Int8(typemax(Int8) - 1))
+{126, 0} undirected simple Int8 graph
+
+julia> add_vertex!(g)
+true
+
+julia> add_vertex!(g)
+false
+```
 """
 function add_vertex!(g::SimpleGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow

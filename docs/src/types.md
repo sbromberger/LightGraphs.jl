@@ -1,6 +1,6 @@
-#LightGraphs Types
+# LightGraphs Types
 
-*LightGraphs.jl* supports both the `AbstractGraph` type and two concrete simple graph types- - `SimpleGraph` for undirected graphs and `SimpleDiGraph` for directed graphs -- that are subtypes of `AbstractGraph`.
+*LightGraphs.jl* supports both the `AbstractGraph` type and two concrete simple graph types -- [`SimpleGraph`](@ref) for undirected graphs and [`SimpleDiGraph`](@ref) for directed graphs -- that are subtypes of `AbstractGraph`.
 
 ## Concrete Types
 
@@ -10,7 +10,7 @@ A graph *G* is described by a set of vertices *V* and edges *E*: *G = {V, E}*. *
 
 Graphs are created using `SimpleGraph()` or `SimpleDiGraph()`; there are several options (see the tutorials for examples).
 
-Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will not raise an error. This event can be detected using the return value of `add_edge!`.
+Multiple edges between two given vertices are not allowed: an attempt to add an edge that already exists in a graph will not raise an error. This event can be detected using the return value of [`add_edge!`](@ref).
 
 Note that graphs in which the number of vertices equals or approaches the `typemax` of the underlying graph element (_e.g._, a `SimpleGraph{UInt8}` with 127 vertices) may encounter arithmetic overflow errors in some functions, which should be reported as bugs. To be safe, please ensure that your graph is sized with some spare capacity.
 
