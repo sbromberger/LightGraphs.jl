@@ -52,7 +52,7 @@ function auto_decompress(io::IO)
     end
     reset(io)
     if format == :gzip
-        io = DecompressStream(io)
+        io = InflateGzipStream(io)
     end
     return io
 end
@@ -70,8 +70,8 @@ The default graph name assigned to `gname` may change in the future.
 function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
         format::AbstractGraphFormat; compress=nothing
     )
-    if compress !== nothing
-        depwarn("compression no longer supported. Saving uncompressed.", :savegraph)
+    compress === nothing ||
+        Base.depwarn("compression no longer supported. Saving uncompressed.", :savegraph)
     io = open(fn, "w")
     try
         return savegraph(io, g, gname, format)
@@ -100,9 +100,10 @@ Will only work if the file format supports multiple graph types.
 """
 function savegraph(fn::AbstractString, d::Dict{T,U},
     format::AbstractGraphFormat; compress=nothing) where T <: AbstractString where U <: AbstractGraph
-    if compress !== nothing
-        depwarn("compression no longer supported. Saving uncompressed.", :savegraph)
-    io = open(fn, "w")
+    compress === nothing ||
+        Base.depwarn("compression no longer supported. Saving uncompressed.", :savegraph)
+
+        io = open(fn, "w")
     
     try
         return savegraph(io, d, format)
