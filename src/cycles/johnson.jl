@@ -58,6 +58,9 @@ type JohnsonVisitor{T<:Integer} <: Visitor{T}
     blocked::BitArray
     blockedmap::Vector{Set{T}}
 end
+
+JohnsonVisitor(dg::::IsDirected)
+
 ```
 
 Composite type that regroups the information needed for Johnson's algorithm.
@@ -65,6 +68,8 @@ Composite type that regroups the information needed for Johnson's algorithm.
 `stack` is the stack of visited vertices. `blocked` is a boolean for each 
 vertex that tells whether it is blocked or not. `blockedmap` tells which 
 vertices to unblock if the key vertex is unblocked.
+
+`JohnsonVisitor` may also be constructed directly from the directed graph.
 """
 struct JohnsonVisitor{T <: Integer} <: Visitor{T}
     stack::Vector{T}
@@ -72,13 +77,10 @@ struct JohnsonVisitor{T <: Integer} <: Visitor{T}
     blockedmap::Vector{Set{T}}
 end
 
-"""
-    JohnsonVisitor(dg::::IsDirected)
-
-Constructor of the visitor, using the directed graph information.
-"""
-JohnsonVisitor(dg::DiGraph{T}) where T <: Integer =
-    JohnsonVisitor(Vector{T}(), falses(nv(dg)), [Set{T}() for i in vertices(dg)])
+@traitfn function JohnsonVisitor(dg::::IsDirected)
+    T = eltype(dg)
+    return JohnsonVisitor(Vector{T}(), falses(nv(dg)), [Set{T}() for i in vertices(dg)])
+end
 
 """
     unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
