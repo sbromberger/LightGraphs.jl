@@ -124,7 +124,6 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     if n > 12
         λ, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
         ret = real(Q[:,2])
-        @show ret
     else
         ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
     end

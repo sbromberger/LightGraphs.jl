@@ -8,9 +8,9 @@
     (f, fio) = mktemp()
     # test :lg
     @test savegraph(f, p1) == 1
-    @test_deprecated savegraph(f, p1; compress=true)
+    @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1; compress=true)
     @test savegraph(f, p1) == 1
-    @test_deprecated @test savegraph(f, p1, LGFormat(); compress=true)
+    @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1, LGFormat(); compress=true)
     @test savegraph(f, p1, LGFormat()) == 1
     @test savegraph(f, p2) == 1
     @test (ne(p2), nv(p2)) == (9, 10)
@@ -20,8 +20,6 @@
     j2 = loadgraph(f, "graph")
     @test g2 == h2 == j2
     @test (ne(g2), nv(g2)) == (9, 10)
-    # test try block (#701)
-    @test_throws TypeError savegraph(f, p2; compress=nothing)
 
     (f, fio) = mktemp()
     @test length(sprint(savegraph, p1, LGFormat())) == 421
