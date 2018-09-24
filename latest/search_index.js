@@ -837,7 +837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "Base.join",
     "category": "method",
-    "text": "join(g, h)\n\nReturn a graph that combines graphs g and h using blockdiag and then adds all the edges between the vertices in g and those in h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "join(g, h)\n\nReturn a graph that combines graphs g and h using blockdiag and then adds all the edges between the vertices in g and those in h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = join(StarGraph(3), PathGraph(2))\n{5, 9} undirected simple Int64 graph\n\njulia> collect(edges(g))\n9-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 1 => 4\n Edge 1 => 5\n Edge 2 => 4\n Edge 2 => 5\n Edge 3 => 4\n Edge 3 => 5\n Edge 4 => 5\n\n\n\n\n\n"
 },
 
 {
@@ -869,7 +869,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.cartesian_product",
     "category": "method",
-    "text": "cartesian_product(g, h)\n\nReturn the (cartesian product)[https://en.wikipedia.org/wiki/Cartesianproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "cartesian_product(g, h)\n\nReturn the (cartesian product)[https://en.wikipedia.org/wiki/Cartesianproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = cartesian_product(StarGraph(3), PathGraph(3))\n{9, 12} undirected simple Int64 graph\n\njulia> collect(edges(g))\n12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 4\n Edge 1 => 7\n Edge 2 => 3\n Edge 2 => 5\n Edge 2 => 8\n Edge 3 => 6\n Edge 3 => 9\n Edge 4 => 5\n Edge 5 => 6\n Edge 7 => 8\n Edge 8 => 9\n\n\n\n\n\n"
 },
 
 {
@@ -885,7 +885,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.crosspath",
     "category": "function",
-    "text": "crosspath(len::Integer, g::Graph)\n\nReturn a graph that duplicates g len times and connects each vertex with its copies in a path.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "crosspath(len::Integer, g::Graph)\n\nReturn a graph that duplicates g len times and connects each vertex with its copies in a path.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = crosspath(3, PathGraph(3))\n{9, 12} undirected simple Int64 graph\n\njulia> collect(edges(g))\n12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 4\n Edge 2 => 3\n Edge 2 => 5\n Edge 3 => 6\n Edge 4 => 5\n Edge 4 => 7\n Edge 5 => 6\n Edge 5 => 8\n Edge 6 => 9\n Edge 7 => 8\n Edge 8 => 9\n\n\n\n\n\n"
 },
 
 {
@@ -941,7 +941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.tensor_product",
     "category": "method",
-    "text": "tensor_product(g, h)\n\nReturn the (tensor product)[https://en.wikipedia.org/wiki/Tensorproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "tensor_product(g, h)\n\nReturn the (tensor product)[https://en.wikipedia.org/wiki/Tensorproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = tensor_product(StarGraph(3), PathGraph(3))\n{9, 8} undirected simple Int64 graph\n\njulia> collect(edges(g))\n8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 5\n Edge 1 => 8\n Edge 2 => 4\n Edge 2 => 6\n Edge 2 => 7\n Edge 2 => 9\n Edge 3 => 5\n Edge 3 => 8\n\n\n\n\n\n"
 },
 
 {
