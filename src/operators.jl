@@ -267,6 +267,26 @@ adds all the edges between the vertices in `g` and those in `h`.
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = join(StarGraph(3), PathGraph(2))
+{5, 9} undirected simple Int64 graph
+
+julia> collect(edges(g))
+9-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 1 => 5
+ Edge 2 => 4
+ Edge 2 => 5
+ Edge 3 => 4
+ Edge 3 => 5
+ Edge 4 => 5
+```
 """
 function join(g::T, h::T) where T <: AbstractGraph
     r = blockdiag(g, h)
@@ -288,6 +308,29 @@ with its copies in a path.
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = crosspath(3, PathGraph(3))
+{9, 12} undirected simple Int64 graph
+
+julia> collect(edges(g))
+12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 2 => 5
+ Edge 3 => 6
+ Edge 4 => 5
+ Edge 4 => 7
+ Edge 5 => 6
+ Edge 5 => 8
+ Edge 6 => 9
+ Edge 7 => 8
+ Edge 8 => 9
+```
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
@@ -400,6 +443,29 @@ of `g` and `h`.
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = cartesian_product(StarGraph(3), PathGraph(3))
+{9, 12} undirected simple Int64 graph
+
+julia> collect(edges(g))
+12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 4
+ Edge 1 => 7
+ Edge 2 => 3
+ Edge 2 => 5
+ Edge 2 => 8
+ Edge 3 => 6
+ Edge 3 => 9
+ Edge 4 => 5
+ Edge 5 => 6
+ Edge 7 => 8
+ Edge 8 => 9
+```
 """
 function cartesian_product(g::G, h::G) where G <: AbstractGraph
     z = G(nv(g) * nv(h))
@@ -429,6 +495,25 @@ of `g` and `h`.
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = tensor_product(StarGraph(3), PathGraph(3))
+{9, 8} undirected simple Int64 graph
+
+julia> collect(edges(g))
+8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 5
+ Edge 1 => 8
+ Edge 2 => 4
+ Edge 2 => 6
+ Edge 2 => 7
+ Edge 2 => 9
+ Edge 3 => 5
+ Edge 3 => 8
+```
 """
 function tensor_product(g::G, h::G) where G <: AbstractGraph
     z = G(nv(g) * nv(h))
@@ -610,7 +695,7 @@ connect to the new merged vertex.
 Return a vector with new vertex values are indexed by the original vertex indices.
 
 ### Implementation Notes
-Supports SimpleGraph only.
+Supports [`SimpleGraph`](@ref) only.
 """
 function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
