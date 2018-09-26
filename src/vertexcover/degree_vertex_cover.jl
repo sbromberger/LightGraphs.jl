@@ -15,6 +15,20 @@ edges.
 ### Performance
 Runtime: O((|V|+|E|)*log(|V|))
 Memory: O(|V|)
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> vertex_cover(PathGraph(3), DegreeVertexCover())
+1-element Array{Int64,1}:
+ 2
+
+julia> vertex_cover(CycleGraph(3), DegreeVertexCover())
+2-element Array{Int64,1}:
+ 1
+ 3
+```
 """
 function vertex_cover(
     g::AbstractGraph{T},
