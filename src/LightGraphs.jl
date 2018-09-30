@@ -144,6 +144,9 @@ articulation, biconnected_components,
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
 
+#independentset
+independent_set,
+
 #vertexcover
 vertex_cover
 
@@ -244,6 +247,8 @@ include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
+include("independentset/degree_ind_set.jl")
+include("independentset/maximal_ind_set.jl")
 include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
