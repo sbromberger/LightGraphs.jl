@@ -27,6 +27,31 @@ Use a matrix type for `distmx` that is implemented in [row-major matrix format](
 for better run-time.
 Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
 instead of `SparseMatrixCSC{Int64,Int64}`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> ds = dijkstra_shortest_paths(CycleGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 2
+
+julia> ds = dijkstra_shortest_paths(PathGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 3
+```
 """
 function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
