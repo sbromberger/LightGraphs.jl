@@ -46,6 +46,33 @@
     g = CompleteBipartiteGraph(Int8(0), Int8(127))
     @test nv(g) == 127 && ne(g) == 0
 
+    g = @inferred(CompleteMultipartiteGraph([5, 8, 3]))
+    @test nv(g) == 16 && ne(g) == 79
+    @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = CompleteMultipartiteGraph([0, 0, 0])
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteMultipartiteGraph(Int[])
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteMultipartiteGraph([5, 0, 3])
+    @test nv(g) == 0 && ne(g) == 0
+    g = CompleteMultipartiteGraph(Int8[100, 25, 2])
+    @test nv(g) == 127 && ne(g) == 2750
+    @test eltype(g) == Int8
+
+    g = @inferred(TuranGraph(13, 4))
+    @test nv(g) == 13 && ne(g) == 63
+    @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = TuranGraph(15,15)
+    @test nv(g) == 15 && ne(g) == 105
+    g = TuranGraph(10, 1)
+    @test nv(g) == 10 && ne(g) == 0
+    @test_throws DomainError TuranGraph(3,0)
+    @test_throws DomainError TuranGraph(0,4)
+    @test_throws DomainError TuranGraph(3,4)
+    @test_throws DomainError TuranGraph(-1,5)
+    @test_throws DomainError TuranGraph(3,-6)
 
     g = @inferred(StarGraph(5))
     @test nv(g) == 5 && ne(g) == 4
