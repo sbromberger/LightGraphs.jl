@@ -47,6 +47,35 @@ function CompleteBipartiteGraph(n1::T, n2::T) where {T <: Integer}
     return SimpleGraph(ne, fadjlist)
 end
 
+"""
+    CompleteMultipartiteGraph(partitions)
+
+Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
+with `sum(partitions)` vertices and `prod(partitions)` edges.
+"""
+function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: Integer}
+    (any(x -> x < 0, partitions)) && return SimpleGraph{T}(0)
+    (length(partitions) == 1) && return SimpleGraph{T}(partitions[1])
+    (length(partitions) == 2) && return CompleteBipartiteGraph(partitions[1], partitions[2])
+
+    Tw = widen(T)
+    nw = sum(map(Tw, partitions))
+    n = T(nw)  # checks if T is large enough for sum(partitions)
+
+    #ne = Int(n1) * Int(n2)
+    ne = prod(map(Int, partitions))
+
+    fadjlist = Vector{Vector{T}}(undef, n)
+    cur = 1
+    for p in partitions
+        currange = cur:(cur+p)
+        @inbounds @simd for u in currange
+            fadjlist[u] = Vector{T}((cur+p):n)
+        end
+    end
+
+    return SimpleGraph(ne, fadjlist)
+end
 
 """
     CompleteDiGraph(n)
