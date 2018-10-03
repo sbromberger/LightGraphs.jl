@@ -1008,12 +1008,13 @@ end
 """
     dorogovtsev_mendes(n)
 
-Generates a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
-The process begins with a triangle graph. Each time a vertex is added, a random edge is selected
-and the new vertex is connected to the two endpoints of the chosen edge.
+Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
 
-###
-References
+The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` additional vertices.
+Each time a vertex is added, a random edge is selected and the new vertex is connected to the two 
+endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
+
+### References
 - http://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/
 - https://arxiv.org/pdf/cond-mat/0106144.pdf#page=24
 """
