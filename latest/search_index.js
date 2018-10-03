@@ -281,11 +281,27 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.SimpleGraphFromIterator",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.SimpleGraphFromIterator",
+    "category": "function",
+    "text": "SimpleGraphFromIterator(iter)\n\nCreate a SimpleGraph from an iterator iter. The elements in iter must be of type <: SimpleEdge.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 3);\n\njulia> h = SimpleGraphFromIterator(edges(g));\n\njulia> collect(edges(h))\n2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#LightGraphs.SimpleGraphs.SimpleDiGraph",
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.SimpleDiGraph",
     "category": "type",
     "text": "SimpleDiGraph{T}\n\nA type representing a directed graph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.SimpleDiGraphFromIterator",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.SimpleDiGraphFromIterator",
+    "category": "function",
+    "text": "SimpleDiGraphFromIterator(iter)\n\nCreate a SimpleDiGraph from an iterator iter. The elements in iter must be of type <: SimpleEdge.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleDiGraph(2);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 1);\n\njulia> h = SimpleDiGraphFromIterator(edges(g))\n{2, 2} directed simple Int64 graph\n\njulia> collect(edges(h))\n2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 1\n\n\n\n\n\n"
 },
 
 {
@@ -349,7 +365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "Modifying graphs",
     "category": "section",
-    "text": "LightGraphs.jl offers a range of tools for modifying graphs, including:SimpleGraph\nSimpleDiGraph\nEdge\nadd_edge!\nrem_edge!\nadd_vertex!\nadd_vertices!\nrem_vertex!\nzeroIn addition to these core functions, more advanced operators can be found in Operators."
+    "text": "LightGraphs.jl offers a range of tools for modifying graphs, including:SimpleGraph\nSimpleGraphFromIterator\nSimpleDiGraph\nSimpleDiGraphFromIterator\nEdge\nadd_edge!\nrem_edge!\nadd_vertex!\nadd_vertices!\nrem_vertex!\nzeroIn addition to these core functions, more advanced operators can be found in Operators."
 },
 
 {
