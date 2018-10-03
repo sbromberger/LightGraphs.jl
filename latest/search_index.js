@@ -781,7 +781,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Reading / Writing Graphs",
     "title": "LightGraphs.savegraph",
     "category": "method",
-    "text": "savegraph(file, g, gname=\"graph\", format=LGFormat; compress=true)\n\nSaves a graph g with name gname to file in the format format. If compress = true, use GZip compression when writing the file. Return the number of graphs written.\n\nImplementation Notes\n\nThe default graph name assigned to gname may change in the future.\n\n\n\n\n\n"
+    "text": "savegraph(file, g, gname=\"graph\", format=LGFormat)\n\nSaves a graph g with name gname to file in the format format. Return the number of graphs written.\n\nImplementation Notes\n\nThe default graph name assigned to gname may change in the future.\n\n\n\n\n\n"
 },
 
 {
@@ -789,7 +789,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Reading / Writing Graphs",
     "title": "LightGraphs.savegraph",
     "category": "method",
-    "text": "savegraph(file, g, d, format=LGFormat; compress=true)\n\nSave a dictionary of graphname => graph to file in the format format. If compress = true, use GZip compression when writing the file. Return the number of graphs written.\n\nImplementation Notes\n\nWill only work if the file format supports multiple graph types.\n\n\n\n\n\n"
+    "text": "savegraph(file, g, d, format=LGFormat)\n\nSave a dictionary of graphname => graph to file in the format format. Return the number of graphs written.\n\nImplementation Notes\n\nWill only work if the file format supports multiple graph types.\n\n\n\n\n\n"
 },
 
 {
