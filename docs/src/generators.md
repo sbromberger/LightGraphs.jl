@@ -12,7 +12,9 @@ generator functions, and the ability to read and write graphs from files
 
 ```@docs
 SimpleGraph
+SimpleGraphFromIterator
 SimpleDiGraph
+SimpleDiGraphFromIterator
 Edge
 add_edge!
 rem_edge!
