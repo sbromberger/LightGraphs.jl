@@ -63,6 +63,11 @@
     g = @inferred(TuranGraph(13, 4))
     @test nv(g) == 13 && ne(g) == 63
     @test isvalid_simplegraph(g)
+    # testing smaller int types
+    g = TuranGraph(Int8(11), Int8(6))
+    @test nv(g) == 11 && ne(g) == 50
+    g = TuranGraph(Int16(35), Int16(17))
+    @test nv(g) == 35 && ne(g) == 576
     # tests for extreme values
     g = TuranGraph(15,15)
     @test nv(g) == 15 && ne(g) == 105

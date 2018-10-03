@@ -59,14 +59,14 @@ function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: In
     (length(partitions) == 0 || any(x -> x <= 0, partitions)) && return SimpleGraph(T)
 
     Tw = widen(T)
-    nw = sum(map(Tw, partitions))
+    nw = sum(partitions)
     n = T(nw)  # checks if T is large enough for sum(partitions)
 
-    ne = Int(0)
+    ne = 0
     for p in partitions # type stability fails if we use sum and a generator here
-        ne += p*(Int(n)-p)
+        ne += p*(Int(n)-p) # overflow if we don't convert to Int
     end
-    ne = Int(ne/2)
+    ne = div(ne, 2)
 
     fadjlist = Vector{Vector{T}}(undef, n)
     cur = 1
@@ -90,10 +90,10 @@ Creates a [Turán Graph](https://en.wikipedia.org/wiki/Tur%C3%A1n_graph), a comp
 multipartite graph with `n` vertices and `r` partitions.
 """
 function TuranGraph(n::T, r::T) where {T <: Integer}
-    (n <= 0 || r <= 0 || n < r) && throw(DomainError("n=$n and r=$r are invalid, must satisfy 1 <= r <= n"))
-    partitions = zeros(T, r)
-    c = ceil(T, n/r)
-    f = floor(T, n/r)
+    !(1 <= r <= n) && throw(DomainError("n=$n and r=$r are invalid, must satisfy 1 <= r <= n"))
+    partitions = Vector{T}(undef, r)
+    c = cld(n,r)
+    f = fld(n,r)
     @inbounds @simd for i in 1:(n%r)
         partitions[i] = c
     end
