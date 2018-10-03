@@ -301,7 +301,7 @@ end
 """
     SimpleDiGraphFromIterator(iter)
 
-Creates a `SimpleDiGraph` from an iterator `iter`. The elements in `iter` must
+Create a `SimpleDiGraph` from an iterator `iter`. The elements in `iter` must
 be of `type <: SimpleEdge`.
 
 # Examples
