@@ -1004,3 +1004,41 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
     end
     return g
 end
+
+"""
+    dorogovtsev_mendes(n)
+
+Generates a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
+The process begins with a triangle graph. Each time a vertex is added, a random edge is selected
+and the new vertex is connected to the two endpoints of the chosen edge.
+
+###
+References
+- http://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/
+- https://arxiv.org/pdf/cond-mat/0106144.pdf#page=24
+"""
+function dorogovtsev_mendes(n::Integer; seed::Int=-1)
+    n < 3 && throw(DomainError("n=$n must be at least 3"))
+    rng = getRNG(seed)
+    g = CycleGraph(3)
+
+    for iteration in 1:(n-3)
+        chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
+        u, v = -1, -1
+        for i in 1:nv(g)
+            edgelist = g.fadjlist[i]
+            if chosenedge > length(edgelist)
+                chosenedge -= length(edgelist)
+            else
+                u = i
+                v = edgelist[chosenedge]
+                break
+            end
+        end
+
+        add_vertex!(g)
+        add_edge!(g, nv(g), u)
+        add_edge!(g, nv(g), v)
+    end
+    return g
+end
