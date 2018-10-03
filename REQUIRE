@@ -1,5 +1,5 @@
 julia 0.7
-DataStructures
-SimpleTraits
+CodecZlib 0.4
+DataStructures 0.7
+SimpleTraits 0.8
 ArnoldiMethod
-Inflate

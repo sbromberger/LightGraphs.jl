@@ -52,28 +52,30 @@ function auto_decompress(io::IO)
     end
     reset(io)
     if format == :gzip
-        io = InflateGzipStream(io)
+        io = GzipDecompressorStream(io)
     end
     return io
 end
 
 
 """
-    savegraph(file, g, gname="graph", format=LGFormat)
+    savegraph(file, g, gname="graph", format=LGFormat; compress=true)
 
 Saves a graph `g` with name `gname` to `file` in the format `format`.
+If `compress = true`, use GZip compression when writing the file.
 Return the number of graphs written.
 
 ### Implementation Notes
 The default graph name assigned to `gname` may change in the future.
 """
 function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
-        format::AbstractGraphFormat; compress=nothing
+        format::AbstractGraphFormat; compress=true
     )
-    compress === nothing ||
-    Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
     io = open(fn, "w")
     try
+        if compress
+            io = GzipCompressorStream(io)
+        end
         return savegraph(io, g, gname, format)
     catch
         rethrow()
@@ -83,28 +85,29 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
 end
 
 # without graph name
-savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=nothing) =
+savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=true) =
     savegraph(fn, g, "graph", format, compress=compress)
 
 # without format - default to LGFormat()
-savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=nothing) = savegraph(fn, g, "graph", LGFormat(), compress=compress)
+savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=true) = savegraph(fn, g, "graph", LGFormat(), compress=compress)
 
 """
-    savegraph(file, g, d, format=LGFormat)
+    savegraph(file, g, d, format=LGFormat; compress=true)
 
 Save a dictionary of `graphname => graph` to `file` in the format `format`.
+If `compress = true`, use GZip compression when writing the file.
 Return the number of graphs written.
 
 ### Implementation Notes
 Will only work if the file format supports multiple graph types.
 """
 function savegraph(fn::AbstractString, d::Dict{T,U},
-    format::AbstractGraphFormat; compress=nothing) where T <: AbstractString where U <: AbstractGraph
-    compress === nothing ||
-    Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
-        io = open(fn, "w")
-    
+    format::AbstractGraphFormat; compress=true) where T <: AbstractString where U <: AbstractGraph
+    io = open(fn, "w")
     try
+        if compress
+            io = GzipCompressorStream(io)
+        end
         return savegraph(io, d, format)
     catch
         rethrow()
@@ -113,4 +116,4 @@ function savegraph(fn::AbstractString, d::Dict{T,U},
     end
 end
 
-savegraph(fn::AbstractString, d::Dict) = savegraph(fn, d, LGFormat())
+savegraph(fn::AbstractString, d::Dict; compress=true) = savegraph(fn, d, LGFormat(), compress=compress)
