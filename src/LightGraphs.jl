@@ -6,7 +6,7 @@ using SimpleTraits
 using ArnoldiMethod
 using Statistics: mean
 
-using Inflate: InflateGzipStream
+using CodecZlib: GzipCompressorStream, GzipDecompressorStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
 using Distributed: @distributed
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
