@@ -1027,7 +1027,7 @@ function dorogovtsev_mendes(n::Integer; seed::Int=-1)
         chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
         u, v = -1, -1
         for i in 1:nv(g)
-            edgelist = g.fadjlist[i]
+            edgelist = outneighbors(g, i)
             if chosenedge > length(edgelist)
                 chosenedge -= length(edgelist)
             else
