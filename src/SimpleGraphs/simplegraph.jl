@@ -292,7 +292,7 @@ end
 """
     SimpleGraphFromIterator(iter)
 
-Creates a [`SimpleGraph`](@ref) from an iterator `iter`. The elements in iter must
+Create a [`SimpleGraph`](@ref) from an iterator `iter`. The elements in iter must
 be of `type <: SimpleEdge`.
 
 # Examples
