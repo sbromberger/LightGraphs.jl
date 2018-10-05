@@ -11,6 +11,7 @@
     @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1; compress=true)
     @test savegraph(f, p1) == 1
     @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1, LGFormat(); compress=true)
+    @test_logs (:info,r"Note: the `compress` keyword is no longer supported in LightGraphs") savegraph(f, p1; compress=false)
     @test savegraph(f, p1, LGFormat()) == 1
     @test savegraph(f, p2) == 1
     @test (ne(p2), nv(p2)) == (9, 10)
