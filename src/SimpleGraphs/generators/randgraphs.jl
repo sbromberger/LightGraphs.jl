@@ -1014,6 +1014,9 @@ The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` ad
 Each time a vertex is added, a random edge is selected and the new vertex is connected to the two 
 endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
 
+It is often useful to track the evolution of the graph as vertices are added, you can access the graph from
+the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:t]`.
+
 ### References
 - http://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/
 - https://arxiv.org/pdf/cond-mat/0106144.pdf#page=24
