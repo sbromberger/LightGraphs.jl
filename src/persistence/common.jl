@@ -70,8 +70,13 @@ The default graph name assigned to `gname` may change in the future.
 function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
         format::AbstractGraphFormat; compress=nothing
     )
-    compress === nothing ||
-    Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
+    if compress !== nothing
+        if !compress
+            @info("Note: the `compress` keyword is no longer supported in LightGraphs. Saving uncompressed.") 
+        else
+            Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
+        end
+    end
     io = open(fn, "w")
     try
         return savegraph(io, g, gname, format)
