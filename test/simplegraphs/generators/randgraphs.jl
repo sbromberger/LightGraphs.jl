@@ -293,4 +293,15 @@
     kg = @inferred kronecker(5, 5)
     @test nv(kg) == 32
     @test is_directed(kg)
+
+    g = @inferred(dorogovtsev_mendes(10))
+    @test nv(g) == 10 && ne(g) == 17
+    g = dorogovtsev_mendes(11)
+    @test nv(g) == 11 && ne(g) == 19
+    @test δ(g) == 2
+    g = dorogovtsev_mendes(3)
+    @test nv(g) == 3 && ne(g) == 3
+    # testing domain errors
+    @test_throws DomainError dorogovtsev_mendes(2)
+    @test_throws DomainError dorogovtsev_mendes(-1)
 end
