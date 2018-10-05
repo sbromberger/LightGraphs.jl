@@ -457,6 +457,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.dorogovtsev_mendes-Tuple{Integer}",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.dorogovtsev_mendes",
+    "category": "method",
+    "text": "dorogovtsev_mendes(n)\n\nGenerate a random n vertex graph by the Dorogovtsev-Mendes method (with n \\ge 3).\n\nThe Dorogovtsev-Mendes process begins with a triangle graph and inserts n-3 additional vertices. Each time a vertex is added, a random edge is selected and the new vertex is connected to the two  endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.\n\nIt is often useful to track the evolution of the graph as vertices are added, you can access the graph from the tth stage of this algorithm by accessing the first t vertices with g[1:t].\n\nReferences\n\nhttp://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/\nhttps://arxiv.org/pdf/cond-mat/0106144.pdf#page=24\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#LightGraphs.SimpleGraphs.erdos_renyi-Tuple{Integer,Integer}",
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.erdos_renyi",
