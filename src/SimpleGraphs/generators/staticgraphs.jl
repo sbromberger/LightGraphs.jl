@@ -372,3 +372,27 @@ function CliqueGraph(k::T, n::T) where {T <: Integer}
     add_edge!(g, 1, (n - 1) * k + 1)
     return g
 end
+
+function LadderGraph(n::T) where {T <: Integer}
+    n == 0 && SimpleGraph{T}(0)
+    n == 1 && PathGraph(T(2))
+    Tw = widen(T)
+    temp = T(Tw(n)+Tw(n)) # test to check if T is large enough
+    g = SimpleGraph(2*n)
+    for i in 1:(n-1)
+        add_edge!(g, i, i+1)
+        add_edge!(g, n+i, n+i+1)
+        add_edge!(g, i, n+i)
+    end
+    add_edge!(g, n, 2*n)
+    return g
+end
+
+function CircularLadderGraph(n::T) where {T <: Integer}
+    n == 0 && SimpleGraph{T}(0)
+    n == 1 && PathGraph(T(2))
+    g = LadderGraph(n)
+    add_edge!(g, 1, n)
+    add_edge!(g, n+1, 2*n)
+    return g
+end
