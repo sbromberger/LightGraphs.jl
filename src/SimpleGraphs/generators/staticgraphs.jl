@@ -51,12 +51,12 @@ end
     CompleteMultipartiteGraph(partitions)
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
-with `sum(partitions)` vertices and `prod(partitions)` edges.
+with `sum(partitions)` vertices and `prod(partitions)` edges. A partition with `0` vertices is skipped.
 """
 function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: Integer}
+    any(x -> x < 0, partitions) && return SimpleGraph{T}(0)
     length(partitions) == 1 && return SimpleGraph{T}(partitions[1])
     length(partitions) == 2 && return CompleteBipartiteGraph(partitions[1], partitions[2])
-    (length(partitions) == 0 || any(x -> x <= 0, partitions)) && return SimpleGraph(T)
 
     Tw = widen(T)
     nw = sum(partitions)
