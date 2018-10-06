@@ -58,9 +58,7 @@ function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: In
     length(partitions) == 1 && return SimpleGraph{T}(partitions[1])
     length(partitions) == 2 && return CompleteBipartiteGraph(partitions[1], partitions[2])
 
-    Tw = widen(T)
-    nw = sum(partitions)
-    n = T(nw)  # checks if T is large enough for sum(partitions)
+    n = sum(partitions)
 
     ne = 0
     for p in partitions # type stability fails if we use sum and a generator here
