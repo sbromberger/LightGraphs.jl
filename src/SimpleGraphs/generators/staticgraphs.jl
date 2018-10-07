@@ -51,7 +51,11 @@ end
     CompleteMultipartiteGraph(partitions)
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
-with `sum(partitions)` vertices and `prod(partitions)` edges. A partition with `0` vertices is skipped.
+with `sum(partitions)` vertices. A partition with `0` vertices is skipped.
+
+### Implementation Notes
+Preserves the eltype of the partitions vector. Will error if the required number of vertices
+exceeds the eltype.
 """
 function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: Integer}
     any(x -> x < 0, partitions) && return SimpleGraph{T}(0)
@@ -73,7 +77,9 @@ function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: In
         lowerrange = 1:(cur-1)   # all vertices lower than the current partition
         upperrange = (cur+p):n   # all vertices higher than the current partition
         @inbounds @simd for u in currange
-            fadjlist[u] = vcat(Vector{T}(lowerrange), Vector{T}(upperrange))
+            fadjlist[u] = Vector{T}(undef, length(lowerrange) + length(upperrange))
+            fadjlist[u][1:length(lowerrange)] = lowerrange
+            fadjlist[u][(length(lowerrange)+1):end] = upperrange
         end
         cur += p
     end

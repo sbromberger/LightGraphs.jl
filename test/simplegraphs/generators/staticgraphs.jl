@@ -108,6 +108,7 @@
     h = CompleteMultipartiteGraph([5, 0, 3])
     j = CompleteMultipartiteGraph([0, 5, 0, 3, 0, 0])
     @test g == h == j
+    @test_throws InexactError CompleteMultipartiteGraph(Int8[100, 20, 20])
 
     function retrievepartitions(n, r)
       partitions = partitions = Vector{Int}(undef, r)
