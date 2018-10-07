@@ -952,8 +952,6 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
     Q = sparse(I, J, V)
-    # Q = Q / Q'Q
-    # @show Q'Q# < 1e-6
     return (Q'A) * Q
 end
 
