@@ -6,7 +6,7 @@ using SimpleTraits
 using ArnoldiMethod
 using Statistics: mean
 
-using CodecZlib: GzipCompressorStream, GzipDecompressorStream
+using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
 using Distributed: @distributed
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
@@ -117,7 +117,7 @@ loadgraph, loadgraphs, savegraph, LGFormat,
 erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph, random_regular_digraph,
 random_configuration_model, random_tournament_digraph, StochasticBlockModel, make_edgestream,
 nearbipartiteSBM, blockcounts, blockfractions, stochastic_block_model, barabasi_albert,
-barabasi_albert!, static_fitness_model, static_scale_free, kronecker,
+barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes,
 
 #community
 modularity, core_periphery_deg,

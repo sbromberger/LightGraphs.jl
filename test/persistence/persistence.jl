@@ -8,9 +8,12 @@
     (f, fio) = mktemp()
     # test :lg
     @test savegraph(f, p1) == 1
-    @test savegraph(f, p1; compress=true) == 1
-    @test savegraph(f, p1, LGFormat(); compress=true) == 1
-    @test savegraph(f, p2; compress=true) == 1
+    @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1; compress=true)
+    @test savegraph(f, p1) == 1
+    @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1, LGFormat(); compress=true)
+    @test_logs (:info,r"Note: the `compress` keyword is no longer supported in LightGraphs") savegraph(f, p1; compress=false)
+    @test savegraph(f, p1, LGFormat()) == 1
+    @test savegraph(f, p2) == 1
     @test (ne(p2), nv(p2)) == (9, 10)
     
     g2 = loadgraph(f)
@@ -18,8 +21,6 @@
     j2 = loadgraph(f, "graph")
     @test g2 == h2 == j2
     @test (ne(g2), nv(g2)) == (9, 10)
-    # test try block (#701)
-    @test_throws TypeError savegraph(f, p2; compress=nothing)
 
     (f, fio) = mktemp()
     @test length(sprint(savegraph, p1, LGFormat())) == 421
@@ -30,8 +31,6 @@
 
     d = Dict{String,AbstractGraph}("p1" => p1, "p2" => p2)
     @test savegraph(f, d) == 2
-    # test try block (#701)
-    @test_throws TypeError savegraph(f, d; compress=nothing)
     
     close(fio)
     rm(f)

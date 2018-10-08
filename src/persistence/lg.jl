@@ -56,7 +56,7 @@ function _lg_skip_one_graph(f::IO, n_e::Integer)
         readline(f)
     end
 end
-
+ 
 function _parse_header(s::AbstractString)
     addl_info = false
     nvstr, nestr, dirundir, graphname = split(s, r"s*,s*", limit=4)
@@ -78,11 +78,6 @@ function _parse_header(s::AbstractString)
     end
     return header
 end
-
-
-
-
-
 
 """
     loadlg_mult(io)

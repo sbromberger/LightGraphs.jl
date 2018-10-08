@@ -952,8 +952,6 @@ function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
     J =  [sbm.nodemap[i] for i in 1:sbm.n]
     V =  ones(sbm.n)
     Q = sparse(I, J, V)
-    # Q = Q / Q'Q
-    # @show Q'Q# < 1e-6
     return (Q'A) * Q
 end
 
@@ -1001,6 +999,48 @@ function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
     g = SimpleDiGraph(N)
     for (s, d) in zip(@view(ij[:, 1]), @view(ij[:, 2]))
         add_edge!(g, s, d)
+    end
+    return g
+end
+
+"""
+    dorogovtsev_mendes(n)
+
+Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
+
+The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` additional vertices.
+Each time a vertex is added, a random edge is selected and the new vertex is connected to the two 
+endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
+
+It is often useful to track the evolution of the graph as vertices are added, you can access the graph from
+the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:t]`.
+
+### References
+- http://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/
+- https://arxiv.org/pdf/cond-mat/0106144.pdf#page=24
+"""
+function dorogovtsev_mendes(n::Integer; seed::Int=-1)
+    n < 3 && throw(DomainError("n=$n must be at least 3"))
+    rng = getRNG(seed)
+    g = CycleGraph(3)
+
+    for iteration in 1:(n-3)
+        chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
+        u, v = -1, -1
+        for i in 1:nv(g)
+            edgelist = outneighbors(g, i)
+            if chosenedge > length(edgelist)
+                chosenedge -= length(edgelist)
+            else
+                u = i
+                v = edgelist[chosenedge]
+                break
+            end
+        end
+
+        add_vertex!(g)
+        add_edge!(g, nv(g), u)
+        add_edge!(g, nv(g), v)
     end
     return g
 end

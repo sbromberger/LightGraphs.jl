@@ -4,6 +4,22 @@
 The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraphs`.
 The iterates are in lexicographical order, smallest first. The iterator is valid for
 one pass over the edges, and is invalidated by changes to the graph.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(3);
+
+julia> es = edges(g)
+SimpleEdgeIter 2
+
+julia> e_it = iterate(es)
+(Edge 1 => 2, SimpleEdgeIterState [2, 2])
+
+julia> iterate(es, e_it[2])
+(Edge 2 => 3, SimpleEdgeIterState [0, 1])
+```
 """
 struct SimpleEdgeIter{G} <: AbstractEdgeIter
     g::G
