@@ -1,6 +1,5 @@
 @testset "Parallel.Pagerank" begin
     function dense_pagerank_solver(g::AbstractGraph, α=0.85::Real)
-        # M = google_matrix(g, α)
         p = fill(1 / nv(g), nv(g))
         danglingnodes = outdegree(g) .== 0
         M = Matrix{Float64}(adjacency_matrix(g))
@@ -11,18 +10,6 @@
        # v = inv(I-β*M) * ((1-β)/nv(g) * ones(nv(g), 1))
         v = inv(I - α * M) * ((1 - α) / nv(g) * ones(nv(g), 1))
         return v
-    end
-
-    function google_matrix(g::AbstractGraph, α=0.85::Real)
-        p = fill(1 / nv(g), nv(g))
-        danglingnodes = outdegree(g) .== 0
-        M = Matrix{Float64}(adjacency_matrix(g))
-        @show M = M'
-        M[:, danglingnodes] = sum(danglingnodes) ./ nv(g)
-        @show M = M * Diagonal(1 ./ sum(M, dims=1)[:])
-        @show sum(M, 1)
-        @assert all(1.01 .>= sum(M, 1) .>= 0.999)
-        return α * M .+ (1 - α) * p
     end
 
     g5 = SimpleDiGraph(4)
