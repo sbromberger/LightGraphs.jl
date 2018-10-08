@@ -23,18 +23,17 @@ function binomial_test(n, p, s)
     drand = rand(Binomial(n, p), s)
     lrand = Int64[randbn(n, p) for i in 1:s]
 
-    ds = @show summarystats(drand)
-    ls = @show summarystats(lrand)
-    dσ = @show std(drand)
-    lσ = @show std(lrand)
+    ds = summarystats(drand)
+    ls = summarystats(lrand)
+    dσ = std(drand)
+    lσ = std(lrand)
 
-    summarydiff = @show ds - ls
+    summarydiff = ds - ls
     @test abs(summarydiff.mean) / ds.mean < .10
     @test abs(summarydiff.median) / ds.median < .10
     @test abs(summarydiff.q25) / ds.q25 < .10
     @test abs(summarydiff.q75) / ds.q75 < .10
 
-    @show dσ - lσ
     @test abs(dσ - lσ) / dσ < .10
 end
 seed!(1234)
