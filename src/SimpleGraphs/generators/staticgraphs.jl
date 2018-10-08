@@ -373,12 +373,20 @@ function CliqueGraph(k::T, n::T) where {T <: Integer}
     return g
 end
 
+"""
+    LadderGraph(n)
+
+Create a graph consisting of `2n` nodes and `3n-2` edges.
+
+### Implementation Notes
+Preserves the eltype of `n`. Will error if the required number of vertices
+exceeds the eltype.
+"""
 function LadderGraph(n::T) where {T <: Integer}
-    n == 0 && SimpleGraph{T}(0)
+    n <= 0 && SimpleGraph{T}(0)
     n == 1 && PathGraph(T(2))
-    Tw = widen(T)
-    temp = T(Tw(n)+Tw(n)) # test to check if T is large enough
-    g = SimpleGraph(2*n)
+
+    g = SimpleGraph{T}(2*n)
     for i in 1:(n-1)
         add_edge!(g, i, i+1)
         add_edge!(g, n+i, n+i+1)
@@ -388,9 +396,18 @@ function LadderGraph(n::T) where {T <: Integer}
     return g
 end
 
+"""
+    CircularLadderGraph(n)
+
+Create a graph consisting of `2n` nodes and `3n` edges.
+
+### Implementation Notes
+Preserves the eltype of the partitions vector. Will error if the required number of vertices
+exceeds the eltype. 
+`n` must be at least 3 to avoid self-loops and multi-edges.
+"""
 function CircularLadderGraph(n::T) where {T <: Integer}
-    n == 0 && SimpleGraph{T}(0)
-    n == 1 && PathGraph(T(2))
+    n < 3 && throw(DomainError("n=$n must be at least 3"))
     g = LadderGraph(n)
     add_edge!(g, 1, n)
     add_edge!(g, n+1, 2*n)

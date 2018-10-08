@@ -243,4 +243,36 @@
     Adj = sparse(I, J, V)
     @test Adj == sparse(rg3)
     @test isvalid_simplegraph(g)
+
+    g = @inferred(LadderGraph(5))
+    @test nv(g) == 10 && ne(g) == 13
+    @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = LadderGraph(0)
+    @test nv(g) == 0 && ne(g) == 0
+    g = LadderGraph(1)
+    @test nv(g) == 2 && ne(g) == 1
+    g = @inferred LadderGraph(-1)
+    @test nv(g) == 0 && ne(g) == 0
+    g = LadderGraph(Int8(63))
+    @test nv(g) == 126 && ne(g) == 187
+    @test eltype(g) == Int8
+    # tests for errors
+    @test_throws InexactError LadderGraph(Int8(64))
+
+    g = @inferred(CircularLadderGraph(5))
+    @test nv(g) == 10 && ne(g) == 15
+    @test isvalid_simplegraph(g)
+    # tests for extreme values
+    g = CircularLadderGraph(3)
+    @test nv(g) == 6 && ne(g) == 9
+    g = CircularLadderGraph(Int8(63))
+    @test nv(g) == 126 && ne(g) == 189
+    @test eltype(g) == Int8
+    # tests for errors
+    @test_throws InexactError CircularLadderGraph(Int8(64))
+    @test_throws DomainError CircularLadderGraph(-1)
+    @test_throws DomainError CircularLadderGraph(0)
+    @test_throws DomainError CircularLadderGraph(1)
+    @test_throws DomainError CircularLadderGraph(2)
 end

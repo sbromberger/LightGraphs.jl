@@ -28,7 +28,7 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
     CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
     WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
-    LadderGraph, CircularLadderGraph
+    LadderGraph, CircularLadderGraph,
     #smallgraphs
     smallgraph,
     # Euclidean graphs
