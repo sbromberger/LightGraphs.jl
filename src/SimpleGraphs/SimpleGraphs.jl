@@ -17,7 +17,7 @@ import LightGraphs:
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
     SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
-    add_vertex!, add_edge!, rem_vertex!, rem_edge!,
+    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
     random_regular_digraph, random_configuration_model, random_tournament_digraph, 
