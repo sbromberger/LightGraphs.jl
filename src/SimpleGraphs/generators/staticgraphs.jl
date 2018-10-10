@@ -381,30 +381,42 @@ Create a graph consisting of `2n` nodes and `3n-2` edges.
 ### Implementation Notes
 Preserves the eltype of `n`. Will error if the required number of vertices
 exceeds the eltype.
+
+### References
+- https://en.wikipedia.org/wiki/Ladder_graph
 """
 function LadderGraph(n::T) where {T <: Integer}
-    n <= 0 && SimpleGraph{T}(0)
-    n == 1 && PathGraph(T(2))
+    n <= 0 && return SimpleGraph{T}(0)
+    n == 1 && return PathGraph(T(2))
+    Tw = widen(T)
+    temp = T(Tw(n)+Tw(n)) # test to check if T is large enough
 
-    g = SimpleGraph{T}(2*n)
-    for i in 1:(n-1)
-        add_edge!(g, i, i+1)
-        add_edge!(g, n+i, n+i+1)
-        add_edge!(g, i, n+i)
+    fadjlist = Vector{Vector{T}}(undef, 2*n)
+    @inbounds @simd for i in 2:(n-1)
+        fadjlist[i]   = T[i-1, i+1, i+n]
+        fadjlist[n+i] = T[i, n+i-1, n+i+1]
     end
-    add_edge!(g, n, 2*n)
-    return g
+    fadjlist[1]   = T[2, n+1]
+    fadjlist[n+1] = T[1, n+2]
+    fadjlist[n]   = T[n-1, 2*n]
+    fadjlist[2*n] = T[n, 2*n-1]
+
+    return SimpleGraph(3*n-2, fadjlist)
 end
 
 """
     CircularLadderGraph(n)
 
-Create a graph consisting of `2n` nodes and `3n` edges.
+Create a graph consisting of `2n` nodes and `3n` edges. This is also known as the Prism Graph.
 
 ### Implementation Notes
 Preserves the eltype of the partitions vector. Will error if the required number of vertices
 exceeds the eltype. 
 `n` must be at least 3 to avoid self-loops and multi-edges.
+
+### References
+- https://en.wikipedia.org/wiki/Ladder_graph#Circular_ladder_graph
+- http://mathworld.wolfram.com/PrismGraph.html
 """
 function CircularLadderGraph(n::T) where {T <: Integer}
     n < 3 && throw(DomainError("n=$n must be at least 3"))
