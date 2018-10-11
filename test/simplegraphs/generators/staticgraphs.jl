@@ -244,9 +244,23 @@
     @test Adj == sparse(rg3)
     @test isvalid_simplegraph(g)
 
+    function isladdergraph(g)
+      n = nv(g)÷2
+      !(degree(g, 1) == degree(g, n) == degree(g, n+1) == degree(g, 2*n) == 2) && return false
+      !(has_edge(g, 1, n+1) && has_edge(g, n, 2*n)) && return false
+      !(has_edge(g, 1, 2) && has_edge(g, n, n-1) && has_edge(g, n+1, n+2) && has_edge(g, 2*n, 2*n-1) ) && return false
+      for i in 2:(n-1)
+        !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
+        !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
+        !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
+      end
+      return true
+    end
+
     g = @inferred(LadderGraph(5))
     @test nv(g) == 10 && ne(g) == 13
     @test isvalid_simplegraph(g)
+    @test isladdergraph(g)
     # tests for extreme values
     g = LadderGraph(0)
     @test nv(g) == 0 && ne(g) == 0
@@ -257,18 +271,32 @@
     g = LadderGraph(Int8(63))
     @test nv(g) == 126 && ne(g) == 187
     @test eltype(g) == Int8
+    @test isladdergraph(g)
     # tests for errors
     @test_throws InexactError LadderGraph(Int8(64))
+
+    function iscircularladdergraph(g)
+      n = nv(g)÷2
+      for i in 1:n
+        !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
+        !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
+        !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
+      end
+      return true
+    end
 
     g = @inferred(CircularLadderGraph(5))
     @test nv(g) == 10 && ne(g) == 15
     @test isvalid_simplegraph(g)
+    @test iscircularladdergraph(g)
     # tests for extreme values
     g = CircularLadderGraph(3)
     @test nv(g) == 6 && ne(g) == 9
+    @test iscircularladdergraph(g)
     g = CircularLadderGraph(Int8(63))
     @test nv(g) == 126 && ne(g) == 189
     @test eltype(g) == Int8
+    @test iscircularladdergraph(g)
     # tests for errors
     @test_throws InexactError CircularLadderGraph(Int8(64))
     @test_throws DomainError CircularLadderGraph(-1)
