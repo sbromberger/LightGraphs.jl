@@ -416,9 +416,9 @@ function add_vertex!(g::SimpleDiGraph{T}) where T
 end
 
 function rem_vertices!(g::SimpleDiGraph{T},
-                       vs::AbstractVector{T};
+                       vs::AbstractVector{<: Integer};
                        keep_order::Bool=false
-                      ) where {T}
+                      ) where {T <: Integer}
     # check the implementation in simplegraph.jl for more comments
 
     n = nv(g)
@@ -427,8 +427,7 @@ function rem_vertices!(g::SimpleDiGraph{T},
     # Sort and filter the vertices that we want to remove
     remove = sort(vs)
     unique!(remove)
-    lo, hi = extrema(remove)
-    (one(T) <= lo && hi <= n) ||
+    (1 <= remove[1] && remove[end] <= n) ||
             throw(ArgumentError("Vertices to be removed must be in the range 1:nv(g)."))
 
     # Create a vmap that maps vertices to their new position
@@ -437,14 +436,12 @@ function rem_vertices!(g::SimpleDiGraph{T},
     if keep_order
         # traverse the vertex list and shift if a vertex gets removed
         i = 1
-        Δ = 0
         @inbounds for u in vertices(g)
             if i <= length(remove) && u == remove[i]
                 vmap[u] = 0
-                Δ += 1
                 i += 1
             else
-                vmap[u] = u - Δ
+                vmap[u] = u - (i - 1)
             end
         end
     else

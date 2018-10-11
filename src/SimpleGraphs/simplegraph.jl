@@ -520,9 +520,9 @@ julia> g
 ```
 """
 function rem_vertices!(g::SimpleGraph{T},
-                       vs::AbstractVector{T};
+                       vs::AbstractVector{<:Integer};
                        keep_order::Bool=false
-                      ) where {T}
+                      ) where {T <: Integer}
     # TODO There might be some room for performance improvements.
     # At the moment, we check for all edges if they stay in the graph.
     # If some vertices keep their position, this might be unnecessary.
@@ -533,8 +533,7 @@ function rem_vertices!(g::SimpleGraph{T},
     # Sort and filter the vertices that we want to remove
     remove = sort(vs)
     unique!(remove)
-    lo, hi = extrema(remove)
-    (one(T) <= lo && hi <= n) ||
+    (1 <= remove[1] && remove[end] <= n) ||
             throw(ArgumentError("Vertices to be removed must be in the range 1:nv(g)."))
 
     # Create a vmap that maps vertices to their new position
@@ -544,14 +543,12 @@ function rem_vertices!(g::SimpleGraph{T},
     if keep_order
         # traverse the vertex list and shift if a vertex gets removed
         i = 1
-        Δ = 0
         @inbounds for u in vertices(g)
             if i <= length(remove) && u == remove[i]
                 vmap[u] = 0
-                Δ += 1
                 i += 1
             else
-                vmap[u] = u - Δ
+                vmap[u] = u - (i - 1)
             end
         end
     else
