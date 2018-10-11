@@ -38,6 +38,11 @@
     g = smallgraph(:icosahedral)
     @test nv(g) == 12 && ne(g) == 30
 
+    g = smallgraph(:karate)
+    degree_sequence = sort([16, 9, 10, 6, 3, 4, 4, 4, 5, 2, 3, 1, 2, 5, 2,  2,  2,
+                             2, 2,  3, 2, 2, 2, 5, 3, 3, 2, 4, 3, 4, 4, 6, 12, 17])
+    @test nv(g) == 34 && ne(g) == 78 && sort(degree(g)) == degree_sequence
+
     g = smallgraph(:krackhardtkite)
     @test nv(g) == 10 && ne(g) == 18
 
