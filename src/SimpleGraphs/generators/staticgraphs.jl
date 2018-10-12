@@ -431,3 +431,50 @@ function CliqueGraph(k::T, n::T) where {T <: Integer}
     add_edge!(g, 1, (n - 1) * k + 1)
     return g
 end
+
+"""
+    LadderGraph(n)
+
+Create a [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting of `2n` nodes and `3n-2` edges.
+
+### Implementation Notes
+Preserves the eltype of `n`. Will error if the required number of vertices
+exceeds the eltype.
+"""
+function LadderGraph(n::T) where {T <: Integer}
+    n <= 0 && return SimpleGraph{T}(0)
+    n == 1 && return PathGraph(T(2))
+    Tw = widen(T)
+    temp = T(Tw(n)+Tw(n)) # test to check if T is large enough
+
+    fadjlist = Vector{Vector{T}}(undef, 2*n)
+    @inbounds @simd for i in 2:(n-1)
+        fadjlist[i]   = T[i-1, i+1, i+n]
+        fadjlist[n+i] = T[i, n+i-1, n+i+1]
+    end
+    fadjlist[1]   = T[2, n+1]
+    fadjlist[n+1] = T[1, n+2]
+    fadjlist[n]   = T[n-1, 2*n]
+    fadjlist[2*n] = T[n, 2*n-1]
+
+    return SimpleGraph(3*n-2, fadjlist)
+end
+
+"""
+    CircularLadderGraph(n)
+
+Create a [circular ladder graph](https://en.wikipedia.org/wiki/Ladder_graph#Circular_ladder_graph) consisting of `2n` nodes and `3n` edges.
+This is also known as the [prism graph](https://en.wikipedia.org/wiki/Prism_graph).
+
+### Implementation Notes
+Preserves the eltype of the partitions vector. Will error if the required number of vertices
+exceeds the eltype. 
+`n` must be at least 3 to avoid self-loops and multi-edges.
+"""
+function CircularLadderGraph(n::T) where {T <: Integer}
+    n < 3 && throw(DomainError("n=$n must be at least 3"))
+    g = LadderGraph(n)
+    add_edge!(g, 1, n)
+    add_edge!(g, n+1, 2*n)
+    return g
+end
