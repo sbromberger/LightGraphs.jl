@@ -126,8 +126,9 @@ label_propagation, maximal_cliques, clique_percolation,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
-CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
+CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph, StarDiGraph,
+PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
+CliqueGraph,
 
 #smallgraphs
 smallgraph,
