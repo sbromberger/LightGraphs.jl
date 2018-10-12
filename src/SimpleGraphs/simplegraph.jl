@@ -490,3 +490,146 @@ function add_vertex!(g::SimpleGraph{T}) where T
     push!(g.fadjlist, Vector{T}())
     return true
 end
+
+"""
+    rem_vertices!(g, vs, keep_order=false) -> vmap
+
+Remove all vertices in `vs` from `g`.
+Return a vector `vmap` that maps the vertices in the modified graph to the ones in
+the unmodified graph.
+If `keep_order` is `true`, the vertices in the modified graph appear in the same
+order as they did in the unmodified graph. This might be slower.
+
+### Implementation Notes
+This function is not part of the official LightGraphs API and is subject to change/removal between major versions.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = CompleteGraph{5}
+{5, 10} undirected simple Int64 graph
+
+julia> vmap = rem_vertices!(g, [2, 4], keep_order=true);
+
+julia> vmap
+3-element Array{Int64,1}:
+ 1
+ 3
+ 5
+
+julia> g
+{3, 3} undirected simple Int64 graph
+```
+"""
+function rem_vertices!(g::SimpleGraph{T},
+                       vs::AbstractVector{<:Integer};
+                       keep_order::Bool=false
+                      ) where {T <: Integer}
+    # TODO There might be some room for performance improvements.
+    # At the moment, we check for all edges if they stay in the graph.
+    # If some vertices keep their position, this might be unnecessary.
+
+    n = nv(g)
+    isempty(vs) && return collect(Base.OneTo(n))
+
+    # Sort and filter the vertices that we want to remove
+    remove = sort(vs)
+    unique!(remove)
+    (1 <= remove[1] && remove[end] <= n) ||
+            throw(ArgumentError("Vertices to be removed must be in the range 1:nv(g)."))
+
+    # Create a vmap that maps vertices to their new position
+    # vertices that get removed are mapped to 0
+    vmap = Vector{T}(undef, n)
+
+    if keep_order
+        # traverse the vertex list and shift if a vertex gets removed
+        i = 1
+        @inbounds for u in vertices(g)
+            if i <= length(remove) && u == remove[i]
+                vmap[u] = 0
+                i += 1
+            else
+                vmap[u] = u - (i - 1)
+            end
+        end
+    else
+        # traverse the vertex list and replace vertices that get removed
+        # with the furthest one to the back that does not get removed
+        i = 1
+        j = length(remove)
+        v = n
+        @inbounds for u in vertices(g)
+            u > v && break
+            if i <= length(remove) && u == remove[i]
+                while v == remove[j] && v > u
+                   vmap[v] = 0
+                   v -= one(T)
+                   j -= 1
+                end
+                # v > remove[j] || u == v
+                vmap[v] = u
+                vmap[u] = 0
+                v -= one(T)
+                i += 1
+            else
+                vmap[u] = u
+            end
+        end
+    end
+
+    fadjlist = g.fadjlist
+
+    # count the number of edges that will be removed
+    # for an edge that gets removed we have to ensure that
+    # such an edge does not get counted twice when both endpoints
+    # get removed. That's why we relay on the ordering >= on the vertices.
+    num_removed_edges = 0
+    @inbounds for u in remove
+        for v in fadjlist[u]
+            if v >= u || vmap[v] != 0
+                num_removed_edges += 1
+            end
+        end
+    end
+    g.ne -= num_removed_edges
+
+    # move the lists in the adjacency list to their new position
+    # The order of traversal is very important here, as otherwise we
+    # could overwrite lists, that we want to keep!
+    @inbounds for u in (keep_order ? (one(T):1:n) : (n:-1:one(T)))
+        if vmap[u] != 0
+            fadjlist[vmap[u]] = fadjlist[u]
+        end
+    end
+    resize!(fadjlist, n - length(remove))
+
+    # remove vertices from the lists in fadjlist
+    @inbounds for list in fadjlist
+        Δ = 0
+        for (i, v) in enumerate(list)
+            if vmap[v] == 0
+                Δ += 1
+            else
+                list[i - Δ] = vmap[v]
+            end
+        end
+        resize!(list, length(list) - Δ)
+        if !keep_order
+            sort!(list)
+        end
+    end
+
+    # we create a reverse vmap, that maps vertices in the result graph
+    # to the ones in the original graph. This resembles the output of
+    # induced_subgraph
+    reverse_vmap = Vector{T}(undef, nv(g))
+    @inbounds for (i, u) in enumerate(vmap)
+        if u != 0
+            reverse_vmap[u] = i
+        end
+    end
+
+    return reverse_vmap
+end

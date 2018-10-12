@@ -414,3 +414,116 @@ function add_vertex!(g::SimpleDiGraph{T}) where T
 
     return true
 end
+
+function rem_vertices!(g::SimpleDiGraph{T},
+                       vs::AbstractVector{<: Integer};
+                       keep_order::Bool=false
+                      ) where {T <: Integer}
+    # check the implementation in simplegraph.jl for more comments
+
+    n = nv(g)
+    isempty(vs) && return collect(Base.OneTo(n))
+
+    # Sort and filter the vertices that we want to remove
+    remove = sort(vs)
+    unique!(remove)
+    (1 <= remove[1] && remove[end] <= n) ||
+            throw(ArgumentError("Vertices to be removed must be in the range 1:nv(g)."))
+
+    # Create a vmap that maps vertices to their new position
+    # vertices that get removed are mapped to 0
+    vmap = Vector{T}(undef, n)
+    if keep_order
+        # traverse the vertex list and shift if a vertex gets removed
+        i = 1
+        @inbounds for u in vertices(g)
+            if i <= length(remove) && u == remove[i]
+                vmap[u] = 0
+                i += 1
+            else
+                vmap[u] = u - (i - 1)
+            end
+        end
+    else
+        # traverse the vertex list and replace vertices that get removed 
+        # with the furthest one to the back that does not get removed
+        i = 1
+        j = length(remove)
+        v = n
+        @inbounds for u in vertices(g)
+            u > v && break
+            if i <= length(remove) && u == remove[i]
+                while v == remove[j] && v > u
+                   vmap[v] = 0
+                   v -= one(T)
+                   j -= 1
+                end
+                # v > remove[j] || u == v
+                vmap[v] = u
+                vmap[u] = 0
+                v -= one(T)
+                i += 1
+            else
+                vmap[u] = u
+            end
+        end
+    end
+
+    fadjlist = g.fadjlist
+    badjlist = g.badjlist
+
+    # count the number of edges that will be removed
+    num_removed_edges = 0
+    @inbounds for u in remove
+        for v in fadjlist[u]
+            num_removed_edges += 1
+        end
+        for v in badjlist[u]
+            if vmap[v] != 0
+                num_removed_edges += 1
+            end
+        end
+    end
+    g.ne -= num_removed_edges
+
+    # move the lists in the adjacency list to their new position
+    # order of traversing is important!
+    @inbounds for u in (keep_order ? (one(T):1:n) : (n:-1:one(T)))
+        if vmap[u] != 0
+            fadjlist[vmap[u]] = fadjlist[u]
+            badjlist[vmap[u]] = badjlist[u]
+        end
+    end
+    resize!(fadjlist, n - length(remove))
+    resize!(badjlist, n - length(remove))
+
+    # remove vertices from the lists in fadjlist and badjlist
+    @inbounds for list_of_lists in (fadjlist, badjlist)
+        for list in list_of_lists
+            Δ = 0
+            for (i, v) in enumerate(list)
+                if vmap[v] == 0
+                    Δ += 1
+                else
+                    list[i - Δ] = vmap[v]
+                end
+            end
+            resize!(list, length(list) - Δ)
+            if !keep_order
+                sort!(list)
+            end
+        end
+    end
+
+    # we create a reverse vmap, that maps vertices in the result graph
+    # to the ones in the original graph. This resembles the output of
+    # induced_subgraph
+    reverse_vmap = Vector{T}(undef, nv(g))
+    @inbounds for (i, u) in enumerate(vmap)
+        if u != 0
+            reverse_vmap[u] = i
+        end
+    end
+
+    return reverse_vmap
+end

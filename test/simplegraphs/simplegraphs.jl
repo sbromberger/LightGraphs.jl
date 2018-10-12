@@ -368,4 +368,82 @@ import Random
         @test Int8 <: eltype(g2_dir)
         @test Int16 <: eltype(g2_dir)
     end
+
+    # test for rem_vertices!
+    let
+        g_undir = CompleteGraph(5)
+        g_dir = CompleteDiGraph(5)
+        for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
+            T = eltype(g)
+
+            g5 = copy(g)
+            vmap = @inferred rem_vertices!(g5, T[], keep_order=true)
+            @test g5 == g
+            @test vmap == 1:5
+            @test isvalid_simplegraph(g5)
+
+            g4 = copy(g)
+            vmap = rem_vertices!(g4, T[3], keep_order=true)
+            @test g4 == (is_directed(g) ? CompleteDiGraph(T(4)) : CompleteGraph(T(4)))
+            @test vmap == [1, 2, 4, 5]
+            @test isvalid_simplegraph(g4)
+
+            g4 = copy(g)
+            add_edge!(g4, 1, 1) # some self_loops
+            add_edge!(g4, 2, 2)
+            vmap = rem_vertices!(g4, T[1, 1, 1], keep_order=false)
+            @test ne(g4) == (is_directed(g) ? 13 : 7)
+            @test sort(vmap) == [2, 3, 4, 5]
+            @test isvalid_simplegraph(g4)
+
+            g2 = copy(g)
+            vmap = rem_vertices!(g2, T[2, 1, 4], keep_order=false)
+            @test g2 == (is_directed(g) ? CompleteDiGraph(T(2)) : CompleteGraph(T(2)))
+            @test sort(vmap) == [3, 5]
+            @test isvalid_simplegraph(g2)
+
+            g0 = copy(g)
+            vmap = rem_vertices!(g0, T[1, 3, 2, 3, 5, 4], keep_order=false)
+            @test g0 == (is_directed(g) ? SimpleDiGraph(T(0)) : SimpleGraph(T(0)))
+            @test isempty(vmap)
+            @test isvalid_simplegraph(g0)
+            vmap = rem_vertices!(g0, T[], keep_order=false)
+            @test g0 == (is_directed(g) ? SimpleDiGraph(T(0)) : SimpleGraph(T(0)))
+            @test isempty(vmap)
+            @test isvalid_simplegraph(g0)
+
+            g5 = copy(g)
+            @test_throws ArgumentError rem_vertices!(g5, T[2, 6], keep_order=true)
+            g5 = copy(g)
+            @test_throws ArgumentError rem_vertices!(g5, T[3, 0], keep_order=false)
+        end
+
+        g_undir = erdos_renyi(10, 0.5)
+        g_dir = erdos_renyi(10, 0.5, is_directed=true)
+        for u = 1:2:10
+            add_edge!(g_undir, u, u)
+            add_edge!(g_dir, u, u)
+        end
+        a = Random.randsubseq(1:10, 0.5)
+        for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
+            T = eltype(g)
+
+            gt = copy(g)
+            gf = copy(g)
+            a_converted = convert(Vector{T}, a)
+            vmap_t = rem_vertices!(gt, a_converted, keep_order=true)
+            vmap_f = rem_vertices!(gf, a_converted, keep_order=false)
+            @test issorted(vmap_t)
+            @test allunique(vmap_t)
+            @test allunique(vmap_f)
+            @test sort(vmap_f) == vmap_t
+            @test length(vmap_f) == nv(g) - length(a_converted)
+            @test vmap_t == setdiff(collect(vertices(g)), a_converted)
+            @test LightGraphs.Experimental.has_isomorph(gt, gf)
+            gi = g[setdiff(collect(vertices(g)), a_converted)]
+            @test LightGraphs.Experimental.has_isomorph(gf, gi)
+            @test isvalid_simplegraph(gt)
+            @test isvalid_simplegraph(gf)
+        end
+    end
 end
