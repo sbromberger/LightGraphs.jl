@@ -26,8 +26,9 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     barabasi_albert!, static_fitness_model, static_scale_free, kronecker,
     #generators
     CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
-    CompleteBipartiteGraph, CompleteDiGraph, StarDiGraph, PathDiGraph, Grid,
-    WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph, CliqueGraph,
+    CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph,
+    StarDiGraph, PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree,
+    DoubleBinaryTree, RoachGraph, CliqueGraph,
     LadderGraph, CircularLadderGraph,
     #smallgraphs
     smallgraph,
