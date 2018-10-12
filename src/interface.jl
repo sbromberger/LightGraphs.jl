@@ -191,6 +191,10 @@ julia> collect(edges(g))
  Edge 1 => 2
  Edge 2 => 3
 ```
+
+### See also
+[`inneighbors`](@ref) and [`outneighbors`](@ref) for how to find vertices
+connected to a given vertex by and edge.
 """
 edges(g) = _NI("edges")
 
