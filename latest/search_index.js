@@ -633,6 +633,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.CompleteMultipartiteGraph-Union{Tuple{AbstractArray{T,1}}, Tuple{T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.CompleteMultipartiteGraph",
+    "category": "method",
+    "text": "CompleteMultipartiteGraph(partitions)\n\nCreate an undirected complete bipartite graph with sum(partitions) vertices. A partition with 0 vertices is skipped.\n\nImplementation Notes\n\nPreserves the eltype of the partitions vector. Will error if the required number of vertices exceeds the eltype.\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#LightGraphs.SimpleGraphs.CycleDiGraph-Union{Tuple{T}, Tuple{T}} where T<:Integer",
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.CycleDiGraph",
@@ -702,6 +710,14 @@ var documenterSearchIndex = {"docs": [
     "title": "LightGraphs.SimpleGraphs.StarGraph",
     "category": "method",
     "text": "StarGraph(n)\n\nCreate an undirected star graph with n vertices.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.TuranGraph-Union{Tuple{T}, Tuple{T,T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.TuranGraph",
+    "category": "method",
+    "text": "TuranGraph(n, r)\n\nCreates a Turán Graph, a complete  multipartite graph with n vertices and r partitions.\n\n\n\n\n\n"
 },
 
 {
