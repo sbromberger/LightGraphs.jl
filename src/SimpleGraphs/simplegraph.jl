@@ -501,7 +501,7 @@ If `keep_order` is `true`, the vertices in the modified graph appear in the same
 order as they did in the unmodified graph. This might be slower.
 
 ### Implementation Notes
-This function is not (yet) part of the official LightGraphs API and is subject to change/removal between major versions.
+This function is not part of the official LightGraphs API and is subject to change/removal between major versions.
 
 # Examples
 ```jldoctest
