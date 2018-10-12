@@ -440,9 +440,6 @@ Create a [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting o
 ### Implementation Notes
 Preserves the eltype of `n`. Will error if the required number of vertices
 exceeds the eltype.
-
-### References
-- https://en.wikipedia.org/wiki/Ladder_graph
 """
 function LadderGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph{T}(0)
@@ -466,17 +463,13 @@ end
 """
     CircularLadderGraph(n)
 
-Create a circular [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting of `2n` nodes and `3n` edges.
+Create a [circular ladder graph](https://en.wikipedia.org/wiki/Ladder_graph#Circular_ladder_graph) consisting of `2n` nodes and `3n` edges.
 This is also known as the [prism graph](https://en.wikipedia.org/wiki/Prism_graph).
 
 ### Implementation Notes
 Preserves the eltype of the partitions vector. Will error if the required number of vertices
 exceeds the eltype. 
 `n` must be at least 3 to avoid self-loops and multi-edges.
-
-### References
-- https://en.wikipedia.org/wiki/Ladder_graph#Circular_ladder_graph
-- http://mathworld.wolfram.com/PrismGraph.html
 """
 function CircularLadderGraph(n::T) where {T <: Integer}
     n < 3 && throw(DomainError("n=$n must be at least 3"))
