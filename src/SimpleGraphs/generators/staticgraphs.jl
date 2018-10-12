@@ -376,7 +376,7 @@ end
 """
     LadderGraph(n)
 
-Create a graph consisting of `2n` nodes and `3n-2` edges.
+Create a [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting of `2n` nodes and `3n-2` edges.
 
 ### Implementation Notes
 Preserves the eltype of `n`. Will error if the required number of vertices
@@ -407,7 +407,8 @@ end
 """
     CircularLadderGraph(n)
 
-Create a graph consisting of `2n` nodes and `3n` edges. This is also known as the Prism Graph.
+Create a circular [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting of `2n` nodes and `3n` edges.
+This is also known as the [prism graph](https://en.wikipedia.org/wiki/Prism_graph).
 
 ### Implementation Notes
 Preserves the eltype of the partitions vector. Will error if the required number of vertices
