@@ -601,6 +601,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.CircularLadderGraph-Union{Tuple{T}, Tuple{T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.CircularLadderGraph",
+    "category": "method",
+    "text": "CircularLadderGraph(n)\n\nCreate a circular ladder graph consisting of 2n nodes and 3n edges. This is also known as the prism graph.\n\nImplementation Notes\n\nPreserves the eltype of the partitions vector. Will error if the required number of vertices exceeds the eltype.  n must be at least 3 to avoid self-loops and multi-edges.\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#LightGraphs.SimpleGraphs.CliqueGraph-Union{Tuple{T}, Tuple{T,T}} where T<:Integer",
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.CliqueGraph",
@@ -670,6 +678,14 @@ var documenterSearchIndex = {"docs": [
     "title": "LightGraphs.SimpleGraphs.Grid",
     "category": "method",
     "text": "Grid(dims; periodic=false)\n\nCreate a dims-dimensional cubic lattice, with length dims[i] in dimension i.\n\nOptional Arguments\n\nperiodic=false: If true, the resulting lattice will have periodic boundary\n\ncondition in each dimension.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.LadderGraph-Union{Tuple{T}, Tuple{T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.LadderGraph",
+    "category": "method",
+    "text": "LadderGraph(n)\n\nCreate a ladder graph consisting of 2n nodes and 3n-2 edges.\n\nImplementation Notes\n\nPreserves the eltype of n. Will error if the required number of vertices exceeds the eltype.\n\n\n\n\n\n"
 },
 
 {
