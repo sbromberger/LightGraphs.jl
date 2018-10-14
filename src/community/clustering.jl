@@ -5,6 +5,25 @@
 Return the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
 for node `v` in graph `g`. If a list of vertices `vs` is specified, return a vector
 of coefficients for each node in the list.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(4);
+
+julia> add_edge!(g, 1, 2);
+
+julia> add_edge!(g, 2, 4);
+
+julia> add_edge!(g, 4, 1);
+
+julia> local_clustering_coefficient(g, [1, 2, 3])
+3-element Array{Float64,1}:
+ 1.0
+ 1.0
+ 0.0
+```
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
     ntriang, nalltriang = local_clustering(g, v)
@@ -78,6 +97,26 @@ Return the number of triangles in the neighborhood of node `v` in graph `g`.
 If a list of vertices `vs` is specified, return a vector of number of triangles
 for each node in the list. If no vertices are specified, return the number
 of triangles for each node in the graph.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(4);
+
+julia> add_edge!(g, 1, 2);
+
+julia> add_edge!(g, 2, 4);
+
+julia> add_edge!(g, 4, 1);
+
+julia> triangles(g)
+4-element Array{Int64,1}:
+ 1
+ 1
+ 0
+ 1
+```
 """
 triangles(g::AbstractGraph, v::Integer) = local_clustering(g, v)[1]
 triangles(g::AbstractGraph, vs = vertices(g)) = local_clustering(g, vs)[1]
