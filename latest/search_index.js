@@ -973,7 +973,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.merge_vertices!",
     "category": "method",
-    "text": "merge_vertices!(g, vs)\n\nCombine vertices specified in vs into single vertex whose index will be the lowest value in vs. All edges connected to vertices in vs connect to the new merged vertex.\n\nReturn a vector with new vertex values are indexed by the original vertex indices.\n\nImplementation Notes\n\nSupports SimpleGraph only.\n\n\n\n\n\n"
+    "text": "merge_vertices!(g, vs)\n\nCombine vertices specified in vs into single vertex whose index will be the lowest value in vs. All edges connected to vertices in vs connect to the new merged vertex.\n\nReturn a vector with new vertex values are indexed by the original vertex indices.\n\nImplementation Notes\n\nSupports SimpleGraph only.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> collect(edges(g))\n4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n Edge 3 => 4\n Edge 4 => 5\n\njulia> merge_vertices!(g, [2, 3])\n5-element Array{Int64,1}:\n 1\n 2\n 2\n 3\n 4\n\njulia> collect(edges(g))\n3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n Edge 3 => 4\n\n\n\n\n\n"
 },
 
 {
@@ -981,7 +981,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.merge_vertices",
     "category": "method",
-    "text": "merge_vertices(g::AbstractGraph, vs)\n\nCreate a new graph where all vertices in vs have been aliased to the same vertex minimum(vs).\n\n\n\n\n\n"
+    "text": "merge_vertices(g::AbstractGraph, vs)\n\nCreate a new graph where all vertices in vs have been aliased to the same vertex minimum(vs).\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> collect(edges(g))\n4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n Edge 3 => 4\n Edge 4 => 5\n\njulia> h = merge_vertices(g, [2, 3]);\n\njulia> collect(edges(h))\n3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 2 => 3\n Edge 3 => 4\n\n\n\n\n\n"
 },
 
 {
