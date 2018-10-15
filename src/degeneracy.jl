@@ -21,15 +21,9 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph(6);
+julia> g = PathGraph(5);
 
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
+julia> add_vertex!(g);
 
 julia> add_edge!(g, 5, 2);
 
@@ -96,15 +90,9 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph(6);
+julia> g = PathGraph(5);
 
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
+julia> add_vertex!(g);
 
 julia> add_edge!(g, 5, 2);
 
@@ -157,15 +145,9 @@ Not implemented for graphs with parallel edges or self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph(6);
+julia> g = PathGraph(5);
 
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
+julia> add_vertex!(g);
 
 julia> add_edge!(g, 5, 2);
 
@@ -217,15 +199,9 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph(6);
+julia> g = PathGraph(5);
 
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
+julia> add_vertex!(g);
 
 julia> add_edge!(g, 5, 2);
 
@@ -278,15 +254,9 @@ Not implemented for graphs with parallel edges or self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleGraph(6);
+julia> g = PathGraph(5);
 
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
+julia> add_vertex!(g);
 
 julia> add_edge!(g, 5, 2);
 
