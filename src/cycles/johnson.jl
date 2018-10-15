@@ -162,13 +162,26 @@ Compute and return all cycles of the given directed graph using Johnson's algori
 
 ### Performance
 The number of cycles grows more than exponentially with the number of vertices,
-you might want to use the algorithm with a ceiling -- `simplecycles_iter` -- on large directed graphs
+you might want to use the algorithm with a ceiling -- [`simplecycles_iter`](@ref) -- on large directed graphs
 (slightly slower). If you want to have an idea of the possible number of cycles,
 look at function `maxsimplecycles(dg::DiGraph, byscc::Bool = true)`. If you only need
-short cycles of a limited length, `simplecycles_limited_length` can be more efficient.
+short cycles of a limited length, [`simplecycles_limited_length`](@ref) can be more efficient.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> simplecycles(CompleteDiGraph(3))
+5-element Array{Array{Int64,1},1}:
+ [1, 2]   
+ [1, 2, 3]
+ [1, 3]   
+ [1, 3, 2]
+ [2, 3]
+```
 """
 function simplecycles end
 @traitfn function simplecycles(dg::::IsDirected)
@@ -208,7 +221,7 @@ the same as v, otherwise it should be passed.
 
 ### Implementation Notes
 The CIRCUIT function from Johnson's algorithm, recursive and iterative version. 
-Produce a cycle when needed, can be used only inside a Channel.
+Produce a cycle when needed, can be used only inside a `Channel`.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
@@ -247,7 +260,7 @@ end
 Compute all cycles of the given directed graph, using Johnson's algorithm.
 
 ### Implementation Notes
-Iterative version of the algorithm, using Channels to stop the exploration
+Iterative version of the algorithm, using `Channel`s to stop the exploration
 after a given number of cycles.
 
 ### References
@@ -280,6 +293,14 @@ theoretical maximum number or cycles.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> simplecyclescount(CompleteDiGraph(6))
+409
+```
 """
 function simplecyclescount end
 @traitfn function simplecyclescount(dg::::IsDirected, ceiling=10^6)
@@ -327,6 +348,17 @@ a subset of the cycles lengths.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> simplecycleslength(CompleteDiGraph(16))
+([0, 1, 1, 1, 1, 1, 2, 10, 73, 511, 3066, 15329, 61313, 183939, 367876, 367876], 1000000)
+
+julia> simplecycleslength(WheelDiGraph(16))
+([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], 1)
+```
 """
 function simplecycleslength end
 @traitfn function simplecycleslength(dg::::IsDirected, ceiling=10^6)
