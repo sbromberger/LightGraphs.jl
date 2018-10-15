@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -2085,7 +2085,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Degeneracy",
     "title": "LightGraphs.core_number",
     "category": "method",
-    "text": "core_number(g)\n\nReturn the core number for each vertex in graph g.\n\nA k-core is a maximal subgraph that contains vertices of degree k or more. The core number of a vertex is the largest value k of a k-core containing that vertex.\n\nImplementation Notes\n\nNot implemented for graphs with self loops.\n\nReferences\n\nAn O(m) Algorithm for Cores Decomposition of Networks,   Vladimir Batagelj and Matjaz Zaversnik, 2003.   http://arxiv.org/abs/cs.DS/0310049\n\n\n\n\n\n"
+    "text": "core_number(g)\n\nReturn the core number for each vertex in graph g.\n\nA k-core is a maximal subgraph that contains vertices of degree k or more. The core number of a vertex is the largest value k of a k-core containing that vertex.\n\nImplementation Notes\n\nNot implemented for graphs with self loops.\n\nReferences\n\nAn O(m) Algorithm for Cores Decomposition of Networks,   Vladimir Batagelj and Matjaz Zaversnik, 2003.   http://arxiv.org/abs/cs.DS/0310049\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> add_vertex!(g);\n\njulia> add_edge!(g, 5, 2);\n\njulia> core_number(g)\n6-element Array{Int64,1}:\n 1\n 2\n 2\n 2\n 2\n 0\n\n\n\n\n\n"
 },
 
 {
@@ -2093,7 +2093,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Degeneracy",
     "title": "LightGraphs.k_core",
     "category": "function",
-    "text": "k_core(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-core of graph g. If k is not specified, return the core with the largest degree.\n\nA k-core is a maximal subgraph that contains vertices of degree k or more.\n\nImplementation Notes\n\nNot implemented for graphs with self loops.\n\nReferences\n\nAn O(m) Algorithm for Cores Decomposition of Networks,   Vladimir Batagelj and Matjaz Zaversnik, 2003.   http://arxiv.org/abs/cs.DS/0310049\n\n\n\n\n\n"
+    "text": "k_core(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-core of graph g. If k is not specified, return the core with the largest degree.\n\nA k-core is a maximal subgraph that contains vertices of degree k or more.\n\nImplementation Notes\n\nNot implemented for graphs with self loops.\n\nReferences\n\nAn O(m) Algorithm for Cores Decomposition of Networks,   Vladimir Batagelj and Matjaz Zaversnik, 2003.   http://arxiv.org/abs/cs.DS/0310049\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> add_vertex!(g);\n\njulia> add_edge!(g, 5, 2);\n\njulia> k_core(g, 1)\n5-element Array{Int64,1}:\n 1\n 2\n 3\n 4\n 5\n\njulia> k_core(g, 2)\n4-element Array{Int64,1}:\n 2\n 3\n 4\n 5    \n\n\n\n\n\n"
 },
 
 {
@@ -2101,7 +2101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Degeneracy",
     "title": "LightGraphs.k_corona",
     "category": "method",
-    "text": "k_corona(g, k; corenum=core_number(g))\n\nReturn a vector of vertices in the k-corona of g. \n\nThe k-corona is the subgraph of vertices in the k-core which have exactly k neighbors in the k-core.\n\nImplementation Notes\n\nNot implemented for graphs with parallel edges or self loops.\n\nReferences\n\nk-core (bootstrap) percolation on complex networks:  Critical phenomena and nonlocal effects,  A. V. Goltsev, S. N. Dorogovtsev, and J. F. F. Mendes,  Phys. Rev. E 73, 056101 (2006)  http://link.aps.org/doi/10.1103/PhysRevE.73.056101\n\n\n\n\n\n"
+    "text": "k_corona(g, k; corenum=core_number(g))\n\nReturn a vector of vertices in the k-corona of g. \n\nThe k-corona is the subgraph of vertices in the k-core which have exactly k neighbors in the k-core.\n\nImplementation Notes\n\nNot implemented for graphs with parallel edges or self loops.\n\nReferences\n\nk-core (bootstrap) percolation on complex networks:  Critical phenomena and nonlocal effects,  A. V. Goltsev, S. N. Dorogovtsev, and J. F. F. Mendes,  Phys. Rev. E 73, 056101 (2006)  http://link.aps.org/doi/10.1103/PhysRevE.73.056101\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> add_vertex!(g);\n\njulia> add_edge!(g, 5, 2);\n\njulia> k_corona(g, 0)\n1-element Array{Int64,1}:\n 6\n\njulia> k_corona(g, 1)\n1-element Array{Int64,1}:\n 1\n\njulia> k_corona(g, 2)\n4-element Array{Int64,1}:\n 2\n 3\n 4\n 5\n\njulia> k_corona(g, 3)\n0-element Array{Int64,1}\n\n\n\n\n\n"
 },
 
 {
@@ -2109,7 +2109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Degeneracy",
     "title": "LightGraphs.k_crust",
     "category": "function",
-    "text": "k_crust(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-crust of g.  If k is not specified, return the crust of the core with the largest degree.\n\nThe k-crust is the graph g with the k-core removed.\n\nImplementation Notes\n\nThis definition of k-crust is different than the definition in References. The k-crust in References is equivalent to the k+1 crust of this algorithm.\n\nNot implemented for graphs with self loops.\n\nReferences\n\nA model of Internet topology using k-shell decomposition  Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,  and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154  http://www.pnas.org/content/104/27/11150.full\n\n\n\n\n\n"
+    "text": "k_crust(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-crust of g.  If k is not specified, return the crust of the core with the largest degree.\n\nThe k-crust is the graph g with the k-core removed.\n\nImplementation Notes\n\nThis definition of k-crust is different than the definition in References. The k-crust in References is equivalent to the k+1 crust of this algorithm.\n\nNot implemented for graphs with self loops.\n\nReferences\n\nA model of Internet topology using k-shell decomposition  Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,  and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154  http://www.pnas.org/content/104/27/11150.full\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> add_vertex!(g);\n\njulia> add_edge!(g, 5, 2);\n\njulia> k_crust(g, 0)\n1-element Array{Int64,1}:\n 6\n\njulia> k_crust(g, 1)\n2-element Array{Int64,1}:\n 1\n 6\n\njulia> k_crust(g, 2)\n6-element Array{Int64,1}:\n 1\n 2\n 3\n 4\n 5\n 6\n\n\n\n\n\n"
 },
 
 {
@@ -2117,7 +2117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Degeneracy",
     "title": "LightGraphs.k_shell",
     "category": "function",
-    "text": "k_shell(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-shell of g. If k is not specified, return the shell of the core with the largest degree.\n\nThe k-shell is the subgraph of vertices in the k-core but not in the (k+1)-core. This is similar to k_corona but in that case only neighbors in the k-core are considered.\n\nImplementation Notes\n\nNot implemented for graphs with parallel edges or self loops.\n\nReferences\n\nA model of Internet topology using k-shell decomposition  Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,  and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154  http://www.pnas.org/content/104/27/11150.full\n\n\n\n\n\n"
+    "text": "k_shell(g[, k]; corenum=core_number(g))\n\nReturn a vector of vertices in the k-shell of g. If k is not specified, return the shell of the core with the largest degree.\n\nThe k-shell is the subgraph of vertices in the k-core but not in the (k+1)-core. This is similar to k_corona but in that case only neighbors in the k-core are considered.\n\nImplementation Notes\n\nNot implemented for graphs with parallel edges or self loops.\n\nReferences\n\nA model of Internet topology using k-shell decomposition  Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,  and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154  http://www.pnas.org/content/104/27/11150.full\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = PathGraph(5);\n\njulia> add_vertex!(g);\n\njulia> add_edge!(g, 5, 2);\n\njulia> k_shell(g, 0)\n1-element Array{Int64,1}:\n 6\n\njulia> k_shell(g, 1)\n1-element Array{Int64,1}:\n 1\n\njulia> k_shell(g, 2)\n4-element Array{Int64,1}:\n 2\n 3\n 4\n 5\n\n\n\n\n\n"
 },
 
 {
