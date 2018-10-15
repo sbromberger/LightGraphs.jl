@@ -5,7 +5,7 @@ Compute the transitive closure of a directed graph, using the Floyd-Warshall
 algorithm. If `selflooped` is true, add self loops to the graph.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V|^3).
+Time complexity is ``\\mathcal{O}(|V|^3)``.
 
 ### Implementation Notes
 This version of the function modifies the original graph.
@@ -29,7 +29,7 @@ algorithm. Return a graph representing the transitive closure. If `selflooped`
 is `true`, add self loops to the graph.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V|^3).
+Time complexity is ``\\mathcal{O}(|V|^3)``.
 """
 function transitiveclosure(g::DiGraph, selflooped = false)
     copyg = copy(g)
@@ -46,7 +46,7 @@ components. If `selflooped` is true, self loops on strongly connected components
 of size one will be preserved.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V||E|).
+Time complexity is ``\\mathcal{O}(|V||E|)``.
 """
 function transitivereducion end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
