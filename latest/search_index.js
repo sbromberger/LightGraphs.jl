@@ -917,7 +917,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "Base.union",
     "category": "method",
-    "text": "union(g, h)\n\nReturn a graph that combines graphs g and h by taking the set union of all vertices and edges.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "union(g, h)\n\nReturn a graph that combines graphs g and h by taking the set union of all vertices and edges.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3); h = SimpleGraph(5);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 1, 3);\n\njulia> add_edge!(h, 3, 4);\n\njulia> add_edge!(h, 3, 5);\n\njulia> add_edge!(h, 4, 5);\n\njulia> f = union(g, h);\n\njulia> collect(edges(f))\n5-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 3 => 4\n Edge 3 => 5\n Edge 4 => 5\n\n\n\n\n\n"
 },
 
 {
@@ -989,7 +989,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.symmetric_difference",
     "category": "method",
-    "text": "symmetric_difference(g, h)\n\nReturn a graph with edges from graph g that do not exist in graph h, and vice versa.\n\nImplementation Notes\n\nNote that this function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\n\n\n\n\n"
+    "text": "symmetric_difference(g, h)\n\nReturn a graph with edges from graph g that do not exist in graph h, and vice versa.\n\nImplementation Notes\n\nNote that this function may produce a graph with 0-degree vertices. Preserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3); h = SimpleGraph(3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(h, 1, 3);\n\njulia> add_edge!(h, 2, 3);\n\njulia> f = symmetric_difference(g, h);\n\njulia> collect(edges(f))\n3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 2 => 3\n\n\n\n\n\n"
 },
 
 {
