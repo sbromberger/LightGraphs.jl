@@ -1661,7 +1661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.transitiveclosure",
     "category": "function",
-    "text": "transitiveclosure(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. Return a graph representing the transitive closure. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is \\mathcal{O}(|V|^3).\n\n\n\n\n\n"
+    "text": "transitiveclosure(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. Return a graph representing the transitive closure. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is mathcalO(V^3).\n\n\n\n\n\n"
 },
 
 {
@@ -1669,7 +1669,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.transitiveclosure!",
     "category": "function",
-    "text": "transitiveclosure!(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is \\mathcal{O}(|V|^3).\n\nImplementation Notes\n\nThis version of the function modifies the original graph.\n\n\n\n\n\n"
+    "text": "transitiveclosure!(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is mathcalO(V^3).\n\nImplementation Notes\n\nThis version of the function modifies the original graph.\n\n\n\n\n\n"
 },
 
 {
