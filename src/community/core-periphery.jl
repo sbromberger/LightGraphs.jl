@@ -6,6 +6,25 @@ assignments (`1` for core and `2` for periphery) for each node in `g`.
 
 References:
     [Lip](http://arxiv.org/abs/1102.5511))
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> core_periphery_deg(StarGraph(5))
+5-element Array{Int64,1}:
+ 1
+ 2
+ 2
+ 2
+ 2
+
+julia> core_periphery_deg(PathGraph(3))
+3-element Array{Int64,1}:
+ 2
+ 1
+ 2
+```
 """
 function core_periphery_deg end
 @traitfn function core_periphery_deg(g::::(!IsDirected))
