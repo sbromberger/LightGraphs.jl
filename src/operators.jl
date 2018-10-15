@@ -214,6 +214,27 @@ and vice versa.
 Note that this function may produce a graph with 0-degree vertices.
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(3); h = SimpleGraph(3);
+
+julia> add_edge!(g, 1, 2);
+
+julia> add_edge!(h, 1, 3);
+
+julia> add_edge!(h, 2, 3);
+
+julia> f = symmetric_difference(g, h);
+
+julia> collect(edges(f))
+3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 2 => 3
+```
 """
 function symmetric_difference(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
@@ -238,6 +259,33 @@ of all vertices and edges.
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the
 number of vertices in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(3); h = SimpleGraph(5);
+
+julia> add_edge!(g, 1, 2);
+
+julia> add_edge!(g, 1, 3);
+
+julia> add_edge!(h, 3, 4);
+
+julia> add_edge!(h, 3, 5);
+
+julia> add_edge!(h, 4, 5);
+
+julia> f = union(g, h);
+
+julia> collect(edges(f))
+5-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 3 => 4
+ Edge 3 => 5
+ Edge 4 => 5
+```
 """
 function union(g::T, h::T) where T <: AbstractGraph
     gnv = nv(g)
@@ -405,6 +453,22 @@ size(g::AbstractGraph) = (nv(g), nv(g))
     size(g, i)
 
 Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = CycleGraph(4);
+
+julia> size(g, 1)
+4
+
+julia> size(g, 2)
+4
+
+julia> size(g, 3)
+1
+```
 """
 size(g::Graph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
@@ -644,7 +708,7 @@ egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=we
 """
     compute_shifts(n::Int, x::AbstractArray)
 
-Determine how many elements of vs are less than i for all i in 1:n.
+Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
