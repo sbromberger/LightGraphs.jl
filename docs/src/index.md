@@ -7,8 +7,7 @@ As such, *LightGraphs.jl* is the central package of the JuliaGraphs ecosystem. A
   * [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl): graphs with associated meta-data.
   * [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): weighted graphs.
   * [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
-  * [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for
-  converting edgelists stored in DataFrames into graphs (`MetaGraphs`, `MetaDiGraphs`).
+  * [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for converting edgelists stored in DataFrames into graphs (`MetaGraphs`, `MetaDiGraphs`).
 
 
 ## Basic library examples
