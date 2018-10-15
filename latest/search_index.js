@@ -2005,7 +2005,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Community Structures",
     "title": "LightGraphs.global_clustering_coefficient",
     "category": "method",
-    "text": "global_clustering_coefficient(g)\n\nReturn the global clustering coefficient of graph g.\n\n\n\n\n\n"
+    "text": "global_clustering_coefficient(g)\n\nReturn the global clustering coefficient of graph g.\n\nExamples\n\njulia> using LightGraphs\n\njulia> global_clustering_coefficient(StarGraph(4))\n0.0\n\njulia> global_clustering_coefficient(smallgraph(:housex))\n0.7894736842105263\n\n\n\n\n\n"
 },
 
 {
