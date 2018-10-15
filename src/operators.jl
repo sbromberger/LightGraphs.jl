@@ -656,6 +656,28 @@ end
     merge_vertices(g::AbstractGraph, vs)
 
 Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> collect(edges(g))
+4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 4
+ Edge 4 => 5
+
+julia> h = merge_vertices(g, [2, 3]);
+
+julia> collect(edges(h))
+3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 4
+```
 """
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
@@ -696,6 +718,34 @@ Return a vector with new vertex values are indexed by the original vertex indice
 
 ### Implementation Notes
 Supports [`SimpleGraph`](@ref) only.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> collect(edges(g))
+4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 4
+ Edge 4 => 5
+
+julia> merge_vertices!(g, [2, 3])
+5-element Array{Int64,1}:
+ 1
+ 2
+ 2
+ 3
+ 4
+
+julia> collect(edges(g))
+3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 4
+```
 """
 function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     vs = sort!(unique(vs))
