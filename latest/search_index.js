@@ -1661,7 +1661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Distance",
     "title": "LightGraphs.transitiveclosure",
     "category": "function",
-    "text": "transitiveclosure(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. Return a graph representing the transitive closure. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is mathcalO(V^3).\n\n\n\n\n\n"
+    "text": "transitiveclosure(g, selflooped=false)\n\nCompute the transitive closure of a directed graph, using the Floyd-Warshall algorithm. Return a graph representing the transitive closure. If selflooped is true, add self loops to the graph.\n\nPerformance\n\nTime complexity is mathcalO(V^3).\n\nExamples\n\njulia> using LightGraphs\n\njulia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));\n\njulia> add_edge!(barbell, 1, 4);\n\njulia> collect(edges(barbell))\n13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 1 => 4\n Edge 2 => 1\n Edge 2 => 3\n Edge 3 => 1\n Edge 3 => 2\n Edge 4 => 5\n Edge 4 => 6\n Edge 5 => 4\n Edge 5 => 6\n Edge 6 => 4\n Edge 6 => 5\n\njulia> collect(edges(transitiveclosure(barbell)))\n21-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 1 => 4\n Edge 1 => 5\n Edge 1 => 6\n Edge 2 => 1\n Edge 2 => 3\n Edge 2 => 4\n Edge 2 => 5\n Edge 2 => 6\n Edge 3 => 1\n Edge 3 => 2\n Edge 3 => 4\n Edge 3 => 5\n Edge 3 => 6\n Edge 4 => 5\n Edge 4 => 6\n Edge 5 => 4\n Edge 5 => 6\n Edge 6 => 4\n Edge 6 => 5\n\n\n\n\n\n"
 },
 
 {
@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
