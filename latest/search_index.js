@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -2021,7 +2021,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Community Structures",
     "title": "LightGraphs.local_clustering_coefficient",
     "category": "method",
-    "text": "local_clustering_coefficient(g, v)\nlocal_clustering_coefficient(g, vs)\n\nReturn the local clustering coefficient for node v in graph g. If a list of vertices vs is specified, return a vector of coefficients for each node in the list.\n\n\n\n\n\n"
+    "text": "local_clustering_coefficient(g, v)\nlocal_clustering_coefficient(g, vs)\n\nReturn the local clustering coefficient for node v in graph g. If a list of vertices vs is specified, return a vector of coefficients for each node in the list.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(4);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 4);\n\njulia> add_edge!(g, 4, 1);\n\njulia> local_clustering_coefficient(g, [1, 2, 3])\n3-element Array{Float64,1}:\n 1.0\n 1.0\n 0.0\n\n\n\n\n\n"
 },
 
 {
@@ -2029,7 +2029,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Community Structures",
     "title": "LightGraphs.triangles",
     "category": "method",
-    "text": "triangles(g[, v])\ntriangles(g, vs)\n\nReturn the number of triangles in the neighborhood of node v in graph g. If a list of vertices vs is specified, return a vector of number of triangles for each node in the list. If no vertices are specified, return the number of triangles for each node in the graph.\n\n\n\n\n\n"
+    "text": "triangles(g[, v])\ntriangles(g, vs)\n\nReturn the number of triangles in the neighborhood of node v in graph g. If a list of vertices vs is specified, return a vector of number of triangles for each node in the list. If no vertices are specified, return the number of triangles for each node in the graph.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(4);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 4);\n\njulia> add_edge!(g, 4, 1);\n\njulia> triangles(g)\n4-element Array{Int64,1}:\n 1\n 1\n 0\n 1\n\n\n\n\n\n"
 },
 
 {
@@ -2037,7 +2037,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Community Structures",
     "title": "LightGraphs.core_periphery_deg",
     "category": "function",
-    "text": "core_periphery_deg(g)\n\nCompute the degree-based core-periphery for graph g. Return the vertex assignments (1 for core and 2 for periphery) for each node in g.\n\nReferences:     Lip)\n\n\n\n\n\n"
+    "text": "core_periphery_deg(g)\n\nCompute the degree-based core-periphery for graph g. Return the vertex assignments (1 for core and 2 for periphery) for each node in g.\n\nReferences:     Lip)\n\nExamples\n\njulia> using LightGraphs\n\njulia> core_periphery_deg(StarGraph(5))\n5-element Array{Int64,1}:\n 1\n 2\n 2\n 2\n 2\n\njulia> core_periphery_deg(PathGraph(3))\n3-element Array{Int64,1}:\n 2\n 1\n 2\n\n\n\n\n\n"
 },
 
 {
