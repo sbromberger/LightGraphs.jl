@@ -18,6 +18,17 @@ Run quick test to check if `g1 and `g2` could be isomorphic.
 
 If the result is `false`, then `g1` and `g2` are definitely not isomorphic,
 but if the result is `true` this is not guaranteed.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> LightGraphs.Experimental.could_have_isomorph(PathGraph(3), StarGraph(4))
+false
+
+julia> LightGraphs.Experimental.could_have_isomorph(PathGraph(3), StarGraph(3))
+true
+```
 """
 function could_have_isomorph(g1::AbstractGraph, g2::AbstractGraph)
     nv(g1) == nv(g2) || return false
