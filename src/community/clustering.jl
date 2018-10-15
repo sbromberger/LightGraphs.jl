@@ -127,6 +127,17 @@ triangles(g::AbstractGraph, vs = vertices(g)) = local_clustering(g, vs)[1]
 
 Return the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
 of graph `g`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> global_clustering_coefficient(StarGraph(4))
+0.0
+
+julia> global_clustering_coefficient(smallgraph(:housex))
+0.7894736842105263
+```
 """
 function global_clustering_coefficient(g::AbstractGraph)
     c = 0
