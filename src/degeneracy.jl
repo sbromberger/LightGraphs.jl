@@ -16,6 +16,26 @@ Not implemented for graphs with self loops.
 * An O(m) Algorithm for Cores Decomposition of Networks,
     Vladimir Batagelj and Matjaz Zaversnik, 2003.
     http://arxiv.org/abs/cs.DS/0310049
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> add_vertex!(g);
+
+julia> add_edge!(g, 5, 2);
+
+julia> core_number(g)
+6-element Array{Int64,1}:
+ 1
+ 2
+ 2
+ 2
+ 2
+ 0
+```
 """
 function core_number(g::AbstractGraph{T}) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
@@ -65,6 +85,32 @@ Not implemented for graphs with self loops.
 - An O(m) Algorithm for Cores Decomposition of Networks,
     Vladimir Batagelj and Matjaz Zaversnik, 2003.
     http://arxiv.org/abs/cs.DS/0310049
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> add_vertex!(g);
+
+julia> add_edge!(g, 5, 2);
+
+julia> k_core(g, 1)
+5-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+ 5
+
+julia> k_core(g, 2)
+4-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5    
+```
 """
 function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
     if (k == -1)
@@ -94,6 +140,32 @@ Not implemented for graphs with parallel edges or self loops.
    Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,
    and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154
    http://www.pnas.org/content/104/27/11150.full
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> add_vertex!(g);
+
+julia> add_edge!(g, 5, 2);
+
+julia> k_shell(g, 0)
+1-element Array{Int64,1}:
+ 6
+
+julia> k_shell(g, 1)
+1-element Array{Int64,1}:
+ 1
+
+julia> k_shell(g, 2)
+4-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+```
 """
 function k_shell(g::AbstractGraph, k=-1; corenum=core_number(g))
     if k == -1
@@ -109,7 +181,7 @@ Return a vector of vertices in the k-crust of `g`.
 If `k` is not specified, return the crust of the core with
 the largest degree.
 
-The k-crust is the graph `g` with the k-core removed.
+The k-crust is the graph `g` with the [`k-core`](@ref k_core) removed.
 
 ### Implementation Notes
 This definition of k-crust is different than the definition in References.
@@ -122,6 +194,35 @@ Not implemented for graphs with self loops.
    Shai Carmi, Shlomo Havlin, Scott Kirkpatrick, Yuval Shavitt,
    and Eran Shir, PNAS  July 3, 2007   vol. 104  no. 27  11150-11154
    http://www.pnas.org/content/104/27/11150.full
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> add_vertex!(g);
+
+julia> add_edge!(g, 5, 2);
+
+julia> k_crust(g, 0)
+1-element Array{Int64,1}:
+ 6
+
+julia> k_crust(g, 1)
+2-element Array{Int64,1}:
+ 1
+ 6
+
+julia> k_crust(g, 2)
+6-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+```
 """
 function k_crust(g, k=-1; corenum=core_number(g))
     if k == -1
@@ -135,7 +236,7 @@ end
 
 Return a vector of vertices in the k-corona of `g`. 
 
-The k-corona is the subgraph of vertices in the k-core which
+The k-corona is the subgraph of vertices in the [`k-core`](@ref k_core) which
 have exactly `k` neighbors in the k-core.
 
 ### Implementation Notes
@@ -148,6 +249,35 @@ Not implemented for graphs with parallel edges or self loops.
    A. V. Goltsev, S. N. Dorogovtsev, and J. F. F. Mendes,
    Phys. Rev. E 73, 056101 (2006)
    http://link.aps.org/doi/10.1103/PhysRevE.73.056101
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = PathGraph(5);
+
+julia> add_vertex!(g);
+
+julia> add_edge!(g, 5, 2);
+
+julia> k_corona(g, 0)
+1-element Array{Int64,1}:
+ 6
+
+julia> k_corona(g, 1)
+1-element Array{Int64,1}:
+ 1
+
+julia> k_corona(g, 2)
+4-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+
+julia> k_corona(g, 3)
+0-element Array{Int64,1}
+```
 """
 function k_corona(g::AbstractGraph, k; corenum=core_number(g))
     kcore = k_core(g, k)
