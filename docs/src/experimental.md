@@ -8,3 +8,11 @@ Code in this module is unstable and subject to change. Do not use any code in th
 ## Graph Isomorphism
 
 Here is the documentation for graph isomorphism functions.
+
+```@autodocs
+Modules = [LightGraphs]
+Pages   = [
+    "Experimental/isomorphism.jl",
+]
+Private = false
+```
