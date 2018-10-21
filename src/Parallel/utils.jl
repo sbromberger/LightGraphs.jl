@@ -42,7 +42,6 @@ function threaded_generate_reduce(
     n_t = Base.Threads.nthreads()
     is_undef = ones(Bool, n_t)
     min_set = [Vector{T}() for _ in 1:n_t]
-
     Base.Threads.@threads for _ in 1:reps
         t = Base.Threads.threadid()
         next_set = gen_func(g)

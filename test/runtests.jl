@@ -71,6 +71,8 @@ tests = [
     "biconnectivity/biconnect",
     "graphcut/normalized_cut",
     "graphcut/karger_min_cut",
+    "dominatingset/degree_dom_set",
+    "dominatingset/minimal_dom_set",
     "independentset/degree_ind_set",
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
