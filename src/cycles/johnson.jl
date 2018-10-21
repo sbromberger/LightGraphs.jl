@@ -218,8 +218,8 @@ Return `true` if a circuit has been found in the current exploration.
 the same as v, otherwise it should be passed.
 
 ### Implementation Notes
-The CIRCUIT function from Johnson's algorithm, recursive and iterative version. 
-Produce a cycle when needed, can be used only inside a `Channel`.
+Implements the CIRCUIT function from Johnson's algorithm, recursive and iterative version. 
+Produces a cycle when needed. Can be used only inside a `Channel`.
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
