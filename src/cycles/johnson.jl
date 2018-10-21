@@ -172,8 +172,6 @@ short cycles of a limited length, [`simplecycles_limited_length`](@ref) can be m
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
-
 julia> simplecycles(CompleteDiGraph(3))
 5-element Array{Array{Int64,1},1}:
  [1, 2]   
@@ -296,8 +294,6 @@ theoretical maximum number or cycles.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
-
 julia> simplecyclescount(CompleteDiGraph(6))
 409
 ```
@@ -351,8 +347,6 @@ a subset of the cycles lengths.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
-
 julia> simplecycleslength(CompleteDiGraph(16))
 ([0, 1, 1, 1, 1, 1, 2, 10, 73, 511, 3066, 15329, 61313, 183939, 367876, 367876], 1000000)
 
