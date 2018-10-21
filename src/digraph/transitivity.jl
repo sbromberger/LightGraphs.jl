@@ -5,7 +5,7 @@ Compute the transitive closure of a directed graph, using the Floyd-Warshall
 algorithm. If `selflooped` is true, add self loops to the graph.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V|^3).
+Time complexity is ``\\mathcal{O}(|V|^3)``.
 
 ### Implementation Notes
 This version of the function modifies the original graph.
@@ -29,7 +29,56 @@ algorithm. Return a graph representing the transitive closure. If `selflooped`
 is `true`, add self loops to the graph.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V|^3).
+Time complexity is ``\\mathcal{O}(|V|^3)``.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+
+julia> add_edge!(barbell, 1, 4);
+
+julia> collect(edges(barbell))
+13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 1
+ Edge 2 => 3
+ Edge 3 => 1
+ Edge 3 => 2
+ Edge 4 => 5
+ Edge 4 => 6
+ Edge 5 => 4
+ Edge 5 => 6
+ Edge 6 => 4
+ Edge 6 => 5
+
+julia> collect(edges(transitiveclosure(barbell)))
+21-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 1 => 5
+ Edge 1 => 6
+ Edge 2 => 1
+ Edge 2 => 3
+ Edge 2 => 4
+ Edge 2 => 5
+ Edge 2 => 6
+ Edge 3 => 1
+ Edge 3 => 2
+ Edge 3 => 4
+ Edge 3 => 5
+ Edge 3 => 6
+ Edge 4 => 5
+ Edge 4 => 6
+ Edge 5 => 4
+ Edge 5 => 6
+ Edge 6 => 4
+ Edge 6 => 5
+```
 """
 function transitiveclosure(g::DiGraph, selflooped = false)
     copyg = copy(g)
@@ -46,7 +95,42 @@ components. If `selflooped` is true, self loops on strongly connected components
 of size one will be preserved.
 
 ### Performance
-Time complexity is \\mathcal{O}(|V||E|).
+Time complexity is ``\\mathcal{O}(|V||E|)``.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+
+julia> add_edge!(barbell, 1, 4);
+
+julia> collect(edges(barbell))
+13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 1
+ Edge 2 => 3
+ Edge 3 => 1
+ Edge 3 => 2
+ Edge 4 => 5
+ Edge 4 => 6
+ Edge 5 => 4
+ Edge 5 => 6
+ Edge 6 => 4
+ Edge 6 => 5
+
+julia> collect(edges(transitivereduction(barbell)))
+7-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 3 => 1
+ Edge 4 => 5
+ Edge 5 => 6
+ Edge 6 => 4
+```
 """
 function transitivereducion end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
