@@ -58,6 +58,24 @@ function insorted(item, collection)
 end
 
 """
+    findall!(A, B)
+
+Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true. 
+
+Assumes `length(B) >= |I|`.
+"""
+function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where T<:Integer
+    len = 0
+    @inbounds for (i, a) in enumerate(A)
+        if a
+            len += 1
+            B[len] = i
+        end
+    end
+    return B
+end
+
+"""
     unweighted_contiguous_partition(num_items, required_partitions)
 
 Partition `1:num_items` into `required_partitions` number of partitions such that the

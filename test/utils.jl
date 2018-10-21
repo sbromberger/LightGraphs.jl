@@ -32,7 +32,13 @@
             @test LightGraphs.isbounded(T(0)) == false
         end
     end
+
+    A = [false, true, false, false, true, true]
+    @test findall(A) == LightGraphs.findall!(A, Vector{Int16}(undef, 6))[1:3]
 end
+
+
+
 
 @testset "Unweighted Contiguous Partition" begin
 
