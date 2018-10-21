@@ -12,10 +12,12 @@ is defined as "exclusive or" of the edges. Cycle bases are
 useful, e.g. when deriving equations for electric circuits
 using Kirchhoff's Laws.
 
-Example:
+# Examples
 ```jldoctest
-julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)]
-julia> g = SimpleGraph(SimpleEdge.(elist))
+julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)];
+
+julia> g = SimpleGraph(SimpleEdge.(elist));
+
 julia> cycle_basis(g)
 2-element Array{Array{Int64,1},1}:
  [2, 3, 4]
