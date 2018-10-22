@@ -37,11 +37,13 @@ function vertex_cover(
 
     nvg = nv(g)    
     in_cover = falses(nvg)
+    length_cover = 0
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g)))
 
     while !isempty(degree_queue) && peek(degree_queue)[2] > 0
         v = dequeue!(degree_queue)
         in_cover[v] = true
+        length_cover += 1
 
         @inbounds @simd for u in neighbors(g, v)
             if !in_cover[u] 
@@ -49,6 +51,5 @@ function vertex_cover(
             end
         end
     end
-
-    return [v for v in vertices(g) if in_cover[v]]
+    return LightGraphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
