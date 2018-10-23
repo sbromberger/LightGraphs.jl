@@ -2,7 +2,7 @@
     complement(g)
 
 Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
-of a graph
+of a graph. The resulting graph will not contain any self-loops.
 
 ### Implementation Notes
 Preserves the `eltype` of the input graph.
@@ -28,11 +28,12 @@ Edge 5 => 2
 Edge 5 => 3
 ```
 """
-function complement(g::Graph)
+function complement end
+@traitfn function complement(g::G::(!IsDirected)) where {T <: Integer, G <: AbstractGraph{T}}
     gnv = nv(g)
-    h = SimpleGraph(gnv)
-    for i = 1:gnv
-        for j = (i + 1):gnv
+    h = G(gnv)
+    for i = one(T):gnv
+        for j = (i + one(T)):gnv
             if !has_edge(g, i, j)
                 add_edge!(h, i, j)
             end
@@ -41,9 +42,9 @@ function complement(g::Graph)
     return h
 end
 
-function complement(g::DiGraph)
+@traitfn function complement(g::G::IsDirected) where {T <: Integer, G <: AbstractGraph{T}}
     gnv = nv(g)
-    h = SimpleDiGraph(gnv)
+    h = G(gnv)
     for i in vertices(g), j in vertices(g)
         if i != j && !has_edge(g, i, j)
             add_edge!(h, i, j)
@@ -85,8 +86,17 @@ function reverse end
     return h
 end
 
+@traitfn function reverse(g::G::IsDirected) where G<:AbstractGraph
+    gnv = nv(g)
+    h = G(gnv)
+    for e in edges(g)
+        add_edge!(h, reverse(e))
+    end
+    return h
+end
+
 """
-    reverse!(g)
+    reverse!(g::AbstractSimpleGraph)
 
 In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
