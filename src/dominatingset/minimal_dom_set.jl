@@ -3,7 +3,7 @@ export MinimalDominatingSet
 struct MinimalDominatingSet end
 
 """
-    dominating_set(g, MinimalDominatingSet(); seed=0)
+    dominating_set(g, MinimalDominatingSet(); seed=-1)
 
 Find a set of vertices that consitute a dominating set (all vertices in `g` are either adjacent to a vertex 
 in the set or is a vertex in the set) and it is not possible to delete a vertex from the set 
