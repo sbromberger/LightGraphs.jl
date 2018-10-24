@@ -19,9 +19,9 @@
     end
     
     g3 = StarGraph(5)
-    for g in testgraphs(g3)
-        @inferred(dominating_set(g, DegreeDominatingSet())) == [1,]
-        @inferred(dominating_set(g, DegreeDominatingSet())) == [1,]
+    for g in testgraphs(g1)
+        d = @inferred(dominating_set(g, DegreeDominatingSet()))
+        @test (d == [1,])
     end
     
     g4 = CompleteGraph(5)
