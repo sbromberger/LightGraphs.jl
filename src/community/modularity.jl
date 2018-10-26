@@ -26,32 +26,25 @@ where:
 - Reichardt, J. & Bornholdt, S. "Statistical mechanics of community detection". 
   Phys. Rev. E 74, 016110 (2006). [(arXiv)](https://arxiv.org/abs/cond-mat/0603718)
 
-# Example 
+# Examples 
 ```jldoctest
 julia> using LightGraphs
-julia> g = SimpleDiGraph(6)
-{6, 0} directed simple Int64 graph
 
-julia> add_edge!(g, 1, 2)
-true
+julia> g = SimpleDiGraph(6);
 
-julia> add_edge!(g, 2, 3)
-true
+julia> add_edge!(g, 1, 2);
 
-julia> add_edge!(g, 3, 1)
-true
+julia> add_edge!(g, 2, 3);
 
-julia> add_edge!(g, 3, 4)
-true 
+julia> add_edge!(g, 3, 1);
 
-julia> add_edge!(g, 4, 5)
-true
+julia> add_edge!(g, 3, 4);
 
-julia> add_edge!(g, 5, 6)
-true 
+julia> add_edge!(g, 4, 5);
 
-julia> add_edge!(g, 6, 4)
-true
+julia> add_edge!(g, 5, 6);
+
+julia> add_edge!(g, 6, 4);
 
 julia> modularity(g, [1, 1, 1, 2, 2, 2])
 0.35714285714285715
