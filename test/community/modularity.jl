@@ -12,7 +12,7 @@
       @test @inferred(modularity(g, c)) == 0
     end
 
-    n = 10
+    n = 6
     gint = SimpleGraph(n)
     add_edge!(gint, 1, 2)
     add_edge!(gint, 2, 3)
