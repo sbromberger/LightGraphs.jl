@@ -51,7 +51,7 @@ julia> modularity(g, [1, 1, 1, 2, 2, 2])
 ```
 """
 function modularity end
-@traitfn function modularity(g::::(!IsDirected), c::Vector, γ=1.0)
+@traitfn function modularity(g::::(!IsDirected), c::AbstractVector{<:Integer}, γ=1.0)
     m = 2 * ne(g)
     m == 0 && return 0.
     nc = maximum(c)
