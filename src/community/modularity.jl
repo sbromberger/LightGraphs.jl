@@ -30,23 +30,11 @@ where:
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = SimpleDiGraph(6);
+julia> barbell = blockdiag(CompleteGraph(3), CompleteGraph(3));
 
-julia> add_edge!(g, 1, 2);
+julia> add_edge!(barbell, 1, 4);
 
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 1);
-
-julia> add_edge!(g, 3, 4);
-
-julia> add_edge!(g, 4, 5);
-
-julia> add_edge!(g, 5, 6);
-
-julia> add_edge!(g, 6, 4);
-
-julia> modularity(g, [1, 1, 1, 2, 2, 2])
+julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
 0.35714285714285715
 ```
 """
