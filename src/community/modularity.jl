@@ -36,6 +36,9 @@ julia> add_edge!(barbell, 1, 4);
 
 julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
 0.35714285714285715
+
+julia> modularity(barbell, [1, 1, 1, 2, 2, 2], 0.5)
+0.6071428571428571
 ```
 """
 function modularity end
