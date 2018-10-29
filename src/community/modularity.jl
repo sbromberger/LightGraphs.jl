@@ -52,7 +52,6 @@ function modularity(g::AbstractGraph, c::AbstractVector{<:Integer}, γ=1.0)
     Q = 0
     for u in vertices(g)
         for v in neighbors(g, u)
-            #@show u, v
             c1 = c[u]
             c2 = c[v]
             if c1 == c2
@@ -61,8 +60,7 @@ function modularity(g::AbstractGraph, c::AbstractVector{<:Integer}, γ=1.0)
             kout[c1] += 1
             kin[c2] += 1
         end
-    end
-    #@show kin, kout, Q 
+    end 
     Q = Q * m
     @inbounds for i = 1:nc
         Q -= γ * kin[i] * kout[i]
