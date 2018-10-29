@@ -31,7 +31,6 @@ where:
   fewer communities. Where `γ=1.0` it lead to the traditional definition of 
   the modularity.
 
-
 ### References
 - M. E. J. Newman and M. Girvan. "Finding and evaluating community structure in networks". 
   Phys. Rev. E 69, 026113 (2004). [(arXiv)](https://arxiv.org/abs/cond-mat/0308217)
