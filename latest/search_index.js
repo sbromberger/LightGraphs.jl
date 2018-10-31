@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -2049,11 +2049,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "community.html#LightGraphs.modularity",
+    "location": "community.html#LightGraphs.modularity-Tuple{AbstractGraph,AbstractArray{#s68,1} where #s68<:Integer}",
     "page": "Community Structures",
     "title": "LightGraphs.modularity",
-    "category": "function",
-    "text": "modularity(g, c, γ=1.0)\n\nReturn a value representing Newman\'s modularity Q for the undirected graph g given the partitioning vector c.\n\nQ = frac12m sum_c left( e_c - gamma fracK_c^22m right)\n\nwhere:\n\nm: m is the total number of edges in the network \ne_c: number of edges in community c\nK_c: is the sum of the degrees of the nodes in community c \n\nOptional Arguments\n\nγ=1.0: where γ > 0 is a resolution parameter. When the modularity is used  to find communities structure in networks (i.e with Louvain\'s method for  community detection),  higher resolutions lead to more communities, while lower resolutions lead to  fewer communities. Where γ=1.0 it lead to the traditional definition of  the modularity.\n\nReferences\n\nM. E. J. Newman and M. Girvan. \"Finding and evaluating community structure in networks\".  Phys. Rev. E 69, 026113 (2004). (arXiv)\nReichardt, J. & Bornholdt, S. \"Statistical mechanics of community detection\".  Phys. Rev. E 74, 016110 (2006). (arXiv)\n\nExamples\n\njulia> using LightGraphs\n\njulia> barbell = blockdiag(CompleteGraph(3), CompleteGraph(3));\n\njulia> add_edge!(barbell, 1, 4);\n\njulia> modularity(barbell, [1, 1, 1, 2, 2, 2])\n0.35714285714285715\n\njulia> modularity(barbell, [1, 1, 1, 2, 2, 2], 0.5)\n0.6071428571428571\n\n\n\n\n\n"
+    "category": "method",
+    "text": "modularity(g, c, distmx=weights(g), γ=1.0)\n\nReturn a value representing Newman\'s modularity Q for the undirected and  directed graph g given the partitioning vector c. This medthod also support  weighted graphs if the distance matrix is provided.\n\nModularity Q for undirected graph:\n\nQ = frac12m sum_c left( e_c - gamma fracK_c^22m right)\n\nModularity Q for directed graph:\n\nQ = frac1m sum_c left( e_c - gamma fracK_c^in K_c^outm right)\n\nwhere:\n\nm: m is the total number of edges in the network \ne_c: number of edges in community c\nK_c: is the sum of the degrees of the nodes in community c or the  sum of the weighted degree of the nodes in community c when the graph is  weighted. K_c^in sum of the in-degrees of the nodes in community c.\n\nOptional Arguments\n\ndistmx=weights(g): distance matrix for weighted graphs\nγ=1.0: where γ > 0 is a resolution parameter. When the modularity is used  to find communities structure in networks (i.e with Louvain\'s method for  community detection),  higher resolutions lead to more communities, while lower resolutions lead to  fewer communities. Where γ=1.0 it lead to the traditional definition of  the modularity.\n\nReferences\n\nM. E. J. Newman and M. Girvan. \"Finding and evaluating community structure in networks\".  Phys. Rev. E 69, 026113 (2004). (arXiv)\nJ. Reichardt and S. Bornholdt. \"Statistical mechanics of community detection\".  Phys. Rev. E 74, 016110 (2006). (arXiv)\nE. A. Leicht and M. E. J. Newman. \"Community structure in directed networks\".  Physical Review Letter, 100:118703, (2008). (arXiv)\n\nExamples\n\njulia> using LightGraphs\n\njulia> barbell = blockdiag(CompleteGraph(3), CompleteGraph(3));\n\njulia> add_edge!(barbell, 1, 4);\n\njulia> modularity(barbell, [1, 1, 1, 2, 2, 2])\n0.35714285714285715\n\njulia> modularity(barbell, [1, 1, 1, 2, 2, 2], γ=0.5)\n0.6071428571428571  \n\njulia> using SimpleWeightedGraphs\n\njulia> triangle = SimpleWeightedGraph(3);\n\njulia> add_edge!(triangle, 1, 2, 1);\n\njulia> add_edge!(triangle, 2, 3, 1);\n\njulia> add_edge!(triangle, 3, 1, 1);\n\njulia> barbell = blockdiag(triangle, triangle);\n\njulia> add_edge!(barbell, 1, 4, 5); # this edge has a weight of 5\n\njulia> modularity(barbell, [1, 1, 1, 2, 2, 2])\n0.045454545454545456\n\n\n\n\n\n"
 },
 
 {
