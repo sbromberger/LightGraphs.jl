@@ -1269,7 +1269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.bipartite_map",
     "category": "function",
-    "text": "bipartite_map(g) -> Vector{UInt8}\n\nFor a bipartite graph g, return a vector c of size V containing the assignment of each vertex to one of the two sets (c_i == 1 or c_i == 2`). Ifg` is not bipartite, return an empty vector.\n\nImplementation Notes\n\nNote that an empty vector does not necessarily indicate non-bipartiteness. An empty graph will return an empty vector but is bipartite.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x01\n 0x01\n\njulia> add_vertices!(g, 3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x02\n 0x01\n\n\n\n\n\n"
+    "text": "bipartite_map(g) -> Vector{UInt8}\n\nFor a bipartite graph g, return a vector c of size V containing the assignment of each vertex to one of the two sets (c_i == 1 or c_i == 2). If g is not bipartite, return an empty vector.\n\nImplementation Notes\n\nNote that an empty vector does not necessarily indicate non-bipartiteness. An empty graph will return an empty vector but is bipartite.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = SimpleGraph(3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x01\n 0x01\n\njulia> add_vertices!(g, 3);\n\njulia> add_edge!(g, 1, 2);\n\njulia> add_edge!(g, 2, 3);\n\njulia> bipartite_map(g)\n3-element Array{UInt8,1}:\n 0x01\n 0x02\n 0x01\n\n\n\n\n\n"
 },
 
 {
@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
