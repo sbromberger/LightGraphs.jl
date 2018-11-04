@@ -6,6 +6,7 @@ of a graph. The resulting graph will not contain any self-loops.
 
 ### Implementation Notes
 Preserves the `eltype` of the input graph.
+Only topological information is preserved, but not metadata.
 
 # Examples
 ```jldoctest
@@ -61,6 +62,8 @@ original directed graph.
 
 ### Implementation Notes
 Preserves the eltype of the input graph.
+Only topological information and edge-metadata is preserved, but not any
+other metadata.
 
 # Examples
 ```jldoctest
