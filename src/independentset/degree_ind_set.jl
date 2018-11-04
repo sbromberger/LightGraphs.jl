@@ -31,7 +31,7 @@ function independent_set(
 
     while !isempty(degree_queue)
         v = dequeue!(degree_queue)
-        deleted[v] && continue
+        (deleted[v] || has_edge(g, v, v)) && continue
         deleted[v] = true
         push!(ind_set, v)
 
