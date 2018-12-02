@@ -32,6 +32,11 @@
     @test nv(er) == 10
     @test is_directed(er) == false
 
+    @test erdos_renyi(5, 1.0) == CompleteGraph(5)
+    @test erdos_renyi(5, 1.0, is_directed=true) == CompleteDiGraph(5)
+    @test erdos_renyi(5, 2.1) == CompleteGraph(5)
+    @test erdos_renyi(5, 2.1, is_directed=true) == CompleteDiGraph(5)
+
     cl = expected_degree_graph(zeros(10), seed=17)
     @test nv(cl) == 10
     @test ne(cl) == 0
