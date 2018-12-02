@@ -112,6 +112,7 @@ probability `p`.
 - `seed=-1`: set the RNG seed.
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
+    p >= 1 && return is_directed ? CompleteDiGraph(n) : CompleteGraph(n)
     m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
     ne = randbn(m, p, seed)
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)

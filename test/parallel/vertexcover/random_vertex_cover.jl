@@ -55,7 +55,6 @@
         for g in testgraphs(g5)
             c = @inferred(Parallel.vertex_cover(g, 4, RandomVertexCover(); parallel=parallel))
             sort!(c)
-            println(c)
             @test (c == [1, 2, 3, 4] || c == [1, 2, 3, 4, 5] || c == [2, 3, 4] || c == [2, 3, 4, 5])
         end
     end
