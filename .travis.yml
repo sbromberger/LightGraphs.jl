@@ -5,8 +5,18 @@ os:
 #  - osx
 
 julia:
- - 0.7
- - nightly
+  - 1.0
+  - nightly
+notifications:
+  email: false
+git:
+  depth: 99999999
+
+## uncomment the following lines to allow failures on nightly julia
+## (tests will run but not make your overall status red)
+matrix:
+  allow_failures:
+    - julia: nightly
 
 notifications:
   email: false
@@ -14,7 +24,7 @@ notifications:
 # uncomment the following lines to override the default test script
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
+  - julia --inline=no -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
 
 after_success:
     - julia -e 'using Pkg; cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
