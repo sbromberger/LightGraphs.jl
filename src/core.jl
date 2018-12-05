@@ -265,6 +265,7 @@ julia> all_neighbors(g, 3)
 2-element Array{Int64,1}:
  1
  2
+ ```
 """
 function all_neighbors end
 @traitfn all_neighbors(g::::IsDirected, v::Integer) =
