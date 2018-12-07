@@ -24,4 +24,20 @@
         z = @inferred(floyd_warshall_shortest_paths(g, d))
         @test z.dists == [0 1 -3 2 -4; 3 0 -4 1 -1; 7 4 0 5 3; 2 -1 -5 0 -2; 8 5 1 6 0]
     end 
+
+    @testset "enumerate_paths infinite loop bug" begin
+        g = SimpleGraph(2)
+        add_edge!(g, 1, 2)
+        add_edge!(g, 2, 2)
+        @test enumerate_paths(floyd_warshall_shortest_paths(g)) ==
+            Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
+
+        g = SimpleDiGraph(2)
+        add_edge!(g, 1, 1)
+        add_edge!(g, 1, 2)
+        add_edge!(g, 2, 1)
+        add_edge!(g, 2, 2)
+        @test enumerate_paths(floyd_warshall_shortest_paths(g)) ==
+            Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
+    end
 end
