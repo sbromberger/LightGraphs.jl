@@ -80,7 +80,11 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
             currpathindex = i
             while currpathindex != 0
                 push!(path, currpathindex)
-                currpathindex = pathinfo[currpathindex]
+                if pathinfo[currpathindex] == currpathindex
+                    currpathindex = 0
+                else
+                    currpathindex = pathinfo[currpathindex]
+                end
             end
             push!(paths, reverse(path))
         end
