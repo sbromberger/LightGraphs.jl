@@ -1,81 +1,47 @@
 # Checking for existence of Eulerian circuit and Eulerian trail
 
-function isConnected(
-    graph::AbstractGraph{U},
-    ) where U<:Integer
+function multinode_component_count end
+@traitfn function multinode_component_count(
+    graph::AG::(!IsDirected),
+    ) where {T, AG <: AbstractGraph{T}}
 
-    visited = zeros(UInt8, nv(graph))
+    components = connected_components(graph)
 
-    for v in vertices(graph)
-        if length(outneighbors(graph, v)) == 0
-            visited[v] = 2
+    count = 0
+    for component in components
+        if length(component) > 1
+            count += 1
         end
     end
 
-    for v in vertices(graph)
-
-        if length(outneighbors(graph, v)) == 0
-            continue
-        end
-        S = Vector{U}([v])
-        visited[v] = 1
-        while !isempty(S)
-            u = S[end]
-            w = 0
-            for n in outneighbors(graph, u)
-                if visited[n] == 0
-                    w = n
-                    break
-                end
-            end
-            if w != 0
-                visited[w] = 1
-                push!(S, w)
-            else
-                visited[u] = 2
-                pop!(S)
-            end
-        end
-
-        break
-    end
-
-    for v in vertices(graph)
-        if(visited[v]==0)
-            return false
-        end
-    end
-
-    return true
+    return count
 end
 
 """
     eulerian_trail(g)
 
 Return `true` if graph `g` contains [Eulerian trail](https://en.wikipedia.org/wiki/Eulerian_path).
+Note that a Eulerian Trail can have the same start and end vertex so all Eulerian Circuits are Trails as well.
 
 ### Implementation Notes
 Uses single call to iterative version of DFS.
 """
-function eulerian_trail(
-    graph::AbstractGraph{U},
-    ) where U<:Integer
+function has_eulerian_trail end
+@traitfn function has_eulerian_trail(
+    graph::AG::(!IsDirected),
+    ) where {T, AG <: AbstractGraph{T}}
 
-    if(!isConnected(graph))
+    if multinode_component_count(graph) > 1
         return false
     end
 
     odd = 0
     for v in vertices(graph)
-        if (length(outneighbors(graph, v))%2 == 1)
+        if isodd(outdegree(graph, v))
             odd+=1
         end
     end
-
-    if odd > 2
-        return false
-    end
-
+    odd > 2 && return false
     return true
 end
 
@@ -87,24 +53,19 @@ Return `true` if graph `g` contains [Eulerian circuit](https://en.wikipedia.org/
 ### Implementation Notes
 Uses single call to iterative version of DFS.
 """
-function eulerian_circuit(
-    graph::AbstractGraph{U},
-    ) where U<:Integer
+function has_eulerian_circuit end
+@traitfn function has_eulerian_circuit(
+    graph::AG::(!IsDirected),
+    ) where {T, AG <: AbstractGraph{T}}
 
-    if !eulerian_trail(graph)
-        return false
-    end
-
+    multinode_component_count(graph) > 1 && return false
     odd = 0
     for v in vertices(graph)
-        if (length(outneighbors(graph, v))%2 == 1)
+        if isodd(outdegree(graph, v))
             odd+=1
         end
     end
 
-    if odd == 0
-        return true
-    end
-
+    odd == 0 && return true
     return false
 end

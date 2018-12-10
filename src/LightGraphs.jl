@@ -89,7 +89,7 @@ isgraphical,
 # cycles
 simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
-simplecycles_limited_length, eulerian_trail, eulerian_circuit,
+simplecycles_limited_length, has_eulerian_trail, has_eulerian_circuit,
 
 # maximum_adjacency_visit
 MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
