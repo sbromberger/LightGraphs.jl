@@ -23,10 +23,11 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 predecessors of a given vertex.
 
 ### Performance
-Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order) 
+Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order)
 for better run-time.
-Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
+Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}`
 instead of `SparseMatrixCSC{Int64,Int64}`.
+If the graph is unweighted, use a breath first search instead.
 
 # Examples
 ```jldoctest
@@ -55,7 +56,7 @@ julia> ds.dists
 """
 function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
-    distmx::AbstractMatrix{T}=weights(g);
+    distmx::AbstractMatrix{T}=adjacency_matrix(g);
     allpaths=false,
     trackvertices=false
     ) where T <: Real where U <: Integer
@@ -66,51 +67,47 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     visited = zeros(Bool, nvg)
 
     pathcounts = zeros(UInt64, nvg)
-    preds = fill(Vector{U}(), nvg)
-    H = PriorityQueue{U,T}()
-    # fill creates only one array.
+    preds = fill(Vector{U}(), nvg) # fill creates only one array.
+    pq = PriorityQueue{U,T}()
 
     for src in srcs
         dists[src] = zero(T)
-        visited[src] = true
         pathcounts[src] = 1
-        H[src] = zero(T)
+        pq[src] = zero(T)
+        preds[src] = []
     end
 
     closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
     sizehint!(closest_vertices, nvg)
 
-    while !isempty(H)
-        u = dequeue!(H)
+    while !isempty(pq)
+        u, d = peek(pq) #(u, distance of u)
+        dists[u] = d
+        dequeue!(pq)
+        visited[u] = true
 
         if trackvertices
             push!(closest_vertices, u)
         end
 
-        d = dists[u] # Cannot be typemax if `u` is in the queue
         for v in outneighbors(g, u)
-            alt = d + distmx[u, v]
+            alt = d + distmx[u, v] #new distance to v via u
 
-            if !visited[v]
-                visited[v] = true
+            if alt < dists[v] #not visited or found a shorter path to visit
+                (visited[v]) && error("Negative weight cycle detected in Dijkstra's Algorithm.")
                 dists[v] = alt
                 parents[v] = u
-
-                pathcounts[v] += pathcounts[u]
-                if allpaths
-                    preds[v] = [u;]
-                end
-                H[v] = alt
-            elseif alt < dists[v]
-                dists[v] = alt
-                parents[v] = u
-                #615
                 pathcounts[v] = pathcounts[u]
+                pq[v] = alt
+
                 if allpaths
-                    resize!(preds[v], 1)
-                    preds[v][1] = u
+                    if isassigned(preds[v], 1)
+                        resize!(preds[v], 1)
+                        preds[v][1] = u
+                    else #first time accessing vertex v
+                        preds[v] = [u]
+                    end
                 end
-                H[v] = alt
             elseif alt == dists[v]
                 pathcounts[v] += pathcounts[u]
                 if allpaths
@@ -126,12 +123,6 @@ function dijkstra_shortest_paths(g::AbstractGraph,
                 push!(closest_vertices, s)
             end
         end
-    end
-
-    for src in srcs
-        pathcounts[src] = 1
-        parents[src] = 0
-        empty!(preds[src])
     end
 
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)

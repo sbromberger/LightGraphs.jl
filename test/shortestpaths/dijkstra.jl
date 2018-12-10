@@ -77,7 +77,6 @@
         ds = @inferred(dijkstra_shortest_paths(g, 1, m; allpaths=true))
         @test ds.pathcounts   == [1, 1, 1, 1, 2]
         @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
-        @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
 
         dm = @inferred(dijkstra_shortest_paths(g, 1; allpaths=true, trackvertices=true))
         @test dm.pathcounts       == [1, 1, 1, 1, 2]
@@ -92,5 +91,10 @@
     for g in testgraphs(G)
         dm = @inferred(dijkstra_shortest_paths(g, 1; allpaths=true, trackvertices=true))
         @test dm.closest_vertices == [1, 2, 3, 4, 5]
+    end
+
+    G = CompleteGraph(3)
+    for g in testgraphs(G)
+        @test_throws ErrorException dijkstra_shortest_paths(g, 1, I - ones(3,3))
     end
 end
