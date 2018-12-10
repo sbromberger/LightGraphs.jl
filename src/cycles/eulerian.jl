@@ -21,7 +21,10 @@ end
     eulerian_trail(g)
 
 Return `true` if graph `g` contains [Eulerian trail](https://en.wikipedia.org/wiki/Eulerian_path).
+<<<<<<< HEAD
 Note that a Eulerian Trail can have the same start and end vertex so all Eulerian Circuits are Trails as well.
+=======
+>>>>>>> 9873a0097520a3634cefa26ed3b5ff76173aae2d
 
 ### Implementation Notes
 Uses single call to iterative version of DFS.
