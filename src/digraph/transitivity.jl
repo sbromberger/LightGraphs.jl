@@ -12,6 +12,7 @@ This version of the function modifies the original graph.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
+    cg = copy(g)
     visited = Vector{Bool}(undef,nv(g))
     stack = Vector{eltype(g)}(undef,nv(g))
     for i in vertices(g)
@@ -23,7 +24,7 @@ function transitiveclosure! end
             w = stack[stacksize]
             stacksize -= 1
             if i != w || selflooped
-                add_edge!(g,i,w)
+                add_edge!(cg,i,w)
             end
             visited[w] = true
             for j in outneighbors(g,w)
@@ -33,6 +34,9 @@ function transitiveclosure! end
                 end
             end
         end
+    end
+    for e in edges(cg)
+        add_edge!(g,e)
     end
     return g
 end
