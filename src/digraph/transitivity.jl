@@ -1,21 +1,37 @@
 """
     transitiveclosure!(g, selflooped=false)
 
-Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm. If `selflooped` is true, add self loops to the graph.
+Compute the transitive closure of a directed graph, using DFS.
+If `selflooped` is true, add self loops to the graph.
 
 ### Performance
-Time complexity is ``\\mathcal{O}(|V|^3)``.
+Time complexity is ``\\mathcal{O}(|E||V|)``.
 
 ### Implementation Notes
 This version of the function modifies the original graph.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
-    for k in vertices(g)
-        for i in inneighbors(g, k), j in outneighbors(g, k)
-            ((!selflooped && i == j) || i == k || j == k) && continue
-            add_edge!(g, i, j)      
+    visited = Vector{Bool}(undef,nv(g))
+    stack = Vector{eltype(g)}(undef,nv(g))
+    for i in vertices(g)
+        fill!(visited,false)
+        stacksize = 0
+        stacksize += 1
+        stack[stacksize] = i
+        while stacksize > 0
+            w = stack[stacksize]
+            stacksize -= 1
+            if i != w || selflooped
+                add_edge!(g,i,w)
+            end
+            visited[w] = true
+            for j in outneighbors(g,w)
+                if !visited[j]
+                    stacksize += 1
+                    stack[stacksize] = j
+                end
+            end
         end
     end
     return g
@@ -24,12 +40,12 @@ end
 """
     transitiveclosure(g, selflooped=false)
 
-Compute the transitive closure of a directed graph, using the Floyd-Warshall
-algorithm. Return a graph representing the transitive closure. If `selflooped`
+Compute the transitive closure of a directed graph, using DFS.
+Return a graph representing the transitive closure. If `selflooped`
 is `true`, add self loops to the graph.
 
 ### Performance
-Time complexity is ``\\mathcal{O}(|V|^3)``.
+Time complexity is ``\\mathcal{O}(|E||V|)``.
 
 # Examples
 ```jldoctest
@@ -134,14 +150,14 @@ julia> collect(edges(transitivereduction(barbell)))
 """
 function transitivereducion end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
-    scc = strongly_connected_components(g) 
-    cg = condensation(g, scc) 
+    scc = strongly_connected_components(g)
+    cg = condensation(g, scc)
 
-    reachable = Vector{Bool}(undef, nv(cg)) 
+    reachable = Vector{Bool}(undef, nv(cg))
     visited = Vector{Bool}(undef, nv(cg))
-    stack = Vector{eltype(cg)}(undef, nv(cg)) 
+    stack = Vector{eltype(cg)}(undef, nv(cg))
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
-    
+
 # Calculate the transitive reduction of the acyclic condensation graph.
     @inbounds(
     for u in vertices(cg)
@@ -181,7 +197,7 @@ function transitivereducion end
     @inbounds(
     for component in scc
         nvc = length(component)
-        if nvc == 1 
+        if nvc == 1
             if selflooped && has_edge(g, component[1], component[1])
                 add_edge!(resultg, component[1], component[1])
             end
@@ -195,4 +211,3 @@ function transitivereducion end
 
     return resultg
 end
-
