@@ -21,6 +21,9 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 ### Optional Arguments
 - `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
+- `trackvertices=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of the
+order of insertion into the priority queue (i.e. distance from source). Vertices not reachable from source
+are appended to the end of the list.
 
 ### Performance
 Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order)
@@ -56,7 +59,7 @@ julia> ds.dists
 """
 function dijkstra_shortest_paths(g::AbstractGraph,
     srcs::Vector{U},
-    distmx::AbstractMatrix{T}=adjacency_matrix(g);
+    distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false
     ) where T <: Real where U <: Integer
