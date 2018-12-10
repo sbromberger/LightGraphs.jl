@@ -12,7 +12,7 @@ This version of the function modifies the original graph.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
-    cg = copy(g)
+    cg = SimpleDiGraph{eltype(g)}(nv(g))
     visited = Vector{Bool}(undef,nv(g))
     stack = Vector{eltype(g)}(undef,nv(g))
     for i in vertices(g)
