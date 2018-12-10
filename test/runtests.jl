@@ -34,6 +34,7 @@ tests = [
     "cycles/karp",
     "cycles/basis",
     "cycles/limited_length",
+    "cycles/eulerian",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
