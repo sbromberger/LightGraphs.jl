@@ -30,7 +30,7 @@ Use a matrix type for `distmx` that is implemented in [row-major matrix format](
 for better run-time.
 Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}`
 instead of `SparseMatrixCSC{Int64,Int64}`.
-If the graph is unweighted, use a breath first search instead.
+If the graph is unweighted, use a breadth first search instead.
 
 # Examples
 ```jldoctest
@@ -65,6 +65,10 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     ) where T <: Real where U <: Integer
 
     nvg = nv(g)
+    @boundscheck  if !(size(distmx,1) == size(distmx,2) == nvg)
+        error("In dijkstra_shortest_paths, $(size(distmx,1)) by $(size(distmx,2)) matrix used for edge weights of a graph with $nvg vertices.")
+    end
+
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
@@ -80,13 +84,12 @@ function dijkstra_shortest_paths(g::AbstractGraph,
         preds[src] = []
     end
 
-    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
+    closest_vertices = Vector{U}()  #maintains vertices in order of distances from source
     sizehint!(closest_vertices, nvg)
 
-    while !isempty(pq)
-        u, d = peek(pq) #(u, distance of u)
+    @inbounds while !isempty(pq)
+        u, d = dequeue_pair!(pq) #(u, distance of u)
         dists[u] = d
-        dequeue!(pq)
         visited[u] = true
 
         if trackvertices
@@ -121,7 +124,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     end
 
     if trackvertices
-        for s in vertices(g)
+        @inbounds for s in vertices(g)
             if !visited[s]
                 push!(closest_vertices, s)
             end
