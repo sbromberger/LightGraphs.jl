@@ -30,7 +30,6 @@ Use a matrix type for `distmx` that is implemented in [row-major matrix format](
 for better run-time.
 Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}`
 instead of `SparseMatrixCSC{Int64,Int64}`.
-If the graph is unweighted, use a breadth first search instead.
 
 # Examples
 ```jldoctest
@@ -65,9 +64,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     ) where T <: Real where U <: Integer
 
     nvg = nv(g)
-    @boundscheck  if !(size(distmx,1) == size(distmx,2) == nvg)
-        error("In dijkstra_shortest_paths, $(size(distmx,1)) by $(size(distmx,2)) matrix used for edge weights of a graph with $nvg vertices.")
-    end
+    @boundscheck checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
 
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
