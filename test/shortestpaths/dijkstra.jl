@@ -81,7 +81,7 @@
         dm = @inferred(dijkstra_shortest_paths(g, 1; allpaths=true, trackvertices=true))
         @test dm.pathcounts       == [1, 1, 1, 1, 2]
         @test dm.predecessors     == [[], [1], [1], [3], [2, 3]]
-        @test dm.closest_vertices == [1, 2, 3, 5, 4]
+        @test dm.closest_vertices == [1, 2, 3, 4, 5]
     end
 
     G = SimpleGraph(5)

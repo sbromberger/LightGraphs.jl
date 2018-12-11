@@ -71,13 +71,13 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     visited = zeros(Bool, nvg)
 
     pathcounts = zeros(UInt64, nvg)
-    preds = fill(Vector{U}(), nvg) # fill creates only one array.
-    pq = PriorityQueue{U,T}()
+    preds = fill(Vector{U}(), nvg) #fill creates only one array.
+    pq = binary_minheap(Tuple{T, U}) #heaps avoid costly decrease_key operation
 
     for src in srcs
         dists[src] = zero(T)
         pathcounts[src] = 1
-        pq[src] = zero(T)
+        push!(pq, (zero(T), src))
         preds[src] = []
     end
 
@@ -85,8 +85,8 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     sizehint!(closest_vertices, nvg)
 
     @inbounds while !isempty(pq)
-        u, d = dequeue_pair!(pq) #(u, distance of u)
-        dists[u] = d
+        d, u = pop!(pq) #(distance of u, u)
+        visited[u] && continue #without using decrease_key, it is possible for the pq to contain multiple copies of u
         visited[u] = true
 
         if trackvertices
@@ -94,14 +94,14 @@ function dijkstra_shortest_paths(g::AbstractGraph,
         end
 
         for v in outneighbors(g, u)
+            (distmx[u,v] < 0) && error("Negative edges detected. Use bellman_ford_shortest_paths instead.")
             alt = d + distmx[u, v] #new distance to v via u
 
             if alt < dists[v] #not visited or found a shorter path to visit
-                (visited[v]) && error("Negative weight cycle detected in Dijkstra's Algorithm.")
                 dists[v] = alt
                 parents[v] = u
                 pathcounts[v] = pathcounts[u]
-                pq[v] = alt
+                push!(pq, (alt, convert(U,v)))
 
                 if allpaths
                     if isassigned(preds[v], 1)
