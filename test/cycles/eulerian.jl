@@ -1,5 +1,6 @@
 @testset "Eulerian traits and circuits" begin
 
+    # Test with undirected graphs
     # Simple connected graph with cyclic and acyclic part
     g1 = SimpleGraph(5)
     add_edge!(g1, 2, 1)
@@ -66,7 +67,7 @@
     @test @inferred has_eulerian_trail(g8)
     @test @inferred has_eulerian_circuit(g8)
 
-    #SimpleGraph with self-loops and multiedge
+    #SimpleGraph with multiedge
     g9 = SimpleGraph(2)
     add_edge!(g9, 1, 1)
     add_edge!(g9, 1, 2)
@@ -74,5 +75,59 @@
     add_edge!(g9, 2, 2)
     @test @inferred has_eulerian_trail(g9)
     @test @inferred has_eulerian_circuit(g9)
+
+    #SimpleGraph with self-loops
+    g10 = SimpleGraph(3)
+    add_edge!(g10, 1, 1)
+    add_edge!(g10, 1, 1)
+    add_edge!(g10, 2, 2)
+    add_edge!(g10, 3, 3)
+    @test @inferred !has_eulerian_trail(g10)
+    @test @inferred !has_eulerian_circuit(g10)
+
+    # Test with directed graphs
+    # Simple Cyclic graph
+    dg1 = SimpleDiGraph(4)
+    add_edge!(dg1, 1, 2)
+    add_edge!(dg1, 2, 3)
+    add_edge!(dg1, 3, 1)
+    add_edge!(dg1, 3, 4)
+    @test @inferred has_eulerian_trail(dg1)
+    @test @inferred !has_eulerian_circuit(dg1)
+
+    # SimpleDiGraph with no edge
+    dg2 = SimpleDiGraph(3)
+    @test @inferred has_eulerian_trail(dg2)
+    @test @inferred has_eulerian_circuit(dg2)
+
+    #SimpleDiGraph with disconnected components
+    dg3 = SimpleDiGraph(6)
+    add_edge!(dg3, 2, 1)
+    add_edge!(dg3, 1, 3)
+    add_edge!(dg3, 3, 2)
+    add_edge!(dg3, 4, 5)
+    add_edge!(dg3, 5, 6)
+    add_edge!(dg3, 6, 4)
+    @test @inferred !has_eulerian_trail(dg3)
+    @test @inferred !has_eulerian_circuit(dg3)
+
+    #SimpleDiGraph with zero node
+    dg4 = SimpleDiGraph(0)
+    @test @inferred has_eulerian_trail(dg4)
+    @test @inferred has_eulerian_circuit(dg4)
+    
+    #SimpleDiGraph with one node and no edge
+    dg5 = SimpleDiGraph(1)
+    @test @inferred has_eulerian_trail(dg5)
+    @test @inferred has_eulerian_circuit(dg5)
+
+    #SimpleDiGraph with self-loops
+    dg6 = SimpleDiGraph(3)
+    add_edge!(dg6, 1, 1)
+    add_edge!(dg6, 1, 1)
+    add_edge!(dg6, 2, 2)
+    add_edge!(dg6, 3, 3)
+    @test @inferred !has_eulerian_trail(dg6)
+    @test @inferred !has_eulerian_circuit(dg6)
 
 end
