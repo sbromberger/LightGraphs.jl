@@ -61,8 +61,10 @@ function has_eulerian_trail end
     single_nonzero_degree_component(graph) || return false
     odd = 0
     for v in vertices(graph)
-        if isodd(outdegree(graph, v))
-            odd+=1
+        if (has_edge(graph, v, v) && iseven(outdegree(graph, v))) 
+            odd += 1
+        elseif (!has_edge(graph, v, v) && isodd(outdegree(graph, v)))
+            odd += 1
         end
     end
 
@@ -113,8 +115,10 @@ function has_eulerian_circuit end
     single_nonzero_degree_component(graph) || return false
     odd = 0
     for v in vertices(graph)
-        if isodd(outdegree(graph, v))
-            odd+=1
+        if (has_edge(graph, v, v) && iseven(outdegree(graph, v))) 
+            odd += 1
+        elseif (!has_edge(graph, v, v) && isodd(outdegree(graph, v)))
+            odd += 1
         end
     end
 
@@ -133,4 +137,85 @@ function has_eulerian_circuit end
     end
 
     return true
+end
+
+"""
+    eulerian_circuit(g)
+
+Return array for vertices representing Eulerian circuit if graph `g` contains [Eulerian circuit](https://en.wikipedia.org/wiki/Eulerian_path) otherwise throws error.
+
+### Implementation Notes
+Implemented Hierholzer's algorithm to find Eulerian circuit.
+The idea is to keep following unused edges and removing them until we get stuck.
+Once we get stuck, we back-track to the nearest vertex in our current path that has unused edges, and we repeat the process until all the edges have been used.
+For undirected graph, made a copy of adjacency list and deleted edges from it while iterating.
+For directed graph, since each edge is in one vertex's adjacency, it can be virtually removed it by decrementing the edge_count.
+"""
+function eulerian_circuit end
+@traitfn function eulerian_circuit(
+    graph::AG::(IsDirected)
+    ) where {T, AG <: AbstractGraph{T}}
+    
+    has_eulerian_circuit(graph) || throw(ArgumentError("Graph do not have Eulerian circuit."))
+    circuit = Vector{T}()
+    iszero(nv(graph)) && return circuit
+    iszero(ne(graph)) && return [vertices(graph)[1]]
+
+    edge_count = collect(outdegree(graph))
+    current_path = Vector{T}([1])
+    current_vertex = 1
+    iszero(ne(graph)) && return circuit
+
+    while !isempty(current_path)
+        if !iszero(edge_count[current_vertex])
+            push!(current_path, current_vertex)
+            next_vertex = neighbors(graph, current_vertex)[edge_count[current_vertex]]
+            edge_count[current_vertex] -= 1
+            current_vertex = next_vertex
+        else
+            push!(circuit, current_vertex)
+            current_vertex = current_path[end]
+            pop!(current_path)
+        end
+    end
+    
+    return reverse!(circuit)
+end
+
+function eulerian_circuit end
+@traitfn function eulerian_circuit(
+    graph::AG::(!IsDirected)
+    ) where {T, AG <: AbstractGraph{T}}
+
+    has_eulerian_circuit(graph) || throw(ArgumentError("Graph do not have Eulerian circuit."))
+    circuit = Vector{T}()
+    iszero(nv(graph)) && return circuit
+    iszero(ne(graph)) && return [vertices(graph)[1]]
+
+    edge_count = collect(outdegree(graph))
+    out_neighbor = Dict()
+    for v in vertices(graph)
+        out_neighbor[v] = collect(neighbors(graph,v))
+    end
+    current_path = Vector{T}([1])
+    current_vertex = 1
+    iszero(ne(graph)) && return circuit
+
+    while !isempty(current_path)
+        if !iszero(edge_count[current_vertex])
+            push!(current_path, current_vertex)
+            next_vertex = out_neighbor[current_vertex][end]
+            pop!(out_neighbor[current_vertex])
+            !iszero(length(out_neighbor[next_vertex])) && deleteat!(out_neighbor[next_vertex], findfirst(x -> x == current_vertex, out_neighbor[next_vertex]))            
+            edge_count[current_vertex] -= 1
+            edge_count[next_vertex] -= 1
+            current_vertex = next_vertex
+        else
+            push!(circuit, current_vertex)
+            current_vertex = current_path[end]
+            pop!(current_path)
+        end
+    end
+
+    return reverse!(circuit)
 end
