@@ -97,4 +97,8 @@
     for g in testgraphs(G)
         @test_throws ErrorException dijkstra_shortest_paths(g, 1, I - ones(3,3))
     end
+
+    G = erdos_renyi(100, 0.9; is_directed = true)
+    dm = dijkstra_shortest_paths(G, 1, rand(100,100); trackvertices = true)
+    @test issorted([dm.dists[dm.closest_vertices[i]] for i in 1:100])
 end
