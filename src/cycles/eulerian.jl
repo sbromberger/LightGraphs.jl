@@ -51,7 +51,8 @@ Note that a Eulerian Trail can have the same start and end vertex so all Euleria
 Uses single call to iterative version of DFS to check for the existence of a single component with non-zero degree in single_nonzero_degree_component().
 Condition for Eulerian trail :
 For undirected graph, if nodes with odd degree are at most 2.
-For directed graph,  if at most one vertex has (out-degree) − (in-degree) = 1, at most one vertex has (in-degree) − (out-degree) = 1
+For directed graph,  if at most one vertex has (out-degree) − (in-degree) = 1, at most one vertex has (in-degree) − (out-degree) = 1.
+Since degree() accounts only once of self loop in directed graph, incremented degree by 1 for the algorithm to work in undirected graphs.
 """
 function has_eulerian_trail end
 @traitfn function has_eulerian_trail(
@@ -106,6 +107,7 @@ Uses single call to iterative version of DFS to check for the existence of a sin
 Condition for Eulerian circuit :
 For undirected graph, if all nodes have even degree.
 For directed graph,  if all nodes have (out-degree) = (in-degree).
+Since degree() accounts only once of self loop in directed graph, incremented degree by 1 for the algorithm to work in undirected graphs.
 """
 function has_eulerian_circuit end
 @traitfn function has_eulerian_circuit(
@@ -150,6 +152,7 @@ The idea is to keep following unused edges and removing them until we get stuck.
 Once we get stuck, we back-track to the nearest vertex in our current path that has unused edges, and we repeat the process until all the edges have been used.
 For undirected graph, made a copy of adjacency list and deleted edges from it while iterating.
 For directed graph, since each edge is in one vertex's adjacency, it can be virtually removed it by decrementing the edge_count.
+Since degree() accounts only once of self loop in directed graph, incremented degree by 1 for the algorithm to work in undirected graphs.
 """
 function eulerian_circuit end
 @traitfn function eulerian_circuit(
@@ -164,7 +167,6 @@ function eulerian_circuit end
     edge_count = collect(outdegree(graph))
     current_path = Vector{T}([1])
     current_vertex = 1
-    iszero(ne(graph)) && return circuit
 
     while !isempty(current_path)
         if !iszero(edge_count[current_vertex])
@@ -193,13 +195,15 @@ function eulerian_circuit end
     iszero(ne(graph)) && return [vertices(graph)[1]]
 
     edge_count = collect(outdegree(graph))
+    for v in vertices(graph)
+        has_edge(graph, v, v) && (edge_count[v] += 1)
+    end
     out_neighbor = Dict()
     for v in vertices(graph)
         out_neighbor[v] = collect(neighbors(graph,v))
     end
     current_path = Vector{T}([1])
     current_vertex = 1
-    iszero(ne(graph)) && return circuit
 
     while !isempty(current_path)
         if !iszero(edge_count[current_vertex])
@@ -218,4 +222,100 @@ function eulerian_circuit end
     end
 
     return reverse!(circuit)
+end
+
+"""
+    eulerian_trail(g)
+
+Return array for vertices representing Eulerian trail if graph `g` contains [Eulerian trail](https://en.wikipedia.org/wiki/Eulerian_path) otherwise throws error.
+
+### Implementation Notes
+Implemented Hierholzer's algorithm to find Eulerian trail.
+The idea is to keep following unused edges and removing them until we get stuck.
+Once we get stuck, we back-track to the nearest vertex in our current path that has unused edges, and we repeat the process until all the edges have been used.
+For undirected graph, made a copy of adjacency list and deleted edges from it while iterating.
+For directed graph, since each edge is in one vertex's adjacency, it can be virtually removed it by decrementing the edge_count.
+For Eulerian trail we start tracking the path from vertices with odd degree in case of undirected graph and for directed graph from a vertex having outdegree - indegree = 1, if exists.
+Since degree() accounts only once of self loop in directed graph, incremented degree by 1 for the algorithm to work in undirected graphs.
+"""
+function eulerian_trail end
+@traitfn function eulerian_trail(
+    graph::AG::(IsDirected)
+    ) where {T, AG <: AbstractGraph{T}}
+    
+    has_eulerian_trail(graph) || throw(ArgumentError("Graph do not have Eulerian trail."))
+    trail = Vector{T}()
+    iszero(nv(graph)) && return trail
+    iszero(ne(graph)) && return [vertices(graph)[1]]
+
+    edge_count = collect(outdegree(graph))
+    current_vertex = 1
+    for v in vertices(graph)
+        if outdegree(graph, v) - indegree(graph, v) == 1
+            current_vertex = v
+            break
+        end
+    end
+    current_path = Vector{T}([current_vertex])
+
+    while !isempty(current_path)
+        if !iszero(edge_count[current_vertex])
+            push!(current_path, current_vertex)
+            next_vertex = neighbors(graph, current_vertex)[edge_count[current_vertex]]
+            edge_count[current_vertex] -= 1
+            current_vertex = next_vertex
+        else
+            push!(trail, current_vertex)
+            current_vertex = current_path[end]
+            pop!(current_path)
+        end
+    end
+    
+    return reverse!(trail)
+end
+
+function eulerian_trail end
+@traitfn function eulerian_trail(
+    graph::AG::(!IsDirected)
+    ) where {T, AG <: AbstractGraph{T}}
+
+    has_eulerian_trail(graph) || throw(ArgumentError("Graph do not have Eulerian trail."))
+    trail = Vector{T}()
+    iszero(nv(graph)) && return trail
+    iszero(ne(graph)) && return [vertices(graph)[1]]
+
+    current_vertex = 1
+    edge_count = collect(outdegree(graph))
+    for v in vertices(graph)
+        has_edge(graph, v, v) && (edge_count[v] += 1)
+    end
+    for v in vertices(graph)
+        if isodd(edge_count[v])
+            current_vertex = v
+            break
+        end
+    end
+    out_neighbor = Dict()
+    for v in vertices(graph)
+        out_neighbor[v] = collect(neighbors(graph,v))
+    end
+    current_path = Vector{T}([current_vertex])
+
+    while !isempty(current_path)
+        if !iszero(edge_count[current_vertex])
+            push!(current_path, current_vertex)
+            next_vertex = out_neighbor[current_vertex][end]
+            pop!(out_neighbor[current_vertex])
+            !iszero(length(out_neighbor[next_vertex])) && deleteat!(out_neighbor[next_vertex], findfirst(x -> x == current_vertex, out_neighbor[next_vertex]))            
+            edge_count[current_vertex] -= 1
+            edge_count[next_vertex] -= 1
+            current_vertex = next_vertex
+        else
+            push!(trail, current_vertex)
+            current_vertex = current_path[end]
+            pop!(current_path)
+        end
+    end
+
+    return reverse!(trail)
 end

@@ -16,6 +16,23 @@
         iszero(ne(graph)) && return true
         return false
     end
+
+    function check_trail(original_graph, trail)
+        
+        graph = copy(original_graph)
+        length(trail) < 2 && return true
+        start = trail[1]
+        splice!(trail, 1)
+        while !isempty(trail)
+            v = trail[1]
+            rem_edge!(graph, start, v)
+            start = v
+            splice!(trail, 1)
+        end
+        iszero(ne(graph)) && return true
+        return false
+    end
+
     # Test with undirected graphs
     # Simple connected graph with cyclic and acyclic part
     g1 = SimpleGraph(5)
@@ -26,6 +43,7 @@
     add_edge!(g1, 4, 5)
     @test @inferred has_eulerian_trail(g1)
     @test @inferred !has_eulerian_circuit(g1)
+    @test @inferred check_trail(g1, eulerian_trail(g1))
     @test_throws ArgumentError eulerian_circuit(g1)
 
     # Cycles with common vertex
@@ -38,6 +56,7 @@
     add_edge!(g2, 5, 1)
     @test @inferred has_eulerian_trail(g2)
     @test @inferred has_eulerian_circuit(g2)
+    @test @inferred check_trail(g2, eulerian_trail(g2))
     @test @inferred check_circuit(g2, eulerian_circuit(g2))
 
     # Cycles with common edge
@@ -50,6 +69,7 @@
     add_edge!(g3, 2, 4)
     @test @inferred !has_eulerian_trail(g3)
     @test @inferred !has_eulerian_circuit(g3)
+    @test_throws ArgumentError eulerian_trail(g3)
     @test_throws ArgumentError eulerian_circuit(g3)
 
     # Simple Cyclic graph
@@ -59,12 +79,14 @@
     add_edge!(g4, 3, 1)
     @test @inferred has_eulerian_trail(g4)
     @test @inferred has_eulerian_circuit(g4)
+    @test @inferred check_trail(g4, eulerian_trail(g4))
     @test @inferred check_circuit(g4, eulerian_circuit(g4))
 
     # SimpleGraph with no edge
     g5 = SimpleGraph(3)
     @test @inferred has_eulerian_trail(g5)
     @test @inferred has_eulerian_circuit(g5)
+    @test @inferred check_trail(g5, eulerian_trail(g5))
     @test @inferred check_circuit(g5, eulerian_circuit(g5))
 
     #SimpleGraph with disconnected components
@@ -77,18 +99,21 @@
     add_edge!(g6, 6, 4)
     @test @inferred !has_eulerian_trail(g6)
     @test @inferred !has_eulerian_circuit(g6)
+    @test_throws ArgumentError eulerian_trail(g6)
     @test_throws ArgumentError eulerian_circuit(g6)
 
     #SimpleGraph with zero node
     g7 = SimpleGraph(0)
     @test @inferred has_eulerian_trail(g7)
     @test @inferred has_eulerian_circuit(g7)
+    @test @inferred check_trail(g7, eulerian_trail(g7))
     @test @inferred check_circuit(g7, eulerian_circuit(g7))
     
     #SimpleGraph with one node and no edge
     g8 = SimpleGraph(1)
     @test @inferred has_eulerian_trail(g8)
     @test @inferred has_eulerian_circuit(g8)
+    @test @inferred check_trail(g8, eulerian_trail(g8))
     @test @inferred check_circuit(g8, eulerian_circuit(g8))
 
     #SimpleGraph with self-loops
@@ -98,6 +123,7 @@
     add_edge!(g9, 2, 2)
     @test @inferred has_eulerian_trail(g9)
     @test @inferred !has_eulerian_circuit(g9)
+    @test @inferred check_trail(g9, eulerian_trail(g9))
     @test_throws ArgumentError eulerian_circuit(g9)
 
     #SimpleGraph with self-loops
@@ -108,6 +134,7 @@
     add_edge!(g10, 3, 3)
     @test @inferred !has_eulerian_trail(g10)
     @test @inferred !has_eulerian_circuit(g10)
+    @test_throws ArgumentError eulerian_trail(g10)
     @test_throws ArgumentError eulerian_circuit(g10)
 
     # Test with directed graphs
@@ -119,12 +146,14 @@
     add_edge!(dg1, 3, 4)
     @test @inferred has_eulerian_trail(dg1)
     @test @inferred !has_eulerian_circuit(dg1)
+    @test @inferred check_trail(dg1, eulerian_trail(dg1))
     @test_throws ArgumentError eulerian_circuit(dg1)
 
     # SimpleDiGraph with no edge
     dg2 = SimpleDiGraph(3)
     @test @inferred has_eulerian_trail(dg2)
     @test @inferred has_eulerian_circuit(dg2)
+    @test @inferred check_trail(dg2, eulerian_trail(dg2))
     @test @inferred check_circuit(dg2, eulerian_circuit(dg2))
 
     #SimpleDiGraph with disconnected components
@@ -137,18 +166,21 @@
     add_edge!(dg3, 6, 4)
     @test @inferred !has_eulerian_trail(dg3)
     @test @inferred !has_eulerian_circuit(dg3)
+    @test_throws ArgumentError eulerian_trail(dg3)
     @test_throws ArgumentError eulerian_circuit(dg3)
 
     #SimpleDiGraph with zero node
     dg4 = SimpleDiGraph(0)
     @test @inferred has_eulerian_trail(dg4)
     @test @inferred has_eulerian_circuit(dg4)
+    @test @inferred check_trail(dg4, eulerian_trail(dg4))
     @test @inferred check_circuit(dg4, eulerian_circuit(dg4))
     
     #SimpleDiGraph with one node and no edge
     dg5 = SimpleDiGraph(1)
     @test @inferred has_eulerian_trail(dg5)
     @test @inferred has_eulerian_circuit(dg5)
+    @test @inferred check_trail(dg5, eulerian_trail(dg5))
     @test @inferred check_circuit(dg5, eulerian_circuit(dg5))
 
     #SimpleDiGraph with self-loops
@@ -159,6 +191,7 @@
     add_edge!(dg6, 3, 3)
     @test @inferred !has_eulerian_trail(dg6)
     @test @inferred !has_eulerian_circuit(dg6)
+    @test_throws ArgumentError eulerian_trail(dg6)
     @test_throws ArgumentError eulerian_circuit(dg6)
 
 end
