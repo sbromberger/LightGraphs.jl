@@ -12,31 +12,38 @@ This version of the function modifies the original graph.
 """
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
-    cg = SimpleDiGraph{eltype(g)}(nv(g))
-    visited = Vector{Bool}(undef,nv(g))
-    stack = Vector{eltype(g)}(undef,nv(g))
-    for i in vertices(g)
-        fill!(visited,false)
-        stacksize = 0
-        stacksize += 1
-        stack[stacksize] = i
-        while stacksize > 0
-            w = stack[stacksize]
-            stacksize -= 1
-            if i != w || selflooped
-                add_edge!(cg,i,w)
-            end
-            visited[w] = true
-            for j in outneighbors(g,w)
-                if !visited[j]
-                    stacksize += 1
-                    stack[stacksize] = j
-                end
+    scc = strongly_connected_components(g)
+    cg = condensation(g, scc)
+    tp = reverse(topological_sort_by_dfs(cg))
+    sr = Array{Array{eltype(cg),1},1}(undef,nv(cg))
+    for i in vertices(cg)
+        sr[i] = [0]
+    end
+    x = selflooped ? 0 : 1
+    for comp in scc
+        for j in 1:(length(comp)-x)
+            for k in (j+x):length(comp)
+                add_edge!(g,comp[j],comp[k])
+                add_edge!(g,comp[k],comp[j])
             end
         end
     end
-    for e in edges(cg)
-        add_edge!(g,e)
+    for u in tp
+        for v in outneighbors(cg,u)
+            union!(sr[u],sr[v],[v])
+        end
+    end
+    for i in vertices(cg)
+        for u in scc[i]
+            for j in sr[i]
+                if j == 0
+                    continue
+                end
+                for v in scc[j]
+                    add_edge!(g,u,v)
+                end
+            end
+        end
     end
     return g
 end
