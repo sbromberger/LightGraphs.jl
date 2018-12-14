@@ -478,3 +478,101 @@ function CircularLadderGraph(n::T) where {T <: Integer}
     add_edge!(g, n+1, 2*n)
     return g
 end
+
+"""
+    BarbellGraph(n)
+
+Create a [barbell graph](https://en.wikipedia.org/wiki/Barbell_graph) consisting of a clique of size `n1` connected by an edge to a clique of size `n2`.
+
+### Implementation Notes
+Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
+exceeds the eltype.
+`n1` and `n2` must be at least 1 so that both cliques are non-empty.
+"""
+function BarbellGraph(n1::T, n2::T) where {T <: Integer}
+    (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
+
+    if n1 == 1 && n2 == 1
+        return PathGraph(T(2))
+    elseif n1 > 1 && n2 == 1
+        g = CompleteGraph(n1)
+        add_vertex!(g)
+        add_edge!(g, n1, n1+1)
+        return g
+    elseif n1 == 1 && n2 > 1
+        g = blockdiag(PathGraph(T(1)), CompleteGraph(n2))
+        add_edge!(g, 1, 2)
+        return g
+    end
+
+    Tw = widen(T)
+    temp = T(Tw(n1)+Tw(n2)) # test to check if T is large enough
+
+    fadjlist = Vector{Vector{T}}(undef, n1+n2)
+    ne = Int(n1*(n1-1)/2 + n2*(n2-1)/2)
+
+    @inbounds @simd for u = 1:n1
+        listu = Vector{T}(undef, n1-1)
+        listu[1:(u-1)] = 1:(u - 1)
+        listu[u:(n1-1)] = (u + 1):n1
+        fadjlist[u] = listu
+    end
+
+    @inbounds for u = 1:n2
+        listu = Vector{T}(undef, n2-1)
+        listu[1:(u-1)] = (n1+1):(n1+(u-1))
+        listu[u:(n2-1)] = (n1+u+1):(n1+n2)
+        fadjlist[n1+u] = listu
+    end
+
+    g = SimpleGraph(ne, fadjlist)
+    add_edge!(g, n1, n1+1)
+    return g
+end
+
+"""
+    LollipopGraph(n)
+
+Create a [lollipop graph](https://en.wikipedia.org/wiki/Barbell_graph) consisting of a clique of size `n1` connected by an edge to a path of size `n2`.
+
+### Implementation Notes
+Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
+exceeds the eltype.
+`n1` and `n2` must be at least 1 so that both the clique and the path have at least one vertex.
+"""
+function LollipopGraph(n1::T, n2::T) where {T <: Integer}
+    (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
+
+    if n1 == 1
+        return PathGraph(T(n2+1))
+    elseif n1 > 1 && n2 == 1
+        g = CompleteGraph(n1)
+        add_vertex!(g)
+        add_edge!(g, n1, n1+1)
+        return g
+    end
+
+    Tw = widen(T)
+    temp = T(Tw(n1)+Tw(n2)) # test to check if T is large enough
+    ne = Int(n1*(n1-1)/2 + n2-1)
+
+    fadjlist = Vector{Vector{T}}(undef, n1+n2)
+
+    @inbounds @simd for u = 1:n1
+        listu = Vector{T}(undef, n1-1)
+        listu[1:(u-1)] = 1:(u - 1)
+        listu[u:(n1-1)] = (u + 1):n1
+        fadjlist[u] = listu
+    end
+
+    @inbounds fadjlist[n1+1] = T[n1+2]
+    @inbounds fadjlist[n1+n2] = T[n1+n2-1]
+
+    @inbounds @simd for u = (n1+2):(n1+n2-1)
+        fadjlist[u] = T[u - 1, u + 1]
+    end
+
+    g = SimpleGraph(ne, fadjlist)
+    add_edge!(g, n1, n1+1)
+    return g
+end

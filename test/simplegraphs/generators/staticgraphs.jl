@@ -403,4 +403,62 @@
     @test_throws DomainError CircularLadderGraph(0)
     @test_throws DomainError CircularLadderGraph(1)
     @test_throws DomainError CircularLadderGraph(2)
+
+    function isbarbellgraph(g, n1, n2)
+      h = blockdiag(CompleteGraph(n1), CompleteGraph(n2))
+      add_edge!(h, n1, n1+1)
+      return g == h
+    end
+
+    g = @inferred(BarbellGraph(5, 6))
+    @test nv(g) == 11 && ne(g) == 26
+    @test isvalid_simplegraph(g)
+    @test isbarbellgraph(g, 5, 6)
+    g = BarbellGraph(Int8(5), Int8(6))
+    @test nv(g) == 11 && ne(g) == 26
+    @test isvalid_simplegraph(g)
+    @test isbarbellgraph(g, 5, 6)
+    # extreme values
+    g = BarbellGraph(1, 5)
+    @test nv(g) == 6 && ne(g) == 11
+    @test isbarbellgraph(g, 1, 5)
+    g = BarbellGraph(5, 1)
+    @test nv(g) == 6 && ne(g) == 11
+    @test isbarbellgraph(g, 5, 1)
+    g = BarbellGraph(1, 1)
+    @test nv(g) == 2 && ne(g) == 1
+    @test isbarbellgraph(g, 1, 1)
+    @test_throws InexactError BarbellGraph(Int8(100), Int8(50))
+    @test_throws DomainError BarbellGraph(1, 0)
+    @test_throws DomainError BarbellGraph(0, 1)
+    @test_throws DomainError BarbellGraph(-1, -1)
+
+    function islollipopgraph(g, n1, n2)
+      h = blockdiag(CompleteGraph(n1), PathGraph(n2))
+      add_edge!(h, n1, n1+1)
+      return g == h
+    end
+
+    g = @inferred(LollipopGraph(3, 5))
+    @test nv(g) == 8 && ne(g) == 8
+    @test isvalid_simplegraph(g)
+    @test islollipopgraph(g, 3, 5)
+    g = LollipopGraph(Int8(7), Int8(6))
+    @test nv(g) == 13 && ne(g) == 27
+    @test isvalid_simplegraph(g)
+    @test islollipopgraph(g, 7, 6)
+    # extreme values
+    g = LollipopGraph(1, 3)
+    @test nv(g) == 4 && ne(g) == 3
+    @test islollipopgraph(g, 1, 3)
+    g = LollipopGraph(3, 1)
+    @test nv(g) == 4 && ne(g) == 4
+    @test islollipopgraph(g, 3, 1)
+    g = LollipopGraph(1, 1)
+    @test nv(g) == 2 && ne(g) == 1
+    @test islollipopgraph(g, 1, 1)
+    @test_throws InexactError LollipopGraph(Int8(100), Int8(50))
+    @test_throws DomainError LollipopGraph(1, 0)
+    @test_throws DomainError LollipopGraph(0, 1)
+    @test_throws DomainError LollipopGraph(-1, -1)
 end
