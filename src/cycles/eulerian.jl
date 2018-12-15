@@ -69,8 +69,7 @@ function has_eulerian_trail end
         end
     end
 
-    odd > 2 && return false
-    return true
+    return (odd <= 2)
 end
 
 function has_eulerian_trail end
@@ -93,8 +92,7 @@ function has_eulerian_trail end
         end
     end
 
-    (out_more > 1 || in_more > 1) && return false
-    return true
+    return !(out_more > 1 || in_more > 1)
 end
 
 """
@@ -124,8 +122,7 @@ function has_eulerian_circuit end
         end
     end
 
-    odd == 0 && return true
-    return false
+    return (odd == 0)
 end
 
 function has_eulerian_circuit end
