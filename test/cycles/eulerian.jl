@@ -157,6 +157,51 @@
         @test_throws ArgumentError eulerian_circuit(g)
     end
 
+    #Complete graph with odd number of nodes
+    g11 = CompleteGraph(11)
+    for g in testgraphs(g11)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    #Complete graph with even number of nodes
+    g12 = CompleteGraph(12)
+    for g in testgraphs(g12)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Star graph
+    g13 = StarGraph(10)
+    for g in testgraphs(g13)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Path graph
+    g14 = PathGraph(11)
+    for g in testgraphs(g14)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Wheel graph
+    g15 = WheelGraph(11)
+    for g in testgraphs(g15)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
     # Test with directed graphs
     # Simple Cyclic graph
     dg1 = SimpleDiGraph(4)
@@ -226,4 +271,48 @@
         @test_throws ArgumentError eulerian_circuit(g)
     end
 
+    #Complete graph with odd number of nodes
+    dg7 = CompleteDiGraph(11)
+    for g in testdigraphs(dg7)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    #Complete graph with even number of nodes
+    dg8 = CompleteDiGraph(12)
+    for g in testdigraphs(dg8)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    #Star graph
+    dg9 = StarDiGraph(10)
+    for g in testdigraphs(dg9)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Path graph
+    dg10 = PathDiGraph(11)
+    for g in testdigraphs(dg10)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Wheel graph
+    dg11 = WheelDiGraph(11)
+    for g in testdigraphs(dg11)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
 end
