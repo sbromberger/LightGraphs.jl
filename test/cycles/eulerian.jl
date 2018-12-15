@@ -202,6 +202,66 @@
         @test_throws ArgumentError eulerian_circuit(g)
     end
 
+    #Complete Bipartite Graph with all even-odd combination of vertices
+    g16 = CompleteBipartiteGraph(10, 12)
+    for g in testgraphs(g16)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    g17 = CompleteBipartiteGraph(10, 11)
+    for g in testgraphs(g17)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    g18 = CompleteBipartiteGraph(11, 10)
+    for g in testgraphs(g18)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    g19 = CompleteBipartiteGraph(11, 13)
+    for g in testgraphs(g19)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Chvatal Graph
+    g20 = smallgraph(:chvatal)
+    for g in testgraphs(g20)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    #Frucht Graph
+    g21 = smallgraph(:frucht)
+    for g in testgraphs(g21)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
+    #Simple House Graph
+    g22 = smallgraph(:house)
+    for g in testgraphs(g22)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
     # Test with directed graphs
     # Simple Cyclic graph
     dg1 = SimpleDiGraph(4)
@@ -315,4 +375,23 @@
         @test_throws ArgumentError eulerian_trail(g)
         @test_throws ArgumentError eulerian_circuit(g)
     end
+
+    #Complete graph with even number of nodes
+    dg12 = CycleDiGraph(10)
+    for g in testdigraphs(dg12)
+        @test @inferred has_eulerian_trail(g)
+        @test @inferred has_eulerian_circuit(g)
+        @test @inferred check_trail(g, eulerian_trail(g))
+        @test @inferred check_circuit(g, eulerian_circuit(g))
+    end
+
+    #Directed Truncated Tetrahedron Graph
+    dg13 = smallgraph(:truncatedtetrahedron_dir)
+    for g in testdigraphs(dg13)
+        @test @inferred !has_eulerian_trail(g)
+        @test @inferred !has_eulerian_circuit(g)
+        @test_throws ArgumentError eulerian_trail(g)
+        @test_throws ArgumentError eulerian_circuit(g)
+    end
+
 end
