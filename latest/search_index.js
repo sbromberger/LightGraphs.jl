@@ -1893,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -2253,7 +2253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Contributing",
     "title": "Git usage",
     "category": "section",
-    "text": "In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at $HOME/.julia/v0.6/LightGraphs/.git/config. Follow the instructions here.Locate the section for your github remote in the .git/config file. It looks like this:[remote \"origin\"]\n    fetch = +refs/heads/*:refs/remotes/origin/*\n    url = git@github.com:JuliaGraphs/LightGraphs.jl.gitNow add the line fetch = +refs/pull/*/head:refs/remotes/origin/pr/* to this section. Obviously, change the github url to match your project\'s URL. It ends up looking like this:[remote \"origin\"]\n    fetch = +refs/heads/*:refs/remotes/origin/*\n    url = git@github.com:JuliaGraphs/LightGraphs.jl.git\n    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*Now fetch all the pull requests:$ git fetch origin\nFrom github.com:JuliaGraphs/LightGraphs.jl\n * [new ref]         refs/pull/1000/head -> origin/pr/1000\n * [new ref]         refs/pull/1002/head -> origin/pr/1002\n * [new ref]         refs/pull/1004/head -> origin/pr/1004\n * [new ref]         refs/pull/1009/head -> origin/pr/1009\n...To check out a particular pull request:$ git checkout pr/999\nBranch pr/999 set up to track remote branch pr/999 from origin.\nSwitched to a new branch \'pr/999\'Now you can test a PR by running git fetch && git checkout pr/PRNUMBER && julia -e \'Pkg.test(\"LightGraphs\")"
+    "text": "In order to make it easier for you to review Pull Requests (PRs), you can add this to your git config file, which should be located at $HOME/.julia/dev/LightGraphs/.git/config. Follow the instructions here.Locate the section for your github remote in the .git/config file. It looks like this:[remote \"origin\"]\n    fetch = +refs/heads/*:refs/remotes/origin/*\n    url = git@github.com:JuliaGraphs/LightGraphs.jl.gitNow add the line fetch = +refs/pull/*/head:refs/remotes/origin/pr/* to this section. Obviously, change the github url to match your project\'s URL. It ends up looking like this:[remote \"origin\"]\n    fetch = +refs/heads/*:refs/remotes/origin/*\n    url = git@github.com:JuliaGraphs/LightGraphs.jl.git\n    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*Now fetch all the pull requests:$ git fetch origin\nFrom github.com:JuliaGraphs/LightGraphs.jl\n * [new ref]         refs/pull/1000/head -> origin/pr/1000\n * [new ref]         refs/pull/1002/head -> origin/pr/1002\n * [new ref]         refs/pull/1004/head -> origin/pr/1004\n * [new ref]         refs/pull/1009/head -> origin/pr/1009\n...To check out a particular pull request:$ git checkout pr/999\nBranch pr/999 set up to track remote branch pr/999 from origin.\nSwitched to a new branch \'pr/999\'Now you can test a PR by running git fetch && git checkout pr/PRNUMBER && julia -e \'Pkg.test(\"LightGraphs\")"
 },
 
 {
