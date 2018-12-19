@@ -1421,7 +1421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.kruskal_mst",
     "category": "function",
-    "text": "kruskal_mst(g, distmx=weights(g))\n\nReturn a vector of edges representing the minimum spanning tree of a connected, undirected graph g with optional distance matrix distmx using Kruskal\'s algorithm.\n\n\n\n\n\n"
+    "text": "kruskal_mst(g, distmx=weights(g); minimize=true)\n\nReturn a vector of edges representing the minimum (by default) spanning tree of a connected, undirected graph g with optional distance matrix distmx using Kruskal\'s algorithm.\n\nOptional Arguments\n\nminimize=true: if set to false, calculate the maximum spanning tree.\n\n\n\n\n\n"
 },
 
 {
