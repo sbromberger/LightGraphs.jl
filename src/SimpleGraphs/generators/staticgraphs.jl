@@ -480,7 +480,7 @@ function CircularLadderGraph(n::T) where {T <: Integer}
 end
 
 """
-    BarbellGraph(n)
+    BarbellGraph(n1, n2)
 
 Create a [barbell graph](https://en.wikipedia.org/wiki/Barbell_graph) consisting of a clique of size `n1` connected by an edge to a clique of size `n2`.
 
@@ -531,7 +531,7 @@ function BarbellGraph(n1::T, n2::T) where {T <: Integer}
 end
 
 """
-    LollipopGraph(n)
+    LollipopGraph(n1, n2)
 
 Create a [lollipop graph](https://en.wikipedia.org/wiki/Lollipop_graph) consisting of a clique of size `n1` connected by an edge to a path of size `n2`.
 
