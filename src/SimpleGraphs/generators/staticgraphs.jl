@@ -533,7 +533,7 @@ end
 """
     LollipopGraph(n)
 
-Create a [lollipop graph](https://en.wikipedia.org/wiki/Barbell_graph) consisting of a clique of size `n1` connected by an edge to a path of size `n2`.
+Create a [lollipop graph](https://en.wikipedia.org/wiki/Lollipop_graph) consisting of a clique of size `n1` connected by an edge to a path of size `n2`.
 
 ### Implementation Notes
 Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
