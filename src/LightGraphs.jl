@@ -55,7 +55,7 @@ MinkowskiCost, BoundedMinkowskiCost,
 complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
-induced_subgraph, egonet, merge_vertices!, merge_vertices,
+induced_subgraph, egonet, merge_vertices!, merge_vertices, linegraph,
 
 # graph visit
 AbstractGraphVisitor,
@@ -97,7 +97,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths,
 
 # centrality

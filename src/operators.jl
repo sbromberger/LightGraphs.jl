@@ -858,3 +858,35 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 
     return new_vertex_ids
 end
+
+"""
+    linegraph(g)
+    returns the line graph of a given graph
+"""
+function linegraph(g::AbstractGraph)
+    lg = is_directed(g) ? SimpleDiGraph(ne(g)) : SimpleGraph(ne(g))
+    nodemap = Dict(edges(g) .=> 1:ne(g))
+    earr = collect(edges(g))
+    for i in 1:(ne(g)-1)
+        for j in i+1:ne(g)
+            e1 = earr[i]
+            e2 = earr[j]
+            node1 = nodemap[e1]
+            node2 = nodemap[e2]
+            if is_directed(lg)
+                if dst(e1) == src(e2)
+                    add_edge!(lg,node1,node2)
+                end
+                if dst(e2) == src(e1)
+                    add_edge!(lg,node2,node1)
+                end
+            else
+                if (src(e1) == src(e2) || src(e1) == dst(e2)
+                    || dst(e1) == src(e2) || dst(e1) == dst(e2))
+                    add_edge!(lg,node1,node2)
+                end
+            end
+        end
+    end
+    return lg
+end
