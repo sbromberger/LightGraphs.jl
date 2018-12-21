@@ -83,10 +83,10 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
             if k < nv(G₁) # there are still vertices to process in G₁?
                 for v in vs
                     λ⁺ = [λ; (k + 1, v)]
-                    enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, λ⁺, edge_delete_cost, edge_subst_cost) + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
+                    enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, G₂, λ⁺, edge_insert_cost, edge_delete_cost, edge_subst_cost) + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
                 end
                 λ⁺ = [λ; (k + 1, 0)]
-                enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, λ⁺, edge_delete_cost, edge_subst_cost) + delete_cost(k + 1) + h(λ⁺) - h(λ))
+                enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, G₂, λ⁺, edge_insert_cost, edge_delete_cost, edge_subst_cost) + delete_cost(k + 1) + h(λ⁺) - h(λ))
             else
                 # add remaining vertices of G₂ to the path
                 # sequencially adding vertices and hence edges
@@ -110,22 +110,44 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
     end
 end
 
-function edge_cost(G₁, λ⁺, edge_delete_cost::Function, edge_subst_cost::Function)
+function edge_cost(G₁::AbstractGraph, G₂::AbstractGraph, λ⁺,
+                    edge_insert_cost::Function,
+                    edge_delete_cost::Function,
+                    edge_subst_cost::Function)
+
     cu = []
+    cv = []
     u_neighbors = is_directed(G₁) ? (inneighbors(G₁, λ⁺[end][1])..., outneighbors(G₁, λ⁺[end][1])...) : neighbors(G₁, λ⁺[end][1])
+    if λ⁺[end][2]!=0
+        v_neighbors = is_directed(G₂) ? (inneighbors(G₂, λ⁺[end][2])..., outneighbors(G₂, λ⁺[end][2])...) : neighbors(G₂, λ⁺[end][2])
+    else
+        v_neighbors = []
+    end
     for u in u_neighbors
-        for (w,v) in λ⁺[1:end-1]
-            if w==u
-                cu = [cu;(w,v)]
+        for (w, v) in λ⁺[1:end-1]
+            if w == u
+                cu = [cu; (w, v)]
+            end
+        end
+    end
+    for v in v_neighbors
+        for (u, w) in λ⁺[1:end-1]
+            if w == v
+                cv = [cv; (u, w)]
             end
         end
     end
     edgecost = 0
     for (u,v) in cu
-        if v == 0 || λ⁺[end][2] == 0
-            edgecost += edge_delete_cost(u, λ⁺[end][2])
+        if (v == 0 || λ⁺[end][2] == 0) || !(has_edge(G₂, v, λ⁺[end][2]) || has_edge(G₂, λ⁺[end][2], v))
+            edgecost += edge_delete_cost(u, λ⁺[end][1])
         else
             edgecost += edge_subst_cost((u, λ⁺[end][1]), (v, λ⁺[end][2]))
+        end
+    end
+    for (u,v) in cv
+        if !(has_edge(G₁, u, λ⁺[end][1]) || has_edge(G₁, λ⁺[end][1], u))
+            edgecost +=  edge_insert_cost(v, λ⁺[end][2])
         end
     end
     return edgecost
