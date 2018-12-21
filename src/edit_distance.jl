@@ -54,6 +54,9 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                         insert_cost::Function=v -> 1.0,
                         delete_cost::Function=u -> 1.0,
                         subst_cost::Function=(u, v) -> 0.5,
+                        edge_insert_cost::Function=(u, v) -> 1.0,
+                        edge_delete_cost::Function=(u, v) -> 1.0,
+                        edge_subst_cost::Function=((u, v), (x, y)) -> 0.0,
                         heuristic::Function=DefaultEditHeuristic)
 
   # A* search heuristic
@@ -80,18 +83,52 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
             if k < nv(G₁) # there are still vertices to process in G₁?
                 for v in vs
                     λ⁺ = [λ; (k + 1, v)]
-                    enqueue!(OPEN, λ⁺, cost + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
+                    enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, λ⁺, edge_delete_cost, edge_subst_cost) + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
                 end
                 λ⁺ = [λ; (k + 1, 0)]
-                enqueue!(OPEN, λ⁺, cost + delete_cost(k + 1) + h(λ⁺) - h(λ))
+                enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, λ⁺, edge_delete_cost, edge_subst_cost) + delete_cost(k + 1) + h(λ⁺) - h(λ))
             else
                 # add remaining vertices of G₂ to the path
-                λ⁺ = [λ; [(0, v) for v in vs]]
-                total_insert_cost = sum(insert_cost, vs)
+                # sequencially adding vertices and hence edges
+                λ⁺ = collect(λ)
+                total_insert_cost = 0
+                for v in vs
+                    total_insert_cost += insert_cost(v)
+                    u_neighbors = is_directed(G₂) ? (inneighbors(G₂, v)..., outneighbors(G₂, v)...) : neighbors(G₂, v)
+                    for u in u_neighbors
+                        for (w, x) in λ⁺
+                            if x == u
+                                total_insert_cost += edge_insert_cost(w, u)
+                            end
+                        end
+                    end
+                    λ⁺ = [λ⁺; (0, v)]
+                end                    
                 enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
             end
         end
     end
+end
+
+function edge_cost(G₁, λ⁺, edge_delete_cost::Function, edge_subst_cost::Function)
+    cu = []
+    u_neighbors = is_directed(G₁) ? (inneighbors(G₁, λ⁺[end][1])..., outneighbors(G₁, λ⁺[end][1])...) : neighbors(G₁, λ⁺[end][1])
+    for u in u_neighbors
+        for (w,v) in λ⁺[1:end-1]
+            if w==u
+                cu = [cu;(w,v)]
+            end
+        end
+    end
+    edgecost = 0
+    for (u,v) in cu
+        if v == 0 || λ⁺[end][2] == 0
+            edgecost += edge_delete_cost(u, λ⁺[end][2])
+        else
+            edgecost += edge_subst_cost((u, λ⁺[end][1]), (v, λ⁺[end][2]))
+        end
+    end
+    return edgecost
 end
 
 function is_complete_path(λ, G₁, G₂)
