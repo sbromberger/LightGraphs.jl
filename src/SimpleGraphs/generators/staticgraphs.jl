@@ -471,7 +471,7 @@ Preserves the eltype of the partitions vector. Will error if the required number
 exceeds the eltype. 
 `n` must be at least 3 to avoid self-loops and multi-edges.
 """
-function CircularLadderGraph(n::T) where {T <: Integer}
+function CircularLadderGraph(n::Integer)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     g = LadderGraph(n)
     add_edge!(g, 1, n)
