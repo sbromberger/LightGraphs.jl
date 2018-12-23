@@ -404,10 +404,25 @@
     @test_throws DomainError CircularLadderGraph(1)
     @test_throws DomainError CircularLadderGraph(2)
 
+    # checking that the nodes are organized correctly
+    # see the docstring implementation notes for LollipopGraph
     function isbarbellgraph(g, n1, n2)
-      h = blockdiag(CompleteGraph(n1), CompleteGraph(n2))
-      add_edge!(h, n1, n1+1)
-      return g == h
+      nv(g) != n1+n2 && return false
+      ne(g) != n1*(n1-1)÷2+n2*(n2-1)÷2 +1 && return false
+      for i in 1:n1
+        for j in (i+1):n1
+          !has_edge(g, i, j) && return false
+        end
+      end
+
+      for i in n1 .+ 1:n2
+        for j in (i+1):(n1+n2)
+          !has_edge(g, i, j) && return false
+        end
+      end
+
+      !has_edge(g, n1, n1+1) && return false
+      return true
     end
 
     g = @inferred(BarbellGraph(5, 6))
@@ -428,15 +443,29 @@
     g = BarbellGraph(1, 1)
     @test nv(g) == 2 && ne(g) == 1
     @test isbarbellgraph(g, 1, 1)
-    @test_throws InexactError BarbellGraph(Int8(100), Int8(50))
+    @test_throws OverflowError BarbellGraph(Int8(100), Int8(50))
     @test_throws DomainError BarbellGraph(1, 0)
     @test_throws DomainError BarbellGraph(0, 1)
     @test_throws DomainError BarbellGraph(-1, -1)
 
+    # checking that the nodes are organized correctly
+    # see the docstring implementation notes for LollipopGraph
     function islollipopgraph(g, n1, n2)
-      h = blockdiag(CompleteGraph(n1), PathGraph(n2))
-      add_edge!(h, n1, n1+1)
-      return g == h
+      nv(g) != n1+n2 && return false
+      ne(g) != n1*(n1-1)÷2+n2 && return false
+      for i in 1:n1
+        for j in (i+1):n1
+          !has_edge(g, i, j) && return false
+        end
+      end
+
+      for i in n1 .+ 1:(n2-1)
+        !has_edge(g, i, i+1) && return false
+      end
+
+      !has_edge(g, n1, n1+1) && return false
+
+      return true
     end
 
     g = @inferred(LollipopGraph(3, 5))
@@ -457,7 +486,7 @@
     g = LollipopGraph(1, 1)
     @test nv(g) == 2 && ne(g) == 1
     @test islollipopgraph(g, 1, 1)
-    @test_throws InexactError LollipopGraph(Int8(100), Int8(50))
+    @test_throws OverflowError LollipopGraph(Int8(100), Int8(50))
     @test_throws DomainError LollipopGraph(1, 0)
     @test_throws DomainError LollipopGraph(0, 1)
     @test_throws DomainError LollipopGraph(-1, -1)

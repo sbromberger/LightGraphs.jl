@@ -493,10 +493,9 @@ The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n
 function BarbellGraph(n1::T, n2::T) where {T <: Integer}
     (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
 
-    Tw = widen(T)
-    temp = T(Tw(n1)+Tw(n2)) # test to check if T is large enough
+    n = Base.Checked.checked_add(n1, n2) # check for overflow
+    fadjlist = Vector{Vector{T}}(undef, n)
 
-    fadjlist = Vector{Vector{T}}(undef, n1+n2)
     ne = Int(n1)*(n1-1)÷2 + Int(n2)*(n2-1)÷2
 
     @inbounds @simd for u = 1:n1
@@ -541,11 +540,10 @@ function LollipopGraph(n1::T, n2::T) where {T <: Integer}
         return g
     end
 
-    Tw = widen(T)
-    temp = T(Tw(n1)+Tw(n2)) # test to check if T is large enough
-    ne = Int(Int(n1)*(n1-1)÷2 + n2-1)
+    n = Base.Checked.checked_add(n1, n2) # check for overflow
+    fadjlist = Vector{Vector{T}}(undef, n)
 
-    fadjlist = Vector{Vector{T}}(undef, n1+n2)
+    ne = Int(Int(n1)*(n1-1)÷2 + n2-1)
 
     @inbounds @simd for u = 1:n1
         listu = Vector{T}(undef, n1-1)
