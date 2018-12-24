@@ -593,6 +593,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "generators.html#LightGraphs.SimpleGraphs.BarbellGraph-Union{Tuple{T}, Tuple{T,T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.BarbellGraph",
+    "category": "method",
+    "text": "BarbellGraph(n1, n2)\n\nCreate a barbell graph consisting of a clique of size n1 connected by an edge to a clique of size n2.\n\nImplementation Notes\n\nPreserves the eltype of n1 and n2. Will error if the required number of vertices exceeds the eltype. n1 and n2 must be at least 1 so that both cliques are non-empty. The cliques are organized with nodes 1:n1 being the left clique and n1+1:n1+n2 being the right clique. The cliques are connected by and edge (n1, n1+1).\n\n\n\n\n\n"
+},
+
+{
     "location": "generators.html#LightGraphs.SimpleGraphs.BinaryTree-Union{Tuple{T}, Tuple{T}} where T<:Integer",
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.BinaryTree",
@@ -686,6 +694,14 @@ var documenterSearchIndex = {"docs": [
     "title": "LightGraphs.SimpleGraphs.LadderGraph",
     "category": "method",
     "text": "LadderGraph(n)\n\nCreate a ladder graph consisting of 2n nodes and 3n-2 edges.\n\nImplementation Notes\n\nPreserves the eltype of n. Will error if the required number of vertices exceeds the eltype.\n\n\n\n\n\n"
+},
+
+{
+    "location": "generators.html#LightGraphs.SimpleGraphs.LollipopGraph-Union{Tuple{T}, Tuple{T,T}} where T<:Integer",
+    "page": "Making and Modifying Graphs",
+    "title": "LightGraphs.SimpleGraphs.LollipopGraph",
+    "category": "method",
+    "text": "LollipopGraph(n1, n2)\n\nCreate a lollipop graph consisting of a clique of size n1 connected by an edge to a path of size n2.\n\nImplementation Notes\n\nPreserves the eltype of n1 and n2. Will error if the required number of vertices exceeds the eltype. n1 and n2 must be at least 1 so that both the clique and the path have at least one vertex. The graph is organized with nodes 1:n1 being the clique and n1+1:n1+n2 being the path. The clique is connected to the path by an edge (n1, n1+1).\n\n\n\n\n\n"
 },
 
 {
