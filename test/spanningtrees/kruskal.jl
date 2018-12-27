@@ -14,7 +14,7 @@
     # Testing Kruskal's algorithm
         mst = @inferred(kruskal_mst(g, distmx))
         @test mst == vec_mst
-	@test @inferred(kruskal_mst(g, distmx, minimize=false)) == max_vec_mst
+	@test @inferred(kruskal_mst(g, distmx, cmp=!isless)) == max_vec_mst
     end
     #second test
     distmx_sec = [
@@ -34,6 +34,6 @@
     for g in testgraphs(gx)
         mst2 = @inferred(kruskal_mst(g, distmx_sec))
         @test mst2 == vec2
-	@test @inferred(kruskal_mst(g, distmx_sec, minimize=false)) == max_vec2
+	@test @inferred(kruskal_mst(g, distmx_sec, cmp=!isless)) == max_vec2
     end
 end
