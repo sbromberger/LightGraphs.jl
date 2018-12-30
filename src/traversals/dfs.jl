@@ -6,23 +6,35 @@
 
 Return `true` if graph `g` contains a cycle.
 
+    is_cyclic(g, cycle)
+
+Return `true` if directed graph `g` contains a cycle. Also fill in
+`cycle` with the first found cycle. `cycle` must be a vector of the
+element type of the graph and will be overwritten with the new cycle.
+If no cycle is found, `cycle` will become empty.
+
 ### Implementation Notes
 Uses DFS.
 """
 function is_cyclic end
 @traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected,
+                            cycle::Vector{T}=Vector{T}()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
+    empty!(cycle)
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        S = Vector{T}([v])
+        push!(cycle, v)
         vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
+        while !isempty(cycle)
+            u = cycle[end]
             w = 0
             for n in outneighbors(g, u)
                 if vcolor[n] == 1
+                    while cycle[1] != n
+                        popfirst!(cycle)
+                    end
                     return true
                 elseif vcolor[n] == 0
                     w = n
@@ -31,10 +43,10 @@ function is_cyclic end
             end
             if w != 0
                 vcolor[w] = 1
-                push!(S, w)
+                push!(cycle, w)
             else
                 vcolor[u] = 2
-                pop!(S)
+                pop!(cycle)
             end
         end
     end
