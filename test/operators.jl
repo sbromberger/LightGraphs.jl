@@ -294,4 +294,34 @@
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
     end
+
+    """Test for line graph of undirected graphs
+    For a graph G with n vertices and m edges, the number of vertices of
+    the line graph L(G) is m, and the number of edges of L(G) is half the
+    sum of the squares of the degrees of the vertices in G, minus m"""
+
+    gx = SimpleGraph(10,20)
+    for g in testgraphs(gx)
+        lg = linegraph(g)
+        sum_sq_deg = 0
+        for u in vertices(g) sum_sq_deg += (degree(g,u)*degree(g,u)) end
+        @test nv(lg) == ne(g)
+        @test ne(lg) == ((sum_sq_deg/2)-ne(g))
+    end
+
+    """Test for line graph of directed graphs
+    If G is a directed graph, its directed line graph or line digraph has
+    one vertex for each edge of G. Two vertices representing directed edges
+    from u to v and from w to x in G are connected by an edge from uv to wx
+    in the line digraph when v = w."""
+
+    gy = SimpleDiGraph(10,20)
+    for g in testdigraphs(gy)
+        lg,lineV_graphE = linegraph(g,true)
+        for e in edges(lg)
+            uv = lineV_graphE[src(e)]
+            vw = lineV_graphE[dst(e)]
+            @test has_edge(g,uv) && has_edge(g,vw)
+        end
+    end
 end
