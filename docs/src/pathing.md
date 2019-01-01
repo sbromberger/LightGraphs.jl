@@ -36,6 +36,7 @@ dfs_tree
 maximum_adjacency_visit
 bfs_parents
 has_path
+get_path
 diffusion
 diffusion_rate
 mincut
@@ -82,6 +83,7 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 
 ```@docs
 is_cyclic
+get_cycle
 maxsimplecycles
 simplecycles
 simplecycles_iter

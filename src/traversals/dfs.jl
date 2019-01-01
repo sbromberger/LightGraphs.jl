@@ -6,39 +6,109 @@
 
 Return `true` if graph `g` contains a cycle.
 
+See also: `get_cycle`
+
 ### Implementation Notes
 Uses DFS.
 """
 function is_cyclic end
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 @traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+    return !isempty(get_path_or_cycle(g, vertices(g), 0, true, true))
+end
+
+"""
+    get_cycle(g)
+
+Return an arbitrary cycle from graph `g` or an empty vector if `g` has
+no cycle.
+
+    get_cycle(g, v)
+
+Return an arbitrary cycle from graph `g` which includes vertex `v` or
+an empty vector if `v` is not part of any cycle in `g`.
+
+See also: `is_cyclic`
+
+### Implementation Notes
+Uses DFS. The first encountered cycle is returned.
+"""
+function get_cycle end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function get_cycle(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+    ne(g) == 0 && return Vector{T}()
+    e = first(edges(g))
+    return [src(e), dst(e)]
+end
+
+@traitfn function get_cycle(g::AG::(!IsDirected), v::Integer) where {T, AG<:AbstractGraph{T}}
+    n = neighbors(g, v)
+    isempty(n) && return Vector{T}()
+    return [T(v), n[1]]
+end
+
+@traitfn function get_cycle(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+    return get_path_or_cycle(g, vertices(g), 0, true, false)
+end
+
+@traitfn function get_cycle(g::AG::IsDirected, v::Integer) where {T, AG<:AbstractGraph{T}}
+    return get_path_or_cycle(g, v, v, true, false)
+end
+
+"""
+    get_path(g, v, w)
+
+Return an arbitrary path from vertex `v` to vertex `w` in graph `g` or
+an empty vector if there is no path from `v` to `w`.
+
+See also: has_path
+
+### Implementation Notes
+Uses DFS. The first encountered path is returned.
+"""
+function get_path(g::AbstractGraph, v::Integer, w::Integer)
+    return get_path_or_cycle(g, v, w, false, false)
+end
+
+function get_path_or_cycle(g::AbstractGraph{T}, sources, target, find_cycle,
+                           only_detect_cycle) where T
     vcolor = zeros(UInt8, nv(g))
-    for v in vertices(g)
-        vcolor[v] != 0 && continue
-        S = Vector{T}([v])
-        vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
-            w = 0
+    path = Vector{T}()
+    for source in sources
+        vcolor[source] != 0 && continue
+        push!(path, source)
+        vcolor[source] = 1
+        while !isempty(path)
+            u = path[end]
+            w = T(0)
             for n in outneighbors(g, u)
-                if vcolor[n] == 1
-                    return true
-                elseif vcolor[n] == 0
+                if vcolor[n] == 0
                     w = n
                     break
+                elseif vcolor[n] == 1 && find_cycle && (target == 0 || target == n)
+                    if !only_detect_cycle
+                        while path[1] != n
+                            popfirst!(path)
+                        end
+                    end
+                    return path
                 end
             end
             if w != 0
+                push!(path, w)
+                if w == target
+                    return path
+                end
                 vcolor[w] = 1
-                push!(S, w)
             else
                 vcolor[u] = 2
-                pop!(S)
+                pop!(path)
             end
         end
     end
-    return false
+
+    return path
 end
 
 # Topological sort using DFS
