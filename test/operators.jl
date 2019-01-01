@@ -1,23 +1,3 @@
-using LightGraphs
-using LightGraphs.SimpleGraphs
-using LightGraphs.Experimental
-using Test
-using SparseArrays
-using LinearAlgebra
-using DelimitedFiles
-using Base64
-using Random
-using Statistics: mean
-
-const testdir = dirname(@__FILE__)
-
-testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
-testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
-
-# some operations will create a large graph from two smaller graphs. We
-# might error out on very small eltypes.
-testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
-testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 @testset "Operators" begin
     g3 = PathGraph(5)
     g4 = PathDiGraph(5)
