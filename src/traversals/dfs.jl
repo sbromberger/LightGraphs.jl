@@ -84,7 +84,7 @@ end
 """
     dfs_tree(g, s)
 
-Return an ordered vector of vertices representing a directed acylic graph based on
+Return an ordered vector of vertices representing a directed acyclic graph based on
 depth-first traversal of the graph `g` starting with source vertex `s`.
 """
 dfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
