@@ -1117,7 +1117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.dfs_tree",
     "category": "function",
-    "text": "dfs_tree(g, s)\n\nReturn an ordered vector of vertices representing a directed acylic graph based on depth-first traversal of the graph g starting with source vertex s.\n\n\n\n\n\n"
+    "text": "dfs_tree(g, s)\n\nReturn an ordered vector of vertices representing a directed acyclic graph based on depth-first traversal of the graph g starting with source vertex s.\n\n\n\n\n\n"
 },
 
 {
