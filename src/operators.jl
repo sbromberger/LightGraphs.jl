@@ -867,7 +867,7 @@ end
 """
 function linegraph(g::AbstractGraph, returnmap::Bool = false)
     lg = is_directed(g) ? SimpleDiGraph(ne(g)) : SimpleGraph(ne(g))
-    graphE_lineV = Dict(edges(g) .=> 1:ne(g))
+    graphE_lineV = Dict(e => i for (i,e) in enumerate(edges(g)))
     earr = collect(edges(g))
     for i in 1:(ne(g)-1)
         for j in i+1:ne(g)
@@ -891,7 +891,7 @@ function linegraph(g::AbstractGraph, returnmap::Bool = false)
         end
     end
     if returnmap
-        lineV_graphE = Dict(values(graphE_lineV) .=> keys(graphE_lineV))
+        lineV_graphE = Dict(value => key for (key,value) in graphE_lineV)
         return lg,lineV_graphE
     end
     return lg
