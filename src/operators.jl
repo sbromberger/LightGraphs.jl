@@ -861,18 +861,20 @@ end
 
 """
     linegraph(g)
-    returns the line graph of a given graph
+    returns only the line graph of a given graph if returnmap is false
+    returns line graph and a dictionary mapping new vertices in line graph
+    to old edges in graph if returnmap is true
 """
-function linegraph(g::AbstractGraph)
+function linegraph(g::AbstractGraph, returnmap::Bool = false)
     lg = is_directed(g) ? SimpleDiGraph(ne(g)) : SimpleGraph(ne(g))
-    nodemap = Dict(edges(g) .=> 1:ne(g))
+    graphE_lineV = Dict(edges(g) .=> 1:ne(g))
     earr = collect(edges(g))
     for i in 1:(ne(g)-1)
         for j in i+1:ne(g)
             e1 = earr[i]
             e2 = earr[j]
-            node1 = nodemap[e1]
-            node2 = nodemap[e2]
+            node1 = graphE_lineV[e1]
+            node2 = graphE_lineV[e2]
             if is_directed(lg)
                 if dst(e1) == src(e2)
                     add_edge!(lg,node1,node2)
@@ -887,6 +889,10 @@ function linegraph(g::AbstractGraph)
                 end
             end
         end
+    end
+    if returnmap
+        lineV_graphE = Dict(values(graphE_lineV) .=> keys(graphE_lineV))
+        return lg,lineV_graphE
     end
     return lg
 end
