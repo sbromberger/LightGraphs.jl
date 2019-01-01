@@ -48,7 +48,7 @@ end
 Return a [toplogical sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
 graph `g` as a vector of vertices in topological order.
 """
-function toplogical_sort_by_dfs end
+function topological_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
