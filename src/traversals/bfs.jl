@@ -169,11 +169,7 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
         for vertex in outneighbors(g, src)
 	    if vertex == v
 	        if u == v
-	            if depth <= 2
-		        continue
-                    else
-		        return true
-		    end
+		    depth > 2 && return true
 	        else
 	            return true
                 end
