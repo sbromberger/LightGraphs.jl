@@ -857,7 +857,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "persistence.html#LightGraphs.savegraph-Union{Tuple{T}, Tuple{U}, Tuple{AbstractString,Dict{T,U},AbstractGraphFormat}} where T<:AbstractString where U<:AbstractGraph",
+    "location": "persistence.html#LightGraphs.savegraph-Union{Tuple{T}, Tuple{U}, Tuple{AbstractString,Dict{T,U},LightGraphs.AbstractGraphFormat}} where T<:AbstractString where U<:AbstractGraph",
     "page": "Reading / Writing Graphs",
     "title": "LightGraphs.savegraph",
     "category": "method",
@@ -1141,7 +1141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.has_path",
     "category": "function",
-    "text": "has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())\n\nReturn true if there is a path from u to v in g (while avoiding vertices in exclude_vertices) or u == v. Return false if there is no such path or if u or v is in excluded_vertices. \n\n\n\n\n\n"
+    "text": "has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())\n\nReturn true if there is a path from u to v in g (while avoiding vertices in exclude_vertices) or u == v. Return false if there is no such path or if u or v is in excluded_vertices. \n\nImplementation Notes\n\nhas_path(g, v, v) will return false unless there is an explicit self-loop defined on vertex v. This is a change from previous versions.\n\n\n\n\n\n"
 },
 
 {
@@ -1909,7 +1909,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -1917,7 +1917,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
