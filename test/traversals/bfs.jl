@@ -82,8 +82,11 @@ import LightGraphs: tree
 
 	add_edge!(g, 1, 1)
 	@test has_path(g, 1, 1)
+<<<<<<< HEAD
     end
     for g in testgraphs(CycleGraph(3))
         @test has_path(g, 1, 1)
+=======
+>>>>>>> master
     end
 end
