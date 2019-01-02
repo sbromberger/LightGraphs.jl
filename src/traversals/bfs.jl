@@ -159,14 +159,26 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
         seen[ve] = true
     end
     (seen[u] || seen[v]) && return false
-    u == v  && return has_edge(g, u, v) # cannot be separated
+#    u == v  && has_edge(g, u, v) && return true # cannot be separated
     next = Vector{T}()
     push!(next, u)
     seen[u] = true
+    depth = 0
     while !isempty(next)
         src = popfirst!(next) # get new element from queue
+	depth += 1
         for vertex in outneighbors(g, src)
-            vertex == v && return true
+	    if vertex == v
+	        if u == v
+	            if depth <= 2
+		        continue
+                    else
+		        return true
+		    end
+	        else
+	            return true
+                end
+            end
             if !seen[vertex]
                 push!(next, vertex) # push onto queue
                 seen[vertex] = true
