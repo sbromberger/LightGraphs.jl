@@ -45,10 +45,10 @@ end
 """
     topological_sort_by_dfs(g)
 
-Return a [toplogical sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
+Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
 graph `g` as a vector of vertices in topological order.
 """
-function toplogical_sort_by_dfs end
+function topological_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
@@ -84,7 +84,7 @@ end
 """
     dfs_tree(g, s)
 
-Return an ordered vector of vertices representing a directed acylic graph based on
+Return an ordered vector of vertices representing a directed acyclic graph based on
 depth-first traversal of the graph `g` starting with source vertex `s`.
 """
 dfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
