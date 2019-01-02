@@ -159,11 +159,6 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer;
         seen[ve] = true
     end
     (seen[u] || seen[v]) && return false
-<<<<<<< HEAD
-#    u == v  && has_edge(g, u, v) && return true # cannot be separated
-=======
-    u == v  && return has_edge(g, u, v) # cannot be separated
->>>>>>> master
     next = Vector{T}()
     push!(next, u)
     seen[u] = true
