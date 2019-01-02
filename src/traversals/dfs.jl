@@ -6,7 +6,7 @@
 
 Return `true` if graph `g` contains a cycle.
 
-See also: `get_cycle`
+See also: [`get_cycle`](@ref)
 
 ### Implementation Notes
 Uses DFS.
@@ -29,7 +29,7 @@ no cycle.
 Return an arbitrary cycle from graph `g` which includes vertex `v` or
 an empty vector if `v` is not part of any cycle in `g`.
 
-See also: `is_cyclic`
+See also: [`is_cyclic`](@ref)
 
 ### Implementation Notes
 Uses DFS. The first encountered cycle is returned.
@@ -62,7 +62,7 @@ end
 Return an arbitrary path from vertex `v` to vertex `w` in graph `g` or
 an empty vector if there is no path from `v` to `w`.
 
-See also: has_path
+See also: [`has_path`](@ref)
 
 ### Implementation Notes
 Uses DFS. The first encountered path is returned.
