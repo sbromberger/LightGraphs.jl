@@ -128,3 +128,78 @@ function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) whe
     end
     return parents
 end
+
+"""
+    has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
+
+Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
+`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
+is in `excluded_vertices`. 
+
+### Implementation Notes
+`has_path(g, v, v)` will return `false` unless there is an explicit
+self-loop defined on vertex `v`. This is a change from previous
+versions.
+"""
+function has_path end
+
+@traitfn function has_path(g::AG::IsDirected, src::Integer, target::Integer;
+                           exclude_vertices::AbstractVector = Vector{Int}()) where {T , AG <: AbstractGraph{T}}
+    seen = zeros(Bool, nv(g))
+    @inbounds for ve in exclude_vertices
+        seen[ve] = true
+    end
+    (seen[src] || seen[target]) && return false
+
+    # Idea here is to start from the neighbours of src and see whether BFS will reach a target
+    stack = deepcopy(outneighbors(g, src))
+    @inbounds while !isempty(stack)
+        curr = pop!(stack) # get new element from stack
+        seen[curr] && continue
+        curr == target && return true
+        seen[curr] = true
+        for vertex in outneighbors(g, curr)
+            vertex == target && return true
+            if !seen[vertex]
+                push!(stack, vertex) # push onto stack
+            end
+        end
+    end
+    return false
+end
+
+@traitfn function has_path(g::AG::(!IsDirected), src::Integer, target::Integer;
+                           exclude_vertices::AbstractVector = Vector{Int}()) where {T, AG <: AbstractGraph{T}}
+    seen = zeros(Bool, nv(g))
+    @inbounds for ve in exclude_vertices
+        seen[ve] = true
+    end
+    (seen[src] || seen[target]) && return false
+
+    # Same idea as directed case, but we ensure no backtracking from the edge we come from.
+    # We use Depth-First Search instead to perform this
+    stack = Vector{T}()
+    parents = Vector{T}()
+    for v in outneighbors(g, src)
+        push!(stack, v)
+        push!(parents, src)
+    end
+
+    @inbounds while !isempty(stack)
+        curr = pop!(stack) # get new element from stack
+        prev = pop!(parents)
+        seen[curr] && continue
+        curr == target && return true
+        seen[curr] = true
+        for vertex in outneighbors(g, curr)
+            vertex == prev && continue
+            vertex == target && return true
+            if !seen[vertex]
+                push!(stack, vertex) # push onto queue
+                push!(parents, curr)
+            end
+        end
+    end
+    return false
+end
+

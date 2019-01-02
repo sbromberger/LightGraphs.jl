@@ -140,38 +140,3 @@ significant performance improvements on larger graphs.
 """
 gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg = sort_alg)
 
-"""
-    has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
-
-Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
-`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `excluded_vertices`. 
-
-### Implementation Notes
-`has_path(g, v, v)` will return `false` unless there is an explicit
-self-loop defined on vertex `v`. This is a change from previous
-versions.
-"""
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector = Vector{T}()) where T
-    seen = zeros(Bool, nv(g))
-    for ve in exclude_vertices # mark excluded vertices as seen
-        seen[ve] = true
-    end
-    (seen[u] || seen[v]) && return false
-    u == v  && return has_edge(g, u, v) # cannot be separated
-    next = Vector{T}()
-    push!(next, u)
-    seen[u] = true
-    while !isempty(next)
-        src = popfirst!(next) # get new element from queue
-        for vertex in outneighbors(g, src)
-            vertex == v && return true
-            if !seen[vertex]
-                push!(next, vertex) # push onto queue
-                seen[vertex] = true
-            end
-        end
-    end
-    return false
-end
