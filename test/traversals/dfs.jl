@@ -55,9 +55,29 @@
         @test !@inferred(is_cyclic(zero(g)))
         @test isempty(@inferred(find_simple_cycle(g)))
         @test isempty(@inferred(find_simple_cycle(zero(g))))
+        @test @inferred(has_simple_path(g, 1, 3))
+        @test @inferred(has_simple_path(g, 3, 1))
+        @test @inferred(has_simple_path(g, 1, 1))
+        @test !@inferred(has_simple_path(g, 1, 1, accept_trivial_paths=false))
         @test @inferred(find_simple_path(g, 1, 3)) == 1:3
         @test @inferred(find_simple_path(g, 3, 1)) == [3, 2, 1]
         @test @inferred(find_simple_path(g, 1, 1)) == [1]
         @test isempty(@inferred(find_simple_path(g, 1, 1, accept_trivial_paths=false)))
+    end
+
+    for g in testgraphs(PathGraph(2))
+        @test !@inferred(is_cyclic(g))
+    end
+
+    for g in testdigraphs(DiGraph(PathGraph(2)))
+        @test @inferred(is_cyclic(g))
+    end
+
+    for g in testgraphs(LollipopGraph(3, 1))
+        @test @inferred(is_cyclic(g))
+        @test @inferred(has_simple_cycle(g, 1))
+        @test !@inferred(has_simple_cycle(g, 4))
+        @test is_valid_simple_cycle(g, @inferred(find_simple_cycle(g)))
+        @test isempty(@inferred(find_simple_cycle(g, 4)))
     end
 end
