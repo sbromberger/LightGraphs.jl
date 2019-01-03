@@ -48,6 +48,27 @@
         @test has_path(g, 1, 1)
     end
 
+    gx = SimpleDiGraph(7)
+    for (i, j) in [(1, 2), (2, 3), (3, 1), (3, 4), (4, 5), (4, 6)]
+        add_edge!(gx, i, j)
+    end
+    @test has_path(gx, 1, 3)
+    @test has_path(gx, 1, 5)
+    @test !has_path(gx, 1, 7)
+    @test has_path(gx, 2, 6)
+    @test !has_path(gx, 3, 7)
+    @test !has_path(gx, 4, 2)
+    @test has_path(gx, 4, 6)
+    @test !has_path(gx, 5, 6)
+    @test !has_path(gx, 5, 1)
+    @test !has_path(gx, 6, 7)
+    @test !has_path(gx, 6, 6)
+
+    @test has_path(gx, 2, 5; exclude_vertices=[1, 6])
+    @test !has_path(gx, 2, 5; exclude_vertices=[3])
+    @test !has_path(gx, 2, 5; exclude_vertices=[2])
+    @test !has_path(gx, 2, 5; exclude_vertices=[5])
+
     # Cases of haspath(g, v, v)
     # Undirected
     for i in 1:4
@@ -72,6 +93,7 @@
         else
             @test has_path(gx, 1, 1)
         end
+        @test !has_path(gx, 1, 1; exclude_vertices=[1])
     end
     # Self Loop
     gx = SimpleDiGraph(Edge{Int}.([(1, 1)]))
