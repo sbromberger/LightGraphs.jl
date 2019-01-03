@@ -69,7 +69,8 @@ gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 is_bipartite, bipartite_map,
 
 # dfs
-is_cyclic, get_cycle, get_path, topological_sort_by_dfs, dfs_tree,
+is_cyclic, has_simple_cycle, find_simple_cycle, has_simple_path,
+find_simple_path, topological_sort_by_dfs, dfs_tree,
 
 # random
 randomwalk, saw, non_backtracking_randomwalk,

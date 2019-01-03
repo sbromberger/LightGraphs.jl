@@ -4,75 +4,121 @@
 """
     is_cyclic(g)
 
-Return `true` if graph `g` contains a cycle.
+Return `true` if graph `g` contains a simple cycle. With simple cycle
+is understood a cycle which repeats neither vertices nor edges.
 
-See also: [`get_cycle`](@ref)
+See also: [`find_simple_cycle`, `has_simple_cycle`](@ref)
 
 ### Implementation Notes
 Uses DFS.
 """
-function is_cyclic end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
-    return !isempty(get_path_or_cycle(g, vertices(g), 0, true, true))
+function is_cyclic(g::AbstractGraph)
+    return !isempty(find_simple_path_or_cycle(g, vertices(g), 0, true, true))
 end
 
 """
-    get_cycle(g)
+    has_simple_cycle(g, v)
 
-Return an arbitrary cycle from graph `g` or an empty vector if `g` has
-no cycle.
+Return `true` if graph `g` contains a simple cycle which includes
+vertex `v`. With simple cycle is understood a cycle which
+repeats neither vertices nor edges.
 
-    get_cycle(g, v)
+See also: [`is_cyclic`](@ref), [`find_simple_cycle`](@ref)
+"""
+function has_simple_cycle(g::AbstractGraph, v::Integer)
+    return !isempty(find_simple_path_or_cycle(g, v, v, true, true))
+end
 
-Return an arbitrary cycle from graph `g` which includes vertex `v` or
-an empty vector if `v` is not part of any cycle in `g`.
+"""
+    find_simple_cycle(g)
 
-See also: [`is_cyclic`](@ref)
+Return an arbitrary simple cycle from graph `g` or an empty vector if
+`g` has no simple cycle. With simple cycle is understood a cycle which
+repeats neither vertices nor edges.
+
+    find_simple_cycle(g, v)
+
+Return an arbitrary simple cycle from graph `g` which includes vertex
+`v` or an empty vector if `v` is not part of any cycle in `g`.
+
+A non-empty return vector `c` of length `n` is guaranteed to have the
+following properties:
+* `c[1] == v`
+* `c` has no repeated entry.
+* `(c[i], c[mod1(i+1, n)])` is an edge in `g` for `i = 1:n`.
+* The number of edges in the cycle is `n`.
+
+For undirected graphs, the requirement of non-repeating edges excludes
+trivial 2-cycles since they require using the same edge twice.
+Directed graphs can have 2-cycles if they have an edge in each
+direction. 1-cycles correspond to self-loops in the graph.
+
+See also: [`is_cyclic`](@ref), [`has_simple_cycle`](@ref),
+[`find_simple_path`](@ref)
 
 ### Implementation Notes
 Uses DFS. The first encountered cycle is returned.
 """
-function get_cycle end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function get_cycle(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
-    ne(g) == 0 && return Vector{T}()
-    e = first(edges(g))
-    return [src(e), dst(e)]
+function find_simple_cycle(g::AbstractGraph)
+    return find_simple_path_or_cycle(g, vertices(g), 0, true, false)
 end
 
-@traitfn function get_cycle(g::AG::(!IsDirected), v::Integer) where {T, AG<:AbstractGraph{T}}
-    n = neighbors(g, v)
-    isempty(n) && return Vector{T}()
-    return [T(v), n[1]]
-end
-
-@traitfn function get_cycle(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
-    return get_path_or_cycle(g, vertices(g), 0, true, false)
-end
-
-@traitfn function get_cycle(g::AG::IsDirected, v::Integer) where {T, AG<:AbstractGraph{T}}
-    return get_path_or_cycle(g, v, v, true, false)
+function find_simple_cycle(g::AbstractGraph, v::Integer)
+    return find_simple_path_or_cycle(g, v, v, true, false)
 end
 
 """
-    get_path(g, v, w)
+    has_simple_path(g, v, w; accept_trivial_paths = true)
 
-Return an arbitrary path from vertex `v` to vertex `w` in graph `g` or
-an empty vector if there is no path from `v` to `w`.
+Return true if graph `g` contains a simple path from vertex `v` to
+vertex `w`. With simple path is understood a path with no repeated
+vertices.
 
-See also: [`has_path`](@ref)
+In the degenerate case `v == w`, `true` is returned if and only if
+`accept_trivial_paths` is `true`.
+
+See also: [`find_simple_path`](@ref)
+"""
+function has_simple_path(g::AbstractGraph{T}, v::Integer, w::Integer;
+                         accept_trivial_paths::Bool = true) where T
+    v == w && return accept_trivial_paths
+    return !isempty(find_simple_path_or_cycle(g, v, w, false, false))
+end
+
+"""
+    find_simple_path(g, v, w; accept_trivial_paths = true)
+
+Find an arbitrary simple path from vertex `v` to vertex `w` in graph
+`g` and return this as a vector of the visited vertices. Return an
+empty vector if there is no simple path from `v` to `w`. With simple
+path is understood a path with no repeated vertices.
+
+In the degenerate case `v == w`, the trivial path `[v]` is returned if
+`accept_trivial_paths` is `true` and otherwise an empty vector is
+returned.
+
+A non-empty return vector `p` of length `n` is guaranteed to have the
+following properties:
+* `p[1] == v`
+* `p[end] == w`
+* `p` has no repeated entry.
+* `(p[i], p[i+1])` is an edge in `g` for `i = 1:(n-1)`.
+* The number of edges in the path is `n - 1`.
+
+See also: [`has_simple_path`](@ref), [`find_simple_cycle`](@ref)
 
 ### Implementation Notes
 Uses DFS. The first encountered path is returned.
 """
-function get_path(g::AbstractGraph, v::Integer, w::Integer)
-    return get_path_or_cycle(g, v, w, false, false)
+function find_simple_path(g::AbstractGraph{T}, v::Integer, w::Integer;
+                          accept_trivial_paths::Bool = true) where T
+    v == w && accept_trivial_paths && return T[v]
+    v == w && !accept_trivial_paths && return Vector{T}()
+    return find_simple_path_or_cycle(g, v, w, false, false)
 end
 
-function get_path_or_cycle(g::AbstractGraph{T}, sources, target, find_cycle,
-                           only_detect_cycle) where T
+function find_simple_path_or_cycle(g::AbstractGraph{T}, sources, target,
+                                   find_cycle, only_detect_cycle) where T
     vcolor = zeros(UInt8, nv(g))
     path = Vector{T}()
     for source in sources
@@ -87,6 +133,12 @@ function get_path_or_cycle(g::AbstractGraph{T}, sources, target, find_cycle,
                     w = n
                     break
                 elseif vcolor[n] == 1 && find_cycle && (target == 0 || target == n)
+                    if !is_directed(g) && length(path) > 1 && path[end - 1] == n
+                        # This requires using the same edge in both
+                        # directions, which does not yield a simple
+                        # cycle.
+                        continue
+                    end
                     if !only_detect_cycle
                         while path[1] != n
                             popfirst!(path)

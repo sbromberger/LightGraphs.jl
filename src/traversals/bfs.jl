@@ -146,8 +146,6 @@ gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
 is in `excluded_vertices`.
-
-See also: [`get_path`](@ref)
 """
 function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
         exclude_vertices::AbstractVector = Vector{T}()) where T
