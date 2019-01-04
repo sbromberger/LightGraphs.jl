@@ -76,11 +76,8 @@ import LightGraphs: tree
         # Edge cases
         @test !has_path(g, 1, 6)
         @test !has_path(g, 6, 1)  
-        @test !has_path(g, 1, 1) # inseparable 
+        @test has_path(g, 1, 1) # inseparable 
         @test !has_path(g, 1, 2; exclude_vertices=[2])
         @test !has_path(g, 1, 2; exclude_vertices=[1])
-
-	add_edge!(g, 1, 1)
-	@test has_path(g, 1, 1)
     end
 end
