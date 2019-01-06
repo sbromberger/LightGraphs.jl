@@ -929,7 +929,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "operators.html#Base.union-Union{Tuple{T}, Tuple{T,T}} where T<:AbstractGraph",
+    "location": "operators.html#Base.union-Union{Tuple{T}, Tuple{T,T}} where T<:LightGraphs.SimpleGraphs.AbstractSimpleGraph",
     "page": "Operators",
     "title": "Base.union",
     "category": "method",
@@ -2065,7 +2065,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "community.html#LightGraphs.modularity-Tuple{AbstractGraph,AbstractArray{#s67,1} where #s67<:Integer}",
+    "location": "community.html#LightGraphs.modularity-Tuple{AbstractGraph,AbstractArray{#s68,1} where #s68<:Integer}",
     "page": "Community Structures",
     "title": "LightGraphs.modularity",
     "category": "method",
