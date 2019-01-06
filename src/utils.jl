@@ -261,7 +261,6 @@ function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
 
     result = Vector{Vector{T}}(undef, length(adjlist))
     @inbounds for (i, list) in enumerate(adjlist)
-        length_list = length(list)
         result_list = Vector{T}(undef, length(list))
         for (j, item) in enumerate(list)
             result_list[j] = item
