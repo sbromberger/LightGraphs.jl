@@ -79,8 +79,8 @@ function reverse end
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
-    h.fadjlist = deepcopy(g.badjlist)
-    h.badjlist = deepcopy(g.fadjlist)
+    h.fadjlist = deepcopy_adjlist(g.badjlist)
+    h.badjlist = deepcopy_adjlist(g.fadjlist)
     h.ne = gne
     return h
 end
@@ -287,7 +287,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where T <: AbstractGraph
+function union(g::T, h::T) where T <: AbstractSimpleGraph
     gnv = nv(g)
     hnv = nv(h)
 
