@@ -69,6 +69,7 @@ tests = [
     "spanningtrees/prim",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
+    "biconnectivity/bridge",
     "graphcut/normalized_cut",
     "graphcut/karger_min_cut",
     "dominatingset/degree_dom_set",
