@@ -45,7 +45,7 @@ end
 
 """
     bridge(g)
-Compute the [bridges](https://en.wikipedia.org/wiki/Biconnected_component)
+Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges.
 # Examples
 ```jldoctest
