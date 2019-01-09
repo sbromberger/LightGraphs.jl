@@ -50,14 +50,28 @@ of a connected graph `g` and return an array containing all bridges.
 # Examples
 ```jldoctest
 julia> using LightGraphs
+
 julia> bridge(StarGraph(5))
-1-element Array{Int64,1}:
- 1
+8-element Array{CartesianIndex{2},1}:
+ CartesianIndex(1, 2)
+ CartesianIndex(2, 1)
+ CartesianIndex(1, 3)
+ CartesianIndex(3, 1)
+ CartesianIndex(1, 4)
+ CartesianIndex(4, 1)
+ CartesianIndex(1, 5)
+ CartesianIndex(5, 1)
+
 julia> bridge(PathGraph(5))
-3-element Array{Int64,1}:
- 2
- 3
- 4
+8-element Array{CartesianIndex{2},1}:
+ CartesianIndex(4, 5)
+ CartesianIndex(5, 4)
+ CartesianIndex(3, 4)
+ CartesianIndex(4, 3)
+ CartesianIndex(2, 3)
+ CartesianIndex(3, 2)
+ CartesianIndex(1, 2)
+ CartesianIndex(2, 1)
 ```
 """
 function bridge(g::AbstractGraph)
