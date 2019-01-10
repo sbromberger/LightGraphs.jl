@@ -21,14 +21,12 @@ Perform a depth first search storing the depth (in `depth`) and low-points
 (in `low`) of each vertex.
 """
 function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
-    children = 0
     state.id += 1
     state.depth[v] = state.id
     state.low[v] = state.depth[v]
 
     for w in outneighbors(g, v)
         if state.depth[w] == 0
-            children += 1
             visit!(state, g, v, w)
 
             state.low[v] = min(state.low[v], state.low[w])
