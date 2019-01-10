@@ -36,8 +36,8 @@
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
             brd = @inferred(bridge(tree))
-            sorted_ans = sort(collect(edges(tree)))
-            @test sort(brd) == sorted_ans
+            sorted_ans = sort(collect(edges(tree)), by = Tuple)
+            @test sort(brd, by = Tuple) == sorted_ans
         end
     end
 
