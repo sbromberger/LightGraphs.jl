@@ -21,14 +21,14 @@
     for g in testgraphs(gint)
         brd = @inferred(bridge(g))
         ans = [
-            CartesianIndex(1, 2),
-            CartesianIndex(2, 1),
-            CartesianIndex(8, 9),
-            CartesianIndex(9, 8),
-            CartesianIndex(7, 8),
-            CartesianIndex(8, 7),
-            CartesianIndex(12, 11),
-            CartesianIndex(11, 12),
+            Edge(1, 2),
+            Edge(2, 1),
+            Edge(8, 9),
+            Edge(9, 8),
+            Edge(7, 8),
+            Edge(8, 7),
+            Edge(12, 11),
+            Edge(11, 12),
         ]
         @test brd == ans
     end
@@ -37,7 +37,7 @@
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
             brd = @inferred(bridge(tree))
             row, col, _ = findnz(adjacency_matrix(tree))
-            sorted_ans = sort(CartesianIndex.(zip(row, col)))
+            sorted_ans = sort(Edge.(zip(row, col)))
             @test sort(brd) == sorted_ans
         end
     end
@@ -46,8 +46,8 @@
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(bridge(h)) == [
-            CartesianIndex(5, 6),
-            CartesianIndex(6, 5),
+            Edge(5, 6),
+            Edge(6, 5),
         ]
     end
 end

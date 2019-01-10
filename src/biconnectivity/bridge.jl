@@ -5,14 +5,14 @@ A state type for the depth-first search that finds bridges in a graph.
 mutable struct Bridges{T<:Integer}
     low::Vector{T}
     depth::Vector{T}
-    bridges::Vector{Tuple{T, T}}
+    bridges::Vector{Edge{T}}
     id::T
 end
 
 function Bridges(g::AbstractGraph)
     n = nv(g)
     T = typeof(n)
-    return Bridges(zeros(T, n), zeros(T, n), Tuple{T, T}[], zero(T))
+    return Bridges(zeros(T, n), zeros(T, n), Edge{T}[], zero(T))
 end
 
 """
@@ -33,8 +33,8 @@ function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
 
             state.low[v] = min(state.low[v], state.low[w])
             if state.low[w] > state.depth[v]
-                push!(state.bridges, (v, w))
-                push!(state.bridges, (w, v))
+                push!(state.bridges, Edge(v, w))
+                push!(state.bridges, Edge(w, v))
             end
 
         elseif w != u
@@ -52,26 +52,26 @@ of a connected graph `g` and return an array containing all bridges.
 julia> using LightGraphs
 
 julia> bridge(StarGraph(5))
-8-element Array{CartesianIndex{2},1}:
- CartesianIndex(1, 2)
- CartesianIndex(2, 1)
- CartesianIndex(1, 3)
- CartesianIndex(3, 1)
- CartesianIndex(1, 4)
- CartesianIndex(4, 1)
- CartesianIndex(1, 5)
- CartesianIndex(5, 1)
+8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 1
+ Edge 1 => 3
+ Edge 3 => 1
+ Edge 1 => 4
+ Edge 4 => 1
+ Edge 1 => 5
+ Edge 5 => 1
 
 julia> bridge(PathGraph(5))
-8-element Array{CartesianIndex{2},1}:
- CartesianIndex(4, 5)
- CartesianIndex(5, 4)
- CartesianIndex(3, 4)
- CartesianIndex(4, 3)
- CartesianIndex(2, 3)
- CartesianIndex(3, 2)
- CartesianIndex(1, 2)
- CartesianIndex(2, 1)
+8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 4 => 5
+ Edge 5 => 4
+ Edge 3 => 4
+ Edge 4 => 3
+ Edge 2 => 3
+ Edge 3 => 2
+ Edge 1 => 2
+ Edge 2 => 1
 ```
 """
 function bridge(g::AbstractGraph)
@@ -81,5 +81,5 @@ function bridge(g::AbstractGraph)
             visit!(state, g, u, u)
         end
     end
-    return CartesianIndex.(state.bridges)
+    return state.bridges
 end
