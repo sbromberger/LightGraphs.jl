@@ -33,8 +33,8 @@ function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
 
             state.low[v] = min(state.low[v], state.low[w])
             if state.low[w] > state.depth[v]
-                push!(state.bridges, Edge(v, w))
-                push!(state.bridges, Edge(w, v))
+                edge = v < w ? Edge(v, w) : Edge(w, v)
+                push!(state.bridges, edge)
             end
 
         elseif w != u
@@ -54,24 +54,16 @@ julia> using LightGraphs
 julia> bridge(StarGraph(5))
 8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
- Edge 2 => 1
  Edge 1 => 3
- Edge 3 => 1
  Edge 1 => 4
- Edge 4 => 1
  Edge 1 => 5
- Edge 5 => 1
 
 julia> bridge(PathGraph(5))
 8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 4 => 5
- Edge 5 => 4
  Edge 3 => 4
- Edge 4 => 3
  Edge 2 => 3
- Edge 3 => 2
  Edge 1 => 2
- Edge 2 => 1
 ```
 """
 function bridge(g::AbstractGraph)

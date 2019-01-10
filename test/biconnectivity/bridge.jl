@@ -22,12 +22,8 @@
         brd = @inferred(bridge(g))
         ans = [
             Edge(1, 2),
-            Edge(2, 1),
             Edge(8, 9),
-            Edge(9, 8),
             Edge(7, 8),
-            Edge(8, 7),
-            Edge(12, 11),
             Edge(11, 12),
         ]
         @test brd == ans
@@ -46,7 +42,6 @@
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(bridge(h)) == [
             Edge(5, 6),
-            Edge(6, 5),
         ]
     end
 end
