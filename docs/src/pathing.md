@@ -71,7 +71,7 @@ condensation
 neighborhood
 neighborhood_dists
 articulation
-bridge
+bridges
 period
 isgraphical
 ```
