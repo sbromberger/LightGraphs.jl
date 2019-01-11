@@ -66,6 +66,7 @@ julia> bridges(PathGraph(5))
 ```
 """
 function bridges(g::AbstractGraph{<:Integer})
+    is_directed(g) && throw(ArgumentError("bridges is only implemented for undirected graphs"))
     state = Bridges(g)
     for u in vertices(g)
         if state.depth[u] == 0

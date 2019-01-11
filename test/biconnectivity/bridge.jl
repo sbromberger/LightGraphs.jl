@@ -44,4 +44,7 @@
             Edge(5, 6),
         ]
     end
+
+    dir = SimpleDiGraph(10, 10)
+    @test_throws ArgumentError bridges(dir)
 end
