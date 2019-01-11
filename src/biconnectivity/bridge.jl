@@ -65,8 +65,9 @@ julia> bridges(PathGraph(5))
  Edge 1 => 2
 ```
 """
-function bridges(g::AbstractGraph{<:Integer})
-    is_directed(g) && throw(ArgumentError("bridges is only implemented for undirected graphs"))
+function bridges end
+
+@traitfn function bridges(g::AG::(!IsDirected)) where {T<:Integer, AG<:AbstractGraph{T}}
     state = Bridges(g)
     for u in vertices(g)
         if state.depth[u] == 0

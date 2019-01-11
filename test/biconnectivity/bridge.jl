@@ -46,5 +46,5 @@
     end
 
     dir = SimpleDiGraph(10, 10)
-    @test_throws ArgumentError bridges(dir)
+    @test_throws MethodError bridges(dir)
 end
