@@ -19,7 +19,7 @@
     add_edge!(gint, 7, 12)
 
     for g in testgraphs(gint)
-        brd = @inferred(bridge(g))
+        brd = @inferred(bridges(g))
         ans = [
             Edge(1, 2),
             Edge(8, 9),
@@ -31,7 +31,7 @@
     for level in 1:6
         btree = LightGraphs.BinaryTree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
-            brd = @inferred(bridge(tree))
+            brd = @inferred(bridges(tree))
             ans = collect(edges(tree))
             @test Set(brd) == Set(ans)
         end
@@ -40,7 +40,7 @@
     hint = blockdiag(WheelGraph(5), WheelGraph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
-        @test @inferred(bridge(h)) == [
+        @test @inferred(bridges(h)) == [
             Edge(5, 6),
         ]
     end

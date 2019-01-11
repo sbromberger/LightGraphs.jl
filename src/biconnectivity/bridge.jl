@@ -42,7 +42,7 @@ function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
 end
 
 """
-    bridge(g)
+    bridges(g)
 Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges, i.e edges
 whose deletion increases the number of connected components of the graph.
@@ -50,14 +50,14 @@ whose deletion increases the number of connected components of the graph.
 ```jldoctest
 julia> using LightGraphs
 
-julia> bridge(StarGraph(5))
+julia> bridges(StarGraph(5))
 8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
  Edge 1 => 5
 
-julia> bridge(PathGraph(5))
+julia> bridges(PathGraph(5))
 8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 4 => 5
  Edge 3 => 4
@@ -65,7 +65,7 @@ julia> bridge(PathGraph(5))
  Edge 1 => 2
 ```
 """
-function bridge(g::AbstractGraph{<:Integer})
+function bridges(g::AbstractGraph{<:Integer})
     state = Bridges(g)
     for u in vertices(g)
         if state.depth[u] == 0
