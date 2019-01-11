@@ -11,7 +11,7 @@ end
 
 function Bridges(g::AbstractGraph)
     n = nv(g)
-    T = typeof(n)
+    T = eltype(g)
     return Bridges(zeros(T, n), zeros(T, n), Edge{T}[], zero(T))
 end
 
@@ -25,7 +25,7 @@ function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
     state.depth[v] = state.id
     state.low[v] = state.depth[v]
 
-    for w in outneighbors(g, v)
+    @inbounds for w in outneighbors(g, v)
         if state.depth[w] == 0
             visit!(state, g, v, w)
 
@@ -44,7 +44,8 @@ end
 """
     bridge(g)
 Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
-of a connected graph `g` and return an array containing all bridges.
+of a connected graph `g` and return an array containing all bridges, i.e edges
+whose deletion increases the number of connected components of the graph.
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -64,7 +65,7 @@ julia> bridge(PathGraph(5))
  Edge 1 => 2
 ```
 """
-function bridge(g::AbstractGraph)
+function bridge(g::AbstractGraph{<:Integer})
     state = Bridges(g)
     for u in vertices(g)
         if state.depth[u] == 0
