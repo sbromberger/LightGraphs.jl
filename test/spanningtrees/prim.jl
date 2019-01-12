@@ -33,4 +33,48 @@
         mst2 = @inferred(prim_mst(g, distmx_sec))
         @test mst2 == vec2
     end
+
+    
+    # Third test: Example from
+    #   https://en.wikipedia.org/wiki/Kruskal%27s_algorithm#Example
+    # Adapted from networkx
+    #   https://github.com/networkx/networkx/blob/master/networkx/algorithms/tree/tests/test_mst.py
+    edges_w = [(0, 1, 7), (0, 3, 5), (1, 2, 8), (1, 3, 9), (1, 4, 7),
+               (2, 4, 5), (3, 4, 15), (3, 5, 6), (4, 5, 8), (4, 6, 9),
+               (5, 6, 11)]
+    n = 7
+
+    if false    # verify the example, visually
+        for e in edges_w
+            println("$('A' + e[1]) -- $('A' + e[2]): $(e[3])")
+        end
+    end
+
+    gx = LightGraphs.SimpleGraph([Edge(e[1]+1, e[2]+1) for e in edges_w])
+
+    @test nv(gx) == n
+    @test ne(gx) == length(edges_w)
+
+    distmx3 = zeros(Float64, n, n)
+    for e in edges_w
+        distmx3[e[1]+1, e[2]+1] = e[3]
+        distmx3[e[2]+1, e[1]+1] = e[3]
+    end
+    mst3 = @inferred(prim_mst(gx, distmx3))
+
+    expected3 = [Edge(e[1]+1, e[2]+1)
+                 for e in [(0, 1, 7),
+                           (0, 3, 5),
+                           (1, 4, 7),
+                           (2, 4, 5),
+                           (3, 5, 6),
+                           (4, 6, 9)]]
+
+    """
+    The cost of the edge selection `es` given the distance matrix `distmx`
+    """
+    edge_costs(es, distmx) =
+        sum(distmx[e.src, e.dst] for e in es)
+
+    @test edge_costs(mst3, distmx3) == edge_costs(expected3, distmx3)
 end
