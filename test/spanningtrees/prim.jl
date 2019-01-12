@@ -77,4 +77,15 @@
         sum(distmx[e.src, e.dst] for e in es)
 
     @test edge_costs(mst3, distmx3) == edge_costs(expected3, distmx3)
+
+    # maximum spanning tree
+    mst3n = @inferred(prim_mst(gx, -distmx3))
+    expected3n = [Edge(e[1]+1, e[2]+1)
+                  for e in [(0, 1, 7),
+                            (1, 2, 8),
+                            (1, 3, 9),
+                            (3, 4, 15),
+                            (4, 6, 9),
+                            (5, 6, 11)]]
+    @test edge_costs(mst3n, distmx3) == edge_costs(expected3n, distmx3)
 end
