@@ -97,7 +97,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths,
 
 # centrality
@@ -141,7 +141,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, iterative_articulation,
 
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,

@@ -78,3 +78,62 @@ function articulation(g::AbstractGraph)
     end
     return findall(state.articulation_points)
 end
+
+function iterative_articulation(g::AbstractGraph)
+    s = Array{NTuple{4,Int}}(undef,0)
+    articulation_points = falses(nv(g))
+    low = zeros(nv(g))
+    pre = zeros(nv(g))
+    children = 0
+    wi = 0
+    w = 0
+    cnt = 1
+    b = true
+    for u in vertices(g)
+        if pre[u] != 0
+            continue
+        end
+        v = u
+        while !isempty(s) || b
+            if  wi < 1
+                children = 0
+                pre[v] = cnt
+                cnt += 1
+                low[v] = pre[v]
+                x = outneighbors(g,v)
+                wi = 1
+            else
+                children,wi,u,v = pop!(s)
+                x = outneighbors(g,v)
+                w = x[wi]
+                low[v] = min(low[v],low[w])
+                if low[w] >= pre[v] && u != v
+                    articulation_points[v] = true
+                end
+                wi += 1
+            end
+            while wi <= length(x)
+                w = x[wi]
+                if pre[w] == 0
+                    children += 1
+                    push!(s,(children,wi,u,v))
+                    wi = 0
+                    u = v
+                    v = w
+                    break
+                elseif w != u
+                    low[v] = min(low[v],pre[w])
+                end
+                wi += 1
+            end
+            if wi < 1
+                continue
+            end
+            if u == v && children > 1
+                articulation_points[v] = true
+            end
+            b = false
+        end
+    end
+    return findall(articulation_points)
+end
