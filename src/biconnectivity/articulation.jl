@@ -79,41 +79,41 @@ function articulation(g::AbstractGraph)
     return findall(state.articulation_points)
 end
 
-function iterative_articulation(g::AbstractGraph)
-    s = Array{NTuple{4,Int}}(undef,0)
-    articulation_points = falses(nv(g))
-    low = zeros(nv(g))
-    pre = zeros(nv(g))
-    children = 0
-    wi = 0
-    w = 0
-    cnt = 1
-    b = true
-    for u in vertices(g)
-        if pre[u] != 0
-            continue
-        end
+function iterative_articulation(g::SimpleGraph)
+    T = eltype(g)
+    s = Vector{Tuple{Int, Int, T, T}}()
+    articulation_points = Set{T}()
+    low = zeros(Int, nv(g))
+    pre = zeros(Int, nv(g))
+    @inbounds for u in vertices(g)
+        pre[u] != 0 && continue
         v = u
-        while !isempty(s) || b
+        children = 0
+        wi::Int = 0
+        w::T = 0
+        cnt::Int = 1
+        first_time = true
+        while !isempty(s) || first_time
+            first_time = false
             if  wi < 1
                 children = 0
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
-                x = outneighbors(g,v)
+                v_neighbors = outneighbors(g,v)
                 wi = 1
             else
                 children,wi,u,v = pop!(s)
-                x = outneighbors(g,v)
-                w = x[wi]
+                v_neighbors = outneighbors(g,v)
+                w = v_neighbors[wi]
                 low[v] = min(low[v],low[w])
                 if low[w] >= pre[v] && u != v
-                    articulation_points[v] = true
+                    push!(articulation_points,v)
                 end
                 wi += 1
             end
-            while wi <= length(x)
-                w = x[wi]
+            while wi <= length(v_neighbors)
+                w = v_neighbors[wi]
                 if pre[w] == 0
                     children += 1
                     push!(s,(children,wi,u,v))
@@ -126,14 +126,11 @@ function iterative_articulation(g::AbstractGraph)
                 end
                 wi += 1
             end
-            if wi < 1
-                continue
-            end
+            wi < 1 && continue
             if u == v && children > 1
-                articulation_points[v] = true
+                push!(articulation_points,v)
             end
-            b = false
         end
     end
-    return findall(articulation_points)
+    return collect(articulation_points)
 end
