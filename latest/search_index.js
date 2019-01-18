@@ -1445,7 +1445,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.kruskal_mst",
     "category": "function",
-    "text": "kruskal_mst(g, distmx=weights(g); minimize=true)\n\nReturn a vector of edges representing the minimum (by default) spanning tree of a connected, undirected graph g with optional distance matrix distmx using Kruskal\'s algorithm.\n\nOptional Arguments\n\nminimize=true: if set to false, calculate the maximum spanning tree.\n\n\n\n\n\n"
+    "text": "kruskal_mst(g, distmx=weights(g); minimize=true)\n\nReturn a vector of edges representing the minimum (by default) spanning tree of a connected,  undirected graph g with optional distance matrix distmx using Kruskal\'s algorithm.\n\nOptional Arguments\n\nminimize=true: if set to false, calculate the maximum spanning tree.\n\n\n\n\n\n"
 },
 
 {
@@ -1941,7 +1941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.adjacency_spectrum",
     "category": "function",
-    "text": "Return the eigenvalues of the adjacency matrix for a graph g, indexed by vertex. Default values for T are the same as those in adjacency_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse eigs(adjacency_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
+    "text": "adjacency_spectrum(g[, T=Int; dir=:unspec])\n\nReturn the eigenvalues of the adjacency matrix for a graph g, indexed by vertex. Default values for T are the same as those in adjacency_matrix.\n\nOptional Arguments\n\ndir=:unspec: Options for dir are the same as those in laplacian_matrix.\n\nPerformance\n\nConverts the matrix to dense with nv^2 memory usage.\n\nImplementation Notes\n\nUse eigs(adjacency_matrix(g);  kwargs...) to compute some of the eigenvalues/eigenvectors.\n\n\n\n\n\n"
 },
 
 {
