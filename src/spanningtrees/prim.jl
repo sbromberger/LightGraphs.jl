@@ -36,3 +36,4 @@ function prim_mst end
 
     return [Edge{U}(parents[v], v) for v in vertices(g) if parents[v] != 0]
 end
+

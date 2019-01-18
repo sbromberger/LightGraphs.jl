@@ -100,3 +100,4 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     return YenState{T,U}(dists, A)
 end
+
