@@ -1,5 +1,6 @@
 """
     Bridges{T}
+
 A state type for the depth-first search that finds bridges in a graph.
 """
 mutable struct Bridges{T<:Integer}
@@ -17,6 +18,7 @@ end
 
 """
     visit!(state, g, u, v)
+
 Perform a depth first search storing the depth (in `depth`) and low-points
 (in `low`) of each vertex.
 """
@@ -43,6 +45,7 @@ end
 
 """
     bridges(g)
+
 Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges, i.e edges
 whose deletion increases the number of connected components of the graph.
