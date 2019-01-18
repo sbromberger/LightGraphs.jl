@@ -91,6 +91,7 @@ end
 
 """
     saw(g, s, niter)
+
 Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
 Return a vector of vertices visited in order.
@@ -113,3 +114,4 @@ function saw(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} whe
     end
     return visited[1:(i - 1)]
 end
+

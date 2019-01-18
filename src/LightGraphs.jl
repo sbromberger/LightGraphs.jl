@@ -130,7 +130,7 @@ CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 
 CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph, StarDiGraph,
 PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
-CliqueGraph, LadderGraph, CircularLadderGraph,
+CliqueGraph, LadderGraph, CircularLadderGraph, BarbellGraph, LollipopGraph,
 
 #smallgraphs
 smallgraph,
@@ -142,7 +142,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, bridges,
 
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
@@ -251,6 +251,7 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/bridge.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
 include("dominatingset/degree_dom_set.jl")

@@ -1,4 +1,3 @@
-
 function johnson_shortest_paths(g::AbstractGraph{U},
 distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
@@ -59,3 +58,4 @@ end
 
 enumerate_paths(s::JohnsonState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
 enumerate_paths(st::JohnsonState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]
+
