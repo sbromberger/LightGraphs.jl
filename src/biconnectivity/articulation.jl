@@ -81,17 +81,17 @@ end
 
 function iterative_articulation(g::SimpleGraph)
     T = eltype(g)
-    s = Vector{Tuple{Int, Int, T, T}}()
+    s = Vector{Tuple{T, T, T, T}}()
     articulation_points = Set{T}()
-    low = zeros(Int, nv(g))
-    pre = zeros(Int, nv(g))
+    low = zeros(T, nv(g))
+    pre = zeros(T, nv(g))
     @inbounds for u in vertices(g)
         pre[u] != 0 && continue
         v = u
         children = 0
-        wi::Int = 0
+        wi::T = 0
         w::T = 0
-        cnt::Int = 1
+        cnt::T = 1
         first_time = true
         while !isempty(s) || first_time
             first_time = false
