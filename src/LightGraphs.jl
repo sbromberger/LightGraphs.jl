@@ -141,7 +141,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components, iterative_articulation,
+articulation, biconnected_components, bridges, iterative_articulation,
 
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
@@ -250,6 +250,7 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/bridge.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
 include("dominatingset/degree_dom_set.jl")
