@@ -81,7 +81,7 @@ end
 
 function iterative_articulation(g::SimpleGraph)
     T = eltype(g)
-    s = Vector{Tuple{T, T, T, T}}()
+    s = Vector{Tuple{T, T, T}}()
     articulation_points = Set{T}()
     low = zeros(T, nv(g))
     pre = zeros(T, nv(g))
@@ -96,14 +96,13 @@ function iterative_articulation(g::SimpleGraph)
         while !isempty(s) || first_time
             first_time = false
             if  wi < 1
-                children = 0
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
                 v_neighbors = outneighbors(g,v)
                 wi = 1
             else
-                children,wi,u,v = pop!(s)
+                wi,u,v = pop!(s)
                 v_neighbors = outneighbors(g,v)
                 w = v_neighbors[wi]
                 low[v] = min(low[v],low[w])
@@ -115,8 +114,10 @@ function iterative_articulation(g::SimpleGraph)
             while wi <= length(v_neighbors)
                 w = v_neighbors[wi]
                 if pre[w] == 0
-                    children += 1
-                    push!(s,(children,wi,u,v))
+                    if u == v
+                        children += 1
+                    end
+                    push!(s,(wi,u,v))
                     wi = 0
                     u = v
                     v = w
@@ -127,9 +128,9 @@ function iterative_articulation(g::SimpleGraph)
                 wi += 1
             end
             wi < 1 && continue
-            if u == v && children > 1
-                push!(articulation_points,v)
-            end
+        end
+        if children > 1
+            push!(articulation_points,u)
         end
     end
     return collect(articulation_points)
