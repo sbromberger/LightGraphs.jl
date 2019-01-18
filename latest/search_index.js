@@ -1329,6 +1329,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.bridges",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.bridges",
+    "category": "function",
+    "text": "bridges(g)\n\nCompute the bridges of a connected graph g and return an array containing all bridges, i.e edges whose deletion increases the number of connected components of the graph.\n\nExamples\n\njulia> using LightGraphs\n\njulia> bridges(StarGraph(5))\n8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 3\n Edge 1 => 4\n Edge 1 => 5\n\njulia> bridges(PathGraph(5))\n8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 4 => 5\n Edge 3 => 4\n Edge 2 => 3\n Edge 1 => 2\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#LightGraphs.period",
     "page": "Path and Traversal",
     "title": "LightGraphs.period",
@@ -1349,7 +1357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "Connectivity / Bipartiteness",
     "category": "section",
-    "text": "Graph connectivity functions are defined on both undirected and directed graphs:is_connected\nis_strongly_connected\nis_weakly_connected\nconnected_components\nstrongly_connected_components\nweakly_connected_components\nhas_self_loops\nattracting_components\nis_bipartite\nbipartite_map\nbiconnected_components\ncondensation\nneighborhood\nneighborhood_dists\narticulation\nperiod\nisgraphical"
+    "text": "Graph connectivity functions are defined on both undirected and directed graphs:is_connected\nis_strongly_connected\nis_weakly_connected\nconnected_components\nstrongly_connected_components\nweakly_connected_components\nhas_self_loops\nattracting_components\nis_bipartite\nbipartite_map\nbiconnected_components\ncondensation\nneighborhood\nneighborhood_dists\narticulation\nbridges\nperiod\nisgraphical"
 },
 
 {
@@ -1909,7 +1917,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1917,7 +1925,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
