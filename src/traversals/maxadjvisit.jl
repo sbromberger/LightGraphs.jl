@@ -123,3 +123,4 @@ maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(g,
     weights(g),
     false,
     stdout)
+

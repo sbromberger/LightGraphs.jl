@@ -421,7 +421,6 @@ end
 """
     neighborhood(g, v, d, distmx=weights(g))
     
-
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
 may be specified by `distmx`. 
 

@@ -106,6 +106,8 @@ eigenvalues/eigenvectors.
 laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
 """
+    adjacency_spectrum(g[, T=Int; dir=:unspec])
+
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
 by vertex. Default values for `T` are the same as those in
 [`adjacency_matrix`](@ref).
