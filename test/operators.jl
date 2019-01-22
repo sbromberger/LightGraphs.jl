@@ -294,4 +294,12 @@
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
     end
+    
+    let gegonet = SimpleDiGraph([0 1 1 0; 0 0 0 1; 0 0 0 1; 0 0 0 0])
+        @test egonet(gegonet,1,3,dir=:out)==gegonet
+        @test egonet(gegonet,4,3,dir=:in)==reverse(gegonet)
+        gegonetlarge = copy(gegonet)
+        add_vertex!(gegonetlarge); add_edge!(gegonetlarge,5,1)
+        @test egonet(gegonetlarge,1,3,dir=:out)==gegonet
+    end
 end

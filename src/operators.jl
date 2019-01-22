@@ -701,7 +701,7 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    g[neighborhood(g, v, d, distmx, dir=dir)]
+    g[unique!(neighborhood(g, v, d, distmx, dir=dir))]
 
 
 
