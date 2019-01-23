@@ -89,9 +89,9 @@ function iterative_articulation(g::SimpleGraph)
         pre[u] != 0 && continue
         v = u
         children = 0
-        wi::T = 0
-        w::T = 0
-        cnt::T = 1
+        wi::T = zero(T)
+        w::T = zero(T)
+        cnt::T = one(T)
         first_time = true
         while !isempty(s) || first_time
             first_time = false
@@ -99,15 +99,15 @@ function iterative_articulation(g::SimpleGraph)
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
-                v_neighbors = outneighbors(g,v)
+                v_neighbors = outneighbors(g, v)
                 wi = 1
             else
-                wi,u,v = pop!(s)
-                v_neighbors = outneighbors(g,v)
+                wi, u, v = pop!(s)
+                v_neighbors = outneighbors(g, v)
                 w = v_neighbors[wi]
-                low[v] = min(low[v],low[w])
+                low[v] = min(low[v], low[w])
                 if low[w] >= pre[v] && u != v
-                    push!(articulation_points,v)
+                    push!(articulation_points, v)
                 end
                 wi += 1
             end
@@ -117,20 +117,20 @@ function iterative_articulation(g::SimpleGraph)
                     if u == v
                         children += 1
                     end
-                    push!(s,(wi,u,v))
+                    push!(s, (wi, u, v))
                     wi = 0
                     u = v
                     v = w
                     break
                 elseif w != u
-                    low[v] = min(low[v],pre[w])
+                    low[v] = min(low[v], pre[w])
                 end
                 wi += 1
             end
             wi < 1 && continue
         end
         if children > 1
-            push!(articulation_points,u)
+            push!(articulation_points, u)
         end
     end
     return collect(articulation_points)
