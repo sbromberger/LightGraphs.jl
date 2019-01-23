@@ -1,5 +1,5 @@
 """
-sample!([rng, ]a, k)
+    sample!([rng, ]a, k)
 
 Sample `k` element from array `a` without repetition and eventually excluding elements in `exclude`.
 
