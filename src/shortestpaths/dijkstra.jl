@@ -28,7 +28,7 @@ That is, assuming `D` is the sparse distance matrix:
 ```
 D = transpose(sparse(transpose(D)))
 ```
-Be aware that creating the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
+Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
 when multiple calls to `dijkstra_shortest_paths` with the distance matrix are planned.
 
 # Examples
