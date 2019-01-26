@@ -77,11 +77,11 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
-            currpathindex = i
+            currpathindex::U = i
             while currpathindex != 0
                 push!(path, currpathindex)
                 if pathinfo[currpathindex] == currpathindex
-                    currpathindex = 0
+                    currpathindex = zero(currpathindex)
                 else
                     currpathindex = pathinfo[currpathindex]
                 end

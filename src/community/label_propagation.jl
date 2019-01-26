@@ -11,6 +11,8 @@ the second is the convergence history for each node. Will return after
 """
 function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
     n = nv(g)
+    n == 0 && return (T[], Int[])
+
     label = collect(one(T):n)
     active_vs = BitSet(vertices(g))
     c = NeighComm(collect(one(T):n), fill(-1, n), one(T))
@@ -104,20 +106,22 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
             return lbl
         end
     end
+
+    return zero(eltype(c.neigh_pos)) # Case should never occur, just for type stability
 end
 
-function renumber_labels!(membership::Vector, label_counters::Vector{Int})
+function renumber_labels!(membership::Vector{T}, label_counters::Vector{Int}) where {T <: Integer}
     N = length(membership)
     (maximum(membership) > N || minimum(membership) < 1) && throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
-    j = 1
+    j = one(T)
     @inbounds for i = 1:length(membership)
-        k = membership[i]
+        k::T = membership[i]
         if k >= 1
             if label_counters[k] == 0
                 # We have seen this label for the first time
                 label_counters[k] = j
                 k = j
-                j += 1
+                j += one(j)
             else
                 k = label_counters[k]
             end
