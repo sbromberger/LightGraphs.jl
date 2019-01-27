@@ -156,3 +156,24 @@ function global_clustering_coefficient(g::AbstractGraph)
     ntriangles == 0 && return 1.
     return c / ntriangles
 end
+
+"""
+    triangle_count(g::SimpleGraph)
+    Returns the total number of triangles in a graph
+"""
+function triangle_count(g::AbstractGraph)
+    if !is_directed(g)
+        return Int(round(sum(eigvals(Matrix(adjacency_matrix(g))) .^ 3) / 6))
+    end
+    ntrng = 0
+    for u in vertices(g)
+        for v in outneighbors(g, u)
+            for w in inneighbors(g, u)
+                if has_edge(g, v, w)
+                    ntrng += 1
+                end
+            end
+        end
+    end
+    return Int(ntrng/3)
+end

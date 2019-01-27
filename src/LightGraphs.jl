@@ -97,7 +97,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths,
 
 # centrality
@@ -122,7 +122,7 @@ barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtse
 #community
 modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
-label_propagation, maximal_cliques, clique_percolation,
+label_propagation, maximal_cliques, clique_percolation, triangle_count,
 
 #generators
 CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
