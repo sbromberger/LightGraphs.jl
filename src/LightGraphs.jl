@@ -97,7 +97,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths,
 
 # centrality
@@ -153,7 +153,10 @@ dominating_set,
 independent_set,
 
 #vertexcover
-vertex_cover
+vertex_cover,
+
+#matrix reordering
+reverse_cuthill_mckee
 
 """
     LightGraphs
@@ -261,6 +264,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("matrix_ordering.jl")
 
 using .LinAlg
 end # module
