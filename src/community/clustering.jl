@@ -159,33 +159,21 @@ end
 
 """
     triangle_count(g::AbstractGraph)
-    Returns the total number of triangles in a graph
-"""
-function triangle_count(g::AbstractGraph)
-    if is_directed(g)
-        return directed_triangle_count(g)
-    end
-    return undirected_triangle_count(g)
-end
 
-function undirected_triangle_count(g::SimpleGraph)
+Returns the total number of triangles in a graph
+"""
+function triangle_count end
+
+@traitfn function triangle_count(g::::(!IsDirected))
     ntriangles = 0
     for u in vertices(g)
         u_nbrs = outneighbors(g, u)
         for i in 1:length(u_nbrs)
             v = u_nbrs[i]
-            if degree(g, u) >= degree(g, v)
-                if !(degree(g, u) == degree(g, v) && u < v)
-                    continue
-                end
-            end
+            compare_degree(g, u, v) || continue
             for j in i+1:length(u_nbrs)
                 w = u_nbrs[j]
-                if degree(g, u) >= degree(g, w)
-                    if !(degree(g, u) == degree(g, w) && u < w)
-                        continue
-                    end
-                end
+                compare_degree(g, u, w) || continue
                 if has_edge(g, v, w)
                     ntriangles += 1
                 end
@@ -195,7 +183,7 @@ function undirected_triangle_count(g::SimpleGraph)
     return ntriangles
 end
 
-function directed_triangle_count(g::SimpleDiGraph)
+@traitfn function triangle_count(g::::IsDirected)
     ntriangles = 0
     for u in vertices(g)
         for v in outneighbors(g, u)
@@ -207,4 +195,11 @@ function directed_triangle_count(g::SimpleDiGraph)
         end
     end
     return ntriangles ÷ 3
+end
+
+function compare_degree(g, u, v)
+    if (degree(g, u) < degree(g, v)) || (degree(g, u) == degree(g, u) && u < v)
+        return true
+    end
+    return false
 end
