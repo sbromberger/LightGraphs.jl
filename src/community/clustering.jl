@@ -162,18 +162,49 @@ end
     Returns the total number of triangles in a graph
 """
 function triangle_count(g::AbstractGraph)
-    if !is_directed(g)
-        return Int(round(sum(eigvals(Matrix(adjacency_matrix(g))) .^ 3) / 6))
+    if is_directed(g)
+        return directed_triangle_count(g)
     end
-    ntrng = 0
+    return undirected_triangle_count(g)
+end
+
+function undirected_triangle_count(g::SimpleGraph)
+    ntriangles = 0
     for u in vertices(g)
-        for v in outneighbors(g, u)
-            for w in inneighbors(g, u)
+        u_nbrs = outneighbors(g, u)
+        for i in 1:length(u_nbrs)
+            v = u_nbrs[i]
+            if degree(g, u) >= degree(g, v)
+                if !(degree(g, u) == degree(g, v) && u < v)
+                    continue
+                end
+            end
+            for j in i+1:length(u_nbrs)
+                w = u_nbrs[j]
+                if degree(g, u) >= degree(g, w)
+                    if !(degree(g, u) == degree(g, w) && u < w)
+                        continue
+                    end
+                end
                 if has_edge(g, v, w)
-                    ntrng += 1
+                    ntriangles += 1
                 end
             end
         end
     end
-    return Int(ntrng/3)
+    return ntriangles
+end
+
+function directed_triangle_count(g::SimpleDiGraph)
+    ntriangles = 0
+    for u in vertices(g)
+        for v in outneighbors(g, u)
+            for w in outneighbors(g, v)
+                if has_edge(g, w, u)
+                    ntriangles += 1
+                end
+            end
+        end
+    end
+    return ntriangles ÷ 3
 end
