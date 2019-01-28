@@ -158,7 +158,7 @@ function global_clustering_coefficient(g::AbstractGraph)
 end
 
 """
-    triangle_count(g::SimpleGraph)
+    triangle_count(g::AbstractGraph)
     Returns the total number of triangles in a graph
 """
 function triangle_count(g::AbstractGraph)
