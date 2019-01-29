@@ -41,14 +41,16 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
 
     validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
-    index_type::DataType = UInt8
-    for t in validtypes
-        if ne(g) < typemax(t)
-            index_type = t
-            break
+    index_type::DataType = T
+    if ne(g) >= typemax(T)
+        for t in validtypes
+            if ne(g) < typemax(t)
+                index_type = t
+                break
+            end
         end
     end
-
+    
     colpt = ones(index_type, n_v + 1)
     rowval = sizehint!(Vector{index_type}(), nz)
     selfloops = Vector{index_type}()
