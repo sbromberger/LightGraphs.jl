@@ -39,10 +39,19 @@ end
 function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Function, nzmult::Int=1) where U
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
-    colpt = ones(U, n_v + 1)
 
-    rowval = sizehint!(Vector{U}(), nz)
-    selfloops = Vector{U}()
+    validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
+    index_type::DataType = UInt8
+    for t in validtypes
+        if ne(g) < typemax(t)
+            index_type = t
+            break
+        end
+    end
+
+    colpt = ones(index_type, n_v + 1)
+    rowval = sizehint!(Vector{index_type}(), nz)
+    selfloops = Vector{index_type}()
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
