@@ -15,32 +15,12 @@ override the default data type (`Int`) and specify an optional direction.
 ### Implementation Notes
 This function is optimized for speed and directly manipulates CSC sparse matrix fields.
 """
-function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
+function adjacency_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:out) where U
     nzmult = 1
     # see below - we iterate over columns. That's why we take the
     # "opposite" neighbor function. It's faster than taking the transpose
     # at the end.
-    if (dir == :out)
-        _adjacency_matrix(g, T, inneighbors, 1)
-    elseif (dir == :in)
-        _adjacency_matrix(g, T, outneighbors, 1)
-    elseif (dir == :both)
-        _adjacency_matrix(g, T, all_neighbors, 1)
-        if is_directed(g)
-            _adjacency_matrix(g, T, all_neighbors, 2)
-        else
-            _adjacency_matrix(g, T, outneighbors, 1)
-        end
-    else
-        error("Not implemented")
-    end
-end
-
-function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Function, nzmult::Int=1) where U
-    n_v = nv(g)
-    nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
-
-    validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
+    validtypes::Vector{DataType} = [UInt8, UInt16, UInt32, UInt64, Int64]
     index_type::DataType = U
     if ne(g) >= typemax(U)
         for t in validtypes
@@ -50,8 +30,27 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
             end
         end
     end
+    if (dir == :out)
+        _adjacency_matrix(g, T, index_type, inneighbors, 1)
+    elseif (dir == :in)
+        _adjacency_matrix(g, T, index_type, outneighbors, 1)
+    elseif (dir == :both)
+        _adjacency_matrix(g, T, index_type, all_neighbors, 1)
+        if is_directed(g)
+            _adjacency_matrix(g, T, index_type, all_neighbors, 2)
+        else
+            _adjacency_matrix(g, T, index_type, outneighbors, 1)
+        end
+    else
+        error("Not implemented")
+    end
+end
 
+function _adjacency_matrix(g::AbstractGraph, T::DataType, index_type::DataType, neighborfn::Function, nzmult::Int=1)
+    n_v = nv(g)
+    nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     colpt = ones(index_type, n_v + 1)
+
     rowval = sizehint!(Vector{index_type}(), nz)
     selfloops = Vector{index_type}()
     for j in 1:n_v  # this is by column, not by row.
