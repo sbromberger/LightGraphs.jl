@@ -2073,7 +2073,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "community.html#LightGraphs.modularity-Tuple{AbstractGraph,AbstractArray{#s68,1} where #s68<:Integer}",
+    "location": "community.html#LightGraphs.modularity-Tuple{AbstractGraph,AbstractArray{#s67,1} where #s67<:Integer}",
     "page": "Community Structures",
     "title": "LightGraphs.modularity",
     "category": "method",
