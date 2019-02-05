@@ -941,7 +941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.cartesian_product",
     "category": "method",
-    "text": "cartesian_product(g, h)\n\nReturn the (cartesian product)[https://en.wikipedia.org/wiki/Cartesianproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = cartesian_product(StarGraph(3), PathGraph(3))\n{9, 12} undirected simple Int64 graph\n\njulia> collect(edges(g))\n12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 4\n Edge 1 => 7\n Edge 2 => 3\n Edge 2 => 5\n Edge 2 => 8\n Edge 3 => 6\n Edge 3 => 9\n Edge 4 => 5\n Edge 5 => 6\n Edge 7 => 8\n Edge 8 => 9\n\n\n\n\n\n"
+    "text": "cartesian_product(g, h)\n\nReturn the cartesian product of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = cartesian_product(StarGraph(3), PathGraph(3))\n{9, 12} undirected simple Int64 graph\n\njulia> collect(edges(g))\n12-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 2\n Edge 1 => 4\n Edge 1 => 7\n Edge 2 => 3\n Edge 2 => 5\n Edge 2 => 8\n Edge 3 => 6\n Edge 3 => 9\n Edge 4 => 5\n Edge 5 => 6\n Edge 7 => 8\n Edge 8 => 9\n\n\n\n\n\n"
 },
 
 {
@@ -1013,7 +1013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Operators",
     "title": "LightGraphs.tensor_product",
     "category": "method",
-    "text": "tensor_product(g, h)\n\nReturn the (tensor product)[https://en.wikipedia.org/wiki/Tensorproductof_graphs] of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = tensor_product(StarGraph(3), PathGraph(3))\n{9, 8} undirected simple Int64 graph\n\njulia> collect(edges(g))\n8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 5\n Edge 1 => 8\n Edge 2 => 4\n Edge 2 => 6\n Edge 2 => 7\n Edge 2 => 9\n Edge 3 => 5\n Edge 3 => 8\n\n\n\n\n\n"
+    "text": "tensor_product(g, h)\n\nReturn the tensor product of g and h.\n\nImplementation Notes\n\nPreserves the eltype of the input graph. Will error if the number of vertices in the generated graph exceeds the eltype.\n\nExamples\n\njulia> using LightGraphs\n\njulia> g = tensor_product(StarGraph(3), PathGraph(3))\n{9, 8} undirected simple Int64 graph\n\njulia> collect(edges(g))\n8-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:\n Edge 1 => 5\n Edge 1 => 8\n Edge 2 => 4\n Edge 2 => 6\n Edge 2 => 7\n Edge 2 => 9\n Edge 3 => 5\n Edge 3 => 8\n\n\n\n\n\n"
 },
 
 {
@@ -1917,7 +1917,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1925,7 +1925,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
