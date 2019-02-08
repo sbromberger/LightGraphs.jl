@@ -16,10 +16,6 @@ override the default data type (`Int`) and specify an optional direction.
 This function is optimized for speed and directly manipulates CSC sparse matrix fields.
 """
 function adjacency_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:out) where U
-    nzmult = 1
-    # see below - we iterate over columns. That's why we take the
-    # "opposite" neighbor function. It's faster than taking the transpose
-    # at the end.
     validtypes::Vector{DataType} = [UInt8, UInt16, UInt32, UInt64, Int64]
     index_type::DataType = U
     if ne(g) >= typemax(U)
@@ -30,6 +26,10 @@ function adjacency_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:out
             end
         end
     end
+    nzmult = 1
+    # see below - we iterate over columns. That's why we take the
+    # "opposite" neighbor function. It's faster than taking the transpose
+    # at the end.
     if (dir == :out)
         _adjacency_matrix(g, T, index_type, inneighbors, 1)
     elseif (dir == :in)
