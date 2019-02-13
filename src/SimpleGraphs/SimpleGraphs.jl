@@ -10,7 +10,7 @@ import Base:
 import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    has_vertex, has_edge, inneighbors, outneighbors,
+    has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
 
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
 

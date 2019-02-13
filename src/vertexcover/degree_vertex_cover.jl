@@ -53,3 +53,4 @@ function vertex_cover(
     end
     return LightGraphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
+
