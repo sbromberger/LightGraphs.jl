@@ -3,7 +3,11 @@
     e3 = Edge(1, 4)
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
-    @test @inferred(s,d = e2; (s===1) && (d === 3))
+    @test begin s,d = e2; (s===1) && (d === 3) end
+    let
+        sd = e->begin s,d = e; (s,d) end
+        @inferred sd(e2)
+    end
     @test_throws BoundsError s,d,w = e2
     @test_throws MethodError (e2...,)
 
