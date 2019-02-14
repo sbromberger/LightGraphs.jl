@@ -26,4 +26,5 @@ Note: to use the `has_edge(g, e)` method safely, it is important to understand t
 
 - `src`: Give source vertex of an edge.
 - `dst`: Give destination vertex of an edge.
+- `s, d = some_edge`: Shorthand for `s = src(some_edge); d = dst(some_edge); some_edge`
 - `reverse`: Creates a new edge running in opposite direction of passed edge.

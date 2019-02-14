@@ -406,3 +406,12 @@ In general, referencing the weight of a nonexistent edge is undefined behavior. 
 as a substitute for the graph's [`adjacency_matrix`](@ref).
 """
 weights(g::AbstractGraph) = DefaultDistance(nv(g))
+
+#Edge destructuring generic fallback. This does not permit iteration like `tup = (edge...,)` 
+#or `for v in edge`; basically because we do not want to impose on implementor's freedom to 
+#assign third or fourth argument
+@inline function Base.indexed_iterate(e::AbstractEdge, i::Int, state=nothing)
+    i == 1 && return (src(e), nothing)
+    i == 2 && return (dst(e), nothing)
+    throw(BoundsError(e, i))
+end

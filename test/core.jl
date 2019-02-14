@@ -3,6 +3,9 @@
     e3 = Edge(1, 4)
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
+    @test @inferred(s,d = e2; (s===1) && (d === 3))
+    @test_throws BoundsError s,d,w = e2
+    @test_throws MethodError (e2...,)
 
     gx = SimpleGraph(10)
     for g in testgraphs(gx)
