@@ -107,7 +107,20 @@ function SimpleGraph{T}(g::SimpleGraph) where T <: Integer
     return SimpleGraph(ne(g), h_fadj)
 end
 
+"""
+    SimpleGraph(g::AbstractGraph)
 
+Construct an undirected `SimpleGraph` from an abstract graph.
+Every directed edge in `g` is added as an undirected edge.
+The element type is the same as for `g`.
+"""
+function SimpleGraph(g::AbstractGraph{T}) where T
+    res = SimpleGraph{T}(nv(g))
+    for ed in edges(g)
+        add_edge!(res, src(ed), dst(ed))
+    end
+    res
+end
 
 # SimpleGraph(digraph)
 """
