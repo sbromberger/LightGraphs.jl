@@ -3,13 +3,13 @@ export DegreeDominatingSet
 struct DegreeDominatingSet end
 
 """
-    update_dominated(degree_queue, v, dominated, in_dom_set)
+    update_dominated!(degree_queue, v, dominated, in_dom_set)
 
 Check if a vertex is already dominated.
 If not, make it dominated and update `degree_queue` by decreasing
 the priority of the vertices adjacent to `v` by 1.
 """
-function update_dominated(
+function update_dominated!(
     g::AbstractGraph{T},
     degree_queue::PriorityQueue,
     v::Integer,
@@ -62,9 +62,9 @@ function dominating_set(
         in_dom_set[v] = true
         length_ds += 1
 
-        update_dominated(g, degree_queue, v, dominated, in_dom_set)
+        update_dominated!(g, degree_queue, v, dominated, in_dom_set)
         for u in neighbors(g, v)
-            update_dominated(g, degree_queue, u, dominated, in_dom_set)
+            update_dominated!(g, degree_queue, u, dominated, in_dom_set)
         end
     end
     
