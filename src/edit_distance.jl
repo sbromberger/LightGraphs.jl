@@ -81,76 +81,86 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
             vs = setdiff(1:nv(G₂), [v for (u, v) in λ])
 
             if k < nv(G₁) # there are still vertices to process in G₁?
+                # u be the next node to be transformed
+                u = k+1
+                # transformation operations on neighbor of u 
+                u_edited_neighbors = Vector{Tuple{Int,Int}}()
+                u_neighbors = all_neighbors(G₁, u)
+                
+                # # add transformation (x, y) to u_edited_neighbors if x is neighbor of u
+                for (x, y) in λ
+                    if has_edge(G₁, k+1, x) || has_edge(G₁, x, k+1)
+                        u_edited_neighbors = [u_edited_neighbors; (x, y)]
+                    end
+                end
+                
+                # transformation: u -> v , v != 0
                 for v in vs
+                    # transformation operations on neighbor of v
+                    v_edited_neighbors = Vector{Tuple{Int,Int}}()
+                    v_neighbors = all_neighbors(G₂, v)
+                    edgecost = 0
+
+                    # add transformation (x, y) to v_edited_neighbors if y is neighbor of v
+                    for (x, y) in λ
+                        if has_edge(G₂, v, y) || has_edge(G₂, y, v)
+                            v_edited_neighbors = [v_edited_neighbors; (x, y)]
+                        end
+                    end
+
+                    # add edge transformation cost
+                    for (x, y) in u_edited_neighbors
+                        # if node is deleted or not neighbor after transformation
+                        if (y == 0) || !(has_edge(G₂, y, v) || has_edge(G₂, v, y))
+                            edgecost += edge_delete_cost(x, u)
+                        # if node is neighbor even after transformation
+                        else
+                            edgecost += edge_subst_cost((x, u), (y, v))
+                        end
+                    end
+
+                    # new neighbors formed after transformation
+                    for (x, y) in v_edited_neighbors
+                        if !(has_edge(G₁, x, u) || has_edge(G₁, u, x))
+                            edgecost +=  edge_insert_cost(y, v)
+                        end
+                    end
                     λ⁺ = [λ; (k + 1, v)]
-                    enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, G₂, λ⁺, edge_insert_cost, edge_delete_cost, edge_subst_cost) + subst_cost(k + 1, v) + h(λ⁺) - h(λ))
+                    enqueue!(OPEN, λ⁺, cost + edgecost + subst_cost(u, v) + h(λ⁺) - h(λ))
+                end
+                # deleting u i.e. transformation u -> 0 
+                edgecost = 0
+                # deleting edges to transformed neighbors of u
+                for (x, y) in u_edited_neighbors
+                    edgecost += edge_delete_cost(x, u)
                 end
                 λ⁺ = [λ; (k + 1, 0)]
-                enqueue!(OPEN, λ⁺, cost + edge_cost(G₁, G₂, λ⁺, edge_insert_cost, edge_delete_cost, edge_subst_cost) + delete_cost(k + 1) + h(λ⁺) - h(λ))
+                enqueue!(OPEN, λ⁺, cost + edgecost + delete_cost(u) + h(λ⁺) - h(λ))
+
             else
                 # add remaining vertices of G₂ to the path
                 # sequencially adding vertices and hence edges
                 λ⁺ = collect(λ)
-                total_insert_cost = 0
+                edgecost = 0
+                node_insert_cost = 0
                 for v in vs
-                    total_insert_cost += insert_cost(v)
-                    u_neighbors = is_directed(G₂) ? (inneighbors(G₂, v)..., outneighbors(G₂, v)...) : neighbors(G₂, v)
-                    for u in u_neighbors
-                        for (w, x) in λ⁺
-                            if x == u
-                                total_insert_cost += edge_insert_cost(w, u)
-                            end
+                    # cost of inserting new node
+                    node_insert_cost += insert_cost(v)
+                    u_neighbors = all_neighbors(G₂, v)
+                    
+                    # cost of connecting new node
+                    for (x, y) in λ⁺
+                        if has_edge(G₂, v, y) || has_edge(G₂, y, v)
+                            edgecost += edge_insert_cost(v, y)
                         end
                     end
+
                     λ⁺ = [λ⁺; (0, v)]
-                end                    
-                enqueue!(OPEN, λ⁺, cost + total_insert_cost + h(λ⁺) - h(λ))
+                end   
+                enqueue!(OPEN, λ⁺, cost + node_insert_cost + edgecost + h(λ⁺) - h(λ))
             end
         end
     end
-end
-
-function edge_cost(G₁::AbstractGraph, G₂::AbstractGraph, λ⁺,
-                    edge_insert_cost::Function,
-                    edge_delete_cost::Function,
-                    edge_subst_cost::Function)
-
-    cu = []
-    cv = []
-    u_neighbors = is_directed(G₁) ? (inneighbors(G₁, λ⁺[end][1])..., outneighbors(G₁, λ⁺[end][1])...) : neighbors(G₁, λ⁺[end][1])
-    if λ⁺[end][2]!=0
-        v_neighbors = is_directed(G₂) ? (inneighbors(G₂, λ⁺[end][2])..., outneighbors(G₂, λ⁺[end][2])...) : neighbors(G₂, λ⁺[end][2])
-    else
-        v_neighbors = []
-    end
-    for u in u_neighbors
-        for (w, v) in λ⁺[1:end-1]
-            if w == u
-                cu = [cu; (w, v)]
-            end
-        end
-    end
-    for v in v_neighbors
-        for (u, w) in λ⁺[1:end-1]
-            if w == v
-                cv = [cv; (u, w)]
-            end
-        end
-    end
-    edgecost = 0
-    for (u,v) in cu
-        if (v == 0 || λ⁺[end][2] == 0) || !(has_edge(G₂, v, λ⁺[end][2]) || has_edge(G₂, λ⁺[end][2], v))
-            edgecost += edge_delete_cost(u, λ⁺[end][1])
-        else
-            edgecost += edge_subst_cost((u, λ⁺[end][1]), (v, λ⁺[end][2]))
-        end
-    end
-    for (u,v) in cv
-        if !(has_edge(G₁, u, λ⁺[end][1]) || has_edge(G₁, λ⁺[end][1], u))
-            edgecost +=  edge_insert_cost(v, λ⁺[end][2])
-        end
-    end
-    return edgecost
 end
 
 function is_complete_path(λ, G₁, G₂)
