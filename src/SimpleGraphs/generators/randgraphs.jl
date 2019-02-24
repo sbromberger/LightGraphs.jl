@@ -1,5 +1,5 @@
 using Random:
-    GLOBAL_RNG, AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
+    AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
 using Statistics: mean
 
 using LightGraphs:
@@ -1055,8 +1055,9 @@ the architecture of the original directed graph.
 
 DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
 """
-function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: Integer
+function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
     nv = length(g.fadjlist)
+    rng = getRNG(seed)
     order = randperm(rng, nv)
     g2 = SimpleDiGraph(nv(g))
     @inbounds for i in vertices(g)
