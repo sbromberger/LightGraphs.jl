@@ -1056,9 +1056,9 @@ the architecture of the original directed graph.
 DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
 """
 function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
-    nv = length(g.fadjlist)
+    nv_ = length(g.fadjlist)
     rng = getRNG(seed)
-    order = randperm(rng, nv)
+    order = randperm(rng, nv_)
     g2 = SimpleDiGraph(nv(g))
     @inbounds for i in vertices(g)
         for j in outneighbors(g, i)
