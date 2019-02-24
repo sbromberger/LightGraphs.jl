@@ -320,4 +320,8 @@
     @test isvalid_simplegraph(rog2)
     @test !is_cyclic(rog2)
 
+    # testing with abstract RNG
+    rog3 = random_orientation_dag(SimpleGraph(10,15), MersenneTwister(1))
+    @test isvalid_simplegraph(rog3)
+    @test !is_cyclic(rog3)
 end
