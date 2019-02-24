@@ -1,5 +1,5 @@
 using Random:
-    AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
+    GLOBAL_RNG, AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
 using Statistics: mean
 
 using LightGraphs:
@@ -1052,15 +1052,15 @@ end
 Generate a random oriented acyclical digraph. The function takes in a simple/
 graph as an argument. 
 """
-function random_orientation_dag(g::SimpleGraph{T}) where T <: Integer
+function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: Integer
     nv = length(g.fadjlist)
     tnv = T(nv)
-    order = randperm(tnv)
+    order = randperm(rng, tnv)
     g2 = SimpleDiGraph(tnv) #initialize empty adj lists for each node; both f and b
     for i in (1 : tnv)
-        for j in 1:length(g.fadjlist[i])
+        for j in eachindex(g.fadjlist[i])
             if (order[i] < order[g.fadjlist[i][j]])
-                add_edge!(g2, SimpleEdge(i, g.fadjlist[i][j]))
+                add_edge!(g2, i, g.fadjlist[i][j])
             end
         end
     end
