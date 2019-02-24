@@ -1045,3 +1045,25 @@ function dorogovtsev_mendes(n::Integer; seed::Int=-1)
     end
     return g
 end
+
+"""
+    random_orientation_dag(n)
+
+Generate a random oriented acyclical digraph. The function takes in a simple/
+graph as an argument. 
+"""
+function random_orientation_dag(g::SimpleGraph{T}) where T <: Integer
+    nv = length(g.fadjlist)
+    tnv = T(nv)
+    order = randperm(tnv)
+    g2 = SimpleGraph(tnv)
+    for i in (1 : tnv)
+        for j in (i+1 : tnv)
+            if g.fadjlist[order[i], order[j]] != 0
+                g2.fadjlist[order[i], order[j]] = g.fadjlist[order[i], order[j]]
+                g2.fadjlist[order[j], order[i]] = 0 
+            end
+        end
+    end
+    return g2
+end
