@@ -1045,3 +1045,27 @@ function dorogovtsev_mendes(n::Integer; seed::Int=-1)
     end
     return g
 end
+
+"""
+    random_orientation_dag(n)
+
+Generate a random oriented acyclical digraph. The function takes in a simple/
+graph and an rng as an argument. The probability of each random dag being generated depends/
+the architecture of the original directed graph.
+
+DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
+"""
+function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
+    nv_ = length(g.fadjlist)
+    rng = getRNG(seed)
+    order = randperm(rng, nv_)
+    g2 = SimpleDiGraph(nv(g))
+    @inbounds for i in vertices(g)
+        for j in outneighbors(g, i)
+            if order[i] < order[j]
+                add_edge!(g2, i, j)
+            end
+        end
+    end
+    return g2
+end

@@ -117,7 +117,7 @@ loadgraph, loadgraphs, savegraph, LGFormat,
 erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph, random_regular_digraph,
 random_configuration_model, random_tournament_digraph, StochasticBlockModel, make_edgestream,
 nearbipartiteSBM, blockcounts, blockfractions, stochastic_block_model, barabasi_albert,
-barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes,
+barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes, random_orientation_dag,
 
 #community
 modularity, core_periphery_deg,
@@ -141,7 +141,7 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, bridges,
 
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
@@ -251,6 +251,7 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/bridge.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
 include("dominatingset/degree_dom_set.jl")

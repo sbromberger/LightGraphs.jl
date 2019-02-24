@@ -77,6 +77,7 @@ end
 """
     diffusion_rate(results)
     diffusion_rate(g, p, n; ...)
+
 Given the results of a `diffusion` output or the parameters
 to the `diffusion` simulation itself, (run and) return the rate of
 diffusion as a vector representing the cumulative number of vertices
@@ -91,3 +92,4 @@ diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
     ) = diffusion_rate(diffusion(g, p, n,
             initial_infections=initial_infections,
             watch=watch, normalize=normalize))
+

@@ -18,16 +18,18 @@ function pagerank(
     n=100::Integer, 
     ϵ=1.0e-6
     ) where U <: Integer
-    # collect dangling nodes
-    dangling_nodes = [v for v in vertices(g) if outdegree(g, v) == 0]
+    α_div_outdegree = Vector{Float64}(undef,nv(g))
+    dangling_nodes = Vector{U}()
+    for v in vertices(g)
+        if outdegree(g, v) == 0
+            push!(dangling_nodes, v)
+        end
+        α_div_outdegree[v] = (α/outdegree(g, v))
+    end
     N = Int(nv(g))
     # solution vector and temporary vector
     x = fill(1.0 / N, N)
     xlast = copy(x)
-    # personalization vector
-    p = fill(1.0 / N, N)
-    # adjustment for leaf nodes in digraph
-    dangling_weights = p
     for _ in 1:n
         dangling_sum = 0.0
         for v in dangling_nodes
@@ -35,13 +37,13 @@ function pagerank(
         end
         # flow from teleprotation
         for v in vertices(g)
-            xlast[v] = (1 - α + α * dangling_sum) * p[v]
+            xlast[v] = (1 - α + α * dangling_sum) * (1.0 / N)
         end
         # flow from edges
         
         for v in vertices(g)
             for u in inneighbors(g, v)
-                xlast[v] += α * x[u] / outdegree(g, u)
+                xlast[v] += (x[u] * α_div_outdegree[u])
             end
         end
         # l1 change in solution convergence criterion
