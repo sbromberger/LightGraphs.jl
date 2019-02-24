@@ -2,7 +2,7 @@
 
 function single_nonzero_degree_component(
     graph::AG,
-    ) where {T, AG <: AbstractGraph{T}}
+    ) where {T <: Integer, AG <: AbstractGraph{T}}
 
     visited = zeros(UInt8, nv(graph))
     for v in vertices(graph)
@@ -14,23 +14,24 @@ function single_nonzero_degree_component(
         if (outdegree(graph, v) + indegree(graph, v)) == 0
             continue
         end
-        S = Vector{T}([v])
+        stack = Vector{T}([v])
         visited[v] = 1
-        while !isempty(S)
-            u = S[end]
-            w = 0
-            for n in outneighbors(graph, u)
-                if visited[n] == 0
-                    w = n
+        while !isempty(stack)
+            u = stack[end]
+            # assuming valid vertices never take zero value
+            w = zero(eltype(graph))
+            for v in outneighbors(graph, u)
+                if visited[v] == 0
+                    w = v
                     break
                 end
             end
-            if w != 0
+            if w != zero(eltype(graph))
                 visited[w] = 1
-                push!(S, w)
+                push!(stack, w)
             else
                 visited[u] = 2
-                pop!(S)
+                pop!(stack)
             end
         end
         break
@@ -72,7 +73,6 @@ function has_eulerian_trail end
     return (odd <= 2)
 end
 
-function has_eulerian_trail end
 @traitfn function has_eulerian_trail(
     graph::AG::(IsDirected),
     ) where {T, AG <: AbstractGraph{T}}
@@ -125,7 +125,6 @@ function has_eulerian_circuit end
     return (odd == 0)
 end
 
-function has_eulerian_circuit end
 @traitfn function has_eulerian_circuit(
     graph::AG::(IsDirected),
     ) where {T, AG <: AbstractGraph{T}}
@@ -181,7 +180,6 @@ function eulerian_circuit end
     return reverse!(circuit)
 end
 
-function eulerian_circuit end
 @traitfn function eulerian_circuit(
     graph::AG::(!IsDirected)
     ) where {T, AG <: AbstractGraph{T}}
@@ -271,7 +269,6 @@ function eulerian_trail end
     return reverse!(trail)
 end
 
-function eulerian_trail end
 @traitfn function eulerian_trail(
     graph::AG::(!IsDirected)
     ) where {T, AG <: AbstractGraph{T}}
