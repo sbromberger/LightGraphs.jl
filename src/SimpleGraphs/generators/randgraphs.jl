@@ -1062,7 +1062,7 @@ function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: 
     @inbounds for i in vertices(g)
         for j in outneighbors(g, i)
             if order[i] < order[j]
-                add_edge!(g2, i, g.fadjlist[i][j])
+                add_edge!(g2, i, j)
             end
         end
     end
