@@ -1061,7 +1061,7 @@ function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: 
     order = randperm(rng, tnv)
     g2 = SimpleDiGraph(tnv) #initialize empty adj lists for each node; both f and b
     for i in (1 : tnv)
-        for j in eachindex(g.fadjlist[i])
+        for j in 1:outdegree(g, i)
             if (order[i] < order[g.fadjlist[i][j]])
                 add_edge!(g2, i, g.fadjlist[i][j])
             end
