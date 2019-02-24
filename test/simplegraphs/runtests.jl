@@ -73,6 +73,10 @@ function isvalid_simplegraph(g::SimpleDiGraph{T}) where {T <: Integer}
     return true
 end
 
+# function isvalid_acyclicgraph() 
+    
+# end
+
 const simplegraphtestdir = dirname(@__FILE__)
 
 tests = [
