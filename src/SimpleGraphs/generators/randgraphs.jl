@@ -1057,8 +1057,7 @@ DAG's have a finite topological order; this order is randomly generated via "ord
 """
 function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: Integer
     nv = length(g.fadjlist)
-    tnv = T(nv)
-    order = randperm(rng, tnv)
+    order = randperm(rng, nv)
     g2 = SimpleDiGraph(nv(g))
     @inbounds for i in vertices(g)
         for j in outneighbors(g, i)
