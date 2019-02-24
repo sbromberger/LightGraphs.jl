@@ -1050,7 +1050,10 @@ end
     random_orientation_dag(n)
 
 Generate a random oriented acyclical digraph. The function takes in a simple/
-graph as an argument. 
+graph and an rng as an argument. The probability of each random dag being generated depends/
+the architecture of the original directed graph.
+
+DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
 """
 function random_orientation_dag(g::SimpleGraph{T}, rng = GLOBAL_RNG) where T <: Integer
     nv = length(g.fadjlist)
