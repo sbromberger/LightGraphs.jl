@@ -309,4 +309,14 @@
     # testing domain errors
     @test_throws DomainError dorogovtsev_mendes(2)
     @test_throws DomainError dorogovtsev_mendes(-1)
+
+    # testing if returned graph is acyclic and valid SimpleGraph
+    rog = random_orientation_dag(SimpleGraph(5, 10))
+    @test isvalid_simplegraph(rog)
+    @test !is_cyclic(rog)
+
+    # testing if returned graph is acyclic and valid ComplexGraph
+    rog2 = random_orientation_dag(CompleteGraph(5))
+    @test isvalid_simplegraph(rog2)
+    @test !is_cyclic(rog2)
 end
