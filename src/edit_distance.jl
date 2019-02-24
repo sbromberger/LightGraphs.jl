@@ -83,33 +83,18 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
             if k < nv(G₁) # there are still vertices to process in G₁?
                 # u be the next node to be transformed
                 u = k+1
-                # transformation operations on neighbor of u 
-                u_edited_neighbors = Vector{Tuple{Int,Int}}()
-                u_neighbors = all_neighbors(G₁, u)
-                
-                # # add transformation (x, y) to u_edited_neighbors if x is neighbor of u
-                for (x, y) in λ
-                    if has_edge(G₁, k+1, x) || has_edge(G₁, x, k+1)
-                        u_edited_neighbors = [u_edited_neighbors; (x, y)]
-                    end
-                end
-                
+                # transforms on neighbor of u
+                u_neighbor_transforms = filter(((x,y),) -> has_edge(G₁, u, x) || has_edge(G₁, x, u), λ)
+                                
                 # transformation: u -> v , v != 0
                 for v in vs
-                    # transformation operations on neighbor of v
-                    v_edited_neighbors = Vector{Tuple{Int,Int}}()
-                    v_neighbors = all_neighbors(G₂, v)
+                    # transforms on neighbor of v
+                    v_neighbor_transforms = filter(((x,y),) -> has_edge(G₂, v, y) || has_edge(G₂, y, v), λ)
+                    # cost of edge transforms
                     edgecost = 0
-
-                    # add transformation (x, y) to v_edited_neighbors if y is neighbor of v
-                    for (x, y) in λ
-                        if has_edge(G₂, v, y) || has_edge(G₂, y, v)
-                            v_edited_neighbors = [v_edited_neighbors; (x, y)]
-                        end
-                    end
-
+                    
                     # add edge transformation cost
-                    for (x, y) in u_edited_neighbors
+                    for (x, y) in u_neighbor_transforms
                         # if node is deleted or not neighbor after transformation
                         if (y == 0) || !(has_edge(G₂, y, v) || has_edge(G₂, v, y))
                             edgecost += edge_delete_cost(x, u)
@@ -120,21 +105,21 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                     end
 
                     # new neighbors formed after transformation
-                    for (x, y) in v_edited_neighbors
+                    for (x, y) in v_neighbor_transforms
                         if !(has_edge(G₁, x, u) || has_edge(G₁, u, x))
                             edgecost +=  edge_insert_cost(y, v)
                         end
                     end
-                    λ⁺ = [λ; (k + 1, v)]
+                    λ⁺ = [λ; (u, v)]
                     enqueue!(OPEN, λ⁺, cost + edgecost + subst_cost(u, v) + h(λ⁺) - h(λ))
                 end
                 # deleting u i.e. transformation u -> 0 
                 edgecost = 0
                 # deleting edges to transformed neighbors of u
-                for (x, y) in u_edited_neighbors
+                for (x, y) in u_neighbor_transforms
                     edgecost += edge_delete_cost(x, u)
                 end
-                λ⁺ = [λ; (k + 1, 0)]
+                λ⁺ = [λ; (u, 0)]
                 enqueue!(OPEN, λ⁺, cost + edgecost + delete_cost(u) + h(λ⁺) - h(λ))
 
             else
@@ -146,8 +131,6 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                 for v in vs
                     # cost of inserting new node
                     node_insert_cost += insert_cost(v)
-                    u_neighbors = all_neighbors(G₂, v)
-                    
                     # cost of connecting new node
                     for (x, y) in λ⁺
                         if has_edge(G₂, v, y) || has_edge(G₂, y, v)
