@@ -55,7 +55,7 @@ end
 ```
 type JohnsonVisitor{T<:Integer} <: Visitor{T}
     stack::Vector{T}
-    blocked::BitArray{1}
+    blocked::BitVector
     blockedmap::Vector{Set{T}}
 end
 
@@ -73,17 +73,19 @@ vertices to unblock if the key vertex is unblocked.
 """
 struct JohnsonVisitor{T <: Integer} <: Visitor{T}
     stack::Vector{T}
-    blocked::BitArray{1}
+    blocked::BitVector
     blockedmap::Vector{Set{T}}
 end
 
 function JohnsonVisitor(dg)
+    # dg should be a directed graph, we had some problems with type instability and @traitfn
+    # so we removed the type check for this (Julia v1.1.0), this might change in the future.
     T = eltype(dg)
     return JohnsonVisitor(Vector{T}(), falses(nv(dg)), [Set{T}() for i in vertices(dg)])
 end
 
 """
-    unblock!{T<:Integer}(v::T, blocked::BitArray, B::Vector{Set{T}})
+    unblock!{T<:Integer}(v::T, blocked::BitVector, B::Vector{Set{T}})
 
 Unblock the vertices recursively. 
 
@@ -91,7 +93,7 @@ Unblock the vertices recursively.
 not and `B` is the map that tells if the unblocking of one vertex should 
 unblock other vertices.
 """
-function unblock!(v::T, blocked::BitArray, B::Vector{Set{T}}) where T <: Integer
+function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Integer
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)

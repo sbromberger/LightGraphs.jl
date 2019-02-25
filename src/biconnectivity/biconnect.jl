@@ -24,7 +24,7 @@ end
 Perform a DFS visit storing the depth and low-points of each vertex.
 """
 function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Integer) where {E}
-    @assert E === Edge{eltype(g)}
+    # E === Edge{eltype(g)}
 
     children = 0
     state.id += 1

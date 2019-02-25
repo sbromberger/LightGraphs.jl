@@ -101,13 +101,16 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     end
     # ties breaking randomly
     range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
+
+    result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos
         if c.neigh_cnt[lbl] == max_cnt
-            return lbl
+            result_lbl = lbl
+            break
         end
     end
 
-    return zero(eltype(c.neigh_pos)) # Case should never occur, just for type stability
+    return result_lbl
 end
 
 function renumber_labels!(membership::Vector{T}, label_counters::Vector{Int}) where {T <: Integer}

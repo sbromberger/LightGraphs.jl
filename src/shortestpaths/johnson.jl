@@ -80,7 +80,7 @@ function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
-            currpathindex::U = i
+            currpathindex = U(i)
             while currpathindex != 0
                 push!(path, currpathindex)
                 currpathindex = pathinfo[currpathindex]
