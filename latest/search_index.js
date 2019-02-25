@@ -517,7 +517,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Making and Modifying Graphs",
     "title": "LightGraphs.SimpleGraphs.random_orientation_dag",
     "category": "method",
-    "text": "random_orientation_dag(n)\n\nGenerate a random oriented acyclical digraph. The function takes in a simple/ graph and an rng as an argument. The probability of each random dag being generated depends/ the architecture of the original directed graph.\n\nDAG\'s have a finite topological order; this order is randomly generated via \"order = randperm()\". \n\n\n\n\n\n"
+    "text": "random_orientation_dag(n)\n\nGenerate a random oriented acyclical digraph. The function takes in a simple graph and a random number generator as an argument. The probability of each directional acyclic graph randomly being generated depends on the architecture of the original directed graph.\n\nDAG\'s have a finite topological order; this order is randomly generated via \"order = randperm()\". \n\n\n\n\n\n"
 },
 
 {
