@@ -15,7 +15,7 @@ function transitiveclosure! end
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
     tp = reverse(topological_sort_by_dfs(cg))
-    sr = [Vector{eltype(cg)}() for _ in vertices(g)]
+    sr = [Vector{eltype(cg)}() for _ in vertices(cg)]
 
     x = selflooped ? 0 : 1
     for comp in scc
