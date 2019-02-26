@@ -1047,7 +1047,7 @@ function dorogovtsev_mendes(n::Integer; seed::Int=-1)
 end
 
 """
-    random_orientation_dag(n)
+    random_orientation_dag(g)
 
 Generate a random oriented acyclical digraph. The function takes in a simple
 graph and a random number generator as an argument. The probability of each
