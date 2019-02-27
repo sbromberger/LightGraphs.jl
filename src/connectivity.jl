@@ -536,17 +536,31 @@ end
 """
     isgraphical(degs)
 
-Return true if the degree sequence `degs` is graphical, according to
-[Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
+Return true if the degree sequence `degs` is graphical
+According to Erdös-Gallai theorem, a degree sequence
+```math
+{d_1, ...,d_n}
+```
+(sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -
+```math
+\\sum_{i=1}^{k} d_i \\leq r(r-1) + \\sum_{i=k+1}^n min(r,d_i)
+```
+for each integer r <= n-1
 
 ### Performance
-    Time complexity: ``\\mathcal{O}(|degs|^2)``
+Time complexity: ``\\mathcal{O}(|degs|^2)``.
 """
 function isgraphical(degs::Vector{Int})
     iseven(sum(degs)) || return false
+    sort!(degs, rev = true)
     n = length(degs)
+    cur_sum = 0
+    mindeg = (i->min(i, degs[i])).(degs)
+    cum_min = sum(mindeg)
     for r = 1:(n - 1)
-        cond = sum(i -> degs[i], 1:r) <= r * (r - 1) + sum(i -> min(r, degs[i]), (r + 1):n)
+        cur_sum += degs[r]
+        cum_min -= mindeg[r]
+        cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
     end
     return true
