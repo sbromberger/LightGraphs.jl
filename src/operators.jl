@@ -501,7 +501,7 @@ issymmetric(g::AbstractGraph) = !is_directed(g)
 """
     cartesian_product(g, h)
 
-Return the (cartesian product)[https://en.wikipedia.org/wiki/Cartesian_product_of_graphs]
+Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
@@ -553,7 +553,7 @@ end
 """
     tensor_product(g, h)
 
-Return the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
