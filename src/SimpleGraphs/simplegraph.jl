@@ -387,9 +387,12 @@ end
 
 """
     add_edge!(g, e)
+    add_edge!(g, x, y)
 
 Add an edge `e` to graph `g`. Return `true` if edge was added successfully,
 otherwise return `false`.
+
+In digraphs, an edge is added from x to y.
 
 # Examples
 ```jldoctest
