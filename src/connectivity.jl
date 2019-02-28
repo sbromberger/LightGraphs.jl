@@ -548,13 +548,13 @@ Time complexity: ``\\mathcal{O}(|degs|)``.
 """
 function isgraphical(degs::Vector{Int})
     iseven(sum(degs)) || return false
-    sort!(degs, rev = true)
-    n = length(degs)
+    sorted_degs = sort(degs, rev = true)
+    n = length(sorted_degs)
     cur_sum = 0
-    mindeg = (i->min(i, degs[i])).(degs)
+    mindeg = (i->min(i, sorted_degs[i])).(sorted_degs)
     cum_min = sum(mindeg)
     for r = 1:(n - 1)
-        cur_sum += degs[r]
+        cur_sum += sorted_degs[r]
         cum_min -= mindeg[r]
         cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
