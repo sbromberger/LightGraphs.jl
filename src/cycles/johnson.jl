@@ -184,12 +184,12 @@ julia> simplecycles(CompleteDiGraph(3))
 function simplecycles end
 @traitfn function simplecycles(dg::::IsDirected)
     sccs = strongly_connected_components(dg)
-    cycles = Vector{Vector{Int}}() # Pas très cohérent : devrait être du type de dg.
+    cycles = Vector{Vector{eltype(dg)}}() # Pas très cohérent : devrait être du type de dg.
     for scc in sccs
         for i in 1:length(scc)
             wdg, vmap = induced_subgraph(dg, scc[i:end])
             visitor = JohnsonVisitor(wdg)
-            circuit(1, wdg, visitor, cycles, vmap) # 1 is the startnode.
+            circuit(eltype(wdg)(1), wdg, visitor, cycles, vmap) # 1 is the startnode.
         end
     end
     return cycles
@@ -272,7 +272,7 @@ function itercycles end
             wdg, vmap = induced_subgraph(dg, scc)
             popfirst!(scc)
             visitor = JohnsonVisitor(wdg)
-            circuit_iter(1, wdg, visitor, vmap, cycle)
+            circuit_iter(eltype(wdg)(1), wdg, visitor, vmap, cycle)
         end
     end
 end
