@@ -539,12 +539,12 @@ end
 Return true if the degree sequence `degs` is graphical
 According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -
 ```math
-\\sum_{i=1}^{k} d_i \\leq r(r-1) + \\sum_{i=k+1}^n min(r,d_i)
+\\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
 ```
 for each integer r <= n-1
 
 ### Performance
-Time complexity: ``\\mathcal{O}(|degs|^2)``.
+Time complexity: ``\\mathcal{O}(|degs|)``.
 """
 function isgraphical(degs::Vector{Int})
     iseven(sum(degs)) || return false
