@@ -117,7 +117,7 @@ loadgraph, loadgraphs, savegraph, LGFormat,
 erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph, random_regular_digraph,
 random_configuration_model, random_tournament_digraph, StochasticBlockModel, make_edgestream,
 nearbipartiteSBM, blockcounts, blockfractions, stochastic_block_model, barabasi_albert,
-barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes,
+barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes, random_orientation_dag,
 
 #community
 modularity, core_periphery_deg,

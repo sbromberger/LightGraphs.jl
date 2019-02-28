@@ -23,7 +23,7 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     random_regular_digraph, random_configuration_model, random_tournament_digraph, 
     StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, 
     blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
-    barabasi_albert!, static_fitness_model, static_scale_free, kronecker,
+    barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
     #generators
     CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
     CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph,
