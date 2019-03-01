@@ -29,7 +29,7 @@ function dominating_set(
 
     nvg = nv(g)  
     in_dom_set = trues(nvg) 
-    length_ds = nvg 
+    length_ds = Int(nvg)
     dom_degree = degree(g)
     @inbounds @simd for v in vertices(g)
         dom_degree[v] -= (has_edge(g, v, v) ? 1 : 0)

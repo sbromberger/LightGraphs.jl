@@ -46,20 +46,18 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
         if has_edge(g, j, j)
             push!(selfloops, j)
         end
-        dsts = neighborfn(g, j)
+        dsts = sort(neighborfn(g, j)) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
-        append!(rowval, sort!(dsts))
+        append!(rowval, dsts)
     end
     spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
     # not one(T).
-    if !is_directed(g)
+    if !(T <: Bool) && !is_directed(g)
         for i in selfloops
-            if !(T <: Bool)
-                spmx[i, i] += one(T)
-            end
+            spmx[i, i] += one(T)
         end
     end
     return spmx
