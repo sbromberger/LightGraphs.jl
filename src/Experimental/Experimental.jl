@@ -10,9 +10,13 @@ export description,
     has_induced_subgraphisomorph, count_induced_subgraphisomorph, all_induced_subgraphisomorph,
     has_subgraphisomorph, count_subgraphisomorph, all_subgraphisomorph
 
+export iso_hash, Iso_hash_state, iso_hash_show, iso_partition
+
 description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
 include("vf2.jl") # Julian implementation of VF2 algorithm
 
+include("aesmbed.jl")
+include("equipartitions.jl")
 end
