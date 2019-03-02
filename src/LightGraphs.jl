@@ -57,11 +57,6 @@ difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
-# graph visit
-AbstractGraphVisitor,
-discover_vertex!, close_vertex!,
-examine_neighbor!, traverse_graph,
-
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 
@@ -92,7 +87,7 @@ simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 simplecycles_limited_length,
 
 # maximum_adjacency_visit
-MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
+mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
@@ -107,7 +102,7 @@ eigenvector_centrality, stress_centrality, radiality_centrality,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-non_backtracking_matrix, incidence_matrix, nonbacktrack_embedding, Nonbacktracking,
+non_backtracking_matrix, incidence_matrix, Nonbacktracking,
 contract,
 
 # persistence
