@@ -10,11 +10,14 @@ function single_nonzero_degree_component(
             visited[v] = 2
         end
     end
+    stack = Vector{T}()
     for v in vertices(graph)
         if (outdegree(graph, v) + indegree(graph, v)) == 0
             continue
         end
-        stack = Vector{T}([v])
+        # initializing stack for using
+        empty!(stack)
+        push!(stack, v)
         visited[v] = 1
         while !isempty(stack)
             u = stack[end]
@@ -191,7 +194,9 @@ end
 
     edge_count = collect(outdegree(graph))
     for v in vertices(graph)
-        has_edge(graph, v, v) && (edge_count[v] += 1)
+        if has_edge(graph, v, v)
+            edge_count[v] += 1
+        end
     end
     out_neighbor = Dict()
     for v in vertices(graph)
@@ -281,7 +286,9 @@ end
     current_vertex = 1
     edge_count = collect(outdegree(graph))
     for v in vertices(graph)
-        has_edge(graph, v, v) && (edge_count[v] += 1)
+        if has_edge(graph, v, v)
+            edge_count[v] += 1
+        end
     end
     for v in vertices(graph)
         if isodd(edge_count[v])
