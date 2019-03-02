@@ -15,7 +15,7 @@ is not reached within `n` iterations.
 function pagerank(
     g::AbstractGraph{U}, 
     α=0.85, 
-    n=100::Integer, 
+    n::Integer=100,
     ϵ=1.0e-6
     ) where U <: Integer
     α_div_outdegree = Vector{Float64}(undef,nv(g))

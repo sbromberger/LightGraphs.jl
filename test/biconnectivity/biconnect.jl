@@ -24,6 +24,7 @@
     for g in testgraphs(gint)
         bcc = @inferred(biconnected_components(g))
         @test bcc == a
+        @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
     end
 
     g = SimpleGraph(4)
@@ -46,5 +47,6 @@
     for g in testgraphs(gint)
         bcc = @inferred(biconnected_components(g))
         @test bcc == a
+        @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
     end
 end
