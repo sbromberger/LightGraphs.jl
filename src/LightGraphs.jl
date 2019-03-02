@@ -140,6 +140,9 @@ euclidean_graph,
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
 
+#steinertree
+steiner_tree,
+
 #biconnectivity and articulation points
 articulation, biconnected_components, bridges,
 
@@ -248,6 +251,7 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("biconnectivity/bridge.jl")

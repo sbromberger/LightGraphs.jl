@@ -67,6 +67,7 @@ tests = [
     "utils",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
     "biconnectivity/bridge",
