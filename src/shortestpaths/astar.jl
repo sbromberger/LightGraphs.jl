@@ -10,6 +10,8 @@ function a_star_impl!(g::AbstractGraph,# the graph
     distmx::AbstractMatrix,
     heuristic::Function)
 
+    E = Edge{eltype(g)}
+
     @inbounds while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
         if u == t
@@ -21,7 +23,7 @@ function a_star_impl!(g::AbstractGraph,# the graph
             if get(colormap, v, 0) < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
-                new_path = cat(path, Edge(u, v), dims=1)
+                new_path = cat(path, E(u, v), dims=1)
                 path_cost = cost_so_far + dist
                 enqueue!(frontier,
                     (path_cost, new_path, v),
@@ -31,7 +33,7 @@ function a_star_impl!(g::AbstractGraph,# the graph
         end
         colormap[u] = 2
     end
-    Vector{Edge}()
+    Vector{E}()
 end
 
 """
@@ -59,11 +61,13 @@ function a_star(g::AbstractGraph{U},  # the g
     distmx::AbstractMatrix{T}=weights(g),
     heuristic::Function=n -> zero(T)) where {T, U}
 
+    E = Edge{eltype(g)}
+
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
     # heuristic (under)estimating distance to target
-    frontier = PriorityQueue{Tuple{T,Vector{Edge},U},T}()
-    frontier[(zero(T), Vector{Edge}(), U(s))] = zero(T)
+    frontier = PriorityQueue{Tuple{T,Vector{E},U},T}()
+    frontier[(zero(T), Vector{E}(), U(s))] = zero(T)
     colormap = empty_colormap(nv(g))
     colormap[s] = 1
     a_star_impl!(g, U(t), frontier, colormap, distmx, heuristic)
