@@ -31,7 +31,7 @@
     add_edge!(G, 4, 5)
     
     for g in testgraphs(G)
-        y = @inferred(desopo_pape_shortest_paths(G, 1, m))
+        y = @inferred(desopo_pape_shortest_paths(g, 1, m))
         @test z.parents == [0, 1, 1, 3, 3]
         @test z.dists == [0, 2, 2, 3, 4]
     end
