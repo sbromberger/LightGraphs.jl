@@ -8,24 +8,27 @@ struct DEsopoPapeState{T <:Real, U <: Integer} <: AbstractPathState
     dists::Vector{T}
 end
 
-function DEsopoPape_shortest_path(g::AbstractGraph, 
-    src::U,
-    distmx::AbstractMatrix{T} = weights(g)) where T <: Real where U <: Integer
-    
+function desopo_pape_shortest_paths(g::AbstractGraph, 
+    src::Integer,
+    distmx::AbstractMatrix{T} = weights(g)) where T <: Real
+    U = eltype(g)
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    state = fill(2, nvg)
-    q = Array{U,1}()
+    state = Vector{UInt8}()
+    for i=1:nvg
+        push!(state, 2)
+    end
+    q = Vector{U}()
     push!(q, src)
-    dists[src] = 0
+    @inbounds dists[src] = 0
     
     while !isempty(q)
-        u = q[1]
+        @inbounds u = q[1]
         popfirst!(q)
-        state[u] = 0
+        @inbounds state[u] = 0
         
-        for v in outneighbors(g, u)
+        @inbounds for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
             if (dists[v] > alt)
                 dists[v] = alt
