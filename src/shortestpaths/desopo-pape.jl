@@ -13,19 +13,16 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
     distmx::AbstractMatrix{T} = weights(g)) where T <: Real
     U = eltype(g)
     nvg = nv(g)
+    (src in 1:nvg) || throw(DomainError("src should be in between 1 and $nvg"))
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    state = Vector{UInt8}()
-    for i=1:nvg
-        push!(state, 2)
-    end
-    q = Vector{U}()
-    push!(q, src)
+    state = Vector{Int8}()
+    state = fill(Int8(2), nvg)
+    q = U[src]
     @inbounds dists[src] = 0
     
-    while !isempty(q)
-        @inbounds u = q[1]
-        popfirst!(q)
+    @inbounds while !isempty(q)
+        @inbounds u = popfirst!(q)
         @inbounds state[u] = 0
         
         @inbounds for v in outneighbors(g, u)
