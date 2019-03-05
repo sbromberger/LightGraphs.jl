@@ -135,6 +135,10 @@ euclidean_graph,
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
 
+#uniform spanning trees
+random_spanning_tree_with_root,
+random_spanning_tree,
+    
 #biconnectivity and articulation points
 articulation, biconnected_components, bridges,
 
@@ -243,6 +247,7 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("spanningtrees/wilson.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("biconnectivity/bridge.jl")
