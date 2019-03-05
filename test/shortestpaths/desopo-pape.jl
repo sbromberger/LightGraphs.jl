@@ -63,19 +63,6 @@
         end
     end
     
-    @testset "Disconnected graph" begin
-        G = SimpleGraph(5)
-        add_edge!(G, 1, 2)
-        add_edge!(G, 1, 3)
-        add_edge!(G, 4, 5)
-        inf = typemax(eltype(G))
-        for g in testgraphs(G)
-            z = @inferred(desopo_pape_shortest_paths(g, 1))
-            @test z.dists == [0, 1, 1, inf, inf]
-            @test z.parents == [0, 1, 1, 0, 0]
-        end
-    end
-    
     @testset "Random Graphs" begin
         @testset "Simple graphs" begin
             for i = 1:5
