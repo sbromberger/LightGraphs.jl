@@ -65,8 +65,8 @@ JohnsonVisitor(dg::::IsDirected)
 
 Composite type that regroups the information needed for Johnson's algorithm.
 
-`stack` is the stack of visited vertices. `blocked` is a boolean for each 
-vertex that tells whether it is blocked or not. `blockedmap` tells which 
+`stack` is the stack of visited vertices. `blocked` is a boolean for each
+vertex that tells whether it is blocked or not. `blockedmap` tells which
 vertices to unblock if the key vertex is unblocked.
 
 `JohnsonVisitor` may also be constructed directly from the directed graph.
@@ -87,10 +87,10 @@ end
 """
     unblock!{T<:Integer}(v::T, blocked::BitVector, B::Vector{Set{T}})
 
-Unblock the vertices recursively. 
+Unblock the vertices recursively.
 
-`v` is the vertex to unblock, `blocked` tells whether a vertex is blocked or 
-not and `B` is the map that tells if the unblocking of one vertex should 
+`v` is the vertex to unblock, `blocked` tells whether a vertex is blocked or
+not and `B` is the map that tells if the unblocking of one vertex should
 unblock other vertices.
 """
 function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Integer
@@ -104,7 +104,7 @@ function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Intege
 end
 
 """
-    circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+    circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
     allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
 
 Return one step of the recursive version of simple cycle detection,
@@ -125,12 +125,12 @@ using a DFS algorithm.
 ### Implementation Notes
 Implements Johnson's CIRCUIT function. This is a recursive version.
 Modifies the vector of cycles, when needed.
-  
+ 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit end
-@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
 allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Integer
     done = false
     push!(vis.stack, v)
@@ -176,9 +176,9 @@ short cycles of a limited length, [`simplecycles_limited_length`](@ref) can be m
 ```jldoctest
 julia> simplecycles(CompleteDiGraph(3))
 5-element Array{Array{Int64,1},1}:
- [1, 2]   
+ [1, 2]
  [1, 2, 3]
- [1, 3]   
+ [1, 3]
  [1, 3, 2]
  [2, 3]
 ```
@@ -202,7 +202,7 @@ end
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
 """
-    circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T}, 
+    circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
     vmap::Vector{T}, cycle::Channel, startnode::T = v)
 
 Execute one step of the recursive version of simple cycle detection, using a DFS algorithm.
@@ -221,7 +221,7 @@ Return `true` if a circuit has been found in the current exploration.
 the same as v, otherwise it should be passed.
 
 ### Implementation Notes
-Implements the CIRCUIT function from Johnson's algorithm, recursive and iterative version. 
+Implements the CIRCUIT function from Johnson's algorithm, recursive and iterative version.
 Produces a cycle when needed. Can be used only inside a `Channel`.
 
 ### References
@@ -331,7 +331,7 @@ To get an idea of the possible number of cycles, use function
 
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
-""" 
+"""
 function simplecycles_iter end
 @traitfn simplecycles_iter(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}} =
     return collect(Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
@@ -339,7 +339,7 @@ function simplecycles_iter end
 """
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
 
-Search all cycles of the given directed graph, using Johnson's algorithm, 
+Search all cycles of the given directed graph, using Johnson's algorithm,
 and return a tuple representing the cycle length and the number of cycles.
 
 ### Implementation Notes
