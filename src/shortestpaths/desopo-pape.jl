@@ -8,12 +8,44 @@ struct DEsopoPapeState{T <:Real, U <: Integer} <: AbstractPathState
     dists::Vector{T}
 end
 
+"""
+    desopo_pape_shortest_paths(g, src, distmx=weights(g))
+
+Compute shortest paths between a source `src` and all
+other nodes in graph `g` using the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
+Return a [`LightGraphs.DEsopoPapeState`](@ref) with relevant traversal information.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> ds = desopo_pape_shortest_paths(CycleGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 2
+
+julia> ds = desopo_pape_shortest_paths(PathGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 3
+```
+"""
 function desopo_pape_shortest_paths(g::AbstractGraph, 
     src::Integer,
     distmx::AbstractMatrix{T} = weights(g)) where T <: Real
     U = eltype(g)
     nvg = nv(g)
-    (src in 1:nvg) || throw(DomainError("src should be in between 1 and $nvg"))
+    (src in 1:nvg) || throw(DomainError(src, "src should be in between 1 and $nvg"))
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
     state = Vector{Int8}()
@@ -22,10 +54,10 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
     @inbounds dists[src] = 0
     
     @inbounds while !isempty(q)
-        @inbounds u = popfirst!(q)
-        @inbounds state[u] = 0
+        u = popfirst!(q)
+        state[u] = 0
         
-        @inbounds for v in outneighbors(g, u)
+        for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
             if (dists[v] > alt)
                 dists[v] = alt

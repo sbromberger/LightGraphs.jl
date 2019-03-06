@@ -40,6 +40,23 @@
         end
     end
     
+    @testset "Graph with self loop" begin
+        G = SimpleGraph(5)
+        add_edge!(G, 2, 2)
+        add_edge!(G, 1, 2)
+        add_edge!(G, 1, 3)
+        add_edge!(G, 3, 3)
+        add_edge!(G, 1, 5)
+        add_edge!(G, 2, 4)
+        add_edge!(G, 4, 5)
+        m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
+        for g in testgraphs(G)
+            z = @inferred(desopo_pape_shortest_paths(g, 1 , m))
+            y = @inferred(dijkstra_shortest_paths(g, 1, m))
+            @test isapprox(z.dists, y.dists)
+        end
+    end
+    
     @testset "Disconnected graph" begin
         G = SimpleGraph(5)
         add_edge!(G, 1, 2)
