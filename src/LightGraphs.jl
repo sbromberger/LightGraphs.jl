@@ -20,7 +20,7 @@ import SparseArrays: blockdiag, sparse
 import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
-            join, iterate, eltype, get, Pair, Tuple, zero, push!, popfirst!, pushfirst!
+            join, iterate, eltype, get, Pair, Tuple, zero
 
 export
 # Interface
