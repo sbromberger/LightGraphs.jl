@@ -35,8 +35,8 @@
 
         for g in testgraphs(G)
             y = @inferred(desopo_pape_shortest_paths(g, 1, m))
-            @test z.parents == [0, 1, 1, 3, 3]
-            @test z.dists == [0, 2, 2, 3, 4]
+            @test y.parents == [0, 1, 1, 3, 3]
+            @test y.dists == [0, 2, 2, 3, 4]
         end
     end
     
