@@ -83,29 +83,25 @@
     @testset "Random Graphs" begin
         @testset "Simple graphs" begin
             for i = 1:5
-                nvg = Int(floor(500*rand()))
+                nvg = Int(floor(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                 seed = Int(floor(100*rand()))
-                G = SimpleGraph(nvg, neg; seed = seed)
-                for g in testgraphs(G)
-                    z = desopo_pape_shortest_paths(g, 1)
-                    y = dijkstra_shortest_paths(g, 1)
-                    @test isapprox(z.dists, y.dists)
-                end
+                g = SimpleGraph(nvg, neg; seed = seed)
+                z = desopo_pape_shortest_paths(g, 1)
+                y = dijkstra_shortest_paths(g, 1)
+                @test isapprox(z.dists, y.dists)
             end
         end
 
         @testset "Simple DiGraphs" begin
             for i = 1:5
-                nvg = Int(floor(500*rand()))
+                nvg = Int(floor(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                 seed = Int(floor(100*rand()))
-                G = SimpleDiGraph(nvg, neg; seed = seed)
-                for g in testgraphs(G)
-                    z = desopo_pape_shortest_paths(g, 1)
-                    y = dijkstra_shortest_paths(g, 1)
-                    @test isapprox(z.dists, y.dists)
-                end
+                g = SimpleDiGraph(nvg, neg; seed = seed)
+                z = desopo_pape_shortest_paths(g, 1)
+                y = dijkstra_shortest_paths(g, 1)
+                @test isapprox(z.dists, y.dists)
             end
         end
     end
