@@ -11,6 +11,10 @@ julia:
 notifications:
   email: false
 
+env:
+  global:
+    - DISABLE_AMEND_COVERAGE_FROM_SRC=yes
+
 # uncomment the following lines to override the default test script
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
