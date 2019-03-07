@@ -1497,6 +1497,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.desopo_pape_shortest_paths",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.desopo_pape_shortest_paths",
+    "category": "function",
+    "text": "desopo_pape_shortest_paths(g, src, distmx=weights(g))\n\nCompute shortest paths between a source src and all other nodes in graph g using the D\'Esopo-Pape algorithm. Return a LightGraphs.DEsopoPapeState with relevant traversal information.\n\nExamples\n\njulia> using LightGraphs\n\njulia> ds = desopo_pape_shortest_paths(CycleGraph(5), 2);\n\njulia> ds.dists\n5-element Array{Int64,1}:\n 1\n 0\n 1\n 2\n 2\n\njulia> ds = desopo_pape_shortest_paths(PathGraph(5), 2);\n\njulia> ds.dists\n5-element Array{Int64,1}:\n 1\n 0\n 1\n 2\n 3\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#LightGraphs.bellman_ford_shortest_paths",
     "page": "Path and Traversal",
     "title": "LightGraphs.bellman_ford_shortest_paths",
@@ -1525,7 +1533,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "General properties of shortest path algorithms",
     "category": "section",
-    "text": "The distance from a vertex to itself is always 0.\nThe distance between two vertices with no connecting edge is always Inf.a_star\ndijkstra_shortest_paths\nbellman_ford_shortest_paths\nfloyd_warshall_shortest_paths\nyen_k_shortest_paths"
+    "text": "The distance from a vertex to itself is always 0.\nThe distance between two vertices with no connecting edge is always Inf.a_star\ndijkstra_shortest_paths\ndesopo_pape_shortest_paths\nbellman_ford_shortest_paths\nfloyd_warshall_shortest_paths\nyen_k_shortest_paths"
 },
 
 {
@@ -1577,6 +1585,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "pathing.html#LightGraphs.DEsopoPapeState",
+    "page": "Path and Traversal",
+    "title": "LightGraphs.DEsopoPapeState",
+    "category": "type",
+    "text": "struct DEposoPapeState{T, U}\n\nAn AbstractPathState designed for D`Esopo-Pape shortest-path calculations.\n\n\n\n\n\n"
+},
+
+{
     "location": "pathing.html#LightGraphs.BellmanFordState",
     "page": "Path and Traversal",
     "title": "LightGraphs.BellmanFordState",
@@ -1605,7 +1621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "Path States",
     "category": "section",
-    "text": "All path states derive fromLightGraphs.AbstractPathStateThe dijkstra_shortest_paths, floyd_warshall_shortest_paths, bellman_ford_shortest_paths, and yen_shortest_paths functions  return states that contain various  information about the graph learned during traversal. LightGraphs.DijkstraState\nLightGraphs.BellmanFordState\nLightGraphs.FloydWarshallState\nLightGraphs.YenStateThe above state types (with the exception of YenState) have the following common information, accessible via the type:.dists Holds a vector of distances computed, indexed by source vertex..parents Holds a vector of parents of each source vertex. The parent of a source vertex is always 0.(YenState substitutes .paths for .parents.)In addition, the following information may be populated with the appropriate arguments to dijkstra_shortest_paths:.predecessors Holds a vector, indexed by vertex, of all the predecessors discovered during shortest-path calculations. This keeps track of all parents when there are multiple shortest paths available from the source..pathcounts Holds a vector, indexed by vertex, of the path counts discovered during traversal. This equals the length of each subvector in the .predecessors output above."
+    "text": "All path states derive fromLightGraphs.AbstractPathStateThe dijkstra_shortest_paths, floyd_warshall_shortest_paths, bellman_ford_shortest_paths, and yen_shortest_paths functions  return states that contain various  information about the graph learned during traversal. LightGraphs.DijkstraState\nLightGraphs.DEsopoPapeState\nLightGraphs.BellmanFordState\nLightGraphs.FloydWarshallState\nLightGraphs.YenStateThe above state types (with the exception of YenState) have the following common information, accessible via the type:.dists Holds a vector of distances computed, indexed by source vertex..parents Holds a vector of parents of each source vertex. The parent of a source vertex is always 0.(YenState substitutes .paths for .parents.)In addition, the following information may be populated with the appropriate arguments to dijkstra_shortest_paths:.predecessors Holds a vector, indexed by vertex, of all the predecessors discovered during shortest-path calculations. This keeps track of all parents when there are multiple shortest paths available from the source..pathcounts Holds a vector, indexed by vertex, of the path counts discovered during traversal. This equals the length of each subvector in the .predecessors output above."
 },
 
 {
