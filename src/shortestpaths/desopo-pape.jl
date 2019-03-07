@@ -63,10 +63,10 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
                 dists[v] = alt
                 parents[v] = u
                 
-                if (state[v] == 2)
+                if state[v] == 2
                     state[v] = 1
                     push!(q, v)
-                elseif (state[v] == 0)
+                elseif state[v] == 0
                     state[v] = 1
                     pushfirst!(q, v)
                 end
