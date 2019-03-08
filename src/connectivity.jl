@@ -507,6 +507,7 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
     d < 0 && return Vector{Tuple{T,U}}()
     neighs = Vector{T}()
+    neighset = Set{T}()
     push!(neighs, v)
     Q = Vector{T}()
     push!(Q, v)
@@ -521,10 +522,11 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
         vertexneighbors = neighborfn(g, src)
         @inbounds for vertex in vertexneighbors
             if !seen[vertex] 
-                vdist = currdist + distmx[src, vertex]
-                if vdist <= d
+                vdist = currdist == typemax(U) ? typemax(U) : currdist + distmx[src, vertex]
+                if vdist <= d && vertex ∉ neighset
                     push!(Q, vertex)
                     push!(neighs, vertex)
+                    push!(neighset, vertex)
                     dists[vertex] = vdist
                 end
             end
