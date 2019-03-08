@@ -509,6 +509,7 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
     neighs = Vector{T}()
     neighset = Set{T}()
     push!(neighs, v)
+    push!(neighset, v)
     Q = Vector{T}()
     push!(Q, v)
     seen = falses(nv(g))
