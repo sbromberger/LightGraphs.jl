@@ -136,8 +136,8 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #uniform spanning trees
-random_spanning_tree_with_root,
 random_spanning_tree,
+reorient_tree,
     
 #biconnectivity and articulation points
 articulation, biconnected_components, bridges,

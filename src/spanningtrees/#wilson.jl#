@@ -177,6 +177,7 @@ end
 
 #maxiter is required by traitfn but pointless for undirected graphs
 @traitfn function random_spanning_tree(G::AG::(!IsDirected); maxiter=-1) where {T,AG <: AbstractGraph{T} }
+    #if (variant==1)
     ccG = connected_components(G)
     edges = Array{SimpleEdge{T},1}()
     roots = zeros(T,length(ccG))
@@ -223,3 +224,26 @@ function _random_spanning_tree_dir(G :: AG; nodes=1:nv(G),maxiter=50) where AG <
     throw(ErrorException("Failed to find tree, increase maxiter?"))
 end
 
+#given a tree rooted at oldr, root it at newr
+function reorient_tree(G :: AG,oldr :: T,newr :: T) where AG <: AbstractGraph{T} where T
+    (oldr==newr) && return G
+    u = newr
+    iter = 0
+    path = Array{Edge,1}()
+    while u != oldr
+        nn = neighbors(G,u)
+        length(nn) ==0 && throw(ArgumentError("Found unexpected sink node, are you sure you had the right root?")) 
+        next = nn[1]
+        push!(path,Edge(u,next))
+        u = next
+        iter += 1
+        (iter > (ne(G))) && throw(ArgumentError("No path between old root and new, graph is not a spanning tree"))
+    end
+    for e in path
+        rem_edge!(G,e)
+    end 
+    for e in path
+        add_edge!(G,reverse(e))
+    end
+    G
+end
