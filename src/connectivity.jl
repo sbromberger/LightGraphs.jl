@@ -553,7 +553,7 @@ function isgraphical(degs::Vector{<:Integer})
     iseven(sum(degs)) || return false
     sorted_degs = sort(degs, rev = true)
     n = length(sorted_degs)
-    cur_sum = 0
+    cur_sum = zero(UInt64)
     mindeg = Vector{UInt64}(undef, n)
     @inbounds for i = 1:n
         mindeg[i] = min(i, sorted_degs[i])
