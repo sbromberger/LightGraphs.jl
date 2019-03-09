@@ -506,11 +506,7 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
     ud = U(d)
-    if ud < 0
-        return Vector{Tuple{T, U}}()
-    end
-
-    #= ud < zero(U) && return Vector{Tuple{T,U}}() =#
+    ud < zero(U) && return Vector{Tuple{T,U}}()
     neighs = Vector{T}()
     Q = Vector{T}()
     push!(Q, v)
@@ -527,14 +523,15 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
         @inbounds for vertex in vertexneighbors
             if !seen[vertex] 
                 vdist = currdist == typemax(U) ? typemax(U) : currdist + distmx[src, vertex]
-                if vdist <= ud
+                if vdist <= ud && vdist < dists[vertex]
                     push!(Q, vertex)
                     dists[vertex] = vdist
                 end
             end
         end
     end
-    return [(x::T, dists[x]::U) for x in neighs]
+    # working around closure bug - should be fixed in Julia 1.2
+    return let dists=dists; [(x::T, dists[x]::U) for x in neighs]; end
 end
 
 """
