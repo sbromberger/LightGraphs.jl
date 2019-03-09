@@ -31,11 +31,7 @@ function distr_betweenness_centrality(g::AbstractGraph,
         temp_betweenness
     end
 
-    LightGraphs._rescale!(betweenness,
-    n_v,
-    normalize,
-    isdir,
-    k)
+    LightGraphs._rescale!(betweenness, n_v, normalize, isdir, k)
 
     return betweenness
 end

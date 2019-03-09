@@ -5,8 +5,11 @@ os:
 #  - osx
 
 julia:
- - 0.7
+ - 1.1
  - nightly
+ 
+allow_failures:
+ - julia: nightly
 
 notifications:
   email: false

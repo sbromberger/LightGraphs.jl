@@ -350,7 +350,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     # expand it by one vertex and add k edges from this additional node
     if ne(g) == 0
         # expand initial graph
-        n0 += 1
+        n0 += one(n0)
 
         # add edges to k existing vertices
         for target in sample!(collect(1:(n0 - 1)), k)
@@ -484,10 +484,9 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
         target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
         # skip if loop edge
         (source == target) && continue
-        edge = SimpleEdge(source, target)
         # is there already an edge? If so, try again
-        add_edge!(g, edge) || continue
-        m -= 1
+        add_edge!(g, source, target) || continue
+        m -= one(m)
     end
 end
 
