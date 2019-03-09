@@ -39,6 +39,7 @@ tests = [
     "persistence/persistence",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
+    "shortestpaths/desopo-pape",
     "shortestpaths/dijkstra",
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
