@@ -112,6 +112,7 @@ prim_mst
 ```@docs
 a_star
 dijkstra_shortest_paths
+desopo_pape_shortest_paths
 bellman_ford_shortest_paths
 floyd_warshall_shortest_paths
 yen_k_shortest_paths
@@ -139,6 +140,7 @@ learned during traversal.
 
 ```@docs
 LightGraphs.DijkstraState
+LightGraphs.DEsopoPapeState
 LightGraphs.BellmanFordState
 LightGraphs.FloydWarshallState
 LightGraphs.YenState
