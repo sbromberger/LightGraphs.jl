@@ -460,8 +460,8 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a tuple of each vertex at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`, along with its distance from `v`.
+Return a tuple of each vertex at a geodesic distance less than or equal to `d`, along with 
+its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
