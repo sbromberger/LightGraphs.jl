@@ -19,7 +19,8 @@ julia> articulation(PathGraph(5))
  4
 ```
 """
-function articulation(g::SimpleGraph{T}) where T
+function articulation end
+@traitfn function articulation(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     s = Vector{Tuple{T, T, T}}()
     is_articulation_pt = falses(nv(g))
     low = zeros(T, nv(g))
