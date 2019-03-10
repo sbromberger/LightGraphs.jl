@@ -460,8 +460,8 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a tuple of each vertex at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`, along with its distance from `v`.
+Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with 
+its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -505,9 +505,9 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
-    d < 0 && return Vector{Tuple{T,U}}()
+    ud = U(d)
+    ud < zero(U) && return Vector{Tuple{T,U}}()
     neighs = Vector{T}()
-    push!(neighs, v)
     Q = Vector{T}()
     push!(Q, v)
     seen = falses(nv(g))
@@ -518,19 +518,20 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
         seen[src] && continue
         seen[src] = true
         currdist = dists[src]
+        push!(neighs, src)
         vertexneighbors = neighborfn(g, src)
         @inbounds for vertex in vertexneighbors
-            if !seen[vertex] 
+            if !seen[vertex]  && currdist < typemax(U)
                 vdist = currdist + distmx[src, vertex]
-                if vdist <= d
+                if vdist <= ud  && vdist < dists[vertex]
                     push!(Q, vertex)
-                    push!(neighs, vertex)
                     dists[vertex] = vdist
                 end
             end
         end
     end
-    return [(x::T, dists[x]::U) for x in neighs]
+    # working around closure bug https://github.com/JuliaLang/julia/issues/15276 - should be fixed in Julia 1.2
+    return let dists=dists; [(x::T, dists[x]::U) for x in neighs]; end
 end
 
 """
