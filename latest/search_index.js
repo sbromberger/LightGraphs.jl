@@ -1357,7 +1357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Path and Traversal",
     "title": "LightGraphs.isgraphical",
     "category": "function",
-    "text": "isgraphical(degs)\n\nReturn true if the degree sequence degs is graphical, according to Erdös-Gallai condition.\n\nPerformance\n\nTime complexity: ``\\mathcal{O}(|degs|^2)``\n\n\n\n\n\n"
+    "text": "isgraphical(degs)\n\nReturn true if the degree sequence degs is graphical. A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.\n\nPerformance\n\nTime complexity: mathcalO(degs*log(degs)).\n\nImplementation Notes\n\nAccording to Erdös-Gallai theorem, a degree sequence d_1 d_n (sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -\n\nsum_i=1^r d_i leq r(r-1) + sum_i=r+1^n min(rd_i)\n\nfor each integer r <= n-1\n\n\n\n\n\n"
 },
 
 {
@@ -1941,7 +1941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1949,7 +1949,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
