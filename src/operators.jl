@@ -494,7 +494,7 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-length(g::AbstractGraph) = nv(g) * nv(g)
+length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
 
