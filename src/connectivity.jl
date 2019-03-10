@@ -460,7 +460,7 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a tuple of each vertex at a geodesic distance less than or equal to `d`, along with 
+Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with 
 its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
@@ -521,16 +521,16 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
         push!(neighs, src)
         vertexneighbors = neighborfn(g, src)
         @inbounds for vertex in vertexneighbors
-            if !seen[vertex] 
-                vdist = currdist == typemax(U) ? typemax(U) : currdist + distmx[src, vertex]
-                if vdist <= ud && vdist < dists[vertex]
+            if !seen[vertex]  && currdist < typemax(U)
+                vdist = currdist + distmx[src, vertex]
+                if vdist <= ud  && vdist < dists[vertex]
                     push!(Q, vertex)
                     dists[vertex] = vdist
                 end
             end
         end
     end
-    # working around closure bug - should be fixed in Julia 1.2
+    # working around closure bug https://github.com/JuliaLang/julia/issues/15276 - should be fixed in Julia 1.2
     return let dists=dists; [(x::T, dists[x]::U) for x in neighs]; end
 end
 
