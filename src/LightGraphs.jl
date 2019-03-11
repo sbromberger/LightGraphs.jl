@@ -97,7 +97,7 @@ MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 # a-star, dijkstra, bellman-ford, floyd-warshall
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
+floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
 yen_k_shortest_paths,
 
 # centrality
@@ -156,7 +156,7 @@ independent_set,
 vertex_cover,
 
 #matrix reordering
-reverse_cuthill_mckee
+rcm_vertex_permutation
 
 """
     LightGraphs

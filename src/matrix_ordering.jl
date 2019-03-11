@@ -1,9 +1,20 @@
-function pseudo_peripheral_node(g::SimpleGraph, src)
+"""
+    pseudo_peripheral_node(g, src)
+
+A pseudo-peripheral node v has the property that for any node u,
+if v is as far away from u as possible, then u is as far away from v as possible.
+"""
+function pseudo_peripheral_node(g, src)
     T = eltype(g)
-    u::T = src
+    u = src
     lp = 0
     while true
-        l = maximum(gdistances(g, u))
+        l = -1
+        for i in gdistances(g, u)
+            if i < typemax(T)
+                l = max(i, l)
+            end
+        end
         l <= lp && break
         lp = l
         for v in outneighbors(g, u)
@@ -15,16 +26,17 @@ function pseudo_peripheral_node(g::SimpleGraph, src)
     return u
 end
 
-function connected_rcm(g::SimpleGraph, visited, cm, src)
+function connected_rcm!(vertex_permutation, visited, src,  g)
     T = eltype(g)
-    start::T = pseudo_peripheral_node(g, src)
+    start = pseudo_peripheral_node(g, src)
     q = Vector{T}()
+    u_nbrs = Vector{T}()
     push!(q, start)
-    while !isempty(q)
-        u::T = popfirst!(q)
+    @inbounds while !isempty(q)
+        u = popfirst!(q)
         visited[u] = true
-        push!(cm, u)
-        u_nbrs = Vector{T}()
+        push!(vertex_permutation, u)
+        empty!(u_nbrs)
         for v in outneighbors(g, u)
             if !visited[v]
                 push!(u_nbrs, v)
@@ -36,14 +48,14 @@ function connected_rcm(g::SimpleGraph, visited, cm, src)
     end
 end
 
-function reverse_cuthill_mckee(g::SimpleGraph)
+function rcm_vertex_permutation(g::SimpleGraph)
     T = eltype(g)
-    cm = Vector{T}()
+    vertex_permutation = Vector{T}()
     visited = falses(nv(g))
     for i in vertices(g)
         if !visited[i]
-            connected_rcm(g, visited, cm, i)
+            connected_rcm!(vertex_permutation, visited, i, g)
         end
     end
-    return reverse(cm)
+    return reverse!(vertex_permutation)
 end
