@@ -350,7 +350,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     # expand it by one vertex and add k edges from this additional node
     if ne(g) == 0
         # expand initial graph
-        n0 += 1
+        n0 += one(n0)
 
         # add edges to k existing vertices
         for target in sample!(collect(1:(n0 - 1)), k)
@@ -484,10 +484,9 @@ function _create_static_fitness_graph!(g::AbstractGraph, m::Integer, cum_fitness
         target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
         # skip if loop edge
         (source == target) && continue
-        edge = SimpleEdge(source, target)
         # is there already an edge? If so, try again
-        add_edge!(g, edge) || continue
-        m -= 1
+        add_edge!(g, source, target) || continue
+        m -= one(m)
     end
 end
 
@@ -1044,4 +1043,29 @@ function dorogovtsev_mendes(n::Integer; seed::Int=-1)
         add_edge!(g, nv(g), v)
     end
     return g
+end
+
+"""
+    random_orientation_dag(g)
+
+Generate a random oriented acyclical digraph. The function takes in a simple
+graph and a random number generator as an argument. The probability of each
+directional acyclic graph randomly being generated depends on the architecture
+of the original directed graph.
+
+DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
+"""
+function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
+    nvg = length(g.fadjlist)
+    rng = getRNG(seed)
+    order = randperm(rng, nvg)
+    g2 = SimpleDiGraph(nv(g))
+    @inbounds for i in vertices(g)
+        for j in outneighbors(g, i)
+            if order[i] < order[j]
+                add_edge!(g2, i, j)
+            end
+        end
+    end
+    return g2
 end

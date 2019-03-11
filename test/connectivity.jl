@@ -193,4 +193,18 @@
     @test @inferred(!isgraphical([1, 1, 1]))
     @test @inferred(isgraphical([2, 2, 2]))
     @test @inferred(isgraphical(fill(3, 10)))
+    # 1116
+    gc = CycleGraph(4)
+    for g in testgraphs(gc)
+        z = @inferred(neighborhood(g, 3, 3))
+        @test (z == [3, 2, 4, 1] || z == [3, 4, 2, 1])
+    end
+
+    gd = SimpleDiGraph([0 1 1 0; 0 0 0 1; 0 0 0 1; 0 0 0 0])
+    add_edge!(gd, 1, 4)
+    for g in testdigraphs(gd)
+        z = @inferred(neighborhood_dists(g, 1, 4))
+        @test (4, 1) ∈ z
+        @test (4, 2) ∉ z
+    end
 end
