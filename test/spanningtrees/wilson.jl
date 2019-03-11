@@ -8,7 +8,7 @@ function check_correctness(edges,roots)
     @test all(outdegree(F,roots) .== 0)
     #test that all nodes lead to a root
     for cc in connected_components(F)
-        if (length(cc)==1)
+        if length(cc)==1
             @test cc[1] in roots
         else
             rc = intersect(cc,roots)
@@ -36,9 +36,10 @@ end
         check_correctness(rt.edges,rt.roots)
     end
 
-    #Try a bunch of random graphs
-    rg = [SimpleGraph(20,20) for i in 1:15]
-    map((g) -> (rt=random_spanning_tree(g);check_correctness(rt.edges,rt.roots)),rg)
+    #Try some small graphs
+    gs = [CycleGraph(5), CycleDiGraph(4), WheelDiGraph(9),
+          smallgraph(:bull), smallgraph(:tutte)]
+    map((g) -> (rt=random_spanning_tree(g);check_correctness(rt.edges,rt.roots)),gs)
 
     #The next graph is not connected, a forest with three roots should be returned
     G=reduce(blockdiag,[CycleDiGraph(5),CycleDiGraph(3),CycleDiGraph(2)])

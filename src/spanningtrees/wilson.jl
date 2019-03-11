@@ -26,6 +26,11 @@ In the case of graphs that are not connected, a random spanning *forest* is retu
 - optional: r, index of a node to serve as root
 - maxiter: interrupt the algorithm for directed graphs after maxiter attempts. Default 50. Ignored for undirected graphs.
 
+The following arguments are used internally, do not modify unless you know what you are doing:
+
+- force: skip connectivity tests. The algorithm may get into an infinite loop
+- nodes: limit outer loop to a subset of nodes (used when the graph has disconnected components)
+
 ### Output 
 
 If the root is specified, returns the set of edges in the tree. If it isn't, returns a named tuple with 'edges': the set of edges and 'root': the root. 
@@ -91,10 +96,7 @@ prim_mst, kruskal_mst
 Wilson, D. B. (1996). [Generating random spanning trees more quickly than the cover time](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.47.8598&rep=rep1&type=pdf). In STOC (Vol. 96, pp. 296-303).
 
 """
-function random_spanning_tree end
-
-
-function random_spanning_tree(G :: AG, r :: Integer; nodes = 1:nv(G), force=false ) where AG <: AbstractGraph{T} where T
+function random_spanning_tree(G :: AG, r :: Integer; nodes = vertices(G), force=false ) where AG <: AbstractGraph{T} where T
     r in vertices(G) || throw(BoundsError("Root r must be one of the vertices"))
     r in nodes || throw(BoundsError("Root r must be one of the vertices in subset"))
     if (!force)
