@@ -505,12 +505,10 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
-    Q = [ (T(v),zero(U),) ]
-    if d < zero(U)
-        pop!(Q)
-        return Q
-    end
-    seen = [i==v for i in 1:nv(g)]
+    Q = Vector{Tuple{T,U}}()
+    d < zero(U) && return Q
+    push!(Q, (v,zero(U),) )
+    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
     for (src,currdist) in Q
         currdist >= d && continue
         for dst in neighborfn(g,src)
