@@ -1,9 +1,4 @@
-"""
-    pseudo_peripheral_node(g, src)
-
-A pseudo-peripheral node v has the property that for any node u,
-if v is as far away from u as possible, then u is as far away from v as possible.
-"""
+#A pseudo-peripheral node v has the property that for any node u, if v is as far away from u as possible, then u is as far away from v as possible.
 function pseudo_peripheral_node(g, src)
     T = eltype(g)
     u = src
@@ -48,8 +43,13 @@ function connected_rcm!(vertex_permutation, visited, src,  g)
     end
 end
 
-function rcm_vertex_permutation(g::SimpleGraph)
-    T = eltype(g)
+"""
+    rcm_vertex_permutation(g)
+
+Return the vertices in the new ordering. 
+The reverse Cuthill-Mckee ordering algorithm reduces the bandwidth of a graph by reordering the indices assigned to each vertex.
+"""
+function rcm_vertex_permutation(g::SimpleGraph{T}) where T
     vertex_permutation = Vector{T}()
     visited = falses(nv(g))
     for i in vertices(g)

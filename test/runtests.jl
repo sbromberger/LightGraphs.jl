@@ -79,6 +79,7 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
+    "matrix_ordering",
     "experimental/experimental"
 ]
 
