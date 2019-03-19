@@ -1,5 +1,3 @@
-using LightGraphs, SimpleTraits
-
 """
     ear_decomposition(g)
 
