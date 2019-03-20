@@ -62,9 +62,11 @@
     for g in testdigraphs(h)
         @test @inferred(is_weakly_connected(g))
         scc = @inferred(strongly_connected_components(g))
+        scc_k = @inferred(strongly_connected_components_kosaraju(g))
         wcc = @inferred(weakly_connected_components(g))
 
         @test length(scc) == 3 && sort(scc[3]) == [1, 2, 5]
+        @test length(scc_k) == 3 && sort(scc_k[1]) == [1, 2, 5]
         @test length(wcc) == 1 && length(wcc[1]) == nv(g)
     end
 
@@ -75,16 +77,26 @@
       scc_as_subgraphs = map(i -> graph[i], scc)
       return all(is_strongly_connected, scc_as_subgraphs)
     end
+    
+    function scc_k_ok(graph)
+      """Check that all SCC really are strongly connected"""
+      scc_k = @inferred(strongly_connected_components_kosaraju(graph))
+      scc_k_as_subgraphs = map(i -> graph[i], scc_k)
+      return all(is_strongly_connected, scc_k_as_subgraphs)
+    end
 
     # the two graphs below are isomorphic (exchange 2 <--> 4)
     h = SimpleDiGraph(4);  add_edge!(h, 1, 4); add_edge!(h, 4, 2); add_edge!(h, 2, 3); add_edge!(h, 1, 3);
     for g in testdigraphs(h)
       @test scc_ok(g)
+      @test scc_k_ok(g)
+        
     end
 
     h2 = SimpleDiGraph(4); add_edge!(h2, 1, 2); add_edge!(h2, 2, 4); add_edge!(h2, 4, 3); add_edge!(h2, 1, 3);
     for g in testdigraphs(h2)
       @test scc_ok(g)
+      @test scc_k_ok(g)
     end
 
     h = SimpleDiGraph(6)
@@ -92,14 +104,18 @@
     add_edge!(h, 3, 5); add_edge!(h, 5, 6); add_edge!(h, 6, 4)
     for g in testdigraphs(h)
       scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
       @test length(scc) == 1 && sort(scc[1]) == [1:6;]
+      @test length(scc_k) == 1 && sort(scc_k[1]) == [1:6;]
     end
     # tests from Graphs.jl
     h = SimpleDiGraph(4)
     add_edge!(h, 1, 2); add_edge!(h, 2, 3); add_edge!(h, 3, 1); add_edge!(h, 4, 1)
     for g in testdigraphs(h)
       scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
       @test length(scc) == 2 && sort(scc[1]) == [1:3;] && sort(scc[2]) == [4]
+      @test length(scc_k) == 2 && sort(scc_k[2]) == [1:3;] && sort(scc[1]) == [4]
     end
 
     h = SimpleDiGraph(12)
@@ -111,12 +127,20 @@
 
     for g in testdigraphs(h)
       scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
       @test length(scc) == 4
       @test sort(scc[1]) == [7, 8, 9, 10, 11, 12]
       @test sort(scc[2]) == [3, 6]
       @test sort(scc[3]) == [2, 4, 5]
       @test scc[4] == [1]
+        
+      @test length(scc_k) == 4
+      @test sort(scc_k[1]) ==  [1] 
+      @test sort(scc_k[2]) ==  [4, 5, 2] 
+      @test sort(scc_k[3]) ==  [6, 3]  
+      @test scc_k[4] ==  [11, 12, 10, 9, 7, 8]
     end
+
     # Test examples with self-loops from
     # Graph-Theoretic Analysis of Finite Markov Chains by J.P. Jarvis & D. R. Shier
 
