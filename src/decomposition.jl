@@ -39,10 +39,6 @@ julia> for e in elist
     add_edge!(g, e[1], e[2])
 end
 
-julia> ear_decomposition(g)
-2-element Array{Any,1}:
- [1, 4, 3, 2, 1]
- [1, 8, 7, 6, 1]
 ```
 
 ### References
