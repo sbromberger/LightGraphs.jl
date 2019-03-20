@@ -38,12 +38,9 @@ julia> for e in elist
 end
 
 julia> ear_decomposition(g)
-5-element Array{Any,1}:
+2-element Array{Any,1}:
  [1, 4, 3, 2, 1]
- [1, 5, 4]
- [1, 6, 4]
- [1, 8, 7, 6]
- [2, 7]
+ [1, 8, 7, 6, 1]
 ```
 
 ### References
