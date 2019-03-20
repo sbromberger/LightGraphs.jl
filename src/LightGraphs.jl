@@ -40,7 +40,7 @@ has_self_loops, num_self_loops, density, squash, weights,
 add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!, rem_vertices!,
 
 # decomposition
-core_number, k_core, k_shell, k_crust, k_corona,
+core_number, k_core, k_shell, k_crust, k_corona, ear_decomposition,
 
 # distance
 eccentricity, diameter, periphery, radius, center,
@@ -257,6 +257,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("decomposition.jl")
 
 using .LinAlg
 end # module
