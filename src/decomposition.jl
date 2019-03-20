@@ -55,7 +55,7 @@ function ear_decomposition end
 @traitfn function ear_decomposition(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}} !is_connected(g) && throw(ArgumentError("Graph must be connected"))
 
     # List to store the order in which dfs visits vertices.
-    dfs_order = []
+    dfs_order = Vector{T}()
 
     # Boolean dict to mark vertices as visited or unvisited during
     # Dfs traversal in graph.
@@ -72,9 +72,9 @@ function ear_decomposition end
     value = Dict()
 
     # List to store all the chains and cycles of the input graph G.
-    chains = []
+    chains = Vector{Vector{T}}()
 
-    nodes = []
+    nodes = Vector{T}()
     for i in vertices(g) 
     	append!(nodes, i)
     end
