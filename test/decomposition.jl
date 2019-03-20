@@ -6,19 +6,19 @@
 		add_edge!(g1, e[1], e[2])
 	end
 
-	ear_d = @inferred(ear_decomposition(g1))
+	ear_d1 = @inferred(ear_decomposition(g1))
 	expected_results = [[1, 5, 4, 3, 2, 1], [1, 8, 7, 6, 4], [2, 7]]
-	@test ear_d == expected_results
+	@test ear_d1 == expected_results
 
 	# test for path graph
 	g2 = PathGraph(5)
-	ear_d = @inferred(ear_decomposition(g2))
-	@test ear_d == []
+	ear_d2 = @inferred(ear_decomposition(g2))
+	@test ear_d2 == []
 
 	# test for cycle graph
 	g3 = PathGraph(5)
 	add_edge!(g3, 1, 5)
-	ear_d = @inferred(ear_decomposition(g3))
+	ear_d3 = @inferred(ear_decomposition(g3))
 	expected_results = [[1, 5, 4, 3, 2, 1]]
-	@test ear_d == expected_results
+	@test ear_d3 == expected_results
 end

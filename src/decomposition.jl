@@ -26,7 +26,7 @@ OUTPUT:
 Time complexity of this algorithm is `O(N+M)`, where `N` is number of vertices
 and `M` is number of edges.
 
-### Examples
+# Examples
 ```jldoctest
 
 julia> using LightGraphs
@@ -39,6 +39,10 @@ julia> for e in elist
     add_edge!(g, e[1], e[2])
 end
 
+julia> ear_decomposition(g)
+2-element Array{Any,1}:
+ [1, 4, 3, 2, 1]
+ [1, 8, 7, 6, 1]
 ```
 
 ### References
@@ -138,5 +142,5 @@ function ear_decomposition end
             dfs_order = []
         end
     end
-    return(chains)
+    return chains
 end
