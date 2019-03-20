@@ -26,12 +26,14 @@ OUTPUT:
 Time complexity of this algorithm is `O(N+M)`, where `N` is number of vertices
 and `M` is number of edges.
 
-# Examples
+### Examples
 ```jldoctest
 
 julia> using LightGraphs
 
-julia> elist = [(1,2),(2,3),(3,4),(4,1),(1,5), (1, 6), (6, 7), (7, 8), (1, 8)];
+julia> elist = [(1,2),(2,3),(3,4),(4,1),(1,5), (1, 6), (6, 7), (7, 8), (1, 8)]
+
+julia> g = SimpleGraph(8)
 
 julia> for e in elist
     add_edge!(g, e[1], e[2])
