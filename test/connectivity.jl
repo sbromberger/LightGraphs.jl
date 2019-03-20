@@ -115,7 +115,7 @@
       scc = @inferred(strongly_connected_components(g))
       scc_k = @inferred(strongly_connected_components_kosaraju(g))
       @test length(scc) == 2 && sort(scc[1]) == [1:3;] && sort(scc[2]) == [4]
-      @test length(scc_k) == 2 && sort(scc_k[2]) == [1:3;] && sort(scc_[1]) == [4]
+      @test length(scc_k) == 2 && sort(scc_k[2]) == [1:3;] && sort(scc_k[1]) == [4]
     end
 
     h = SimpleDiGraph(12)
