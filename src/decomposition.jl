@@ -1,7 +1,7 @@
 """
-    ear_decomposition(g)
+    ear_decomposition(g, s)
 
-Return an Ear decomposition of the graph.
+Return an Ear decomposition of the graph by using s as source for DFS Tree.
 
 An ear of an undirected unweighted connected graph `G` is a path `P` where
 the two endpoints of the path may coincide (i.e., form a cycle), but where
@@ -52,94 +52,83 @@ doi:10.1016/j.ipl.2013.01.016.
 """
 
 function ear_decomposition end
-@traitfn function ear_decomposition(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}} !is_connected(g) && throw(ArgumentError("Graph must be connected"))
+@traitfn function ear_decomposition(g::AG::(!IsDirected), s::Integer) where {T, AG<:AbstractGraph{T}} !is_connected(g) && throw(ArgumentError("Graph must be connected"))
 
     # List to store the order in which dfs visits vertices.
-    dfs_order = Vector{T}()
+    dfs_order = []
 
     # Boolean dict to mark vertices as visited or unvisited during
     # Dfs traversal in graph.
-    seen = Set()
+    seen = zeros(Bool, nv(g))
 
     # Boolean dict to mark vertices as visited or unvisited in
     # Dfs tree traversal.
     traversed = Set()
 
     # Dict to store parent vertex of all the visited vertices.
-    parent = Dict()
+    parents = zeros(T, nv(g))
 
     # List to store visit_time of vertices in Dfs traversal.
     value = Dict()
 
     # List to store all the chains and cycles of the input graph G.
-    chains = Vector{Vector{T}}()
+    chains = []
 
-    nodes = Vector{T}()
-    for i in vertices(g) 
-    	append!(nodes, i)
-    end
-    parent[nodes[1]] = -1
+    # Construct depth-first search tree from source s.
+    S = Vector{T}([s])
 
-    # DFS() : Function that performs depth first search on input graph G and
-    #         stores DFS tree in parent array format.
-    function DFS(v)
-        """
-        Depth first search step from vertex v.
-        """
-        # make v are visited, update its time of visited and value
-        push!(seen, v)
-        append!(dfs_order, v)
+    # mark source vertex s as seen
+    seen[s] = true
 
-        # Traverse though all the neighbor nodes of v
-        for u in neighbors(g, v)
-            # if any neighbor is not visited, enter
-            if !(u in seen)
-                # Set the parent of u in DFS tree as v and continue
-                # exploration
-                parent[u] = v
-                DFS(u)
-            end
-        end
-    end
+    parents[s] = s
+    append!(dfs_order, s)
 
-    # Traverse() : Function that use G-T (non-tree edges) to find cycles
-    #              and chains by traversing in DFS tree.
-    function traverse(start, pointer)
-        # Make the firt end of non-tree edge visited
-        push!(traversed, start)
-        chain = [start]
-
-        # Traverse DFS Tree of G and print all the not visited nodes
-        # Appending all the nodes in chain
-        while true
-            append!(chain, pointer)
-            if pointer in traversed
+    while !isempty(S)
+        v = S[end]
+        u = 0
+        for n in neighbors(g, v)
+            if !seen[n]
+                u = n
+                append!(dfs_order, u)
                 break
             end
-            push!(traversed, pointer)
-            pointer = parent[pointer]
         end
-        push!(chains, chain)
+        if u == 0
+            pop!(S)
+        else
+            seen[u] = true
+            push!(S, u)
+            parents[u] = v
+        end
     end
 
-    # Perform ear decomposition on each connected component of input graph.
-    for v in nodes
-        if !(v in seen)
-            # Start the depth first search from first vertex
-            DFS(v)
-            for (i, u) in enumerate(dfs_order)
-                value[u] = i
-            end
+    for (i, u) in enumerate(dfs_order)
+        value[u] = i
+    end
 
-            # Traverse all the non Tree edges, according to DFS order
-            for u in dfs_order
-                for neighbor in neighbors(g, u)
-                    if (value[u] < value[neighbor] && u != parent[neighbor])
-                        traverse(u, neighbor)
+    # Traverse all the non Tree edges(G-T (non-tree edges)), according to
+    # DFS order to find cycles and chains by traversing in DFS tree.
+    for u in dfs_order
+        for neighbor in neighbors(g, u)
+            if (value[u] < value[neighbor] && u != parents[neighbor])
+
+                # Make the firt end of non-tree edge visited
+                push!(traversed, u)
+                chain = [u]
+
+                # Traverse DFS Tree of G and print all the not visited nodes
+                # Appending all the nodes in chain
+                pointer = neighbor
+                while true
+                    append!(chain, pointer)
+                    if pointer in traversed
+                        break
                     end
+                    push!(traversed, pointer)
+                    pointer = parents[pointer]
                 end
+                push!(chains, chain)
             end
-            dfs_order = []
         end
     end
     return chains
