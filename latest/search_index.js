@@ -1941,7 +1941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
+    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
 },
 
 {
@@ -1949,7 +1949,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "LightGraphs.LinAlg.symmetrize",
     "category": "function",
-    "text": "symmetrize(adjmat, which=:or)\n\nReturn a symmetric version of graph (represented by CombinatorialAdjacency adjmat) as a CombinatorialAdjacency. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\nImplementation Notes\n\nOnly works on Adjacency because the normalizations don\'t commute with symmetrization.\n\n\n\n\n\n"
+    "text": "symmetrize(A::SparseMatrix, which=:or)\n\nReturn a symmetric version of graph (represented by sparse matrix A) as a sparse matrix. which may be one of :triu, :tril, :sum, or :or. Use :sum for weighted graphs.\n\n\n\n\n\n"
 },
 
 {
@@ -2317,7 +2317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Developer Notes",
     "title": "Developing Alternate Graph Types",
     "category": "section",
-    "text": "This section is designed to guide developers who wish to write their own graph structures.All LightGraphs functions rely on a standard API to function. As long as your graph structure is a subtype of AbstractGraph and implements the following API functions with the given return values, all functions within the LightGraphs package should just work:edges\nBase.eltype\nhas_edge\nhas_vertex\ninneighbors\nne\nnv\noutneighbors\nvertices\nis_directed: Note that since LightGraphs uses traits to determine directedness, is_directed for a CustomGraph type should be implemented with both of the following signatures:\nis_directed(::Type{CustomGraph})::Bool\nis_directed(g::CustomGraph)::BoolIf the graph structure is designed to represent weights on edges, the weights function should also be defined. Note that the output does not necessarily have to be a dense matrix, but it must be indexable via [u, v]."
+    "text": "This section is designed to guide developers who wish to write their own graph structures.All LightGraphs functions rely on a standard API to function. As long as your graph structure is a subtype of AbstractGraph and implements the following API functions with the given return values, all functions within the LightGraphs package should just work:edges\nBase.eltype\nedgetype (example: edgetype(g::CustomGraph) = LightGraphs.SimpleEdge{eltype(g)}))\nhas_edge\nhas_vertex\ninneighbors\nne\nnv\noutneighbors\nvertices\nis_directed: Note that since LightGraphs uses traits to determine directedness, is_directed for a CustomGraph typeshould be implemented with both of the following signatures:is_directed(::Type{CustomGraph})::Bool (example: is_directed(::Type{<:CustomGraph}) = false)\nis_directed(g::CustomGraph)::Bool\nzeroIf the graph structure is designed to represent weights on edges, the weights function should also be defined. Note that the output does not necessarily have to be a dense matrix, but it must be a subtype of AbstractMatrix{<:Real} and indexable via [u, v]."
 },
 
 {
