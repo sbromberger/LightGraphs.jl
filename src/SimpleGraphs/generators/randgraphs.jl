@@ -79,6 +79,44 @@ SimpleDiGraph(nv::T, ne::Integer; seed::Int=-1) where T <: Integer =
     SimpleDiGraph{Int}(nv, ne, seed=seed)
 
 """
+	SimpleDiGraph(g, p_in, p_out; seed=-1)
+
+Create a directed graph from an undirected graph `g` where the direction of each
+edge from `u` to `v` (`u < v`) in `g` is added as a directed edge from `u` to `v`
+with probability `p_out`, from `v` to `u` with probability `p_in`, or in both
+directions with probability `1 - p_in - p_out`. If `p_in + p_out ≥ 1`, `p_out`
+will be truncated to `1 - p_in`, and no bidirectional edges will be created.
+"""
+function SimpleDiGraph(g::SimpleGraph, _p_in::Real, _p_out::Real; seed::Int=-1)
+    p_in, p_out = promote(_p_in, _p_out)
+    T = typeof(p_in)
+    edgelist = Vector{edgetype(g)}()
+    ne_g = ne(g)
+    p_both = max(one(T) - p_in - p_out, zero(T))
+    thresh_in = (zero(T), p_in)
+    thresh_out = (p_in, p_in + p_out)
+    sizehint!(edgelist, ne_g + Int(ceil(ne_g * p_both)))
+    rng = getRNG(seed)
+    for e in edges(g)
+        r = rand(rng)
+        if thresh_in[1] <= r < thresh_in[2]
+            push!(edgelist, e)
+        elseif thresh_out[1] <= r < thresh_out[2]
+            push!(edgelist, reverse(e))
+        else
+            push!(edgelist, e)
+            push!(edgelist, reverse(e))
+        end
+    end
+    d = SimpleDiGraphFromIterator(edgelist)
+    if nv(d) < nv(g)
+        add_vertices!(d, nv(g) - nv(d))
+    end
+    return d
+end
+
+
+"""
     randbn(n, p, seed=-1)
 
 Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.

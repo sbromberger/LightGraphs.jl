@@ -15,6 +15,21 @@
         @test eltype(DiGraph{T}(5, 2)) == T
     end
 
+    pdg = PathDiGraph(5)
+    for dg in testdigraphs(pdg)
+        g = Graph(dg)
+        dg10 = copy(dg); add_vertices!(dg10, 5)
+        add_vertices!(g, 5)
+        d1 = @inferred(DiGraph(g, 0.0, 1.0))
+        @test d1 == reverse(dg10)
+        d2 = @inferred(DiGraph(g, 2//7, 5//9))
+        @test ne(d2) >= ne(g)
+        d3 = @inferred(DiGraph(g, 0, 0))
+        @test d3 == DiGraph(g)
+        d4 = @inferred(DiGraph(g, -1, 200))
+        @test d4 == reverse(dg10)
+    end
+
     @test SimpleGraph(10, 20, seed=3) == SimpleGraph(10, 20, seed=3)
     @test SimpleDiGraph(10, 20, seed=3) == SimpleDiGraph(10, 20, seed=3)
     @test SimpleGraph(10, 20, seed=3) == erdos_renyi(10, 20, seed=3)
