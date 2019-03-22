@@ -420,9 +420,9 @@ end
 
 """
     neighborhood(g, v, d, distmx=weights(g))
-    
+
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`. 
+may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -460,8 +460,8 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a tuple of each vertex at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`, along with its distance from `v`.
+Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with
+its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -505,48 +505,54 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
-    d < 0 && return Vector{Tuple{T,U}}()
-    neighs = Vector{T}()
-    push!(neighs, v)
-    Q = Vector{T}()
-    push!(Q, v)
-    seen = falses(nv(g))
-    dists = fill(typemax(U), nv(g))
-    dists[v] = zero(U)
-    while !isempty(Q)
-        src = popfirst!(Q)
-        seen[src] && continue
-        seen[src] = true
-        currdist = dists[src]
-        vertexneighbors = neighborfn(g, src)
-        @inbounds for vertex in vertexneighbors
-            if !seen[vertex] 
-                vdist = currdist + distmx[src, vertex]
-                if vdist <= d
-                    push!(Q, vertex)
-                    push!(neighs, vertex)
-                    dists[vertex] = vdist
+    Q = Vector{Tuple{T,U}}()
+    d < zero(U) && return Q
+    push!(Q, (v,zero(U),) )
+    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
+    for (src,currdist) in Q
+        currdist >= d && continue
+        for dst in neighborfn(g,src)
+            if !seen[dst]
+                seen[dst]=true
+                if currdist+distmx[src,dst] <= d
+                    push!(Q, (dst , currdist+distmx[src,dst],))
                 end
             end
         end
     end
-    return [(x::T, dists[x]::U) for x in neighs]
+    return Q
 end
 
 """
     isgraphical(degs)
 
-Return true if the degree sequence `degs` is graphical, according to
-[Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
+Return true if the degree sequence `degs` is graphical.
+A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.
 
 ### Performance
-    Time complexity: ``\\mathcal{O}(|degs|^2)``
+Time complexity: ``\\mathcal{O}(|degs|*\\log(|degs|))``.
+
+### Implementation Notes
+According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
+```
+for each integer r <= n-1
 """
-function isgraphical(degs::Vector{Int})
+function isgraphical(degs::Vector{<:Integer})
     iseven(sum(degs)) || return false
-    n = length(degs)
-    for r = 1:(n - 1)
-        cond = sum(i -> degs[i], 1:r) <= r * (r - 1) + sum(i -> min(r, degs[i]), (r + 1):n)
+    sorted_degs = sort(degs, rev = true)
+    n = length(sorted_degs)
+    cur_sum = zero(UInt64)
+    mindeg = Vector{UInt64}(undef, n)
+    @inbounds for i = 1:n
+        mindeg[i] = min(i, sorted_degs[i])
+    end
+    cum_min = sum(mindeg)
+    @inbounds for r = 1:(n - 1)
+        cur_sum += sorted_degs[r]
+        cum_min -= mindeg[r]
+        cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
     end
     return true

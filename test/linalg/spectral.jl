@@ -152,7 +152,6 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         #check that matmat works and Matrix(nbt) == B
         @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
-        #check that we can use the implicit matvec in nonbacktrack_embedding
         @test size(y) == size(x)
 
         B₁ = Nonbacktracking(g10)

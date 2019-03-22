@@ -43,7 +43,7 @@ end
 """
     karger_cut_cost(g, cut)
 
-Find the number of crossing edges in the a cut of graph `g` where the cut is represented
+Find the number of crossing edges in a cut of graph `g` where the cut is represented
 by the integer array, `cut`.
 """
 karger_cut_cost(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer =
@@ -52,7 +52,7 @@ count((e::Edge{T})->cut[src(e)] != cut[dst(e)], edges(g))
 """
     karger_cut_edges(g, cut)
 
-Find the crossing edges the a cut of graph `g` where the cut is represented
+Find the crossing edges in a cut of graph `g` where the cut is represented
 by the integer array, `cut`.
 """
 karger_cut_edges(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer = 

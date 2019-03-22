@@ -8,30 +8,34 @@ function pagerank(
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
     partitions = LightGraphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
-    # collect dangling nodes
-    dangling_nodes = [v for v in vertices(g) if outdegree(g, v) == 0]
-    N = Int(nv(g))
+    α_div_outdegree = Vector{Float64}(undef,nv(g))
+    dangling_nodes = Vector{U}()
+    @inbounds for v in vertices(g)
+        if outdegree(g, v) == 0
+            push!(dangling_nodes, v)
+        end
+        α_div_outdegree[v] = (α/outdegree(g, v))
+    end
+
+    nvg = Int(nv(g))
     # solution vector and temporary vector
-    x = fill(1.0 / N, N)
+    x = fill(1.0 / nvg, nvg)
     xlast = copy(x)
-    # personalization vector
-    p = fill(1.0 / N, N)
-    # adjustment for leaf nodes in digraph
-    dangling_weights = p
-    for _ in 1:n
+    @inbounds for _ in 1:n
         dangling_sum = 0.0
         for v in dangling_nodes
             dangling_sum += x[v]
         end
         # flow from teleprotation
-        for v in vertices(g)
-            xlast[v] = (1 - α + α * dangling_sum) * p[v]
-        end
+        y = (1 - α + α * dangling_sum) * (1.0 / nvg)
+        xlast .= y
         # flow from edges
-        @threads for v_set in partitions
-            for v in v_set
-                for u in inneighbors(g, v)
-                    xlast[v] += α * x[u] / outdegree(g, u)
+        let x = x
+            @threads for v_set in partitions
+                for v in v_set
+                    for u in inneighbors(g, v)
+                        xlast[v] += (x[u] * α_div_outdegree[u])
+                    end
                 end
             end
         end
@@ -42,7 +46,7 @@ function pagerank(
             err += abs(xlast[v] - x[v])
             x[v] = xlast[v]
         end
-        if (err < N * ϵ)
+        if (err < nvg * ϵ)
             return x
         end
     end

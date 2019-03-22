@@ -3,17 +3,18 @@
 
 A state type for depth-first search that finds the biconnected components.
 """
-mutable struct Biconnections
+mutable struct Biconnections{E <: AbstractEdge}
     low::Vector{Int}
     depth::Vector{Int}
-    stack::Vector{Edge}
-    biconnected_comps::Vector{Vector{Edge}}
+    stack::Vector{E}
+    biconnected_comps::Vector{Vector{E}}
     id::Int
 end
 
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
-    return Biconnections(zeros(Int, n), zeros(Int, n), Vector{Edge}(), Vector{Vector{Edge}}(), 0)
+    E = Edge{eltype(g)}
+    return Biconnections(zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0)
 end
 
 
@@ -22,7 +23,9 @@ end
 
 Perform a DFS visit storing the depth and low-points of each vertex.
 """
-function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
+function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Integer) where {E}
+    # E === Edge{eltype(g)}
+
     children = 0
     state.id += 1
     state.depth[v] = state.id
@@ -31,15 +34,15 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
     for w in outneighbors(g, v)
         if state.depth[w] == 0
             children += 1
-            push!(state.stack, Edge(min(v, w), max(v, w)))
+            push!(state.stack, E(min(v, w), max(v, w)))
             visit!(g, state, v, w)
             state.low[v] = min(state.low[v], state.low[w])
 
             #Checking the root, and then the non-roots if they are articulation points
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = Edge(0, 0)  #Invalid Edge, used for comparison only
-                st = Vector{Edge}()
-                while e != Edge(min(v, w), max(v, w))
+                e = E(0, 0)  #Invalid Edge, used for comparison only
+                st = Vector{E}()
+                while e != E(min(v, w), max(v, w))
                     e = pop!(state.stack)
                     push!(st, e)
                 end
@@ -47,14 +50,14 @@ function visit!(g::AbstractGraph, state::Biconnections, u::Integer, v::Integer)
             end
 
         elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, Edge(min(v, w), max(v, w)))
+            push!(state.stack, E(min(v, w), max(v, w)))
             state.low[v] = state.depth[w]
         end
     end
 end
 
 """
-    biconnected_components(g)
+    biconnected_components(g) -> Vector{Vector{Edge{eltype(g)}}}
 
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)
 of an undirected graph `g`and return a vector of vectors containing each

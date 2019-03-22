@@ -1,7 +1,7 @@
 using ArnoldiMethod
 #computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
-    cut_cost = 0
+    cut_cost = zero(eltype(W))
     for j in axes(W, 2)
         for i in axes(W, 1)
             if cut[i] != cut[j]
@@ -9,12 +9,12 @@ function _normalized_cut_cost(cut, W::AbstractMatrix, D)
             end
         end
     end
-    cut_cost /= 2
-    return cut_cost / sum(D * cut) + cut_cost / sum(D * (.~cut))
+    half_cut_cost = cut_cost / 2
+    return half_cut_cost / sum(D * cut) + half_cut_cost / sum(D * (.~cut))
 end
 
 function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
-    cut_cost = 0
+    cut_cost = zero(eltype(W))
     rows = rowvals(W)
     vals = nonzeros(W)
     n = size(W, 2)
@@ -22,11 +22,12 @@ function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
-                cut_cost += vals[j] / 2
+                cut_cost += vals[j]
             end
         end
     end
-    return cut_cost / sum(D * cut) + cut_cost / sum(D * (.~cut))
+    half_cut_cost = cut_cost / 2
+    return half_cut_cost / sum(D * cut) + half_cut_cost / sum(D * (.~cut))
 end
 
 function _partition_weightmx(cut, W::AbstractMatrix)
