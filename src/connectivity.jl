@@ -420,9 +420,9 @@ end
 
 """
     neighborhood(g, v, d, distmx=weights(g))
-    
+
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`. 
+may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -460,7 +460,7 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with 
+Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with
 its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
@@ -505,33 +505,22 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
-    ud = U(d)
-    ud < zero(U) && return Vector{Tuple{T,U}}()
-    neighs = Vector{T}()
-    Q = Vector{T}()
-    push!(Q, v)
-    seen = falses(nv(g))
-    dists = fill(typemax(U), nv(g))
-    dists[v] = zero(U)
-    while !isempty(Q)
-        src = popfirst!(Q)
-        seen[src] && continue
-        seen[src] = true
-        currdist = dists[src]
-        push!(neighs, src)
-        vertexneighbors = neighborfn(g, src)
-        @inbounds for vertex in vertexneighbors
-            if !seen[vertex]  && currdist < typemax(U)
-                vdist = currdist + distmx[src, vertex]
-                if vdist <= ud  && vdist < dists[vertex]
-                    push!(Q, vertex)
-                    dists[vertex] = vdist
+    Q = Vector{Tuple{T,U}}()
+    d < zero(U) && return Q
+    push!(Q, (v,zero(U),) )
+    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
+    for (src,currdist) in Q
+        currdist >= d && continue
+        for dst in neighborfn(g,src)
+            if !seen[dst]
+                seen[dst]=true
+                if currdist+distmx[src,dst] <= d
+                    push!(Q, (dst , currdist+distmx[src,dst],))
                 end
             end
         end
     end
-    # working around closure bug https://github.com/JuliaLang/julia/issues/15276 - should be fixed in Julia 1.2
-    return let dists=dists; [(x::T, dists[x]::U) for x in neighs]; end
+    return Q
 end
 
 """
