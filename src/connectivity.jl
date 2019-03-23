@@ -392,12 +392,12 @@ function strongly_connected_components_kosaraju end
        end
    end
     
-   reverse!(g)   # Reverse the graph (Transpose of the graph) 
     
    for i = 1:nvg
         color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
    end
    
+    
    # dfs2
    for i in 1:nvg
     
@@ -414,7 +414,7 @@ function strongly_connected_components_kosaraju end
            u = dfs_stack[end]
            w = zero(T)
        
-           for u_neighbor in outneighbors(g, u)
+           for u_neighbor in inneighbors(g, u)
                if  color[u_neighbor] == 0
                    w = u_neighbor
                    break
@@ -434,8 +434,7 @@ function strongly_connected_components_kosaraju end
        push!(components,component)
    end
  
-   reverse!(g)   # Restore the original graph (Transpose of the graph again) 
-
+    
    return components
 end
 
