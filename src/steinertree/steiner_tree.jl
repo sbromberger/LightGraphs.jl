@@ -70,10 +70,10 @@ function steiner_tree end
 
     # Expand each edge in mst_mc into the path it represents
     for e in mst_mc
-        i = e.src
+        i = src(e)
         s = term_to_actual[i]
-        t = term_to_actual[e.dst]
-        while s != t 
+        t = term_to_actual[dst(e)]
+        while s != t
             t_next = parents[t, i] 
             push!(expanded_mst, Edge(min(t_next, t), max(t_next, t))) 
             t = t_next
