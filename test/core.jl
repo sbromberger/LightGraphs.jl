@@ -12,7 +12,8 @@
 
     g5w = WheelGraph(5)
     for g in testgraphs(g5w)
-        @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == @inferred(degree(g, 1)) == 4
+        @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == 4
+        @test degree(g, 1) == 4 # explicit codecov
         @test @inferred(indegree(g)) == @inferred(outdegree(g)) == @inferred(degree(g)) == [4, 3, 3, 3, 3]
 
         @test @inferred(Δout(g)) == @inferred(Δin(g)) == @inferred(Δ(g)) == 4
@@ -24,7 +25,8 @@
 
         @test z1 == z2 == z3 == Dict(4 => 1, 3 => 4)
 
-        @test @inferred(neighbors(g, 2)) == @inferred(all_neighbors(g, 2)) == [1, 3, 5]
+        @test @inferred(neighbors(g, 2)) == [1, 3, 5]
+        @test @inferred(all_neighbors(g, 2)) == [1, 3, 5]
         @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
 
         gsl = copy(g)
