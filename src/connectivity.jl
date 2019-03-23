@@ -283,6 +283,7 @@ function strongly_connected_components end
     return components
 end
 
+
 """
     strongly_connected_components_kosaraju(g)
 
@@ -292,17 +293,11 @@ Compute the strongly connected components of a directed graph `g` using Kosaraju
 Return an array of arrays, each of which is the entire connected component.
 
 ### Performance
-Time Complexity : O(|E|+|V|) 
+Time Complexity : O(|E|+|V|)
+Space Complexity : O(|V|) {Excluding the memory required for storing graph}
+
 |V| = Number of vertices
 |E| = Number of edges
-This algorithm requires 2 depth first search passes. Also the algorithm reverses the graph once after one dfs.
-At the end, the graph is reversed again to restore the original graph.
-Also, an iterative version of dfs is written so that this graph doesn't show "stackoverflow" when run on large 
-graphs.
-
-Space Complexity : O(|V|) 
-This memory is used for vectors named color, original, component and components. This space complexity 
-excludes the space required to store the graph.
 
 ### Examples
 ```jldoctest
@@ -310,14 +305,9 @@ excludes the space required to store the graph.
 julia> g=SimpleDiGraph(3)
 {3, 0} directed simple Int64 graph
 
-julia> edge_list=[(1,2),(2,3)]
-2-element Array{Tuple{Int64,Int64},1}:
- (1, 2)
- (2, 3)
+julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
+{3, 2} directed simple Int64 graph
 
-julia> for e in edge_list
-           add_edge!(g, e[1], e[2])
-       end
 
 julia> strongly_connected_components_kosaraju(g)
 3-element Array{Array{Int64,1},1}:
@@ -325,37 +315,6 @@ julia> strongly_connected_components_kosaraju(g)
  [2]
  [3]
 
-
-julia> g=SimpleDiGraph(3)
-{3, 0} directed simple Int64 graph
-
-julia> edge_list=[(1,2),(2,3),(3,1)]
-3-element Array{Tuple{Int64,Int64},1}:
- (1, 2)
- (2, 3)
- (3, 1)
-
-julia> for e in edge_list
-           add_edge!(g, e[1], e[2])
-       end
-
-julia> strongly_connected_components_kosaraju(g)
-1-element Array{Array{Int64,1},1}:
- [2, 3, 1]
-
-
-julia> g=SimpleDiGraph(3)
-{3, 0} directed simple Int64 graph
-
-julia> edge_list=[(1,2),(2,3),(3,2)]
-3-element Array{Tuple{Int64,Int64},1}:
- (1, 2)
- (2, 3)
- (3, 2)
-
-julia> for e in edge_list
-           add_edge!(g, e[1], e[2])
-       end
 
 
 julia> g=SimpleDiGraph(11)
@@ -377,9 +336,8 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
  (10, 11)
  (11, 10)
 
-julia> for e in edge_list
-           add_edge!(g, e[1], e[2])
-       end
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
 
 julia> strongly_connected_components_kosaraju(g)
 4-element Array{Array{Int64,1},1}:
