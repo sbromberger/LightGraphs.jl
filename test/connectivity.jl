@@ -99,6 +99,45 @@
       @test scc_k_ok(g)
     end
 
+    
+    #Test case for empty graph
+    h = SimpleDiGraph(0)
+    for g in testdigraphs(h)
+      scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
+      @test length(scc) == 0
+      @test length(scc_k) == 0 
+    end    
+
+
+    #Test case for graph with one vertex
+    h = SimpleDiGraph(1)
+    for g in testdigraphs(h)
+      scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
+      @test length(scc) == 1 && scc[1] == [1]
+      @test length(scc_k) == 1 && scc[1] == [1]
+    end    
+ 
+
+    #Test case for graph with self loops
+    h = SimpleDiGraph(3);
+    add_edge!(h, 1, 1); add_edge!(h, 2, 2); add_edge!(h, 3, 3); 
+    add_edge!(h, 1, 2); add_edge!(h, 2, 3); add_edge!(h, 2, 1);
+
+    for g in testdigraphs(h)
+      scc = @inferred(strongly_connected_components(g))
+      scc_k = @inferred(strongly_connected_components_kosaraju(g))
+      @test length(scc) == 2 
+      @test sort(scc[1]) == [3]
+      @test sort(scc[2]) == [1,2]
+    
+      @test length(scc_k) == 2 
+      @test sort(scc_k[1]) == [1,2]
+      @test sort(scc_k[2]) == [3]
+    end
+    
+    
     h = SimpleDiGraph(6)
     add_edge!(h, 1, 3); add_edge!(h, 3, 4); add_edge!(h, 4, 2); add_edge!(h, 2, 1)
     add_edge!(h, 3, 5); add_edge!(h, 5, 6); add_edge!(h, 6, 4)
