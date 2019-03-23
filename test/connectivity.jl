@@ -138,7 +138,7 @@
       @test sort(scc_k[1]) ==  [1] 
       @test sort(scc_k[2]) ==  [2, 4 ,5] 
       @test sort(scc_k[3]) ==  [3, 6]  
-      @test scc_k[4] ==  [11, 12, 10, 9, 7, 8]
+      @test sort(scc_k[4]) ==  [7, 8, 9, 10, 11, 12]
     end
 
     # Test examples with self-loops from
