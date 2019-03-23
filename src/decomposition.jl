@@ -16,7 +16,9 @@ internal vertices of each ear do not belong to any earlier ear.
 For more information, see the 
 [Ear Decomposition](https://en.wikipedia.org/wiki/Ear_decomposition)
 
-It will throw an error if input graph is directed/disconnected graph. 
+It will throw an error if input graph is directed/disconnected graph.
+and return ear_decomposition of connected components if graph is not
+connected.
 
 OUTPUT:
 - A nested array(list) representing the cycles and chains of the ear
@@ -78,7 +80,7 @@ function ear_decomposition end
 
     # Boolean dict to mark vertices as visited or unvisited in
     # Dfs tree traversal.
-    traversed = Set{T}()
+    traversed = zeros(Bool, nv(g))
 
     # Dict to store parent vertex of all the visited vertices.
     parents = zeros(T, nv(g))
@@ -141,7 +143,7 @@ function ear_decomposition end
                     if (value[u] < value[neighbor] && u != parents[neighbor])
 
                         # Make the firt end of non-tree edge visited
-                        push!(traversed, u)
+                        traversed[u] = true
                         chain = [u]
 
                         # Traverse DFS Tree of G and print all the not visited nodes
@@ -149,10 +151,10 @@ function ear_decomposition end
                         pointer = neighbor
                         while true
                             push!(chain, pointer)
-                            if pointer in traversed
+                            if traversed[pointer]
                                 break
                             end
-                            push!(traversed, pointer)
+                            traversed[pointer] = true
                             pointer = parents[pointer]
                         end
                         push!(chains, chain)
