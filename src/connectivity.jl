@@ -350,12 +350,11 @@ julia> strongly_connected_components_kosaraju(g)
 """
 
 function strongly_connected_components_kosaraju end
-@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
        
    nvg = nv(g)    
 
    components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
-   sizehint!(components, nvg)
    
    order = Vector{T}()         # Vector which will store the order in which vertices are visited
    sizehint!(order, nvg)
@@ -369,15 +368,15 @@ function strongly_connected_components_kosaraju end
        color[v] = 1
        
        # Start dfs from v
-       dfs_stack = Vector{T}([v])   # Stack used for dfs. Also push v to the stack
+       dfs_stack = T[v]   # Stack used for dfs. Also push v to the stack
        
        while !isempty(dfs_stack)
            u = dfs_stack[end]
-           w = 0
+           w = zero(T)
        
-           for n in outneighbors(g, u)
-               if  color[n] == 0
-                   w = n
+           for u_neighbor in outneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
                    break
                end
            end
@@ -401,23 +400,23 @@ function strongly_connected_components_kosaraju end
    
    # dfs2
    for i in 1:nvg
-       
-       v = order[nvg-i+1]   # Reading the order vector in the decreasing order of finish time
+    
+       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
        color[v] != 0  && continue  
        color[v] = 1
        
        component=Vector{T}()   # Vector used to store the vertices of one component temporarily
        
        # Start dfs from v
-       dfs_stack = Vector{T}([v])   # Stack used for dfs. Also push v to the stack
+       dfs_stack = T[v]   # Stack used for dfs. Also push v to the stack
        
        while !isempty(dfs_stack)
            u = dfs_stack[end]
-           w = 0
+           w = zero(T)
        
-           for n in outneighbors(g, u)
-               if  color[n] == 0
-                   w = n
+           for u_neighbor in outneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
                    break
                end
            end
@@ -439,6 +438,8 @@ function strongly_connected_components_kosaraju end
 
    return components
 end
+
+
 
 """
     is_strongly_connected(g)
