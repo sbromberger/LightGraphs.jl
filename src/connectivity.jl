@@ -364,7 +364,7 @@ function strongly_connected_components_kosaraju end
    dfs_stack = T[]   # Stack used for dfs
     
    # dfs1
-   for v in vertices(g)
+   @inbounds for v in vertices(g)
        
        color[v] != 0  && continue  
        color[v] = 1
@@ -395,13 +395,13 @@ function strongly_connected_components_kosaraju end
    end
     
     
-   for i = 1:nvg
+   @inbounds for i = 1:nvg
         color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
    end
    
     
    # dfs2
-   for i in 1:nvg
+   @inbounds for i in 1:nvg
     
        v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
        color[v] != 0  && continue  
