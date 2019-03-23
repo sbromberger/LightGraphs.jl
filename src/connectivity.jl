@@ -361,6 +361,8 @@ function strongly_connected_components_kosaraju end
    
    color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
    
+   dfs_stack = T[]   # Stack used for dfs
+    
    # dfs1
    for v in vertices(g)
        
@@ -368,7 +370,7 @@ function strongly_connected_components_kosaraju end
        color[v] = 1
        
        # Start dfs from v
-       dfs_stack = T[v]   # Stack used for dfs. Also push v to the stack
+       push!(dfs_stack,v)   # Push v to the stack
        
        while !isempty(dfs_stack)
            u = dfs_stack[end]
@@ -408,8 +410,8 @@ function strongly_connected_components_kosaraju end
        component=Vector{T}()   # Vector used to store the vertices of one component temporarily
        
        # Start dfs from v
-       dfs_stack = T[v]   # Stack used for dfs. Also push v to the stack
-       
+       push!(dfs_stack,v)   # Push v to the stack
+      
        while !isempty(dfs_stack)
            u = dfs_stack[end]
            w = zero(T)
