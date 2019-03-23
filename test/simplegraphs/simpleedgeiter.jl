@@ -1,6 +1,7 @@
 @testset "SimpleEdgeIter" begin
     ga = @inferred(SimpleGraph(10, 20; seed=1))
     gb = @inferred(SimpleGraph(10, 20; seed=1))
+    gd = SimpleDiGraph{UInt8}(10, 20)
     @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
     # note: we don't get the first iterator state,
     #since iterate returns the state after taking the first value
@@ -19,6 +20,9 @@
     @test @inferred(eltype(edges(ga))) == eltype(typeof(edges(ga))) == edgetype(ga)
     @test eltype(collect(edges(ga))) == edgetype(ga)
 
+    # codecov for eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
+    @test @inferred(eltype(edges(gd))) == eltype(typeof(edges(gd))) == edgetype(gd) == SimpleDiGraphEdge{UInt8}
+    
     ga = @inferred(SimpleDiGraph(10, 20; seed=1))
     gb = @inferred(SimpleDiGraph(10, 20; seed=1))
     @test @inferred(edges(ga)) == edges(gb)
