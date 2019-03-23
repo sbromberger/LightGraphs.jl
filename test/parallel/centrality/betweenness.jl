@@ -19,21 +19,21 @@
         @test all(isapprox(y, yd))
 
 
-        xt = Parallel.betweenness_centrality(g, 3; parallel=:threads)
+        xt = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:threads))
         @test length(xt) == 50
-        xd = Parallel.betweenness_centrality(g, 3; parallel=:distributed)
+        xd = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:distributed))
         @test length(xd) == 50
 
-        xt2 = Parallel.betweenness_centrality(g, collect(1:20); parallel=:threads)
+        xt2 = @inferred(Parallel.betweenness_centrality(g, collect(1:20); parallel=:threads))
         @test length(xt2) == 50
-        xd2 = Parallel.betweenness_centrality(g, collect(1:20); parallel=:distributed)
+        xd2 = @inferred(Parallel.betweenness_centrality(g, collect(1:20); parallel=:distributed))
         @test length(xd2) == 50
     end
     @test @inferred(Parallel.betweenness_centrality(s1; parallel=:threads)) == [0, 1, 0]
     @test @inferred(Parallel.betweenness_centrality(s1; parallel=:distributed)) == [0, 1, 0]
 
-    @test Parallel.betweenness_centrality(s2; parallel=:threads) == [0, 0.5, 0]
-    @test Parallel.betweenness_centrality(s2; parallel=:distributed) == [0, 0.5, 0]
+    @test @inferred(Parallel.betweenness_centrality(s2; parallel=:threads)) == [0, 0.5, 0]
+    @test @inferred(Parallel.betweenness_centrality(s2; parallel=:distributed)) == [0, 0.5, 0]
 
     g = SimpleGraph(2)
     add_edge!(g, 1, 2)

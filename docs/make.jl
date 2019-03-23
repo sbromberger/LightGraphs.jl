@@ -9,7 +9,7 @@ cp(normpath(@__FILE__, "../../CITING.md"), normpath(@__FILE__, "../src/citing.md
 
 makedocs(
     modules     = [LightGraphs],
-    format      = :html,
+    format      = Documenter.HTML(), 
     sitename    = "LightGraphs",
     doctest     = false,
     pages       = Any[
