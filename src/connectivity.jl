@@ -199,9 +199,39 @@ julia> strongly_connected_components(g)
 2-element Array{Array{Int64,1},1}:
  [3]
  [1, 2]
+
+
+julia> g=SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
+13-element Array{Tuple{Int64,Int64},1}:
+ (1, 2)  
+ (2, 3)  
+ (3, 4)  
+ (4, 1)  
+ (3, 5)  
+ (5, 6)  
+ (6, 7)  
+ (7, 5)  
+ (5, 8)  
+ (8, 9)  
+ (9, 8)  
+ (10, 11)
+ (11, 10)
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components_kosaraju(g)
+4-element Array{Array{Int64,1},1}:
+ [8, 9]      
+ [5, 6, 7]   
+ [1, 2, 3, 4]
+ [10, 11]    
+
 ```
 """
-
 
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
