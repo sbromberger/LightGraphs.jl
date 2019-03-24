@@ -86,6 +86,10 @@ tests = [
 @testset "LightGraphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
-        include(tp)
+        println("Testing $(t):")
+        time_ns = 10^9 * (@elapsed include(tp))
+        print("    ")
+        Base.time_print(time_ns)
+        println()
     end
 end
