@@ -178,6 +178,9 @@ true
 """
 is_weakly_connected(g) = is_connected(g)
 
+
+
+
 """
     strongly_connected_components(g)
 
@@ -198,23 +201,28 @@ julia> strongly_connected_components(g)
  [1, 2]
 ```
 """
+
+
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
     count = one_t
+    
     index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
+    stack = T[]                   # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-    sizehint!(stack, nvg)
-    sizehint!(components, nvg)
+    #sizehint!(stack, nvg)
+    #sizehint!(components, nvg)
 
-    for s in vertices(g)
+    dfs_stack = T[]
+    
+    @inbounds for s in vertices(g)
         if index[s] == zero_t
             index[s] = count
             lowlink[s] = count
@@ -224,21 +232,21 @@ function strongly_connected_components end
             count = count + one_t
 
             # start dfs from 's'
-            dfs_stack = Vector{T}([s])
+            push!(dfs_stack,s) 
             while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
-                for n in outneighbors(g, v)
-                    if index[n] == zero_t
+                @inbounds for v_neighbor in outneighbors(g, v)
+                    if index[v_neighbor] == zero_t
                         # unvisited neighbor found
-                        u = n
+                        u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[n]
+                    elseif onstack[v_neighbor]
                         # we have already seen n, but can update the lowlink of v
                         # which has the effect of possibly keeping v on the stack until n is ready to pop.
                         # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[n])
+                        lowlink[v] = min(lowlink[v], index[v_neighbor])
                     end
                 end
                 if u == zero_t
@@ -250,7 +258,7 @@ function strongly_connected_components end
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
                         component = Vector{T}()
-                        sizehint!(component, length(stack))
+                        #sizehint!(component, length(stack))
                         while !isempty(stack) #break when popped == v
                             # drain stack until we see v.
                             # everything on the stack until we see v is in the SCC rooted at v.
@@ -282,6 +290,10 @@ function strongly_connected_components end
 
     return components
 end
+
+
+
+
 
 
 """
