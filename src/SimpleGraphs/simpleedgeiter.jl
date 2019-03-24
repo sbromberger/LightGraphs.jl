@@ -1,7 +1,7 @@
 """
     SimpleEdgeIter
 
-The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraphs`.
+The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraph`s.
 The iterates are in lexicographical order, smallest first. The iterator is valid for
 one pass over the edges, and is invalidated by changes to the graph.
 
