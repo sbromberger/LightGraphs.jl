@@ -300,7 +300,7 @@ function strongly_connected_components end
                                 break
                             end
                         end
-                        push!(components, reverse(component))
+                        push!(components, reverse!(component))
                     end
                 else #LABEL A
                     # add unvisited neighbor to dfs
