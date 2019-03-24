@@ -242,14 +242,14 @@ function strongly_connected_components end
     count = one_t
     
     index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = T[]                   # stores vertices which have been discovered and not yet assigned to any component
+    stack = Vector{T}()                   # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
 
-    dfs_stack = T[]
+    dfs_stack = Vector{T}()
     
     @inbounds for s in vertices(g)
         if index[s] == zero_t
