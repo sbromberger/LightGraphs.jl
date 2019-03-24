@@ -1,11 +1,9 @@
 @testset "Cycle Basis" begin
 
     function evaluate(x,y)
-        @test length(x) == length(y)
-        for i=1:length(x)
-            @test isempty(setdiff(x[i],y[i]))
-            @test isempty(setdiff(x[i],y[i]))
-        end
+        x_sorted = sort(sort.(x))
+        y_sorted = sort(sort.(y))
+        @test x_sorted == y_sorted
     end
 
     # No Edges
@@ -56,5 +54,14 @@
     for g in testgraphs(ex)
         ex_cyclebasis = @inferred cycle_basis(g,3)
         evaluate(ex_cyclebasis,expected_cyclebasis)
+    end
+
+    @testset "Two isolated cycles" begin
+        ex = blockdiag(CycleGraph(3), CycleGraph(4))
+        expected_cyclebasis = [[1, 2, 3], [4, 5, 6, 7]]
+        for g in testgraphs(ex)
+            found_cyclebasis = @inferred cycle_basis(g)
+            evaluate(expected_cyclebasis, found_cyclebasis)
+        end
     end
 end
