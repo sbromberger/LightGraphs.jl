@@ -57,4 +57,13 @@
         ex_cyclebasis = @inferred cycle_basis(g,3)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end
+
+    @testset "Two isolated cycles" begin
+        ex = blockdiag(CycleGraph(3), CycleGraph(4))
+        expected_cyclebasis = [[1, 2, 3], [4, 5, 6, 7]]
+        for g in testgraphs(ex)
+            found_cyclebasis = @inferred cycle_basis(g)
+            evaluate(expected_cyclebasis, found_cyclebasis)
+        end
+    end
 end
