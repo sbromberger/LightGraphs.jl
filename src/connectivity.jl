@@ -247,8 +247,7 @@ function strongly_connected_components end
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-    #sizehint!(stack, nvg)
-    #sizehint!(components, nvg)
+
 
     dfs_stack = T[]
     
@@ -288,7 +287,7 @@ function strongly_connected_components end
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
                         component = Vector{T}()
-                        #sizehint!(component, length(stack))
+                        
                         while !isempty(stack) #break when popped == v
                             # drain stack until we see v.
                             # everything on the stack until we see v is in the SCC rooted at v.
@@ -320,9 +319,6 @@ function strongly_connected_components end
 
     return components
 end
-
-
-
 
 
 
