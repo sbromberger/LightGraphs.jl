@@ -223,7 +223,7 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> strongly_connected_components_kosaraju(g)
+julia> strongly_connected_components(g)
 4-element Array{Array{Int64,1},1}:
  [8, 9]      
  [5, 6, 7]   
@@ -232,7 +232,6 @@ julia> strongly_connected_components_kosaraju(g)
 
 ```
 """
-
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
