@@ -1,6 +1,7 @@
 
 """
     struct JohnsonState{T, U}
+
 An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 """
 struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
@@ -8,9 +9,8 @@ struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
     parents::Matrix{U}
 end
 
-@doc """
+"""
     johnson_shortest_paths(g, distmx=weights(g))
-
 
 Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
@@ -80,7 +80,7 @@ function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
-            currpathindex = i
+            currpathindex = U(i)
             while currpathindex != 0
                 push!(path, currpathindex)
                 currpathindex = pathinfo[currpathindex]

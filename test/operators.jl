@@ -294,4 +294,9 @@
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
     end
+
+    gx = SimpleGraph(100)
+    for g in testgraphs(gx)
+        @test length(g) == 10000
+    end
 end

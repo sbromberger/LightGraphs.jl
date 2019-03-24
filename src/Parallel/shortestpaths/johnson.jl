@@ -1,4 +1,3 @@
-
 function johnson_shortest_paths(g::AbstractGraph{U},
 distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
@@ -38,24 +37,3 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
     return JohnsonState(dists, parents)
 end
 
-function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where U <: Integer
-    pathinfo = s.parents[v, :]
-    paths = Vector{Vector{U}}()
-    for i in 1:length(pathinfo)
-        if (i == v) || (s.dists[v, i] == typemax(T))
-            push!(paths, Vector{U}())
-        else
-            path = Vector{U}()
-            currpathindex = i
-            while currpathindex != 0
-                push!(path, currpathindex)
-                currpathindex = pathinfo[currpathindex]
-            end
-            push!(paths, reverse(path))
-        end
-    end
-    return paths
-end
-
-enumerate_paths(s::JohnsonState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
-enumerate_paths(st::JohnsonState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]
