@@ -1,11 +1,9 @@
 @testset "Cycle Basis" begin
 
     function evaluate(x,y)
-        @test length(x) == length(y)
-        for i=1:length(x)
-            @test isempty(setdiff(x[i],y[i]))
-            @test isempty(setdiff(x[i],y[i]))
-        end
+        x_sorted = sort(sort.(x))
+        y_sorted = sort(sort.(y))
+        @test x_sorted == y_sorted
     end
 
     # No Edges

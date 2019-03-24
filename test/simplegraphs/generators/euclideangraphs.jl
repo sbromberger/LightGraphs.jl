@@ -29,7 +29,7 @@
         point2 = [0.0, 1.0, 0.0]
         point3 = [0.0, 0.0, 100.0]
         matrix = hcat(point1, point2, point3)
-        g = euclidean_graph(matrix, cutoff= 5.0)
+        g, _ = euclidean_graph(matrix, cutoff= 5.0)
         @test has_edge(g, 1, 2) && ne(g) == 1
         @test nv(g) == 3
     end
