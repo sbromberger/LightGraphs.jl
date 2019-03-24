@@ -28,6 +28,14 @@
         @test d3 == DiGraph(g)
         d4 = @inferred(DiGraph(g, -1, 200))
         @test d4 == reverse(dg10)
+        d5 = DiGraph(g, 0.2, 0.4, seed=10)
+        d6 = DiGraph(g, 0.2, 0.4, seed=10)
+        @test d5 == d6
+        d7 = DiGraph(zero(g), 0.2, 0.4)
+        @test d7 == zero(pdg)
+        g8 = zero(g); add_vertices!(g8, 10)
+        d8 = DiGraph(g8, 0.2, 0.4)
+        @test nv(d8) == nv(g8) && ne(d8) == ne(g8)
     end
 
     @test SimpleGraph(10, 20, seed=3) == SimpleGraph(10, 20, seed=3)
