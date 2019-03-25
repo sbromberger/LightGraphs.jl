@@ -2,7 +2,6 @@
 # licensing details.
 """
     struct FloydWarshallState{T, U}
-
 An [`AbstractPathState`](@ref) designed for Floyd-Warshall shortest-paths calculations.
 """
 struct FloydWarshallState{T,U<:Integer} <: AbstractPathState
@@ -12,12 +11,10 @@ end
 
 @doc """
     floyd_warshall_shortest_paths(g, distmx=weights(g))
-
 Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
 optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@ref) with relevant
 traversal information.
-
 ### Performance
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
@@ -65,6 +62,18 @@ function floyd_warshall_shortest_paths(
             end
         end
     end
+
+    #If dists[i,j] is negative, it means that there is a negative cycle in going from i to j
+    @inbounds for i=1:nvg
+        @inbounds for j=1:nvg
+            @inbounds for t = 1:nvg
+                if (dists[i,t] < typemax(T)) && (dists[t,t] < 0) && (dists[t,j] < typemax(T))
+                    dists[i,j] = - typemax(T)
+                end
+            end
+        end
+    end
+
     fws = FloydWarshallState(dists, parents)
     return fws
 end
@@ -77,14 +86,10 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
-            currpathindex = U(i)
+            currpathindex = i
             while currpathindex != 0
                 push!(path, currpathindex)
-                if pathinfo[currpathindex] == currpathindex
-                    currpathindex = zero(currpathindex)
-                else
-                    currpathindex = pathinfo[currpathindex]
-                end
+                currpathindex = pathinfo[currpathindex]
             end
             push!(paths, reverse(path))
         end
