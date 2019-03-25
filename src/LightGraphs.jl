@@ -53,7 +53,7 @@ MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
 complement, reverse, reverse!, blockdiag, union, intersect,
-difference, symmetric_difference,
+difference, symmetric_difference, linegraph, get_root,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
 

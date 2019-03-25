@@ -858,3 +858,220 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 
     return new_vertex_ids
 end
+
+"""
+    linegraph(g, returnmap)
+
+Return the line graph of a graph if returnmap is false
+Return line graph and a dictionary mapping new vertices in line graph to
+edges in the graph if returnmap is true
+"""
+function linegraph(g::AbstractGraph, returnmap::Bool = false)
+    lg = is_directed(g) ? SimpleDiGraph(ne(g)) : SimpleGraph(ne(g))
+    graphE_lineV = Dict(e => i for (i, e) in enumerate(edges(g)))
+    earr = collect(edges(g))
+    for i in 1:(ne(g)-1)
+        for j in i+1:ne(g)
+            e1 = earr[i]
+            e2 = earr[j]
+            node1 = graphE_lineV[e1]
+            node2 = graphE_lineV[e2]
+            if is_directed(lg)
+                if dst(e1) == src(e2)
+                    add_edge!(lg, node1, node2)
+                end
+                if dst(e2) == src(e1)
+                    add_edge!(lg, node2, node1)
+                end
+            else
+                if (src(e1) == src(e2) || src(e1) == dst(e2)
+                    || dst(e1) == src(e2) || dst(e1) == dst(e2))
+                    add_edge!(lg, node1, node2)
+                end
+            end
+        end
+    end
+    if returnmap
+        lineV_graphE = Dict(value => key for (key, value) in graphE_lineV)
+        return lg, lineV_graphE
+    end
+    return lg
+end
+
+#Helper function for get_root, checks if 3 nodes form a even triangle.
+#In an even triangle, every node is adjacent to two or zero vertices of the triangle.
+function is_evenTri(g, nodes)
+    for n ∈ nodes
+        for nbr ∈ outneighbors(g, n)
+            x = setdiff(nodes, n)
+            if !has_edge(g, x[1], nbr) && !has_edge(g, x[2], nbr)
+                return false
+            end
+        end
+    end
+    return true
+end
+
+#Helper function for get_root, names all adjacent nodes to current clique.
+#The current clique contains all fully named nodes and is used to name the adjacent nodes.
+function name_adj(curnt_clq, fnn, hnn, cliqn, in_hnn, in_fnn, g)
+    while !isempty(curnt_clq)
+        u = pop!(curnt_clq)
+        x = (fnn[u][1] == cliqn) ? fnn[u][2] : fnn[u][1]
+        for v ∈ outneighbors(g, u)
+            in_fnn[v] && continue
+            if !in_hnn[v]
+                hnn[v] = [x, u]
+                in_hnn[v] = true
+            else
+                fnn[v] = [hnn[v][1], x]
+                in_fnn[v] = true
+                delete!(hnn, v)
+                in_hnn[v] = false
+            end
+        end
+    end
+end
+
+#Helper function for get_root g is the original graph and h is the line graph of the root_graph.
+#Checks if the two graphs are isomorphic
+function is_valid_linegraph(g, h, gV_RootE, RootE_hV)
+    if !(nv(g) == nv(h) && ne(g) == ne(h))
+        return false
+    end
+    vertex_perm = Vector{Int}(undef, nv(g))
+    for u in vertices(g)
+        vertex_perm[u] = RootE_hV[gV_RootE[u]]
+    end
+    return h[vertex_perm] == g
+end
+
+"""
+    get_root(g::SimpleGraph{Int})
+
+Return the root graph from the line graph if it is valid else throws an ArgumentError
+Works for connected undirected graphs with no self loops.
+
+Reference -
+Lehot, Philippe G. H. (1974), "An optimal algorithm to detect a line graph and output its root graph"
+"""
+function get_root(g::SimpleGraph{Int})
+    fnn = Dict{Int, Vector{Int}}()  #fully named nodes (mapping vertices in g to edges in root_graph)
+    hnn = Dict{Int, Vector{Int}}()  #half named nodes
+    in_fnn = falses(nv(g))          #to mark nodes present in fnn dict
+    in_hnn = falses(nv(g))          #to mark nodes present in hnn dict
+    curnt_clq = Vector{Int}()
+
+    #first step of algorithm
+    first_edge = first(edges(g))    #chose two adjacent nodes
+    basic_1 = first_edge.src
+    basic_2 = first_edge.dst
+    fnn[basic_1] = [1, 2]
+    fnn[basic_2] = [2, 3]
+    common = common_neighbors(g, basic_1, basic_2)
+    ncom = length(common)
+    N = 4
+    if ncom == 0
+        #do nothing
+    elseif ncom == 1
+        x = common[1]
+        if !is_evenTri(g, (basic_1, basic_2, x))
+            fnn[x] = [2, 4]
+            N += 1
+        end
+    elseif ncom == 2
+        x, y = common
+        if has_edge(g, x, y)
+            fnn[x] = [2, 4]
+            fnn[y] = [2, 5]
+            N += 2
+        else
+            xeven = is_evenTri(g, (basic_1, basic_2, x))
+            yeven = is_evenTri(g, (basic_1, basic_2, y))
+            if !xeven || !yeven
+                if !xeven
+                    fnn[x] = [2, 4]
+                else
+                    fnn[y] = [2, 4]
+                end
+            else
+                fnn[y] = [2, 4]
+            end
+            N += 1
+        end
+    else    #ncom >=3
+        a, b, c = common
+        if !has_edge(g, a, b)
+            if has_edge(g, a, c)
+                fnn[a] = [2, 4]
+            else
+                fnn[b] = [2, 4]
+            end
+        else
+            fnn[a] = [2, 4]
+        end
+        N += 1
+        for u ∈ common
+            u ∈ keys(fnn) && continue
+            is_incliq = true
+            for v ∈ keys(fnn)
+                if !has_edge(g, u, v)
+                    is_incliq = false
+                    break
+                end
+            end
+            !is_incliq && continue
+            fnn[u] = [2, N]
+            N += 1
+        end
+    end
+    for u ∈ keys(fnn)
+        push!(curnt_clq, u)
+        in_fnn[u] = true
+    end
+    name_adj(curnt_clq, fnn, hnn, 2, in_hnn, in_fnn, g)
+
+    #main step of algorithm
+    while !isempty(hnn)
+        key,val = first(hnn)
+        hn_node = key
+        cliqn,fn_adjn = val
+        fnn[key] = [cliqn, N]
+        in_fnn[key] = true
+        delete!(hnn, key)
+        in_hnn[key] = false
+        push!(curnt_clq, key)
+        N += 1
+        common = common_neighbors(g, hn_node, fn_adjn)
+        for v ∈ common
+            in_fnn[v] && continue
+            fnn[v] = [cliqn, N]
+            in_fnn[v] = true
+            delete!(hnn, v)
+            in_hnn[v] = false
+            push!(curnt_clq, v)
+            N += 1
+        end
+        name_adj(curnt_clq, fnn, hnn, cliqn, in_hnn, in_fnn, g)
+    end
+    root_graph = SimpleGraph{Int}(N-1)
+    for val in values(fnn)
+        add_edge!(root_graph, val[1], val[2])
+    end
+
+    #lineRoot is the linegraph of root_graph
+    #lineRootV_To_RootE is mapping from vertices of line graph of root_graph, to edges of root_graph
+    lineRoot, lineRootV_To_RootE = linegraph(root_graph, true)
+    RootE_To_lineRootV = Dict{Vector{Int}, Int}()
+    for (key, value) in lineRootV_To_RootE
+        push!(RootE_To_lineRootV, [value.src, value.dst] => key)
+        push!(RootE_To_lineRootV, [value.dst, value.src] => key)
+    end
+    #gV_to_RootE is the mapping from graph vertices to root_graph edges
+    gV_To_RootE = fnn
+
+    if !is_valid_linegraph(g, lineRoot, gV_To_RootE, RootE_To_lineRootV)
+        throw(ArgumentError("Not a valid line graph"))
+    end
+    return root_graph
+end

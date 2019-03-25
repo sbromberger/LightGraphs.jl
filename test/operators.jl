@@ -299,4 +299,88 @@
     for g in testgraphs(gx)
         @test length(g) == 10000
     end
+
+    #Test for line graph of undirected graphs
+
+    gx = SimpleGraph(10,20)
+    for g in testgraphs(gx)
+        lg = linegraph(g)
+        sum_sq_deg = 0
+        for u in vertices(g) sum_sq_deg += (degree(g,u)*degree(g,u)) end
+        @test nv(lg) == ne(g)
+        @test ne(lg) == ((sum_sq_deg/2)-ne(g))
+    end
+
+    #Test for line graph of directed graphs
+
+    gy = SimpleDiGraph(10,20)
+    for g in testdigraphs(gy)
+        lg,lineV_graphE = linegraph(g,true)
+        for e in edges(lg)
+            uv = lineV_graphE[src(e)]
+            vw = lineV_graphE[dst(e)]
+            @test has_edge(g,uv) && has_edge(g,vw)
+        end
+    end
+
+    #Test get_root function for line graph
+
+    g5 = CompleteGraph(5)
+    rem_edge!(g5, 1, 4)
+    rem_edge!(g5, 2, 5)
+    rem_edge!(g5, 1, 5)
+
+    is_isomorphic = LightGraphs.Experimental.has_isomorph
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    rem_edge!(g5, 2, 3)
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    add_edge!(g5, 1, 4)
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    add_edge!(g5, 1, 5)
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    rem_edge!(g5, 1, 2)
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    rem_edge!(g5, 4, 5)
+    @test is_isomorphic(g5, get_root(linegraph(g5)))
+
+    gx = SimpleGraph(5)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 1, 3)
+    add_edge!(gx, 2, 3)
+    add_edge!(gx, 2, 4)
+    add_edge!(gx, 2, 5)
+    @test_throws ArgumentError get_root(gx)
+
+    gy = CompleteGraph(5)
+    rem_edge!(gy, 3, 5)
+    rem_edge!(gy, 3, 4)
+
+    @test is_isomorphic(gx, get_root(gy))
+
+    add_edge!(gy, 3, 5)
+    rem_edge!(gy, 4, 5)
+
+    @test is_isomorphic(gx, get_root(gy))
+
+    gx = CompleteGraph(6)
+    @test is_isomorphic(gx, get_root(linegraph(gx)))
+
+    gy = CompleteGraph(4)
+    rem_edge!(gy, 1, 3)
+    rem_edge!(gy, 1, 4)
+
+    gx = CompleteGraph(4)
+    rem_edge!(gx, 3, 4)
+    @test is_isomorphic(gy, get_root(gx))
+
+    gx = CompleteGraph(5)
+    rem_edge!(gx, 3, 5)
+    rem_edge!(gx, 4, 5)
+    rem_edge!(gx, 3, 4)
+    @test_throws ArgumentError get_root(gx)
 end
