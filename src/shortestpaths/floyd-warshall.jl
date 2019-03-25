@@ -88,17 +88,28 @@ function floyd_warshall_shortest_paths(
         end
     end
 
-    #If dists[i,j] is negative, it means that there is a negative cycle in going from i to j
-    @inbounds for i in vertices(g) , j in vertices(g) , k in vertices(g) 
-         if (dists[i,t] < typemax(T)) && (dists[t,t] < 0) && (dists[t,j] < typemax(T))
-               dists[i,j] = - typemax(T)
-         end
+    has_negative_cycle=false
+
+    #if dists[i][i]<0, it means there is a negative weight cycle.
+    for i in vertices(g)
+        if dists[i,i]<0
+            has_negative_cycle=true
+            break
+        end
+    end
+
+    if has_negative_cycle
+        #If dists[i,j] is negative, it means that there is a negative cycle in going from i to j
+        @inbounds for i in vertices(g) , j in vertices(g) ,  t in vertices(g)
+            if (dists[i,t] < typemax(T)) && (dists[t,t] < 0) && (dists[t,j] < typemax(T))
+                dists[i,j] = - typemax(T)
+            end
+        end
     end
 
     fws = FloydWarshallState(dists, parents)
     return fws
 end
-
 
 function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U<:Integer
     pathinfo = s.parents[v, :]
@@ -108,14 +119,10 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
             push!(paths, Vector{U}())
         else
             path = Vector{U}()
-            currpathindex = U(i)
+            currpathindex = i
             while currpathindex != 0
                 push!(path, currpathindex)
-                if pathinfo[currpathindex] == currpathindex
-                    currpathindex = zero(currpathindex)
-                else
-                    currpathindex = pathinfo[currpathindex]
-                end
+                currpathindex = pathinfo[currpathindex]
             end
             push!(paths, reverse(path))
         end
