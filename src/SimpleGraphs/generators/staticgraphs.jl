@@ -6,6 +6,15 @@
 
 Create an undirected [complete graph](https://en.wikipedia.org/wiki/Complete_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> CompleteGraph(5)
+{5, 10} undirected simple Int64 graph
+
+julia> CompleteGraph(Int8(6))
+{6, 15} undirected simple Int8 graph
+```
 """
 function CompleteGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph{T}(0)
@@ -26,6 +35,15 @@ end
 
 Create an undirected [complete bipartite graph](https://en.wikipedia.org/wiki/Complete_bipartite_graph)
 with `n1 + n2` vertices.
+
+# Examples
+```jldoctest
+julia> CompleteBipartiteGraph(3, 4)
+{7, 12} undirected simple Int64 graph
+
+julia> CompleteBipartiteGraph(Int8(3), Int8(4))
+{7, 12} undirected simple Int8 graph
+```
 """
 function CompleteBipartiteGraph(n1::T, n2::T) where {T <: Integer}
     (n1 < 0 || n2 < 0) && return SimpleGraph{T}(0)
@@ -56,6 +74,15 @@ with `sum(partitions)` vertices. A partition with `0` vertices is skipped.
 ### Implementation Notes
 Preserves the eltype of the partitions vector. Will error if the required number of vertices
 exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> CompleteMultipartiteGraph([1,2,3])
+{6, 11} undirected simple Int64 graph
+
+julia> CompleteMultipartiteGraph(Int8[5,5,5])
+{15, 75} undirected simple Int8 graph
+```
 """
 function CompleteMultipartiteGraph(partitions::AbstractVector{T}) where {T <: Integer}
     any(x -> x < 0, partitions) && return SimpleGraph{T}(0)
@@ -92,9 +119,19 @@ end
 
 Creates a [Turán Graph](https://en.wikipedia.org/wiki/Tur%C3%A1n_graph), a complete 
 multipartite graph with `n` vertices and `r` partitions.
+
+# Examples
+```jldoctest
+julia> TuranGraph(6, 2)
+{6, 9} undirected simple Int64 graph
+
+julia> TuranGraph(Int8(7), 2)
+{7, 12} undirected simple Int8 graph
+```
 """
-function TuranGraph(n::T, r::T) where {T <: Integer}
+function TuranGraph(n::Integer, r::Integer)
     !(1 <= r <= n) && throw(DomainError("n=$n and r=$r are invalid, must satisfy 1 <= r <= n"))
+    T = typeof(n)
     partitions = Vector{T}(undef, r)
     c = cld(n,r)
     f = fld(n,r)
@@ -112,6 +149,15 @@ end
 
 Create a directed [complete graph](https://en.wikipedia.org/wiki/Complete_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> CompleteDiGraph(5)
+{5, 20} directed simple Int64 graph
+
+julia> CompleteDiGraph(Int8(6))
+{6, 30} directed simple Int8 graph
+```
 """
 function CompleteDiGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
@@ -134,6 +180,15 @@ end
 
 Create an undirected [star graph](https://en.wikipedia.org/wiki/Star_(graph_theory))
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> StarGraph(3)
+{3, 2} undirected simple Int64 graph
+
+julia> StarGraph(Int8(10))
+{10, 9} undirected simple Int8 graph
+```
 """
 function StarGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph{T}(0)
@@ -152,6 +207,15 @@ end
 
 Create a directed [star graph](https://en.wikipedia.org/wiki/Star_(graph_theory))
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> StarDiGraph(3)
+{3, 2} directed simple Int64 graph
+
+julia> StarDiGraph(Int8(10))
+{10, 9} directed simple Int8 graph
+```
 """
 function StarDiGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
@@ -173,6 +237,15 @@ end
 
 Create an undirected [path graph](https://en.wikipedia.org/wiki/Path_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> PathGraph(5)
+{5, 4} undirected simple Int64 graph
+
+julia> PathGraph(Int8(10))
+{10, 9} undirected simple Int8 graph
+```
 """
 function PathGraph(n::T) where {T <: Integer}
     n <= 1 && return SimpleGraph(n)
@@ -193,6 +266,15 @@ end
 
 Creates a directed [path graph](https://en.wikipedia.org/wiki/Path_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> PathDiGraph(5)
+{5, 4} directed simple Int64 graph
+
+julia> PathDiGraph(Int8(10))
+{10, 9} directed simple Int8 graph
+```
 """
 function PathDiGraph(n::T) where {T <: Integer}
     n <= 1 && return SimpleDiGraph(n)
@@ -218,6 +300,15 @@ end
 
 Create an undirected [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> CycleGraph(3)
+{3, 3} undirected simple Int64 graph
+
+julia> CycleGraph(Int8(5))
+{5, 5} undirected simple Int8 graph
+```
 """
 function CycleGraph(n::T) where {T <: Integer}
     n <= 1 && return SimpleGraph(n)
@@ -239,6 +330,15 @@ end
 
 Create a directed [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> CycleDiGraph(3)
+{3, 3} directed simple Int64 graph
+
+julia> CycleDiGraph(Int8(5))
+{5, 5} directed simple Int8 graph
+```
 """
 function CycleDiGraph(n::T) where {T <: Integer}
     n <= 1 && return SimpleDiGraph(n)
@@ -265,6 +365,15 @@ end
 
 Create an undirected [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> WheelGraph(5)
+{5, 8} undirected simple Int64 graph
+
+julia> WheelGraph(Int8(6))
+{6, 10} undirected simple Int8 graph
+```
 """
 function WheelGraph(n::T) where {T <: Integer}
     n <= 1 && return SimpleGraph(n)
@@ -287,6 +396,15 @@ end
 
 Create a directed [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph)
 with `n` vertices.
+
+# Examples
+```jldoctest
+julia> WheelDiGraph(5)
+{5, 8} directed simple Int64 graph
+
+julia> WheelDiGraph(Int8(6))
+{6, 10} directed simple Int8 graph
+```
 """
 function WheelDiGraph(n::T) where {T <: Integer}
     n <= 2 && return PathDiGraph(n)
@@ -318,6 +436,15 @@ in dimension `i`.
 ### Optional Arguments
 - `periodic=false`: If true, the resulting lattice will have periodic boundary
 condition in each dimension.
+
+# Examples
+```jldoctest
+julia> Grid([2,3])
+{6, 7} undirected simple Int64 graph
+
+julia> Grid(Int8[2, 2, 2], periodic=true)
+{8, 12} undirected simple Int8 graph
+```
 """
 function Grid(dims::AbstractVector{T}; periodic=false) where {T <: Integer}
     # checks if T is large enough for product(dims)
@@ -348,6 +475,15 @@ end
 
 Create a [binary tree](https://en.wikipedia.org/wiki/Binary_tree)
 of depth `k`.
+
+# Examples
+```jldoctest
+julia> BinaryTree(4)
+{15, 14} undirected simple Int64 graph
+
+julia> BinaryTree(Int8(5))
+{31, 30} undirected simple Int8 graph
+```
 """
 function BinaryTree(k::T) where {T <: Integer}
     k <= 0 && return SimpleGraph(0)
@@ -373,12 +509,21 @@ function BinaryTree(k::T) where {T <: Integer}
 end
 
 """
-    BinaryTree(k::Integer)
+    DoubleBinaryTree(k::Integer)
 
 Create a double complete binary tree with `k` levels.
 
 ### References
 - Used as an example for spectral clustering by Guattery and Miller 1998.
+
+# Examples
+```jldoctest
+julia> DoubleBinaryTree(4)
+{30, 29} undirected simple Int64 graph
+
+julia> DoubleBinaryTree(Int8(5))
+{62, 61} undirected simple Int8 graph
+```
 """
 function DoubleBinaryTree(k::Integer)
     gl = BinaryTree(k)
@@ -396,6 +541,12 @@ Create a Roach Graph of size `k`.
 
 ### References
 - Guattery and Miller 1998
+
+# Examples
+```jldoctest
+julia> RoachGraph(10)
+{40, 48} undirected simple Int64 graph
+```
 """
 function RoachGraph(k::Integer)
     dipole = CompleteGraph(2)
@@ -413,6 +564,15 @@ end
     CliqueGraph(k, n)
 
 Create a graph consisting of `n` connected `k`-cliques.
+
+# Examples
+```jldoctest
+julia> CliqueGraph(4, 10)
+{40, 70} undirected simple Int64 graph
+
+julia> CliqueGraph(Int8(10), Int8(4))
+{40, 184} undirected simple Int8 graph
+```
 """
 function CliqueGraph(k::T, n::T) where {T <: Integer}
     Tw = widen(T)
@@ -440,6 +600,15 @@ Create a [ladder graph](https://en.wikipedia.org/wiki/Ladder_graph) consisting o
 ### Implementation Notes
 Preserves the eltype of `n`. Will error if the required number of vertices
 exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> LadderGraph(3)
+{6, 7} undirected simple Int64 graph
+
+julia> LadderGraph(Int8(4))
+{8, 10} undirected simple Int8 graph
+```
 """
 function LadderGraph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph{T}(0)
@@ -470,6 +639,15 @@ This is also known as the [prism graph](https://en.wikipedia.org/wiki/Prism_grap
 Preserves the eltype of the partitions vector. Will error if the required number of vertices
 exceeds the eltype. 
 `n` must be at least 3 to avoid self-loops and multi-edges.
+
+# Examples
+```jldoctest
+julia> CircularLadderGraph(3)
+{6, 9} undirected simple Int64 graph
+
+julia> CircularLadderGraph(Int8(4))
+{8, 12} undirected simple Int8 graph
+```
 """
 function CircularLadderGraph(n::Integer)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
@@ -489,6 +667,15 @@ Preserves the eltype of `n1` and `n2`. Will error if the required number of vert
 exceeds the eltype.
 `n1` and `n2` must be at least 1 so that both cliques are non-empty.
 The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n2` being the right clique. The cliques are connected by and edge `(n1, n1+1)`.
+
+# Examples
+```jldoctest
+julia> BarbellGraph(3, 4)
+{7, 10} undirected simple Int64 graph
+
+julia> BarbellGraph(Int8(5), Int8(5))
+{10, 21} undirected simple Int8 graph
+```
 """
 function BarbellGraph(n1::T, n2::T) where {T <: Integer}
     (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
@@ -527,6 +714,15 @@ Preserves the eltype of `n1` and `n2`. Will error if the required number of vert
 exceeds the eltype.
 `n1` and `n2` must be at least 1 so that both the clique and the path have at least one vertex.
 The graph is organized with nodes `1:n1` being the clique and `n1+1:n1+n2` being the path. The clique is connected to the path by an edge `(n1, n1+1)`.
+
+# Examples
+```jldoctest
+julia> LollipopGraph(2, 5)
+{7, 6} undirected simple Int64 graph
+
+julia> LollipopGraph(Int8(3), Int8(4))
+{7, 7} undirected simple Int8 graph
+```
 """
 function LollipopGraph(n1::T, n2::T) where {T <: Integer}
     (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
