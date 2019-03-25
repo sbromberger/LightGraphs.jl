@@ -17,6 +17,31 @@ optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@
 traversal information.
 ### Performance
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
+Example :
+
+julia> g= SimpleWeightedDiGraph(5);
+
+julia> add_edge!(g,1,2,1); add_edge!(g,2,3,-2); add_edge!(g,3,4,-3); add_edge!(g,4,2,-4); add_edge!(g,3,5,5);
+
+julia> a=floyd_warshall_shortest_paths(g);
+
+julia> a.dists
+5×5 Array{Float64,2}:
+   0.0  -Inf  -Inf  -Inf  -Inf
+ Inf    -Inf  -Inf  -Inf  -Inf
+ Inf    -Inf  -Inf  -Inf  -Inf
+ Inf    -Inf  -Inf  -Inf  -Inf
+ Inf     Inf   Inf   Inf    0.0
+
+julia> a.parents
+5×5 Array{Int64,2}:
+ 0  4  2  3  3
+ 0  4  2  3  3
+ 0  4  2  3  3
+ 0  4  2  3  3
+ 0  0  0  0  0
+
+
 """
 function floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
@@ -54,7 +79,7 @@ function floyd_warshall_shortest_paths(
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d) 
+                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d)
                 if dists[u, v] > ans
                     dists[u, v] = ans
                     parents[u, v] = p
