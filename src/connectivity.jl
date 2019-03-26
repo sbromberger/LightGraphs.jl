@@ -179,8 +179,6 @@ true
 is_weakly_connected(g) = is_connected(g)
 
 
-
-
 """
     strongly_connected_components(g)
 
@@ -218,6 +216,7 @@ julia> strongly_connected_components(g)
 
 ```
 """
+
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
@@ -227,7 +226,7 @@ function strongly_connected_components end
     count = one_t
     
     index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()                   # stores vertices which have been discovered and not yet assigned to any component
+    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
@@ -285,7 +284,8 @@ function strongly_connected_components end
                                 break
                             end
                         end
-                        push!(components, reverse!(component))
+                        reverse!(component)
+                        push!(components, component)
                     end
                 else #LABEL A
                     # add unvisited neighbor to dfs
@@ -304,7 +304,6 @@ function strongly_connected_components end
 
     return components
 end
-
 
 
 """
