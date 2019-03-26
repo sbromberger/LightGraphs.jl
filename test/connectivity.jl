@@ -72,14 +72,14 @@
 
 
     function scc_ok(graph)
-      """Check that all SCC really are strongly connected"""
+      #Check that all SCC really are strongly connected
       scc = @inferred(strongly_connected_components(graph))
       scc_as_subgraphs = map(i -> graph[i], scc)
       return all(is_strongly_connected, scc_as_subgraphs)
     end
     
     function scc_k_ok(graph)
-      """Check that all SCC really are strongly connected"""
+      #Check that all SCC really are strongly connected
       scc_k = @inferred(strongly_connected_components_kosaraju(graph))
       scc_k_as_subgraphs = map(i -> graph[i], scc_k)
       return all(is_strongly_connected, scc_k_as_subgraphs)
