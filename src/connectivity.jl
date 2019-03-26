@@ -225,6 +225,7 @@ function strongly_connected_components end
     nvg = nv(g)
     count = one_t
     
+    
     index = zeros(T, nvg)         # first time in which vertex is discovered
     stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
@@ -232,7 +233,7 @@ function strongly_connected_components end
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
-
+    
     dfs_stack = Vector{T}()
     
     @inbounds for s in vertices(g)
@@ -245,7 +246,8 @@ function strongly_connected_components end
             count = count + one_t
 
             # start dfs from 's'
-            push!(dfs_stack,s) 
+            push!(dfs_stack, s) 
+            
             while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
@@ -268,6 +270,7 @@ function strongly_connected_components end
                     # time to start popping.
                     popped = pop!(dfs_stack)
                     lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
+                    
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
                         component = Vector{T}()
@@ -284,9 +287,11 @@ function strongly_connected_components end
                                 break
                             end
                         end
+                        
                         reverse!(component)
                         push!(components, component)
                     end
+                    
                 else #LABEL A
                     # add unvisited neighbor to dfs
                     index[u] = count
@@ -294,6 +299,7 @@ function strongly_connected_components end
                     onstack[u] = true
                     parents[u] = v
                     count = count + one_t
+                    
                     push!(stack, u)
                     push!(dfs_stack, u)
                     # next iteration of while loop will expand the DFS tree from u.
