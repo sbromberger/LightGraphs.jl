@@ -437,7 +437,6 @@ function strongly_connected_components_kosaraju end
 end
 
 
-
 """
     is_strongly_connected(g)
 
