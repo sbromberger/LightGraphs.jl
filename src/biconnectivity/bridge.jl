@@ -26,31 +26,32 @@ julia> bridges(PathGraph(5))
 function bridges end
 @traitfn function bridges(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     s = Vector{Tuple{T, T, T}}()
-    low = zeros(T, nv(g))
-    pre = zeros(T, nv(g))
-    bridges = Edge{T}[]
+    low = zeros(T, nv(g)) #keeps track of the earliest accesible time of a vertex in DFS-stack, effect of having back-edges is considered here
+    pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited, non-zero, otherwise
+    bridges = Edge{T}[]   #keeps record of the bridge-edges
     
     @inbounds for u in vertices(g)
         pre[u] != 0 && continue
-        v = u
-        wi::T = zero(T)
-        w::T = zero(T)
-        cnt::T = one(T)
+        v = u #currently visiting vertex
+        wi::T = zero(T) #index of childen of v
+        w::T = zero(T) #children of v
+        cnt::T = one(T) # keeps record of the time
         first_time = true
-
+        
+        #start of DFS
         while !isempty(s) || first_time
             first_time = false
-            if  wi < 1
+            if  wi < 1 #intialisation for vertex v
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
                 v_neighbors = outneighbors(g, v)
                 wi = 1
             else
-                wi, u, v = pop!(s)
+                wi, u, v = pop!(s) # the stack states, explained later
                 v_neighbors = outneighbors(g, v)
                 w = v_neighbors[wi]
-                low[v] = min(low[v], low[w])
+                low[v] = min(low[v], low[w]) # condition check for v, w being a tree-edge
                 if low[w] > pre[v]
                     edge = v < w ? Edge(v, w) : Edge(w, v)
                     push!(bridges, edge)
@@ -60,13 +61,14 @@ function bridges end
             while wi <= length(v_neighbors)
                 w = v_neighbors[wi]
                 if pre[w] == 0
-                    push!(s, (wi, u, v))
-                    wi = 0
+                    push!(s, (wi, u, v)) # the stack states are (index of child, currently visiting vertex, parent vartex of the child)
+                    #updates the value for stimulating DFS from top of the stack
+                    wi = 0 
                     u = v
                     v = w
                     break
-                elseif w != u
-                    low[v] = min(low[v], pre[w])
+                elseif w != u # v, w is a back-edge
+                    low[v] = min(low[v], pre[w]) # condition for back-edges
                 end
                 wi += 1
             end
