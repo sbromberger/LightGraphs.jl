@@ -308,7 +308,6 @@ julia> g=SimpleDiGraph(3)
 julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
-
 julia> strongly_connected_components_kosaraju(g)
 3-element Array{Array{Int64,1},1}:
  [1]
@@ -357,11 +356,11 @@ function strongly_connected_components_kosaraju end
    components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
    
    order = Vector{T}()         # Vector which will store the order in which vertices are visited
-   sizehint!(order, nvg)
+   sizehint!(order, nvg)    
    
    color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
    
-   dfs_stack = T[]   # Stack used for dfs
+   dfs_stack = Vector{T}()   # Stack used for dfs
     
    # dfs1
    @inbounds for v in vertices(g)
@@ -370,7 +369,7 @@ function strongly_connected_components_kosaraju end
        color[v] = 1
        
        # Start dfs from v
-       push!(dfs_stack,v)   # Push v to the stack
+       push!(dfs_stack, v)   # Push v to the stack
        
        while !isempty(dfs_stack)
            u = dfs_stack[end]
@@ -394,12 +393,10 @@ function strongly_connected_components_kosaraju end
        end
    end
     
-    
-   @inbounds for i = 1:nvg
+   @inbounds for i in vertices(g)
         color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
    end
    
-    
    # dfs2
    @inbounds for i in 1:nvg
     
@@ -410,7 +407,7 @@ function strongly_connected_components_kosaraju end
        component=Vector{T}()   # Vector used to store the vertices of one component temporarily
        
        # Start dfs from v
-       push!(dfs_stack,v)   # Push v to the stack
+       push!(dfs_stack, v)   # Push v to the stack
       
        while !isempty(dfs_stack)
            u = dfs_stack[end]
@@ -428,7 +425,7 @@ function strongly_connected_components_kosaraju end
                color[w] = 1
            else
                color[u] = 2
-               push!(component,u)   # Push u to the vector component
+               push!(component, u)   # Push u to the vector component
                pop!(dfs_stack)    
            end
        end
@@ -436,7 +433,6 @@ function strongly_connected_components_kosaraju end
        push!(components,component)
    end
  
-    
    return components
 end
 
