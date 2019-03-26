@@ -315,7 +315,6 @@ julia> strongly_connected_components_kosaraju(g)
  [3]
 
 
-
 julia> g=SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
@@ -430,7 +429,7 @@ function strongly_connected_components_kosaraju end
            end
        end
        
-       push!(components,component)
+       push!(components, component)
    end
  
    return components
