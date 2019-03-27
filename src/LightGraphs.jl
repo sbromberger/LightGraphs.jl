@@ -89,10 +89,10 @@ simplecycles_limited_length,
 # maximum_adjacency_visit
 mincut, maximum_adjacency_visit,
 
-# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape
+# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+spfa_shortest_paths,has_negative_edge_cycle_spfa,has_negative_edge_cycle, enumerate_paths,
+johnson_shortest_paths, floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths, desopo_pape_shortest_paths,
 
 # centrality
@@ -227,6 +227,7 @@ include("shortestpaths/johnson.jl")
 include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
+include("shortestpaths/spfa.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")

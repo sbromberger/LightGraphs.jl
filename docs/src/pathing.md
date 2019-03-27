@@ -116,6 +116,7 @@ desopo_pape_shortest_paths
 bellman_ford_shortest_paths
 floyd_warshall_shortest_paths
 yen_k_shortest_paths
+spfa_shortest_paths
 ```
 
 ## Path discovery / enumeration
@@ -134,9 +135,9 @@ LightGraphs.AbstractPathState
 ```
 
 The `dijkstra_shortest_paths`, `floyd_warshall_shortest_paths`,
-`bellman_ford_shortest_paths`, and `yen_shortest_paths` functions 
+`bellman_ford_shortest_paths`, and `yen_shortest_paths` functions
 return states that contain various  information about the graph
-learned during traversal. 
+learned during traversal.
 
 ```@docs
 LightGraphs.DijkstraState
