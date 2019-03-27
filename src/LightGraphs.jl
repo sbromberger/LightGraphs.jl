@@ -76,7 +76,7 @@ diffusion, diffusion_rate,
 greedy_color,
 
 # connectivity
-connected_components, strongly_connected_components, weakly_connected_components,
+connected_components, strongly_connected_components, strongly_connected_components_kosaraju, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
