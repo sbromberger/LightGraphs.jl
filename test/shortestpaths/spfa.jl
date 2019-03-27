@@ -158,11 +158,11 @@
     for g in testgraphs(gx)
         d = [1 -3 1; -3 1 1; 1 1 1]
         @test_throws LightGraphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
-        @test has_negative_edge_cycle(g, d)
+        @test has_negative_edge_cycle_spfa(g, d)
 
         d = [1 -1 1; -1 1 1; 1 1 1]
         @test_throws LightGraphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
-        @test has_negative_edge_cycle(g, d)
+        @test has_negative_edge_cycle_spfa(g, d)
     end
 
     # Negative cycle of length 3 in graph of diameter 4
@@ -170,7 +170,7 @@
     d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
     for g in testgraphs(gx)
         @test_throws LightGraphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
-        @test has_negative_edge_cycle(g, d)
+        @test has_negative_edge_cycle_spfa(g, d)
     end
 
 end
