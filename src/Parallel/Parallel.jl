@@ -28,8 +28,4 @@ include("dominatingset/minimal_dom_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/random_vertex_cover.jl")
 
-# Overload until https://github.com/JuliaLang/julia/pull/28651
-import Distributed: splitrange
-splitrange(N::Integer, np::Integer) = splitrange(Int.(N), np)
-
 end
