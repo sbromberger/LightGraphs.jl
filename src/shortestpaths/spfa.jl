@@ -8,7 +8,6 @@
 
 using Base.Threads
 
-struct NegativeCycleError <: Exception end
 
 """
     spfa_shortest_paths(g, s, distmx=weights(g))
