@@ -313,6 +313,158 @@ end
 
 
 """
+    strongly_connected_components_kosaraju(g)
+
+Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm. 
+(https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
+
+Return an array of arrays, each of which is the entire connected component.
+
+### Performance
+Time Complexity : O(|E|+|V|)
+Space Complexity : O(|V|) {Excluding the memory required for storing graph}
+
+|V| = Number of vertices
+|E| = Number of edges
+
+### Examples
+```jldoctest
+
+julia> g=SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+
+julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
+{3, 2} directed simple Int64 graph
+
+julia> strongly_connected_components_kosaraju(g)
+3-element Array{Array{Int64,1},1}:
+ [1]
+ [2]
+ [3]
+
+
+julia> g=SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
+13-element Array{Tuple{Int64,Int64},1}:
+ (1, 2)  
+ (2, 3)  
+ (3, 4)  
+ (4, 1)  
+ (3, 5)  
+ (5, 6)  
+ (6, 7)  
+ (7, 5)  
+ (5, 8)  
+ (8, 9)  
+ (9, 8)  
+ (10, 11)
+ (11, 10)
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components_kosaraju(g)
+4-element Array{Array{Int64,1},1}:
+ [11, 10]    
+ [2, 3, 4, 1]
+ [6, 7, 5]   
+ [9, 8]      
+
+```
+"""
+
+function strongly_connected_components_kosaraju end
+@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+       
+   nvg = nv(g)    
+
+   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
+   
+   order = Vector{T}()         # Vector which will store the order in which vertices are visited
+   sizehint!(order, nvg)    
+   
+   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
+   
+   dfs_stack = Vector{T}()   # Stack used for dfs
+    
+   # dfs1
+   @inbounds for v in vertices(g)
+       
+       color[v] != 0  && continue  
+       color[v] = 1
+       
+       # Start dfs from v
+       push!(dfs_stack, v)   # Push v to the stack
+       
+       while !isempty(dfs_stack)
+           u = dfs_stack[end]
+           w = zero(T)
+       
+           for u_neighbor in outneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
+                   break
+               end
+           end
+           
+           if w != 0
+               push!(dfs_stack, w)
+               color[w] = 1
+           else
+               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
+               color[u] = 2
+               pop!(dfs_stack)    
+           end
+       end
+   end
+    
+   @inbounds for i in vertices(g)
+        color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
+   end
+   
+   # dfs2
+   @inbounds for i in 1:nvg
+    
+       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
+       color[v] != 0  && continue  
+       color[v] = 1
+       
+       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
+       
+       # Start dfs from v
+       push!(dfs_stack, v)   # Push v to the stack
+      
+       while !isempty(dfs_stack)
+           u = dfs_stack[end]
+           w = zero(T)
+       
+           for u_neighbor in inneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
+                   break
+               end
+           end
+           
+           if w != 0
+               push!(dfs_stack, w)
+               color[w] = 1
+           else
+               color[u] = 2
+               push!(component, u)   # Push u to the vector component
+               pop!(dfs_stack)    
+           end
+       end
+       
+       push!(components, component)
+   end
+ 
+   return components
+end
+
+
+"""
     is_strongly_connected(g)
 
 Return `true` if directed graph `g` is strongly connected.
