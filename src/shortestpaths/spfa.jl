@@ -16,7 +16,7 @@ Compute shortest paths between a source `s` and all
 other nodes in graph `g` using the [Shortest Path Faster Algorithm]
 (https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
 
-###Examples
+# Examples
 ```jldoctest
 julia> g = CompleteGraph(3);
 
