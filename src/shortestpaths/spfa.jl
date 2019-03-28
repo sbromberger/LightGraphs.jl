@@ -17,6 +17,7 @@ other nodes in graph `g` using the [Shortest Path Faster Algorithm]
 (https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
 
 ###Examples
+```jldoctest
 julia> g = CompleteGraph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
