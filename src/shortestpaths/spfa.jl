@@ -36,7 +36,7 @@ julia> spfa_shortest_paths(gx, 1, d)
   0
  -1
   0
-
+```
 """
 function spfa_shortest_paths(
     graph::AbstractGraph{U},
@@ -105,7 +105,7 @@ julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 
 julia> has_negative_edge_cycle_spfa(g, d);
 false
-
+```
 """
 
 function has_negative_edge_cycle_spfa(
