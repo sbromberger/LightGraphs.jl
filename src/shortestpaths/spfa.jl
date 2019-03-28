@@ -72,7 +72,7 @@ function has_negative_edge_cycle_spfa(
     distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
     try
-        spfa_shortest_paths(g, vertices(g), distmx)
+        spfa_shortest_paths(g, 1, distmx)
     catch e
         isa(e, NegativeCycleError) && return true
     end
