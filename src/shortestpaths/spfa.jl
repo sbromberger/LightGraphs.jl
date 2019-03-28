@@ -38,7 +38,6 @@ julia> spfa_shortest_paths(gx, 1, d)
   0
 
 """
-
 function spfa_shortest_paths(
     graph::AbstractGraph{U},
     source::Integer,
