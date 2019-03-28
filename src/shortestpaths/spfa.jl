@@ -44,7 +44,6 @@ function spfa_shortest_paths(
     distmx::AbstractMatrix{T}=weights(graph)
     ) where T<:Real where U<:Integer
 
-
     nvg = nv(graph)
 
     (source in 1:nvg) || throw(DomainError(source, "source should be in between 1 and $nvg"))
