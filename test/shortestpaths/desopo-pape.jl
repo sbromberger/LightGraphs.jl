@@ -83,7 +83,7 @@
     @testset "Random Graphs" begin
         @testset "Simple graphs" begin
             for i = 1:5
-                nvg = Int(floor(250*rand()))
+                nvg = Int(ceil(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                 seed = Int(floor(100*rand()))
                 g = SimpleGraph(nvg, neg; seed = seed)
@@ -95,7 +95,7 @@
 
         @testset "Simple DiGraphs" begin
             for i = 1:5
-                nvg = Int(floor(250*rand()))
+                nvg = Int(ceil(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                 seed = Int(floor(100*rand()))
                 g = SimpleDiGraph(nvg, neg; seed = seed)
