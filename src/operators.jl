@@ -891,6 +891,16 @@ function linegraph(g::AbstractGraph, returnmap::Bool = false)
             end
         end
     end
+
+    #add self loops for directed graphs
+    if is_directed(lg)
+        for e in edges(g)
+            if src(e) == dst(e)
+                add_edge!(lg, src(e), dst(e))
+            end
+        end
+    end
+
     if returnmap
         lineV_graphE = Dict(value => key for (key, value) in graphE_lineV)
         return lg, lineV_graphE

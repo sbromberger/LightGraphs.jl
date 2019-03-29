@@ -323,6 +323,12 @@
         end
     end
 
+    gz = CompleteDiGraph(3)
+    add_edge!(gz, 1, 1)
+    for g in testdigraphs(gz)
+        @test has_self_loops(linegraph(gz))
+    end
+
     #Test get_root function for line graph
 
     g5 = CompleteGraph(5)
