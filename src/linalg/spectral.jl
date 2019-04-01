@@ -1,6 +1,7 @@
 # This file provides reexported functions.
 
 using ArnoldiMethod
+using SparseArrays
 
 """
     adjacency_matrix(g[, T=Int; dir=:out])
@@ -79,8 +80,9 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseMatrixCSC{T,U}, Diagonal(sparse(sum(A, dims=2)[:])))
-    return D - A
+    s = sum(A;dims=2)
+    D = spdiagm(0=>s[:])
+    D-A
 end
 
 """
