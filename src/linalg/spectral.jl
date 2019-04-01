@@ -81,7 +81,7 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
     end
     A = adjacency_matrix(g, T; dir=dir)
     s = sum(A;dims=2)
-    D = spdiagm(0=>s[:])
+    D = convert(SparseMatrixCSC{T,U}, spdiagm(0 => s[:]))
     D-A
 end
 
