@@ -7,7 +7,7 @@ using SparseArrays
     adjacency_matrix(g[, T=Int; dir=:out])
 
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
-vertices. Non-zero values indicate an edge between `u` and `v`. Users may
+vertices. Non-zero values indicate an edge from `u` to `v`. Users may
 override the default data type (`Int`) and specify an optional direction.
 
 ### Optional Arguments

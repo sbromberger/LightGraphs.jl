@@ -52,7 +52,7 @@
         1 0 1 0;
         0 0 0 1;
     ])
-    
+
     for g in testdigraphs(selfloopg)
         cycles = simplecycles(g)
         @test [3] in cycles

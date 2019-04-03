@@ -76,7 +76,7 @@ diffusion, diffusion_rate,
 greedy_color,
 
 # connectivity
-connected_components, strongly_connected_components, weakly_connected_components,
+connected_components, strongly_connected_components, strongly_connected_components_kosaraju, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
@@ -89,11 +89,11 @@ simplecycles_limited_length,
 # maximum_adjacency_visit
 mincut, maximum_adjacency_visit,
 
-# a-star, dijkstra, bellman-ford, floyd-warshall
+# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
 has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
 floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
-yen_k_shortest_paths,
+yen_k_shortest_paths, desopo_pape_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -134,6 +134,9 @@ euclidean_graph,
 
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
+
+#steinertree
+steiner_tree,
 
 #biconnectivity and articulation points
 articulation, biconnected_components, bridges,
@@ -221,6 +224,7 @@ include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
 include("shortestpaths/johnson.jl")
+include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("linalg/LinAlg.jl")
@@ -243,6 +247,7 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("biconnectivity/bridge.jl")
