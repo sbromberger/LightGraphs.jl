@@ -12,11 +12,13 @@ import Random
 
     @test @inferred(ne(SimpleGraph(PathDiGraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
+    @test @inferred(!is_directed(SimpleGraph{Int}))
 
     @test @inferred(eltype(SimpleDiGraph())) == Int
     @test @inferred(eltype(SimpleDiGraph(adjmx2))) == Int
     @test @inferred(ne(SimpleDiGraph(PathGraph(5)))) == 8
     @test @inferred(is_directed(SimpleDiGraph))
+    @test @inferred(is_directed(SimpleDiGraph{Int}))
 
 
     for gbig in [SimpleGraph(0xff), SimpleDiGraph(0xff)]
@@ -446,4 +448,6 @@ import Random
             @test isvalid_simplegraph(gf)
         end
     end
+    # codecov for has_edge(::AbstractSimpleGraph, x, y)
+    @test @inferred has_edge(DummySimpleGraph(), 1, 2)
 end
