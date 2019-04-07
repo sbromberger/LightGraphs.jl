@@ -1,49 +1,4 @@
 """
-    Bridges{T}
-
-A state type for the depth-first search that finds bridges in a graph.
-"""
-mutable struct Bridges{T<:Integer}
-    low::Vector{T}
-    depth::Vector{T}
-    bridges::Vector{Edge{T}}
-    id::T
-end
-
-function Bridges(g::AbstractGraph)
-    n = nv(g)
-    T = eltype(g)
-    return Bridges(zeros(T, n), zeros(T, n), Edge{T}[], zero(T))
-end
-
-"""
-    visit!(state, g, u, v)
-
-Perform a depth first search storing the depth (in `depth`) and low-points
-(in `low`) of each vertex.
-"""
-function visit!(state::Bridges, g::AbstractGraph, u::Integer, v::Integer)
-    state.id += 1
-    state.depth[v] = state.id
-    state.low[v] = state.depth[v]
-
-    @inbounds for w in outneighbors(g, v)
-        if state.depth[w] == 0
-            visit!(state, g, v, w)
-
-            state.low[v] = min(state.low[v], state.low[w])
-            if state.low[w] > state.depth[v]
-                edge = v < w ? Edge(v, w) : Edge(w, v)
-                push!(state.bridges, edge)
-            end
-
-        elseif w != u
-            state.low[v] = min(state.low[v], state.depth[w])
-        end
-    end
-end
-
-"""
     bridges(g)
 
 Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
@@ -69,13 +24,64 @@ julia> bridges(PathGraph(5))
 ```
 """
 function bridges end
-
-@traitfn function bridges(g::AG::(!IsDirected)) where {T<:Integer, AG<:AbstractGraph{T}}
-    state = Bridges(g)
-    for u in vertices(g)
-        if state.depth[u] == 0
-            visit!(state, g, u, u)
+@traitfn function bridges(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+    s = Vector{Tuple{T, T, T}}()
+    low = zeros(T, nv(g)) #keeps track of the earliest accesible time of a vertex in DFS-stack, effect of having back-edges is considered here
+    pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
+    bridges = Edge{T}[]   #keeps record of the bridge-edges
+    
+    # We iterate over all vertices, and if they have already been visited (pre != 0), we don't start a DFS from that vertex.
+    # The purpose is to create a DFS forest.
+    @inbounds for u in vertices(g)
+        pre[u] != 0 && continue
+        v = u #currently visiting vertex
+        wi::T = zero(T) #index of children of v
+        w::T = zero(T) #children of v
+        cnt::T = one(T) # keeps record of the time
+        first_time = true
+        
+        #start of DFS
+        while !isempty(s) || first_time
+            first_time = false
+            if  wi < 1 #initialisation for vertex v
+                pre[v] = cnt
+                cnt += 1
+                low[v] = pre[v]
+                v_neighbors = outneighbors(g, v)
+                wi = 1
+            else
+                wi, u, v = pop!(s) # the stack states, explained later
+                v_neighbors = outneighbors(g, v)
+                w = v_neighbors[wi]
+                low[v] = min(low[v], low[w]) # condition check for (v, w) being a tree-edge
+                if low[w] > pre[v]
+                    edge = v < w ? Edge(v, w) : Edge(w, v)
+                    push!(bridges, edge)
+                end
+                wi += 1
+            end
+            
+            # here, we're iterating of all the childen of vertex v, if unvisited, we start a DFS from that child, else we update the low[v] as the edge is a back-edge.
+            while wi <= length(v_neighbors)
+                w = v_neighbors[wi]
+                # If this is true , this indicates the vertex is still unvisited, then we push this on the stack.
+                # Pushing onto the stack is analogous to visiting the vertex and starting DFS from that vertex.
+                if pre[w] == 0
+                    push!(s, (wi, u, v)) # the stack states are (index of child, currently visiting vertex, parent vertex of the child)
+                    #updates the value for stimulating DFS from top of the stack
+                    wi = 0 
+                    u = v
+                    v = w
+                    break
+                elseif w != u # (v, w) is a back-edge
+                    low[v] = min(low[v], pre[w]) # condition for back-edges
+                end
+                wi += 1
+            end
+            wi < 1 && continue
         end
+        
     end
-    return state.bridges
+    
+    return bridges
 end
