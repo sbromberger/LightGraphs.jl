@@ -23,6 +23,8 @@
     @testset "(Graph{$T}(Int, Int) eltype"for T in [UInt8, Int8, UInt16, Int16, UInt32, Int32, UInt, Int]
         @test eltype(Graph{T}(5, 2)) == T
         @test eltype(DiGraph{T}(5, 2)) == T
+        @test eltype(Graph{T}(5, 8)) == T
+        @test eltype(DiGraph{T}(5, 8)) == T
     end
 
 
