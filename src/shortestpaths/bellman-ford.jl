@@ -51,8 +51,7 @@ function bellman_ford_shortest_paths(
     for i in vertices(graph)
         no_changes = true
         new_active .= false
-        active_vertices = convert(Vector{U}, findall(active))
-        for u in active_vertices
+        for u in vertices(graph)[active]
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
