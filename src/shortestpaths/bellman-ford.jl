@@ -39,9 +39,7 @@ function bellman_ford_shortest_paths(
 
     nvg = nv(graph)
     active = falses(nvg)
-    for s in sources
-        active[s] = true
-    end
+    active[sources] .= true
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
     dists[sources] .= 0
@@ -65,7 +63,7 @@ function bellman_ford_shortest_paths(
         if no_changes
             break
         end
-        active .= new_active
+        active, new_active = new_active, active
     end
     no_changes || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
