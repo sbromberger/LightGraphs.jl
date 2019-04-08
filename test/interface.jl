@@ -33,6 +33,7 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
         has_edge,
       ]
         @test_throws ErrorException graphfunedge(dummygraph, dummyedge)
+        @test_throws ErrorException graphfunedge(dummygraph, 1, 2)
     end
 
 end # testset
