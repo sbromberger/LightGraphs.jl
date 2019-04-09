@@ -68,6 +68,22 @@ end
 
 has_negative_edge_cycle_spfa(g::AbstractGraph) = false
 
+"""
+Function which returns true if there is any negative weight cycle in the graph.
+# Examples
+
+```jldoctest
+julia> g = CompleteGraph(3);
+julia> d = [1 -3 1; -3 1 1; 1 1 1];
+julia> has_negative_edge_cycle_spfa(g, d)
+true
+
+julia> g = CompleteGraph(4);
+julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
+julia> has_negative_edge_cycle_spfa(g, d);
+false
+```
+"""
 function has_negative_edge_cycle_spfa(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T}
