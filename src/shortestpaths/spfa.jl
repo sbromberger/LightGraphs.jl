@@ -51,7 +51,7 @@ function spfa_shortest_paths(
 
     nvg = nv(graph)
 
-    (source in vertices(g)) || throw(DomainError(source, "source should be in between 1 and $nvg"))
+    (source in 1:nvg) || throw(DomainError(source, "source should be in between 1 and $nvg"))
     dists = fill(typemax(T),nvg)
     dists[source] = 0
 
