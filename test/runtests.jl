@@ -45,6 +45,7 @@ tests = [
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
+    "shortestpaths/spfa",
     "traversals/bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
