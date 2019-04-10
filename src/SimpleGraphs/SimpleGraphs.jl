@@ -76,8 +76,25 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
-issubset(g::T, h::T) where T<:AbstractSimpleGraph =
-    (nv(g) <= nv(h)) && issubset(edges(g), edges(h))
+function issubset(g::T, h::T) where T <: AbstractSimpleGraph
+	(nv(g) <= nv(h)) || return false
+	for u in vertices(g)
+		u_nbrs_g = neighbors(g, u)
+		u_nbrs_h = neighbors(h, u)
+		p = 1
+		len_u_nbrs_g = length(u_nbrs_g)
+		(len_u_nbrs_g == 0) && continue
+		(len_u_nbrs_g > length(u_nbrs_h)) && return false
+		for v in u_nbrs_h
+			if v == u_nbrs_g[p]
+				(p == len_u_nbrs_g) && break
+				p += 1
+			end
+		end
+		(p == len_u_nbrs_g) || return false
+	end
+	return true
+end
 
 has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
