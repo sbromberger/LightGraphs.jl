@@ -37,31 +37,33 @@ function bellman_ford_shortest_paths(
     distmx::AbstractMatrix{T}=weights(graph)
     ) where T<:Real where U<:Integer
 
-    active = Set{U}(sources)
-    sizehint!(active, nv(graph))
-    dists = fill(typemax(T), nv(graph))
-    parents = zeros(U, nv(graph))
+    nvg = nv(graph)
+    active = falses(nvg)
+    active[sources] .= true
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
     dists[sources] .= 0
     no_changes = false
+    new_active = falses(nvg)
 
-    for i in one(U):nv(graph)
+    for i in vertices(graph)
         no_changes = true
-        new_active = Set{U}()
-        for u in active
+        new_active .= false
+        for u in vertices(graph)[active]
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
                     dists[v] = relax_dist
                     parents[v] = u
                     no_changes = false
-                    push!(new_active, v)
+                    new_active[v] = true
                 end
             end
         end
         if no_changes
             break
         end
-        active = new_active
+        active, new_active = new_active, active
     end
     no_changes || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
