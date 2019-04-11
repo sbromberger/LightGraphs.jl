@@ -1,0 +1,10 @@
+name = "LightGraphs"
+uuid="093fc24a-ae57-5d10-9952-331d41423f4d"
+authors = ["Seth Bromberger <github@bromberger.com>", "James Fairbanks <james.fairbanks@gatech.edu>"]
+version = "1.2.0"
+
+[deps]
+ArnoldiMethod = "ec485272-7323-5ecc-a04f-4719b315124d"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+Inflate = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
+SimpleTraits = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
