@@ -14,11 +14,6 @@ allow_failures:
 notifications:
   email: false
 
-# uncomment the following lines to override the default test script
-script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; Pkg.add("LightGraphs"); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
-
 after_success:
     - julia -e 'using Pkg; cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
     - julia -e 'using Pkg; ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps)'
