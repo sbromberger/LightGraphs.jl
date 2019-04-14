@@ -1,9 +1,8 @@
-
 @testset "SimpleEdge" begin
     e = SimpleEdge(1, 2)
     re = SimpleEdge(2, 1)
 
-    for s in [0x01, UInt16(1), 1]
+    @testset "edgetype: $(typeof(s))" for s in [0x01, UInt16(1), 1]
         T = typeof(s)
         d = s + one(T)
         p = Pair(s, d)
