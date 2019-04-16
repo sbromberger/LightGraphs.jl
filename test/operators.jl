@@ -2,130 +2,132 @@
     g3 = PathGraph(5)
     g4 = PathDiGraph(5)
 
-    for g in testlargegraphs(g3)
+    @testset "$g" for g in testlargegraphs(g3)
         T = eltype(g)
-        c = @inferred(complement(g))
-        @test nv(c) == 5
-        @test ne(c) == 6
+        @testset "complement" begin
+            c = @inferred(complement(g))
+            @test nv(c) == 5
+            @test ne(c) == 6
+        end
 
-        gb = @inferred(blockdiag(g, g))
-        @test nv(gb) == 10
-        @test ne(gb) == 8
+        @testset "blockdiag" begin
+            gb = @inferred(blockdiag(g, g))
+            @test nv(gb) == 10
+            @test ne(gb) == 8
+        end
 
-        hp = PathGraph(2)
-        h = Graph{T}(hp)
-        @test @inferred(intersect(g, h)) == h
+        @testset "intersect" begin
+            hp = PathGraph(2)
+            h = Graph{T}(hp)
+            @test @inferred(intersect(g, h)) == h
+        end
 
-        hp = PathGraph(4)
-        h = Graph{T}(hp)
+        @testset "difference / symmetric difference" begin
+            hp = PathGraph(4)
+            h = Graph{T}(hp)
 
-        z = @inferred(difference(g, h))
-        @test nv(z) == 5
-        @test ne(z) == 1
-        z = @inferred(difference(h, g))
-        @test nv(z) == 4
-        @test ne(z) == 0
-        z = @inferred(symmetric_difference(h, g))
-        @test z == symmetric_difference(g, h)
-        @test nv(z) == 5
-        @test ne(z) == 1
+            z = @inferred(difference(g, h))
+            @test nv(z) == 5
+            @test ne(z) == 1
+            z = @inferred(difference(h, g))
+            @test nv(z) == 4
+            @test ne(z) == 0
+            z = @inferred(symmetric_difference(h, g))
+            @test z == symmetric_difference(g, h)
+            @test nv(z) == 5
+            @test ne(z) == 1
+        end
 
-        h = Graph{T}(6)
-        add_edge!(h, 5, 6)
-        e = SimpleEdge(5, 6)
+        @testset "union" begin
+            h = Graph{T}(6)
+            add_edge!(h, 5, 6)
+            e = SimpleEdge(5, 6)
 
-        z = @inferred(union(g, h))
-        @test has_edge(z, e)
-        @test z == PathGraph(6)
+            z = @inferred(union(g, h))
+            @test has_edge(z, e)
+            @test z == PathGraph(6)
+        end
 
-        # Check merge_vertices function.
-        h = Graph{T}(7)
-        add_edge!(h, 2, 5)
-        add_edge!(h, 3, 6)
-        add_edge!(h, 1, 7)
-        add_edge!(h, 6, 5)
+        @testset "merge vertices" begin
+            # Check merge_vertices function.
+            h = Graph{T}(7)
+            add_edge!(h, 2, 5)
+            add_edge!(h, 3, 6)
+            add_edge!(h, 1, 7)
+            add_edge!(h, 6, 5)
 
-        vs = [2, 3, 7, 3, 3, 2]
-        hmerged = merge_vertices(h, vs)
-        @test neighbors(hmerged, 1) == [2]
-        @test neighbors(hmerged, 2) == [1, 4, 5]
-        @test neighbors(hmerged, 3) == []
-        @test neighbors(hmerged, 4) == [2, 5]
+            vs = [2, 3, 7, 3, 3, 2]
+            hmerged = merge_vertices(h, vs)
+            @test neighbors(hmerged, 1) == [2]
+            @test neighbors(hmerged, 2) == [1, 4, 5]
+            @test neighbors(hmerged, 3) == []
+            @test neighbors(hmerged, 4) == [2, 5]
 
-        new_map = @inferred(merge_vertices!(h, vs))
-        @test new_map == [1, 2, 2, 3, 4, 5, 2]
-        @test neighbors(h, 1) == [2]
-        @test neighbors(h, 2) == [1, 4, 5]
-        @test neighbors(h, 3) == []
-        @test neighbors(hmerged, 4) == [2, 5]
-        @test hmerged == h
+            new_map = @inferred(merge_vertices!(h, vs))
+            @test new_map == [1, 2, 2, 3, 4, 5, 2]
+            @test neighbors(h, 1) == [2]
+            @test neighbors(h, 2) == [1, 4, 5]
+            @test neighbors(h, 3) == []
+            @test neighbors(hmerged, 4) == [2, 5]
+            @test hmerged == h
 
-        h = Graph{T}(7)
-        add_edge!(h, 1, 2)
-        add_edge!(h, 2, 3)
-        add_edge!(h, 2, 4)
-        add_edge!(h, 3, 4)
-        add_edge!(h, 3, 7)
-        new_map = @inferred(merge_vertices!(h, [2, 3, 2, 2]))
-        @test new_map == [1, 2, 2, 3, 4, 5, 6]
-        @test neighbors(h, 2) == [1, 3, 6]
-        @test neighbors(h, 1) == [2]
-        @test neighbors(h, 3) == [2]
-        @test neighbors(h, 4) == Int[]
-        @test neighbors(h, 6) == [2]
-        @test ne(h) == 3
-        @test nv(h) == 6
+            h = Graph{T}(7)
+            add_edge!(h, 1, 2)
+            add_edge!(h, 2, 3)
+            add_edge!(h, 2, 4)
+            add_edge!(h, 3, 4)
+            add_edge!(h, 3, 7)
+            new_map = @inferred(merge_vertices!(h, [2, 3, 2, 2]))
+            @test new_map == [1, 2, 2, 3, 4, 5, 6]
+            @test neighbors(h, 2) == [1, 3, 6]
+            @test neighbors(h, 1) == [2]
+            @test neighbors(h, 3) == [2]
+            @test neighbors(h, 4) == Int[]
+            @test neighbors(h, 6) == [2]
+            @test ne(h) == 3
+            @test nv(h) == 6
 
-        h2 = Graph{T}(7)
-        add_edge!(h2, 1, 2)
-        add_edge!(h2, 2, 3)
-        add_edge!(h2, 2, 4)
-        add_edge!(h2, 3, 4)
-        add_edge!(h2, 3, 7)
-        add_edge!(h2, 6, 7)
-        new_map = @inferred(merge_vertices!(h2, [2, 7, 3, 2]))
-        @test new_map == [1, 2, 2, 3, 4, 5, 2]
-        @test neighbors(h2, 2) == [1, 3, 5]
-        @test neighbors(h2, 1) == [2]
-        @test neighbors(h2, 3) == [2]
-        @test neighbors(h2, 4) == Int[]
-        @test neighbors(h2, 5) == [2]
-        @test ne(h2) == 3
-        @test nv(h2) == 5
-
+            h2 = Graph{T}(7)
+            add_edge!(h2, 1, 2)
+            add_edge!(h2, 2, 3)
+            add_edge!(h2, 2, 4)
+            add_edge!(h2, 3, 4)
+            add_edge!(h2, 3, 7)
+            add_edge!(h2, 6, 7)
+            new_map = @inferred(merge_vertices!(h2, [2, 7, 3, 2]))
+            @test new_map == [1, 2, 2, 3, 4, 5, 2]
+            @test neighbors(h2, 2) == [1, 3, 5]
+            @test neighbors(h2, 1) == [2]
+            @test neighbors(h2, 3) == [2]
+            @test neighbors(h2, 4) == Int[]
+            @test neighbors(h2, 5) == [2]
+            @test ne(h2) == 3
+            @test nv(h2) == 5
+        end
     end
-    for g in testlargedigraphs(g4)
+
+    @testset "$g" for g in testlargegraphs(g4)
         T = eltype(g)
-        c = @inferred(complement(g))
-        @test nv(c) == 5
-        @test ne(c) == 16
+        @testset "complement" begin
+            c = @inferred(complement(g))
+            @test nv(c) == 5
+            @test ne(c) == 16
+        end
 
-        h = DiGraph{T}(6)
-        add_edge!(h, 5, 6)
-        e = SimpleEdge(5, 6)
+        @testset "union" begin
+            h = DiGraph{T}(6)
+            add_edge!(h, 5, 6)
+            e = SimpleEdge(5, 6)
 
-        z = @inferred(union(g, h))
-        @test has_edge(z, e)
-        @test z == PathDiGraph(6)
-
-        # Check merge_vertices function.
-        # h = DiGraph{T}(7)
-        # add_edge!(h, 2, 5)
-        # add_edge!(h, 3, 6)
-        # add_edge!(h, 1, 7)
-        # add_edge!(h, 4, 3)
-        # add_edge!(h, 6, 5)
-        # new_map = @inferred(merge_vertices!(h, [2, 3, 7, 3, 3, 2]))
-        # @test new_map == [1, 2, 2, 4, 5, 3, 2]
-        # @test inneighbors(h, 2) == [1, 4]
-        # @test outneighbors(h, 2) == [3, 5]
-        # @test outneighbors(h, 3) == [5]
-
+            z = @inferred(union(g, h))
+            @test has_edge(z, e)
+            @test z == PathDiGraph(6)
+        end
     end
 
     re1 = Edge(2, 1)
     gr = @inferred(reverse(g4))
-    for g in testdigraphs(gr)
+    @testset "Reverse $g" for g in testdigraphs(gr)
         T = eltype(g)
         @test re1 in edges(g)
         @inferred(reverse!(g))
@@ -134,7 +136,7 @@
 
     gx = CompleteGraph(2)
 
-    for g in testlargegraphs(gx)
+    @testset "Blockdiag $g" for g in testlargegraphs(gx)
         T = eltype(g)
         hc = CompleteGraph(2)
         h = Graph{T}(hc)
@@ -150,7 +152,7 @@
     end
 
     gx = SimpleGraph(2)
-    for g in testgraphs(gx)
+    @testset "Join $g" for g in testgraphs(gx)
         T = eltype(g)
         h = Graph{T}(2)
         z = @inferred(join(g, h))
@@ -165,7 +167,7 @@
     end
 
     px = PathGraph(10)
-    for p in testgraphs(px)
+    @testset "Matrix operations: $p" for p in testgraphs(px)
         x = @inferred(p * ones(10))
         @test  x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
         @test size(p) == (10, 10)
@@ -181,7 +183,7 @@
 
     gx = SimpleDiGraph(4)
     add_edge!(gx, 1, 2); add_edge!(gx, 2, 3); add_edge!(gx, 1, 3); add_edge!(gx, 3, 4)
-    for g in testdigraphs(gx)
+    @testset "Matrix operations: $g" for g in testdigraphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
         @test sum(g, 1) ==  [0, 1, 2, 1]
         @test sum(g, 2) ==  [2, 1, 1, 0]
@@ -191,7 +193,7 @@
 
     nx = 20; ny = 21
     gx = PathGraph(ny)
-    for g in testlargegraphs(gx)
+    @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(gx)
         T = eltype(g)
         hp = PathGraph(nx)
         h = Graph{T}(hp)
@@ -213,7 +215,7 @@
     end
 
     gx = CompleteGraph(2)
-    for g in testgraphs(gx)
+    @testset "Cartesian Product / Tensor Product: $g" for g in testgraphs(gx)
         h = @inferred(cartesian_product(g, g))
         @test nv(h) == 4
         @test ne(h) == 4
@@ -223,12 +225,12 @@
         @test ne(h) == 2
     end
     g2 = CompleteGraph(2)
-    for g in testgraphs(g2)
+    @testset "Crosspath: $g" for g in testgraphs(g2)
         @test crosspath_slow(2, g) == crosspath(2, g)
     end
     for i in 3:4
         gx = PathGraph(i)
-        for g in testgraphs(gx)
+        @testset "Tensor Product: $g" for g in testgraphs(gx)
             @test length(connected_components(tensor_product(g, g))) == 2
         end
     end
@@ -236,7 +238,7 @@
     ## test subgraphs ##
 
     gb = smallgraph(:bull)
-    for g in testgraphs(gb)
+    @testset "Subgraphs: $g" for g in testgraphs(gb)
         n = 3
         h = @inferred(g[1:n])
         @test nv(h) == n
@@ -253,7 +255,7 @@
     end
 
     gx = SimpleDiGraph(100, 200)
-    for g in testdigraphs(gx)
+    @testset "Subgraphs: $g" for g in testdigraphs(gx)
         h = @inferred(g[5:26])
         @test nv(h) == 22
         @test typeof(h) == typeof(g)
@@ -267,7 +269,7 @@
     end
 
     g10 = CompleteGraph(10)
-    for g in testgraphs(g10)
+    @testset "Induced Subgraphs: $g" for g in testgraphs(g10)
         sg, vm = @inferred(induced_subgraph(g, 5:8))
         @test nv(sg) == 4
         @test ne(sg) == 6
@@ -287,7 +289,7 @@
 
     gs = StarGraph(10)
     distgs = fill(4.0, 10, 10)
-    for g in testgraphs(gs)
+    @testset "Egonet: $g" for g in testgraphs(gs)
         T = eltype(g)
         @test @inferred(egonet(g, 1, 0)) == Graph{T}(1)
         @test @inferred(egonet(g, 1, 3, distgs)) == Graph{T}(1)
@@ -296,7 +298,7 @@
     end
 
     gx = SimpleGraph(100)
-    for g in testgraphs(gx)
+    @testset "Length: $g" for g in testgraphs(gx)
         @test length(g) == 10000
     end
 end
