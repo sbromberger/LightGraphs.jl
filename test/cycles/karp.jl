@@ -1,5 +1,4 @@
 @testset "Karp Minimum Cycle Mean" begin
-     g1 = SimpleDiGraph(12)
      w = [0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 0. 0.  1.1 0.0  0.  0.
@@ -12,6 +11,21 @@
           0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 1. 0.  0.  0.0  0.  0.
           0. 0.  0. 0. 0. 0. 0. 0.  1.2 0.0  0.  0.]
+
+    w2 = [Inf  Inf    Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf   -0.06 Inf  Inf    Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf   -0.01 Inf  Inf    Inf
+          Inf   -0.19 Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
+          Inf   -0.02 Inf  Inf  Inf  Inf  Inf    Inf   -0.03 Inf  Inf    Inf
+          Inf   -0.19 Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
+          Inf   -0.02 Inf  Inf  Inf  Inf  Inf    Inf   -0.03 Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf  Inf    Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf  Inf    Inf    0.39 Inf
+          Inf  Inf    Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf   -0.06 Inf  Inf    Inf  Inf    Inf
+          Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf   -0.01 Inf  Inf    Inf]
+
+     g1 = SimpleDiGraph(12)
      add_edge!(g1, 1, 7)
      add_edge!(g1, 2, 7)
      add_edge!(g1, 3, 9)
@@ -28,47 +42,15 @@
      add_edge!(g1, 11, 7)
      add_edge!(g1, 12, 9)
 
-     for g in testdigraphs(g1)
-         c, λ = karp_minimum_cycle_mean(g, w)
-         @test c == [9, 11, 7]
-         @test λ == 0.9
-     end
-
-    w = [Inf  Inf    Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf   -0.06 Inf  Inf    Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf   -0.01 Inf  Inf    Inf
-         Inf   -0.19 Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
-         Inf   -0.02 Inf  Inf  Inf  Inf  Inf    Inf   -0.03 Inf  Inf    Inf
-         Inf   -0.19 Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
-         Inf   -0.02 Inf  Inf  Inf  Inf  Inf    Inf   -0.03 Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf  Inf    Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf  Inf    Inf    0.39 Inf
-         Inf  Inf    Inf  Inf  Inf  Inf   -0.09 Inf  Inf    Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf   -0.06 Inf  Inf    Inf  Inf    Inf
-         Inf  Inf    Inf  Inf  Inf  Inf  Inf    Inf   -0.01 Inf  Inf    Inf]
-
-    g2 = SimpleDiGraph(12)
-    add_edge!(g2, 1, 7)
-    add_edge!(g2, 2, 7)
-    add_edge!(g2, 3, 9)
-    add_edge!(g2, 4, 2)
-    add_edge!(g2, 4, 7)
-    add_edge!(g2, 5, 2)
-    add_edge!(g2, 5, 9)
-    add_edge!(g2, 6, 2)
-    add_edge!(g2, 6, 7)
-    add_edge!(g2, 7, 2)
-    add_edge!(g2, 7, 9)
-    add_edge!(g2, 9, 11)
-    add_edge!(g2, 10, 7)
-    add_edge!(g2, 11, 7)
-    add_edge!(g2, 12, 9)
-
-    for g in testdigraphs(g2)
+     @testset "simple digraphs" for g in testgraphs(g1)
         c, λ = karp_minimum_cycle_mean(g, w)
-        @test λ == -0.04
-        @test c == [2, 7]
-    end
+        @test c == [9, 11, 7]
+        @test λ == 0.9
+
+        c2, λ2 = karp_minimum_cycle_mean(g, w2)
+        @test λ2 == -0.04
+        @test c2 == [2, 7]
+     end
 
     # Tricky test case
     # Backward walk from 3 is good:
@@ -90,7 +72,7 @@
               Inf Inf Inf  0.
                1. Inf  0. Inf]
 
-    for g in testdigraphs(tricky)
+    @testset "tricky case" for g in testgraphs(tricky)
         c, λ = karp_minimum_cycle_mean(g, distmx)
         @test λ == 0.
         @test sort(c) == [3, 4]
@@ -107,7 +89,7 @@
     distmx = [0. Inf
               Inf -1]
 
-    for g in testdigraphs(multi)
+    @testset "multiple SCCs" for g in testgraphs(multi)
         c, λ = karp_minimum_cycle_mean(g, distmx)
         @test λ == -1.
         @test c == [2]
