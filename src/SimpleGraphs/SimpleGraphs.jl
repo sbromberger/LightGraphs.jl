@@ -12,7 +12,8 @@ import LightGraphs:
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
 
-    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
+    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted,
+    common_neighbors, intersect
 
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
@@ -33,8 +34,9 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     #smallgraphs
     smallgraph,
     # Euclidean graphs
-    euclidean_graph
-
+    euclidean_graph,
+    #overrides
+    common_neighbors, intersect
 
 """
     AbstractSimpleGraph
@@ -183,5 +185,6 @@ include("./generators/staticgraphs.jl")
 include("./generators/randgraphs.jl")
 include("./generators/euclideangraphs.jl")
 include("./generators/smallgraphs.jl")
+include("./overrides.jl")
 
 end # module

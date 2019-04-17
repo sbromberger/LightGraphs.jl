@@ -42,6 +42,23 @@ import Random
         @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
+    gt = SimpleGraph(5)
+    @test isempty(common_neighbors(gt, 1, 2))
+    add_edge!(gt, 1, 3)
+    add_edge!(gt, 2, 4)
+    @test isempty(common_neighbors(gt, 1, 2))
+
+    g5w = WheelGraph(5)
+    for g in testgraphs(g5w)
+        @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
+        @test eltype(common_neighbors(g, 1, 5)) == eltype(g)
+    end
+
+    g5wd = WheelDiGraph(5)
+    for g in testdigraphs(g5wd)
+        @test @inferred(common_neighbors(g, 1, 5)) == [2]
+    end
+
     gx = PathGraph(4)
     for g in testgraphs(gx)
         @test @inferred(vertices(g)) == 1:4

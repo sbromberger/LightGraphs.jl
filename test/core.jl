@@ -1,3 +1,12 @@
+import LightGraphs.outneighbors
+abstract type DummyAbstractGraph{T} <: AbstractGraph{T} end
+
+mutable struct NewDummyGraph{T} <: DummyAbstractGraph{T}
+    ASG::AbstractSimpleGraph{T}
+end
+
+outneighbors(g::NewDummyGraph, u::Integer) = outneighbors(g.ASG, u)
+
 @testset "Core" begin
     e2 = Edge(1, 3)
     e3 = Edge(1, 4)
@@ -54,17 +63,16 @@
         end
     end
 
-
     @testset "neighbor functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(neighbors(g, 2)) == [1, 3, 5]
             @test @inferred(all_neighbors(g, 2)) == [1, 3, 5]
-            @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
+            @test common_neighbors(NewDummyGraph(g), 1, 5) == [2, 4]
         end
         @testset "$g" for g in testgraphs(g5wd)
             @test @inferred(neighbors(g, 2)) == [3]
             @test Set(@inferred(all_neighbors(g, 2))) == Set([1, 3, 5])
-            @test @inferred(common_neighbors(g, 1, 5)) == [2]
+            @test common_neighbors(NewDummyGraph(g), 1, 5) == [2]
         end
     end
 

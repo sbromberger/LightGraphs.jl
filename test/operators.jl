@@ -1,3 +1,16 @@
+import LightGraphs.edges, LightGraphs.nv, LightGraphs.add_edge!
+
+abstract type DummyAbstractGraph{T} <: AbstractGraph{T} end
+
+mutable struct DummyGraphNew{T} <: DummyAbstractGraph{T}
+    SG::SimpleGraph{T}
+end
+
+edges(g::DummyGraphNew) = edges(g.SG)
+nv(g::DummyGraphNew) = nv(g.SG)
+add_edge!(g::DummyGraphNew, e) = add_edge!(g.SG, e)
+DummyGraphNew{T}(nvg::Integer) where T = DummyGraphNew{T}(SimpleGraph{T}(nvg))
+
 @testset "Operators" begin
     g3 = PathGraph(5)
     g4 = PathDiGraph(5)
@@ -15,11 +28,21 @@
             @test nv(gb) == 10
             @test ne(gb) == 8
         end
-
+    
         @testset "intersect" begin
             hp = PathGraph(2)
             h = Graph{T}(hp)
-            @test @inferred(intersect(g, h)) == h
+            #test for intersection of AbstractGraphs
+            y = intersect(DummyGraphNew(g), DummyGraphNew(h))
+            @test y.SG == h
+            #test for intersection SimpleGraphs
+            hp = copy(g)
+            g7 = CompleteGraph(T(7))
+            rem_edge!(hp, 1, 2)
+            @test intersect(hp, g7) == intersect(g7, hp) == hp
+            h = SimpleGraph{T}(8)
+            add_edge!(h, 1, 8)
+            @test ne(intersect(h, g7)) == 0
         end
 
         @testset "difference / symmetric difference" begin
