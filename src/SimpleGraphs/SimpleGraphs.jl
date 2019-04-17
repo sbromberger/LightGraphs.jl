@@ -85,10 +85,11 @@ function issubset(g::T, h::T) where T <: AbstractSimpleGraph
         u_nbrs_h = neighbors(h, u)
         p = 1
         len_u_nbrs_g > length(u_nbrs_h) && return false
-        for v in u_nbrs_h
+		(u_nbrs_g[1] < u_nbrs_h[1] || u_nbrs_g[end] > u_nbrs_h[end]) && return false
+        @inbounds for v in u_nbrs_h
             if v == u_nbrs_g[p]
-            p == len_u_nbrs_g && break
-            p += 1
+                p == len_u_nbrs_g && break
+                p += 1
             end
         end
         p == len_u_nbrs_g || return false
