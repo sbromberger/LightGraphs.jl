@@ -26,7 +26,7 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integ
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(SimpleGraph(nv, maxe - ne))
+    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne))
 
     rng = getRNG(seed)
     g = SimpleGraph(tnv)
@@ -63,7 +63,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Int
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(SimpleDiGraph{T}(nv, maxe - ne))
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne))
 
     rng = getRNG(seed)
     g = SimpleDiGraph(tnv)
@@ -110,6 +110,15 @@ probability `p`.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `seed=-1`: set the RNG seed.
+
+# Examples
+```jldoctest
+julia> erdos_renyi(10, 0.5)
+{10, 20} undirected simple Int64 graph
+
+julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
+{10, 49} directed simple Int64 graph
+```
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
     p >= 1 && return is_directed ? CompleteDiGraph(n) : CompleteGraph(n)
@@ -127,6 +136,15 @@ graph with `n` vertices and `ne` edges.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `seed=-1`: set the RNG seed.
+
+# Examples
+```jldoctest
+julia> erdos_renyi(10, 30)
+{10, 30} undirected simple Int64 graph
+
+julia> erdos_renyi(10, 30, is_directed=true, seed=123)
+{10, 30} directed simple Int64 graph
+```
 """
 function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-1)
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
@@ -148,6 +166,23 @@ from the expected values are likely.
 ### References
 - Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu and Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
+
+# Examples
+```jldoctest
+# 1)
+julia> g = expected_degree_graph([3, 1//2, 1//2, 1//2, 1//2])
+{5, 3} undirected simple Int64 graph
+
+julia> print(degree(g))
+[3, 0, 1, 1, 1]
+
+# 2)
+julia> g = expected_degree_graph([0.5, 0.5, 0.5], seed=123)
+{3, 1} undirected simple Int64 graph
+
+julia> print(degree(g))
+[1, 0, 1]
+```
 """
 function expected_degree_graph(ω::Vector{T}; seed::Int=-1) where T <: Real
     g = SimpleGraph(length(ω))
@@ -194,6 +229,15 @@ randomized per the model based on probability `β`.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `seed=-1`: set the RNG seed.
+
+## Examples
+```jldoctest
+julia> watts_strogatz(10, 4, 0.3)
+{10, 20} undirected simple Int64 graph
+
+julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
+{10, 20} directed simple Int8 graph
+```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
     @assert k < n / 2
@@ -293,6 +337,14 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
 - `seed=-1`: set the RNG seed.
+## Examples
+```jldoctest
+julia> barabasi_albert(50, 3)
+{50, 141} undirected simple Int64 graph
+
+julia> barabasi_albert(100, Int8(10), is_directed=true, complete=true, seed=123)
+{100, 990} directed simple Int8 graph
+```
 """
 barabasi_albert(n::Integer, k::Integer; keyargs...) =
 barabasi_albert(n, k, k; keyargs...)
@@ -310,6 +362,15 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
 - `seed=-1`: set the RNG seed.
+
+## Examples
+```jldoctest
+julia> barabasi_albert(10, 3, 2)
+{10, 14} undirected simple Int64 graph
+
+julia> barabasi_albert(100, Int8(10), 3, is_directed=true, seed=123)
+{100, 270} directed simple Int8 graph
+```
 """
 function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool=false, complete::Bool=false, seed::Int=-1)
     if complete
@@ -332,6 +393,16 @@ already present in the system by preferential attachment.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
+## Examples
+```jldoctest
+julia> g = CycleGraph(4)
+{4, 4} undirected simple Int64 graph
+
+julia> barabasi_albert!(g, 16, 3);
+
+julia> g
+{16, 40} undirected simple Int64 graph
+```
 """
 function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1)
     n0 = nv(g)
@@ -414,6 +485,20 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+## Examples
+```jldoctest
+julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1])
+{4, 5} undirected simple Int64 graph
+
+julia> edges(g) |> collect
+5-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 2 => 4
+```
 """
 function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
@@ -438,7 +523,7 @@ end
 """
     static_fitness_model(m, fitness_out, fitness_in)
 
-Generate a random graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
+Generate a random directed graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional with
 respect to ``i ∝ fitness\\_out`` and ``j ∝ fitness\\_in``.
 
@@ -450,6 +535,21 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+## Examples
+```jldoctest
+julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
+{4, 6} directed simple Int64 graph
+
+julia> edges(g) |> collect
+6-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 2 => 4
+ Edge 3 => 4
+```
 """
 function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T <: Real where S <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
@@ -698,6 +798,15 @@ with `n` vertices.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
+
+# Examples
+```jldoctest
+julia> random_tournament_digraph(5)
+{5, 10} directed simple Int64 graph
+
+julia> random_tournament_digraph(Int8(10), seed=123)
+{10, 45} directed simple Int8 graph
+```
 """
 function random_tournament_digraph(n::Integer; seed::Int=-1)
 
@@ -1018,6 +1127,15 @@ the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:
 ### References
 - http://graphstream-project.org/doc/Generators/Dorogovtsev-Mendes-generator/
 - https://arxiv.org/pdf/cond-mat/0106144.pdf#page=24
+
+# Examples
+```jldoctest
+julia> dorogovtsev_mendes(10)
+{10, 17} undirected simple Int64 graph
+
+julia> dorogovtsev_mendes(11, seed=123)
+{11, 19} undirected simple Int64 graph
+```
 """
 function dorogovtsev_mendes(n::Integer; seed::Int=-1)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
@@ -1054,6 +1172,15 @@ directional acyclic graph randomly being generated depends on the architecture
 of the original directed graph.
 
 DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
+
+# Examples
+```jldoctest
+julia> random_orientation_dag(CompleteGraph(10))
+{10, 45} directed simple Int64 graph
+
+julia> random_orientation_dag(StarGraph(Int8(10)), 123)
+{10, 9} directed simple Int8 graph
+```
 """
 function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
     nvg = length(g.fadjlist)

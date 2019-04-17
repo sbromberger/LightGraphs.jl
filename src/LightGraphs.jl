@@ -8,12 +8,9 @@ using Statistics: mean
 
 using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
-using Distributed: @distributed
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
-# import Markdown
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
-using SharedArrays: SharedMatrix, SharedVector, sdata
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 
@@ -76,7 +73,7 @@ diffusion, diffusion_rate,
 greedy_color,
 
 # connectivity
-connected_components, strongly_connected_components, weakly_connected_components,
+connected_components, strongly_connected_components, strongly_connected_components_kosaraju, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
@@ -89,10 +86,10 @@ simplecycles_limited_length,
 # maximum_adjacency_visit
 mincut, maximum_adjacency_visit,
 
-# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape
+# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
+spfa_shortest_paths,has_negative_edge_cycle_spfa,has_negative_edge_cycle, enumerate_paths,
+johnson_shortest_paths, floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
 yen_k_shortest_paths, desopo_pape_shortest_paths,
 
 # centrality
@@ -134,6 +131,9 @@ euclidean_graph,
 
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
+
+#steinertree
+steiner_tree,
 
 #biconnectivity and articulation points
 articulation, biconnected_components, bridges,
@@ -227,6 +227,7 @@ include("shortestpaths/johnson.jl")
 include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
+include("shortestpaths/spfa.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
@@ -247,6 +248,7 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("biconnectivity/bridge.jl")
