@@ -25,13 +25,11 @@ In the case of graphs that are not connected, a random spanning *forest* is retu
 - G: a graph
 - optional: r, index of a node to serve as root
 - maxiter: interrupt the algorithm for directed graphs after maxiter attempts. Default 50. Ignored for undirected graphs.
+- skip_test: On directed graphs that are periodic, the algorithm may get stuck into an infinite loop, so by default the algorithm tests that this won't happen. The test is expensive, however, so set skip_test to false if you know this won't happen (or if you want to take the risk). On *directed* graphs, the problem does not occur, and the test is skipped anyways. 
 
 ### Output 
 
-If the root is specified, returns the set of edges in the tree. If it isn't, returns a named tuple with 'edges': the set of edges and 'root': the root. 
-
-Interestingly, the root is a perfect sample from the stationary distribution of the random walk on the graph, see Wilson (1996). 
-
+If the root is specified, returns a tree, represented as a SimpleDiGraph. If it isn't, returns a named tuple with "tree": the tree and "root": the root. 
 
 ### Examples
 
@@ -41,8 +39,10 @@ The graph 1->2->3 has only one spanning tree (i.e. the graph itself)
 julia> G = PathDiGraph(3)
 {3, 2} directed simple Int64 graph
 
-julia> random_spanning_tree(G)
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 1 => 2, Edge 2 => 3], root = 3)
+julia> random_spanning_tree(G).tree |> edges |> collect
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
 ```
 
 Other graphs have several:
@@ -51,34 +51,31 @@ Other graphs have several:
 julia> G = CycleDiGraph(4)
 {4, 4} directed simple Int64 graph
 
-julia> random_spanning_tree(G)
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 2 => 3, Edge 3 => 4, Edge 4 => 1], roots = [1])
+julia> random_spanning_tree(G).tree |> edges |> collect
+3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 3 => 4
+ Edge 4 => 1
 
-julia> random_spanning_tree(G)
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 1 => 2, Edge 3 => 4, Edge 4 => 1], roots = [2])
-
-julia> random_spanning_tree(G)
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 2 => 3, Edge 3 => 4, Edge 4 => 1], roots = [1])
+julia> random_spanning_tree(G).tree |> edges |> collect
+3-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 4
 ```
 
-On graphs that are not connected, a forest is returned (note the multiple roots): 
+On graphs that are not connected, a forest is returned (ie., there will be multiple roots): 
 
 ```@example
 julia> G=blockdiag(CycleDiGraph(5),CycleDiGraph(3))
 {8, 8} directed simple Int64 graph
 
-julia> random_spanning_tree(G)
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 1 => 2, Edge 2 => 3, Edge 3 => 4, Edge 5 => 1, Edge 7 => 8, Edge 8 => 6], roots = [4, 6])
+julia> random_spanning_tree(G).tree |> connected_components
+2-element Array{Array{Int64,1},1}:
+ [1, 2, 3, 4, 5]
+ [6, 7, 8]      
 ```
 
-To get a representation of the tree as a graph, use SimpleDiGraph:
-```jldoctest
-julia> rt=random_spanning_tree(PathDiGraph(3))
-(edges = LightGraphs.SimpleGraphs.SimpleEdge{Int64}[Edge 1 => 2, Edge 2 => 3], roots = [3])
-
-julia> SimpleDiGraph(rt.edges)
-{3, 2} directed simple Int64 graph
-```
 
 
 
@@ -91,11 +88,11 @@ prim_mst, kruskal_mst
 Wilson, D. B. (1996). [Generating random spanning trees more quickly than the cover time](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.47.8598&rep=rep1&type=pdf). In STOC (Vol. 96, pp. 296-303).
 
 """
-function random_spanning_tree(G :: AG, r :: Integer) where AG <: AbstractGraph{T} where T
-    _random_spanning_tree(G,r)
+function random_spanning_tree(G :: AG, r :: Integer; skip_test=false) where AG <: AbstractGraph{T} where T
+    _random_spanning_tree(G,r;skip_test=skip_test)
 end
 
-function _random_spanning_tree(G :: AG, r :: Integer; nodes = vertices(G), force=false ) where AG <: AbstractGraph{T} where T
+function _random_spanning_tree(G :: AG, r :: Integer; nodes = vertices(G), force=false, skip_test=false ) where AG <: AbstractGraph{T} where T
     r in vertices(G) || throw(BoundsError("Root r must be one of the vertices"))
     r in nodes || throw(BoundsError("Root r must be one of the vertices in subset"))
     if (!force)
@@ -103,7 +100,7 @@ function _random_spanning_tree(G :: AG, r :: Integer; nodes = vertices(G), force
     end
     
     #in directed graphs, add an extra test for safety, otherwise we may get into inf. loops
-    if (is_directed(G))
+    if (!skip_test && is_directed(G))
         all(bfs_parents(reverse(G),r) .> 0) || throw(ArgumentError("No spanning tree at this root"))
     end
     n = nv(G)
@@ -126,10 +123,17 @@ function _random_spanning_tree(G :: AG, r :: Integer; nodes = vertices(G), force
             u = next[u]
         end
     end
-    return [Edge{T}(v,next[v]) for v in nodes if next[v] != 0]
+    return tree_from_next(next,nodes)
 end
 
-
+# Given a vector of pointers "next", make a tree of DiGraph type
+function tree_from_next(next :: Array{T,1}, nodes :: AbstractArray{T,1}) where T
+    tree = SimpleDiGraph{T}(length(next))
+    for v in nodes
+        next[v] > 0 && add_edge!(tree,v,next[v])
+    end
+    tree
+end
 
 # Corresponds to 'attempt' in Wilson's paper. The idea is to construct a random forest in an augmented graph. If the forest is actually a tree, then we have generated a spanning tree. See paper for details. 
 function attempt_tree(G :: AG, eps :: Real; nodes=1:nv(G)) where AG <: AbstractGraph{T} where T
@@ -171,7 +175,8 @@ function attempt_tree(G :: AG, eps :: Real; nodes=1:nv(G)) where AG <: AbstractG
         end
     end
     # If we got here it means we have a single tree, just return it
-    (edges =[Edge{T}(v,next[v]) for v in nodes if next[v] != 0],nroots=1,
+
+    (tree = tree_from_next(next,nodes),nroots=1,
      root=pop!(roots))
 end
 
@@ -179,14 +184,15 @@ end
 #maxiter is required by traitfn but pointless for undirected graphs
 @traitfn function random_spanning_tree(G::AG::(!IsDirected); maxiter=-1) where {T,AG <: AbstractGraph{T} }
     ccG = connected_components(G)
+    tree = SimpleDiGraph{T}(nv(G))
     edges = Array{SimpleEdge{T},1}()
     roots = zeros(T,length(ccG))
     for i in eachindex(ccG)
         r = rand(ccG[i])
-        append!(edges,_random_spanning_tree(G,r;nodes=ccG[i],force=true))
+        tree = union(tree,_random_spanning_tree(G,r;nodes=ccG[i],force=true))
         roots[i] = r
     end
-    (edges=edges,roots=roots)
+    (tree=tree,roots=roots)
 end
 
 
@@ -194,18 +200,18 @@ end
 
 @traitfn function random_spanning_tree(G::AG::(IsDirected); maxiter=50) where {T,AG <: AbstractGraph{T} }
     ccG = connected_components(G)
-    edges = Array{SimpleEdge{T},1}()
+    tree = SimpleDiGraph{T}(nv(G))
     roots = zeros(T,length(ccG))
     for i in eachindex(ccG)
         if (length(ccG[i])>1)
-            tree = _random_spanning_tree_dir(G;nodes=ccG[i],maxiter=maxiter)
-            append!(edges,tree.edges)
-            roots[i] = tree.root
+            res= _random_spanning_tree_dir(G;nodes=ccG[i],maxiter=maxiter)
+            tree = union(tree,res.tree)
+            roots[i] = res.root
         else
             roots[i] = ccG[i][1]
         end
     end
-    (edges=edges,roots=roots)
+    (tree=tree,roots=roots)
 end
 
 # implementation of Wilson's second algorithm, for directed graphs (outer loop)
@@ -217,7 +223,7 @@ function _random_spanning_tree_dir(G :: AG; nodes=1:nv(G),maxiter=50) where AG <
         eps = eps/2
         rf=attempt_tree(G,eps;nodes=nodes)
         if (rf.nroots == 1) #We've found a tree
-            return (edges=rf.edges,root=rf.root)
+            return (tree=rf.tree,root=rf.root)
         end
         niter += 1
     end

@@ -1,9 +1,6 @@
 #test that the result of random_spanning_tree is correct
 #ie. it should be a spanning forest, oriented towards the roots 
-function check_correctness(edges,roots)
-    F = SimpleDiGraph(edges)
-    nmissing = max(0,Int.(maximum(roots))-nv(F)) #there might be some missing nodes if they're alone in their components
-    add_vertices!(F,nmissing)
+function check_correctness(F,roots)
     @test !is_cyclic(F)
     @test all(outdegree(F,roots) .== 0)
     #test that all nodes lead to a root
@@ -33,18 +30,18 @@ end
     gg = Grid([4,4])
     for g in testgraphs(gg)
         rt = @inferred(random_spanning_tree(g))
-        check_correctness(rt.edges,rt.roots)
+        check_correctness(rt.tree,rt.roots)
     end
 
     #Try some small graphs
     gs = [CycleGraph(5), CycleDiGraph(4), WheelDiGraph(9),
           smallgraph(:bull), smallgraph(:tutte)]
-    map((g) -> (rt=random_spanning_tree(g);check_correctness(rt.edges,rt.roots)),gs)
+    map((g) -> (rt=random_spanning_tree(g);check_correctness(rt.tree,rt.roots)),gs)
 
     #The next graph is not connected, a forest with three roots should be returned
     G=reduce(blockdiag,[CycleDiGraph(5),CycleDiGraph(3),CycleDiGraph(2)])
     rt=random_spanning_tree(G)
-    check_correctness(rt.edges,rt.roots)
+    check_correctness(rt.tree,rt.roots)
     @test length(rt.roots)==3
 
     # What follows is a probabilistic test that checks that the algorithm samples from the correct distribution
@@ -58,7 +55,7 @@ end
     K = U*U';
     # The kernel of the DPP gives the inclusion probabilities: for instance K_ii is the probability that edge i is included in a UST
     # We compare theoretical to observed incl. probabilities 
-    AA = [adjacency_matrix(SimpleGraph(random_spanning_tree(gg).edges)) for i in 1:100000];
+    AA = [adjacency_matrix(SimpleGraph(random_spanning_tree(gg).tree)) for i in 1:100000];
     prob_incl = reduce(+,AA)./length(AA);
     pr = map((e) -> prob_incl[src(e),dst(e)],edges(gg));
     #Check that observed probabilities don't deviate too much 
