@@ -1,221 +1,182 @@
-abstract AbstractPathState
-# modified from http://stackoverflow.com/questions/25678112/insert-item-into-a-sorted-list-with-julia-with-and-without-duplicates
-# returns true if insert succeeded, false if it was a duplicate
-_insert_and_dedup!(v::Vector{Int}, x::Int) = isempty(splice!(v, searchsorted(v,x), x))
-
-"""A type representing a single edge between two vertices of a graph."""
-typealias Edge Pair{Int,Int}
-
-@deprecate rev(e::Edge) reverse(e)
-
-"""Return source of an edge."""
-src(e::Edge) = e.first
-"""Return destination of an edge."""
-dst(e::Edge) = e.second
-
- is_ordered(e::Edge) = src(e) <= dst(e)
-
-==(e1::Edge, e2::Edge) = (e1.first == e2.first && e1.second == e2.second)
-
-"""A type representing an undirected graph."""
-type Graph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-end
-
-"""A type representing a directed graph."""
-type DiGraph
-    vertices::UnitRange{Int}
-    ne::Int
-    fadjlist::Vector{Vector{Int}} # [src]: (dst, dst, dst)
-    badjlist::Vector{Vector{Int}} # [dst]: (src, src, src)
-end
-
-typealias SimpleGraph Union{Graph, DiGraph}
-
-
-"""Return the vertices of a graph."""
-vertices(g::SimpleGraph) = g.vertices
-
-"""Return an iterator to the edges of a graph.
-The returned iterator is valid for one pass over the edges, and is invalidated by changes to `g`.
 """
-edges(g::SimpleGraph) = EdgeIter(g)
+    AbstractPathState
 
-"""Returns the forward adjacency list of a graph.
-
-The Array, where each vertex the Array of destinations for each of the edges eminating from that vertex.
-This is equivalent to:
-
-    fadj = [Vector{Int}() for _ in vertices(g)]
-    for e in edges(g)
-        push!(fadj[src(e)], dst(e))
-    end
-    fadj
-
-For most graphs types this is pre-calculated.
-
-The optional second argument take the `v`th vertex adjacency list, that is:
-
-    fadj(g, v::Int) == fadj(g)[v]
-
-NOTE: returns a reference, not a copy. Do not modify result.
+An abstract type that provides information from shortest paths calculations.
 """
-fadj(g::SimpleGraph) = g.fadjlist
-fadj(g::SimpleGraph, v::Int) = g.fadjlist[v]
-
-"""Returns true if all of the vertices and edges of `g` are contained in `h`."""
-function issubset{T<:SimpleGraph}(g::T, h::T)
-    (gmin, gmax) = extrema(vertices(g))
-    (hmin, hmax) = extrema(vertices(h))
-    return (hmin <= gmin <= gmax <= hmax) && issubset(edges(g), edges(h))
-end
-
-
-"""Add `n` new vertices to the graph `g`. Returns true if all vertices
-were added successfully, false otherwise."""
-function add_vertices!(g::SimpleGraph, n::Integer)
-    added = true
-    for i = 1:n
-        added &= add_vertex!(g)
-    end
-    return added
-end
-
-"""Return true if the graph `g` has an edge from `u` to `v`."""
-has_edge(g::SimpleGraph, u::Int, v::Int) = has_edge(g, Edge(u, v))
+abstract type AbstractPathState end
 
 """
-    in_edges(g, v)
+    is_ordered(e)
 
-Returns an Array of the edges in `g` that arrive at vertex `v`.
-`v=dst(e)` for each returned edge `e`.
+Return true if the source vertex of edge `e` is less than or equal to
+the destination vertex.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = DiGraph(2);
+
+julia> add_edge!(g, 2, 1);
+
+julia> is_ordered(first(edges(g)))
+false
+```
 """
-in_edges(g::SimpleGraph, v::Int) = [Edge(x,v) for x in badj(g, v)]
-
-"""
-    out_edges(g, v)
-
-Returns an Array of the edges in `g` that depart from vertex `v`.
-`v = src(e)` for each returned edge `e`.
-"""
-out_edges(g::SimpleGraph, v::Int) = [Edge(v,x) for x in fadj(g,v)]
-
-
-"""Return true if `v` is a vertex of `g`."""
-has_vertex(g::SimpleGraph, v::Int) = v in vertices(g)
-
-"""
-    nv(g)
-
-The number of vertices in `g`.
-"""
-nv(g::SimpleGraph) = length(vertices(g))
-"""
-    ne(g)
-
-The number of edges in `g`.
-"""
-ne(g::SimpleGraph) = g.ne
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
-    add_edge!(g, u, v)
+    add_vertices!(g, n)
 
-Add a new edge to `g` from `u` to `v`.
-Will return false if add fails (e.g., if vertices are not in the graph); true otherwise.
+Add `n` new vertices to the graph `g`.
+Return the number of vertices that were added successfully.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph()
+{0, 0} undirected simple Int64 graph
+
+julia> add_vertices!(g, 2)
+2
+```
 """
-add_edge!(g::SimpleGraph, u::Int, v::Int) = add_edge!(g, Edge(u, v))
+add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
-    rem_edge!(g, u, v)
+    indegree(g[, v])
 
-Remove the edge from `u` to `v`.
+Return a vector corresponding to the number of edges which end at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 
-Returns false if edge removal fails (e.g., if edge does not exist); true otherwise.
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> indegree(g)
+3-element Array{Int64,1}:
+ 1
+ 0
+ 1
+```
 """
-rem_edge!(g::SimpleGraph, u::Int, v::Int) = rem_edge!(g, Edge(u, v))
+indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
+indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
 
 """
-    rem_vertex!(g, v)
+    outdegree(g[, v])
 
-Remove the vertex `v` from graph `g`.
-This operation has to be performed carefully if one keeps external data structures indexed by
-edges or vertices in the graph, since internally the removal is performed swapping the vertices `v`  and `n=nv(g)`,
-and removing the vertex `n` from the graph.
-After removal the vertices in the ` g` will be indexed by 1:n-1.
-This is an O(k^2) operation, where `k` is the max of the degrees of vertices `v` and `n`.
-Returns false if removal fails (e.g., if vertex is not in the graph); true otherwise.
+Return a vector corresponding to the number of edges which start at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> outdegree(g)
+3-element Array{Int64,1}:
+ 0
+ 1
+ 1
+```
 """
-function rem_vertex!(g::SimpleGraph, v::Int)
-    v in vertices(g) || return false
-    n = nv(g)
+outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
+outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
 
-    edgs = in_edges(g, v)
-    for e in edgs
-        rem_edge!(g, e)
-    end
-    neigs = copy(in_neighbors(g, n))
-    for i in neigs
-        rem_edge!(g, Edge(i, n))
-    end
-    if v != n
-        for i in neigs
-            add_edge!(g, Edge(i, v))
-        end
-    end
+"""
+    degree(g[, v])
 
-    if is_directed(g)
-        edgs = out_edges(g, v)
-        for e in edgs
-            rem_edge!(g, e)
-        end
-        neigs = copy(out_neighbors(g, n))
-        for i in neigs
-            rem_edge!(g, Edge(n, i))
-        end
-        if v != n
-            for i in neigs
-                add_edge!(g, Edge(v, i))
-            end
-        end
-    end
+Return a vector corresponding to the number of edges which start or end at each
+vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+For directed graphs, this value equals the incoming plus outgoing edges.
+For undirected graphs, it equals the connected edges.
 
-    g.vertices = 1:n-1
-    pop!(g.fadjlist)
-    if is_directed(g)
-        pop!(g.badjlist)
-    end
-    return true
-end
+# Examples
+```jldoctest
+julia> using LightGraphs
 
-"""Return the number of edges which start at vertex `v`."""
-indegree(g::SimpleGraph, v::Int) = length(badj(g,v))
-"""Return the number of edges which end at vertex `v`."""
-outdegree(g::SimpleGraph, v::Int) = length(fadj(g,v))
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> degree(g)
+3-element Array{Int64,1}:
+ 1
+ 1
+ 2
+```
+"""
+function degree end
+@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
+@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
+
+degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
+
+"""
+    Δout(g)
+
+Return the maximum [`outdegree`](@ref) of vertices in `g`.
+"""
+Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
+"""
+    δout(g)
+
+Return the minimum [`outdegree`](@ref) of vertices in `g`.
+"""
+δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
+
+"""
+    Δin(g)
+
+Return the maximum [`indegree`](@ref) of vertices in `g`.
+"""
+Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
+
+"""
+    δin(g)
+
+Return the minimum [`indegree`](ref) of vertices in `g`.
+"""
+δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
+
+"""
+    Δ(g)
+
+Return the maximum [`degree`](@ref) of vertices in `g`.
+"""
+Δ(g) = noallocextreme(degree, (>), typemin(Int), g)
+
+"""
+    δ(g)
+
+Return the minimum [`degree`](@ref) of vertices in `g`.
+"""
+δ(g) = noallocextreme(degree, (<), typemax(Int), g)
 
 
-indegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [indegree(g,x) for x in v]
-outdegree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [outdegree(g,x) for x in v]
-degree(g::SimpleGraph, v::AbstractArray{Int,1} = vertices(g)) = [degree(g,x) for x in v]
+"""
+    noallocextreme(f, comparison, initial, g)
 
-"Return the maxium `outdegree` of vertices in `g`."
-Δout(g) = noallocextreme(outdegree,(>), typemin(Int), g)
-"Return the minimum `outdegree` of vertices in `g`."
-δout(g) = noallocextreme(outdegree,(<), typemax(Int), g)
-"Return the maximum `indegree` of vertices in `g`."
-δin(g)  = noallocextreme(indegree,(<), typemax(Int), g)
-"Return the minimum `indegree` of vertices in `g`."
-Δin(g)  = noallocextreme(indegree,(>), typemin(Int), g)
-"Return the minimum `degree` of vertices in `g`."
-δ(g)    = noallocextreme(degree,(<), typemax(Int), g)
-"Return the maximum `degree` of vertices in `g`."
-Δ(g)    = noallocextreme(degree,(>), typemin(Int), g)
-
-"computes the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all"
+Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
+"""
 function noallocextreme(f, comparison, initial, g)
     value = initial
-    for i in 1:nv(g)
+    for i in vertices(g)
         funci = f(g, i)
         if comparison(funci, value)
             value = funci
@@ -225,39 +186,223 @@ function noallocextreme(f, comparison, initial, g)
 end
 
 """
-    degree_histogram(g)
+    degree_histogram(g, degfn=degree)
 
-Returns a `StatsBase.Histogram` of the degrees of vertices in `g`.
+Return a `Dict` with values representing the number of vertices that have degree
+represented by the key.
+
+Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
+overriding `degfn`.
 """
-degree_histogram(g::SimpleGraph) = fit(Histogram, degree(g))
+function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
+    hist = Dict{T,Int}()
+    for v in vertices(g)        # minimize allocations by
+        for d in degfn(g, v)    # iterating over vertices
+            hist[d] = get(hist, d, 0) + 1
+        end
+    end
+    return hist
+end
 
-"""Returns a list of all neighbors connected to vertex `v` by an incoming edge.
 
-NOTE: returns a reference, not a copy. Do not modify result.
 """
-in_neighbors(g::SimpleGraph, v::Int) = badj(g,v)
-"""Returns a list of all neighbors connected to vertex `v` by an outgoing edge.
+    neighbors(g, v)
 
-NOTE: returns a reference, not a copy. Do not modify result.
+Return a list of all neighbors reachable from vertex `v` in `g`.
+For directed graphs, the default is equivalent to [`outneighbors`](@ref);
+use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
+
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> neighbors(g, 1)
+0-element Array{Int64,1}
+
+julia> neighbors(g, 2)
+1-element Array{Int64,1}:
+ 3
+
+julia> neighbors(g, 3)
+1-element Array{Int64,1}:
+ 1
+```
 """
-out_neighbors(g::SimpleGraph, v::Int) = fadj(g,v)
+neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
-"""Returns a list of all neighbors of vertex `v` in `g`.
-
-For DiGraphs, this is equivalent to `out_neighbors(g, v)`.
-
-NOTE: returns a reference, not a copy. Do not modify result.
 """
-neighbors(g::SimpleGraph, v::Int) = out_neighbors(g, v)
+    all_neighbors(g, v)
 
-"Returns the neighbors common to vertices `u` and `v` in `g`."
-common_neighbors(g::SimpleGraph, u::Int, v::Int) = intersect(neighbors(g,u), neighbors(g,v))
+Return a list of all inbound and outbound neighbors of `v` in `g`.
+For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
+and [`inneighbors`](@ref).
 
-@deprecate has_self_loop has_self_loops
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
 
-"Returns true if `g` has any self loops."
+# Examples
+```jldoctest
+julia> using LightGraphs
 
-has_self_loops(g::SimpleGraph) = any(v->has_edge(g, v, v), vertices(g))
+julia> g = DiGraph(3);
 
-"Returns the number of self loops in `g`."
-num_self_loops(g::SimpleGraph) = sum(v->has_edge(g, v, v), vertices(g))
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> all_neighbors(g, 1)
+1-element Array{Int64,1}:
+ 3
+
+julia> all_neighbors(g, 2)
+1-element Array{Int64,1}:
+ 3
+
+julia> all_neighbors(g, 3)
+2-element Array{Int64,1}:
+ 1
+ 2
+ ```
+"""
+function all_neighbors end
+@traitfn all_neighbors(g::::IsDirected, v::Integer) =
+    union(outneighbors(g, v), inneighbors(g, v))
+@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
+    neighbors(g, v)
+
+
+"""
+    common_neighbors(g, u, v)
+
+Return the neighbors common to vertices `u` and `v` in `g`.
+
+### Implementation Notes
+Returns a reference, not a copy. Do not modify result.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(4);
+
+julia> add_edge!(g, 1, 2);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 4);
+
+julia> add_edge!(g, 4, 1);
+
+julia> add_edge!(g, 1, 3);
+
+julia> common_neighbors(g, 1, 3)
+2-element Array{Int64,1}:
+ 2
+ 4
+
+julia> common_neighbors(g, 1, 4)
+1-element Array{Int64,1}:
+ 3
+```
+"""
+common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
+    intersect(neighbors(g, u), neighbors(g, v))
+
+"""
+    has_self_loops(g)
+
+Return true if `g` has any self loops.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(2);
+
+julia> add_edge!(g, 1, 2);
+
+julia> has_self_loops(g)
+false
+
+julia> add_edge!(g, 1, 1);
+
+julia> has_self_loops(g)
+true
+```
+"""
+has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
+
+"""
+    num_self_loops(g)
+
+Return the number of self loops in `g`.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = SimpleGraph(2);
+
+julia> add_edge!(g, 1, 2);
+
+julia> num_self_loops(g)
+0
+
+julia> add_edge!(g, 1, 1);
+
+julia> num_self_loops(g)
+1
+```
+"""
+num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
+
+"""
+    density(g)
+
+Return the density of `g`.
+Density is defined as the ratio of the number of actual edges to the
+number of possible edges (``|V|×(|V|-1)`` for directed graphs and
+``\\frac{|V|×(|V|-1)}{2}`` for undirected graphs).
+"""
+function density end
+@traitfn density(g::::IsDirected) =
+ne(g) / (nv(g) * (nv(g) - 1))
+@traitfn density(g::::(!IsDirected)) =
+(2 * ne(g)) / (nv(g) * (nv(g) - 1))
+
+
+"""
+    squash(g)
+
+Return a copy of a graph with the smallest practical type that
+can accommodate all vertices.
+"""
+function squash(g::AbstractGraph)
+    gtype = is_directed(g) ? DiGraph : Graph
+    validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
+    nvg = nv(g)
+    for T in validtypes
+        nvg < typemax(T) && return gtype{T}(g)
+    end
+end
+
+"""
+    weights(g)
+
+Return the weights of the edges of a graph `g` as a matrix. Defaults
+to [`LightGraphs.DefaultDistance`](@ref).
+
+### Implementation Notes
+In general, referencing the weight of a nonexistent edge is undefined behavior. Do not rely on the `weights` matrix
+as a substitute for the graph's [`adjacency_matrix`](@ref).
+"""
+weights(g::AbstractGraph) = DefaultDistance(nv(g))

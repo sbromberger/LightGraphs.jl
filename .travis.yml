@@ -5,18 +5,17 @@ os:
 #  - osx
 
 julia:
-  - 0.5
-#  - nightly # commented out due to instability of 0.6 20160926 - sbromberger
+ - 1.1
+ - nightly
+ 
+allow_failures:
+ - julia: nightly
 
 notifications:
   email: false
 
-# uncomment the following lines to override the default test script
-script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("LightGraphs"); Pkg.test("LightGraphs"; coverage=true)'
-
 after_success:
-    - julia -e 'cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
-    - julia -e 'Pkg.add("Documenter")'
-    - julia -e 'cd(Pkg.dir("LightGraphs")); include(joinpath("docs", "make.jl"))'
+    - julia -e 'using Pkg; cd(Pkg.dir("LightGraphs")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+    - julia -e 'using Pkg; ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps)'
+    - julia -e 'using Pkg; cd(Pkg.dir("LightGraphs")); include(joinpath("docs", "make.jl"))'
+#    - export JULIA_NUM_THREADS=4; julia -e 'Pkg.add("PkgBenchmark"); using PkgBenchmark; benchmarkpkg("LightGraphs", promptoverwrite=false)'

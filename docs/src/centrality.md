@@ -6,13 +6,22 @@ Centrality measures implemented in *LightGraphs.jl* include the following:
 
 
 ```@index
-Order = [:type, :function]
 Pages   = ["centrality.md"]
 ```
 
+## Full docs
+
 ```@autodocs
 Modules = [LightGraphs]
-Pages   = ["centrality/betweenness.jl", "centrality/closeness.jl","centrality/degree.jl"
-            , "centrality/katz.jl","centrality/pagerank.jl"]
+Pages   = [
+    "centrality/betweenness.jl",
+    "centrality/closeness.jl",
+    "centrality/degree.jl",
+    "centrality/eigenvector.jl",
+    "centrality/katz.jl",
+    "centrality/pagerank.jl",
+    "centrality/stress.jl",
+    "centrality/radiality.jl"
+]
 Private = false
 ```

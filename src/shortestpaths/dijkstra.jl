@@ -1,91 +1,144 @@
-abstract AbstractDijkstraState<:AbstractPathState
-
-immutable DijkstraHeapEntry{T}
-    vertex::Int
-    dist::T
-end
-
-isless(e1::DijkstraHeapEntry, e2::DijkstraHeapEntry) = e1.dist < e2.dist
-
-type DijkstraState{T}<: AbstractDijkstraState
-    parents::Vector{Int}
-    dists::Vector{T}
-    predecessors::Vector{Vector{Int}}
-    pathcounts::Vector{Int}
-end
-
-"""Performs [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between a source vertex `s` and all
-other nodes. Returns a `DijkstraState` that contains various traversal
-information (see below).
-
-With `allpaths=true`, returns a `DijkstraState` that keeps track of all
-predecessors of a given vertex (see below).
 """
-function dijkstra_shortest_paths{T}(
-    g::SimpleGraph,
-    srcs::Vector{Int},
-    distmx::AbstractArray{T, 2}=DefaultDistance();
-    allpaths=false
-)
+    struct DijkstraState{T, U}
+
+An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
+"""
+struct DijkstraState{T <: Real,U <: Integer} <: AbstractPathState
+    parents::Vector{U}
+    dists::Vector{T}
+    predecessors::Vector{Vector{U}}
+    pathcounts::Vector{UInt64}
+    closest_vertices::Vector{U}
+end
+
+"""
+    dijkstra_shortest_paths(g, srcs, distmx=weights(g));
+
+Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+on a graph, computing shortest distances between `srcs` and all other vertices.
+Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal information.
+
+### Optional Arguments
+- `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
+predecessors of a given vertex.
+
+### Performance
+If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
+That is, assuming `D` is the sparse distance matrix:
+```
+D = transpose(sparse(transpose(D)))
+```
+Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
+when multiple calls to `dijkstra_shortest_paths` with the distance matrix are planned.
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> ds = dijkstra_shortest_paths(CycleGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 2
+
+julia> ds = dijkstra_shortest_paths(PathGraph(5), 2);
+
+julia> ds.dists
+5-element Array{Int64,1}:
+ 1
+ 0
+ 1
+ 2
+ 3
+```
+"""
+function dijkstra_shortest_paths(g::AbstractGraph,
+    srcs::Vector{U},
+    distmx::AbstractMatrix{T}=weights(g);
+    allpaths=false,
+    trackvertices=false
+    ) where T <: Real where U <: Integer
+
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
-    parents = zeros(Int, nvg)
-    preds = fill(Vector{Int}(),nvg)
+    parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
-    pathcounts = zeros(Int, nvg)
-    H = Vector{DijkstraHeapEntry{T}}()  # this should be Vector{T}() in 0.4, I think.
-    dists[srcs] = zero(T)
-    pathcounts[srcs] = 1
 
-    sizehint!(H, nvg)
+    pathcounts = zeros(UInt64, nvg)
+    preds = fill(Vector{U}(), nvg)
+    H = PriorityQueue{U,T}()
+    # fill creates only one array.
 
-    for v in srcs
-        heappush!(H, DijkstraHeapEntry{T}(v, dists[v]))
+    for src in srcs
+        dists[src] = zero(T)
+        visited[src] = true
+        pathcounts[src] = 1
+        H[src] = zero(T)
     end
 
+    closest_vertices = Vector{U}()  # Maintains vertices in order of distances from source
+    sizehint!(closest_vertices, nvg)
+
     while !isempty(H)
-        hentry = heappop!(H)
-        # info("Popped H - got $(hentry.vertex)")
-        u = hentry.vertex
-        for v in out_neighbors(g,u)
-            alt = (dists[u] == typemax(T))? typemax(T) : dists[u] + distmx[u,v]
+        u = dequeue!(H)
+
+        if trackvertices
+            push!(closest_vertices, u)
+        end
+
+        d = dists[u] # Cannot be typemax if `u` is in the queue
+        for v in outneighbors(g, u)
+            alt = d + distmx[u, v]
 
             if !visited[v]
+                visited[v] = true
                 dists[v] = alt
                 parents[v] = u
+
                 pathcounts[v] += pathcounts[u]
-                visited[v] = true
                 if allpaths
                     preds[v] = [u;]
                 end
-                heappush!(H, DijkstraHeapEntry{T}(v, alt))
-                # info("Pushed $v")
-            else
-                if alt < dists[v]
-                    dists[v] = alt
-                    parents[v] = u
-                    heappush!(H, DijkstraHeapEntry{T}(v, alt))
+                H[v] = alt
+            elseif alt < dists[v]
+                dists[v] = alt
+                parents[v] = u
+                #615
+                pathcounts[v] = pathcounts[u]
+                if allpaths
+                    resize!(preds[v], 1)
+                    preds[v][1] = u
                 end
-                if alt == dists[v]
-                    pathcounts[v] += pathcounts[u]
-                    if allpaths
-                        push!(preds[v], u)
-                    end
+                H[v] = alt
+            elseif alt == dists[v]
+                pathcounts[v] += pathcounts[u]
+                if allpaths
+                    push!(preds[v], u)
                 end
             end
         end
     end
 
-    dists[srcs] = zero(T)
-    pathcounts[srcs] = 1
-    parents[srcs] = 0
-    for src in srcs
-        preds[src] = []
+    if trackvertices
+        for s in vertices(g)
+            if !visited[s]
+                push!(closest_vertices, s)
+            end
+        end
     end
 
-    return DijkstraState{T}(parents, dists, preds, pathcounts)
+    for src in srcs
+        pathcounts[src] = 1
+        parents[src] = 0
+        empty!(preds[src])
+    end
+
+    return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths{T}(g::SimpleGraph, src::Int, distmx::AbstractArray{T,2}=DefaultDistance(); allpaths=false) =
-  dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths)
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false) =
+dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)

@@ -1,111 +1,121 @@
-NI(x...) = error("This function is not implemented.")
-
-@deprecate readgraph load
-
-# filemap is filled in the format specific source files
-const filemap = Dict{Symbol, Tuple{Function, Function, Function, Function}}()
-        # :gml        => (loadgml, loadgml_mult, savegml, savegml_mult)
-        # :graphml    => (loadgraphml, loadgraphml_mult, savegraphml, savegraphml_mult)
-        # :md         => (loadmatrixdepot, NOTIMPLEMENTED, NOTIMPLEMENTED, NOTIMPLEMENTED)
-
-# load a single graph by name
+abstract type AbstractGraphFormat end
 
 """
-    loadgraph(file, t=:lg)
+    loadgraph(file, gname="graph", format=LGFormat())
 
-Reads a graph from  `file` in the format `t`.
+Read a graph named `gname` from `file` in the format `format`.
 
-Supported formats are `:lg, :gml, :dot, :graphml, :gexf, :net, :jld`.
+### Implementation Notes
+`gname` is graph-format dependent and is only used if the file contains
+multiple graphs; if the file format does not support multiple graphs, this
+value is ignored. The default value may change in the future.
 """
-function loadgraph(fn::String, x...)
-    GZip.open(fn,"r") do io
-        loadgraph(io, x...)
+function loadgraph(fn::AbstractString, gname::AbstractString, format::AbstractGraphFormat)
+    open(fn, "r") do io
+        loadgraph(auto_decompress(io), gname, format)
+    end
+end
+loadgraph(fn::AbstractString) = loadgraph(fn, "graph", LGFormat())
+loadgraph(fn::AbstractString, gname::AbstractString) = loadgraph(fn, gname, LGFormat())
+loadgraph(fn::AbstractString, format::AbstractGraphFormat) = loadgraph(fn, "graph", format)
+
+
+"""
+    loadgraphs(file, format=LGFormat())
+
+Load multiple graphs from `file` in the format `format`.
+Return a dictionary mapping graph name to graph.
+
+### Implementation Notes
+For unnamed graphs the default name \"graph\" will be used. This default
+may change in the future.
+"""
+function loadgraphs(fn::AbstractString, format::AbstractGraphFormat)
+    open(fn, "r") do io
+        loadgraphs(auto_decompress(io), format)
     end
 end
 
-function loadgraph(io::IO, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    d = filemap[t][2](io)
-    return first(d)[2]
+loadgraphs(fn::AbstractString) = loadgraphs(fn, LGFormat())
+
+function auto_decompress(io::IO)
+    format = :raw
+    mark(io)
+    if !eof(io)
+        b1 = read(io, UInt8)
+        if !eof(io)
+            b2 = read(io, UInt8)
+            if (b1, b2) == (0x1f, 0x8b)  # check magic bytes
+                format = :gzip
+            end
+        end
+    end
+    reset(io)
+    if format == :gzip
+        io = InflateGzipStream(io)
+    end
+    return io
 end
 
 
 """
-    load(file, name, t=:lg)
+    savegraph(file, g, gname="graph", format=LGFormat)
 
-Loads a graph with name `name` from `file` in format `t`.
+Saves a graph `g` with name `gname` to `file` in the format `format`.
+Return the number of graphs written.
 
-Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
+### Implementation Notes
+The default graph name assigned to `gname` may change in the future.
 """
-function load(io::IO, gname::String, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][1](io, gname)
-end
-
-"""
-    load(file, t=:lg)
-
-Loads multiple graphs from  `file` in the format `t`. Returns a dictionary
-mapping graph name to graph.
-
-For unnamed graphs the default names \"graph\" and \"digraph\" will be used.
-"""
-
-function load(io::IO, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][2](io)
-end
-
-# load from a file
-function load(fn::String, x...)
-    GZip.open(fn,"r") do io
-        load(io, x...)
+function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
+        format::AbstractGraphFormat; compress=nothing
+    )
+    if compress !== nothing
+        if !compress
+            @info("Note: the `compress` keyword is no longer supported in LightGraphs. Saving uncompressed.") 
+        else
+            Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
+        end
+    end
+    io = open(fn, "w")
+    try
+        return savegraph(io, g, gname, format)
+    catch
+        rethrow()
+    finally
+        close(io)
     end
 end
 
+# without graph name
+savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=nothing) =
+    savegraph(fn, g, "graph", format, compress=compress)
+
+# without format - default to LGFormat()
+savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=nothing) = savegraph(fn, g, "graph", LGFormat(), compress=compress)
 
 """
-Save a graph to file. See [`save`](@ref).
+    savegraph(file, g, d, format=LGFormat)
+
+Save a dictionary of `graphname => graph` to `file` in the format `format`.
+Return the number of graphs written.
+
+### Implementation Notes
+Will only work if the file format supports multiple graph types.
 """
-savegraph(f, g::SimpleGraph, x...; kws...) = save(f, g::SimpleGraph, x...; kws...)
-
-"""
-    save(file, g, t=:lg)
-    save(file, g, name, t=:lg)
-    save(file, dict, t=:lg)
-
-Saves a graph `g` with name `name` to `file` in the format `t`. If `name` is not given
-the default names \"graph\" and \"digraph\" will be used.
-
-Currently supported formats are `:lg, :gml, :graphml, :gexf, :dot, :net`.
-
-For some graph formats, multiple graphs in a  `dict` `"name"=>g` can be saved in the same file.
-
-Returns the number of graphs written.
-"""
-function save(io::IO, g::SimpleGraph, gname::String, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][3](io, g, gname)
-end
-
-# save a single graph without name
-save(io::IO, g::Graph, t::Symbol=:lg) = save(io, g, "graph", t)
-save(io::IO, g::DiGraph, t::Symbol=:lg) = save(io, g, "digraph", t)
-
-# save a dictionary of graphs {"name" => graph}
-function save{T<:String}(io::IO, d::Dict{T, SimpleGraph}, t::Symbol=:lg)
-    t in keys(filemap) || error("Please select a supported graph format: one of $(keys(filemap))")
-    return filemap[t][4](io, d)
-end
-
-# save to a file
-function save(fn::String, x...; compress::Bool=false)
-    if compress
-        io = GZip.open(fn,"w")
-    else
-        io = open(fn,"w")
+function savegraph(fn::AbstractString, d::Dict{T,U},
+    format::AbstractGraphFormat; compress=nothing) where T <: AbstractString where U <: AbstractGraph
+    compress === nothing ||
+    Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
+        io = open(fn, "w")
+    
+    try
+        return savegraph(io, d, format)
+    catch
+        rethrow()
+    finally
+        close(io)
     end
-    retval = save(io, x...)
-    close(io)
-    return retval
 end
+
+savegraph(fn::AbstractString, d::Dict) = savegraph(fn, d, LGFormat())
