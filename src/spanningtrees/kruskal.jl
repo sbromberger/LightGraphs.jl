@@ -10,18 +10,32 @@ undirected graph `g` with optional distance matrix `distmx` using [Kruskal's alg
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function kruskal_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, U, AG <: AbstractGraph{U}}
+    distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, AG <: AbstractGraph}
 
     connected_vs = IntDisjointSets(nv(g))
 
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nv(g) - 1)
 
-    weights = Vector{T}()
-    sizehint!(weights, ne(g))
-    edge_list = collect(edges(g))
-    for e in edge_list
-        push!(weights, distmx[src(e), dst(e)])
+    weights = Vector{T}(undef, ne(g))
+    edge_list = Vector{edgetype(g)}(undef, ne(g))
+
+    if typeof(g) <: SimpleGraph
+        i = 1
+        @inbounds for u in vertices(g)
+            for v in neighbors(g, u)
+                v < u && continue
+                edge_list[i] = LightGraphs.SimpleGraphs.SimpleEdge(u, v)
+                weights[i] = distmx[u, v]
+                i += 1
+            end
+        end
+    else
+        @inbounds for (i, e) in enumerate(edges(g))
+            edge_list[i] = e
+            weights[i] = distmx[src(e), dst(e)]
+            i += 1
+        end
     end
 
     for e in edge_list[sortperm(weights; rev=!minimize)]
@@ -34,4 +48,3 @@ function kruskal_mst end
 
     return mst
 end
-
