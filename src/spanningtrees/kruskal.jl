@@ -34,7 +34,6 @@ function kruskal_mst end
         @inbounds for (i, e) in enumerate(edges(g))
             edge_list[i] = e
             weights[i] = distmx[src(e), dst(e)]
-            i += 1
         end
     end
 
