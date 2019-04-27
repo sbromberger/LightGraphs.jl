@@ -3,6 +3,7 @@ module SimpleGraphs
 using SparseArrays
 using LinearAlgebra
 using LightGraphs
+using SimpleTraits
 
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
