@@ -3,22 +3,17 @@
 
 Return an Ear decomposition of the graph by using s as source for DFS Tree.
 
-An ear of an undirected unweighted connected graph `G` is a path `P` where
-the two endpoints of the path may coincide (i.e., form a cycle), but where
-otherwise no repetition of edges or vertices is allowed, so every internal
-vertex of `P` has degree two in `P`.
+An ear of an undirected graph `G` is a path `P` in which no edges or vertices
+are repeated except when endpoints are the same i.e forms a cycle.
 
-An ear decomposition of an undirected graph `G` is a partition of its
-set of edges into a sequence of ears, such that the one or two endpoints
-of each ear belong to earlier ears in the sequence and such that the
-internal vertices of each ear do not belong to any earlier ear.
+Ear Decomposition: Partition the edge set of undirected graph `G` into a
+sequence of paths or cycles(ears), such that only the end vertices of each path
+are present in earlier paths.
 
 For more information, see the 
 [Ear Decomposition](https://en.wikipedia.org/wiki/Ear_decomposition)
 
-It will throw an error if input graph is directed/disconnected graph.
-and return ear_decomposition of connected components if graph is not
-connected.
+It will throw an error if the input graph is a directed graph.
 
 OUTPUT:
 - A nested array(list) representing the cycles and chains of the ear
@@ -69,7 +64,7 @@ doi:10.1016/j.ipl.2013.01.016.
 """
 
 function ear_decomposition end
-@traitfn function ear_decomposition(g::AG::(!IsDirected), s::Integer) where {T, AG<:AbstractGraph{T}}
+@traitfn function ear_decomposition(g::AG::(!IsDirected), s::Int64=1) where {T, AG<:AbstractGraph{T}}
 
     # List to store the order in which dfs visits vertices.
     dfs_order = Vector{T}()
@@ -92,33 +87,27 @@ function ear_decomposition end
     chains = Vector{Vector{T}}()
 
     # Construct depth-first search tree from source s.
-    S = Vector{T}([s])
-
-    nodes = Vector{T}()
-    push!(nodes, s)
-    for u in vertices(g)
-        push!(nodes, u)
-    end
+    S = T[s]
 
     # Perform ear decomposition on each connected component of input graph.
-    for v in nodes
+    for v in Base.Iterators.flatten(((s,), vertices(g)))
         if !(seen[v])
             # Start the depth first search from first vertex
             # mark source vertex s as seen
             seen[v] = true
 
             # Initialize S and dfs_order for every new DFS_Tree
-            S = Vector{T}([v])
+            S = T[v]
             dfs_order = T[]
             parents[v] = v
             push!(dfs_order, v)
 
             while !isempty(S)
                 v = S[end]
-                u = 0
-                for n in neighbors(g, v)
-                    if !seen[n]
-                        u = n
+                u = T(0)
+                for neighbor in neighbors(g, v)
+                    if !seen[neighbor]
+                        u = neighbor
                         push!(dfs_order, u)
                         break
                     end
@@ -142,7 +131,7 @@ function ear_decomposition end
                 for neighbor in neighbors(g, u)
                     if (value[u] < value[neighbor] && u != parents[neighbor])
 
-                        # Make the firt end of non-tree edge visited
+                        # Make the first end of non-tree edge visited
                         traversed[u] = true
                         chain = [u]
 
