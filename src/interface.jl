@@ -1,4 +1,4 @@
-# This file contans the common interface for LightGraphs.
+# This file contains the common interface for LightGraphs.
 # TODO 0.7: reevaluate use of errors here.
 
 _NI(m) = error("Not implemented: $m")
