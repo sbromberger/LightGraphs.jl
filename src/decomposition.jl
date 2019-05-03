@@ -64,7 +64,10 @@ doi:10.1016/j.ipl.2013.01.016.
 """
 
 function ear_decomposition end
-@traitfn function ear_decomposition(g::AG::(!IsDirected), s::Int64=1) where {T, AG<:AbstractGraph{T}}
+@traitfn function ear_decomposition(g::AG::(!IsDirected), s::Integer=1) where {T, AG<:AbstractGraph{T}}
+
+    # Convert type of s to vertex of type `T`
+    s = convert(typeof(T(0)), s)
 
     # List to store the order in which dfs visits vertices.
     dfs_order = Vector{T}()

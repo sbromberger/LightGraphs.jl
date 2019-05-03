@@ -32,4 +32,31 @@
         expected_results = [[5, 7, 6, 5], [5, 8, 7], [1, 4, 3, 2, 1],[2, 4]]
         @test ear_d4 == expected_results
 
+        # test for null graph
+        g5 = SimpleGraph(2)
+        ear_d5 = @inferred(ear_decomposition(g5))
+        expected_results = []
+        @test ear_d5 == expected_results
+
+        # test for a graph with single edge
+        g5 = SimpleGraph(2)
+        add_edge!(g5, (1, 2))
+        ear_d6 = @inferred(ear_decomposition(g5))
+        expected_results = []
+        @test ear_d6 == expected_results
+
+        # test for a graph with loops, i.e all loops are ignored
+        add_edge!(g5, (1, 1))
+        ear_d7 = @inferred(ear_decomposition(g5))
+        expected_results = []
+        @test ear_d7 == expected_results
+
+        # test for a graph of type Int8
+        g6 = SimpleGraph(Int8(8))
+        for e in elist
+            add_edge!(g6, Int8(e[1]), Int8(e[2]))
+        end
+        ear_d8 = @inferred(ear_decomposition(g6, 2))
+        expected_results =  [Int8[2, 3, 4, 1, 2], Int8[2, 4], Int8[5, 7, 6, 5], Int8[5, 8, 7]]
+        @test ear_d8 == expected_results
 end
