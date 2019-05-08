@@ -2,61 +2,66 @@
 # TODO - weighted, separate unweighted, edge betweenness
 
 
-"""
-    betweenness_centrality(g[, vs])
-    betweenness_centrality(g, k)
+doc"""
+    betweenness_centrality(g, k=0; normalize=true, endpoints=false)
 
-Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
-of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
-vertices. Return a vector representing the centrality calculated for each node in `g`.
 
-### Optional Arguments
-- `normalize=true`: If true, normalize the betweenness values by the
-total number of possible distinct paths between all pairs in the graphs.
-For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
-and for a directed graph, ``{(|V|-1)(|V|-2)}``.
-- `endpoints=false`: If true, include endpoints in the shortest path count.
+Calculates the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of
+the graph `g`, or, optionally, of a random subset of `k` vertices. Can
+optionally include endpoints in the calculations. Normalization is enabled by
+default.
+
 Betweenness centrality is defined as:
-``
-bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
-\\frac{\\sigma_{st}(v)}{\\sigma_{st}}
-``.
 
-### References
-- Brandes 2001 & Brandes 2008
+$bc(v) = \frac{1}{\mathcal{N}} \sum_{s \neq t \neq v}
+        \frac{\sigma_{st}(v)}{\sigma_{st}}$.
 
-# Examples
-```jldoctest
-julia> using LightGraphs
+ **Parameters**
 
-julia> betweenness_centrality(StarGraph(3))
-3-element Array{Float64,1}:
- 1.0
- 0.0
- 0.0
+g: SimpleGraph
+    A Graph, directed or undirected.
 
-julia> betweenness_centrality(PathGraph(4))
-4-element Array{Float64,1}:
- 0.0
- 0.6666666666666666
- 0.6666666666666666
- 0.0
-```
+k: Integer, optional
+    Use `k` nodes sample to estimate the betweenness centrality. If none,
+    betweenness centrality is computed using the `n` nodes in the graph.
+
+normalize: bool, optional
+    If true, the betweenness values are normalized by the total number
+    of possible distinct paths between all pairs in the graphs. For an undirected graph,
+    this number if `((n-1)*(n-2))/2` and for a directed graph, `(n-1)*(n-2)`
+    where `n` is the number of nodes in the graph.
+
+endpoints: bool, optional
+    If true, endpoints are included in the shortest path count.
+
+**Returns**
+
+betweenness: Array{Float64}
+    Betweenness centrality value per node id.
+
+
+**References**
+
+[1] Brandes 2001 & Brandes 2008
 """
-function betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g);
+function betweenness_centrality(
+    g::SimpleGraph,
+    k::Integer=0;
     normalize=true,
     endpoints=false)
 
     n_v = nv(g)
-    k = length(vs)
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
-    for s in vs
-        if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+    if k == 0
+        nodes = 1:n_v
+    else
+        nodes = sample!([1:n_v;], k)   #112
+    end
+    for s in nodes
+        if degree(g,s) > 0  # this might be 1?
+            state = dijkstra_shortest_paths(g, s; allpaths=true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -66,22 +71,21 @@ function betweenness_centrality(g::AbstractGraph,
     end
 
     _rescale!(betweenness,
-    n_v,
-    normalize,
-    isdir,
-    k)
+              n_v,
+              normalize,
+              isdir,
+              k)
 
     return betweenness
 end
 
-betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
 
-
-function _accumulate_basic!(betweenness::Vector{Float64},
+function _accumulate_basic!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
-    g::AbstractGraph,
-    si::Integer)
+    g::SimpleGraph,
+    si::Integer
+    )
 
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(n_v)
@@ -90,8 +94,8 @@ function _accumulate_basic!(betweenness::Vector{Float64},
 
     # make sure the source index has no parents.
     P[si] = []
-    # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(state.closest_vertices) #Replaced sortperm with this
+    # we need to order the source nodes by decreasing distance for this to work.
+    S = sortperm(state.dists, rev=true)
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
         for v in P[w]
@@ -103,22 +107,25 @@ function _accumulate_basic!(betweenness::Vector{Float64},
             betweenness[w] += δ[w]
         end
     end
-    return nothing
 end
 
-function _accumulate_endpoints!(betweenness::Vector{Float64},
+
+
+function _accumulate_endpoints!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
-    g::AbstractGraph,
-    si::Integer)
+    g::SimpleGraph,
+    si::Integer
+    )
 
     n_v = nv(g) # this is the ttl number of vertices
     δ = zeros(n_v)
     σ = state.pathcounts
     P = state.predecessors
-    v1 = collect(Base.OneTo(n_v))
+    v1 = [1:n_v;]
     v2 = state.dists
-    S = reverse(state.closest_vertices)
-    s = vertices(g)[si]
+    S = sortperm(state.dists, rev=true)
+    s = g.vertices[si]
     betweenness[s] += length(S) - 1    # 289
 
     for w in S
@@ -130,10 +137,9 @@ function _accumulate_endpoints!(betweenness::Vector{Float64},
             betweenness[w] += (δ[w] + 1)
         end
     end
-    return nothing
 end
 
-function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Integer)
+function _rescale!(betweenness::Vector{Float64}, n::Int, normalize::Bool, directed::Bool, k::Int)
     if normalize
         if n <= 2
             do_scale = false
@@ -153,8 +159,8 @@ function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, di
         if k > 0
             scale = scale * n / k
         end
-        betweenness .*= scale
-
+        for v = 1:length(betweenness)
+            betweenness[v] *= scale
+        end
     end
-    return nothing
 end

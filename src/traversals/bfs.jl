@@ -1,172 +1,282 @@
-### DEVELOPERS NOTE: BFS optimization experiments are typically
-### prototyped in gdistances!, since it's one of the simplest
-### BFS implementations.
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
 
-"""
-    tree(parents)
+# Breadth-first search / traversal
 
-Convert a parents array into a directed graph.
+#################################################
+#
+#  Breadth-first visit
+#
+#################################################
 """
-function tree(parents::AbstractVector{T}) where T <: Integer
-    n = T(length(parents))
-    t = DiGraph{T}(n)
-    for (v, u) in enumerate(parents)
-        if u > zero(T)  && u != v
-            add_edge!(t, u, v)
+**Conventions in Breadth First Search and Depth First Search**
+VertexColorMap :
+- color == 0    => unseen
+- color < 0     => examined but not closed
+- color > 0     => examined and closed
+
+EdgeColorMap :
+- color == 0    => unseen
+- color == 1     => examined
+"""
+
+type BreadthFirst <: SimpleGraphVisitAlgorithm
+end
+
+function breadth_first_visit_impl!(
+    graph::SimpleGraph,                 # the graph
+    queue::Vector{Int},                 # an (initialized) queue that stores the active vertices
+    vertexcolormap::AbstractVertexMap,   # an (initialized) color-map to indicate status of vertices (-1=unseen, otherwise distance from root)
+    edgecolormap::AbstractEdgeMap,        # an (initialized) color-map to indicate status of edges
+    visitor::SimpleGraphVisitor,            # the visitor
+    dir::Symbol)                        # direction [:in,:out]
+
+    fneig = dir == :out ? out_neighbors : in_neighbors
+    while !isempty(queue)
+        u = shift!(queue)
+        open_vertex!(visitor, u)
+        u_color = vertexcolormap[u]
+
+        for v in fneig(graph, u)
+            v_color = get(vertexcolormap, v, 0)
+            v_edge = Edge(u,v)
+            e_color = get(edgecolormap, v_edge, 0)
+            examine_neighbor!(visitor, u, v, u_color, v_color, e_color) || return
+            edgecolormap[v_edge] = 1
+            if v_color == 0
+                vertexcolormap[v] = u_color - 1
+                discover_vertex!(visitor, v) || return
+                push!(queue, v)
+            end
+        end
+        close_vertex!(visitor, u)
+        vertexcolormap[u] *= -1
+    end
+end
+
+function traverse_graph!(
+    graph::SimpleGraph,
+    alg::BreadthFirst,
+    source,
+    visitor::SimpleGraphVisitor;
+    vertexcolormap::AbstractVertexMap = Dict{Int, Int}(),
+    edgecolormap::AbstractEdgeMap = DummyEdgeMap(),
+    queue = Vector{Int}(),
+    dir = :out)
+
+    for s in source
+        vertexcolormap[s] = -1
+        discover_vertex!(visitor, s) || return
+        push!(queue, s)
+    end
+
+    breadth_first_visit_impl!(graph, queue, vertexcolormap, edgecolormap
+            , visitor, dir)
+end
+
+
+#################################################
+#
+#  Useful applications
+#
+#################################################
+
+
+###########################################
+# Constructing BFS trees                  #
+###########################################
+
+"""TreeBFSVisitorVector is a type for representing a BFS traversal
+of the graph as a parents array. This type allows for a more performant implementation.
+"""
+type TreeBFSVisitorVector <: SimpleGraphVisitor
+    tree::Vector{Int}
+end
+
+function TreeBFSVisitorVector(n::Int)
+    return TreeBFSVisitorVector(fill(0, n))
+end
+
+"""tree converts a parents array into a DiGraph"""
+function tree(parents::AbstractVector)
+    n = length(parents)
+    t = DiGraph(n)
+    for i in 1:n
+        parent = parents[i]
+        if parent > 0  && parent != i
+            add_edge!(t, parent, i)
         end
     end
     return t
 end
 
+tree(parents::TreeBFSVisitorVector) = tree(parents.tree)
+
+function examine_neighbor!(visitor::TreeBFSVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
+    if u != v && vcolor == 0
+        visitor.tree[v] = u
+    end
+    return true
+end
+
+function bfs_tree!(visitor::TreeBFSVisitorVector,
+        g::SimpleGraph,
+        s::Int;
+        vertexcolormap = Dict{Int,Int}(),
+        queue = Vector{Int}())
+    # this version of bfs_tree! allows one to reuse the memory necessary to compute the tree
+    # the output is stored in the visitor.tree array whose entries are the vertex id of the
+    # parent of the index. This function checks if the scratch space is too small for the graph.
+    # and throws an error if it is too small.
+    # the source is represented in the output by a fixed point v[root] == root.
+    # this function is considered a performant version of bfs_tree for useful when the parent
+    # array is more helpful than a DiGraph struct, or when performance is critical.
+    nvg = nv(g)
+    length(visitor.tree) >= nvg || error("visitor.tree too small for graph")
+    visitor.tree[s] = s
+    traverse_graph!(g, BreadthFirst(), s, visitor; vertexcolormap=vertexcolormap, queue=queue)
+end
+
+"""Provides a breadth-first traversal of the graph `g` starting with source vertex `s`,
+and returns a directed acyclic graph of vertices in the order they were discovered.
+
+This function is a high level wrapper around bfs_tree!, use that function for more performance.
 """
-    bfs_parents(g, s[; dir=:out])
+function bfs_tree(g::SimpleGraph, s::Int)
+    nvg = nv(g)
+    visitor = TreeBFSVisitorVector(nvg)
+    bfs_tree!(visitor, g, s)
+    return tree(visitor)
+end
 
-Perform a breadth-first search of graph `g` starting from vertex `s`.
-Return a vector of parent vertices indexed by vertex. If `dir` is specified,
-use the corresponding edge direction (`:in` and `:out` are acceptable values).
+############################################
+# Connected Components with BFS            #
+############################################
+"""Performing connected components with BFS starting from seed"""
+type ComponentVisitorVector <: SimpleGraphVisitor
+    labels::Vector{Int}
+    seed::Int
+end
 
+function examine_neighbor!(visitor::ComponentVisitorVector, u::Int, v::Int,
+                            ucolor::Int, vcolor::Int, ecolor::Int)
+    if u != v && vcolor == 0
+        visitor.labels[v] = visitor.seed
+    end
+    return true
+end
 
-### Performance
-This implementation is designed to perform well on large graphs. There are
-implementations which are marginally faster in practice for smaller graphs,
-but the performance improvements using this implementation on large graphs
-can be significant.
+############################################
+# Test graph for bipartiteness             #
+############################################
+type BipartiteVisitor <: SimpleGraphVisitor
+    bipartitemap::Vector{UInt8}
+    is_bipartite::Bool
+end
+
+BipartiteVisitor(n::Int) = BipartiteVisitor(zeros(UInt8,n), true)
+
+function examine_neighbor!(visitor::BipartiteVisitor, u::Int, v::Int,
+        ucolor::Int, vcolor::Int, ecolor::Int)
+    if vcolor == 0
+        visitor.bipartitemap[v] = (visitor.bipartitemap[u] == 1) ? 2 : 1
+    else
+        if visitor.bipartitemap[v] == visitor.bipartitemap[u]
+            visitor.is_bipartite = false
+        end
+    end
+    return visitor.is_bipartite
+end
+
 """
-bfs_parents(g::AbstractGraph, s::Integer; dir = :out) = 
-    (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
+    is_bipartite(g)
+    is_bipartite(g, v)
 
-function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
+Will return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+If a node `v` is specified, only the connected component to which it belongs is considered.
+"""
+function is_bipartite(g::SimpleGraph)
+    cc = filter(x->length(x)>2, connected_components(g))
+    vmap = Dict{Int,Int}()
+    for c in cc
+        _is_bipartite(g,c[1], vmap=vmap) || return false
+    end
+    return true
+end
+
+is_bipartite(g::SimpleGraph, v::Int) = _is_bipartite(g, v)
+
+_is_bipartite(g::SimpleGraph, v::Int; vmap = Dict{Int,Int}()) = _bipartite_visitor(g, v, vmap=vmap).is_bipartite
+
+function _bipartite_visitor(g::SimpleGraph, s::Int; vmap=Dict{Int,Int}())
+    nvg = nv(g)
+    visitor = BipartiteVisitor(nvg)
+    for v in keys(vmap) #have to reset vmap, otherway problems with digraphs
+        vmap[v] = 0
+    end
+    traverse_graph!(g, BreadthFirst(), s, visitor, vertexcolormap=vmap)
+    return visitor
+end
+
+"""
+If the graph is bipartite returns a vector `c`  of size `nv(g)` containing
+the assignment of each vertex to one of the two sets (`c[i] == 1` or `c[i]==2`).
+If `g` is not bipartite returns an empty vector.
+"""
+function bipartite_map(g::SimpleGraph)
+    cc = connected_components(g)
+    visitors = [_bipartite_visitor(g, x[1]) for x in cc]
+    !all([v.is_bipartite for v in visitors]) && return zeros(Int, 0)
+    m = zeros(Int, nv(g))
+    for i=1:nv(g)
+        m[i] = any(v->v.bipartitemap[i] == 1, visitors) ? 2 : 1
+    end
+    m
+end
+
+###########################################
+# Get the map of the (geodesic) distances from vertices to source #
+###########################################
+
+"""
+    gdistances!(g, source, dists) -> dists
+
+Fills `dists` with the geodesic distances of vertices in `g` from vertex/vertices `source`.
+`dists` should be a vector of length `nv(g)`.
+"""
+function gdistances!(g::SimpleGraph, source, dists)
     n = nv(g)
-    visited = falses(n)
-    parents = zeros(T, nv(g))
-    cur_level = Vector{T}()
-    sizehint!(cur_level, n)
-    next_level = Vector{T}()
-    sizehint!(next_level, n)
-    @inbounds for s in source
-        visited[s] = true
-        push!(cur_level, s)
-        parents[s] = s
+    fill!(dists, -1)
+    queue = Vector{Int}(n)
+    for i in 1:length(source)
+        queue[i] = source[i]
+        dists[source[i]] = 0
     end
-    while !isempty(cur_level)
-        @inbounds for v in cur_level
-            @inbounds @simd for i in  neighborfn(g, v)
-                if !visited[i]
-                    push!(next_level, i)
-                    parents[i] = v
-                    visited[i] = true
-                end
-            end
-        end
-        empty!(cur_level)
-        cur_level, next_level = next_level, cur_level
-        sort!(cur_level)
-    end
-    return parents
-end
-
-"""
-    bfs_tree(g, s[; dir=:out])
-
-Provide a breadth-first traversal of the graph `g` starting with source vertex `s`,
-and return a directed acyclic graph of vertices in the order they were discovered.
-If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are
-acceptable values).
-"""
-bfs_tree(g::AbstractGraph, s::Integer; dir = :out) = tree(bfs_parents(g, s; dir = dir))
-
-"""
-    gdistances!(g, source, dists; sort_alg=QuickSort)
-
-Fill `dists` with the geodesic distances of vertices in `g` from source vertex (or
-collection of vertices) `source`. `dists` should be a vector of length `nv(g)` 
-filled with `typemax(T)`. Return `dists`.
-
-For vertices in disconnected components the default distance is `typemax(T)`.
-
-An optional sorting algorithm may be specified (see Performance section).
-
-### Performance
-`gdistances` uses `QuickSort` internally for its default sorting algorithm, since it performs
-the best of the algorithms built into Julia Base. However, passing a `RadixSort` (available via
-[SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
-significant performance improvements on larger graphs.
-"""
-function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where T
-    n = nv(g)
-    visited = falses(n)
-    n_level = one(T)
-    cur_level = Vector{T}()
-    sizehint!(cur_level, n)
-    next_level = Vector{T}()
-    sizehint!(next_level, n)
-    @inbounds for s in source
-        vert_level[s] = zero(T)
-        visited[s] = true
-        push!(cur_level, s)
-    end
-    while !isempty(cur_level)
-        @inbounds for v in cur_level
-            @inbounds @simd for i in outneighbors(g, v)
-                if !visited[i]
-                    push!(next_level, i)
-                    vert_level[i] = n_level
-                    visited[i] = true
-                end
-            end
-        end
-        n_level += one(T)
-        empty!(cur_level)
-        cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg = sort_alg)
-    end
-    return vert_level
-end
-
-"""
-    gdistances(g, source; sort_alg=QuickSort)
-
-Return a vector filled with the geodesic distances of vertices in  `g` from
-`source`. If `source` is a collection of vertices each element should be unique.
-For vertices in disconnected components the default distance is `typemax(T)`.
-
-An optional sorting algorithm may be specified (see Performance section).
-
-### Performance
-`gdistances` uses `QuickSort` internally for its default sorting algorithm, since it performs
-the best of the algorithms built into Julia Base. However, passing a `RadixSort` (available via
-[SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
-significant performance improvements on larger graphs.
-"""
-gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg = sort_alg)
-
-"""
-    has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
-
-Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
-`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `excluded_vertices`. 
-"""
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector = Vector{T}()) where T
-    seen = zeros(Bool, nv(g))
-    for ve in exclude_vertices # mark excluded vertices as seen
-        seen[ve] = true
-    end
-    (seen[u] || seen[v]) && return false
-    u == v && return true # cannot be separated
-    next = Vector{T}()
-    push!(next, u)
-    seen[u] = true
-    while !isempty(next)
-        src = popfirst!(next) # get new element from queue
-        for vertex in outneighbors(g, src)
-            vertex == v && return true
-            if !seen[vertex]
-                push!(next, vertex) # push onto queue
-                seen[vertex] = true
+    head = 1
+    tail = length(source)
+    while head <= tail
+        current = queue[head]
+        distance = dists[current] + 1
+        head += 1
+        for j in fadj(g, current)
+            if dists[j] == -1
+                dists[j] = distance
+                tail += 1
+                queue[tail] = j
             end
         end
     end
-    return false
+    return dists
 end
+
+
+"""
+    gdistances(g, source) -> dists
+
+Returns a vector filled with the geodesic distances of vertices in  `g` from vertex/vertices `source`.
+If `source` is a collection of vertices they should be unique (not checked).
+For vertices in disconnected components the default distance is -1.
+"""
+gdistances(g::SimpleGraph, source) = gdistances!(g, source, Vector{Int}(nv(g)))
+

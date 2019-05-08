@@ -1,157 +1,97 @@
 """
     local_clustering_coefficient(g, v)
-    local_clustering_coefficient(g, vs)
 
-Return the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
-for node `v` in graph `g`. If a list of vertices `vs` is specified, return a vector
-of coefficients for each node in the list.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(4);
-
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 4);
-
-julia> add_edge!(g, 4, 1);
-
-julia> local_clustering_coefficient(g, [1, 2, 3])
-3-element Array{Float64,1}:
- 1.0
- 1.0
- 0.0
-```
+Computes the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient) for node `v`.
 """
-function local_clustering_coefficient(g::AbstractGraph, v::Integer)
-    ntriang, nalltriang = local_clustering(g, v)
-    return nalltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
+function local_clustering_coefficient(g::SimpleGraph, v::Integer)
+    ntriang, alltriang = local_clustering(g, v)
+
+    return alltriang == 0 ? 0. : ntriang / alltriang
 end
 
-function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
-    ntriang, nalltriang = local_clustering(g, vs)
-    return map(p -> p[2] == 0 ? 0. : p[1] * 1.0 / p[2], zip(ntriang, nalltriang))
-end
+"""
+    local_clustering(g, v)
 
-function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
+Returns a tuple `(a,b)`, where `a` is the number of triangles in the neighborhood of
+`v` and `b` is the maximum number of possible triangles.
+It is related to the local clustering coefficient  by `r=a/b`.
+"""
+function local_clustering(g::SimpleGraph, v::Integer)
     k = degree(g, v)
     k <= 1 && return (0, 0)
     neighs = neighbors(g, v)
-    tcount = 0
-    storage[neighs] .= true
-
-    @inbounds for i in neighs
-        @inbounds for j in neighbors(g, i)
-            if (i != j) && storage[j]
-                tcount += 1
+    c = 0
+    for i=1:length(neighs)
+        for j=1:length(neighs)
+            i == j && continue
+            if has_edge(g, neighs[i], neighs[j])
+                c += 1
             end
         end
     end
-    return is_directed(g) ? (tcount, k * (k - 1)) : (div(tcount, 2), div(k * (k - 1), 2))
+    return is_directed(g) ? (c , k*(k-1)) : (div(c,2) , div(k*(k-1),2))
 end
 
-function local_clustering!(storage::AbstractVector{Bool},
-                           ntriang::AbstractVector{Int},
-                           nalltriang::AbstractVector{Int},
-                           g::AbstractGraph,
-                           vs)
+"""
+    triangles(g, v)
+
+Returns the number of triangles in the neighborhood for node `v`.
+"""
+triangles(g::SimpleGraph, v::Integer) = local_clustering(g, v)[1]
+
+
+"""
+    local_clustering_coefficient(g, vlist = vertices(g))
+
+Returns a vector containing  the [local clustering coefficients](https://en.wikipedia.org/wiki/Clustering_coefficient) for vertices `vlist`.
+"""
+local_clustering_coefficient(g::SimpleGraph, vlist = vertices(g)) = Float64[local_clustering_coefficient(g, v) for v in vlist]
+
+"""
+    local_clustering(g, vlist = vertices(g))
+
+Returns two vectors, respectively containing  the first and second result of `local_clustering_coefficients(g, v)`
+for each `v` in `vlist`.
+"""
+function local_clustering(g::SimpleGraph, vlist = vertices(g))
+    ntriang = zeros(Int, length(vlist))
+    nalltriang = zeros(Int, length(vlist))
     i = 0
-    for (i, v) in enumerate(vs)
-        ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
-        storage[neighbors(g, v)] .= false
+    for v in vlist
+        i+=1
+        ntriang[i], nalltriang[i] = local_clustering(g, v)
     end
     return ntriang, nalltriang
 end
 
 """
-    local_clustering(g, v)
-    local_clustering(g, vs)
+    triangles(g, vlist = vertices(g))
 
-Return a tuple `(a, b)`, where `a` is the number of triangles in the neighborhood
-of `v` and `b` is the maximum number of possible triangles. If a list of vertices
-`vs` is specified, return two vectors representing the number of triangles and
-the maximum number of possible triangles, respectively, for each node in the list.
-
-This function is related to the local clustering coefficient `r` by ``r=\\frac{a}{b}``.
+Returns a vector containing the number of triangles for vertices `vlist`.
 """
-function local_clustering(g::AbstractGraph, v::Integer)
-    storage = zeros(Bool, nv(g))
-    return local_clustering!(storage, g, v)
-end
-
-function local_clustering(g::AbstractGraph, vs = vertices(g))
-    storage = zeros(Bool, nv(g))
-    ntriang = zeros(Int, length(vs))
-    nalltriang = zeros(Int, length(vs))
-    return local_clustering!(storage, ntriang, nalltriang, g, vs)
-end
-
-
-"""
-    triangles(g[, v])
-    triangles(g, vs)
-
-Return the number of triangles in the neighborhood of node `v` in graph `g`.
-If a list of vertices `vs` is specified, return a vector of number of triangles
-for each node in the list. If no vertices are specified, return the number
-of triangles for each node in the graph.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(4);
-
-julia> add_edge!(g, 1, 2);
-
-julia> add_edge!(g, 2, 4);
-
-julia> add_edge!(g, 4, 1);
-
-julia> triangles(g)
-4-element Array{Int64,1}:
- 1
- 1
- 0
- 1
-```
-"""
-triangles(g::AbstractGraph, v::Integer) = local_clustering(g, v)[1]
-triangles(g::AbstractGraph, vs = vertices(g)) = local_clustering(g, vs)[1]
+triangles(g::SimpleGraph, vlist = vertices(g)) = local_clustering(g, vlist)[1]
 
 
 """
     global_clustering_coefficient(g)
 
-Return the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient)
-of graph `g`.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> global_clustering_coefficient(StarGraph(4))
-0.0
-
-julia> global_clustering_coefficient(smallgraph(:housex))
-0.7894736842105263
-```
+Computes the [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient).
 """
-function global_clustering_coefficient(g::AbstractGraph)
+function global_clustering_coefficient(g::SimpleGraph)
     c = 0
     ntriangles = 0
-    for v in vertices(g)
+    for v in 1:nv(g)
         neighs = neighbors(g, v)
-        for i in neighs, j in neighs
-            i == j && continue
-            if has_edge(g, i, j)
-                c += 1
+        for i=1:length(neighs)
+            for j=1:length(neighs)
+                i == j && continue
+                if has_edge(g, neighs[i], neighs[j])
+                    c += 1
+                end
             end
         end
         k = degree(g, v)
-        ntriangles += k * (k - 1)
+        ntriangles += k*(k-1)
     end
     ntriangles == 0 && return 1.
     return c / ntriangles

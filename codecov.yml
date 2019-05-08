@@ -2,10 +2,10 @@ coverage:
   status:
     patch:
       default:
-        target: '97'
+        target: '100'
     project:
       default:
-        target: '90'
+        target: '97'
 comment:
   layout: "header, diff"
   behavior: default

@@ -1,51 +1,23 @@
 using Documenter
-#include("../src/LightGraphs.jl")
+include("../src/LightGraphs.jl")
 using LightGraphs
 
-# same for contributing and license
-cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); force=true)
-cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); force=true)
-cp(normpath(@__FILE__, "../../CITING.md"), normpath(@__FILE__, "../src/citing.md"); force=true)
+# index is equal to the README for the time being
+cp(normpath(@__FILE__, "../../README.md"), normpath(@__FILE__, "../src/index.md"); remove_destination=true)
 
-makedocs(
-    modules     = [LightGraphs],
-    format      = Documenter.HTML(), 
-    sitename    = "LightGraphs",
-    doctest     = false,
-    pages       = Any[
-        "Getting Started"                   => "index.md",
-        "Choosing A Graph Type"             => "graphtypes.md",
-        "LightGraphs Types"                 => "types.md",
-        "Accessing Properties"              => "basicproperties.md",
-        "Making and Modifying Graphs"       => "generators.md",
-        "Reading / Writing Graphs"          => "persistence.md",
-        "Operators"                         => "operators.md",
-        "Plotting Graphs"                   => "plotting.md",
-        "Path and Traversal"                => "pathing.md",
-        "Distance"                          => "distance.md",
-        "Centrality Measures"               => "centrality.md",
-        "Linear Algebra"                    => "linalg.md",
-        "Matching"                          => "matching.md",
-        "Community Structures"              => "community.md",
-        "Degeneracy"                        => "degeneracy.md",
-        "Integration with other packages"   => "integration.md",
-        "Experimental Functionality"        => "experimental.md",
-        "Parallel Algorithms"               => "parallel.md",
-        "Contributing"                      => "contributing.md",
-        "Developer Notes"                   => "developing.md",
-        "License Information"               => "license.md",
-        "Citing LightGraphs"                => "citing.md"
-    ]
-)
+# same for contributing and license
+cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); remove_destination=true)
+cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); remove_destination=true)
+
+makedocs(modules=[LightGraphs], doctest = false)
+
 
 deploydocs(
-    deps        = nothing,
-    make        = nothing,
-    repo        = "github.com/JuliaGraphs/LightGraphs.jl.git",
-    target      = "build",
-    julia       = "nightly",
-    osname      = "linux"
+    deps = Deps.pip("pygments", "mkdocs", "mkdocs-material", "python-markdown-math"),
+    repo   = "github.com/JuliaGraphs/LightGraphs.jl.git",
+    julia  = "0.5"
 )
 
+rm(normpath(@__FILE__, "../src/index.md"))
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))

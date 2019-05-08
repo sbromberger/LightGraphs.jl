@@ -1,87 +1,57 @@
 """
-    articulation(g)
-
-Compute the [articulation points](https://en.wikipedia.org/wiki/Biconnected_component)
-of a connected graph `g` and return an array containing all cut vertices.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> articulation(StarGraph(5))
-1-element Array{Int64,1}:
- 1
-
-julia> articulation(PathGraph(5))
-3-element Array{Int64,1}:
- 2
- 3
- 4
-```
+Computes the articulation points(https://en.wikipedia.org/wiki/Biconnected_component)
+of a connected graph `g` and returns an array containing all cut vertices.
 """
-function articulation end
-@traitfn function articulation(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
-    s = Vector{Tuple{T, T, T}}()
-    is_articulation_pt = falses(nv(g))
-    low = zeros(T, nv(g))
-    pre = zeros(T, nv(g))
-
-    @inbounds for u in vertices(g)
-        pre[u] != 0 && continue
-        v = u
-        children = 0
-        wi::T = zero(T)
-        w::T = zero(T)
-        cnt::T = one(T)
-        first_time = true
-
-        while !isempty(s) || first_time
-            first_time = false
-            if  wi < 1
-                pre[v] = cnt
-                cnt += 1
-                low[v] = pre[v]
-                v_neighbors = outneighbors(g, v)
-                wi = 1
-            else
-                wi, u, v = pop!(s)
-                v_neighbors = outneighbors(g, v)
-                w = v_neighbors[wi]
-                low[v] = min(low[v], low[w])
-                if low[w] >= pre[v] && u != v
-                    is_articulation_pt[v] = true
-                end
-                wi += 1
-            end
-            while wi <= length(v_neighbors)
-                w = v_neighbors[wi]
-                if pre[w] == 0
-                    if u == v
-                        children += 1
-                    end
-                    push!(s, (wi, u, v))
-                    wi = 0
-                    u = v
-                    v = w
-                    break
-                elseif w != u
-                    low[v] = min(low[v], pre[w])
-                end
-                wi += 1
-            end
-            wi < 1 && continue
-        end
-        
-        if children > 1
-            is_articulation_pt[u] = true
+function articulation(g::SimpleGraph) :: AbstractArray{Int}
+    state = Articulations(g)
+    for u in vertices(g)
+        if state.depth[u] == 0
+            visit!(state, g, u, u)
         end
     end
-    
-    articulation_points = Vector{T}()
-    
-    for u in findall(is_articulation_pt)
-        push!(articulation_points, T(u))
-    end
+    return [x for (x, y) in enumerate(state.articulation_points) if y == true]
+end
 
-    return articulation_points
+"""
+Articulations: a state type for the Depth first search that finds the articulation points in a graph.
+"""
+type Articulations
+    low::Vector{Int}
+    depth::Vector{Int}
+    articulation_points::Vector{Bool}
+    id::Int
+end
+
+function Articulations(g::SimpleGraph)
+    n = nv(g)
+    return Articulations(zeros(Int, n), zeros(Int, n),zeros(Int, n), 0)
+end
+
+"""
+Does a depth first search storing the depth (in `depth`) and low-points (in `low`) of each vertex.
+Call this function repeatedly to complete the DFS see `articulation` for usage.
+"""
+function visit!(state::Articulations, g::SimpleGraph, u::Int, v::Int)
+    children = 0
+    state.id += 1
+    state.depth[v] = state.id
+    state.low[v] = state.depth[v]
+
+    for w in out_neighbors(g, v)
+        if state.depth[w] == 0
+            children += 1
+            visit!(state, g, v, w)
+
+            state.low[v] = min(state.low[v], state.low[w])
+            if state.low[w] >= state.depth[v] && u != v
+                state.articulation_points[v] = true
+            end
+
+        elseif w != u
+            state.low[v] = min(state.low[v], state.depth[w])
+        end
+	  end
+    if u == v && children > 1
+        state.articulation_points[v] = true
+    end
 end
