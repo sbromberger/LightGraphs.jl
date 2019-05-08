@@ -185,6 +185,7 @@ include("core.jl")
         include("utils.jl")
         include("spanningtrees/kruskal.jl")
         include("spanningtrees/prim.jl")
+		include("transitivity/transitivity.jl")
         include("biconnectivity/articulation.jl")
 
 end # module

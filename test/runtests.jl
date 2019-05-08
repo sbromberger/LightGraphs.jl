@@ -92,6 +92,7 @@ tests = [
     "utils",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+	"transitivity/transitivity",
     "biconnectivity/articulation"
 ]
 
