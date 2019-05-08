@@ -24,7 +24,7 @@ end
 Compute the transitive closure of an undirected graph.
 If `selflooped` is true, add self loops to the graph.
 """
-function transitiveclosure(g::Graph; selflooped = false)
+function transitiveclosure(g::Graph, selflooped = false)
     copyg = copy(g)
     return transitiveclosure!(copyg, selflooped)
 end

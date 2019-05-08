@@ -11,7 +11,7 @@
             @test ne(circle) == 4
             c = copy(circle)
             @test newcircle == @inferred(transitiveclosure!(c))
-            @test ne(c) == ne(newcircle) == 12
+            @test ne(c) == ne(newcircle) == 6
         end
 
         loopedcomplete = copy(complete)
@@ -24,7 +24,7 @@
             @test ne(circle) == 4
             c = copy(circle)
             @test newcircle == @inferred(transitiveclosure!(c, true))
-            @test ne(c) == ne(newcircle) == 16
+            @test ne(c) == ne(newcircle) == 10
         end
     end
 end

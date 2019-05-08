@@ -83,7 +83,7 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
     "experimental/experimental",
-	"transitivity/transitivity"
+    "transitivity/transitivity"
 ]
 
 @testset "LightGraphs" begin
