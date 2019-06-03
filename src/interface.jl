@@ -198,7 +198,7 @@ edges(g) = _NI("edges")
     is_directed(g)
 
 Return `true` if the graph is a directed graph; `false` otherwise.
-
+New graph types must implement `is_directed(::Type{<:G})`.
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -210,7 +210,7 @@ julia> is_directed(SimpleDiGraph(2))
 true
 ```
 """
-is_directed(g) = _NI("is_directed")
+is_directed(::G) where {G} = is_directed(G)
 is_directed(::Type{T}) where T = _NI("is_directed")
 
 """

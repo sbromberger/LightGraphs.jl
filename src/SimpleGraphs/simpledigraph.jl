@@ -352,8 +352,7 @@ fadj(g) == fadj(h) &&
 badj(g) == badj(h)
 
 is_directed(g::SimpleDiGraph) = true
-is_directed(::Type{SimpleDiGraph}) = true
-is_directed(::Type{SimpleDiGraph{T}}) where T = true
+is_directed(::Type{<:SimpleDiGraph}) = true
 
 function has_edge(g::SimpleDiGraph{T}, s, d) where T
     verts = vertices(g)
