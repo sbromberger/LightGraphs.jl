@@ -1,7 +1,7 @@
 """
     struct Coloring{T}
 
-Stores the number of colors used and mapping from vertex to color
+Store the number of colors used and mapping from vertex to color
 """
 struct Coloring{T <: Integer}
     num_colors::T
@@ -16,7 +16,7 @@ best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 `seq[i] = v` implies that vertex v is the ``i^{th}`` vertex to be colored.
 """
-function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where T <: Integer 
+function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T <: Integer}
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
@@ -56,10 +56,10 @@ end
 """
     random_greedy_color(g, reps)
 
-Colors the graph `g` iteratively in a random order using a greedy heuristic
-and chooses the best coloring out of `reps` such random colorings.
+Color the graph `g` iteratively in a random order using a greedy heuristic
+and choose the best coloring out of `reps` such random colorings.
 """
-function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where T <: Integer 
+function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where {T <: Integer} 
 
     seq = shuffle(vertices(g))
     best = perm_greedy_color(g, seq)
