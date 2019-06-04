@@ -77,7 +77,7 @@
             for i = 1:5
                 nvg = Int(ceil(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                rng = Random.MersenneTwister(Int(floor(100*rand())))
+                rng = MersenneTwister(Int(floor(100*rand())))
                 g = SimpleGraph(nvg, neg; rng=rng)
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)
@@ -89,7 +89,7 @@
             for i = 1:5
                 nvg = Int(ceil(250*rand()))
                 neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                rng = Random.MersenneTwister(Int(floor(100*rand())))
+                rng = MersenneTwister(Int(floor(100*rand())))
                 g = SimpleDiGraph(nvg, neg; rng=rng)
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)

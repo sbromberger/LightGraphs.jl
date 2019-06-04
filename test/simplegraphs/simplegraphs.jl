@@ -199,7 +199,7 @@ import Random
 
      # Tests for constructors from iterators of edges
     let
-        g_undir = erdos_renyi(200, 100; rng=Random.MersenneTwister(0))
+        g_undir = erdos_renyi(200, 100; rng=MersenneTwister(0))
         add_edge!(g_undir, 200, 1) # ensure that the result uses all vertices
         add_edge!(g_undir, 2, 2) # add a self-loop
         for g in testgraphs(g_undir)
@@ -235,7 +235,7 @@ import Random
             @test edgetype(g) == edgetype(g4)
             @test edgetype(g) == edgetype(g5)
         end
-        g_dir = erdos_renyi(200, 100; is_directed=true, rng=Random.MersenneTwister(0))
+        g_dir = erdos_renyi(200, 100; is_directed=true, rng=MersenneTwister(0))
         add_edge!(g_dir, 200, 1)
         add_edge!(g_dir, 2, 2)
         for g in testdigraphs(g_dir)

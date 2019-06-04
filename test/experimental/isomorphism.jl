@@ -1,5 +1,6 @@
-using Random: MersenneTwister, randperm
+import Random
 
+using Random: MersenneTwister, randperm
 
 # helper function that permutates the vertices of a graph
 function shuffle_vertices(g::AbstractGraph, σ)
@@ -104,7 +105,7 @@ end
     @test count_isomorph(CompleteGraph(4), CycleGraph(4)) == 0
     @test isempty(all_isomorph(CompleteGraph(4), CycleGraph(4)))
     @test count_subgraphisomorph(CompleteGraph(3), CompleteGraph(4)) == 0
-    
+
 
     # this tests triggers the shortcut in the vf2 algorithm if the first graph is smaller than the second one
     @test has_isomorph(CompleteGraph(3), CompleteGraph(4)) == false

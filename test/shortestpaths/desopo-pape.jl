@@ -73,7 +73,7 @@
         for i = 1:5
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            rng = Random.MersenneTwister(Int(floor(100*rand())))
+            rng = MersenneTwister(Int(floor(100*rand())))
             g = SimpleGraph(nvg, neg; rng=rng)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
@@ -85,7 +85,7 @@
         for i = 1:5
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            rng = Random.MersenneTwister(Int(floor(100*rand())))
+            rng = MersenneTwister(Int(floor(100*rand())))
             g = SimpleDiGraph(nvg, neg; rng=rng)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
@@ -116,7 +116,7 @@
 
         G = StarGraph(9)
         z = deso
-        rng = Random.MersenneTwister(Int(floor(100*rand())))
+        rng = MersenneTwister(Int(floor(100*rand())))
         po_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)

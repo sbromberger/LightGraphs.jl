@@ -1,8 +1,8 @@
 @testset "SimpleEdgeIter" begin
-    ga = @inferred(SimpleGraph(10, 20; rng=Random.MersenneTwister(1)))
-    gb = @inferred(SimpleGraph(10, 20; rng=Random.MersenneTwister(1)))
-    dga = @inferred(SimpleDiGraph(10, 20; rng=Random.MersenneTwister(1)))
-    dgb = @inferred(SimpleDiGraph(10, 20; rng=Random.MersenneTwister(1)))
+    ga = @inferred(SimpleGraph(10, 20; rng=MersenneTwister(1)))
+    gb = @inferred(SimpleGraph(10, 20; rng=MersenneTwister(1)))
+    dga = @inferred(SimpleDiGraph(10, 20; rng=MersenneTwister(1)))
+    dgb = @inferred(SimpleDiGraph(10, 20; rng=MersenneTwister(1)))
     @testset "string representation" begin
         @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
     # note: we don't get the first iterator state,

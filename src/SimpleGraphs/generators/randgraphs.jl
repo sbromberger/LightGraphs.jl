@@ -1,3 +1,4 @@
+import Random
 using Random:
     AbstractRNG, MersenneTwister, randperm, shuffle!
 using Statistics: mean
@@ -113,7 +114,7 @@ probability `p`.
 julia> erdos_renyi(10, 0.5)
 {10, 20} undirected simple Int64 graph
 
-julia> erdos_renyi(10, 0.5, is_directed=true, rng=Random.MersenneTwister(1))
+julia> erdos_renyi(10, 0.5, is_directed=true, rng=MersenneTwister(1))
 {10, 49} directed simple Int64 graph
 ```
 """
@@ -139,7 +140,7 @@ graph with `n` vertices and `ne` edges.
 julia> erdos_renyi(10, 30)
 {10, 30} undirected simple Int64 graph
 
-julia> erdos_renyi(10, 30, is_directed=true, rng=Random.MersenneTwister(2))
+julia> erdos_renyi(10, 30, is_directed=true, rng=MersenneTwister(2))
 {10, 30} directed simple Int64 graph
 ```
 """
@@ -174,7 +175,7 @@ julia> print(degree(g))
 [3, 0, 1, 1, 1]
 
 # 2)
-julia> g = expected_degree_graph([0.5, 0.5, 0.5], rng=Random.MersenneTwister(123))
+julia> g = expected_degree_graph([0.5, 0.5, 0.5], rng=MersenneTwister(123))
 {3, 1} undirected simple Int64 graph
 
 julia> print(degree(g))
@@ -232,7 +233,7 @@ randomized per the model based on probability `β`.
 julia> watts_strogatz(10, 4, 0.3)
 {10, 20} undirected simple Int64 graph
 
-julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, rng=Random.MersenneTwister(123))
+julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, rng=MersenneTwister(123))
 {10, 20} directed simple Int8 graph
 ```
 """
@@ -365,7 +366,7 @@ Initial graphs are undirected and consist of isolated vertices by default.
 julia> barabasi_albert(10, 3, 2)
 {10, 14} undirected simple Int64 graph
 
-julia> barabasi_albert(100, Int8(10), 3, is_directed=true, rng=Random.MersenneTwister(123))
+julia> barabasi_albert(100, Int8(10), 3, is_directed=true, rng=MersenneTwister(123))
 {100, 270} directed simple Int8 graph
 ```
 """
@@ -532,7 +533,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ## Examples
 ```jldoctest
-julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; rng=Random.MersenneTwister(123))
+julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; rng=MersenneTwister(123))
 {4, 6} directed simple Int64 graph
 
 julia> edges(g) |> collect
@@ -795,7 +796,7 @@ with `n` vertices.
 julia> random_tournament_digraph(5)
 {5, 10} directed simple Int64 graph
 
-julia> random_tournament_digraph(Int8(10), rng=Random.MersenneTwister(123))
+julia> random_tournament_digraph(Int8(10), rng=MersenneTwister(123))
 {10, 45} directed simple Int8 graph
 ```
 """
@@ -1125,7 +1126,7 @@ the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:
 julia> dorogovtsev_mendes(10)
 {10, 17} undirected simple Int64 graph
 
-julia> dorogovtsev_mendes(11, rng=Random.MersenneTwister(123))
+julia> dorogovtsev_mendes(11, rng=MersenneTwister(123))
 {11, 19} undirected simple Int64 graph
 ```
 """
