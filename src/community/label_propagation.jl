@@ -59,13 +59,12 @@ mutable struct NeighComm{T<:Integer}
 end
 
 """
-    range_shuffle!(r, a; seed=-1)
+    range_shuffle!(r, a; rng=Random.GLOBAL_RNG)
 
 Fast shuffle Array `a` in UnitRange `r`.
-Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
+Uses `rng` to provide the random number generator, defaulting to `Random.GLOBAL_RNG`.
 """
-function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
-    rng = getRNG(seed)
+function range_shuffle!(r::UnitRange, a::AbstractVector; rng::AbstractRNG=Random.GLOBAL_RNG)
     (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
     @inbounds for i = length(r):-1:2
         j = rand(rng, 1:i)

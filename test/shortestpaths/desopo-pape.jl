@@ -9,7 +9,7 @@
         @test y.parents == z.parents == [0, 0, 2, 3, 4]
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
     end
-        
+
     gx = PathGraph(5)
     add_edge!(gx, 2, 4)
     d = ones(Int, 5, 5)
@@ -73,8 +73,8 @@
         for i = 1:5
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            seed = Int(floor(100*rand()))
-            g = SimpleGraph(nvg, neg; seed = seed)
+            rng = Random.MersenneTwister(Int(floor(100*rand())))
+            g = SimpleGraph(nvg, neg; rng=rng)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -85,8 +85,8 @@
         for i = 1:5
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            seed = Int(floor(100*rand()))
-            g = SimpleDiGraph(nvg, neg; seed = seed)
+            rng = Random.MersenneTwister(Int(floor(100*rand())))
+            g = SimpleDiGraph(nvg, neg; rng=rng)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -115,7 +115,9 @@
         @test isapprox(z.dists, y.dists)
 
         G = StarGraph(9)
-        z = desopo_pape_shortest_paths(G, 1)
+        z = deso
+        rng = Random.MersenneTwister(Int(floor(100*rand())))
+        po_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
@@ -136,10 +138,10 @@
     end
 
     @testset "smallgraphs: $s" for s in [
-        :bull, :chvatal, :cubical, :desargues, 
-        :diamond, :dodecahedral, :frucht, :heawood, 
+        :bull, :chvatal, :cubical, :desargues,
+        :diamond, :dodecahedral, :frucht, :heawood,
         :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte, 
+        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
         :tetrahedral, :truncatedcube, :truncatedtetrahedron,
         :truncatedtetrahedron_dir
      ]
@@ -148,7 +150,7 @@
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
     end
-    
+
     @testset "errors" begin
         g = Graph()
         @test_throws DomainError desopo_pape_shortest_paths(g, 1)
