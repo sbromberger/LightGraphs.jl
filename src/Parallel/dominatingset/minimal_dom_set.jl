@@ -11,9 +11,9 @@ used. This implementation is more efficient if `reps` is large.
 """
 function dominating_set(g::AbstractGraph{T}, reps::Integer, alg::MinimalDominatingSet; parallel=:threads, seed=-1) where T <: Integer
     function gen_func(g::AbstractGraph{T})
-        seed > 0 && seed!(seed)
+        rng = seed > 0 ? MersenneTwister(seed) : Random.GLOBAL_RNG
         LightGraphs.dominating_set(g, alg; rng=rng)
     end
-    compare_func(x::Vector{T}, y::Vector{T}) = length(x < length(y))
+    compare_func(x::Vector{T}, y::Vector{T}) = length(x) < length(y)
     LightGraphs.Parallel.generate_reduce(g, gen_func, compare_func, reps, parallel=parallel)
 end

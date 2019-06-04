@@ -115,9 +115,8 @@
         @test isapprox(z.dists, y.dists)
 
         G = StarGraph(9)
-        z = deso
+        z = desopo_pape_shortest_paths(G, 1)
         rng = MersenneTwister(Int(floor(100*rand())))
-        po_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
