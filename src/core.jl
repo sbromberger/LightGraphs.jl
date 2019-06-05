@@ -7,6 +7,7 @@ abstract type AbstractPathState end
 
 """
     is_ordered(e)
+
 Return true if the source vertex of edge `e` is less than or equal to
 the destination vertex.
 
@@ -26,6 +27,7 @@ is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
     add_vertices!(g, n)
+
 Add `n` new vertices to the graph `g`.
 Return the number of vertices that were added successfully.
 
@@ -96,6 +98,7 @@ outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) 
 
 """
     degree(g[, v])
+
 Return a vector corresponding to the number of edges which start or end at each
 vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 For directed graphs, this value equals the incoming plus outgoing edges.
@@ -160,6 +163,7 @@ Return the maximum [`degree`](@ref) of vertices in `g`.
 
 """
     δ(g)
+
 Return the minimum [`degree`](@ref) of vertices in `g`.
 """
 δ(g) = noallocextreme(degree, (<), typemax(Int), g)
@@ -167,6 +171,7 @@ Return the minimum [`degree`](@ref) of vertices in `g`.
 
 """
     noallocextreme(f, comparison, initial, g)
+
 Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
 """
 function noallocextreme(f, comparison, initial, g)
@@ -236,6 +241,7 @@ neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
 """
     all_neighbors(g, v)
+
 Return a list of all inbound and outbound neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
 and [`inneighbors`](@ref).
@@ -265,6 +271,7 @@ julia> all_neighbors(g, 3)
 2-element Array{Int64,1}:
  1
  2
+ ```
 """
 function all_neighbors end
 @traitfn all_neighbors(g::::IsDirected, v::Integer) =
@@ -360,6 +367,7 @@ num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), 
 
 """
     density(g)
+
 Return the density of `g`.
 Density is defined as the ratio of the number of actual edges to the
 number of possible edges (``|V|×(|V|-1)`` for directed graphs and

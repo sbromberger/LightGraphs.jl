@@ -61,6 +61,7 @@ is_strongly_connected
 is_weakly_connected
 connected_components
 strongly_connected_components
+strongly_connected_components_kosaraju
 weakly_connected_components
 has_self_loops
 attracting_components
@@ -71,6 +72,7 @@ condensation
 neighborhood
 neighborhood_dists
 articulation
+bridges
 period
 isgraphical
 ```
@@ -111,9 +113,11 @@ prim_mst
 ```@docs
 a_star
 dijkstra_shortest_paths
+desopo_pape_shortest_paths
 bellman_ford_shortest_paths
 floyd_warshall_shortest_paths
 yen_k_shortest_paths
+spfa_shortest_paths
 ```
 
 ## Path discovery / enumeration
@@ -132,12 +136,13 @@ LightGraphs.AbstractPathState
 ```
 
 The `dijkstra_shortest_paths`, `floyd_warshall_shortest_paths`,
-`bellman_ford_shortest_paths`, and `yen_shortest_paths` functions 
+`bellman_ford_shortest_paths`, and `yen_shortest_paths` functions
 return states that contain various  information about the graph
-learned during traversal. 
+learned during traversal.
 
 ```@docs
 LightGraphs.DijkstraState
+LightGraphs.DEsopoPapeState
 LightGraphs.BellmanFordState
 LightGraphs.FloydWarshallState
 LightGraphs.YenState

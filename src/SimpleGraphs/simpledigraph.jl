@@ -146,8 +146,8 @@ julia> SimpleDiGraph(g)
 function SimpleDiGraph(g::AbstractSimpleGraph)
     h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)
-    h.fadjlist = deepcopy(fadj(g))
-    h.badjlist = deepcopy(badj(g))
+    h.fadjlist = deepcopy_adjlist(fadj(g))
+    h.badjlist = deepcopy_adjlist(badj(g))
     return h
 end
 
@@ -342,7 +342,7 @@ badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
 copy(g::SimpleDiGraph{T}) where T <: Integer =
-SimpleDiGraph{T}(g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -351,9 +351,7 @@ ne(g) == ne(h) &&
 fadj(g) == fadj(h) &&
 badj(g) == badj(h)
 
-is_directed(g::SimpleDiGraph) = true
-is_directed(::Type{SimpleDiGraph}) = true
-is_directed(::Type{SimpleDiGraph{T}}) where T = true
+is_directed(::Type{<:SimpleDiGraph}) = true
 
 function has_edge(g::SimpleDiGraph{T}, s, d) where T
     verts = vertices(g)

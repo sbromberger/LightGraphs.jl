@@ -172,7 +172,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
-For [`AbstractSimpleGraph`](@ref)s it returns a `SimpleEdgeIter`.
+For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
 The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
 calls to [`has_edge`](@ref).
 
@@ -195,10 +195,11 @@ julia> collect(edges(g))
 edges(g) = _NI("edges")
 
 """
-    is_directed(g)
+    is_directed(G)
 
-Return `true` if the graph is a directed graph; `false` otherwise.
-
+Return `true` if the graph type `G` is a directed graph; `false` otherwise.
+New graph types must implement `is_directed(::Type{<:G})`.
+The method can also be called with `is_directed(g::G)`
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -206,11 +207,14 @@ julia> using LightGraphs
 julia> is_directed(SimpleGraph(2))
 false
 
+julia> is_directed(SimpleGraph)
+false
+
 julia> is_directed(SimpleDiGraph(2))
 true
 ```
 """
-is_directed(g) = _NI("is_directed")
+is_directed(::G) where {G} = is_directed(G)
 is_directed(::Type{T}) where T = _NI("is_directed")
 
 """

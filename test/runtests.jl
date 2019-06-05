@@ -11,13 +11,14 @@ using Statistics: mean
 
 const testdir = dirname(@__FILE__)
 
-testgraphs(g) = [g, Graph{UInt8}(g), Graph{Int16}(g)]
-testdigraphs(g) = [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
+testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)] 
+testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
+testdigraphs = testgraphs
 
 # some operations will create a large graph from two smaller graphs. We
 # might error out on very small eltypes.
-testlargegraphs(g) = [g, Graph{UInt16}(g), Graph{Int32}(g)]
-testlargedigraphs(g) = [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
+testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)] : [g, Graph{UInt16}(g), Graph{Int32}(g)] 
+testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
 tests = [
     "simplegraphs/runtests",
@@ -39,10 +40,12 @@ tests = [
     "persistence/persistence",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
+    "shortestpaths/desopo-pape",
     "shortestpaths/dijkstra",
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
+    "shortestpaths/spfa",
     "traversals/bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
@@ -67,8 +70,10 @@ tests = [
     "utils",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
+    "biconnectivity/bridge",
     "graphcut/normalized_cut",
     "graphcut/karger_min_cut",
     "dominatingset/degree_dom_set",

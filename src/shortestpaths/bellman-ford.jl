@@ -37,31 +37,33 @@ function bellman_ford_shortest_paths(
     distmx::AbstractMatrix{T}=weights(graph)
     ) where T<:Real where U<:Integer
 
-    active = Set{U}(sources)
-    sizehint!(active, nv(graph))
-    dists = fill(typemax(T), nv(graph))
-    parents = zeros(U, nv(graph))
+    nvg = nv(graph)
+    active = falses(nvg)
+    active[sources] .= true
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
     dists[sources] .= 0
     no_changes = false
+    new_active = falses(nvg)
 
-    for i in one(U):nv(graph)
+    for i in vertices(graph)
         no_changes = true
-        new_active = Set{U}()
-        for u in active
+        new_active .= false
+        for u in vertices(graph)[active]
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
                     dists[v] = relax_dist
                     parents[v] = u
                     no_changes = false
-                    push!(new_active, v)
+                    new_active[v] = true
                 end
             end
         end
         if no_changes
             break
         end
-        active = new_active
+        active, new_active = new_active, active
     end
     no_changes || throw(NegativeCycleError())
     return BellmanFordState(parents, dists)
@@ -108,14 +110,15 @@ will return a vector (indexed by destination vertex) of paths from source `v`
 to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
 a vector representing the path from vertex `v` to vertex `d`.
 """
-function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integer
+function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
     parents = state.parents
+    T = eltype(parents)
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
     for i = 1:num_vs
         all_paths[i] = Vector{T}()
-        index = vs[i]
+        index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0
                 push!(all_paths[i], index)
@@ -125,10 +128,9 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{T}) where T<:Integ
             reverse!(all_paths[i])
         end
     end
-    all_paths
+    return all_paths
 end
 
 enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
 enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
-
 

@@ -1,12 +1,13 @@
 # This file provides reexported functions.
 
 using ArnoldiMethod
+using SparseArrays
 
 """
     adjacency_matrix(g[, T=Int; dir=:out])
 
 Return a sparse adjacency matrix for a graph, indexed by `[u, v]`
-vertices. Non-zero values indicate an edge between `u` and `v`. Users may
+vertices. Non-zero values indicate an edge from `u` to `v`. Users may
 override the default data type (`Int`) and specify an optional direction.
 
 ### Optional Arguments
@@ -25,7 +26,6 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     elseif (dir == :in)
         _adjacency_matrix(g, T, outneighbors, 1)
     elseif (dir == :both)
-        _adjacency_matrix(g, T, all_neighbors, 1)
         if is_directed(g)
             _adjacency_matrix(g, T, all_neighbors, 2)
         else
@@ -47,20 +47,18 @@ function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Functio
         if has_edge(g, j, j)
             push!(selfloops, j)
         end
-        dsts = neighborfn(g, j)
+        dsts = sort(neighborfn(g, j)) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
-        append!(rowval, sort!(dsts))
+        append!(rowval, dsts)
     end
     spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
     # not one(T).
-    if !is_directed(g)
+    if !(T <: Bool) && !is_directed(g)
         for i in selfloops
-            if !(T <: Bool)
-                spmx[i, i] += one(T)
-            end
+            spmx[i, i] += one(T)
         end
     end
     return spmx
@@ -82,7 +80,8 @@ function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:uns
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
-    D = convert(SparseMatrixCSC{T,U}, Diagonal(sparse(sum(A, dims=2)[:])))
+    s = sum(A; dims=2)
+    D = convert(SparseMatrixCSC{T, U}, spdiagm(0 => s[:]))
     return D - A
 end
 
@@ -106,6 +105,8 @@ eigenvalues/eigenvectors.
 laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
 
 """
+    adjacency_spectrum(g[, T=Int; dir=:unspec])
+
 Return the eigenvalues of the adjacency matrix for a graph `g`, indexed
 by vertex. Default values for `T` are the same as those in
 [`adjacency_matrix`](@ref).

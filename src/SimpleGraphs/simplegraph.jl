@@ -127,7 +127,7 @@ julia> SimpleGraph(g)
 function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
     edgect = 0
-    newfadj = deepcopy(g.fadjlist)
+    newfadj = deepcopy_adjlist(g.fadjlist)
     @inbounds for i in vertices(g)
         for j in badj(g, i)
             index = searchsortedfirst(newfadj[i], j)
@@ -351,7 +351,7 @@ Returns a reference, not a copy. Do not modify result.
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
-copy(g::SimpleGraph) =  SimpleGraph(g.ne, deepcopy(g.fadjlist))
+copy(g::SimpleGraph) =  SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
 vertices(g) == vertices(h) &&
@@ -364,9 +364,7 @@ fadj(g) == fadj(h)
 
 Return `true` if `g` is a directed graph.
 """
-is_directed(::Type{SimpleGraph}) = false
-is_directed(::Type{SimpleGraph{T}}) where T = false
-is_directed(g::SimpleGraph) = false
+is_directed(::Type{<:SimpleGraph}) = false
 
 function has_edge(g::SimpleGraph{T}, s, d) where T
     verts = vertices(g)

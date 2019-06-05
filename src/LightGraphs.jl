@@ -8,12 +8,9 @@ using Statistics: mean
 
 using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
-using Distributed: @distributed
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
-# import Markdown
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
-using SharedArrays: SharedMatrix, SharedVector, sdata
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 
@@ -57,11 +54,6 @@ difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
-# graph visit
-AbstractGraphVisitor,
-discover_vertex!, close_vertex!,
-examine_neighbor!, traverse_graph,
-
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 
@@ -81,7 +73,7 @@ diffusion, diffusion_rate,
 greedy_color,
 
 # connectivity
-connected_components, strongly_connected_components, weakly_connected_components,
+connected_components, strongly_connected_components, strongly_connected_components_kosaraju, weakly_connected_components,
 is_connected, is_strongly_connected, is_weakly_connected, period,
 condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
@@ -92,13 +84,13 @@ simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 simplecycles_limited_length,
 
 # maximum_adjacency_visit
-MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
+mincut, maximum_adjacency_visit,
 
-# a-star, dijkstra, bellman-ford, floyd-warshall
+# a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
 a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-has_negative_edge_cycle, enumerate_paths, johnson_shortest_paths,
-floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction, 
-yen_k_shortest_paths,
+spfa_shortest_paths,has_negative_edge_cycle_spfa,has_negative_edge_cycle, enumerate_paths,
+johnson_shortest_paths, floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
+yen_k_shortest_paths, desopo_pape_shortest_paths,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -107,7 +99,7 @@ eigenvector_centrality, stress_centrality, radiality_centrality,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
-non_backtracking_matrix, incidence_matrix, nonbacktrack_embedding, Nonbacktracking,
+non_backtracking_matrix, incidence_matrix, Nonbacktracking,
 contract,
 
 # persistence
@@ -117,7 +109,7 @@ loadgraph, loadgraphs, savegraph, LGFormat,
 erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph, random_regular_digraph,
 random_configuration_model, random_tournament_digraph, StochasticBlockModel, make_edgestream,
 nearbipartiteSBM, blockcounts, blockfractions, stochastic_block_model, barabasi_albert,
-barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes,
+barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes, random_orientation_dag,
 
 #community
 modularity, core_periphery_deg,
@@ -129,7 +121,7 @@ CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
 
 CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph, StarDiGraph,
 PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
-CliqueGraph, LadderGraph, CircularLadderGraph,
+CliqueGraph, LadderGraph, CircularLadderGraph, BarbellGraph, LollipopGraph,
 
 #smallgraphs
 smallgraph,
@@ -140,8 +132,11 @@ euclidean_graph,
 #minimum_spanning_trees
 kruskal_mst, prim_mst,
 
+#steinertree
+steiner_tree,
+
 #biconnectivity and articulation points
-articulation, biconnected_components,
+articulation, biconnected_components, bridges,
 
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
@@ -226,8 +221,10 @@ include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
 include("shortestpaths/johnson.jl")
+include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
+include("shortestpaths/spfa.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
@@ -248,8 +245,10 @@ include("community/cliques.jl")
 include("community/clique_percolation.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("biconnectivity/bridge.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
 include("dominatingset/degree_dom_set.jl")

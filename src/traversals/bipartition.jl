@@ -2,7 +2,7 @@
     bipartite_map(g) -> Vector{UInt8}
 
 For a bipartite graph `g`, return a vector `c` of size ``|V|`` containing
-the assignment of each vertex to one of the two sets (``c_i == 1`` or c_i == 2``).
+the assignment of each vertex to one of the two sets (``c_i == 1`` or ``c_i == 2``).
 If `g` is not bipartite, return an empty vector.
 
 ### Implementation Notes

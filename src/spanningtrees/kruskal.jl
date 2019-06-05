@@ -1,12 +1,16 @@
 """
-    kruskal_mst(g, distmx=weights(g))
-Return a vector of edges representing the minimum spanning tree of a connected, undirected graph `g` with optional
-distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm).
+    kruskal_mst(g, distmx=weights(g); minimize=true)
+
+Return a vector of edges representing the minimum (by default) spanning tree of a connected, 
+undirected graph `g` with optional distance matrix `distmx` using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm).
+
+### Optional Arguments
+- `minimize=true`: if set to `false`, calculate the maximum spanning tree.
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function kruskal_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g)) where {T <: Real, U, AG <: AbstractGraph{U}}
+    distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, U, AG <: AbstractGraph{U}}
 
     connected_vs = IntDisjointSets(nv(g))
 
@@ -20,7 +24,7 @@ function kruskal_mst end
         push!(weights, distmx[src(e), dst(e)])
     end
 
-    for e in edge_list[sortperm(weights)]
+    for e in edge_list[sortperm(weights; rev=!minimize)]
         if !in_same_set(connected_vs, src(e), dst(e))
             union!(connected_vs, src(e), dst(e))
             push!(mst, e)
@@ -30,3 +34,4 @@ function kruskal_mst end
 
     return mst
 end
+

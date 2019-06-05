@@ -79,8 +79,8 @@ function reverse end
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
-    h.fadjlist = deepcopy(g.badjlist)
-    h.badjlist = deepcopy(g.fadjlist)
+    h.fadjlist = deepcopy_adjlist(g.badjlist)
+    h.badjlist = deepcopy_adjlist(g.fadjlist)
     h.ne = gne
     return h
 end
@@ -287,7 +287,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where T <: AbstractGraph
+function union(g::T, h::T) where T <: AbstractSimpleGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -494,14 +494,14 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-length(g::AbstractGraph) = nv(g) * nv(g)
+length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)
 
-Return the (cartesian product)[https://en.wikipedia.org/wiki/Cartesian_product_of_graphs]
+Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
@@ -553,7 +553,7 @@ end
 """
     tensor_product(g, h)
 
-Return the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
