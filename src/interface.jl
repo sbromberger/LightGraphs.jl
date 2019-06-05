@@ -333,7 +333,7 @@ julia> inedges(g, 4)
  Edge 5 => 4
 ```
 """
-inedges(g, v) = [Edge(iv, v) for iv in inneighbors(g, v)]
+inedges(g, v) = [edgetype(g)(x, v) for x in inneighbors(g, v)]
 
 """
     outedges(g, v)
@@ -349,4 +349,4 @@ julia> outedges(g, 4)
  Edge 4 => 5
 ```
 """
-outedges(g, v) = [Edge(v, ov) for ov in outneighbors(g, v)]
+outedges(g, v) = [edgetype(g)(v, x) for x in outneighbors(g, v)]
