@@ -317,3 +317,36 @@ julia> zero(g)
 ```
 """
 zero(g::AbstractGraph) = _NI("zero")
+
+"""
+    inedges(g, v)
+
+Return a list of all incoming edges to vertex `v` .
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> inedges(g, 4)
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 3 => 4
+ Edge 5 => 4
+```
+"""
+inedges(g, v) = [Edge(iv, v) for iv in inneighbors(g, v)]
+
+"""
+    outedges(g, v)
+
+Return a list of all outgoing edges from vertex `v` .
+
+# Examples
+```jldoctest
+julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia> outedges(g, 4)
+1-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 4 => 5
+```
+"""
+outedges(g, v) = [Edge(v, ov) for ov in outneighbors(g, v)]

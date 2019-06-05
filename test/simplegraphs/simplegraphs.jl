@@ -65,6 +65,8 @@ import Random
         @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
 
         @test @inferred(inneighbors(g, 2)) == @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
+        @test @inferred(inedges(g, 2)) == [Edge(1, 2), Edge(3, 2)]
+        @test @inferred(outedges(g, 2)) == [Edge(2, 1), Edge(2, 3)]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
@@ -218,7 +220,7 @@ import Random
             edge_set_any = Set{Any}(edge_list)
 
             g1 = @inferred SimpleGraph(edge_list)
-            # we can't infer the return type of SimpleGraphFromIterator at the moment 
+            # we can't infer the return type of SimpleGraphFromIterator at the moment
             g2 = SimpleGraphFromIterator(edge_list)
             g3 = SimpleGraphFromIterator(edge_iter)
             g4 = SimpleGraphFromIterator(edge_set)
@@ -242,13 +244,13 @@ import Random
             # We create an edge list and shuffle it
             edge_list = [e for e in edges(g)]
             shuffle!(MersenneTwister(0), edge_list)
-            
+
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
 
             g1 = @inferred SimpleDiGraph(edge_list)
-            # we can't infer the return type of SimpleDiGraphFromIterator at the moment 
+            # we can't infer the return type of SimpleDiGraphFromIterator at the moment
             g2 = SimpleDiGraphFromIterator(edge_list)
             g3 = SimpleDiGraphFromIterator(edge_iter)
             g4 = SimpleDiGraphFromIterator(edge_set)
@@ -274,7 +276,7 @@ import Random
         @test edgetype(SimpleGraphFromIterator(empty_iter)) == edgetype(SimpleGraph(0))
         @test edgetype(SimpleDiGraphFromIterator(empty_iter)) == edgetype(SimpleDiGraph(0))
 
-        # check if multiple edges && multiple self-loops result in the 
+        # check if multiple edges && multiple self-loops result in the
         # correct number of edges & vertices
         # edges using integers < 1 should be ignored
         g_undir = SimpleGraph(0)
@@ -296,7 +298,7 @@ import Random
             @test nv(g3) == 4
             @test nv(g4) == 4
             @test nv(g5) == 4
- 
+
             @test ne(g1) == 2
             @test ne(g2) == 2
             @test ne(g3) == 2
@@ -322,7 +324,7 @@ import Random
             @test nv(g3) == 4
             @test nv(g4) == 4
             @test nv(g5) == 4
- 
+
             @test ne(g1) == 3
             @test ne(g2) == 3
             @test ne(g3) == 3
