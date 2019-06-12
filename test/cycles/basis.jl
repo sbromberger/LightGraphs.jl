@@ -9,7 +9,7 @@
     # No Edges
     ex = Graph(1)
     expected_cyclebasis = Array{Int64,1}[]
-    for g in testgraphs(ex)
+    @testset "no edges" for g in testgraphs(ex)
         ex_cyclebasis = @inferred cycle_basis(g)
         @test isempty(ex_cyclebasis)
     end
@@ -18,7 +18,7 @@
     elist = [(1,1)]
     ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[[1]]
-    for g in testgraphs(ex)
+    @testset "one self-edge" for g in testgraphs(ex)
         ex_cyclebasis = cycle_basis(g)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end
@@ -28,7 +28,7 @@
     ex = Graph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [1,2,3,4] ]
-    for g in testgraphs(ex)
+    @testset "one cycle" for g in testgraphs(ex)
         ex_cyclebasis = cycle_basis(g)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end    
@@ -39,7 +39,7 @@
     expected_cyclebasis = Array{Int64,1}[
         [2,3,4],
         [2,1,3] ]
-    for g in testgraphs(ex)
+    @testset "2 of 3 cycles w/ basis" for g in testgraphs(ex)
         ex_cyclebasis = cycle_basis(g)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end
@@ -51,12 +51,12 @@
         [2, 4, 3],
         [1, 5, 6, 4, 3],
         [1, 2, 3] ]
-    for g in testgraphs(ex)
+    @testset "root argument" for g in testgraphs(ex)
         ex_cyclebasis = @inferred cycle_basis(g,3)
         evaluate(ex_cyclebasis,expected_cyclebasis)
     end
 
-    @testset "Two isolated cycles" begin
+    @testset "two isolated cycles" begin
         ex = blockdiag(CycleGraph(3), CycleGraph(4))
         expected_cyclebasis = [[1, 2, 3], [4, 5, 6, 7]]
         for g in testgraphs(ex)

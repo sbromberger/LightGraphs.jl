@@ -5,7 +5,7 @@
     quadrangle = random_regular_graph(4, 2)
     pentagon = random_regular_graph(5, 2)
 
-    for g in testdigraphs(pathdg)
+    @testset "path digraph" for g in testgraphs(pathdg)
         @test maxsimplecycles(g) == 0
         @test maxsimplecycles(g, false) == 84
         @test simplecyclescount(g) == 0
@@ -18,9 +18,11 @@
         @test simplecycleslength(g, 10) == (zeros(5), 0)
     end
 
-    @test maxsimplecycles(4) == 20
+    @testset "maxsimplecycles(4)" begin
+        @test maxsimplecycles(4) == 20
+    end
 
-    for g in testdigraphs(completedg)
+    @testset "complete digraph" for g in testgraphs(completedg)
         @test maxsimplecycles(g) == 20
         @test length(simplecycles(g)) == 20
         @test simplecycles(g) == @inferred(simplecycles_iter(g))
@@ -30,18 +32,18 @@
         @test simplecycleslength(g, 10)[2] == 10
     end
 
-    for g in testgraphs(triangle)
+    @testset "triangle" for g in testgraphs(triangle)
         trianglelengths, triangletotal = simplecycleslength(DiGraph(g))
         @test sum(trianglelengths) == triangletotal
     end
 
-    for g in testgraphs(quadrangle)
+    @testset "quadrangle" for g in testgraphs(quadrangle)
         quadranglelengths, quadrangletotal = simplecycleslength(DiGraph(g))
         @test sum(quadranglelengths) == quadrangletotal
         @test simplecycles(DiGraph(g)) == @inferred(simplecycles_iter(DiGraph(g)))
     end
 
-    for g in testgraphs(pentagon)
+    @testset "pentagon" for g in testgraphs(pentagon)
         pentagonlengths, pentagontotal = simplecycleslength(DiGraph(g))
         @test sum(pentagonlengths) == pentagontotal
     end
@@ -53,7 +55,7 @@
         0 0 0 1;
     ])
 
-    for g in testdigraphs(selfloopg)
+    @testset "self loops" for g in testgraphs(selfloopg)
         cycles = simplecycles(g)
         @test [3] in cycles
         @test [4] in cycles
