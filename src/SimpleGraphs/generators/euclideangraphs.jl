@@ -22,8 +22,8 @@ Dict{LightGraphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
 """
 function euclidean_graph(N::Int, d::Int;
     L=1., seed = -1, kws...)
-    _rng = LightGraphs.getRNG(seed)
-    points = rmul!(rand(_rng, d, N), L)
+    rng = LightGraphs.getRNG(seed)
+    points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
 
