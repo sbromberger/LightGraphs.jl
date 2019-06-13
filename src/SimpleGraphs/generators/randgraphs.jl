@@ -411,7 +411,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     n0 == n && return g
 
     # seed random number generator
-    seed > 0 && seed!(seed)
+    rng = getRNG(seed)
 
     # add missing vertices
     sizehint!(g.fadjlist, n)
@@ -424,7 +424,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         n0 += one(n0)
 
         # add edges to k existing vertices
-        for target in sample!(collect(1:(n0 - 1)), k)
+        for target in sample!(rng, collect(1:(n0 - 1)), k)
             add_edge!(g, n0, target)
         end
     end
@@ -450,7 +450,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         # pick uniformly from weightedVs (preferential attachement)
         i = 0
         while i < k
-            target = weightedVs[rand(1:offset)]
+            target = weightedVs[rand(rng, 1:offset)]
             if !picked[target]
                 targets[i += 1] = target
                 picked[target] = true
@@ -1076,7 +1076,7 @@ function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,Abstra
 end
 
 """
-    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
+    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; seed=-1)
 
 Generate a directed [Kronecker graph](https://en.wikipedia.org/wiki/Kronecker_graph)
 with the default Graph500 parameters.
@@ -1085,24 +1085,25 @@ with the default Graph500 parameters.
 References
 - http://www.graph500.org/specifications#alg:generator
 """
-function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
+function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; seed::Int=-1)
     N = 2^SCALE
     M = edgefactor * N
     ij = ones(Int, M, 2)
     ab = A + B
     c_norm = C / (1 - (A + B))
     a_norm = A / (A + B)
+    rng = getRNG(seed)
 
     for ib = 1:SCALE
-        ii_bit = rand(M) .> (ab)  # bitarray
-        jj_bit = rand(M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
+        ii_bit = rand(rng, M) .> (ab)  # bitarray
+        jj_bit = rand(rng, M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
         ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
     end
 
-    p = randperm(N)
+    p = randperm(rng, N)
     ij = p[ij]
 
-    p = randperm(M)
+    p = randperm(rng, M)
     ij = ij[p, :]
 
     g = SimpleDiGraph(N)
@@ -1118,7 +1119,7 @@ end
 Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
 
 The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` additional vertices.
-Each time a vertex is added, a random edge is selected and the new vertex is connected to the two 
+Each time a vertex is added, a random edge is selected and the new vertex is connected to the two
 endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
 
 It is often useful to track the evolution of the graph as vertices are added, you can access the graph from
@@ -1171,7 +1172,7 @@ graph and a random number generator as an argument. The probability of each
 directional acyclic graph randomly being generated depends on the architecture
 of the original directed graph.
 
-DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
+DAG's have a finite topological order; this order is randomly generated via "order = randperm()".
 
 # Examples
 ```jldoctest
