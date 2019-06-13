@@ -22,6 +22,7 @@ makedocs(
         "Operators"                         => "operators.md",
         "Plotting Graphs"                   => "plotting.md",
         "Path and Traversal"                => "pathing.md",
+        "Coloring"                          => "coloring.md",
         "Distance"                          => "distance.md",
         "Centrality Measures"               => "centrality.md",
         "Linear Algebra"                    => "linalg.md",
