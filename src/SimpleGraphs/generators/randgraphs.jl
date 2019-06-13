@@ -240,7 +240,7 @@ julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 ```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
-    @assert k < n / 2
+    @assert k < n
     if is_directed
         g = SimpleDiGraph(n)
     else
