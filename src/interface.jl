@@ -317,3 +317,10 @@ julia> zero(g)
 ```
 """
 zero(g::AbstractGraph) = _NI("zero")
+
+abstract type VertexContiguity end
+struct VertexContiguous <: VertexContiguity end
+struct VertexNonContiguous <: VertexContiguity end
+
+has_contiguous_vertices(::Type{<:AbstractGraph}) = VertexContiguous()
+has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
