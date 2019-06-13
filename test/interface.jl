@@ -9,6 +9,14 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
 
     @test_throws ErrorException is_directed(DummyGraph)
 
+    @test LightGraphs.has_contiguous_vertices(DummyGraph) isa Val{true}
+    @test LightGraphs.has_contiguous_vertices(DummyDiGraph) isa Val{true}
+    @test LightGraphs.has_contiguous_vertices(dummygraph) isa Val{true}
+
+    LightGraphs.has_contiguous_vertices(::Type{<:DummyGraph}) = Val{false}()
+    @test LightGraphs.has_contiguous_vertices(DummyGraph) isa Val{false}
+    @test LightGraphs.has_contiguous_vertices(dummygraph) isa Val{false}
+
     for edgefun in [src, dst, Pair, Tuple, reverse]
         @test_throws ErrorException edgefun(dummyedge)
     end
