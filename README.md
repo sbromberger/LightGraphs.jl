@@ -5,13 +5,7 @@
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/LightGraphs.jl/latest)
 [![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.889971.svg)](https://doi.org/10.5281/zenodo.889971)
-<!--- pkg.julialang.org no longer supported - https://github.com/JuliaCI/PackageEvaluator.jl/issues/207 - sbromberger 20181006 
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.3.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.4.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=0.4)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.5.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.6.svg)](http://pkg.julialang.org/?pkg=LightGraphs)
-[![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_0.7.svg)](http://pkg.julialang.org/detail/LightGraphs)
---->
+
 LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for
 the development of more sophisticated graph implementations under the `AbstractGraph`
@@ -35,7 +29,7 @@ Additional functionality may be found in a number of companion packages, includi
   weighted graphs.
   * [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): tools for importing
   and exporting graph objects using common file types like edgelists, GraphML,
-  Pajek NET, and more.  
+  Pajek NET, and more.
 
 ## Documentation
 Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/LightGraphs.jl/latest).
