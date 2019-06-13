@@ -146,7 +146,16 @@ julia> ne(g)
 ne(g::AbstractGraph) = _NI("ne")
 
 """
-    vertices(g)
+    has_contiguous_vertices(::Type{<:AbstractGraph})
+
+Trait function indicating whether vertices are always contiguous integers.
+Returns a `Val{true/false}`.
+"""
+has_contiguous_vertices(::Type{<:AbstractGraph}) = Val{true}()
+has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
+
+"""
+    vertices(g::AbstractGraph)
 
 Return (an iterator to or collection of) the vertices of a graph.
 
@@ -166,7 +175,10 @@ julia> collect(vertices(SimpleGraph(4)))
  4
 ```
 """
-vertices(g::AbstractGraph) = _NI("vertices")
+vertices(g::G) where {G <: AbstractGraph} = vertices(g, has_contiguous_vertices(G))
+
+vertices(g::AbstractGraph, ::Val{true}) = Base.OneTo(nv(g))
+vertices(g::AbstractGraph, ::Val{false}) = _NI("vertices")
 
 """
     edges(g)
@@ -233,7 +245,10 @@ julia> has_vertex(SimpleGraph(2), 3)
 false
 ```
 """
-has_vertex(x, v) = _NI("has_vertex")
+has_vertex(g::G, v) where {G} = has_vertex(g, v, has_contiguous_vertices(G))
+
+has_vertex(g, v::Integer, ::Val{true}) where {G} = v > 0 && v <= nv(g)
+has_vertex(g, v::Integer, ::Val{false}) where {G} = _NI("has_vertex")
 
 """
     has_edge(g, s, d)
@@ -265,7 +280,7 @@ has_edge(g, s, d) = _NI("has_edge")
 has_edge(g, e) = has_edge(g, src(e), dst(e))
 
 """
-    inneighbors(g, v)
+    inneighbors(g, v)has_vertex(g, v, has_contiguous_vertices(G))
 
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
@@ -317,10 +332,3 @@ julia> zero(g)
 ```
 """
 zero(g::AbstractGraph) = _NI("zero")
-
-abstract type VertexContiguity end
-struct VertexContiguous <: VertexContiguity end
-struct VertexNonContiguous <: VertexContiguity end
-
-has_contiguous_vertices(::Type{<:AbstractGraph}) = VertexContiguous()
-has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
