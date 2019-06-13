@@ -60,3 +60,9 @@ Installation is straightforward: enter Pkg mode by hitting `]`, and then
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
+
+# Citing
+
+We encourage you to cite our work if you have used our libraries, tools or datasets.
+Starring the repository on GitHub is also appreciated.
+See the Zenodo badge above or refer to `CITATION.bib`.
