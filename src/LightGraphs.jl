@@ -174,6 +174,7 @@ and tutorials are available at the
 """
 LightGraphs
 include("interface.jl")
+include("mutable_interface.jl")
 include("utils.jl")
 include("deprecations.jl")
 include("core.jl")

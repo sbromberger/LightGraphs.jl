@@ -192,9 +192,9 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     nvg = zero(T)
     @inbounds(
     for e in edge_list
-        nvg = max(nvg, src(e), dst(e)) 
+        nvg = max(nvg, src(e), dst(e))
     end)
-   
+
     list_sizes = ones(Int, nvg)
     degs = zeros(Int, nvg)
     @inbounds(
@@ -206,7 +206,7 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
             degs[d] += 1
         end
     end)
-    
+
     fadjlist = Vector{Vector{T}}(undef, nvg)
     @inbounds(
     for v in 1:nvg
@@ -217,10 +217,10 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     for e in edge_list
         s, d = src(e), dst(e)
         (s >= 1 && d >= 1) || continue
-        fadjlist[s][list_sizes[s]] = d 
+        fadjlist[s][list_sizes[s]] = d
         list_sizes[s] += 1
-        if s != d 
-            fadjlist[d][list_sizes[d]] = s 
+        if s != d
+            fadjlist[d][list_sizes[d]] = s
             list_sizes[d] += 1
         end
     end)
@@ -249,7 +249,7 @@ end
 
 function _SimpleGraphFromIterator(iter)::SimpleGraph
     T = Union{}
-    fadjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
     @inbounds(
     for e in iter
         typeof(e) <: SimpleGraphEdge ||
@@ -257,7 +257,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
         s, d = src(e), dst(e)
         (s >= 1 && d >= 1) || continue
         if T != eltype(e)
-            T = typejoin(T, eltype(e)) 
+            T = typejoin(T, eltype(e))
             fadjlist = convert(Vector{Vector{T}}, fadjlist)
         end
         add_to_fadjlist!(fadjlist, s, d)
@@ -268,12 +268,12 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     g.fadjlist = fadjlist
     g.ne = neg
-    
+
     return g
 end
 
 function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T <: Integer
-    fadjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
     @inbounds(
     for e in iter
         s, d = src(e), dst(e)
@@ -383,25 +383,6 @@ function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     return has_edge(g, s, d)
 end
 
-"""
-    add_edge!(g, e)
-
-Add an edge `e` to graph `g`. Return `true` if edge was added successfully,
-otherwise return `false`.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(2);
-
-julia> add_edge!(g, 1, 2)
-true
-
-julia> add_edge!(g, 2, 3)
-false
-```
-"""
 function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
@@ -420,106 +401,31 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     return true  # edge successfully added
 end
 
-"""
-    rem_edge!(g, e)
-
-Remove an edge `e` from graph `g`. Return `true` if edge was removed successfully,
-otherwise return `false`.
-
-### Implementation Notes
-If `rem_edge!` returns `false`, the graph may be in an indeterminate state, as
-there are multiple points where the function can exit with `false`.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(2);
-
-julia> add_edge!(g, 1, 2);
-
-julia> rem_edge!(g, 1, 2)
-true
-
-julia> rem_edge!(g, 1, 2)
-false
-```
-"""
 function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s] 
+    @inbounds list = g.fadjlist[s]
     index = searchsortedfirst(list, d)
-    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
+    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph
     deleteat!(list, index)
 
     g.ne -= 1
     s == d && return true  # selfloop
 
-    @inbounds list = g.fadjlist[d] 
+    @inbounds list = g.fadjlist[d]
     index = searchsortedfirst(list, s)
     deleteat!(list, index)
     return true  # edge successfully removed
 end
 
 
-"""
-    add_vertex!(g)
-
-Add a new vertex to the graph `g`. Return `true` if addition was successful.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(Int8(typemax(Int8) - 1))
-{126, 0} undirected simple Int8 graph
-
-julia> add_vertex!(g)
-true
-
-julia> add_vertex!(g)
-false
-```
-"""
 function add_vertex!(g::SimpleGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.fadjlist, Vector{T}())
     return true
 end
 
-"""
-    rem_vertices!(g, vs, keep_order=false) -> vmap
-
-Remove all vertices in `vs` from `g`.
-Return a vector `vmap` that maps the vertices in the modified graph to the ones in
-the unmodified graph.
-If `keep_order` is `true`, the vertices in the modified graph appear in the same
-order as they did in the unmodified graph. This might be slower.
-
-### Implementation Notes
-This function is not part of the official LightGraphs API and is subject to change/removal between major versions.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = CompleteGraph{5}
-{5, 10} undirected simple Int64 graph
-
-julia> vmap = rem_vertices!(g, [2, 4], keep_order=true);
-
-julia> vmap
-3-element Array{Int64,1}:
- 1
- 3
- 5
-
-julia> g
-{3, 3} undirected simple Int64 graph
-```
-"""
 function rem_vertices!(g::SimpleGraph{T},
                        vs::AbstractVector{<:Integer};
                        keep_order::Bool=false

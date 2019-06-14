@@ -26,25 +26,6 @@ false
 is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
-    add_vertices!(g, n)
-
-Add `n` new vertices to the graph `g`.
-Return the number of vertices that were added successfully.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph()
-{0, 0} undirected simple Int64 graph
-
-julia> add_vertices!(g, 2)
-2
-```
-"""
-add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
-
-"""
     indegree(g[, v])
 
 Return a vector corresponding to the number of edges which end at each vertex in
