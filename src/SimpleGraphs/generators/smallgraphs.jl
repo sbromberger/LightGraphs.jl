@@ -76,30 +76,28 @@ function smallgraph(s::AbstractString)
     return smallgraph(Symbol(ls))
 end
 
+diamond_graph() = SimpleGraph( SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]) )
 
-DiamondGraph() = SimpleGraph( SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]) )
-
-
-BullGraph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
+bull_graph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
 
 
-function ChvatalGraph()
+function chvatal_graph()
     e = SimpleEdge.([
-    (1, 2), (1, 5), (1, 7), (1, 10),
-    (2, 3), (2, 6), (2, 8),
-    (3, 4), (3, 7), (3, 9),
-    (4, 5), (4, 8), (4, 10),
-    (5, 6), (5, 9),
-    (6, 11), (6, 12),
-    (7, 11), (7, 12),
-    (8, 9), (8, 12),
-    (9, 11),
-    (10, 11), (10, 12)
-   ])
+        (1, 2), (1, 5), (1, 7), (1, 10),
+        (2, 3), (2, 6), (2, 8),
+        (3, 4), (3, 7), (3, 9),
+        (4, 5), (4, 8), (4, 10),
+        (5, 6), (5, 9),
+        (6, 11), (6, 12),
+        (7, 11), (7, 12),
+        (8, 9), (8, 12),
+        (9, 11),
+        (10, 11), (10, 12)
+    ])
     return SimpleGraph(e)
 end
 
-function CubicalGraph()
+function cubical_graph()
     e = SimpleEdge.([
     (1, 2), (1, 4), (1, 5),
     (2, 3), (2, 8),
