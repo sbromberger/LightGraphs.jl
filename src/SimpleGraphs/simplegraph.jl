@@ -364,9 +364,7 @@ fadj(g) == fadj(h)
 
 Return `true` if `g` is a directed graph.
 """
-is_directed(::Type{SimpleGraph}) = false
-is_directed(::Type{SimpleGraph{T}}) where T = false
-is_directed(g::SimpleGraph) = false
+is_directed(::Type{<:SimpleGraph}) = false
 
 function has_edge(g::SimpleGraph{T}, s, d) where T
     verts = vertices(g)
