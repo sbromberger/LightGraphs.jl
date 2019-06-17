@@ -21,8 +21,8 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
-    random_regular_digraph, random_configuration_model, random_tournament_digraph, 
-    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, 
+    random_regular_digraph, random_configuration_model, random_tournament_digraph,
+    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts,
     blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
     barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
     #generators
@@ -78,8 +78,26 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
-issubset(g::T, h::T) where T<:AbstractSimpleGraph =
-    (nv(g) <= nv(h)) && issubset(edges(g), edges(h))
+function issubset(g::T, h::T) where T <: AbstractSimpleGraph
+    nv(g) <= nv(h) || return false
+    for u in vertices(g)
+        u_nbrs_g = neighbors(g, u)
+        len_u_nbrs_g = length(u_nbrs_g)
+        len_u_nbrs_g == 0 && continue
+        u_nbrs_h = neighbors(h, u)
+        p = 1
+        len_u_nbrs_g > length(u_nbrs_h) && return false
+		(u_nbrs_g[1] < u_nbrs_h[1] || u_nbrs_g[end] > u_nbrs_h[end]) && return false
+        @inbounds for v in u_nbrs_h
+            if v == u_nbrs_g[p]
+                p == len_u_nbrs_g && break
+                p += 1
+            end
+        end
+        p == len_u_nbrs_g || return false
+    end
+    return true
+end
 
 has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
@@ -175,8 +193,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     return true
 end
 
-zero(g::T) where T<:AbstractSimpleGraph = T()
-    
+zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
