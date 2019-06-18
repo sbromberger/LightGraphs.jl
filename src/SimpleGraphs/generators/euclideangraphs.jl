@@ -4,11 +4,26 @@
 Generate `N` uniformly distributed points in the box ``[0,L]^{d}``
 and return a Euclidean graph, a map containing the distance on each edge and
 a matrix with the points' positions.
+
+## Examples
+```jldoctest
+julia> g, dists = euclidean_graph(5, 2, cutoff=0.3);
+
+julia> g
+{5, 4} undirected simple Int64 graph
+
+julia> dists
+Dict{LightGraphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
+  Edge 1 => 5 => 0.205756
+  Edge 2 => 5 => 0.271359
+  Edge 2 => 4 => 0.247703
+  Edge 4 => 5 => 0.168372
+```
 """
 function euclidean_graph(N::Int, d::Int;
     L=1., seed = -1, kws...)
-    _rng = LightGraphs.getRNG(seed)
-    points = rmul!(rand(_rng, d, N), L)
+    rng = LightGraphs.getRNG(seed)
+    points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
 
@@ -29,6 +44,16 @@ vertices `i` and `j` is inserted if `norm(x[i]-x[j], p) < cutoff`.
 In case of negative `cutoff` instead every edge is inserted.
 For `p=2` we have the standard Euclidean distance.
 Set `bc=:periodic` to impose periodic boundary conditions in the box ``[0,L]^d``.
+
+## Examples
+```jldoctest
+julia> pts = rand(3, 10); # 10 vertices in R^3
+
+julia> g, dists = euclidean_graph(pts, p=1, bc=:periodic) # Taxicab-distance (L^1);
+
+julia> g
+{10, 45} undirected simple Int64 graph
+```
 """
 function euclidean_graph(points::Matrix;
     L=1., p=2., cutoff=-1., bc=:open)

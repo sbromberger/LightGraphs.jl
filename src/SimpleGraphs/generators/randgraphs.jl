@@ -26,7 +26,7 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integ
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(SimpleGraph(nv, maxe - ne))
+    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne))
 
     rng = getRNG(seed)
     g = SimpleGraph(tnv)
@@ -63,7 +63,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Int
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > (2 / 3) * maxe && return complement(SimpleDiGraph{T}(nv, maxe - ne))
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne))
 
     rng = getRNG(seed)
     g = SimpleDiGraph(tnv)
@@ -229,9 +229,18 @@ randomized per the model based on probability `β`.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `seed=-1`: set the RNG seed.
+
+## Examples
+```jldoctest
+julia> watts_strogatz(10, 4, 0.3)
+{10, 20} undirected simple Int64 graph
+
+julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
+{10, 20} directed simple Int8 graph
+```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
-    @assert k < n / 2
+    @assert k < n
     if is_directed
         g = SimpleDiGraph(n)
     else
@@ -328,6 +337,14 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
 - `seed=-1`: set the RNG seed.
+## Examples
+```jldoctest
+julia> barabasi_albert(50, 3)
+{50, 141} undirected simple Int64 graph
+
+julia> barabasi_albert(100, Int8(10), is_directed=true, complete=true, seed=123)
+{100, 990} directed simple Int8 graph
+```
 """
 barabasi_albert(n::Integer, k::Integer; keyargs...) =
 barabasi_albert(n, k, k; keyargs...)
@@ -345,6 +362,15 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
 - `seed=-1`: set the RNG seed.
+
+## Examples
+```jldoctest
+julia> barabasi_albert(10, 3, 2)
+{10, 14} undirected simple Int64 graph
+
+julia> barabasi_albert(100, Int8(10), 3, is_directed=true, seed=123)
+{100, 270} directed simple Int8 graph
+```
 """
 function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool=false, complete::Bool=false, seed::Int=-1)
     if complete
@@ -367,6 +393,16 @@ already present in the system by preferential attachment.
 
 ### Optional Arguments
 - `seed=-1`: set the RNG seed.
+## Examples
+```jldoctest
+julia> g = CycleGraph(4)
+{4, 4} undirected simple Int64 graph
+
+julia> barabasi_albert!(g, 16, 3);
+
+julia> g
+{16, 40} undirected simple Int64 graph
+```
 """
 function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1)
     n0 = nv(g)
@@ -375,7 +411,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     n0 == n && return g
 
     # seed random number generator
-    seed > 0 && seed!(seed)
+    rng = getRNG(seed)
 
     # add missing vertices
     sizehint!(g.fadjlist, n)
@@ -388,7 +424,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         n0 += one(n0)
 
         # add edges to k existing vertices
-        for target in sample!(collect(1:(n0 - 1)), k)
+        for target in sample!(rng, collect(1:(n0 - 1)), k)
             add_edge!(g, n0, target)
         end
     end
@@ -414,7 +450,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
         # pick uniformly from weightedVs (preferential attachement)
         i = 0
         while i < k
-            target = weightedVs[rand(1:offset)]
+            target = weightedVs[rand(rng, 1:offset)]
             if !picked[target]
                 targets[i += 1] = target
                 picked[target] = true
@@ -449,6 +485,20 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+## Examples
+```jldoctest
+julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1])
+{4, 5} undirected simple Int64 graph
+
+julia> edges(g) |> collect
+5-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 2 => 4
+```
 """
 function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int=-1) where T <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
@@ -473,7 +523,7 @@ end
 """
     static_fitness_model(m, fitness_out, fitness_in)
 
-Generate a random graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
+Generate a random directed graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional with
 respect to ``i ∝ fitness\\_out`` and ``j ∝ fitness\\_in``.
 
@@ -485,6 +535,21 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ### References
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
+
+## Examples
+```jldoctest
+julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
+{4, 6} directed simple Int64 graph
+
+julia> edges(g) |> collect
+6-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 1 => 4
+ Edge 2 => 3
+ Edge 2 => 4
+ Edge 3 => 4
+```
 """
 function static_fitness_model(m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S}; seed::Int=-1) where T <: Real where S <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
@@ -1011,7 +1076,7 @@ function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,Abstra
 end
 
 """
-    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
+    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; seed=-1)
 
 Generate a directed [Kronecker graph](https://en.wikipedia.org/wiki/Kronecker_graph)
 with the default Graph500 parameters.
@@ -1020,24 +1085,25 @@ with the default Graph500 parameters.
 References
 - http://www.graph500.org/specifications#alg:generator
 """
-function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19)
+function kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; seed::Int=-1)
     N = 2^SCALE
     M = edgefactor * N
     ij = ones(Int, M, 2)
     ab = A + B
     c_norm = C / (1 - (A + B))
     a_norm = A / (A + B)
+    rng = getRNG(seed)
 
     for ib = 1:SCALE
-        ii_bit = rand(M) .> (ab)  # bitarray
-        jj_bit = rand(M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
+        ii_bit = rand(rng, M) .> (ab)  # bitarray
+        jj_bit = rand(rng, M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
         ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
     end
 
-    p = randperm(N)
+    p = randperm(rng, N)
     ij = p[ij]
 
-    p = randperm(M)
+    p = randperm(rng, M)
     ij = ij[p, :]
 
     g = SimpleDiGraph(N)
@@ -1053,7 +1119,7 @@ end
 Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
 
 The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` additional vertices.
-Each time a vertex is added, a random edge is selected and the new vertex is connected to the two 
+Each time a vertex is added, a random edge is selected and the new vertex is connected to the two
 endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
 
 It is often useful to track the evolution of the graph as vertices are added, you can access the graph from
@@ -1106,7 +1172,7 @@ graph and a random number generator as an argument. The probability of each
 directional acyclic graph randomly being generated depends on the architecture
 of the original directed graph.
 
-DAG's have a finite topological order; this order is randomly generated via "order = randperm()". 
+DAG's have a finite topological order; this order is randomly generated via "order = randperm()".
 
 # Examples
 ```jldoctest

@@ -8,6 +8,7 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     dummyedge = DummyEdge()
 
     @test_throws ErrorException is_directed(DummyGraph)
+    @test_throws ErrorException zero(DummyGraph)
 
     for edgefun in [src, dst, Pair, Tuple, reverse]
         @test_throws ErrorException edgefun(dummyedge)
@@ -19,7 +20,7 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
 
     for graphfunbasic in [
         nv, ne, vertices, edges, is_directed,
-        edgetype, eltype, zero
+        edgetype, eltype
     ]
         @test_throws ErrorException graphfunbasic(dummygraph)
     end
