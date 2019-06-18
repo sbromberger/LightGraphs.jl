@@ -1,22 +1,22 @@
 """
-    struct coloring{T}
+    struct Coloring{T}
 
-Store number of colors used and mapping from vertex to color
+Store the number of colors used and mapping from vertex to color
 """
-struct coloring{T <: Integer} <: Any
+struct Coloring{T <: Integer}
     num_colors::T
     colors::Vector{T}
 end
 
-best_color(c1::coloring, c2::coloring) = c1.num_colors < c2.num_colors ? c1 : c2
+best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 
 """
     perm_greedy_color(g, seq)
 
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
-seq[i] = v imples that vertex v is the i<sup>th</sup> vertex to be colored.
+`seq[i] = v` implies that vertex v is the ``i^{th}`` vertex to be colored.
 """
-function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where T <: Integer 
+function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T <: Integer}
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
@@ -39,7 +39,7 @@ function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where T <: Integer
         end
     end
 
-    return coloring{T}(maximum(cols), cols)
+    return Coloring{T}(maximum(cols), cols)
 end
 
 """
@@ -47,20 +47,19 @@ end
 
 Color graph `g` iteratively in the descending order of the degree of the vertices.
 """
-function degree_greedy_color(g::AbstractGraph{T}) where T <: Integer 
+function degree_greedy_color(g::AbstractGraph{T}) where {T <: Integer} 
     seq = convert(Vector{T}, sortperm(degree(g), rev=true)) 
     return perm_greedy_color(g, seq)
 end
 
 
 """
-    random_greedy_color(g, reps=1)
+    random_greedy_color(g, reps)
 
-Color graph `g` iteratively in a random order using a greedy heruistic
-and choose the best coloring out of `reps` such random coloring.
+Color the graph `g` iteratively in a random order using a greedy heuristic
+and choose the best coloring out of `reps` such random colorings.
 """
-function random_greedy_color(g::AbstractGraph{T}, 
-    reps::Integer) where T <: Integer 
+function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where {T <: Integer} 
 
     seq = shuffle(vertices(g))
     best = perm_greedy_color(g, seq)
@@ -87,5 +86,4 @@ If `sort_degree` is false then `reps` colorings are obtained based on random per
 colors is chosen.
 """
 greedy_color(g::AbstractGraph{U}; sort_degree::Bool=false, reps::Integer=1) where {U <: Integer} =
-sort_degree ? degree_greedy_color(g) : random_greedy_color(g, reps)
-
+    sort_degree ? degree_greedy_color(g) : random_greedy_color(g, reps)

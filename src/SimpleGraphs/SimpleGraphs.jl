@@ -20,8 +20,8 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
-    random_regular_digraph, random_configuration_model, random_tournament_digraph, 
-    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, 
+    random_regular_digraph, random_configuration_model, random_tournament_digraph,
+    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts,
     blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
     barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
     #generators
@@ -191,8 +191,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     return true
 end
 
-zero(g::T) where T<:AbstractSimpleGraph = T()
-    
+zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
