@@ -10,7 +10,7 @@
 
     approx_factor(t::Integer) = 2-2/t
 
-    g3 = StarGraph(5) 
+    g3 = star_graph(5) 
     for g in testgraphs(g3)
         g_st = @inferred(steiner_tree(g, [2, 5]))
         @test ne(g_st) == 2 # [Edge(2, 1), Edge(1, 5)]
@@ -20,7 +20,7 @@
         @test ne(g_copy) == 2 # [Edge(2, 1), Edge(1, 5)]
     end
 
-    g4 = PathGraph(11) 
+    g4 = path_graph(11) 
     for g in testgraphs(g4)
         g_st = @inferred(steiner_tree(g, [4, 8]))
         @test ne(g_st) == 4
@@ -31,7 +31,7 @@
     end
 
 
-    g5 = Grid([5, 5])
+    g5 = grid([5, 5])
     for g in testgraphs(g5)
         g_st = @inferred(steiner_tree(g, [3, 11, 15, 23]))
         @test sum_weight(g_st) == 8 
@@ -43,7 +43,7 @@
          4   80  120  0  200
          5  1  150  200  0]
 
-    g6 = CompleteGraph(5) 
+    g6 = complete_graph(5) 
 
     for g in testgraphs(g6)
         g_st = @inferred(steiner_tree(g, [2, 4, 5], d))

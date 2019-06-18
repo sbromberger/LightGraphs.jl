@@ -30,14 +30,14 @@ of graph `g`. Return a vector representing the centrality calculated for each no
 ```jldoctest
 julia> using LightGraphs
 
-julia> degree_centrality(StarGraph(4))
+julia> degree_centrality(star_graph(4))
 4-element Array{Float64,1}:
  1.0               
  0.3333333333333333
  0.3333333333333333
  0.3333333333333333
 
-julia> degree_centrality(PathGraph(3))
+julia> degree_centrality(path_graph(3))
 3-element Array{Float64,1}:
  0.5
  1.0

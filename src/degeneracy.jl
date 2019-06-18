@@ -21,7 +21,7 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> add_vertex!(g);
 
@@ -90,7 +90,7 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> add_vertex!(g);
 
@@ -145,7 +145,7 @@ Not implemented for graphs with parallel edges or self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> add_vertex!(g);
 
@@ -199,7 +199,7 @@ Not implemented for graphs with self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> add_vertex!(g);
 
@@ -254,7 +254,7 @@ Not implemented for graphs with parallel edges or self loops.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> add_vertex!(g);
 

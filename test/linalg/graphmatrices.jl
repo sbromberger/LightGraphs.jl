@@ -220,14 +220,14 @@ using ArnoldiMethod
 
     @testset "Noop" begin
         @testset "Noop broadcasted with * is identity" begin
-            testobjects = [1, "string", 'c', CycleGraph(3), [1,2,3], sin, Noop()]
+            testobjects = [1, "string", 'c', cycle_graph(3), [1,2,3], sin, Noop()]
             for object in testobjects
                 @test Noop() .* object === object
             end
         end
 
         @testset "Noop * is identity" begin
-            testobjects = [1, "string", 'c', CycleGraph(3), [1,2,3], sin, Noop()]
+            testobjects = [1, "string", 'c', cycle_graph(3), [1,2,3], sin, Noop()]
             for object in testobjects
                 @test Noop() * object === object
             end

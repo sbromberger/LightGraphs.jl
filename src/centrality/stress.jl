@@ -16,13 +16,13 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 ```jldoctest
 julia> using LightGraphs
 
-julia> stress_centrality(StarGraph(3))
+julia> stress_centrality(star_graph(3))
 3-element Array{Int64,1}:
  2
  0
  0
 
-julia> stress_centrality(CycleGraph(4))
+julia> stress_centrality(cycle_graph(4))
 4-element Array{Int64,1}:
  2
  2

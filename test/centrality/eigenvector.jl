@@ -1,6 +1,6 @@
 @testset "Eigenvector" begin
     g1 = smallgraph(:house)
-    g2 = CycleDiGraph(4)
+    g2 = cycle_digraph(4)
 
     for g in testgraphs(g1)
         y = @inferred(eigenvector_centrality(g))

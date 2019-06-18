@@ -1,7 +1,7 @@
 @testset "Limited Length Cycles" begin
-    completedg = CompleteDiGraph(4)
-    pathdg = PathDiGraph(5)
-    cycledg = CycleDiGraph(5)
+    completedg = complete_digraph(4)
+    pathdg = path_digraph(5)
+    cycledg = cycle_digraph(5)
 
     @testset "complete digraph" for g in testgraphs(completedg)
         @test length(simplecycles_limited_length(g, 0)) == 0

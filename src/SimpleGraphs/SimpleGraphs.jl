@@ -26,11 +26,11 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
     barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
     #generators
-    CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
-    CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph,
-    StarDiGraph, PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree,
-    DoubleBinaryTree, RoachGraph, CliqueGraph, BarbellGraph, LollipopGraph,
-    LadderGraph, CircularLadderGraph,
+    complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
+    complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph,
+    star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree,
+    double_binary_tree, roach_graph, clique_graph, barbell_graph, lollipop_graph,
+    ladder_graph, circular_ladder_graph,
     #smallgraphs
     smallgraph,
     # Euclidean graphs

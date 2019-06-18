@@ -23,10 +23,10 @@ but if the result is `true` this is not guaranteed.
 ```jldoctest
 julia> using LightGraphs
 
-julia> LightGraphs.Experimental.could_have_isomorph(PathGraph(3), StarGraph(4))
+julia> LightGraphs.Experimental.could_have_isomorph(path_graph(3), star_graph(4))
 false
 
-julia> LightGraphs.Experimental.could_have_isomorph(PathGraph(3), StarGraph(3))
+julia> LightGraphs.Experimental.could_have_isomorph(path_graph(3), star_graph(3))
 true
 ```
 """
@@ -65,13 +65,13 @@ Return `true` if the graph `g1` contains a vertex induced subgraph that is isomo
 
 ### Examples
 ```doctest.jl
-julia> has_induced_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
+julia> has_induced_subgraphisomorph(complete_graph(5), complete_graph(4))
 true
-julia> has_induced_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
+julia> has_induced_subgraphisomorph(complete_graph(5), cycle_graph(4))
 false
 
-julia> g1 = PathDiGraph(3); color1 = [1, 1, 1]
-julia> g2 = PathDiGraph(2); color2 = [1, 2]
+julia> g1 = path_digraph(3); color1 = [1, 1, 1]
+julia> g2 = path_digraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> has_induced_subgraphisomorph(g1, g2)
 true
@@ -104,13 +104,13 @@ Return `true` if the graph `g1` contains a subgraph that is isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> has_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
+julia> has_subgraphisomorph(complete_graph(5), complete_graph(4))
 true
-julia> has_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
+julia> has_subgraphisomorph(complete_graph(5), cycle_graph(4))
 true
 
-julia> g1 = PathDiGraph(3); color1 = [1, 1, 1]
-julia> g2 = PathDiGraph(2); color2 = [1, 2]
+julia> g1 = path_digraph(3); color1 = [1, 1, 1]
+julia> g2 = path_digraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> has_subgraphisomorph(g1, g2)
 true
@@ -143,13 +143,13 @@ Return `true` if the graph `g1` is isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> has_isomorph(CompleteGraph(3), CycleGraph(3))
+julia> has_isomorph(complete_graph(3), cycle_graph(3))
 true
-julia> has_isomorph(CompleteGraph(4), CycleGraph(4))
+julia> has_isomorph(complete_graph(4), cycle_graph(4))
 false
 
-julia> g1 = PathDiGraph(4); color1 = [1, 2, 1, 1]
-julia> g2 = PathDiGraph(4); color2 = [1, 2, 2, 1]
+julia> g1 = path_digraph(4); color1 = [1, 2, 1, 1]
+julia> g2 = path_digraph(4); color2 = [1, 2, 2, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> has_isomorph(g1, g2)
 true
@@ -180,13 +180,13 @@ Return the number of vertex induced subgraphs of the graph `g1` that are isomorp
 
 ### Examples
 ```doctest.jl
-julia> count_induced_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
+julia> count_induced_subgraphisomorph(complete_graph(5), complete_graph(4))
 120
-julia> count_induced_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
+julia> count_induced_subgraphisomorph(complete_graph(5), cycle_graph(4))
 0
 
-julia> g1 = PathGraph(3); color1 = [1, 1, 2]
-julia> g2 = PathGraph(2); color2 = [1, 2]
+julia> g1 = path_graph(3); color1 = [1, 1, 2]
+julia> g2 = path_graph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> count_induced_subgraphisomorph(g1, g2)
 2
@@ -219,12 +219,12 @@ Return the number of subgraphs of the graph `g1` that are isomorphic to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> count_subgraphisomorph(CompleteGraph(5), CompleteGraph(4))
+julia> count_subgraphisomorph(complete_graph(5), complete_graph(4))
 120
-julia> count_subgraphisomorph(CompleteGraph(5), CycleGraph(4))
+julia> count_subgraphisomorph(complete_graph(5), cycle_graph(4))
 120
 
-julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
+julia> g1 = cycle_digraph(3); color1 = [1, 1, 2]
 julia> g2 = SimpleDiGraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> count_subgraphisomorph(g1, g2)
@@ -259,13 +259,13 @@ Return the number of isomorphism from graph `g1` to `g2`.
 
 ### Examples
 ```doctest.jl
-julia> count_isomorph(CycleGraph(5), CycleGraph(5))
+julia> count_isomorph(cycle_graph(5), cycle_graph(5))
 10
-julia> count_isomorph(CompleteGraph(5), CycleGraph(5))
+julia> count_isomorph(complete_graph(5), cycle_graph(5))
 0
 
-julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
-julia> g2 = CycleDiGraph(3); color2 = [1, 1, 1]
+julia> g1 = cycle_digraph(3); color1 = [1, 1, 2]
+julia> g2 = cycle_digraph(3); color2 = [1, 1, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> count_isomorph(g1, g2)
 3
@@ -301,13 +301,13 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_induced_subgraphisomorph(PathGraph(3), SimpleGraph(2)) |> collect
+julia> all_induced_subgraphisomorph(path_graph(3), SimpleGraph(2)) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (3, 2)]
  [(3, 1), (1, 2)]
 
-julia> g1 = PathDiGraph(3); color1 = [1, 1, 2]
-julia> g2 = PathDiGraph(2); color2 = [1, 2]
+julia> g1 = path_digraph(3); color1 = [1, 1, 2]
+julia> g2 = path_digraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> all_induced_subgraphisomorph(g1, g2) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
@@ -346,15 +346,15 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_subgraphisomorph(PathGraph(3), PathGraph(2)) |> collect
+julia> all_subgraphisomorph(path_graph(3), path_graph(2)) |> collect
 4-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
  [(2, 1), (1, 2)]
  [(2, 1), (3, 2)]
  [(3, 1), (2, 2)]
 
-julia> g1 = PathDiGraph(3); color1 = [1, 1, 2]
-julia> g2 = PathDiGraph(2); color2 = [1, 2]
+julia> g1 = path_digraph(3); color1 = [1, 1, 2]
+julia> g2 = path_digraph(2); color2 = [1, 2]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> all_subgraphisomorph(g1, g2) |> collect
 2-element Array{Array{Tuple{Int64,Int64},1},1}:
@@ -394,7 +394,7 @@ mapped to v ∈ g2.
 
 ### Examples
 ```doctest.jl
-julia> all_isomorph(StarGraph(4), StarGraph(4)) |> collect
+julia> all_isomorph(star_graph(4), star_graph(4)) |> collect
 6-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2), (3, 3), (4, 4)]
  [(1, 1), (2, 2), (4, 3), (3, 4)]
@@ -403,8 +403,8 @@ julia> all_isomorph(StarGraph(4), StarGraph(4)) |> collect
  [(1, 1), (4, 2), (2, 3), (3, 4)]
  [(1, 1), (4, 2), (3, 3), (2, 4)]
  
-julia> g1 = CycleDiGraph(3); color1 = [1, 1, 2]
-julia> g2 = CycleDiGraph(3); color2 = [2, 1, 1]
+julia> g1 = cycle_digraph(3); color1 = [1, 1, 2]
+julia> g2 = cycle_digraph(3); color2 = [2, 1, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
 julia> all_isomorph(g1, g2) |> collect
 3-element Array{Array{Tuple{Int64,Int64},1},1}:
