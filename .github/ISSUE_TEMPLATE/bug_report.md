@@ -10,7 +10,7 @@ assignees: ''
 **Description of bug**
 Describe the bug clearly and concisely.
 
-**How To Reproduce**
+**How to reproduce**
 Detail steps to reproduce the behavior.
 
 **Expected behavior**
@@ -23,8 +23,8 @@ Describe what actually happened.
 If applicable, provide a minimal working example of the bug.
 
 **Version information**
- - output from `versioninfo()`
- - output from `] stats LightGraphs`
+ - output from `versioninfo()` surrounded by backticks (``)
+ - output from `] status LightGraphs` surrounded by backticks (``)
 
 **Additional context**
 Add any other context about the problem here.
