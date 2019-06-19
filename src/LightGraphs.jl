@@ -201,7 +201,6 @@ a `Graph` or `DiGraph`.
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
-include("digraph/transitivity.jl")
 include("cycles/johnson.jl")
 include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
@@ -259,7 +258,8 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
-include("transitivity/transitivity.jl")
+include("transitivity/transitiveclosure.jl")
+include("transitivity/transitivereduction.jl")
 
 using .LinAlg
 end # module

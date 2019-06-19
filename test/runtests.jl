@@ -29,7 +29,6 @@ tests = [
     "operators",
     "degeneracy",
     "distance",
-    "digraph/transitivity",
     "cycles/hawick-james",
     "cycles/johnson",
     "cycles/karp",
@@ -83,7 +82,8 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
     "experimental/experimental",
-    "transitivity/transitivity"
+    "transitivity/transitiveclosure",
+    "transitivity/transitivereduction"
 ]
 
 @testset "LightGraphs" begin
