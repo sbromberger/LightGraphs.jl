@@ -24,7 +24,7 @@
         end
     end
 
-    g3 = StarGraph(5)
+    g3 = star_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g3)
             c = @inferred(Parallel.vertex_cover(g, 4, RandomVertexCover(); parallel=parallel))
@@ -32,7 +32,7 @@
         end
     end
     
-    g4 = CompleteGraph(5)
+    g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)
             c = @inferred(Parallel.vertex_cover(g, 4, RandomVertexCover(); parallel=parallel))
@@ -40,7 +40,7 @@
         end
     end
 
-    g5 = PathGraph(5)
+    g5 = path_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g5)
             c = @inferred(Parallel.vertex_cover(g, 4, RandomVertexCover(); parallel=parallel))

@@ -31,8 +31,8 @@
         end
     end
 
-    g1c = CompleteGraph(4)
-    g2c = CompleteGraph(4)
+    g1c = complete_graph(4)
+    g2c = complete_graph(4)
     rem_edge!(g2c, 1, 2)
     @testset "edit_distance $g1, $g2" for g1 in testgraphs(g1c), g2 in testgraphs(g2c)
         d, λ = @inferred(edit_distance(g1, g2))

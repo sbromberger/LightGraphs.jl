@@ -12,16 +12,16 @@ The parameter `k` defines the size of the clique to use in percolation.
 ```jldoctest
 julia> using LightGraphs
 
-julia> clique_percolation(CliqueGraph(3, 2))
+julia> clique_percolation(clique_graph(3, 2))
 2-element Array{BitSet,1}:
  BitSet([4, 5, 6])
  BitSet([1, 2, 3])
 
-julia> clique_percolation(CliqueGraph(3, 2), k=2)
+julia> clique_percolation(clique_graph(3, 2), k=2)
 1-element Array{BitSet,1}:
  BitSet([1, 2, 3, 4, 5, 6])
 
-julia> clique_percolation(CliqueGraph(3, 2), k=4)
+julia> clique_percolation(clique_graph(3, 2), k=4)
 0-element Array{BitSet,1}
 ```
 """

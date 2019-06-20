@@ -132,7 +132,7 @@ of graph `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> global_clustering_coefficient(StarGraph(4))
+julia> global_clustering_coefficient(star_graph(4))
 0.0
 
 julia> global_clustering_coefficient(smallgraph(:housex))

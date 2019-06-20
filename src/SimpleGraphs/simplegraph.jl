@@ -94,7 +94,7 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = CompleteGraph(5)
+julia> g = complete_graph(5)
 julia> SimpleGraph{UInt8}(g)
 {5, 10} undirected simple UInt8 graph
 ```
@@ -119,7 +119,7 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = PathDiGraph(Int8(5))
+julia> g = path_digraph(Int8(5))
 julia> SimpleGraph(g)
 {5, 4} undirected simple Int8 graph
 ```
@@ -505,7 +505,7 @@ This function is not part of the official LightGraphs API and is subject to chan
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = CompleteGraph{5}
+julia> g = complete_graph{5}
 {5, 10} undirected simple Int64 graph
 
 julia> vmap = rem_vertices!(g, [2, 4], keep_order=true);

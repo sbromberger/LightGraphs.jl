@@ -70,14 +70,14 @@ Time complexity is ``\\mathcal{O}(|V|)``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> biconnected_components(StarGraph(5))
+julia> biconnected_components(star_graph(5))
 4-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:
  [Edge 1 => 3]
  [Edge 1 => 4]
  [Edge 1 => 5]
  [Edge 1 => 2]
 
-julia> biconnected_components(CycleGraph(5))
+julia> biconnected_components(cycle_graph(5))
 1-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:
  [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]
 ```

@@ -9,7 +9,7 @@ one pass over the edges, and is invalidated by changes to the graph.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> es = edges(g)
 SimpleEdgeIter 2

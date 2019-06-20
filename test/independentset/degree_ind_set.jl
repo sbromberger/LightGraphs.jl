@@ -18,20 +18,20 @@
         @test isempty(c)
     end
       
-    g3 = StarGraph(5)
+    g3 = star_graph(5)
     for g in testgraphs(g3)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
         @test sort(c) == [2, 3, 4, 5]
     end
     
-    g4 = CompleteGraph(5)
+    g4 = complete_graph(5)
     for g in testgraphs(g4)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
         @test length(c)== 1 #Exactly one vertex 
     end
 
-    #PathGraph(5) with additional edge 2-5
-    g5 = PathGraph(5)
+    #path_graph(5) with additional edge 2-5
+    g5 = path_graph(5)
     add_edge!(g5, 2, 5)
     for g in testgraphs(g5)
         c = @inferred(independent_set(g, DegreeIndependentSet()))

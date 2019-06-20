@@ -13,7 +13,7 @@ from node `n`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> closeness_centrality(StarGraph(5))
+julia> closeness_centrality(star_graph(5))
 5-element Array{Float64,1}:
  1.0
  0.5714285714285714
@@ -21,7 +21,7 @@ julia> closeness_centrality(StarGraph(5))
  0.5714285714285714
  0.5714285714285714
 
-julia> closeness_centrality(PathGraph(4))
+julia> closeness_centrality(path_graph(4))
 4-element Array{Float64,1}:
  0.5
  0.75

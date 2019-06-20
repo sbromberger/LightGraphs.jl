@@ -1,5 +1,5 @@
 @testset "Parallel.Greedy Coloring" begin
-    g3 = StarGraph(10)
+    g3 = star_graph(10)
     for g in testgraphs(g3)
         for op_sort in (true, false)
             C = @inferred(Parallel.greedy_color(g, reps=5, sort_degree=op_sort))
@@ -7,8 +7,8 @@
         end
     end
     
-    g4 = PathGraph(20)
-    g5 = CompleteGraph(20)
+    g4 = path_graph(20)
+    g5 = complete_graph(20)
 
     for graph in [g4, g5]
         for g in testgraphs(graph)

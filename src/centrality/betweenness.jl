@@ -29,13 +29,13 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 ```jldoctest
 julia> using LightGraphs
 
-julia> betweenness_centrality(StarGraph(3))
+julia> betweenness_centrality(star_graph(3))
 3-element Array{Float64,1}:
  1.0
  0.0
  0.0
 
-julia> betweenness_centrality(PathGraph(4))
+julia> betweenness_centrality(path_graph(4))
 4-element Array{Float64,1}:
  0.0
  0.6666666666666666

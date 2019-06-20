@@ -8,11 +8,11 @@ of a connected graph `g` and return an array containing all cut vertices.
 ```jldoctest
 julia> using LightGraphs
 
-julia> articulation(StarGraph(5))
+julia> articulation(star_graph(5))
 1-element Array{Int64,1}:
  1
 
-julia> articulation(PathGraph(5))
+julia> articulation(path_graph(5))
 3-element Array{Int64,1}:
  2
  3
