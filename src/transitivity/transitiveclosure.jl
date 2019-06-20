@@ -1,12 +1,3 @@
-"""
-    ```transitiveclosure!(g::::(!IsDirected), selflooped = false)```
-Compute the transitive closure of an undirected graph.
-If `selflooped` is true, add self loops to the graph.
-If `selflooped` is false and there are already self loops in the graph, removes self loops.
-
-### Implementation Notes
-This version of the function modifies the original graph.
-"""
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::(!IsDirected), selflooped = false)
     cc = connected_components(g)
@@ -21,11 +12,6 @@ function transitiveclosure! end
     return g
 end 
 
-"""
-    ```transitiveclosure(g::Graph, selflooped = false)```
-Compute the transitive closure of an undirected graph.
-If `selflooped` is true, add self loops to the graph.
-"""
 function transitiveclosure(g::Graph, selflooped = false)
     copyg = copy(g)
     return transitiveclosure!(copyg, selflooped)
@@ -33,20 +19,21 @@ end
 
 
 """
-    ```transitiveclosure!(g::::IsDirected, selflooped=false)```
+    transitiveclosure!(g, selflooped = false)
 
-Compute the transitive closure of a directed graph, using DFS.
-If `selflooped` is true, add self loops to the graph.
-If `selflooped` is false and there are already self loops in the graph, removes self loops.
+Compute the transitive closure of a graph.
+If it is a directed graph, uses a DFS.
+If `selflooped` is `true`, add self loops to the graph.
+If `selflooped` is `false`, nothing is done to self-loops.
 
 ### Performance
-Time complexity is ``\\mathcal{O}(|E||V|)``.
+Time complexity is ``\\mathcal{O}(|E||V|)`` for digraphs.
 
 ### Implementation Notes
 This version of the function modifies the original graph.
 """
 function transitiveclosure! end
-@traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
+@traitfn function transitiveclosure!(g::::IsDirected, selflooped = false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
     tp = reverse(topological_sort_by_dfs(cg))
@@ -83,7 +70,8 @@ end
 
 Compute the transitive closure of a directed graph, using DFS.
 Return a graph representing the transitive closure. If `selflooped`
-is `true`, add self loops to the graph.
+is `true`, adds self loops to the graph. If `selflooped` is `false`
+does not change the the states of the self-loops.
 
 ### Performance
 Time complexity is ``\\mathcal{O}(|E||V|)``.

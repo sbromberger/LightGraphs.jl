@@ -155,7 +155,24 @@
                 @test ne(c) == ne(loopedcircleone) == (nvertices * nvertices + 2 + 1)
             end
         end
+        
+        ### Not changing the state of self-loops when selfloop = false
+        loopedcompletedg = CompleteDiGraph(nvertices)
+        for i in vertices(loopedcompletedg)
+            add_edge!(loopedcompletedg, i, i)
+        end
+        @testset "Not changing self-loops when selfloop = false" for lcomplete in testgraphs(loopedcompletedg)
+        T = eltype(lcomplete)
+        loopedcomplete = DiGraph{T}(loopedcompletedg)
+        newlcomplete = @inferred(transitiveclosure(lcomplete, false))
+            @test newlcomplete == loopedcomplete
+            @test ne(loopedcomplete) == (nvertices * nvertices)
+            c = copy(loopedcomplete)
+            @test loopedcomplete  == @inferred(transitiveclosure!(c, false))
+            @test ne(c) == ne(loopedcomplete) == (nvertices * nvertices)
+        end
     end
+    
     
     ### Tests on graph
     
@@ -287,17 +304,17 @@
             end
         end
 
-        circleonedg = copy(circleg)
-        add_vertices!(circleonedg, 2)
-        add_edge!(circleonedg, nvertices + 1, nvertices + 2)
+        circleoneg = copy(circleg)
+        add_vertices!(circleoneg, 2)
+        add_edge!(circleoneg, nvertices + 1, nvertices + 2)
 
-        completeonedg = copy(completeg)
-        add_vertices!(completeonedg, 2)
-        add_edge!(completeonedg, nvertices + 1, nvertices + 2)
+        completeoneg = copy(completeg)
+        add_vertices!(completeoneg, 2)
+        add_edge!(completeoneg, nvertices + 1, nvertices + 2)
 
-        @testset "circle and one $circleone" for circleone in testgraphs(circleonedg)
+        @testset "circle and one $circleone" for circleone in testgraphs(circleoneg)
             T = eltype(circleone)
-            completeone = Graph{T}(completeonedg)
+            completeone = Graph{T}(completeoneg)
             @testset "no self-loops" begin
                 newcircleone = @inferred(transitiveclosure(circleone))
                 @test newcircleone == completeone
@@ -320,5 +337,23 @@
                 @test ne(c) == ne(loopedcircleone) == (binomial(nvertices, 2) + nvertices + 2 + 1)
             end
         end
+    
+
+        ### Not changing the state of self loops when selfloop = false
+        loopedcompleteg = CompleteGraph(nvertices)
+        for i in vertices(loopedcompleteg)
+            add_edge!(loopedcompleteg, i, i)
+        end
+        @testset "Not changing self-loops when selfloop = false" for lcomplete in testgraphs(loopedcompleteg)
+            T = eltype(lcomplete)
+            loopedcomplete = Graph{T}(loopedcompleteg)
+            newlcomplete = @inferred(transitiveclosure(lcomplete, false))
+            @test newlcomplete == loopedcomplete
+            @test ne(loopedcomplete) == (binomial(nvertices, 2) + nvertices)
+            c = copy(loopedcomplete)
+            @test loopedcomplete  == @inferred(transitiveclosure!(c, false))
+            @test ne(c) == ne(loopedcomplete) == (binomial(nvertices, 2) + nvertices)
+        end
     end
 end
+
