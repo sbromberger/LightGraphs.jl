@@ -1,5 +1,7 @@
 
 """
+    IsMutable
+
 Type characterizing the mutability/immutability of a graph type.
 
 A mutable graph type `G` is expected to implement the mutability functions:
@@ -10,9 +12,21 @@ A mutable graph type `G` is expected to implement the mutability functions:
 - `add_vertices!(g::G, n::Integer) -> Integer` (optional)
 - `rem_vertices!(g::G, vs; keep_order::Boolean=false) -> vmap` (optional)
 """
-abstract type GraphMutability end
-struct MutableGraph <: GraphMutability end
-struct ImmutableGraph <: GraphMutability end
+abstract type IsMutable end
+
+"""
+    MutableGraph
+
+Returned from `IsMutable(::Type{G})` when `G` is a type of mutable graph (supporting the mutable interface).
+"""
+struct MutableGraph end
+
+"""
+    ImmutableGraph
+
+Returned from `IsMutable(::Type{G})` when `G` is a type of immutable graph.
+"""
+struct ImmutableGraph end
 
 """
     IsMutable(::Type{<:AbstractGraph})
