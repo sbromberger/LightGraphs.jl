@@ -10,13 +10,13 @@ import Random
 
     @test_throws ErrorException badj(DummySimpleGraph())
 
-    @test @inferred(ne(SimpleGraph(PathDiGraph(5)))) == 4
+    @test @inferred(ne(SimpleGraph(path_digraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
     @test @inferred(!is_directed(SimpleGraph{Int}))
 
     @test @inferred(eltype(SimpleDiGraph())) == Int
     @test @inferred(eltype(SimpleDiGraph(adjmx2))) == Int
-    @test @inferred(ne(SimpleDiGraph(PathGraph(5)))) == 8
+    @test @inferred(ne(SimpleDiGraph(path_graph(5)))) == 8
     @test @inferred(is_directed(SimpleDiGraph))
     @test @inferred(is_directed(SimpleDiGraph{Int}))
 
@@ -26,7 +26,7 @@ import Random
         @test @inferred(add_vertices!(gbig, 10) == 0)
     end
 
-    gdx = PathDiGraph(4)
+    gdx = path_digraph(4)
     gx = SimpleGraph()
     for g in testgraphs(gx)
         T = eltype(g)
@@ -42,7 +42,7 @@ import Random
         @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
-    gx = PathGraph(4)
+    gx = path_graph(4)
     for g in testgraphs(gx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
@@ -56,13 +56,13 @@ import Random
         @test @inferred(has_edge(g, 3, 2))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleGraph(4)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_graph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleGraph(4)
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == cycle_graph(4)
         @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = copy(g)
-        @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
+        @test add_edge!(gc, 4, 1) && gc == cycle_graph(4)
 
         @test @inferred(inneighbors(g, 2)) == @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
@@ -103,7 +103,7 @@ import Random
         @test @inferred(has_edge(g, e))
     end
 
-    gdx = PathDiGraph(4)
+    gdx = path_digraph(4)
     for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
@@ -119,13 +119,13 @@ import Random
         @test @inferred(!has_edge(g, 2, 30))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = @inferred(copy(g))
-        @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, 4, 1)) && gc == cycle_digraph(4)
 
         @test @inferred(inneighbors(g, 2)) == [1]
         @test @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
@@ -168,7 +168,7 @@ import Random
         @test @inferred(has_edge(g, e))
     end
 
-    gx = CompleteGraph(4)
+    gx = complete_graph(4)
     for g in testgraphs(gx)
         h = Graph(g)
         @test g == h
@@ -178,7 +178,7 @@ import Random
     end
 
 
-    gdx = CompleteDiGraph(4)
+    gdx = complete_digraph(4)
     for g in testdigraphs(gdx)
         h = DiGraph(g)
         @test g == h
@@ -187,12 +187,12 @@ import Random
         @test g != h
     end
     # tests for #820
-    g = CompleteGraph(3)
+    g = complete_graph(3)
     add_edge!(g, 3, 3)
     rem_vertex!(g, 1)
     @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
-    g = PathDiGraph(3)
+    g = path_digraph(3)
     add_edge!(g, 3, 3)
     rem_vertex!(g, 1)
     @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
@@ -373,8 +373,8 @@ import Random
 
     # test for rem_vertices!
     let
-        g_undir = CompleteGraph(5)
-        g_dir = CompleteDiGraph(5)
+        g_undir = complete_graph(5)
+        g_dir = complete_digraph(5)
         for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
             T = eltype(g)
 
@@ -386,7 +386,7 @@ import Random
 
             g4 = copy(g)
             vmap = rem_vertices!(g4, T[3], keep_order=true)
-            @test g4 == (is_directed(g) ? CompleteDiGraph(T(4)) : CompleteGraph(T(4)))
+            @test g4 == (is_directed(g) ? complete_digraph(T(4)) : complete_graph(T(4)))
             @test vmap == [1, 2, 4, 5]
             @test isvalid_simplegraph(g4)
 
@@ -400,7 +400,7 @@ import Random
 
             g2 = copy(g)
             vmap = rem_vertices!(g2, T[2, 1, 4], keep_order=false)
-            @test g2 == (is_directed(g) ? CompleteDiGraph(T(2)) : CompleteGraph(T(2)))
+            @test g2 == (is_directed(g) ? complete_digraph(T(2)) : complete_graph(T(2)))
             @test sort(vmap) == [3, 5]
             @test isvalid_simplegraph(g2)
 

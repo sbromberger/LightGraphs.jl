@@ -11,7 +11,7 @@ References:
 ```jldoctest
 julia> using LightGraphs
 
-julia> core_periphery_deg(StarGraph(5))
+julia> core_periphery_deg(star_graph(5))
 5-element Array{Int64,1}:
  1
  2
@@ -19,7 +19,7 @@ julia> core_periphery_deg(StarGraph(5))
  2
  2
 
-julia> core_periphery_deg(PathGraph(3))
+julia> core_periphery_deg(path_graph(3))
 3-element Array{Int64,1}:
  2
  1

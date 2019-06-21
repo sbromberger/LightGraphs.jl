@@ -137,7 +137,7 @@ Return the number of edges in `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> ne(g)
 2
@@ -184,7 +184,7 @@ is invalidated by changes to `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> collect(edges(g))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:

@@ -20,14 +20,14 @@ length of the shortest path from ``u`` to ``v``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> radiality_centrality(StarGraph(4))
+julia> radiality_centrality(star_graph(4))
 4-element Array{Float64,1}:
  1.0               
  0.6666666666666666
  0.6666666666666666
  0.6666666666666666
 
-julia> radiality_centrality(PathGraph(3))
+julia> radiality_centrality(path_graph(3))
 3-element Array{Float64,1}:
  0.75
  1.0 

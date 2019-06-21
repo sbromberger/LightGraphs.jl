@@ -21,7 +21,7 @@
         end
     end
 
-    g3 = StarGraph(5)
+    g3 = star_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g3)
             d = @inferred(Parallel.dominating_set(g, 4, MinimalDominatingSet(); parallel=parallel, seed=0))
@@ -29,7 +29,7 @@
         end
     end
   
-    g4 = CompleteGraph(5)
+    g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)
             d = @inferred(Parallel.dominating_set(g, 4, MinimalDominatingSet(); parallel=parallel, seed=0))
@@ -37,7 +37,7 @@
         end
     end
 
-    g5 = PathGraph(4)
+    g5 = path_graph(4)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g5)
             d = @inferred(Parallel.dominating_set(g, 4, MinimalDominatingSet(); parallel=parallel, seed=0))

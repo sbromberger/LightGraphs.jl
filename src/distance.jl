@@ -95,10 +95,10 @@ eccentricities, return the maximum eccentricity of the graph.
 ```jldoctest
 julia> using LightGraphs
 
-julia> diameter(StarGraph(5))
+julia> diameter(star_graph(5))
 2
 
-julia> diameter(PathGraph(5))
+julia> diameter(path_graph(5))
 4
 ```
 """
@@ -119,14 +119,14 @@ largest eccentricity).
 ```jldoctest
 julia> using LightGraphs
 
-julia> periphery(StarGraph(5))
+julia> periphery(star_graph(5))
 4-element Array{Int64,1}:
  2
  3
  4
  5
 
-julia> periphery(PathGraph(5))
+julia> periphery(path_graph(5))
 2-element Array{Int64,1}:
  1
  5
@@ -151,10 +151,10 @@ eccentricities, return the minimum eccentricity of the graph.
 ```jldoctest
 julia> using LightGraphs
 
-julia> radius(StarGraph(5))
+julia> radius(star_graph(5))
 1
 
-julia> radius(PathGraph(5))
+julia> radius(path_graph(5))
 2
 ```
 """
@@ -174,11 +174,11 @@ to the graph's radius (that is, the set of vertices with the smallest eccentrici
 ```jldoctest
 julia> using LightGraphs
 
-julia> center(StarGraph(5))
+julia> center(star_graph(5))
 1-element Array{Int64,1}:
  1
 
-julia> center(PathGraph(5))
+julia> center(path_graph(5))
 1-element Array{Int64,1}:
  3
 ```
