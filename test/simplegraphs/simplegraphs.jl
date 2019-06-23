@@ -396,7 +396,6 @@ import Random
             @test_throws DomainError SimpleDiGraphFromIterator(edge_list_2)
         end
     end
-    println("Finished unning SimpleGraphFromIterator")
 
     # test for rem_vertices!
     let
