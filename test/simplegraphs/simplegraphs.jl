@@ -388,6 +388,7 @@ import Random
             @test_throws DomainError SimpleGraphFromIterator(edge_list_2)
         end
 
+
         @testset "SimpleDiGraphFromIterator with edgelist of eltype Any" begin
             edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
             edge_list_2 = Any[Edge{Int16}(1, 2), Edge{Int8}(3, 4)]
@@ -395,6 +396,7 @@ import Random
             @test_throws DomainError SimpleDiGraphFromIterator(edge_list_2)
         end
     end
+    println("Finished unning SimpleGraphFromIterator")
 
     # test for rem_vertices!
     let
