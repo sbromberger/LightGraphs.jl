@@ -197,6 +197,15 @@ import Random
     rem_vertex!(g, 1)
     @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
+    @testset "Cannot create graphs for noncrete integer type $T" for T in [Signed, Integer]
+
+        @test_throws DomainError SimpleGraph{T}()
+        @test_throws DomainError SimpleGraph{T}(one(T))
+
+        @test_throws DomainError SimpleDiGraph{T}()
+        @test_throws DomainError SimpleDiGraph{T}(one(T))
+    end
+
      # Tests for constructors from iterators of edges
     @testset "Constructors from edge lists" begin
         g_undir = erdos_renyi(200, 100; seed=0)
