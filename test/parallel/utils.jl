@@ -8,7 +8,7 @@
         return length(x) < length(y)
     end
 
-    g1 = StarGraph(5)
+    g1 = star_graph(5)
 
     for parallel in [:distributed, :threads]
         for g in testgraphs(g1)

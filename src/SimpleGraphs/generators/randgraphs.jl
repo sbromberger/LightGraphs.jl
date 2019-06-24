@@ -121,7 +121,7 @@ julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
 ```
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
-    p >= 1 && return is_directed ? CompleteDiGraph(n) : CompleteGraph(n)
+    p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
     m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
     ne = randbn(m, p, seed)
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
@@ -374,7 +374,7 @@ julia> barabasi_albert(100, Int8(10), 3, is_directed=true, seed=123)
 """
 function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool=false, complete::Bool=false, seed::Int=-1)
     if complete
-        g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
+        g = is_directed ? complete_digraph(n0) : complete_graph(n0)
     else
         g = is_directed ? SimpleDiGraph(n0) : SimpleGraph(n0)
     end
@@ -395,7 +395,7 @@ already present in the system by preferential attachment.
 - `seed=-1`: set the RNG seed.
 ## Examples
 ```jldoctest
-julia> g = CycleGraph(4)
+julia> g = cycle_graph(4)
 {4, 4} undirected simple Int64 graph
 
 julia> barabasi_albert!(g, 16, 3);
@@ -1141,7 +1141,7 @@ julia> dorogovtsev_mendes(11, seed=123)
 function dorogovtsev_mendes(n::Integer; seed::Int=-1)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = getRNG(seed)
-    g = CycleGraph(3)
+    g = cycle_graph(3)
 
     for iteration in 1:(n-3)
         chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
@@ -1176,10 +1176,10 @@ DAG's have a finite topological order; this order is randomly generated via "ord
 
 # Examples
 ```jldoctest
-julia> random_orientation_dag(CompleteGraph(10))
+julia> random_orientation_dag(complete_graph(10))
 {10, 45} directed simple Int64 graph
 
-julia> random_orientation_dag(StarGraph(Int8(10)), 123)
+julia> random_orientation_dag(star_graph(Int8(10)), 123)
 {10, 9} directed simple Int8 graph
 ```
 """

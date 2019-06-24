@@ -57,7 +57,7 @@
     end
 
     @testset "two isolated cycles" begin
-        ex = blockdiag(CycleGraph(3), CycleGraph(4))
+        ex = blockdiag(cycle_graph(3), cycle_graph(4))
         expected_cyclebasis = [[1, 2, 3], [4, 5, 6, 7]]
         for g in testgraphs(ex)
             found_cyclebasis = @inferred cycle_basis(g)

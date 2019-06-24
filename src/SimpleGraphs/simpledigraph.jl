@@ -116,7 +116,7 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = CompleteDiGraph(5)
+julia> g = complete_digraph(5)
 julia> SimpleDiGraph{UInt8}(g)
 {5, 20} directed simple UInt8 graph
 ```
@@ -138,7 +138,7 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = PathGraph(Int8(5))
+julia> g = path_graph(Int8(5))
 julia> SimpleDiGraph(g)
 {5, 8} directed simple Int8 graph
 ```

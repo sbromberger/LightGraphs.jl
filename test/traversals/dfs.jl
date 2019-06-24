@@ -10,13 +10,13 @@
       @test !is_cyclic(g)
     end
 
-    gx = CycleDiGraph(3)
+    gx = cycle_digraph(3)
     for g in testdigraphs(gx)
       @test @inferred(is_cyclic(g))
       @test_throws ErrorException topological_sort_by_dfs(g)
     end
 
-    for g in testgraphs(PathGraph(2))
+    for g in testgraphs(path_graph(2))
         @test @inferred(is_cyclic(g))
         @test @inferred(!is_cyclic(zero(g)))
     end

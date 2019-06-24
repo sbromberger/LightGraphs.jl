@@ -64,7 +64,7 @@ function steiner_tree end
     end
 
     # Compute MST of Metric Closure graph
-    mst_mc = kruskal_mst(CompleteGraph(nvg_mc), distmx_mc)
+    mst_mc = kruskal_mst(complete_graph(nvg_mc), distmx_mc)
     expanded_mst = Vector{Edge{T}}()
     sizehint!(expanded_mst, nvg)
 

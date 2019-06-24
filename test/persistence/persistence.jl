@@ -8,7 +8,7 @@
     @testset "LGFormat simple load" begin
         @test (ne(p2), nv(p2)) == (9, 10)
     end
-    g3 = PathGraph(5)
+    g3 = path_graph(5)
 
     (f, fio) = mktemp()
     # test :lg

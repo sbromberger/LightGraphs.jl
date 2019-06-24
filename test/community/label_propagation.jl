@@ -1,6 +1,6 @@
 @testset "Label propagation" begin
     n = 10
-    g10 = CompleteGraph(n)
+    g10 = complete_graph(n)
     for g in testgraphs(g10)
         z = copy(g)
         for k = 2:5

@@ -1,6 +1,6 @@
 @testset "D'Esopo-Pape" begin
 
-    g4 = PathDiGraph(5)
+    g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
     @testset "generic tests: $g" for g in testdigraphs(g4)
@@ -10,7 +10,7 @@
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
     end
         
-    gx = PathGraph(5)
+    gx = path_graph(5)
     add_edge!(gx, 2, 4)
     d = ones(Int, 5, 5)
     d[2, 3] = 100
@@ -94,42 +94,42 @@
     end
 
     @testset "misc graphs" begin
-        G = CompleteGraph(9)
+        G = complete_graph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = CompleteDiGraph(9)
+        G = complete_digraph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = CycleGraph(9)
+        G = cycle_graph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = CycleDiGraph(9)
+        G = cycle_digraph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = StarGraph(9)
+        G = star_graph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = WheelGraph(9)
+        G = wheel_graph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = RoachGraph(9)
+        G = roach_graph(9)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = CliqueGraph(5, 19)
+        G = clique_graph(5, 19)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)

@@ -1,7 +1,7 @@
 
 @testset "Diffusion Simulation" begin
 
-gx = CompleteGraph(5)
+gx = complete_graph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Most basic
@@ -50,7 +50,7 @@ end
 # Check along path graph
 ######
 
-gx = PathGraph(5)
+gx = path_graph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
 
@@ -65,7 +65,7 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
                                    )) == [1, 3, 5, 5]
 end
 
-gx = PathGraph(30)
+gx = path_graph(30)
 for g in testgraphs(gx)
     # Check normalize
     @test @inferred(diffusion_rate(g,
@@ -114,7 +114,7 @@ for g in testgraphs(gx)
 end
 
 
-gx = PathDiGraph(10)
+gx = path_digraph(10)
 
 for g in testdigraphs(gx)
 

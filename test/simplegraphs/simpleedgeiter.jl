@@ -5,9 +5,6 @@
     dgb = @inferred(SimpleDiGraph(10, 20; seed=1))
     @testset "string representation" begin
         @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
-    # note: we don't get the first iterator state,
-    #since iterate returns the state after taking the first value
-        @test sprint(show, iterate(edges(ga))[2]) == "SimpleEdgeIterState [1, 2]"
     end
 
     @test length(collect(edges(Graph(0, 0)))) == 0
@@ -72,15 +69,9 @@
     @testset "iterator protocol" begin
         eit = edges(ga)
         # @inferred not valid for new interface anymore (return type is a Union)
-        es = iterate(eit)[2]
-        @test es.s == 3
-        @test es.di == 2
         @test collect(eit) == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
         eit = @inferred(edges(dga))
-        es = iterate(eit)[2]
-        @test es.s == 3
-        @test es.di == 2
         @test collect(eit) == [
             SimpleEdge(3, 2), SimpleEdge(3, 10),
             SimpleEdge(5, 10), SimpleEdge(10, 3)

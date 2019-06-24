@@ -8,7 +8,7 @@ This excellent graph visualization package can be used with *LightGraphs.jl*
 as follows:
 
 ```julia
-julia> g = WheelGraph(10); am = Matrix(adjacency_matrix(g))
+julia> g = wheel_graph(10); am = Matrix(adjacency_matrix(g))
 julia> loc_x, loc_y = layout_spring_adj(am)
 julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
 ```
@@ -23,7 +23,7 @@ Another nice graph visualization package. ([TikzPictures.jl](https://github.com/
 required to render/save):
 
 ```julia
-julia> g = WheelGraph(10); t = plot(g)
+julia> g = wheel_graph(10); t = plot(g)
 
 julia> save(SVG("wheel10.svg"), t)
 ```
@@ -40,7 +40,7 @@ Another graph visualization package that is very simple to use.
 ```julia
 julia> using GraphPlot, Compose
 
-julia> g = WheelGraph(10)
+julia> g = wheel_graph(10)
 
 julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 ```
@@ -58,7 +58,7 @@ using LightGraphs
 main(window) = begin
   push!(window.assets, "widgets")
   push!(window.assets,("ThreeJS","threejs"))
-  g = CompleteGraph(10)
+  g = complete_graph(10)
   drawGraph(g)
 end
 ```

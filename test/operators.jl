@@ -1,6 +1,6 @@
 @testset "Operators" begin
-    g3 = PathGraph(5)
-    g4 = PathDiGraph(5)
+    g3 = path_graph(5)
+    g4 = path_digraph(5)
 
     @testset "$g" for g in testlargegraphs(g3)
         T = eltype(g)
@@ -17,13 +17,13 @@
         end
 
         @testset "intersect" begin
-            hp = PathGraph(2)
+            hp = path_graph(2)
             h = Graph{T}(hp)
             @test @inferred(intersect(g, h)) == h
         end
 
         @testset "difference / symmetric difference" begin
-            hp = PathGraph(4)
+            hp = path_graph(4)
             h = Graph{T}(hp)
 
             z = @inferred(difference(g, h))
@@ -45,7 +45,7 @@
 
             z = @inferred(union(g, h))
             @test has_edge(z, e)
-            @test z == PathGraph(6)
+            @test z == path_graph(6)
         end
 
         @testset "merge vertices" begin
@@ -121,7 +121,7 @@
 
             z = @inferred(union(g, h))
             @test has_edge(z, e)
-            @test z == PathDiGraph(6)
+            @test z == path_digraph(6)
         end
     end
 
@@ -134,11 +134,11 @@
         @test g == DiGraph{T}(g4)
     end
 
-    gx = CompleteGraph(2)
+    gx = complete_graph(2)
 
     @testset "Blockdiag $g" for g in testlargegraphs(gx)
         T = eltype(g)
-        hc = CompleteGraph(2)
+        hc = complete_graph(2)
         h = Graph{T}(hc)
         z = @inferred(blockdiag(g, h))
         @test nv(z) == nv(g) + nv(h)
@@ -166,7 +166,7 @@
         @test has_edge(z, 2, 4)
     end
 
-    px = PathGraph(10)
+    px = path_graph(10)
     @testset "Matrix operations: $p" for p in testgraphs(px)
         x = @inferred(p * ones(10))
         @test  x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
@@ -192,13 +192,13 @@
     end
 
     nx = 20; ny = 21
-    gx = PathGraph(ny)
+    gx = path_graph(ny)
     @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(gx)
         T = eltype(g)
-        hp = PathGraph(nx)
+        hp = path_graph(nx)
         h = Graph{T}(hp)
         c = @inferred(cartesian_product(g, h))
-        gz = @inferred(crosspath(ny, PathGraph(nx)))
+        gz = @inferred(crosspath(ny, path_graph(nx)))
         @test gz == c
     end
     function crosspath_slow(len, h)
@@ -214,7 +214,7 @@
         return g
     end
 
-    gx = CompleteGraph(2)
+    gx = complete_graph(2)
     @testset "Cartesian Product / Tensor Product: $g" for g in testgraphs(gx)
         h = @inferred(cartesian_product(g, g))
         @test nv(h) == 4
@@ -224,12 +224,12 @@
         @test nv(h) == 4
         @test ne(h) == 2
     end
-    g2 = CompleteGraph(2)
+    g2 = complete_graph(2)
     @testset "Crosspath: $g" for g in testgraphs(g2)
         @test crosspath_slow(2, g) == crosspath(2, g)
     end
     for i in 3:4
-        gx = PathGraph(i)
+        gx = path_graph(i)
         @testset "Tensor Product: $g" for g in testgraphs(gx)
             @test length(connected_components(tensor_product(g, g))) == 2
         end
@@ -268,7 +268,7 @@
         @test h2 == g[r]
     end
 
-    g10 = CompleteGraph(10)
+    g10 = complete_graph(10)
     @testset "Induced Subgraphs: $g" for g in testgraphs(g10)
         sg, vm = @inferred(induced_subgraph(g, 5:8))
         @test nv(sg) == 4
@@ -283,11 +283,11 @@
           SimpleEdge(4, 5), SimpleEdge(5, 1)
         ]
         sg, vm = @inferred(induced_subgraph(g, elist))
-        @test sg == CycleGraph(5)
+        @test sg == cycle_graph(5)
         @test sort(vm) == [1:5;]
     end
 
-    gs = StarGraph(10)
+    gs = star_graph(10)
     distgs = fill(4.0, 10, 10)
     @testset "Egonet: $g" for g in testgraphs(gs)
         T = eltype(g)

@@ -1,6 +1,6 @@
 @testset "Transitivity" begin
-    completedg = CompleteDiGraph(4)
-    circledg = PathDiGraph(4)
+    completedg = complete_digraph(4)
+    circledg = path_digraph(4)
     add_edge!(circledg, 4, 1)
     @testset "$circle" for circle in testgraphs(circledg)
         T = eltype(circle)
@@ -40,7 +40,7 @@
         
         # transitive reduction of a path is a path again
         @testset "pathgraph reduction" begin
-            pathgraph = PathDiGraph(10)
+            pathgraph = path_digraph(10)
             @testset "$g" for g in testgraphs(pathgraph)
                 @test g == @inferred(transitivereduction(g))
 
@@ -52,7 +52,7 @@
         
         # Transitive reduction of a complete graph should be s simple cycle
         @testset "completegraph reduction" begin
-            completegraph = CompleteDiGraph(9)
+            completegraph = complete_digraph(9)
             @testset "$g" for g in testgraphs(completegraph)
                 greduced = @inferred(transitivereduction(g))
                 @test length(strongly_connected_components(greduced)) == 1 &&

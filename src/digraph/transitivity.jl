@@ -57,7 +57,7 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 
@@ -123,7 +123,7 @@ Time complexity is ``\\mathcal{O}(|V||E|)``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 

@@ -36,29 +36,29 @@ Create a small graph of type `s`. Admissible values for `s` are:
 """
 function smallgraph(s::Symbol)
     graphmap = Dict(
-    :bull            => BullGraph,
-    :chvatal         => ChvatalGraph,
-    :cubical         => CubicalGraph,
-    :desargues       => DesarguesGraph,
-    :diamond         => DiamondGraph,
-    :dodecahedral    => DodecahedralGraph,
-    :frucht          => FruchtGraph,
-    :heawood         => HeawoodGraph,
-    :house           => HouseGraph,
-    :housex          => HouseXGraph,
-    :icosahedral     => IcosahedralGraph,
-    :karate          => KarateGraph,
-    :krackhardtkite  => KrackhardtKiteGraph,
-    :moebiuskantor   => MoebiusKantorGraph,
-    :octahedral      => OctahedralGraph,
-    :pappus          => PappusGraph,
-    :petersen        => PetersenGraph,
-    :sedgewickmaze   => SedgewickMazeGraph,
-    :tetrahedral     => TetrahedralGraph,
-    :truncatedcube   => TruncatedCubeGraph,
-    :truncatedtetrahedron        => TruncatedTetrahedronGraph,
-    :truncatedtetrahedron_dir    => TruncatedTetrahedronDiGraph,
-    :tutte           => TutteGraph
+    :bull            => bull_graph,
+    :chvatal         => chvatal_graph,
+    :cubical         => cubical_graph,
+    :desargues       => desargues_graph,
+    :diamond         => diamond_graph,
+    :dodecahedral    => dodecahedral_graph,
+    :frucht          => frucht_graph,
+    :heawood         => heawood_graph,
+    :house           => house_graph,
+    :housex          => house_x_graph,
+    :icosahedral     => icosahedral_graph,
+    :karate          => karate_graph,
+    :krackhardtkite  => krackhardt_kite_graph,
+    :moebiuskantor   => moebius_kantor_graph,
+    :octahedral      => octahedral_graph,
+    :pappus          => pappus_graph,
+    :petersen        => petersen_graph,
+    :sedgewickmaze   => sedgewick_maze_graph,
+    :tetrahedral     => tetrahedral_graph,
+    :truncatedcube   => truncated_cube_graph,
+    :truncatedtetrahedron        => truncated_tetrahedron_graph,
+    :truncatedtetrahedron_dir    => truncated_tetrahedron_digraph,
+    :tutte           => tutte_graph
     )
 
     if (s in keys(graphmap))
@@ -76,30 +76,28 @@ function smallgraph(s::AbstractString)
     return smallgraph(Symbol(ls))
 end
 
+diamond_graph() = SimpleGraph( SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]) )
 
-DiamondGraph() = SimpleGraph( SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]) )
-
-
-BullGraph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
+bull_graph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
 
 
-function ChvatalGraph()
+function chvatal_graph()
     e = SimpleEdge.([
-    (1, 2), (1, 5), (1, 7), (1, 10),
-    (2, 3), (2, 6), (2, 8),
-    (3, 4), (3, 7), (3, 9),
-    (4, 5), (4, 8), (4, 10),
-    (5, 6), (5, 9),
-    (6, 11), (6, 12),
-    (7, 11), (7, 12),
-    (8, 9), (8, 12),
-    (9, 11),
-    (10, 11), (10, 12)
-   ])
+        (1, 2), (1, 5), (1, 7), (1, 10),
+        (2, 3), (2, 6), (2, 8),
+        (3, 4), (3, 7), (3, 9),
+        (4, 5), (4, 8), (4, 10),
+        (5, 6), (5, 9),
+        (6, 11), (6, 12),
+        (7, 11), (7, 12),
+        (8, 9), (8, 12),
+        (9, 11),
+        (10, 11), (10, 12)
+    ])
     return SimpleGraph(e)
 end
 
-function CubicalGraph()
+function cubical_graph()
     e = SimpleEdge.([
     (1, 2), (1, 4), (1, 5),
     (2, 3), (2, 8),
@@ -112,7 +110,7 @@ function CubicalGraph()
 end
 
 
-function DesarguesGraph()
+function desargues_graph()
     e = SimpleEdge.([
     (1, 2), (1, 6), (1, 20),
     (2, 3), (2, 17),
@@ -138,7 +136,7 @@ function DesarguesGraph()
 end
 
 
-function DodecahedralGraph()
+function dodecahedral_graph()
     e = SimpleEdge.([
     (1, 2), (1, 11), (1, 20),
     (2, 3), (2, 9),
@@ -164,7 +162,7 @@ function DodecahedralGraph()
 end
 
 
-function FruchtGraph()
+function frucht_graph()
     e = SimpleEdge.([
     (1, 2), (1, 7), (1, 8),
     (2, 3), (2, 8),
@@ -181,7 +179,7 @@ function FruchtGraph()
 end
 
 
-function HeawoodGraph()
+function heawood_graph()
     e = SimpleEdge.([
     (1, 2), (1, 6), (1, 14),
     (2, 3), (2, 11),
@@ -201,21 +199,21 @@ function HeawoodGraph()
 end
 
 
-function HouseGraph()
+function house_graph()
     e = SimpleEdge.([(1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5)])
     return SimpleGraph(e)
 end
 
 
-function HouseXGraph()
-    g = HouseGraph()
+function house_x_graph()
+    g = house_graph()
     add_edge!(g, SimpleEdge(1, 4))
     add_edge!(g, SimpleEdge(2, 3))
     return g
 end
 
 
-function IcosahedralGraph()
+function icosahedral_graph()
     e = SimpleEdge.([
     (1, 2), (1, 6), (1, 8), (1, 9), (1, 12),
     (2, 3), (2, 6), (2, 7), (2, 9),
@@ -230,7 +228,7 @@ function IcosahedralGraph()
     return SimpleGraph(e)
 end
 
-function KarateGraph()
+function karate_graph()
     e = SimpleEdge.([
          (1, 2),   (1, 3),   (1, 4),   (1, 5),   (1, 6),   (1, 7),
          (1, 8),   (1, 9),   (1, 11),  (1, 12),  (1, 13),  (1, 14),
@@ -249,7 +247,7 @@ function KarateGraph()
     return SimpleGraph(e)
 end
 
-function KrackhardtKiteGraph()
+function krackhardt_kite_graph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4), (1, 6),
     (2, 4), (2, 5), (2, 7),
@@ -265,7 +263,7 @@ function KrackhardtKiteGraph()
 end
 
 
-function MoebiusKantorGraph()
+function moebius_kantor_graph()
     e = SimpleEdge.([
     (1, 2), (1, 6), (1, 16),
     (2, 3), (2, 13),
@@ -287,7 +285,7 @@ function MoebiusKantorGraph()
 end
 
 
-function OctahedralGraph()
+function octahedral_graph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4), (1, 5),
     (2, 3), (2, 4), (2, 6),
@@ -299,7 +297,7 @@ function OctahedralGraph()
 end
 
 
-function PappusGraph()
+function pappus_graph()
     e = SimpleEdge.([
     (1, 2), (1, 6), (1, 18),
     (2, 3), (2, 9),
@@ -323,7 +321,7 @@ function PappusGraph()
 end
 
 
-function PetersenGraph()
+function petersen_graph()
     e = SimpleEdge.([
     (1, 2), (1, 5), (1, 6),
     (2, 3), (2, 7),
@@ -337,7 +335,7 @@ function PetersenGraph()
     return SimpleGraph(e)
 end
 
-function SedgewickMazeGraph()
+function sedgewick_maze_graph()
     e = SimpleEdge.([
     (1, 3),
     (1, 6), (1, 8),
@@ -350,11 +348,11 @@ function SedgewickMazeGraph()
 end
 
 
-TetrahedralGraph() =
+tetrahedral_graph() =
 SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]))
 
 
-function TruncatedCubeGraph()
+function truncated_cube_graph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 5),
     (2, 12), (2, 15),
@@ -383,7 +381,7 @@ function TruncatedCubeGraph()
 end
 
 
-function TruncatedTetrahedronGraph()
+function truncated_tetrahedron_graph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 10),
     (2, 3), (2, 7),
@@ -401,7 +399,7 @@ function TruncatedTetrahedronGraph()
 end
 
 
-function TruncatedTetrahedronDiGraph()
+function truncated_tetrahedron_digraph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 10),
     (2, 3), (2, 7),
@@ -419,7 +417,7 @@ function TruncatedTetrahedronDiGraph()
 end
 
 
-function TutteGraph()
+function tutte_graph()
     e = SimpleEdge.([
     (1, 2), (1, 3), (1, 4),
     (2, 5), (2, 27),

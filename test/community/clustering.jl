@@ -1,5 +1,5 @@
 @testset "Clustering" begin
-    g10 = CompleteGraph(10)
+    g10 = complete_graph(10)
     for g in testgraphs(g10)
         @test @inferred(local_clustering_coefficient(g, 1)) == 1.0
         @test @inferred(local_clustering_coefficient(g)) == ones(10)

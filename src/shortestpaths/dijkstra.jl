@@ -35,7 +35,7 @@ when multiple calls to `dijkstra_shortest_paths` with the distance matrix are pl
 ```jldoctest
 julia> using LightGraphs
 
-julia> ds = dijkstra_shortest_paths(CycleGraph(5), 2);
+julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
 
 julia> ds.dists
 5-element Array{Int64,1}:
@@ -45,7 +45,7 @@ julia> ds.dists
  2
  2
 
-julia> ds = dijkstra_shortest_paths(PathGraph(5), 2);
+julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
 
 julia> ds.dists
 5-element Array{Int64,1}:

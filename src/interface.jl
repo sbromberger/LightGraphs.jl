@@ -137,7 +137,7 @@ Return the number of edges in `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> ne(g)
 2
@@ -184,7 +184,7 @@ is invalidated by changes to `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> collect(edges(g))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
@@ -308,16 +308,22 @@ julia> outneighbors(g, 4)
 outneighbors(x, v) = _NI("outneighbors")
 
 """
-    zero(g)
+    zero(G)
 
-Return a zero-vertex, zero-edge version of the same type of graph as `g`.
+Return a zero-vertex, zero-edge version of the graph type `G`.
+The fallback is defined for graph values `zero(g::G) = zero(G)`.
 
 # Examples
 ```jldoctest
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
+julia> zero(typeof(g))
+{0, 0} directed simple Int64 graph
+
 julia> zero(g)
 {0, 0} directed simple Int64 graph
 ```
 """
-zero(g::AbstractGraph) = _NI("zero")
+zero(::Type{<:AbstractGraph}) = _NI("zero")
+
+zero(g::G) where {G<: AbstractGraph} = zero(G)

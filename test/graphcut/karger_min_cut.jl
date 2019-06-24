@@ -1,6 +1,6 @@
 @testset "Karger Minimum Cut" begin
 
-    gx = PathGraph(5)
+    gx = path_graph(5)
 
     #Assumes cut[1] = 1
     for g in testgraphs(gx)
@@ -20,7 +20,7 @@
         
     end
 
-    gx = StarGraph(5)
+    gx = star_graph(5)
     for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
         @test count(isequal(2), cut) == 1 

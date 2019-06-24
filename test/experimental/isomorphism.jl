@@ -20,7 +20,7 @@ cubic_graphs = [SimpleGraph(Edge.([(1,2), (1,3), (1,8), (2,3), (2,4), (3,4),
                                    (4,5), (4,7), (5,6), (6,7), (6,8), (7,8)])),
                 SimpleGraph(Edge.([(1,2), (1,3), (1,8), (2,3), (2,6), (3,4),
                                    (4,5), (4,7), (5,6), (5,8), (6,7), (7,8)])),
-                Grid([2,2,2]),
+                grid([2,2,2]),
                 SimpleGraph(Edge.([(1,2), (1,5), (1,8), (2,3), (2,6), (3,4),
                                    (3,7), (4,5), (4,8), (5,6), (6,7), (7,8)]))
                ]
@@ -32,7 +32,7 @@ for i = 1:length(cubic_graphs)
 end
 
 @testset "Isomorphism" begin
-    @test has_isomorph(Grid([2,3]), Grid([3,2]))
+    @test has_isomorph(grid([2,3]), grid([3,2]))
 
     # the cubic graphs should only be isomorph to themself
     # the same holds for subgraph isomorphism and induced subgraph isomorphism
@@ -79,35 +79,35 @@ end
     # TODO better tests for vertex_relation and edge_relation
     vrel(u, v) = false
     erel(e1, e2) = false
-    @test has_isomorph(CompleteGraph(4), CompleteGraph(4), vertex_relation=vrel) == false
-    @test has_isomorph(CompleteGraph(4), CompleteGraph(4), edge_relation=erel) == false
-    @test has_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel) == false
-    @test has_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel) == false
-    @test has_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel) == false
-    @test has_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel) == false
+    @test has_isomorph(complete_graph(4), complete_graph(4), vertex_relation=vrel) == false
+    @test has_isomorph(complete_graph(4), complete_graph(4), edge_relation=erel) == false
+    @test has_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel) == false
+    @test has_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel) == false
+    @test has_induced_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel) == false
+    @test has_induced_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel) == false
 
-    @test count_isomorph(CompleteGraph(4), CompleteGraph(4), vertex_relation=vrel) == 0
-    @test count_isomorph(CompleteGraph(4), CompleteGraph(4), edge_relation=erel) == 0
-    @test count_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel) == 0
-    @test count_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel) == 0
-    @test count_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel) == 0
-    @test count_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel) == 0
+    @test count_isomorph(complete_graph(4), complete_graph(4), vertex_relation=vrel) == 0
+    @test count_isomorph(complete_graph(4), complete_graph(4), edge_relation=erel) == 0
+    @test count_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel) == 0
+    @test count_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel) == 0
+    @test count_induced_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel) == 0
+    @test count_induced_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel) == 0
 
-    @test isempty(all_isomorph(CompleteGraph(4), CompleteGraph(4), vertex_relation=vrel))
-    @test isempty(all_isomorph(CompleteGraph(4), CompleteGraph(4), edge_relation=erel))
-    @test isempty(all_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel))
-    @test isempty(all_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel))
-    @test isempty(all_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), vertex_relation=vrel))
-    @test isempty(all_induced_subgraphisomorph(CompleteGraph(4), CompleteGraph(3), edge_relation=erel))
+    @test isempty(all_isomorph(complete_graph(4), complete_graph(4), vertex_relation=vrel))
+    @test isempty(all_isomorph(complete_graph(4), complete_graph(4), edge_relation=erel))
+    @test isempty(all_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel))
+    @test isempty(all_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel))
+    @test isempty(all_induced_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation=vrel))
+    @test isempty(all_induced_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation=erel))
 
     # some test for early returns if there is no isomorphism
-    @test count_isomorph(CompleteGraph(4), CycleGraph(4)) == 0
-    @test isempty(all_isomorph(CompleteGraph(4), CycleGraph(4)))
-    @test count_subgraphisomorph(CompleteGraph(3), CompleteGraph(4)) == 0
+    @test count_isomorph(complete_graph(4), cycle_graph(4)) == 0
+    @test isempty(all_isomorph(complete_graph(4), cycle_graph(4)))
+    @test count_subgraphisomorph(complete_graph(3), complete_graph(4)) == 0
     
 
     # this tests triggers the shortcut in the vf2 algorithm if the first graph is smaller than the second one
-    @test has_isomorph(CompleteGraph(3), CompleteGraph(4)) == false
+    @test has_isomorph(complete_graph(3), complete_graph(4)) == false
 
     # this test is mainly to cover a certain branch of vf2
     # TODO cover directed graphs better

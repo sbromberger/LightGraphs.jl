@@ -37,3 +37,7 @@ Modules = [LightGraphs]
 Pages   = ["interface.jl"]
 Private = false
 ```
+
+```@docs
+zero(::Type{<:AbstractGraph})
+```
