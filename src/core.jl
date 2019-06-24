@@ -214,8 +214,8 @@ use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
 Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the array behind this reference 
-will be modified too. 
+Do not modify result. If the graph is modified, the behavior is undefined: 
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
@@ -250,8 +250,8 @@ and [`inneighbors`](@ref).
 
 ### Implementation Notes
 Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the array behind this reference 
-will be modified too. 
+Do not modify result. If the graph is modified, the behavior is undefined: 
+the array behind this reference may be modified too, but this is not guaranteed. 
 
 # Examples
 ```jldoctest
@@ -291,8 +291,8 @@ Return the neighbors common to vertices `u` and `v` in `g`.
 
 ### Implementation Notes
 Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the array behind this reference 
-will be modified too. 
+Do not modify result. If the graph is modified, the behavior is undefined: 
+the array behind this reference may be modified too, but this is not guaranteed. 
 
 # Examples
 ```jldoctest
