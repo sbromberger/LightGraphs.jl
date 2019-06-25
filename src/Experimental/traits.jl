@@ -59,13 +59,13 @@ function LightGraphs.rem_vertex!(::ImmutableGraph, g::G, v) where {G <: Abstract
     throw(ImmutabilityException{G}())
 end
 
-LightGraphs.add_edge!(g::G, i, j) where {G <: AbstractGraph} = add_edge!(IsMutable(G), g, i, j)
+LightGraphs.add_edge!(g::G, args...) where {G <: AbstractGraph} = add_edge!(IsMutable(G), g, args...)
 
-function LightGraphs.add_edge!(::MutableGraph, g::G, i, j) where {G <: AbstractGraph}
+function LightGraphs.add_edge!(::MutableGraph, g::G, args...) where {G <: AbstractGraph}
     throw(InterfaceException(G, "add_edge!"))
 end
 
-function LightGraphs.add_edge!(::ImmutableGraph, g::G, i, j) where {G <: AbstractGraph}
+function LightGraphs.add_edge!(::ImmutableGraph, g::G, args...) where {G <: AbstractGraph}
     throw(ImmutabilityException{G}())
 end
 
@@ -89,7 +89,7 @@ struct InterfaceException{G<:AbstractGraph} <: Exception
     f::String
 end
 
-InterfaceException(::Type{G}, func::F) where {G <: AbstractGraph, F} = InterfaceException{G}(string(g))
+InterfaceException(::Type{G}, func::F) where {G <: AbstractGraph, F} = InterfaceException{G}(string(func))
 
 function Base.showerror(io::IO, iex::InterfaceException{G}) where {G}
     print(io, "Function $(iex.f) not implemented for $G")

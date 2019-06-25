@@ -1,3 +1,5 @@
+import LightGraphs.Experimental # triggers piracy for now
+
 mutable struct DummyGraph <: AbstractGraph{Int} end
 mutable struct DummyDiGraph <: AbstractGraph{Int} end
 mutable struct DummyEdge <: AbstractEdge{Int} end
@@ -38,3 +40,17 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     end
 
 end # testset
+
+Experimental.IsMutable(::Type{<:DummyGraph}) = Experimental.ImmutableGraph()
+Experimental.IsMutable(::Type{<:DummyDiGraph}) = Experimental.MutableGraph()
+
+@testset "Mutable interface" begin
+    dummygraph = DummyGraph()
+    dummydigraph = DummyDiGraph()
+    for (f, args) in ((add_edge!, (1, 2)), (rem_edge!, (1, 2)),
+                     (add_vertex!, ()), (rem_vertex!, (1,)),
+                     (add_vertices!, (2,)))
+        @test_throws Experimental.InterfaceException f(dummydigraph, args...)
+        @test_throws Experimental.ImmutabilityException f(dummygraph, args...)        
+    end
+end
