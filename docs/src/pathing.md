@@ -48,7 +48,7 @@ mincut
 ```@docs
 randomwalk
 non_backtracking_randomwalk
-saw
+self_avoiding_walk
 ```
 
 ## Connectivity / Bipartiteness

@@ -64,7 +64,7 @@ is_bipartite, bipartite_map,
 is_cyclic, topological_sort_by_dfs, dfs_tree,
 
 # random
-randomwalk, saw, non_backtracking_randomwalk,
+randomwalk, self_avoiding_walk, non_backtracking_randomwalk,
 
 # diffusion
 diffusion, diffusion_rate,
