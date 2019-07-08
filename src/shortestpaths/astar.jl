@@ -11,12 +11,7 @@ function reconstruct_path!(total_path, # a vector to be filled with the shortest
     E = Edge{eltype(g)}
     curr_idx = end_idx
     while came_from[curr_idx] != curr_idx
-        if came_from[curr_idx] < 0
-            println("Whoops!")
-        end
-
         pushfirst!(total_path, E(came_from[curr_idx], curr_idx))
-
         curr_idx = came_from[curr_idx]
     end
 end
