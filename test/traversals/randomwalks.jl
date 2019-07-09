@@ -38,8 +38,8 @@
 
     gx = path_graph(10)
     for g in testgraphs(gx)
-      @test @inferred(saw(g, 1, 20)) == [1:10;]
-      @test_throws BoundsError saw(g, 20, 20)
+      @test @inferred(self_avoiding_walk(g, 1, 20)) == [1:10;]
+      @test_throws BoundsError self_avoiding_walk(g, 20, 20)
       @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
     end
