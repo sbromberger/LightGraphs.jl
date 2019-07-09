@@ -27,7 +27,7 @@
 @deprecate TuranGraph turan_graph
 @deprecate CompleteDiGraph complete_digraph
 @deprecate StarGraph star_graph
-@deprecate star_digraph star_digraph
+@deprecate StarDigraph star_digraph
 @deprecate PathGraph path_graph
 @deprecate PathDiGraph path_digraph
 @deprecate CycleGraph cycle_graph

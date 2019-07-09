@@ -118,10 +118,22 @@ label_propagation, maximal_cliques, clique_percolation,
 
 #generators
 complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
+complete_bipartite_graph, complete_multipartite_graph, turan_graph,
+complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
+binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
+circular_ladder_graph, barbell_graph, lollipop_graph,
 
-complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph, star_digraph,
-path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree, double_binary_tree, roach_graph,
-clique_graph, ladder_graph, circular_ladder_graph, barbell_graph, lollipop_graph,
+#generator deprecations
+BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
+DodecahedralGraph, FruchtGraph, HeawoodGraph, HouseGraph, HouseXGraph,
+IcosahedralGraph, KarateGraph, KrackhardtKiteGraph, MoebiusKantorGraph,
+OctahedralGraph, PappusGraph, PetersenGraph, SedgewickMazeGraph, TetrahedralGraph,
+TruncatedCubeGraph, TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph,
+TutteGraph, CompleteGraph, CompleteBipartiteGraph, CompleteMultipartiteGraph,
+TuranGraph, CompleteDiGraph, StarGraph, StarDigraph, PathGraph, PathDiGraph,
+CycleGraph, CycleDiGraph, WheelGraph, WheelDiGraph, Grid, BinaryTree,
+Doublebinary_tree, RoachGraph, CliqueGraph, LadderGraph, Circularladder_graph,
+BarbellGraph, LollipopGraph,
 
 #smallgraphs
 smallgraph,
