@@ -8,7 +8,7 @@ function reconstruct_path!(total_path, # a vector to be filled with the shortest
     end_idx, # the end vertex
     g) # the graph
 
-    E = Edge{eltype(g)}
+    E = edgetype(g)
     curr_idx = end_idx
     while came_from[curr_idx] != curr_idx
         pushfirst!(total_path, E(came_from[curr_idx], curr_idx))
@@ -26,7 +26,7 @@ function a_star_impl!(g, # the graph
     distmx,
     heuristic)
 
-    E = Edge{eltype(g)}
+    E = edgetype(g)
     total_path = Vector{E}()
 
     @inbounds while !isempty(open_set)
@@ -40,9 +40,7 @@ function a_star_impl!(g, # the graph
         closed_set[current] = true
 
         for neighbor in LightGraphs.outneighbors(g, current)
-            if closed_set[neighbor]
-                continue
-            end
+            closed_set[neighbor] && continue
 
             tentative_g_score = g_score[current] + distmx[current, neighbor]
 
@@ -82,11 +80,11 @@ function a_star(g::AbstractGraph{U},  # the g
 
     closed_set = zeros(Bool, nv(g))
 
-    g_score = ones(T, nv(g)) * Inf # Type of Inf? T(Inf)? Harms integers...
+    g_score = fill(Inf, nv(g))
     g_score[s] = 0
 
-    f_score = ones(T, nv(g)) * Inf # Type of Inf? T(Inf)? Harms integers...
-    f_score[s] = heuristic(s) # Type of s? U(s)? We don't know the form of heuristic
+    f_score = fill(Inf, nv(g))
+    f_score[s] = heuristic(s)
 
     came_from = -ones(Integer, nv(g))
     came_from[s] = s
