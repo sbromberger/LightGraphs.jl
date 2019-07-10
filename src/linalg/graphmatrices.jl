@@ -17,9 +17,9 @@ Laplacian and its subtypes are used for the different Laplacian matrices.
 
 Adjacency(lapl::Laplacian) provides a generic function for getting the
 adjacency matrix of a Laplacian matrix. If your subtype of Laplacian does not provide
-an field A for the Adjacency instance, then attach another method to this function to provide
+a field A for the Adjacency instance, then attach another method to this function to provide
 an Adjacency{T} representation of the Laplacian. The Adjacency matrix here
-is the final subtype that corresponds to this type of Laplacian
+is the final subtype that corresponds to this type of Laplacian.
 """
 abstract type Adjacency{T} <: GraphMatrix{T} end
 abstract type Laplacian{T} <: GraphMatrix{T} end
