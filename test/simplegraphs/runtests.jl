@@ -80,7 +80,7 @@ end
 
 const simplegraphtestdir = dirname(@__FILE__)
 
-tests = [
+const simple_tests = [
     "simplegraphs",
     "simpleedge",
     "simpleedgeiter",
@@ -91,7 +91,7 @@ tests = [
 ]
 
 @testset "LightGraphs.SimpleGraphs" begin
-    for t in tests
+    for t in simple_tests
         tp = joinpath(simplegraphtestdir, "$(t).jl")
         include(tp)
     end

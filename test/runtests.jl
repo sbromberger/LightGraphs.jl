@@ -68,6 +68,7 @@ tests = [
     "centrality/stress",
     "centrality/radiality",
     "utils",
+    "deprecations",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
     "steinertree/steiner_tree",
