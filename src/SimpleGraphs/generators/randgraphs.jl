@@ -904,7 +904,7 @@ mutable struct StochasticBlockModel{T <: Integer,P <: Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
-    rng::MersenneTwister
+    rng::AbstractRNG
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
