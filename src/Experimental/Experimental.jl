@@ -15,6 +15,7 @@ export description,
     AbstractGraphAlgorith, ShortestPathAlgorithm,
     DijkstraShortestPathResults, DijkstraShortestPathAlgorithm,
     BellmanFordShortestPathResults, BellmanFordShortestPathAlgorithm,
+    AStarShortestPathResults, AStarShortestPathAlgorithm,
     shortest_paths
     #
 description() = "This module contains experimental graph functions."
