@@ -1,4 +1,4 @@
-using LightGraphs:DijkstraState
+using LightGraphs:AbstractPathState, DijkstraState
 import Base:convert, getproperty
 struct LGEnvironment
     threaded::Bool
@@ -15,14 +15,16 @@ struct DijkstraShortestPathResults{T <: Real, U <: Integer}  <: ShortestPathResu
     pathcounts::Vector{UInt64}
     closest_vertices::Vector{U}
 end
-function getproperty(dspr::DijkstraShortestPathResults, sym::Symbol)
-           if sym === :paths
-               return enumerate_paths(DijkstraState(dspr))
-           else # fallback to getfield
-               return getfield(dspr, sym)
-           end
-       end
 
+function getproperty(spr::ShortestPathResults, sym::Symbol)
+   if sym === :paths
+       return enumerate_paths(convert(AbstractPathState, spr))
+   else # fallback to getfield
+       return getfield(spr, sym)
+   end
+end
+
+convert(::Type{AbstractPathState}, dspr::DijkstraShortestPathResults) = convert(DijkstraState, dspr)
 convert(::Type{<:DijkstraShortestPathResults}, ds::DijkstraState) =
     DijkstraShortestPathResults(ds.parents, ds.dists, ds.predecessors, ds.pathcounts, ds.closest_vertices)
 
