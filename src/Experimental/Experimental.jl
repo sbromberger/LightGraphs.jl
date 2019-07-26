@@ -11,8 +11,10 @@ export description,
     has_subgraphisomorph, count_subgraphisomorph, all_subgraphisomorph,
 
     # aggregation
-    AbstractGraphResults, ShortestPathResults, DijkstraShortestPathResults,
-    AbstractGraphAlgorith, ShortestPathAlgorithm, DijkstraShortestPathAlgorithm,
+    AbstractGraphResults, ShortestPathResults, 
+    AbstractGraphAlgorith, ShortestPathAlgorithm,
+    DijkstraShortestPathResults, DijkstraShortestPathAlgorithm,
+    BellmanFordShortestPathResults, BellmanFordShortestPathAlgorithm,
     shortest_paths
     #
 description() = "This module contains experimental graph functions."
