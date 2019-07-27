@@ -1,4 +1,4 @@
-using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState, FloydWarshallState
+using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState, FloydWarshallState, DEsopoPapeState
 import Base:convert, getproperty
 import LightGraphs: enumerate_paths
 
@@ -124,7 +124,24 @@ convert(::Type{<:FloydWarshallState}, spr::FloydWarshallShortestPathResults) =
 FloydWarshallShortestPathResults(s::FloydWarshallState) = convert(FloydWarshallShortestPathResults, s)
 FloydWarshallState(spr::FloydWarshallShortestPathResults) = convert(FloydWarshallState, spr)
 
+##################
+##D'Esposo-Pape ##
+##################
 
+struct DEsopoPapeShortestPathAlgorithm <: ShortestPathAlgorithm end
+struct DEsopoPapeShortestPathResults{T<:Real, U<:Integer} <: ShortestPathResults
+    parents::Vector{U}
+    dists::Vector{T}
+end
+
+convert(::Type{AbstractPathState}, spr::DEsopoPapeShortestPathResults) = convert(DEsopoPapeState, spr)
+convert(::Type{<:DEsopoPapeShortestPathResults}, s::DEsopoPapeState) =
+    DEsopoPapeShortestPathResults(s.parents, s.dists)
+convert(::Type{<:DEsopoPapeState}, spr::DEsopoPapeShortestPathResults) = 
+    DEsopoPapeState(spr.parents, spr.dists)
+
+DEsopoPapeShortestPathResults(s::DEsopoPapeState) = convert(DEsopoPapeShortestPathResults, s)
+DEsopoPapeState(spr::DEsopoPapeShortestPathResults) = convert(DEsopoPapeState, spr)
 # if we don't pass in distances, use weights.
 shortest_paths(g::AbstractGraph, ss::Vector{T}, alg::ShortestPathAlgorithm) where {T<:Integer} =
     shortest_paths(g, ss, weights(g), alg)
@@ -160,6 +177,12 @@ shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx, alg::AStarShort
 
 shortest_paths(g::AbstractGraph, distmx, alg::FloydWarshallShortestPathAlgorithm) =
     FloydWarshallShortestPathResults(floyd_warshall_shortest_paths(g, distmx))
+
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DEsopoPapeShortestPathAlgorithm) =
+    DEsopoPapeShortestPathResults(desopo_pape_shortest_paths(g, s, distmx))
+
+shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPapeShortestPathAlgorithm) =
+DEsopoPapeShortestPathResults(desopo_pape_shortest_paths(g, s, weights(g)))
 
 enumerate_paths(s::ShortestPathResults) = enumerate_paths(convert(AbstractPathState, s))
     
