@@ -10,14 +10,7 @@ export description,
     has_induced_subgraphisomorph, count_induced_subgraphisomorph, all_induced_subgraphisomorph,
     has_subgraphisomorph, count_subgraphisomorph, all_subgraphisomorph,
 
-    # aggregation
-    AbstractGraphResults, ShortestPathResults, 
-    AbstractGraphAlgorith, ShortestPathAlgorithm,
-    DijkstraShortestPathResults, DijkstraShortestPathAlgorithm,
-    BellmanFordShortestPathResults, BellmanFordShortestPathAlgorithm,
-    AStarShortestPathResults, AStarShortestPathAlgorithm,
-    shortest_paths
-    #
+    ShortestPaths
 description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
