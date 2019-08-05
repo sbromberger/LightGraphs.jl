@@ -1,9 +1,9 @@
 module ShortestPaths
 using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState,
-    FloydWarshallState, DEsopoPapeState, AbstractGraph, AbstractEdge, weights
+    FloydWarshallState, DEsopoPapeState, JohnsonState, AbstractGraph, AbstractEdge, weights
 
 using LightGraphs: dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths,
-    desopo_pape_shortest_paths, a_star
+    desopo_pape_shortest_paths, a_star, johnson_shortest_paths
 import Base:convert, getproperty
 import LightGraphs: enumerate_paths
 
@@ -20,37 +20,6 @@ abstract type AbstractGraphAlgorithm end
 
 abstract type ShortestPathResults <: AbstractGraphResults end
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
-
-##################
-##   Dijkstra   ##
-##################
-struct DijkstraResults{T<:Real, U<:Integer}  <: ShortestPathResults
-    parents::Vector{U}
-    dists::Vector{T}
-    predecessors::Vector{Vector{U}}
-    pathcounts::Vector{UInt64}
-    closest_vertices::Vector{U}
-end
-
-convert(::Type{AbstractPathState}, spr::DijkstraResults) = convert(DijkstraState, spr)
-convert(::Type{<:DijkstraResults}, s::DijkstraState) =
-    DijkstraResults(s.parents, s.dists, s.predecessors, s.pathcounts, s.closest_vertices)
-
-convert(::Type{<:DijkstraState}, spr::DijkstraResults) =
-    DijkstraState(spr.parents, spr.dists, spr.predecessors, spr.pathcounts, spr.closest_vertices)
-
-# These constructors do not copy. They probably should, but you shouldn't be changing the values in any case.
-# Can we just document that it's undefined behavior to change any element of a SPR?
-DijkstraResults(s::DijkstraState) = convert(DijkstraResults, s)
-DijkstraState(spr::DijkstraResults) = convert(DijkstraState, spr)
-
-struct Dijkstra <: ShortestPathAlgorithm
-    all_paths::Bool
-    track_vertices::Bool
-
-    Dijkstra() = new(false, false)
-end
-
 
 ##################
 ##    A-Star    ##
@@ -111,12 +80,57 @@ convert(::Type{<:BellmanFordState}, spr::BellmanFordResults) =
 BellmanFordResults(s::BellmanFordState) = convert(BellmanFordResults, s)
 BellmanFordState(spr::BellmanFordResults) = convert(BellmanFordState, spr)
 
+##################
+##D'Esposo-Pape ##
+##################
+struct DEsopoPape <: ShortestPathAlgorithm end
+struct DEsopoPapeResults{T<:Real, U<:Integer} <: ShortestPathResults
+    parents::Vector{U}
+    dists::Vector{T}
+end
 
+convert(::Type{AbstractPathState}, spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
+convert(::Type{<:DEsopoPapeResults}, s::DEsopoPapeState) =
+    DEsopoPapeResults(s.parents, s.dists)
+convert(::Type{<:DEsopoPapeState}, spr::DEsopoPapeResults) = 
+    DEsopoPapeState(spr.parents, spr.dists)
+
+DEsopoPapeResults(s::DEsopoPapeState) = convert(DEsopoPapeResults, s)
+DEsopoPapeState(spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
+
+##################
+##   Dijkstra   ##
+##################
+struct DijkstraResults{T<:Real, U<:Integer}  <: ShortestPathResults
+    parents::Vector{U}
+    dists::Vector{T}
+    predecessors::Vector{Vector{U}}
+    pathcounts::Vector{UInt64}
+    closest_vertices::Vector{U}
+end
+
+convert(::Type{AbstractPathState}, spr::DijkstraResults) = convert(DijkstraState, spr)
+convert(::Type{<:DijkstraResults}, s::DijkstraState) =
+    DijkstraResults(s.parents, s.dists, s.predecessors, s.pathcounts, s.closest_vertices)
+
+convert(::Type{<:DijkstraState}, spr::DijkstraResults) =
+    DijkstraState(spr.parents, spr.dists, spr.predecessors, spr.pathcounts, spr.closest_vertices)
+
+# These constructors do not copy. They probably should, but you shouldn't be changing the values in any case.
+# Can we just document that it's undefined behavior to change any element of a SPR?
+DijkstraResults(s::DijkstraState) = convert(DijkstraResults, s)
+DijkstraState(spr::DijkstraResults) = convert(DijkstraState, spr)
+
+struct Dijkstra <: ShortestPathAlgorithm
+    all_paths::Bool
+    track_vertices::Bool
+
+    Dijkstra() = new(false, false)
+end
 
 ##################
 ##Floyd-Warshall##
 ##################
-
 struct FloydWarshall <: ShortestPathAlgorithm end
 struct FloydWarshallResults{T<:Real, U<:Integer} <: ShortestPathResults
     parents::Matrix{U}
@@ -132,24 +146,27 @@ convert(::Type{<:FloydWarshallState}, spr::FloydWarshallResults) =
 FloydWarshallResults(s::FloydWarshallState) = convert(FloydWarshallResults, s)
 FloydWarshallState(spr::FloydWarshallResults) = convert(FloydWarshallState, spr)
 
-##################
-##D'Esposo-Pape ##
-##################
 
-struct DEsopoPape <: ShortestPathAlgorithm end
-struct DEsopoPapeResults{T<:Real, U<:Integer} <: ShortestPathResults
-    parents::Vector{U}
-    dists::Vector{T}
+##################
+##   Johnson    ##
+##################
+struct Johnson <: ShortestPathAlgorithm end
+struct JohnsonResults{T<:Real, U<:Integer} <: ShortestPathResults
+    parents::Matrix{U}
+    dists::Matrix{T}
 end
+convert(::Type{AbstractPathState}, spr::JohnsonResults) = convert(JohnsonState, spr)
+convert(::Type{<:JohnsonResults}, s::JohnsonState) =
+    JohnsonResults(s.parents, s.dists)
+convert(::Type{<:JohnsonState}, spr::JohnsonResults) = 
+    JohnsonState(spr.dists, spr.parents) # note - FWState is reversed from the others. Yuck.
 
-convert(::Type{AbstractPathState}, spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
-convert(::Type{<:DEsopoPapeResults}, s::DEsopoPapeState) =
-    DEsopoPapeResults(s.parents, s.dists)
-convert(::Type{<:DEsopoPapeState}, spr::DEsopoPapeResults) = 
-    DEsopoPapeState(spr.parents, spr.dists)
+JohnsonResults(s::JohnsonState) = convert(JohnsonResults, s)
+JohnsonState(spr::JohnsonResults) = convert(JohnsonState, spr)
 
-DEsopoPapeResults(s::DEsopoPapeState) = convert(DEsopoPapeResults, s)
-DEsopoPapeState(spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
+
+##############################  #
+# Shortest Paths via algorithm
 # if we don't pass in distances, use weights.
 shortest_paths(g::AbstractGraph, ss::Vector{T}, alg::ShortestPathAlgorithm) where {T<:Integer} =
     shortest_paths(g, ss, weights(g), alg)
@@ -174,23 +191,29 @@ shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     shortest_paths(g, distmx, FloydWarshall())
 
 # Full-formed methods.
-shortest_paths(g::AbstractGraph, ss, distmx, alg::Dijkstra) =
+shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::Dijkstra) =
     DijkstraResults(dijkstra_shortest_paths(g, ss, distmx, allpaths=alg.all_paths, trackvertices=alg.track_vertices))
     
-shortest_paths(g::AbstractGraph, ss, distmx, alg::BellmanFord) =
+shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::BellmanFord) =
     BellmanFordResults(bellman_ford_shortest_paths(g, ss, distmx))
 
-shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx, alg::AStar{F}) where {F<:Function} =
+shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar{F}) where {F<:Function} =
     AStarResults(a_star(g, s, t, distmx, alg.heuristic))
 
-shortest_paths(g::AbstractGraph, distmx, alg::FloydWarshall) =
+shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::FloydWarshall) =
     FloydWarshallResults(floyd_warshall_shortest_paths(g, distmx))
+
+shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::Johnson) =
+    JohnsonResults(johnson_shortest_paths(g, distmx))
+
+shortest_paths(g::AbstractGraph, alg::Johnson) =
+    JohnsonResults(johnson_shortest_paths(g, weights(g)))
 
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DEsopoPape) =
     DEsopoPapeResults(desopo_pape_shortest_paths(g, s, distmx))
 
-shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPape) =
-DEsopoPapeResults(desopo_pape_shortest_paths(g, s, weights(g)))
+# shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPape) =
+#     DEsopoPapeResults(desopo_pape_shortest_paths(g, s, weights(g)))
 
 paths(s::ShortestPathResults) = paths(convert(AbstractPathState, s))
     
@@ -207,6 +230,6 @@ paths(s::ShortestPathResults) = paths(convert(AbstractPathState, s))
 #
 
 export paths, shortest_paths
-export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape
+export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson
 
 end  # module
