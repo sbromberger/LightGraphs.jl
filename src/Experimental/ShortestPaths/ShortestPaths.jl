@@ -180,7 +180,7 @@ shortest_paths(g::AbstractGraph, s::Vector{T}, distmx::AbstractMatrix=weights(g)
 shortest_paths(g, s, distmx, Dijkstra())
 
 # If we don't specify an algorithm and source is a scalar.
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix=weights(g)) =
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix{<:Real}=weights(g)) =
     shortest_paths(g, [s], distmx)
 
 shortest_paths(g::AbstractGraph, s::Integer, alg::ShortestPathAlgorithm) = 
