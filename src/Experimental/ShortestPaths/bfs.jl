@@ -1,4 +1,4 @@
-using LightGraphs: nv, weights, outneighbors
+using LightGraphs: nv, outneighbors
 
 struct BFS <: ShortestPathAlgorithm end
 struct BFSResults{U<:Integer} <: ShortestPathResults
@@ -42,7 +42,7 @@ function shortest_paths(
         n_level += one(U)
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg = sort_alg)
+        sort!(cur_level, alg=sort_alg)
     end
     return BFSResults(parents, dists)
 end
