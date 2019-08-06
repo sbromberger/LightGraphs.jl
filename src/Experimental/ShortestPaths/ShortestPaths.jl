@@ -7,8 +7,6 @@ using LightGraphs: dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_w
 import Base:convert, getproperty
 import LightGraphs: enumerate_paths
 
-const paths = enumerate_paths
-
 struct LGEnvironment
     threaded::Bool
     parallel::Bool
@@ -20,6 +18,9 @@ abstract type AbstractGraphAlgorithm end
 
 abstract type ShortestPathResults <: AbstractGraphResults end
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
+
+include("spfa.jl")
+include("bfs.jl")
 
 ##################
 ##    A-Star    ##
@@ -167,8 +168,8 @@ JohnsonState(spr::JohnsonResults) = convert(JohnsonState, spr)
 
 ##############################  #
 # Shortest Paths via algorithm
-# if we don't pass in distances, use weights.
-shortest_paths(g::AbstractGraph, ss::Vector{T}, alg::ShortestPathAlgorithm) where {T<:Integer} =
+# if we don't pass in distances but specify an algorithm, use weights.
+shortest_paths(g::AbstractGraph, ss::AbstractVector{T}, alg::ShortestPathAlgorithm) where {T<:Integer} =
     shortest_paths(g, ss, weights(g), alg)
 
 # for A*, if we don't pass in distances...
@@ -176,12 +177,15 @@ shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) =
     shortest_paths(g, s, t, weights(g), alg)
 
 # If we don't specify an algorithm, use dijkstra.
-shortest_paths(g::AbstractGraph, s::Vector{T}, distmx::AbstractMatrix=weights(g)) where {T<:Integer} =
-shortest_paths(g, s, distmx, Dijkstra())
+shortest_paths(g::AbstractGraph{T}, ss::AbstractVector{T}, distmx::AbstractMatrix) where {T<:Integer} =
+    shortest_paths(g, ss, distmx, Dijkstra())
+
+# If we don't specify an algorithm AND there are no dists, use BFS.
+shortest_paths(g::AbstractGraph{T}, ss::AbstractVector{T}) where {T<:Integer} = shortest_paths(g, ss, BFS())
 
 # If we don't specify an algorithm and source is a scalar.
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix{<:Real}=weights(g)) =
-    shortest_paths(g, [s], distmx)
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix) = shortest_paths(g, [s], distmx)
+shortest_paths(g::AbstractGraph, s::Integer) = shortest_paths(g, [s])
 
 shortest_paths(g::AbstractGraph, s::Integer, alg::ShortestPathAlgorithm) = 
     shortest_paths(g, [s], alg)
@@ -212,24 +216,52 @@ shortest_paths(g::AbstractGraph, alg::Johnson) =
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DEsopoPape) =
     DEsopoPapeResults(desopo_pape_shortest_paths(g, s, distmx))
 
-# shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPape) =
-#     DEsopoPapeResults(desopo_pape_shortest_paths(g, s, weights(g)))
+"""
+    paths(state[, vs])
 
-paths(s::ShortestPathResults) = paths(convert(AbstractPathState, s))
-    
-#
-# We might not want this.
-# function getproperty(spr::ShortestPathResults, sym::Symbol)
-#    if sym === :paths
-#        return paths(convert(AbstractPathState, spr))
-#    else # fallback to getfield
-#        return getfield(spr, sym)
-#    end
-# end
-#
-#
+Given a path state `state` of type `ShortestPathResults`, return a
+vector (indexed by vertex) of the paths between the source vertex used to
+compute the path state and a single destination vertex, a list of destination
+vertices, or the entire graph. For multiple destination vertices, each
+path is represented by a vector of vertices on the path between the source and
+the destination. Nonexistent paths will be indicated by an empty vector. For
+single destinations, the path is represented by a single vector of vertices,
+and will be length 0 if the path does not exist.
+
+### Implementation Notes
+For Floyd-Warshall path states, please note that the output is a bit different,
+since this algorithm calculates all shortest paths for all pairs of vertices:
+`enumerate_paths(state)` will return a vector (indexed by source vertex) of
+vectors (indexed by destination vertex) of paths. `enumerate_paths(state, v)`
+will return a vector (indexed by destination vertex) of paths from source `v`
+to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
+a vector representing the path from vertex `v` to vertex `d`.
+"""
+function paths(state::ShortestPathResults, vs::AbstractVector{<:Integer})
+    parents = state.parents
+    T = eltype(parents)
+
+    num_vs = length(vs)
+    all_paths = Vector{Vector{T}}(undef, num_vs)
+    for i = 1:num_vs
+        all_paths[i] = Vector{T}()
+        index = T(vs[i])
+        if parents[index] != 0 || parents[index] == index
+            while parents[index] != 0
+                push!(all_paths[i], index)
+                index = parents[index]
+            end
+            push!(all_paths[i], index)
+            reverse!(all_paths[i])
+        end
+    end
+    return all_paths
+end
+
+paths(state::ShortestPathResults, v) = paths(state, [v])[1]
+paths(state::ShortestPathResults) = paths(state, [1:length(state.parents);])
 
 export paths, shortest_paths
-export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson
+export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 
 end  # module
