@@ -1,5 +1,3 @@
-using LightGraphs: nv, outneighbors
-
 struct BFS <: ShortestPathAlgorithm end
 struct BFSResults{U<:Integer} <: ShortestPathResults
     parents::Vector{U}

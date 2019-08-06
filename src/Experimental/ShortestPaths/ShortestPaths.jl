@@ -1,11 +1,15 @@
 module ShortestPaths
+using LightGraphs
 using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState,
-    FloydWarshallState, DEsopoPapeState, JohnsonState, AbstractGraph, AbstractEdge, weights
-
-using LightGraphs: dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths,
-    desopo_pape_shortest_paths, a_star, johnson_shortest_paths
+      FloydWarshallState, DEsopoPapeState, JohnsonState, AbstractGraph, AbstractEdge
+#
+# using LightGraphs: dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths,
+#     desopo_pape_shortest_paths, a_star, johnson_shortest_paths
 import Base:convert, getproperty
 import LightGraphs: enumerate_paths
+
+using DataStructures:PriorityQueue, enqueue!, dequeue!
+
 
 struct LGEnvironment
     threaded::Bool
@@ -19,45 +23,11 @@ abstract type AbstractGraphAlgorithm end
 abstract type ShortestPathResults <: AbstractGraphResults end
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
 
-include("spfa.jl")
+include("astar.jl")
 include("bfs.jl")
-
-##################
-##    A-Star    ##
-##################
-struct AStarResults{E<:AbstractEdge} <: ShortestPathResults
-    path::Vector{E}
-end
-# for completeness and consistency.
-struct AStarState{E<:AbstractEdge} <: AbstractPathState
-    path::Vector{E}
-end
-
-function paths(s::AStarState)
-    T = eltype(eltype(s.path))
-    n = length(s.path)
-    n == 0 && return Vector{T}()
-    p = Vector{T}(undef, n+1)
-    p[1] = src(s.path[1])
-    p[end] = dst(s.path[end])
-    for i in 2:n
-        p[i] = src(s.path[i])
-    end
-    return p
-end
-
-convert(::Type{AbstractPathState}, spr::AStarResults) = convert(AStarState, spr)
-convert(::Type{<:AStarResults}, s::AStarState) = AStarResults(s.path)
-
-convert(::Type{<:AStarState}, spr::AStarResults) = AStarState(spr.path)
-
-struct AStar{F<:Function} <: ShortestPathAlgorithm
-    heuristic::F
-end
-AStarResults(s::AStarState) = convert(AStarResults, s)
-AStarState(spr::AStarResults) = convert(AStarState, spr)
-
-AStar(T::Type{<:Real}=Float64) = AStar(n -> zero(T))
+include("floyd-warshall.jl")
+include("johnson.jl")
+include("spfa.jl")
 
 
 ##################
@@ -125,78 +95,31 @@ DijkstraState(spr::DijkstraResults) = convert(DijkstraState, spr)
 struct Dijkstra <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool
-
-    Dijkstra() = new(false, false)
 end
 
-##################
-##Floyd-Warshall##
-##################
-struct FloydWarshall <: ShortestPathAlgorithm end
-struct FloydWarshallResults{T<:Real, U<:Integer} <: ShortestPathResults
-    parents::Matrix{U}
-    dists::Matrix{T}
-end
-
-convert(::Type{AbstractPathState}, spr::FloydWarshallResults) = convert(FloydWarshallState, spr)
-convert(::Type{<:FloydWarshallResults}, s::FloydWarshallState) =
-    FloydWarshallResults(s.parents, s.dists)
-convert(::Type{<:FloydWarshallState}, spr::FloydWarshallResults) = 
-    FloydWarshallState(spr.dists, spr.parents) # note - FWState is reversed from the others. Yuck.
-
-FloydWarshallResults(s::FloydWarshallState) = convert(FloydWarshallResults, s)
-FloydWarshallState(spr::FloydWarshallResults) = convert(FloydWarshallState, spr)
+Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
 
 
-##################
-##   Johnson    ##
-##################
-struct Johnson <: ShortestPathAlgorithm end
-struct JohnsonResults{T<:Real, U<:Integer} <: ShortestPathResults
-    parents::Matrix{U}
-    dists::Matrix{T}
-end
-convert(::Type{AbstractPathState}, spr::JohnsonResults) = convert(JohnsonState, spr)
-convert(::Type{<:JohnsonResults}, s::JohnsonState) =
-    JohnsonResults(s.parents, s.dists)
-convert(::Type{<:JohnsonState}, spr::JohnsonResults) = 
-    JohnsonState(spr.dists, spr.parents) # note - FWState is reversed from the others. Yuck.
 
-JohnsonResults(s::JohnsonState) = convert(JohnsonResults, s)
-JohnsonState(spr::JohnsonResults) = convert(JohnsonState, spr)
-
-
-##############################  #
-# Shortest Paths via algorithm
+################################
+# Shortest Paths via algorithm #
+################################
 # if we don't pass in distances but specify an algorithm, use weights.
-shortest_paths(g::AbstractGraph, ss::AbstractVector{T}, alg::ShortestPathAlgorithm) where {T<:Integer} =
-    shortest_paths(g, ss, weights(g), alg)
-
-# for A*, if we don't pass in distances...
-shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) =
-    shortest_paths(g, s, t, weights(g), alg)
+shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm) =
+    shortest_paths(g, s, weights(g), alg)
 
 # If we don't specify an algorithm, use dijkstra.
-shortest_paths(g::AbstractGraph{T}, ss::AbstractVector{T}, distmx::AbstractMatrix) where {T<:Integer} =
-    shortest_paths(g, ss, distmx, Dijkstra())
+shortest_paths(g::AbstractGraph{T}, s, distmx::AbstractMatrix) where {T<:Integer} =
+    shortest_paths(g, s, distmx, Dijkstra())
 
 # If we don't specify an algorithm AND there are no dists, use BFS.
-shortest_paths(g::AbstractGraph{T}, ss::AbstractVector{T}) where {T<:Integer} = shortest_paths(g, ss, BFS())
-
-# If we don't specify an algorithm and source is a scalar.
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix) = shortest_paths(g, [s], distmx)
-shortest_paths(g::AbstractGraph, s::Integer) = shortest_paths(g, [s])
-
-shortest_paths(g::AbstractGraph, s::Integer, alg::ShortestPathAlgorithm) = 
-    shortest_paths(g, [s], alg)
-
-# If we don't specify an algorithm AND there's no source, use Floyd-Warshall.
-shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    shortest_paths(g, distmx, FloydWarshall())
+shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer} = shortest_paths(g, s, BFS())
+shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = shortest_paths(g, ss, BFS())
 
 # Full-formed methods.
-shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::Dijkstra) =
+shortest_paths(g::AbstractGraph, ss::AbstractVector, distmx::AbstractMatrix, alg::Dijkstra) =
     DijkstraResults(dijkstra_shortest_paths(g, ss, distmx, allpaths=alg.all_paths, trackvertices=alg.track_vertices))
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
     
 shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::BellmanFord) =
     BellmanFordResults(bellman_ford_shortest_paths(g, ss, distmx))
@@ -204,17 +127,10 @@ shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::BellmanFord) =
 shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar{F}) where {F<:Function} =
     AStarResults(a_star(g, s, t, distmx, alg.heuristic))
 
-shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::FloydWarshall) =
-    FloydWarshallResults(floyd_warshall_shortest_paths(g, distmx))
-
-shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::Johnson) =
-    JohnsonResults(johnson_shortest_paths(g, distmx))
-
-shortest_paths(g::AbstractGraph, alg::Johnson) =
-    JohnsonResults(johnson_shortest_paths(g, weights(g)))
-
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DEsopoPape) =
     DEsopoPapeResults(desopo_pape_shortest_paths(g, s, distmx))
+
+shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPape) = shortest_paths(g, s, weights(g), alg)
 
 """
     paths(state[, vs])
@@ -258,10 +174,12 @@ function paths(state::ShortestPathResults, vs::AbstractVector{<:Integer})
     return all_paths
 end
 
-paths(state::ShortestPathResults, v) = paths(state, [v])[1]
+paths(state::ShortestPathResults, v::Integer) = paths(state, [v])[1]
 paths(state::ShortestPathResults) = paths(state, [1:length(state.parents);])
 
-export paths, shortest_paths
+dists(state::ShortestPathResults, v::Integer) = state.dists[v]
+dists(state::ShortestPathResults) = state.dists
+export paths, dists, shortest_paths
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 
 end  # module
