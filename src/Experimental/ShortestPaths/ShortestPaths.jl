@@ -27,60 +27,16 @@ abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
 include("astar.jl")
 include("bellman-ford.jl")
 include("bfs.jl")
+include("desopo-pape.jl")
+include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
 
 
-
-##################
-##D'Esposo-Pape ##
-##################
-struct DEsopoPape <: ShortestPathAlgorithm end
-struct DEsopoPapeResults{T<:Real, U<:Integer} <: ShortestPathResults
-    parents::Vector{U}
-    dists::Vector{T}
-end
-
-convert(::Type{AbstractPathState}, spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
-convert(::Type{<:DEsopoPapeResults}, s::DEsopoPapeState) =
-    DEsopoPapeResults(s.parents, s.dists)
-convert(::Type{<:DEsopoPapeState}, spr::DEsopoPapeResults) = 
-    DEsopoPapeState(spr.parents, spr.dists)
-
-DEsopoPapeResults(s::DEsopoPapeState) = convert(DEsopoPapeResults, s)
-DEsopoPapeState(spr::DEsopoPapeResults) = convert(DEsopoPapeState, spr)
-
 ##################
 ##   Dijkstra   ##
 ##################
-struct DijkstraResults{T<:Real, U<:Integer}  <: ShortestPathResults
-    parents::Vector{U}
-    dists::Vector{T}
-    predecessors::Vector{Vector{U}}
-    pathcounts::Vector{UInt64}
-    closest_vertices::Vector{U}
-end
-
-convert(::Type{AbstractPathState}, spr::DijkstraResults) = convert(DijkstraState, spr)
-convert(::Type{<:DijkstraResults}, s::DijkstraState) =
-    DijkstraResults(s.parents, s.dists, s.predecessors, s.pathcounts, s.closest_vertices)
-
-convert(::Type{<:DijkstraState}, spr::DijkstraResults) =
-    DijkstraState(spr.parents, spr.dists, spr.predecessors, spr.pathcounts, spr.closest_vertices)
-
-# These constructors do not copy. They probably should, but you shouldn't be changing the values in any case.
-# Can we just document that it's undefined behavior to change any element of a SPR?
-DijkstraResults(s::DijkstraState) = convert(DijkstraResults, s)
-DijkstraState(spr::DijkstraResults) = convert(DijkstraState, spr)
-
-struct Dijkstra <: ShortestPathAlgorithm
-    all_paths::Bool
-    track_vertices::Bool
-end
-
-Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
-
 
 
 ################################
@@ -90,30 +46,11 @@ Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_ver
 shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm) =
     shortest_paths(g, s, weights(g), alg)
 
-# If we don't specify an algorithm, use dijkstra.
-shortest_paths(g::AbstractGraph{T}, s, distmx::AbstractMatrix) where {T<:Integer} =
-    shortest_paths(g, s, distmx, Dijkstra())
-
 # If we don't specify an algorithm AND there are no dists, use BFS.
 shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer} = shortest_paths(g, s, BFS())
 shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = shortest_paths(g, ss, BFS())
 
 # Full-formed methods.
-shortest_paths(g::AbstractGraph, ss::AbstractVector, distmx::AbstractMatrix, alg::Dijkstra) =
-    DijkstraResults(dijkstra_shortest_paths(g, ss, distmx, allpaths=alg.all_paths, trackvertices=alg.track_vertices))
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
-    
-shortest_paths(g::AbstractGraph, ss, distmx::AbstractMatrix, alg::BellmanFord) =
-    BellmanFordResults(bellman_ford_shortest_paths(g, ss, distmx))
-
-shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar{F}) where {F<:Function} =
-    AStarResults(a_star(g, s, t, distmx, alg.heuristic))
-
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DEsopoPape) =
-    DEsopoPapeResults(desopo_pape_shortest_paths(g, s, distmx))
-
-shortest_paths(g::AbstractGraph, s::Integer, alg::DEsopoPape) = shortest_paths(g, s, weights(g), alg)
-
 """
     paths(state[, vs])
 
