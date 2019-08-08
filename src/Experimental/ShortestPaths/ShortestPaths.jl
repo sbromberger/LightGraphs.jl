@@ -1,4 +1,5 @@
 module ShortestPaths
+using SparseArrays: sparse
 using LightGraphs
 using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState,
       FloydWarshallState, DEsopoPapeState, JohnsonState, AbstractGraph, AbstractEdge
@@ -24,32 +25,13 @@ abstract type ShortestPathResults <: AbstractGraphResults end
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
 
 include("astar.jl")
+include("bellman-ford.jl")
 include("bfs.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
 
 
-##################
-## Bellman-Ford ##
-##################
-struct BellmanFord <: ShortestPathAlgorithm end
-struct BellmanFordResults{T<:Real, U<:Integer} <: ShortestPathResults
-    parents::Vector{U}
-    dists::Vector{T}
-end
-
-convert(::Type{AbstractPathState}, spr::BellmanFordResults) = convert(BellmanFordState, spr)
-convert(::Type{<:BellmanFordResults}, s::BellmanFordState) =
-    BellmanFordResults(s.parents, s.dists)
-
-convert(::Type{<:BellmanFordState}, spr::BellmanFordResults) =
-    BellmanFordState(spr.parents, spr.dists)
-
-
-
-BellmanFordResults(s::BellmanFordState) = convert(BellmanFordResults, s)
-BellmanFordState(spr::BellmanFordResults) = convert(BellmanFordState, spr)
 
 ##################
 ##D'Esposo-Pape ##
@@ -181,5 +163,6 @@ dists(state::ShortestPathResults, v::Integer) = state.dists[v]
 dists(state::ShortestPathResults) = state.dists
 export paths, dists, shortest_paths
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
+export NegativeCycleError
 
 end  # module

@@ -67,8 +67,10 @@ function a_star_impl!(g, # the graph
 end
 
 function calc_dist(path, distmx)
+    T = eltype(distmx)
+    isempty(path) && return typemax(T)
     rest_of_path = copy(path)
-    dist = zero(eltype(distmx))
+    dist = zero(T)
     u = pop!(rest_of_path)
     while !isempty(rest_of_path)
         v = pop!(rest_of_path)
