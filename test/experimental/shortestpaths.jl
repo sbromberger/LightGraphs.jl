@@ -279,13 +279,9 @@ end
             3. 0. 2. 0.;
             0. 2. 0. 3.;
             1. 0. 3. 0.]
-        @info("woot $G, shortest_paths = $(shortest_paths)")
-        azaz = @inferred(shortest_paths(G, 2, w, Dijkstra()))
-        @info("done")
+
         for g in testgraphs(G)
-            @info("testing $g. G == g? $(G == g), shortestpaths = $(shortest_paths)")
             ds = @inferred(shortest_paths(g, 2, w, Dijkstra()) )
-            @info("done $g")
           # this loop reconstructs the shortest path for vertices 1, 3 and 4
             @test spaths(ds, [1, 3, 4], 2) == Array[[2 1],
                                                 [2 3],
@@ -294,7 +290,6 @@ end
         # here a selflink at source is introduced; it should not change the shortest paths
             w[2, 2] = 10.0
             ds = @inferred(shortest_paths(g, 2, w, Dijkstra()))
-            shortest_paths = []
           # this loop reconstructs the shortest path for vertices 1, 3 and 4
             @test spaths(ds, [1, 3, 4], 2) == Array[[2 1],
                                                 [2 3],
