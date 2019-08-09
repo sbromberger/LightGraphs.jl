@@ -67,18 +67,17 @@ shortest_paths(
     alg::BellmanFord
     ) where T<:Real where U<:Integer = shortest_paths(graph, [v], distmx, alg)
 
-# TODO: uncomment this when merging out of Experimental.
-# has_negative_edge_cycle(g::AbstractGraph) = false
-#
-# function has_negative_edge_cycle(
-#     g::AbstractGraph{U}, 
-#     distmx::AbstractMatrix{T}
-#     ) where T<:Real where U<:Integer
-#     try
-#         shortest_paths(g, vertices(g), distmx, BellmanFord())
-#     catch e
-#         isa(e, NegativeCycleError) && return true
-#     end
-#     return false
-# end
-#
+has_negative_weight_cycle(g::AbstractGraph, ::BellmanFord) = false
+
+function has_negative_weight_cycle(
+    g::AbstractGraph{U}, 
+    distmx::AbstractMatrix{T},
+    alg::BellmanFord
+    ) where T<:Real where U<:Integer
+    try
+        shortest_paths(g, vertices(g), distmx, alg)
+    catch e
+        isa(e, ShortestPaths.NegativeCycleError) && return true
+    end
+    return false
+end

@@ -72,7 +72,7 @@ function shortest_paths(
     return SPFAResult(parents, dists)
 end
 
-has_negative_edge_cycle_spfa(g::AbstractGraph) = false
+shortest_paths(g::AbstractGraph, s::Integer, alg::SPFA) = shortest_paths(g, s, weights(g), alg)
 
 """
 Function which returns true if there is any negative weight cycle in the graph.
@@ -83,31 +83,31 @@ julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
 
-julia> has_negative_edge_cycle_spfa(g, d)
+julia> has_negative_weight_cycle_spfa(g, d)
 true
 
 julia> g = complete_graph(4);
 
 julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 
-julia> has_negative_edge_cycle_spfa(g, d);
+julia> has_negative_weight_cycle_spfa(g, d);
 false
 ```
 
 """
-function has_negative_edge_cycle_spfa(
+function has_negative_weight_cycle(
     g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}
+    distmx::AbstractMatrix{T},
+    alg::SPFA
     ) where T<:Real where U<:Integer
 
     try
-        shortest_paths(g, 1, distmx, SPFA())
+        shortest_paths(g, 1, distmx, alg)
     catch e
-        isa(e, NegativeCycleError) && return true
+        isa(e, ShortestPaths.NegativeCycleError) && return true
     end
 
     return false
 end
-
-shortest_paths(g::AbstractGraph, s::Integer, alg::SPFA) = shortest_paths(g, s, weights(g), alg)
+has_negative_weight_cycle(g::AbstractGraph, ::SPFA) = false
 

@@ -87,7 +87,11 @@ paths(state::ShortestPathResult) = paths(state, [1:length(state.parents);])
 
 dists(state::ShortestPathResult, v::Integer) = state.dists[v]
 dists(state::ShortestPathResult) = state.dists
-export paths, dists, shortest_paths
+
+has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix) = has_negative_weight_cycle(g, distmx, BellmanFord())
+has_negative_weight_cycle(g::AbstractGraph) = false
+
+export paths, dists, shortest_paths, has_negative_weight_cycle
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
 

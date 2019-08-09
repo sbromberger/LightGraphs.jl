@@ -7,16 +7,16 @@ function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
 end
 @testset "Shortest Paths" begin
 
-    @testset "Paths/Dists" begin
-        g1 = path_graph(5)
-        g2 = path_digraph(5)
-        s1 = shortest_paths(g1, 1) # bfs
-        s2 = shortest_paths(g2, 1) # bfs
-        @test paths(s1)[2] == paths(s1, 2) == [1, 2]
-        @test paths(s2)[2] == paths(s2, 2) == [1, 2]
-        @test dists(s1)[2] == dists(s1, 2) == 1
-        @test dists(s2)[2] == dists(s2, 2) == 1
-    end
+    g1 = path_graph(5)
+    g2 = path_digraph(5)
+    s1 = shortest_paths(g1, 1) # bfs
+    s2 = shortest_paths(g2, 1) # bfs
+    @test paths(s1)[2] == paths(s1, 2) == [1, 2]
+    @test paths(s2)[2] == paths(s2, 2) == [1, 2]
+    @test dists(s1)[2] == dists(s1, 2) == 1
+    @test dists(s2)[2] == dists(s2, 2) == 1
+    @test !has_negative_weight_cycle(g1)
+    @test !has_negative_weight_cycle(g2)
 
     @testset "AStar" begin
         g3 = path_graph(5)
@@ -51,8 +51,8 @@ end
             @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
             @test @inferred(paths(z))[2] == []
             @test @inferred(paths(z))[4] == paths(z, 4) == [2, 3, 4]
-            @test @inferred(!has_negative_edge_cycle(g))
-            @test @inferred(!has_negative_edge_cycle(g, d1))
+            @test @inferred(!has_negative_weight_cycle(g, BellmanFord()))
+            @test @inferred(!has_negative_weight_cycle(g, d1, BellmanFord()))
 
 
             y = @inferred(shortest_paths(g, 2, d1, BellmanFord()))
@@ -60,7 +60,7 @@ end
             @test dists(y) == dists(z) == [Inf, 0, 6, 17, 33]
             @test @inferred(paths(z))[2] == []
             @test @inferred(paths(z))[4] == paths(z, 4) == [2, 3, 4]
-            @test @inferred(!has_negative_edge_cycle(g))
+            @test @inferred(!has_negative_weight_cycle(g, BellmanFord()))
             z = @inferred(shortest_paths(g, 2, BellmanFord()))
             @test dists(z) == [typemax(Int), 0, 1, 2, 3]
         end
@@ -70,11 +70,12 @@ end
         for g in testgraphs(gx)
             d = [1 -3 1; -3 1 1; 1 1 1]
             @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
-            @test has_negative_edge_cycle(g, d)
+            @test has_negative_weight_cycle(g, d, BellmanFord())
 
             d = [1 -1 1; -1 1 1; 1 1 1]
             @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
-            @test has_negative_edge_cycle(g, d)
+            @test has_negative_weight_cycle(g, d, BellmanFord())
+            @test has_negative_weight_cycle(g, d)
         end
 
         # Negative cycle of length 3 in graph of diameter 4
@@ -82,7 +83,7 @@ end
         d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
         for g in testgraphs(gx)
             @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
-            @test has_negative_edge_cycle(g, d)
+            @test has_negative_weight_cycle(g, d)
         end
     end
 
@@ -95,6 +96,9 @@ end
             d = shortest_paths(g, 1, Dijkstra())
             b = shortest_paths(g, 1, BFS())
             @test dists(d) == dists(b) && paths(d) == paths(b)
+            d2 = shortest_paths(g, [1, 3], Dijkstra())
+            b2 = shortest_paths(g, [1, 3], BFS())
+            @test dists(d2) == dists(b2) && paths(d2) == paths(b2)
         end
 
         @test shortest_paths(g1, 1) isa ShortestPaths.BFSResult
@@ -607,14 +611,14 @@ end
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 z = @inferred(shortest_paths(g, 2, d2, SPFA()))
                 @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-                @test @inferred(!has_negative_edge_cycle_spfa(g))
-                @test @inferred(!has_negative_edge_cycle_spfa(g, d1))
+                @test @inferred(!has_negative_weight_cycle(g, SPFA()))
+                @test @inferred(!has_negative_weight_cycle(g, d1, SPFA()))
 
 
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 z = @inferred(shortest_paths(g, 2, d2, SPFA()))
                 @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-                @test @inferred(!has_negative_edge_cycle_spfa(g))
+                @test @inferred(!has_negative_weight_cycle(g, SPFA()))
                 z = @inferred(shortest_paths(g, 2, SPFA()))
                 @test z.dists == [typemax(Int), 0, 1, 2, 3]
             end
@@ -627,11 +631,11 @@ end
             for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_edge_cycle_spfa(g, d)
+                @test has_negative_weight_cycle(g, d, SPFA())
 
                 d = [1 -1 1; -1 1 1; 1 1 1]
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_edge_cycle_spfa(g, d)
+                @test has_negative_weight_cycle(g, d, SPFA())
             end
 
             # Negative cycle of length 3 in graph of diameter 4
@@ -639,7 +643,7 @@ end
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
             for g in testgraphs(gx)
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_edge_cycle_spfa(g, d)
+                @test has_negative_weight_cycle(g, d, SPFA())
             end
         end
 
