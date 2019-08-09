@@ -35,7 +35,6 @@ D = transpose(sparse(transpose(D)))
 Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
 should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
 """
-
 struct Dijkstra <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool

@@ -78,7 +78,7 @@ shortest paths.
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 
 ### Implementation Notes
-The elements of `distmx` may be of any numeric type that has a [Total Ordering](https://en.m.wikipedia.org/wiki/Total_order)
+The elements of `distmx` may be of any type that has a [Total Ordering](https://en.m.wikipedia.org/wiki/Total_order)
 and valid comparator, `zero` and `typemax` functions. Concretely, this means that
 distance matrices containing complex numbers are invalid.
 
@@ -178,6 +178,7 @@ algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = has_negative_weight_cycle(g, distmx, BellmanFord())
 has_negative_weight_cycle(g::AbstractSimpleGraph) = false
 
+export ShortestPathAlgorithm
 export paths, dists, shortest_paths, has_negative_weight_cycle
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
