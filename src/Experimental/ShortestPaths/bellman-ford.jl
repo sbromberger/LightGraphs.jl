@@ -3,11 +3,6 @@
 
 # The Bellman Ford algorithm for single-source shortest path
 
-###################################################################
-#
-#   The type that capsulates the state of Bellman Ford algorithm
-#
-###################################################################
 struct NegativeCycleError <: Exception end
 
 """
@@ -24,7 +19,7 @@ No fields are specified or required.
 - all destinations
 """
 struct BellmanFord <: ShortestPathAlgorithm end
-struct BellmanFordResult{T<:Real, U<:Integer} <: ShortestPathResult
+struct BellmanFordResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -34,7 +29,7 @@ function shortest_paths(
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T},
     ::BellmanFord
-   ) where {T<:Real, U<:Integer}
+   ) where {T, U<:Integer}
 
     nvg = nv(graph)
     active = falses(nvg)
@@ -66,20 +61,12 @@ function shortest_paths(
     return BellmanFordResult(parents, dists)
 end
 
-shortest_paths(
-    graph::AbstractGraph{U},
-    v::Integer,
-    distmx::AbstractMatrix{T},
-    alg::BellmanFord
-    ) where T<:Real where U<:Integer = shortest_paths(graph, [v], distmx, alg)
+shortest_paths(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::BellmanFord) =
+    shortest_paths(g, [v], distmx, alg)
 
 has_negative_weight_cycle(g::AbstractGraph, ::BellmanFord) = false
 
-function has_negative_weight_cycle(
-    g::AbstractGraph{U}, 
-    distmx::AbstractMatrix{T},
-    alg::BellmanFord
-    ) where T<:Real where U<:Integer
+function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg::BellmanFord)
     try
         shortest_paths(g, vertices(g), distmx, alg)
     catch e

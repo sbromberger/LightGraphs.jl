@@ -20,9 +20,9 @@ struct AStar{F<:Function} <: ShortestPathAlgorithm
     heuristic::F
 end
 
-AStar(T::Type{<:Real}=Float64) = AStar(n -> zero(T))
+AStar(T::Type=Float64) = AStar(n -> zero(T))
 
-struct AStarResult{T<:Real, U<:Integer} <: ShortestPathResult
+struct AStarResult{T, U<:Integer} <: ShortestPathResult
     path::Vector{U}
     dist::T
 end
@@ -93,12 +93,8 @@ function calc_dist(path, distmx)
     return dist
 end
 
-function shortest_paths(g::AbstractGraph,  # the g
-    s::Integer,                       # the start vertex
-    t::Integer,                       # the end vertex
-    distmx::AbstractMatrix{T},
-    alg::AStar) where {T<:Real}
-
+function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar)
+    T = eltype(distmx)
 
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))

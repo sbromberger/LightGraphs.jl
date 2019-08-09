@@ -15,14 +15,12 @@ Complexity: O(|V|*|E|)
 """
 struct Johnson <: ShortestPathAlgorithm end
 
-struct JohnsonResult{T<:Real, U<:Integer} <: ShortestPathResult
+struct JohnsonResult{T, U<:Integer} <: ShortestPathResult
     parents::Matrix{U}
     dists::Matrix{T}
 end
 
-function shortest_paths(g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
-
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson) where {T, U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
@@ -64,7 +62,7 @@ end
 
 shortest_paths(g::AbstractGraph, alg::Johnson) = shortest_paths(g, weights(g), alg)
 
-function paths(s::JohnsonResult{T,U}, v::Integer) where T <: Real where U <: Integer
+function paths(s::JohnsonResult{T, U}, v::Integer) where {T, U <: Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

@@ -21,20 +21,15 @@ No additional configuration parameters are specified or required.
 - all destinations
 """
 struct SPFA <: ShortestPathAlgorithm end
-struct SPFAResult{T<:Real, U<:Integer} <: ShortestPathResult
+struct SPFAResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
 
-function shortest_paths(
-    graph::AbstractGraph{U},
-    source::Integer,
-    distmx::AbstractMatrix{T},
-    alg::SPFA
-    ) where T<:Real where U<:Integer
+function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMatrix{T}, alg::SPFA) where {T, U<:Integer}
 
 
-    nvg = nv(graph)
+    nvg = nv(g)
 
     (source in 1:nvg) || throw(DomainError(source, "source should be in between 1 and $nvg"))
     dists = fill(typemax(T), nvg)
@@ -52,7 +47,7 @@ function shortest_paths(
         v = popfirst!(queue)
         inqueue[v] = false
 
-        @inbounds for v_neighbor in outneighbors(graph,v)
+        @inbounds for v_neighbor in outneighbors(g, v)
             d = distmx[v,v_neighbor]
             if dists[v] + d < dists[v_neighbor]      # Relaxing edges
                 dists[v_neighbor] = dists[v] + d
@@ -97,14 +92,8 @@ julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 julia> has_negative_weight_cycle_spfa(g, d);
 false
 ```
-
 """
-function has_negative_weight_cycle(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T},
-    alg::SPFA
-    ) where T<:Real where U<:Integer
-
+function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg::SPFA)
     try
         shortest_paths(g, 1, distmx, alg)
     catch e

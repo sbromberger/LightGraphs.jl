@@ -19,15 +19,12 @@ No additional configuration parameters are specified or required.
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
 struct FloydWarshall <: ShortestPathAlgorithm end
-struct FloydWarshallResult{T,U<:Integer} <: ShortestPathResult
+struct FloydWarshallResult{T, U<:Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-function shortest_paths(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T},
-    ::FloydWarshall) where T<:Real where U<:Integer
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydWarshall) where {T, U<:Integer}
     nvg = nv(g)
     # if we do checkbounds here, we can use @inbounds later
     checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
@@ -72,7 +69,7 @@ function shortest_paths(
     return fws
 end
 
-function paths(s::FloydWarshallResult{T,U}, v::Integer) where T where U<:Integer
+function paths(s::FloydWarshallResult{T, U}, v::Integer) where {T, U<:Integer}
     pathinfo = s.parents[v, :]
     fwpaths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

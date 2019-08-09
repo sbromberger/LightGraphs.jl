@@ -11,12 +11,13 @@ No fields are specified or required.
 - all destinations
 """
 struct DEsopoPape <: ShortestPathAlgorithm end
-struct DEsopoPapeResult{T<:Real, U<:Integer} <: ShortestPathResult
+struct DEsopoPapeResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
 
-function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix{T}, ::DEsopoPape) where {T<:Real}
+function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, ::DEsopoPape)
+    T = eltype(distmx)
     U = eltype(g)
     nvg = nv(g)
     (src in 1:nvg) || throw(DomainError(src, "src should be in between 1 and $nvg"))

@@ -77,6 +77,11 @@ shortest paths.
 
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 
+### Implementation Notes
+The elements of `distmx` may be of any numeric type that has a [Total Ordering](https://en.m.wikipedia.org/wiki/Total_order)
+and valid comparator, `zero` and `typemax` functions. Concretely, this means that
+distance matrices containing complex numbers are invalid.
+
 ### Examples
 ```
 g = path_graph(4)
