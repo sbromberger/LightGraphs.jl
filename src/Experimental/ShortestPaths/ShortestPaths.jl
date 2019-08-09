@@ -1,27 +1,22 @@
 module ShortestPaths
 using SparseArrays: sparse
 using LightGraphs
-using LightGraphs:AbstractPathState, DijkstraState, BellmanFordState,
-      FloydWarshallState, DEsopoPapeState, JohnsonState, AbstractGraph, AbstractEdge
-#
-# using LightGraphs: dijkstra_shortest_paths, bellman_ford_shortest_paths, floyd_warshall_shortest_paths,
-#     desopo_pape_shortest_paths, a_star, johnson_shortest_paths
-import Base:convert, getproperty
-import LightGraphs: enumerate_paths
+using LightGraphs: AbstractGraph, AbstractEdge
 
 using DataStructures:PriorityQueue, enqueue!, dequeue!
 
 
-struct LGEnvironment
-    threaded::Bool
-    parallel::Bool
-    LGEnvironment() = new(false, false)
-end
+# TODO: figure out how we keep environmental params.
+# struct LGEnvironment
+#     threaded::Bool
+#     parallel::Bool
+#     LGEnvironment() = new(false, false)
+# end
      
-abstract type AbstractGraphResults end
+abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
-abstract type ShortestPathResults <: AbstractGraphResults end
+abstract type ShortestPathResult <: AbstractGraphResult end
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
 
 include("astar.jl")
@@ -32,11 +27,6 @@ include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
-
-
-##################
-##   Dijkstra   ##
-##################
 
 
 ################################
@@ -54,7 +44,7 @@ shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = sho
 """
     paths(state[, vs])
 
-Given a path state `state` of type `ShortestPathResults`, return a
+Given a path state `state` of type `ShortestPathResult`, return a
 vector (indexed by vertex) of the paths between the source vertex used to
 compute the path state and a single destination vertex, a list of destination
 vertices, or the entire graph. For multiple destination vertices, each
@@ -72,7 +62,7 @@ will return a vector (indexed by destination vertex) of paths from source `v`
 to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
 a vector representing the path from vertex `v` to vertex `d`.
 """
-function paths(state::ShortestPathResults, vs::AbstractVector{<:Integer})
+function paths(state::ShortestPathResult, vs::AbstractVector{<:Integer})
     parents = state.parents
     T = eltype(parents)
 
@@ -83,21 +73,20 @@ function paths(state::ShortestPathResults, vs::AbstractVector{<:Integer})
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0
-                push!(all_paths[i], index)
+                pushfirst!(all_paths[i], index)
                 index = parents[index]
             end
-            push!(all_paths[i], index)
-            reverse!(all_paths[i])
+            pushfirst!(all_paths[i], index)
         end
     end
     return all_paths
 end
 
-paths(state::ShortestPathResults, v::Integer) = paths(state, [v])[1]
-paths(state::ShortestPathResults) = paths(state, [1:length(state.parents);])
+paths(state::ShortestPathResult, v::Integer) = paths(state, [v])[1]
+paths(state::ShortestPathResult) = paths(state, [1:length(state.parents);])
 
-dists(state::ShortestPathResults, v::Integer) = state.dists[v]
-dists(state::ShortestPathResults) = state.dists
+dists(state::ShortestPathResult, v::Integer) = state.dists[v]
+dists(state::ShortestPathResult) = state.dists
 export paths, dists, shortest_paths
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError

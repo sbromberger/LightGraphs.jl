@@ -1,5 +1,5 @@
 struct DEsopoPape <: ShortestPathAlgorithm end
-struct DEsopoPapeResults{T<:Real, U<:Integer} <: ShortestPathResults
+struct DEsopoPapeResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -68,5 +68,5 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix{T
         end
     end
     
-    return DEsopoPapeResults{T, U}(parents, dists)
+    return DEsopoPapeResult{T, U}(parents, dists)
 end

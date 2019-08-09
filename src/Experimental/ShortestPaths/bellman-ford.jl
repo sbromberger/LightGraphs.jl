@@ -11,7 +11,7 @@
 struct NegativeCycleError <: Exception end
 
 struct BellmanFord <: ShortestPathAlgorithm end
-struct BellmanFordResults{T<:Real, U<:Integer} <: ShortestPathResults
+struct BellmanFordResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -57,7 +57,7 @@ function shortest_paths(
         active, new_active = new_active, active
     end
     no_changes || throw(NegativeCycleError())
-    return BellmanFordResults(parents, dists)
+    return BellmanFordResult(parents, dists)
 end
 
 shortest_paths(

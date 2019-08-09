@@ -9,7 +9,7 @@
 using LightGraphs: nv, weights, outneighbors
 
 struct SPFA <: ShortestPathAlgorithm end
-struct SPFAResults{T<:Real, U<:Integer} <: ShortestPathResults
+struct SPFAResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -69,7 +69,7 @@ function shortest_paths(
         end
     end
 
-    return SPFAResults(parents, dists)
+    return SPFAResult(parents, dists)
 end
 
 has_negative_edge_cycle_spfa(g::AbstractGraph) = false

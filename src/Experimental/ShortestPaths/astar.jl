@@ -9,7 +9,7 @@ end
 
 AStar(T::Type{<:Real}=Float64) = AStar(n -> zero(T))
 
-struct AStarResults{T<:Real, U<:Integer} <: ShortestPathResults
+struct AStarResult{T<:Real, U<:Integer} <: ShortestPathResult
     path::Vector{U}
     dist::T
 end
@@ -115,12 +115,12 @@ function shortest_paths(g::AbstractGraph,  # the g
     came_from[s] = s
 
     path = a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, alg.heuristic)
-    return AStarResults(path, calc_dist(path, distmx))
+    return AStarResult(path, calc_dist(path, distmx))
 end
 
 shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) = shortest_paths(g, s, t, weights(g), alg)
-paths(s::AStarResults) = [s.path]
-paths(s::AStarResults, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
-dists(s::AStarResults) = [[s.dist]]
-dists(s::AStarResults, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
+paths(s::AStarResult) = [s.path]
+paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
+dists(s::AStarResult) = [[s.dist]]
+dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
 

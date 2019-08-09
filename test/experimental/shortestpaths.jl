@@ -2,7 +2,7 @@ using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths
 using SparseArrays
 
 import Base.==
-function ==(a::ShortestPaths.AStarResults, b::ShortestPaths.AStarResults)
+function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
    return a.path == b.path && a.dist == b.dist
 end
 @testset "Shortest Paths" begin
@@ -97,12 +97,12 @@ end
             @test dists(d) == dists(b) && paths(d) == paths(b)
         end
 
-        @test shortest_paths(g1, 1) isa ShortestPaths.BFSResults
-        @test shortest_paths(g2, 1) isa ShortestPaths.BFSResults
+        @test shortest_paths(g1, 1) isa ShortestPaths.BFSResult
+        @test shortest_paths(g2, 1) isa ShortestPaths.BFSResult
         m1 = shortest_paths(g1, [1, 2])
         m2 = shortest_paths(g2, [1, 2])
-        @test m1 isa ShortestPaths.BFSResults
-        @test m2 isa ShortestPaths.BFSResults
+        @test m1 isa ShortestPaths.BFSResult
+        @test m2 isa ShortestPaths.BFSResult
         @test m1.dists == [0, 0, 1, 2, 1]
         @test m2.dists == [0, 0, 1, 2, 1]
     end
@@ -284,7 +284,7 @@ end
             @test @inferred(paths(z)) == paths(y)
             @test @inferred(paths(z))[4] == paths(z, 4) == paths(y, 4) == [2, 3, 4]
 
-            @test shortest_paths(g, 1, d1) isa ShortestPaths.DijkstraResults
+            @test shortest_paths(g, 1, d1) isa ShortestPaths.DijkstraResult
         end
 
         gx = path_graph(5)
@@ -410,8 +410,8 @@ end
                 w[i, i+1] = 1.0
                 w[i+1, i] = 1.0
             end
-            @test shortest_paths(g) isa ShortestPaths.FloydWarshallResults
-            @test shortest_paths(g, w) isa ShortestPaths.FloydWarshallResults
+            @test shortest_paths(g) isa ShortestPaths.FloydWarshallResult
+            @test shortest_paths(g, w) isa ShortestPaths.FloydWarshallResult
         end
     end
 

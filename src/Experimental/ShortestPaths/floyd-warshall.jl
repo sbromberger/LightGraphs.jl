@@ -2,7 +2,7 @@
 # licensing details.
 
 struct FloydWarshall <: ShortestPathAlgorithm end
-struct FloydWarshallResults{T,U<:Integer} <: ShortestPathResults
+struct FloydWarshallResult{T,U<:Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -62,11 +62,11 @@ function shortest_paths(
             end
         end
     end
-    fws = FloydWarshallResults(fwdists, parents)
+    fws = FloydWarshallResult(fwdists, parents)
     return fws
 end
 
-function paths(s::FloydWarshallResults{T,U}, v::Integer) where T where U<:Integer
+function paths(s::FloydWarshallResult{T,U}, v::Integer) where T where U<:Integer
     pathinfo = s.parents[v, :]
     fwpaths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
@@ -95,5 +95,5 @@ shortest_paths(g::AbstractGraph, alg::FloydWarshall) = shortest_paths(g, weights
 shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     shortest_paths(g, distmx, FloydWarshall())
 
-paths(s::FloydWarshallResults) = [paths(s, v) for v in 1:size(s.parents, 1)]
-paths(st::FloydWarshallResults, s::Integer, d::Integer) = paths(st, s)[d]
+paths(s::FloydWarshallResult) = [paths(s, v) for v in 1:size(s.parents, 1)]
+paths(st::FloydWarshallResult, s::Integer, d::Integer) = paths(st, s)[d]

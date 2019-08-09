@@ -1,5 +1,5 @@
 struct BFS <: ShortestPathAlgorithm end
-struct BFSResults{U<:Integer} <: ShortestPathResults
+struct BFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{U}
 end
@@ -42,7 +42,7 @@ function shortest_paths(
         cur_level, next_level = next_level, cur_level
         sort!(cur_level, alg=sort_alg)
     end
-    return BFSResults(parents, dists)
+    return BFSResult(parents, dists)
 end
 
 shortest_paths(g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS) where {U<:Integer} = shortest_paths(g, U.(ss), alg)

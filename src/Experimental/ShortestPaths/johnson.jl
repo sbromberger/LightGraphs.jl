@@ -1,6 +1,6 @@
 using LightGraphs.Experimental.ShortestPaths
 struct Johnson <: ShortestPathAlgorithm end
-struct JohnsonResults{T<:Real, U<:Integer} <: ShortestPathResults
+struct JohnsonResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Matrix{U}
     dists::Matrix{T}
 end
@@ -56,12 +56,12 @@ function shortest_paths(g::AbstractGraph{U},
         end
     end
 
-    return JohnsonResults(parents, dists)
+    return JohnsonResult(parents, dists)
 end
 
 shortest_paths(g::AbstractGraph, alg::Johnson) = shortest_paths(g, weights(g), alg)
 
-function paths(s::JohnsonResults{T,U}, v::Integer) where T <: Real where U <: Integer
+function paths(s::JohnsonResult{T,U}, v::Integer) where T <: Real where U <: Integer
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
@@ -80,5 +80,5 @@ function paths(s::JohnsonResults{T,U}, v::Integer) where T <: Real where U <: In
     return paths
 end
 
-paths(s::JohnsonResults) = [paths(s, v) for v in 1:size(s.parents, 1)]
-paths(st::JohnsonResults, s::Integer, d::Integer) = paths(st, s)[d]
+paths(s::JohnsonResult) = [paths(s, v) for v in 1:size(s.parents, 1)]
+paths(st::JohnsonResult, s::Integer, d::Integer) = paths(st, s)[d]

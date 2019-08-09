@@ -1,4 +1,4 @@
-struct DijkstraResults{T<:Real, U<:Integer}  <: ShortestPathResults
+struct DijkstraResult{T<:Real, U<:Integer}  <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -134,7 +134,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         empty!(preds[src])
     end
 
-    return DijkstraResults{T, U}(parents, dists, preds, pathcounts, closest_vertices)
+    return DijkstraResult{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
