@@ -10,19 +10,25 @@
 ###################################################################
 struct NegativeCycleError <: Exception end
 
+"""
+    struct BellmanFord <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
+No fields are specified or required.
+
+### Implementation Notes
+`BellmanFord` supports the following shortest-path functionality:
+- negative distance matrices / weights
+- (optional) multiple sources
+- all destinations
+"""
 struct BellmanFord <: ShortestPathAlgorithm end
 struct BellmanFordResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
-"""
-    bellman_ford_shortest_paths(g, s, distmx=weights(g))
-    bellman_ford_shortest_paths(g, ss, distmx=weights(g))
 
-Compute shortest paths between a source `s` (or list of sources `ss`) and all
-other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
-Return a [`LightGraphs.BellmanFordState`](@ref) with relevant traversal information.
-"""
 function shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},

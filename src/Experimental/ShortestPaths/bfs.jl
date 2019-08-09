@@ -1,3 +1,18 @@
+"""
+    struct BFS <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
+No additional configuration parameters are specified or required.
+
+`BFS` is the default algorithm used when a source is specified
+but no distance matrix is specified.
+
+### Implementation Notes
+`BFS` supports the following shortest-path functionality:
+- (optional) multiple sources
+- all destinations
+"""
 struct BFS <: ShortestPathAlgorithm end
 struct BFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}

@@ -3,6 +3,19 @@
 
 # A* shortest-path algorithm
 
+"""
+    struct AStar <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
+An optional `heuristic` function may be supplied. If missing, the heuristic is set to
+`n -> 0`.
+
+### Implementation Notes
+`AStar` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- single destination
+"""
 struct AStar{F<:Function} <: ShortestPathAlgorithm
     heuristic::F
 end
@@ -80,16 +93,6 @@ function calc_dist(path, distmx)
     return dist
 end
 
-    
-"""
-    a_star(g, s, t[, distmx][, heuristic])
-
-Return a vector of edges comprising the shortest path between vertices `s` and `t`
-using the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
-An optional heuristic function and edge distance matrix may be supplied. If missing,
-the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heuristic is set to
-`n -> 0`.
-"""
 function shortest_paths(g::AbstractGraph,  # the g
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex

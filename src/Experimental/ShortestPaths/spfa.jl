@@ -8,19 +8,23 @@
 
 using LightGraphs: nv, weights, outneighbors
 
+"""
+    struct SPFA <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
+No additional configuration parameters are specified or required.
+
+### Implementation Notes
+`SPFA` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- all destinations
+"""
 struct SPFA <: ShortestPathAlgorithm end
 struct SPFAResult{T<:Real, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
-
-"""
-    _spfa_shortest_paths(g, s, distmx=weights(g))
-
-Compute shortest paths between a source `s` and all
-other nodes in graph `g` using the [Shortest Path Faster Algorithm]
-(https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
-"""
 
 function shortest_paths(
     graph::AbstractGraph{U},

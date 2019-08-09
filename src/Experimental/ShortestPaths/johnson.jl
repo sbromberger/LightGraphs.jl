@@ -1,22 +1,25 @@
-using LightGraphs.Experimental.ShortestPaths
-struct Johnson <: ShortestPathAlgorithm end
-struct JohnsonResult{T<:Real, U<:Integer} <: ShortestPathResult
-    parents::Matrix{U}
-    dists::Matrix{T}
-end
 """
-    johnson_shortest_paths(g, distmx=weights(g))
+    struct Johnson <: ShortestPathAlgorithm
 
-Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
-to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`.
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
+No additional configuration parameters are specified or required.
 
-Return a [`LightGraphs.JohnsonState`](@ref) with relevant
-traversal information.
+### Implementation Notes
+`Johnson` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- all-pairs shortest paths
 
 ### Performance
 Complexity: O(|V|*|E|)
 """
+struct Johnson <: ShortestPathAlgorithm end
+
+struct JohnsonResult{T<:Real, U<:Integer} <: ShortestPathResult
+    parents::Matrix{U}
+    dists::Matrix{T}
+end
+
 function shortest_paths(g::AbstractGraph{U},
     distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
 

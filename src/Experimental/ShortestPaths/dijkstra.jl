@@ -6,6 +6,36 @@ struct DijkstraResult{T<:Real, U<:Integer}  <: ShortestPathResult
     closest_vertices::Vector{U}
 end
 
+"""
+    struct Dijkstra <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+to compute shortest paths. Optional fields for this structure include
+- all_paths::Bool - set to `true` to calculate all (redundant, equivalent) paths to a given destination
+- track_vertices::Bool - set to `true` to keep a running list of visited vertices (used for specific
+  centrality calculations; generally not needed).
+
+`Dijkstra` is the default algorithm used when a distance matrix is specified.
+
+### Implementation Notes
+`Dijkstra` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- (optional) multiple sources
+- all destinations
+- redundant equivalent path tracking
+- vertex tracking
+
+### Performance
+If using a sparse matrix for `distmx` in [`shortest_paths`](@ref), you *may* achieve better performance
+by passing in a transpose of its sparse transpose. That is, assuming `D` is the sparse distance matrix:
+```
+D = transpose(sparse(transpose(D)))
+```
+Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
+should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
+"""
+
 struct Dijkstra <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool
@@ -14,51 +44,6 @@ end
 Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
 
 
-"""
-    dijkstra_shortest_paths(g, srcs, distmx=weights(g));
-
-Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between `srcs` and all other vertices.
-Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal information.
-
-### Optional Arguments
-- `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
-predecessors of a given vertex.
-
-### Performance
-If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
-That is, assuming `D` is the sparse distance matrix:
-```
-D = transpose(sparse(transpose(D)))
-```
-Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
-when multiple calls to `dijkstra_shortest_paths` with the distance matrix are planned.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
-
-julia> ds.dists
-5-element Array{Int64,1}:
- 1
- 0
- 1
- 2
- 2
-
-julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
-
-julia> ds.dists
-5-element Array{Int64,1}:
- 1
- 0
- 1
- 2
- 3
-```
-"""
 function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T<:Real, U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)

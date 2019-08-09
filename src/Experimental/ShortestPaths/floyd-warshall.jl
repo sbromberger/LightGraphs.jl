@@ -1,23 +1,29 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 
+"""
+    struct FloydWarshall <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm).
+No additional configuration parameters are specified or required.
+
+`FloydWarshall` is the default all-pairs algorithm used when no source is specified.
+
+### Implementation Notes
+`FloydWarshall` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- all-pairs shortest paths
+
+### Performance
+Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
+"""
 struct FloydWarshall <: ShortestPathAlgorithm end
 struct FloydWarshallResult{T,U<:Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-@doc """
-    floyd_warshall_shortest_paths(g, distmx=weights(g))
-
-Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
-to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@ref) with relevant
-traversal information.
-
-### Performance
-Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
-"""
 function shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
