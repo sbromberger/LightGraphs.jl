@@ -82,14 +82,14 @@ julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
 
-julia> has_negative_weight_cycle_spfa(g, d)
+julia> has_negative_weight_cycle(g, d, SPFA())
 true
 
 julia> g = complete_graph(4);
 
 julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 
-julia> has_negative_weight_cycle_spfa(g, d);
+julia> has_negative_weight_cycle(g, d, SPFA());
 false
 ```
 """

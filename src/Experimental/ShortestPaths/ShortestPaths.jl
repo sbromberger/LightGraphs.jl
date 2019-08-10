@@ -91,9 +91,9 @@ for i in 1:3
     w[i+1, i] = 1.0
 end
 
-s1 = shortest_paths(g)                   # `alg` defaults to [`FloydWarshall`](@ref)
-s2 = shortest_paths(g, 1)                # `alg` defaults to [`BFS`](@ref)
-s3 = shortest_paths(g, 1, w)             # `alg` defaults to [`Dijkstra`](@ref)
+s1 = shortest_paths(g)                   # `alg` defaults to `FloydWarshall`
+s2 = shortest_paths(g, 1)                # `alg` defaults to `BFS`
+s3 = shortest_paths(g, 1, w)             # `alg` defaults to `Dijkstra`
 s4 = shortest_paths(g, 1, BellmanFord())
 s5 = shortest_paths(g, 1, w, DEsopoPape())
 ```
@@ -174,6 +174,23 @@ dists(state::ShortestPathResult) = state.dists
 Given a graph `g`, an optional distance matrix `distmx`, and an optional
 algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 `true` if any cycle detected in the graph has a negative weight.
+# Examples
+
+```jldoctest
+julia> g = complete_graph(3);
+
+julia> d = [1 -3 1; -3 1 1; 1 1 1];
+
+julia> has_negative_weight_cycle(g, d)
+true
+
+julia> g = complete_graph(4);
+
+julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
+
+julia> has_negative_weight_cycle(g, d, SPFA())
+false
+```
 """
 has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = has_negative_weight_cycle(g, distmx, BellmanFord())
 has_negative_weight_cycle(g::AbstractSimpleGraph) = false
