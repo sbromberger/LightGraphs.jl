@@ -1,9 +1,20 @@
+import Base.Sort, Base.Sort.Algorithm
+import Base:sort!
+struct NOOPSortAlg <: Base.Sort.Algorithm end
+const NOOPSort = NOOPSortAlg()
+
+sort!(x, ::Integer, ::Integer, ::ShortestPaths.NOOPSortAlg, ::Base.Sort.Ordering) = x
+
 """
     struct BFS <: ShortestPathAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
-No additional configuration parameters are specified or required.
+
+An optional sorting algorithm may be specified (default = no sorting).
+Sorting helps maintain cache locality and will improve performance on
+very large graphs; for normal use, sorting will incur a performance
+penalty.
 
 `BFS` is the default algorithm used when a source is specified
 but no distance matrix is specified.
@@ -13,7 +24,12 @@ but no distance matrix is specified.
 - (optional) multiple sources
 - all destinations
 """
-struct BFS <: ShortestPathAlgorithm end
+struct BFS{T<:Base.Sort.Algorithm} <: ShortestPathAlgorithm
+    sort_alg::T
+end
+
+BFS() = BFS(NOOPSort)
+
 struct BFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{U}
@@ -23,7 +39,6 @@ function shortest_paths(
     g::AbstractGraph{U},
     ss::AbstractVector{U},
     alg::BFS,
-    sort_alg= QuickSort
     ) where U<:Integer
 
 
@@ -55,7 +70,7 @@ function shortest_paths(
         n_level += one(U)
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg=sort_alg)
+        sort!(cur_level, alg=alg.sort_alg)
     end
     return BFSResult(parents, dists)
 end

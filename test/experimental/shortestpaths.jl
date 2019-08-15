@@ -95,10 +95,14 @@ end
         for g in testgraphs(g1, g2)
             d = shortest_paths(g, 1, Dijkstra())
             b = shortest_paths(g, 1, BFS())
+            q = shortest_paths(g, 1, BFS(Base.Sort.QuickSort))
             @test dists(d) == dists(b) && paths(d) == paths(b)
+            @test dists(b) == dists(q) && paths(b) == paths(q)
             d2 = shortest_paths(g, [1, 3], Dijkstra())
-            b2 = shortest_paths(g, [1, 3], BFS())
+            b2 = shortest_paths(g, [1, 3], BFS(ShortestPaths.NOOPSort))
+            q2 = shortest_paths(g, [1, 3], BFS(Base.Sort.MergeSort))
             @test dists(d2) == dists(b2) && paths(d2) == paths(b2)
+            @test dists(b2) == dists(q2) && paths(b2) == paths(q2)
         end
 
         @test shortest_paths(g1, 1) isa ShortestPaths.BFSResult
@@ -267,30 +271,6 @@ end
             g = Graph(5)
             @test_throws DomainError shortest_paths(g, 6, DEsopoPape())
         end
-    end
-
-    @testset "DFS" begin
-        g1= path_graph(5)
-        g2 = path_digraph(5)
-        add_edge!(g1, 2, 5)
-        add_edge!(g2, 2, 5)
-        for g in testgraphs(g1, g2)
-            d = shortest_paths(g, 1, BFS())
-            b = shortest_paths(g, 1, DFS())
-            @test dists(d) == dists(b) && paths(d) == paths(b)
-            d2 = shortest_paths(g, [1, 3], BFS())
-            b2 = shortest_paths(g, [1, 3], DFS())
-            @test dists(d2) == dists(b2) && paths(d2) == paths(b2)
-        end
-
-        @test shortest_paths(g1, 1) isa ShortestPaths.DFSResult
-        @test shortest_paths(g2, 1) isa ShortestPaths.DFSResult
-        m1 = shortest_paths(g1, [1, 2])
-        m2 = shortest_paths(g2, [1, 2])
-        @test m1 isa ShortestPaths.DFSResult
-        @test m2 isa ShortestPaths.DFSResult
-        @test m1.dists == [0, 0, 1, 2, 1]
-        @test m2.dists == [0, 0, 1, 2, 1]
     end
 
     @testset "Dijkstra" begin
