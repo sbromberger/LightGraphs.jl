@@ -269,6 +269,30 @@ end
         end
     end
 
+    @testset "DFS" begin
+        g1= path_graph(5)
+        g2 = path_digraph(5)
+        add_edge!(g1, 2, 5)
+        add_edge!(g2, 2, 5)
+        for g in testgraphs(g1, g2)
+            d = shortest_paths(g, 1, BFS())
+            b = shortest_paths(g, 1, DFS())
+            @test dists(d) == dists(b) && paths(d) == paths(b)
+            d2 = shortest_paths(g, [1, 3], BFS())
+            b2 = shortest_paths(g, [1, 3], DFS())
+            @test dists(d2) == dists(b2) && paths(d2) == paths(b2)
+        end
+
+        @test shortest_paths(g1, 1) isa ShortestPaths.DFSResult
+        @test shortest_paths(g2, 1) isa ShortestPaths.DFSResult
+        m1 = shortest_paths(g1, [1, 2])
+        m2 = shortest_paths(g2, [1, 2])
+        @test m1 isa ShortestPaths.DFSResult
+        @test m2 isa ShortestPaths.DFSResult
+        @test m1.dists == [0, 0, 1, 2, 1]
+        @test m2.dists == [0, 0, 1, 2, 1]
+    end
+
     @testset "Dijkstra" begin
         g4 = path_digraph(5)
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
