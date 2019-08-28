@@ -1,19 +1,19 @@
 # This file contains the common interface for LightGraphs.
 
 """
-    ImplementationError{M}(m)
+    NotImplementedError{M}(m)
 
 `Exception` thrown when a method from the `AbstractGraph` interface
 is not implemented by a given graph type.
 """
-struct ImplementationError{M} <: Exception
+struct NotImplementedError{M} <: Exception
     m::M
-    ImplementationError(m::M) where {M} = new{M}(m)
+    NotImplementedError(m::M) where {M} = new{M}(m)
 end
 
-Base.showerror(io::IO, ie::ImplementationError) = print(io, "method $m not implemented.")
+Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $m not implemented.")
 
-_NI(m) = throw(ImplementationError(m))
+_NI(m) = throw(NotImplementedError(m))
 
 """
     AbstractEdge
