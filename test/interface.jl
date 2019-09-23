@@ -37,4 +37,11 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
         @test_throws LightGraphs.NotImplementedError graphfunedge(dummygraph, 1, 2)
     end
 
+    # Implementation error
+    impl_error = LightGraphs.NotImplementedError(edges)
+    @test impl_error isa LightGraphs.NotImplementedError{typeof(edges)}
+    io = IOBuffer()
+    Base.showerror(io, impl_error)
+    @test String(take!(io)) == "method $edges not implemented."
+
 end # testset
