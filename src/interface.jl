@@ -1,7 +1,19 @@
-# This file contans the common interface for LightGraphs.
-# TODO 0.7: reevaluate use of errors here.
+# This file contains the common interface for LightGraphs.
 
-_NI(m) = error("Not implemented: $m")
+"""
+    NotImplementedError{M}(m)
+
+`Exception` thrown when a method from the `AbstractGraph` interface
+is not implemented by a given graph type.
+"""
+struct NotImplementedError{M} <: Exception
+    m::M
+    NotImplementedError(m::M) where {M} = new{M}(m)
+end
+
+Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not implemented.")
+
+_NI(m) = throw(NotImplementedError(m))
 
 """
     AbstractEdge
@@ -270,9 +282,9 @@ has_edge(g, e) = has_edge(g, src(e), dst(e))
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
-the array behind this reference may be modified too, but this is not guaranteed. 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
@@ -292,9 +304,9 @@ inneighbors(x, v) = _NI("inneighbors")
 Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
-the array behind this reference may be modified too, but this is not guaranteed. 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest

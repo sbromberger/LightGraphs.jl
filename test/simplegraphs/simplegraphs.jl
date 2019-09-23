@@ -8,7 +8,7 @@ import Random
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ArgumentError SimpleGraph(adjmx2)
 
-    @test_throws ErrorException badj(DummySimpleGraph())
+    @test_throws LightGraphs.NotImplementedError badj(DummySimpleGraph())
 
     @test @inferred(ne(SimpleGraph(path_digraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
