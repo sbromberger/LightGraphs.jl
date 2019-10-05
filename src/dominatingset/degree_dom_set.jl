@@ -22,7 +22,7 @@ function update_dominated!(
         if !in_dom_set[v] 
             degree_queue[v] -= 1
         end
-        @inbounds @simd for u in neighbors(g, v)
+        @inbounds for u in neighbors(g, v)
             if !in_dom_set[u] 
                 degree_queue[u] -= ifelse(in_dom_set[u], 0, 1)
             end

@@ -171,7 +171,7 @@ function transitivereducion end
         fill!(visited, false)
         stacksize = 0
         for v in outneighbors(cg,u)
-      @simd for w in outneighbors(cg, v)
+            for w in outneighbors(cg, v)
                 if !visited[w]
                     visited[w] = true
                     stacksize += 1
@@ -183,7 +183,7 @@ function transitivereducion end
             v = stack[stacksize]
             stacksize -= 1
             reachable[v] = true
-      @simd for w in outneighbors(cg, v)
+            for w in outneighbors(cg, v)
                 if !visited[w]
                     visited[w] = true
                     stacksize += 1
@@ -192,7 +192,7 @@ function transitivereducion end
             end
         end
 # Add the edges from the condensation graph to the resulting graph.
-  @simd for v in outneighbors(cg,u)
+    for v in outneighbors(cg,u)
             if !reachable[v]
                 add_edge!(resultg, scc[u][1], scc[v][1])
             end
