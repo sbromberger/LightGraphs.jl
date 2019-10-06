@@ -1,7 +1,8 @@
 @testset "Persistence" begin
     @testset "Errors" begin
-        @test_throws ErrorException LightGraphs._NI("Not implemented")
+        @test_throws LightGraphs.NotImplementedError LightGraphs._NI("Not implemented")
     end
+
     pdict = loadgraphs(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"))
     p1 = pdict["Tutte"]
     p2 = pdict["pathdigraph"]
@@ -21,7 +22,7 @@
         @test savegraph(f, p1, LGFormat()) == 1
         @test savegraph(f, p2) == 1
     end
-    
+
     g2 = loadgraph(f)
     h2 = loadgraph(f, LGFormat())
     j2 = loadgraph(f, "graph")
@@ -43,7 +44,7 @@
         d = Dict{String,AbstractGraph}("p1" => p1, "p2" => p2)
         @test savegraph(f, d) == 2
     end
-    
+
     close(fio)
     rm(f)
 end
