@@ -291,6 +291,14 @@ import Random
             @test edgetype(SimpleDiGraphFromIterator(empty_iter)) == edgetype(SimpleDiGraph(0))
         end
 
+        @testset "SimpleGraphFromIterator for wrong edge types" begin
+            @test_throws DomainError SimpleGraphFromIterator( (i for i in 1:2) )
+        end
+
+        @testset "SimpleDiGraphFromIterator for wrong edge types" begin
+            @test_throws DomainError SimpleDiGraphFromIterator( (SimpleDiGraphEdge(1,2), "a string") )
+        end
+
         # check if multiple edges && multiple self-loops result in the 
         # correct number of edges & vertices
         # edges using integers < 1 should be ignored
