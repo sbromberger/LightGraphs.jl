@@ -64,7 +64,7 @@ Can be used in the constructor of AbstractSimpleGraphs,
 as Julia's typesystem does not enforce concrete types, which can lead to
 problems. E.g `SimpleGraph{Signed}`.
 """
-function throw_if_invalid_eltype(T) where {T<:Integer}
+function throw_if_invalid_eltype(T::Type{<:Integer})
     if !isconcretetype(T)
         throw(DomainError(T, "Eltype for AbstractSimpleGraph must be concrete type."))
     end
