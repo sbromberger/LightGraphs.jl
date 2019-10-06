@@ -50,7 +50,7 @@ function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds for i in  neighborfn(g, v)
+            @inbounds @simd for i in  neighborfn(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     parents[i] = v
@@ -107,7 +107,7 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSo
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds for i in outneighbors(g, v)
+            @inbounds @simd for i in outneighbors(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     vert_level[i] = n_level

@@ -58,7 +58,7 @@ function shortest_paths(
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds for i in outneighbors(g, v)
+            @inbounds @simd for i in outneighbors(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     dists[i] = n_level

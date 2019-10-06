@@ -45,7 +45,7 @@ function vertex_cover(
         in_cover[v] = true
         length_cover += 1
 
-        @inbounds for u in neighbors(g, v)
+        @inbounds @simd for u in neighbors(g, v)
             if !in_cover[u] 
                 degree_queue[u] -= 1
             end
