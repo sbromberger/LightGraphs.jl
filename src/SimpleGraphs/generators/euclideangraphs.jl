@@ -80,7 +80,7 @@ function euclidean_graph(points::Matrix;
             end
         end
     end
-    g = LightGraphs.SimpleGraphs._SimpleGraphFromIterator(keys(weights), SimpleEdge{Int})
+    g = LightGraphs.SimpleGraphs._SimpleGraphFromIterator(keys(weights), Int)
     if nv(g) < N
         add_vertices!(g, N - nv(g))
     end
