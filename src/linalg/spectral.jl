@@ -151,13 +151,22 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     # every col has the same 2 entries
     colpt = collect(1:2:(nz + 1))
     nzval = repeat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
+    swap(i,j) = begin
+        tmp = nzval[i]
+        nzval[i] = nzval[j]
+        nzval[j] = tmp
+    end
 
     # iterate over edges for row indices
     rowval = zeros(Int, nz)
     i = 1
-    for u in vertices(g)
-        for v in outneighbors(g, u)
+    for u in sort(vertices(g))
+        for v in sort(outneighbors(g, u))
             if isdir || u < v # add every edge only once
+                if u > v
+                    v, u = u, v
+                    swap(2*i-1, 2*i)
+                end
                 rowval[2 * i - 1] = u
                 rowval[2 * i] = v
                 i += 1
