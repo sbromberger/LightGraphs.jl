@@ -92,7 +92,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test all((bothmat - outmat) .>= 0)
         @test all((bothmat - inmat)  .>= 0)
 
-      #check properties of the undirected laplacian carry over.
+        #check properties of the undirected laplacian carry over.
         for dir in [:in, :out, :both]
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
