@@ -17,6 +17,8 @@
         @test src(ep1) == src(ep2) == src(ep3) == s
         @test dst(ep1) == dst(ep2) == dst(ep3) == s + one(T)
 
+        @test eltype(ep1) == eltype(SimpleEdge{T}) == T
+
         @test eltype(p) == typeof(s)
         @test SimpleEdge(p) == e
         @test SimpleEdge(t1) == SimpleEdge(t2) == e
