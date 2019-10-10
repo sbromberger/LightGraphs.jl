@@ -158,6 +158,11 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     for u in vertices(g)
         for v in outneighbors(g, u)
             if isdir || u < v # add every edge only once
+                if u > v
+                    v, u = u, v
+                    # need to make sure that columns of the CSC matrix are sorted
+                    nzval[2 * i - 1], nzval[2 * i] = nzval[2 * i], nzval[2 * i - 1]
+                end
                 rowval[2 * i - 1] = u
                 rowval[2 * i] = v
                 i += 1
