@@ -151,9 +151,6 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     # every col has the same 2 entries
     colpt = collect(1:2:(nz + 1))
     nzval = repeat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
-    swap(i,j) = begin
-        nzval[i] nzval[j] = nzval[j], nzval[i]
-    end
 
     # iterate over edges for row indices
     rowval = zeros(Int, nz)
@@ -163,7 +160,8 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
             if isdir || u < v # add every edge only once
                 if u > v
                     v, u = u, v
-                    swap(2*i-1, 2*i)
+                    # need to make sure that columns of the CSC matrix are sorted
+                    nzval[i], nzval[j] = nzval[j], nzval[i]
                 end
                 rowval[2 * i - 1] = u
                 rowval[2 * i] = v
