@@ -444,6 +444,9 @@ julia> grid([2,3])
 
 julia> grid(Int8[2, 2, 2], periodic=true)
 {8, 12} undirected simple Int8 graph
+
+julia> grid((2,3))
+{6, 7} undirected simple Int64 graph
 ```
 """
 function grid(dims::AbstractVector{T}; periodic=false) where {T <: Integer}
@@ -469,6 +472,7 @@ function grid(dims::AbstractVector{T}; periodic=false) where {T <: Integer}
     end
     return g
 end
+grid(dims::Tuple; periodic=false) = grid(collect(dims); periodic=periodic)
 
 """
     binary_tree(k::Integer)
