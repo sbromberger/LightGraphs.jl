@@ -296,12 +296,18 @@
         @test δ(g) == 3
         @test isvalid_simplegraph(g)
 
+        g2 = @inferred(grid((3, 3, 4)))
+        @test g2 == g
+
         g = @inferred(grid([3, 3, 4], periodic=true))
         @test nv(g) == 3 * 3 * 4
         @test ne(g) == 108
         @test Δ(g) == 6
         @test δ(g) == 6
         @test isvalid_simplegraph(g)
+
+        g2 = @inferred(grid((3, 3, 4), periodic=true))
+        @test g2 == g
     end
 
     @testset "Clique Graphs" begin
@@ -418,7 +424,7 @@
       end
       return true
     end
-    
+
     @testset "Circular Ladder Graphs" begin
         g = @inferred(circular_ladder_graph(5))
         @test nv(g) == 10 && ne(g) == 15
