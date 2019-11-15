@@ -39,12 +39,8 @@ makedocs(
 )
 
 deploydocs(
-    deps        = nothing,
-    make        = nothing,
     repo        = "github.com/JuliaGraphs/LightGraphs.jl.git",
     target      = "build",
-    julia       = "nightly",
-    osname      = "linux"
 )
 
 rm(normpath(@__FILE__, "../src/contributing.md"))
