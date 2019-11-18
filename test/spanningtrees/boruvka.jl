@@ -19,12 +19,14 @@ for g in testgraphs(g4)
 # Testing Boruvka's algorithm
     res1 = boruvka_mst(g,distmx)
     g1t = SimpleGraph(res1.mst)
+    @test issetequal(res1.mst,vec_mst)
     @test res.weight == cost_mst
     @test is_cyclic(g1t) == false
     @test nv(g1t) == nv(g)
 
     res2 = boruvka_mst(g,distmx)
     g2t = SimpleGraph(rest2.mst)
+    @test issetequal(res2.mst,max_vec_mst)
     @test res.weight == cost_max_vec_mst
     @test is_cyclic(g2t) == false
     @test nv(g2t) == nv(g)
@@ -55,12 +57,14 @@ for g in testgraphs(gx)
 
     res3 = boruvka_mst(g, distmx_sec)
     g3t = SimpleGraph(res3.mst)
+    @test issetequal(res3.mst,vec2)
     @test res.weight == weight_vec2
     @test is_cyclic(g3t) == false
     @test nv(g3t) == nv(gx)
 
     res4 = boruvka_mst(g, distmx_sec,minimize = false)
     g4t = SimpleGraph(res4.mst)
+    @test issetequal(res4.mst,max_vec2)
     @test res.weight == weight_max_vec2
     @test is_cyclic(g4t) == false
     @test nv(g4t) == nv(gx)
@@ -102,12 +106,14 @@ for g in testgraphs(gx)
 
     res5 = boruvka_mst(g, distmx_sec)
     g5t = SimpleGraph(res5.mst)
+    @test issetequal(res5.mst,vec3)
     @test res.weight == weight_vec2
     @test is_cyclic(g5t) == false
     @test nv(g5t) == nv(gd)
 
     res6 = boruvka_mst(g, distmx_sec,minimize = false)
     g6t = SimpleGraph(res6.mst)
+    @test issetequal(res6.mst,max_vec3)
     @test res.weight == weight_max_vec2
     @test is_cyclic(g6t) == false
     @test nv(g6t) == nv(gd)
