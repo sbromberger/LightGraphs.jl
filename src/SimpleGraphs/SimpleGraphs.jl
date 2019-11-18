@@ -57,6 +57,20 @@ end
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
 vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
 
+"""
+    throw_if_invalid_eltype(T)
+
+Internal function, throw a `DomainError` if `T` is not a concrete type `Integer`.
+Can be used in the constructor of AbstractSimpleGraphs,
+as Julia's typesystem does not enforce concrete types, which can lead to
+problems. E.g `SimpleGraph{Signed}`.
+"""
+function throw_if_invalid_eltype(T::Type{<:Integer})
+    if !isconcretetype(T)
+        throw(DomainError(T, "Eltype for AbstractSimpleGraph must be concrete type."))
+    end
+end
+
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
 
