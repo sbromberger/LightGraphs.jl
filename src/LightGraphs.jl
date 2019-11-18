@@ -142,7 +142,7 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-boruvka_mst, kruskal_mst, prim_mst
+boruvka_mst, kruskal_mst, prim_mst,
 
 #steinertree
 steiner_tree,

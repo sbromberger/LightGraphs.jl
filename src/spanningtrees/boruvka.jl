@@ -1,56 +1,74 @@
-@traitfn function boruvka_mst(graph::AG::(!IsDirected), 
-    distmx::AbstractMatrix{T} = weights(graph); 
-    minimize = true) where {T<:Real,U,AG<:AbstractGraph{U}}
-    
-    f_distmx = minimize ? copy(distmx) : copy(-distmx)
 
-    djSet = IntDisjointSets(nv(graph))
+"""
+boruvka_mst(g, distmx = weights(g); minimize = true)
+Return a tuple `(mst, weights)` where `mst` is a vector of edges representing the
+optimum (minimum, by default) spanning tree of a connected, undirected graph
+`g` with optional matrix `distmx` that provides distinct edge weights, and
+`weights` is the sum of all the edges in the solution by using
+[Boruvka's algorithm](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm).
+The algorithm correctly gives a minimum/maximum spanning tree if all edges have
+different weights.
+### Optional Arguments
+- `minimize=true`: if set to `false`, calculate the maximum spanning tree.
+"""
+function boruvka_mst end 
+
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function boruvka_mst(graph::AG::(!IsDirected), 
+        distmx::AbstractMatrix{T} = weights(graph); 
+        minimize = true) where {T<:Real,U,AG<:AbstractGraph{U}}
+
+    djset = IntDisjointSets(nv(graph))
+    # maximizing Z is the same as minimizing -Z
+    # mode will indicate the need for the -1 multiplication
+    mode = (-1)^(minimize ? 0 : 1)
 
     mst = Vector{edgetype(graph)}()
     sizehint!(mst, nv(graph) - 1)
+    weight = zero(T)
 
-    weight = 0.0
-    while (num_groups(djSet) > 1)
-
-        cheapest = Array{Union{edgetype(graph), Bool}}(undef, nv(graph))
-
+    while (true)
+    
+        cheapest = Vector{Union{edgetype(graph), Nothing}}(nothing, nv(graph))
+        flag = false
+    
+        # find cheapest edge that connects two components 
         for edge in edges(graph)
-            set1 = find_root(djSet, src(edge))
-            set2 = find_root(djSet, dst(edge))
+            set1 = find_root(djset, src(edge))
+            set2 = find_root(djset, dst(edge))
+    
             if (set1 != set2)
+                flag = true
+    
                 e1 = cheapest[set1]
-                if (cheapest[set1] == false || f_distmx[src(e1), dst(e1)] > f_distmx[src(edge), dst(edge)])
+                if ( e1==nothing || distmx[src(e1), dst(e1)]*mode > distmx[src(edge), dst(edge)]*mode )
                     cheapest[set1] = edge
                 end
-
+    
                 e2 = cheapest[set2]
-                if (cheapest[set2] == false || f_distmx[src(e2), dst(e2)] > f_distmx[src(edge), dst(edge)])
+                if ( e2==nothing || distmx[src(e2), dst(e2)]*mode > distmx[src(edge), dst(edge)]*mode )
                     cheapest[set2] = edge
                 end
-
             end
-
         end
 
+        #no more edges between two components    
+        (!flag && break) 
+    
+        # add cheapest edges to the tree
         for v in vertices(graph)
-
-            if (cheapest[v] != false)
-                edge = cheapest[v]
-                
-                if (!in_same_set(djSet, src(edge), dst(edge)))
+    
+            if (cheapest[v]!=nothing)
+    
+                edge = cheapest[v]        
+                if (!in_same_set(djset, src(edge), dst(edge)))
                     weight += distmx[src(edge), dst(edge)]
-                    union!(djSet, src(edge), dst(edge))
+                    union!(djset, src(edge), dst(edge))
                     push!(mst, edge)
                 end
-
             end
-
         end
-
     end
-
-    return mst,weight
-
+    
+    return (mst=mst,weight=weight)
 end
-
-
