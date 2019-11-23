@@ -1,4 +1,3 @@
-
 """
 boruvka_mst(g, distmx = weights(g); minimize = true)
 Return a tuple `(mst, weights)` where `mst` is a vector of edges representing the
@@ -30,15 +29,15 @@ function boruvka_mst end
     while (true)
     
         cheapest = Vector{Union{edgetype(graph), Nothing}}(nothing, nv(graph))
-        flag = false
     
         # find cheapest edge that connects two components 
+        found_edge = false
         for edge in edges(graph)
             set1 = find_root(djset, src(edge))
             set2 = find_root(djset, dst(edge))
     
             if (set1 != set2)
-                flag = true
+                found_edge = true
     
                 e1 = cheapest[set1]
                 if ( e1==nothing || distmx[src(e1), dst(e1)]*mode > distmx[src(edge), dst(edge)]*mode )
@@ -53,7 +52,7 @@ function boruvka_mst end
         end
 
         #no more edges between two components    
-        (!flag && break) 
+        (!found_edge && break) 
     
         # add cheapest edges to the tree
         for v in vertices(graph)
