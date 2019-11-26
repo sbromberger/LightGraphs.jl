@@ -47,7 +47,7 @@ function a_star_impl!(g, # the graph
             if tentative_g_score < g_score[neighbor]
                 g_score[neighbor] = tentative_g_score
                 priority = tentative_g_score + heuristic(neighbor)
-                enqueue!(open_set, neighbor, priority)
+                open_set[neighbor] = priority
                 came_from[neighbor] = current
             end
         end
