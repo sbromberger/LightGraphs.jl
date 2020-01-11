@@ -44,3 +44,26 @@ function core_periphery_deg end
     c[p[1:kbest]] .= 1
     c
 end
+
+"""
+    terminalnodes( G::SimpleDiGraph )
+
+Given an input SimpleDiGraph, return a dictionary of parent and terminal vertices.
+
+"""
+function terminalnodes( G::SimpleDiGraph )
+    nv = max( length( mission.g.fadjlist), length( mission.g.badjlist ) )
+    #get all neighbors onehop away from each vertex
+    onehopneighbs   = [ setdiff( neighborhood( G, v, 1), v ) for v in 1 : nv ]
+    terminatingnodes   = findall( length.( onehopneighbs ) .== 0 )
+    #combine list of all one hop neighbors
+    onehopneighbs   = unique( reduce( vcat, onehopneighbs ) )
+    startschain     = repeat( [ false ], nv )
+    for v in 1 : nv
+        if !(in(v, onehopneighbs))
+            startschain[v] = true
+        end
+    end
+    return Dict( :parentnodes => findall( startschain ),
+                 :terminalnodes => terminatingnodes )
+end
