@@ -2,7 +2,6 @@ using Test
 using DataStructures
 using LightGraphs
 using SimpleTraits
-include("boruvkaG2.jl")
 
 testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)] 
 testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
