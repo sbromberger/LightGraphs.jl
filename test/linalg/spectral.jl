@@ -7,8 +7,8 @@ using ArnoldiMethod
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 @testset "Spectral" begin
 
-    g3 = PathGraph(5)
-    g4 = PathDiGraph(5)
+    g3 = path_graph(5)
+    g4 = path_digraph(5)
     g5 = SimpleDiGraph(4)
     for g in testgraphs(g3)
         @test adjacency_matrix(g, Bool) == adjacency_matrix(g, Bool; dir=:out)
@@ -41,7 +41,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     @test indegree(g) == sum(adjacency_matrix(g), dims=1)[1, :]
     @test outdegree(g) == sum(adjacency_matrix(g), dims=2)[:, 1]
 
-    g10 = CompleteGraph(10)
+    g10 = complete_graph(10)
     for g in testgraphs(g10)
         B, em = non_backtracking_matrix(g)
         @test length(em) == 2 * ne(g)
@@ -92,7 +92,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test all((bothmat - outmat) .>= 0)
         @test all((bothmat - inmat)  .>= 0)
 
-      #check properties of the undirected laplacian carry over.
+        #check properties of the undirected laplacian carry over.
         for dir in [:in, :out, :both]
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
@@ -112,6 +112,10 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test incidence_matrix(g)[1, 1] == -1
         @test incidence_matrix(g)[2, 1] == 1
         @test incidence_matrix(g)[3, 1] == 0
+
+        A = incidence_matrix(g)
+        B = incidence_matrix(reverse(g))
+        @test all((A+B) .== 0)
     end
 
     for g in testgraphs(g3)
@@ -130,7 +134,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     # TESTS FOR Nonbacktracking operator.
 
     n = 10; k = 5
-    pg = CompleteGraph(n)
+    pg = complete_graph(n)
     # ϕ1 = nonbacktrack_embedding(pg, k)'
     for g in testgraphs(pg)
         nbt = Nonbacktracking(g)

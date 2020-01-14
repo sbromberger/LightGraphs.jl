@@ -121,7 +121,7 @@ julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
 ```
 """
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
-    p >= 1 && return is_directed ? CompleteDiGraph(n) : CompleteGraph(n)
+    p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
     m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
     ne = randbn(m, p, seed)
     return is_directed ? SimpleDiGraph(n, ne, seed=seed) : SimpleGraph(n, ne, seed=seed)
@@ -240,7 +240,7 @@ julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 ```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
-    @assert k < n / 2
+    @assert k < n
     if is_directed
         g = SimpleDiGraph(n)
     else
@@ -374,7 +374,7 @@ julia> barabasi_albert(100, Int8(10), 3, is_directed=true, seed=123)
 """
 function barabasi_albert(n::Integer, n0::Integer, k::Integer; is_directed::Bool=false, complete::Bool=false, seed::Int=-1)
     if complete
-        g = is_directed ? CompleteDiGraph(n0) : CompleteGraph(n0)
+        g = is_directed ? complete_digraph(n0) : complete_graph(n0)
     else
         g = is_directed ? SimpleDiGraph(n0) : SimpleGraph(n0)
     end
@@ -395,7 +395,7 @@ already present in the system by preferential attachment.
 - `seed=-1`: set the RNG seed.
 ## Examples
 ```jldoctest
-julia> g = CycleGraph(4)
+julia> g = cycle_graph(4)
 {4, 4} undirected simple Int64 graph
 
 julia> barabasi_albert!(g, 16, 3);
@@ -904,7 +904,6 @@ mutable struct StochasticBlockModel{T <: Integer,P <: Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
-    rng::MersenneTwister
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
@@ -914,7 +913,7 @@ end
 # A constructor for StochasticBlockModel that uses the sizes of the blocks
 # and the affinity matrix. This construction implies that consecutive
 # vertices will be in the same blocks, except for the block boundaries.
-function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; seed::Int=-1)
+function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
@@ -924,7 +923,7 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix;
         end
         nodemap[i] = j
     end
-    return StochasticBlockModel(csum[end], nodemap, affinities, getRNG(seed))
+    return StochasticBlockModel(csum[end], nodemap, affinities)
 end
 
 
@@ -945,17 +944,15 @@ end
 function StochasticBlockModel(internalp::Real,
                               externalp::Real,
                               size::Integer,
-                              numblocks::Integer;
-                              seed::Int=-1)
+                              numblocks::Integer)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
-    StochasticBlockModel(sizes, B, seed=seed)
+    StochasticBlockModel(sizes, B)
 end
 
-function StochasticBlockModel(internalp::Vector{T}, externalp::Real,
-    sizes::Vector{U}; seed::Int=-1) where T <: Real where U <: Integer
+function StochasticBlockModel(internalp::Vector{T}, externalp::Real, sizes::Vector{U}) where {T <: Real, U <: Integer}
     B = sbmaffinity(internalp, externalp, sizes)
-    return StochasticBlockModel(sizes, B, seed=seed)
+    return StochasticBlockModel(sizes, B)
 end
 
 
@@ -973,17 +970,17 @@ This is a specific type of SBM with ``\\frac{k}{2} blocks each with two halves.
 Each half is connected as a random bipartite graph with probability `intra`
 The blocks are connected with probability `between`.
 """
-function nearbipartiteaffinity(sizes::Vector{T}, between::Real, intra::Real) where T <: Integer
+function nearbipartiteaffinity(sizes::AbstractVector{T}, between::Real, intra::Real) where {T <: Integer}
     numblocks = div(length(sizes), 2)
     return kron(between * Matrix{Float64}(I, numblocks, numblocks), biclique) + Matrix{Float64}(I, 2 * numblocks, 2 * numblocks) * intra
 end
 
 #Return a generator for edges from a stochastic block model near-bipartite graph.
-nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where T <: Integer =
+nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where {T <: Integer} =
     nearbipartiteaffinity(sizes, between, inter) .+ noise
 
-nearbipartiteSBM(sizes, between, inter, noise; seed::Int=-1) =
-    StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), seed=seed)
+nearbipartiteSBM(sizes, between, inter, noise) =
+    StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise))
 
 """
     random_pair(rng, n)
@@ -1006,14 +1003,14 @@ end
 Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
-function make_edgestream(sbm::StochasticBlockModel)
-    pairs = Channel(random_pair(sbm.rng, sbm.n), ctype=SimpleEdge, csize=32)
+function make_edgestream(sbm::StochasticBlockModel, rng::AbstractRNG = GLOBAL_RNG)
+    pairs = Channel(random_pair(rng, sbm.n), ctype=SimpleEdge, csize=32)
     edges(ch) = begin
         for e in pairs
             i, j = Tuple(e)
             i == j && continue
             p = sbm.affinities[sbm.nodemap[i], sbm.nodemap[j]]
-            if rand(sbm.rng) < p
+            if rand(rng) < p
                 put!(ch, e)
             end
         end
@@ -1036,7 +1033,6 @@ function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
         add_edge!(g, e)
         ne(g) >= neg && break
     end
-    # println(g)
     return g
 end
 
@@ -1141,7 +1137,7 @@ julia> dorogovtsev_mendes(11, seed=123)
 function dorogovtsev_mendes(n::Integer; seed::Int=-1)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = getRNG(seed)
-    g = CycleGraph(3)
+    g = cycle_graph(3)
 
     for iteration in 1:(n-3)
         chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
@@ -1176,14 +1172,14 @@ DAG's have a finite topological order; this order is randomly generated via "ord
 
 # Examples
 ```jldoctest
-julia> random_orientation_dag(CompleteGraph(10))
+julia> random_orientation_dag(complete_graph(10))
 {10, 45} directed simple Int64 graph
 
-julia> random_orientation_dag(StarGraph(Int8(10)), 123)
+julia> random_orientation_dag(star_graph(Int8(10)), 123)
 {10, 9} directed simple Int8 graph
 ```
 """
-function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where T <: Integer
+function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where {T <: Integer}
     nvg = length(g.fadjlist)
     rng = getRNG(seed)
     order = randperm(rng, nvg)

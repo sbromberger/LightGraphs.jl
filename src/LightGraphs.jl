@@ -61,10 +61,10 @@ gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 is_bipartite, bipartite_map,
 
 # dfs
-is_cyclic, topological_sort_by_dfs, dfs_tree,
+is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
 
 # random
-randomwalk, saw, non_backtracking_randomwalk,
+randomwalk, self_avoiding_walk, non_backtracking_randomwalk,
 
 # diffusion
 diffusion, diffusion_rate,
@@ -117,11 +117,23 @@ local_clustering,local_clustering_coefficient, global_clustering_coefficient, tr
 label_propagation, maximal_cliques, clique_percolation,
 
 #generators
-CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
+complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
+complete_bipartite_graph, complete_multipartite_graph, turan_graph,
+complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
+binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
+circular_ladder_graph, barbell_graph, lollipop_graph,
 
-CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph, StarDiGraph,
-PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree, DoubleBinaryTree, RoachGraph,
-CliqueGraph, LadderGraph, CircularLadderGraph, BarbellGraph, LollipopGraph,
+#generator deprecations
+BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
+DodecahedralGraph, FruchtGraph, HeawoodGraph, HouseGraph, HouseXGraph,
+IcosahedralGraph, KarateGraph, KrackhardtKiteGraph, MoebiusKantorGraph,
+OctahedralGraph, PappusGraph, PetersenGraph, SedgewickMazeGraph, TetrahedralGraph,
+TruncatedCubeGraph, TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph,
+TutteGraph, CompleteGraph, CompleteBipartiteGraph, CompleteMultipartiteGraph,
+TuranGraph, CompleteDiGraph, StarGraph, StarDigraph, PathGraph, PathDiGraph,
+CycleGraph, CycleDiGraph, WheelGraph, WheelDiGraph, Grid, BinaryTree,
+Doublebinary_tree, RoachGraph, CliqueGraph, LadderGraph, Circularladder_graph,
+BarbellGraph, LollipopGraph,
 
 #smallgraphs
 smallgraph,

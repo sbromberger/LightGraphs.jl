@@ -71,7 +71,7 @@
       @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
 
-    g = PathGraph(50)
+    g = path_graph(50)
 
     function contiguous(labels::Vector{Int})::Bool
         changes = 0

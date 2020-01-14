@@ -3,6 +3,7 @@ module SimpleGraphs
 using SparseArrays
 using LinearAlgebra
 using LightGraphs
+using SimpleTraits
 
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
@@ -11,8 +12,9 @@ import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
-
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
+
+using Random: GLOBAL_RNG, AbstractRNG
 
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
@@ -20,16 +22,16 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
-    random_regular_digraph, random_configuration_model, random_tournament_digraph, 
-    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts, 
+    random_regular_digraph, random_configuration_model, random_tournament_digraph,
+    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts,
     blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
     barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
     #generators
-    CompleteGraph, StarGraph, PathGraph, WheelGraph, CycleGraph,
-    CompleteBipartiteGraph, CompleteMultipartiteGraph, TuranGraph, CompleteDiGraph,
-    StarDiGraph, PathDiGraph, Grid, WheelDiGraph, CycleDiGraph, BinaryTree,
-    DoubleBinaryTree, RoachGraph, CliqueGraph, BarbellGraph, LollipopGraph,
-    LadderGraph, CircularLadderGraph,
+    complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
+    complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph,
+    star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree,
+    double_binary_tree, roach_graph, clique_graph, barbell_graph, lollipop_graph,
+    ladder_graph, circular_ladder_graph,
     #smallgraphs
     smallgraph,
     # Euclidean graphs
@@ -54,6 +56,20 @@ end
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
 vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
+
+"""
+    throw_if_invalid_eltype(T)
+
+Internal function, throw a `DomainError` if `T` is not a concrete type `Integer`.
+Can be used in the constructor of AbstractSimpleGraphs,
+as Julia's typesystem does not enforce concrete types, which can lead to
+problems. E.g `SimpleGraph{Signed}`.
+"""
+function throw_if_invalid_eltype(T::Type{<:Integer})
+    if !isconcretetype(T)
+        throw(DomainError(T, "Eltype for AbstractSimpleGraph must be concrete type."))
+    end
+end
 
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
@@ -191,12 +207,13 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     return true
 end
 
-zero(g::T) where T<:AbstractSimpleGraph = T()
-    
+zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
 include("./simpleedgeiter.jl")
+include("./generators/deprecations.jl")
 include("./generators/staticgraphs.jl")
 include("./generators/randgraphs.jl")
 include("./generators/euclideangraphs.jl")

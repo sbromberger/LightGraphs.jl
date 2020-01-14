@@ -1,6 +1,6 @@
 @testset "Connectivity" begin
     g6 = smallgraph(:house)
-    gx = PathGraph(4)
+    gx = path_graph(4)
     add_vertices!(gx, 10)
     add_edge!(gx, 5, 6)
     add_edge!(gx, 6, 7)
@@ -206,7 +206,7 @@
 
     # construct a n-number edge ring graph (period = n)
     n = 10
-    n_ring = CycleDiGraph(n)
+    n_ring = cycle_digraph(n)
     n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut, 1, 4)
 
 
@@ -228,7 +228,7 @@
 
     g10dists = ones(10, 10)
     g10dists[1,2] = 10.0
-    g10 = StarGraph(10)
+    g10 = star_graph(10)
     for g in testgraphs(g10)
       @test @inferred(neighborhood_dists(g, 1, 0)) == [(1, 0)]
       @test length(@inferred(neighborhood(g, 1, 1))) == 10
@@ -238,7 +238,7 @@
       @test length(@inferred(neighborhood(g, 2, 2))) == 10
       @test length(@inferred(neighborhood(g, 2, -1))) == 0
     end
-    g10 = StarDiGraph(10)
+    g10 = star_digraph(10)
     for g in testdigraphs(g10)
         @test @inferred(neighborhood_dists(g10, 1, 0, dir=:out)) == [(1, 0)]
         @test length(@inferred(neighborhood(g, 1, 1, dir=:out))) == 10
@@ -257,7 +257,7 @@
     @test @inferred(isgraphical([2, 2, 2]))
     @test @inferred(isgraphical(fill(3, 10)))
     # 1116
-    gc = CycleGraph(4)
+    gc = cycle_graph(4)
     for g in testgraphs(gc)
         z = @inferred(neighborhood(g, 3, 3))
         @test (z == [3, 2, 4, 1] || z == [3, 4, 2, 1])

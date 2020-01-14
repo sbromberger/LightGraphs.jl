@@ -1,5 +1,5 @@
 @testset "Core periphery" begin
-    g10 = StarGraph(10)
+    g10 = star_graph(10)
     for g in testgraphs(g10)
         c = core_periphery_deg(g)
         @test @inferred(degree(g, 1)) == 9
@@ -9,7 +9,7 @@
         end
     end
 
-    g10 = StarGraph(10)
+    g10 = star_graph(10)
     g10 = blockdiag(g10, g10)
     add_edge!(g10, 1, 11)
     for g in testgraphs(g10)

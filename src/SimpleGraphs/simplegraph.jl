@@ -8,6 +8,19 @@ A type representing an undirected graph.
 mutable struct SimpleGraph{T <: Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
+
+    function SimpleGraph{T}(ne::Int, fadjlist::Vector{Vector{T}}) where T
+        throw_if_invalid_eltype(T)
+        return new{T}(ne, fadjlist)
+    end
+end
+
+function SimpleGraph(
+        ne,
+        fadjlist::Vector{Vector{T}}
+) where T
+
+    return SimpleGraph{T}(ne, fadjlist)
 end
 
 eltype(x::SimpleGraph{T}) where T = T
@@ -94,7 +107,7 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = CompleteGraph(5)
+julia> g = complete_graph(5)
 julia> SimpleGraph{UInt8}(g)
 {5, 10} undirected simple UInt8 graph
 ```
@@ -119,7 +132,7 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = PathDiGraph(Int8(5))
+julia> g = path_digraph(Int8(5))
 julia> SimpleGraph(g)
 {5, 4} undirected simple Int8 graph
 ```
@@ -247,33 +260,52 @@ end
     end
 end
 
-function _SimpleGraphFromIterator(iter)::SimpleGraph
-    T = Union{}
-    fadjlist = Vector{Vector{T}}() 
-    @inbounds(
-    for e in iter
-        typeof(e) <: SimpleGraphEdge ||
-                        throw(ArgumentError("iter must be an iterator over SimpleEdge"))
-        s, d = src(e), dst(e)
-        (s >= 1 && d >= 1) || continue
-        if T != eltype(e)
-            T = typejoin(T, eltype(e)) 
-            fadjlist = convert(Vector{Vector{T}}, fadjlist)
-        end
-        add_to_fadjlist!(fadjlist, s, d)
-    end)
 
-    T == Union{} && return SimpleGraph(0)
-    neg  = cleanupedges!(fadjlist)
+# Try to get the eltype from the first element
+function _SimpleGraphFromIterator(iter)::SimpleGraph
+
+    next = iterate(iter)
+    if (next === nothing)
+        return SimpleGraph(0)
+    end
+
+    e = first(next)
+    E = typeof(e)
+    if !(E <: SimpleGraphEdge{<: Integer})
+        throw(DomainError(iter, "Edges must be of type SimpleEdge{T <: Integer}"))
+    end
+
+    T = eltype(e)
     g = SimpleGraph{T}()
+    fadjlist = Vector{Vector{T}}() 
+
+    while next != nothing
+        (e, state) = next
+
+        if !(e isa E)
+            throw(DomainError(iter, "Edges must all have the same type."))
+        end
+        s, d = src(e), dst(e)
+        if ((s >= 1) & (d >= 1))
+            add_to_fadjlist!(fadjlist, s, d)
+        end
+
+        next = iterate(iter, state)
+    end
+
+    neg  = cleanupedges!(fadjlist)
     g.fadjlist = fadjlist
     g.ne = neg
-    
+
     return g
 end
 
-function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T <: Integer
+
+function _SimpleGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
+
+    g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}() 
+
     @inbounds(
     for e in iter
         s, d = src(e), dst(e)
@@ -282,7 +314,6 @@ function _SimpleGraphFromIterator(iter, ::Type{SimpleGraphEdge{T}}) where T <: I
     end)
 
     neg  = cleanupedges!(fadjlist)
-    g = SimpleGraph{T}()
     g.fadjlist = fadjlist
     g.ne = neg
 
@@ -314,12 +345,17 @@ julia> collect(edges(h))
 ```
 """
 function SimpleGraphFromIterator(iter)::SimpleGraph
-    if Base.IteratorEltype(iter) == Base.EltypeUnknown()
-        return _SimpleGraphFromIterator(iter)
+
+    if Base.IteratorEltype(iter) == Base.HasEltype()
+        E = eltype(iter)
+        if (E <: SimpleGraphEdge{<: Integer} && isconcretetype(E))
+            T = eltype(E)
+            if isconcretetype(T)
+                return _SimpleGraphFromIterator(iter, T)
+            end
+        end
     end
-    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
-        return _SimpleGraphFromIterator(iter, eltype(iter))
-    end
+
     return _SimpleGraphFromIterator(iter)
 end
 
@@ -333,7 +369,9 @@ Return the backwards adjacency list of a graph. If `v` is specified,
 return only the adjacency list for that vertex.
 
 ###Implementation Notes
-Returns a reference, not a copy. Do not modify result.
+Returns a reference to the current graph's internal structures, not a copy. 
+Do not modify result. If the graph is modified, the behavior is undefined: 
+the array behind this reference may be modified too, but this is not guaranteed.
 """
 badj(g::SimpleGraph) = fadj(g)
 badj(g::SimpleGraph, v::Integer) = fadj(g, v)
@@ -346,7 +384,9 @@ Return the adjacency list of a graph. If `v` is specified, return only the
 adjacency list for that vertex.
 
 ### Implementation Notes
-Returns a reference, not a copy. Do not modify result.
+Returns a reference to the current graph's internal structures, not a copy. 
+Do not modify result. If the graph is modified, the behavior is undefined: 
+the array behind this reference may be modified too, but this is not guaranteed. 
 """
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
@@ -505,7 +545,7 @@ This function is not part of the official LightGraphs API and is subject to chan
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = CompleteGraph{5}
+julia> g = complete_graph{5}
 {5, 10} undirected simple Int64 graph
 
 julia> vmap = rem_vertices!(g, [2, 4], keep_order=true);
