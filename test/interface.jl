@@ -10,13 +10,13 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     @test_throws LightGraphs.NotImplementedError is_directed(DummyGraph)
     @test_throws LightGraphs.NotImplementedError zero(DummyGraph)
 
-    @test LightGraphs.has_contiguous_vertices(DummyGraph) isa Val{true}
-    @test LightGraphs.has_contiguous_vertices(DummyDiGraph) isa Val{true}
-    @test LightGraphs.has_contiguous_vertices(dummygraph) isa Val{true}
+    @test LightGraphs.has_contiguous_vertices(DummyGraph)
+    @test LightGraphs.has_contiguous_vertices(DummyDiGraph)
+    @test LightGraphs.has_contiguous_vertices(dummygraph)
 
-    LightGraphs.has_contiguous_vertices(::Type{<:DummyGraph}) = Val{false}()
-    @test LightGraphs.has_contiguous_vertices(DummyGraph) isa Val{false}
-    @test LightGraphs.has_contiguous_vertices(dummygraph) isa Val{false}
+    LightGraphs.has_contiguous_vertices(::Type{<:DummyGraph}) = false
+    @test !LightGraphs.has_contiguous_vertices(DummyGraph)
+    @test !LightGraphs.has_contiguous_vertices(dummygraph)
 
     for edgefun in [src, dst, Pair, Tuple, reverse]
         @test_throws LightGraphs.NotImplementedError edgefun(dummyedge)

@@ -40,6 +40,24 @@ abstract type AbstractGraph{T} end
 @traitdef IsDirected{G<:AbstractGraph}
 @traitimpl IsDirected{G} <- is_directed(G)
 
+"""
+    HasContiguousVertices{G}
+
+A trait indicating whether the vertices of graphs of type `G` are
+always contiguous integers starting at 1.
+"""
+@traitdef HasContiguousVertices{G<:AbstractGraph}
+@traitimpl HasContiguousVertices{G} <- has_contiguous_vertices(G)
+
+"""
+    has_contiguous_vertices(::Type{G}) -> Bool where {G <: AbstractGraph}
+
+Method implemented by graph types to indicate whether their vertices are
+contiguous numbers. Defaults to true.
+"""
+has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
+
+has_contiguous_vertices(G) = true
 
 #
 # Interface for AbstractEdges
@@ -158,15 +176,6 @@ julia> ne(g)
 ne(g::AbstractGraph) = _NI("ne")
 
 """
-    has_contiguous_vertices(::Type{<:AbstractGraph})
-
-Trait function indicating whether vertices are always contiguous integers.
-Returns a `Val{true/false}`.
-"""
-has_contiguous_vertices(::Type{<:AbstractGraph}) = Val{true}()
-has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
-
-"""
     vertices(g::AbstractGraph)
 
 Return (an iterator to or collection of) the vertices of a graph.
@@ -187,10 +196,14 @@ julia> collect(vertices(SimpleGraph(4)))
  4
 ```
 """
-vertices(g::G) where {G <: AbstractGraph} = vertices(g, has_contiguous_vertices(G))
+function vertices end
+@traitfn function vertices(g::AG::(!HasContiguousVertices)) where {AG <: AbstractGraph}
+    return _NI("vertices")
+end
 
-vertices(g::AbstractGraph, ::Val{true}) = Base.OneTo(nv(g))
-vertices(g::AbstractGraph, ::Val{false}) = _NI("vertices")
+@traitfn function vertices(g::AG::(HasContiguousVertices)) where {AG <: AbstractGraph}
+    return Base.OneTo(nv(g))
+end
 
 """
     edges(g)
@@ -257,10 +270,15 @@ julia> has_vertex(SimpleGraph(2), 3)
 false
 ```
 """
-has_vertex(g::G, v) where {G} = has_vertex(g, v, has_contiguous_vertices(G))
+function has_vertex end
 
-has_vertex(g, v::Integer, ::Val{true}) where {G} = v > 0 && v <= nv(g)
-has_vertex(g, v::Integer, ::Val{false}) where {G} = _NI("has_vertex")
+@traitfn function has_vertex(g::G::(!HasContiguousVertices), v) where {G}
+    return _NI("has_vertex")
+end
+
+@traitfn function vertices(g::G::(HasContiguousVertices), v) where {G}
+    return 0 < v <= nv(g)
+end
 
 """
     has_edge(g, s, d)
@@ -292,7 +310,7 @@ has_edge(g, s, d) = _NI("has_edge")
 has_edge(g, e) = has_edge(g, src(e), dst(e))
 
 """
-    inneighbors(g, v)has_vertex(g, v, has_contiguous_vertices(G))
+    inneighbors(g, v)
 
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
@@ -354,22 +372,3 @@ julia> zero(g)
 zero(::Type{<:AbstractGraph}) = _NI("zero")
 
 zero(g::G) where {G<: AbstractGraph} = zero(G)
-
-"""
-    HasContiguousVertices{G}
-
-A trait indicating whether the vertices of graphs of type `G` are
-always contiguous integers starting at 1.
-"""
-@traitdef HasContiguousVertices{G<:AbstractGraph}
-@traitimpl HasContiguousVertices{G} <- has_contiguous_vertices(G)
-
-"""
-    has_contiguous_vertices(::Type{G}) -> Bool where {G <: AbstractGraph}
-
-Method implemented by graph types to indicate whether their vertices are
-contiguous numbers. Defaults to true.
-"""
-has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
-
-has_contiguous_vertices(G) = true

@@ -6,15 +6,10 @@ distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/
 Return a vector of edges.
 """
 function prim_mst end
-@traitfn function prim_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g)) where {U, AG <: AbstractGraph{U}, T <: Real}
+@traitfn function prim_mst(g::AG,
+                           distmx::AbstractMatrix{T}=weights(g)) where {U, AG <: AbstractGraph{U}, T <: Real; HasContiguousVertices{AG}, !IsDirected{AG}}
 
-    return prim_mst(has_contiguous_vertices(AG), g, distmx)
-end
-
-function prim_mst(::Val{true}, g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)) where {U, T <: Real}
     nvg = nv(g)
-
     pq = PriorityQueue{U, T}()
     finished = zeros(Bool, nvg)
     wt = fill(typemax(T), nvg) #Faster access time

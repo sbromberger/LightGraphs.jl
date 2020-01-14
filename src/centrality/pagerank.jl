@@ -7,17 +7,18 @@ using Base.Threads
     pagerank(g, α=0.85, n=100, ϵ=1.0e-6)
 
 Calculate the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the
-graph `g` parameterized by damping factor `α`, number of iterations 
+graph `g` parameterized by damping factor `α`, number of iterations
 `n`, and convergence threshold `ϵ`. Return a vector representing the
 centrality calculated for each node in `g`, or an error if convergence
 is not reached within `n` iterations.
 """
-function pagerank(
-    g::AbstractGraph{U}, 
-    α=0.85, 
-    n::Integer=100,
-    ϵ=1.0e-6
-    ) where U <: Integer
+function pagerank end
+@traitfn function pagerank(
+        g::G,
+        α=0.85,
+        n::Integer=100,
+        ϵ=1.0e-6
+        ) where {U <: Integer, G <: AbstractGraph{U}; HasContiguousVertices{G}}
     α_div_outdegree = Vector{Float64}(undef,nv(g))
     dangling_nodes = Vector{U}()
     for v in vertices(g)
@@ -40,7 +41,7 @@ function pagerank(
             xlast[v] = (1 - α + α * dangling_sum) * (1.0 / N)
         end
         # flow from edges
-        
+
         for v in vertices(g)
             for u in inneighbors(g, v)
                 xlast[v] += (x[u] * α_div_outdegree[u])

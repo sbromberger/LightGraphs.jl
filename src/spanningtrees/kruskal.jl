@@ -9,12 +9,9 @@ undirected graph `g` with optional distance matrix `distmx` using [Kruskal's alg
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g); minimize=true) where {U, AG <: AbstractGraph{U}, T <: Real}
-    return kruskal_mst(has_contiguous_vertices(AG), g, distmx; minimize = minimize)
-end
+@traitfn function kruskal_mst(g::G,
+                              distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, G <: AbstractGraph; HasContiguousVertices{G}, !IsDirected{G}}
 
-function kruskal_mst(::Val{true}, g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, U}
     connected_vs = IntDisjointSets(nv(g))
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nv(g) - 1)
@@ -23,16 +20,16 @@ function kruskal_mst(::Val{true}, g::AbstractGraph{U}, distmx::AbstractMatrix{T}
     sizehint!(weights, ne(g))
     edge_list = collect(edges(g))
     for e in edge_list
-        push!(weights, distmx[src(e), dst(e)])
+      push!(weights, distmx[src(e), dst(e)])
     end
 
     for e in edge_list[sortperm(weights; rev=!minimize)]
-        if !in_same_set(connected_vs, src(e), dst(e))
-            union!(connected_vs, src(e), dst(e))
-            push!(mst, e)
-            (length(mst) >= nv(g) - 1) && break
-        end
+      if !in_same_set(connected_vs, src(e), dst(e))
+          union!(connected_vs, src(e), dst(e))
+          push!(mst, e)
+          (length(mst) >= nv(g) - 1) && break
+      end
     end
-
+    
     return mst
 end
