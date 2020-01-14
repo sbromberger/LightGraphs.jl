@@ -1,5 +1,4 @@
 using Test
-using DataStructures
 using LightGraphs
 using SimpleTraits
 
