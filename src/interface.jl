@@ -354,3 +354,22 @@ julia> zero(g)
 zero(::Type{<:AbstractGraph}) = _NI("zero")
 
 zero(g::G) where {G<: AbstractGraph} = zero(G)
+
+"""
+    HasContiguousVertices{G}
+
+A trait indicating whether the vertices of graphs of type `G` are
+always contiguous integers starting at 1.
+"""
+@traitdef HasContiguousVertices{G<:AbstractGraph}
+@traitimpl HasContiguousVertices{G} <- has_contiguous_vertices(G)
+
+"""
+    has_contiguous_vertices(::Type{G}) -> Bool where {G <: AbstractGraph}
+
+Method implemented by graph types to indicate whether their vertices are
+contiguous numbers. Defaults to true.
+"""
+has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
+
+has_contiguous_vertices(G) = true
