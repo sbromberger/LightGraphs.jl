@@ -59,7 +59,7 @@ function boruvka_mst end
             if cheapest[v] !== nothing
     
                 edge = cheapest[v]        
-                if (!in_same_set(djset, src(edge), dst(edge)))
+                if !in_same_set(djset, src(edge), dst(edge))
                     weight += distmx[src(edge), dst(edge)]
                     union!(djset, src(edge), dst(edge))
                     push!(mst, edge)
