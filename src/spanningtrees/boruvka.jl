@@ -25,7 +25,7 @@ function boruvka_mst end
     sizehint!(mst, nv(graph) - 1)
     weight = zero(T)
 
-    while (true)
+    while true
     
         cheapest = Vector{Union{edgetype(graph), Nothing}}(nothing, nv(graph))
     
