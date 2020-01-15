@@ -1,5 +1,5 @@
 """
-boruvka_mst(g, distmx = weights(g); minimize = true)
+    boruvka_mst(g, distmx = weights(g); minimize = true)
 Return a tuple `(mst, weights)` where `mst` is a vector of edges representing the
 optimum (minimum, by default) spanning tree of a connected, undirected graph
 `g` with optional matrix `distmx` that provides distinct edge weights, and
