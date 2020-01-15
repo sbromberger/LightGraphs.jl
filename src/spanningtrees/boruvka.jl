@@ -38,7 +38,7 @@ function boruvka_mst end
                 found_edge = true
     
                 e1 = cheapest[set1]
-                if ( e1==nothing || distmx[src(e1), dst(e1)]*mode > distmx[src(edge), dst(edge)]*mode )
+                if e1===nothing || distmx[src(e1), dst(e1)]*mode > distmx[src(edge), dst(edge)]*mode
                     cheapest[set1] = edge
                 end
     
