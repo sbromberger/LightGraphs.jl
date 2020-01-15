@@ -43,7 +43,7 @@ function boruvka_mst end
                 end
     
                 e2 = cheapest[set2]
-                if ( e2==nothing || distmx[src(e2), dst(e2)]*mode > distmx[src(edge), dst(edge)]*mode )
+                if e2===nothing || distmx[src(e2), dst(e2)]*mode > distmx[src(edge), dst(edge)]*mode
                     cheapest[set2] = edge
                 end
             end
