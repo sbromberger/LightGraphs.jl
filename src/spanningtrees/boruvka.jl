@@ -56,7 +56,7 @@ function boruvka_mst end
         # add cheapest edges to the tree
         for v in vertices(graph)
     
-            if (cheapest[v]!=nothing)
+            if cheapest[v] !== nothing
     
                 edge = cheapest[v]        
                 if (!in_same_set(djset, src(edge), dst(edge)))
