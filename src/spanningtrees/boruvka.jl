@@ -34,7 +34,7 @@ function boruvka_mst end
             set1 = find_root(djset, src(edge))
             set2 = find_root(djset, dst(edge))
     
-            if (set1 != set2)
+            if set1 != set2
                 found_edge = true
     
                 e1 = cheapest[set1]
