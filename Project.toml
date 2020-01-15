@@ -21,6 +21,7 @@ julia = "1"
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+VertexSafeGraphs = "19fa3120-7c27-5ec5-8db8-b0b0aa330d6f"
 
 [targets]
-test = ["Base64", "DelimitedFiles", "Test"]
+test = ["Base64", "DelimitedFiles", "Test", "VertexSafeGraphs"]
