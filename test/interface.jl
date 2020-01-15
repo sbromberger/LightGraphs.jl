@@ -53,19 +53,3 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     @test String(take!(io)) == "method $edges not implemented."
 
 end # testset
-
-using VertexSafeGraphs: VSafeGraph
-
-LightGraphs.has_contiguous_vertices(::Type{<:VSafeGraph}) = false
-
-@testset "Vertices contiguity" begin
-    nv = 45
-    inner = complete_graph(nv)
-    g = VSafeGraph(inner)
-    removed_ok = rem_vertex!(g, rand(1:nv))
-    @test removed_ok
-
-    # LG only defines these algorithms for contiguous vertices
-    @test_throws MethodError pagerank(g)
-    @test_throws MethodError kruskal_mst(g)
-end
