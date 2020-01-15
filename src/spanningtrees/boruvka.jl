@@ -24,7 +24,7 @@ function boruvka_mst end
     sizehint!(mst, nv(graph) - 1)
     weight = zero(T)
 
-    while (true)
+    while true
     
         cheapest = Vector{Union{edgetype(graph), Nothing}}(nothing, nv(graph))
     
@@ -50,15 +50,15 @@ function boruvka_mst end
         end
 
         #no more edges between two components    
-        (!found_edge && break) 
+        !found_edge && break
     
         # add cheapest edges to the tree
         for v in vertices(graph)
     
-            if (cheapest[v]!=nothing)
+            if cheapest[v] !== nothing
     
                 edge = cheapest[v]        
-                if (!in_same_set(djset, src(edge), dst(edge)))
+                if !in_same_set(djset, src(edge), dst(edge))
                     weight += distmx[src(edge), dst(edge)]
                     union!(djset, src(edge), dst(edge))
                     push!(mst, edge)
