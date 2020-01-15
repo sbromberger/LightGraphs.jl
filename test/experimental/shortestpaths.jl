@@ -38,6 +38,12 @@ end
             @test isempty(paths(z)[1])
             @test dists(z)[1] == [typemax(Int)]
         end
+
+        # test for #1258
+       
+        g = complete_graph(4)
+        w = float([1 1 1 4; 1 1 1 1; 1 1 1 1; 4 1 1 1])
+        @test length(first(paths(shortest_paths(g, 1, 4, w, AStar())))) == 3
     end
 
     @testset "BellmanFord" begin
