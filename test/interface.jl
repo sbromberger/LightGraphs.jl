@@ -60,7 +60,7 @@ LightGraphs.has_contiguous_vertices(::Type{<:VSafeGraph}) = false
 
 @testset "Vertices contiguity" begin
     nv = 45
-    inner = CompleteGraph(nv)
+    inner = complete_graph(nv)
     g = VSafeGraph(inner)
     removed_ok = rem_vertex!(g, rand(1:nv))
     @test removed_ok
