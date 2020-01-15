@@ -51,7 +51,7 @@ function boruvka_mst end
         end
 
         #no more edges between two components    
-        (!found_edge && break) 
+        !found_edge && break
     
         # add cheapest edges to the tree
         for v in vertices(graph)
