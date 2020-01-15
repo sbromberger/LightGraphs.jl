@@ -12,7 +12,6 @@ different weights.
 """
 function boruvka_mst end 
 
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function boruvka_mst(graph::AG::(!IsDirected), 
         distmx::AbstractMatrix{T} = weights(graph); 
         minimize = true) where {T<:Real,U,AG<:AbstractGraph{U}}

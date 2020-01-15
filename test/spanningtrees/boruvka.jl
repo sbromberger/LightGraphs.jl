@@ -1,11 +1,3 @@
-using Test
-using LightGraphs
-using SimpleTraits
-
-testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)] 
-testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
-testdigraphs = testgraphs
-#above we have some functions and libs I need to run this tests
 @testset "Boruvka" begin
 
 g4 = complete_graph(4)
