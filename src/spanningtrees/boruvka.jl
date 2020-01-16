@@ -10,6 +10,7 @@ The algorithm requires that all edges have different weights to correctly genera
 ### Optional Arguments
 - `minimize=true`: if set to `false`, calculate the maximum spanning tree.
 """
+
 function boruvka_mst end 
 
 @traitfn function boruvka_mst(graph::AG::(!IsDirected), 
