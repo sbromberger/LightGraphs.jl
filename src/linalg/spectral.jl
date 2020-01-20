@@ -36,13 +36,22 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     end
 end
 
-function _adjacency_matrix(g::AbstractGraph{U}, T::DataType, neighborfn::Function, nzmult::Int=1) where U
+@generated function _find_correct_type(g::AbstractGraph{T}) where T
+    TT = widen(T)
+    if typemax(TT) >= typemax(Int64)
+        TT = Int64
+    end
+    return :($TT)
+ end
+
+function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
-    colpt = ones(U, n_v + 1)
+    TT = _find_correct_type(g)
+    colpt = ones(TT, n_v + 1)
 
-    rowval = sizehint!(Vector{U}(), nz)
-    selfloops = Vector{U}()
+    rowval = sizehint!(Vector{TT}(), nz)
+    selfloops = Vector{TT}()
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
