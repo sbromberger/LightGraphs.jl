@@ -28,7 +28,6 @@ function boruvka_mst end
     while true
     
         cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
-    
         # find cheapest edge that connects two components 
         found_edge = false
         for edge in edges(g)
