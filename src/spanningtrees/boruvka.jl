@@ -25,7 +25,6 @@ function boruvka_mst end
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nv(g) - 1)
     weight = zero(T)
-    
     while true
     
         cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
