@@ -55,6 +55,7 @@ include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
+include("bfsvisit.jl")
 
 
 ################################
@@ -199,5 +200,6 @@ export ShortestPathAlgorithm
 export paths, dists, shortest_paths, has_negative_weight_cycle
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
+export bfs_visit, AbstractTraversalState, DefaultTraversalState
 
 end  # module
