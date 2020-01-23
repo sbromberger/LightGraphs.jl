@@ -13,26 +13,26 @@ The algorithm requires that all edges have different weights to correctly genera
 
 function boruvka_mst end 
 
-@traitfn function boruvka_mst(graph::AG::(!IsDirected), 
-        distmx::AbstractMatrix{T} = weights(graph); 
+@traitfn function boruvka_mst(g::AG::(!IsDirected), 
+        distmx::AbstractMatrix{T} = weights(g); 
         minimize = true) where {T<:Real,U,AG<:AbstractGraph{U}}
 
-    djset = IntDisjointSets(nv(graph))
+    djset = IntDisjointSets(nv(g))
     # maximizing Z is the same as minimizing -Z
     # mode will indicate the need for the -1 multiplication
-    mode = (-1)^(minimize ? 0 : 1)
+    mode = minimize ? 1 : -1
 
-    mst = Vector{edgetype(graph)}()
-    sizehint!(mst, nv(graph) - 1)
+    mst = Vector{edgetype(g)}()
+    sizehint!(mst, nv(g) - 1)
     weight = zero(T)
-
+    
     while true
     
-        cheapest = Vector{Union{edgetype(graph), Nothing}}(nothing, nv(graph))
+        cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
     
         # find cheapest edge that connects two components 
         found_edge = false
-        for edge in edges(graph)
+        for edge in edges(g)
             set1 = find_root(djset, src(edge))
             set2 = find_root(djset, dst(edge))
     
@@ -55,7 +55,7 @@ function boruvka_mst end
         !found_edge && break
     
         # add cheapest edges to the tree
-        for v in vertices(graph)
+        for v in vertices(g)
     
             if cheapest[v] !== nothing
     
@@ -69,5 +69,5 @@ function boruvka_mst end
         end
     end
     
-    return (mst=mst,weight=weight)
+    return (mst=mst, weight=weight)
 end
