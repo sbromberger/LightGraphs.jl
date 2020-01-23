@@ -10,4 +10,9 @@
           @inferred(a_star(g, 1, 4, d2))
       @test isempty(@inferred(a_star(dg, 4, 1)))
     end
+
+    # test for #1258
+    g = complete_graph(4)
+    w = float([1 1 1 4; 1 1 1 1; 1 1 1 1; 4 1 1 1])
+    @test length(a_star(g, 1, 4, w)) == 2
 end
