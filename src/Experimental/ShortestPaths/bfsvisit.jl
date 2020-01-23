@@ -4,9 +4,10 @@ abstract type AbstractTraversalState end
 
 struct DefaultTraversalState <: AbstractTraversalState end
 
-function bfs_visit(
+function traverse_graph(
     g::AbstractGraph{U},
     ss::AbstractVector{U},
+    alg::BFS;
     previsitfn::Function = nop,
     newvisitfn::Function = nop,
     visitfn::Function = nop,
@@ -31,24 +32,44 @@ function bfs_visit(
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            previsitfn(v)
+            previsitfn(state, v)
             @inbounds @simd for i in outneighbors(g, v)
                 if !visited[i]
-                    newvisitfn(v, i)
+                    newvisitfn(state, v, i)
                     push!(next_level, i)
                     dists[i] = n_level
                     parents[i] = v
                     visited[i] = true
                 end
-                visitfn(v, i)
+                visitfn(state, v, i)
             end
-            postvisitfn(v)
+            postvisitfn(state, v)
         end
         n_level += one(U)
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg=BFS().sort_alg)
+        sort!(cur_level, alg=alg.sort_alg)
     end
-    return BFSResult(parents, dists)
+    return state
 end
 
+struct VisitState{T<:Integer} <: AbstractTraversalState
+    visited::Vector{T}
+end
+
+function visited_vertices(
+    g::AbstractGraph{U},
+    ss::AbstractVector{U},
+    alg::BFS
+    ) where U<:Integer
+
+    v = Vector{U}()
+    sizehint!(v, nv(g))  # actually just the largest connected component, but we'll use this.
+    state = VisitState(v)
+
+    @inline newvisitfn!(state, v, i) = push!(state.visited, i)
+
+    traverse_graph(g, ss, BFS(); state=state, newvisitfn=newvisitfn!)
+
+    return state.visited
+end

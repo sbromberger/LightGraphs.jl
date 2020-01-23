@@ -200,6 +200,6 @@ export ShortestPathAlgorithm
 export paths, dists, shortest_paths, has_negative_weight_cycle
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
-export bfs_visit, AbstractTraversalState, DefaultTraversalState
+export traverse_graph, AbstractTraversalState, DefaultTraversalState, visited_vertices
 
 end  # module
