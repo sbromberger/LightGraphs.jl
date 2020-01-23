@@ -43,8 +43,9 @@ function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::I
     storage[neighs] .= true
 
     @inbounds for i in neighs
+        i == v && continue
         @inbounds for j in neighbors(g, i)
-            if (i != j) && storage[j]
+            if (j != v) && (i != j) && storage[j]
                 tcount += 1
             end
         end
