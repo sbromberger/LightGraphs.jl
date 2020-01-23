@@ -13,50 +13,42 @@ The algorithm requires that all edges have different weights to correctly genera
 
 function boruvka_mst end 
 
-@traitfn function boruvka_mst(g::AG::(!IsDirected), 
-        distmx::AbstractMatrix{T} = weights(g); 
-        minimize = true) where {T<:Real,U,AG<:AbstractGraph{U}}
+@traitfn function boruvka_mst(g::AG::(!IsDirected),
+        distmx::AbstractMatrix{T} = weights(g);
+        minimize = true) where {T<:Real, U, AG<:AbstractGraph{U}}
 
     djset = IntDisjointSets(nv(g))
     # maximizing Z is the same as minimizing -Z
     # mode will indicate the need for the -1 multiplication
     mode = minimize ? 1 : -1
-
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nv(g) - 1)
     weight = zero(T)
-    while true
     
+    while true
         cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
-        # find cheapest edge that connects two components 
+        # find cheapest edge that connects two components
         found_edge = false
         for edge in edges(g)
             set1 = find_root(djset, src(edge))
             set2 = find_root(djset, dst(edge))
-    
             if set1 != set2
                 found_edge = true
-    
                 e1 = cheapest[set1]
-                if e1===nothing || distmx[src(e1), dst(e1)]*mode > distmx[src(edge), dst(edge)]*mode
+                if e1 === nothing || distmx[src(e1), dst(e1)] * mode > distmx[src(edge), dst(edge)] * mode
                     cheapest[set1] = edge
                 end
-    
                 e2 = cheapest[set2]
-                if e2===nothing || distmx[src(e2), dst(e2)]*mode > distmx[src(edge), dst(edge)]*mode
+                if e2===nothing || distmx[src(e2), dst(e2)] * mode > distmx[src(edge), dst(edge)] * mode
                     cheapest[set2] = edge
                 end
             end
         end
-
-        #no more edges between two components    
+        #no more edges between two components
         !found_edge && break
-    
         # add cheapest edges to the tree
         for v in vertices(g)
-    
             if cheapest[v] !== nothing
-    
                 edge = cheapest[v]        
                 if !in_same_set(djset, src(edge), dst(edge))
                     weight += distmx[src(edge), dst(edge)]
@@ -66,6 +58,5 @@ function boruvka_mst end
             end
         end
     end
-    
     return (mst=mst, weight=weight)
 end
