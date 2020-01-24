@@ -1,9 +1,5 @@
-import Base.Sort, Base.Sort.Algorithm
-import Base:sort!
-struct NOOPSortAlg <: Base.Sort.Algorithm end
-const NOOPSort = NOOPSortAlg()
+using LightGraphs.Experimental.Traversals
 
-sort!(x, ::Integer, ::Integer, ::ShortestPaths.NOOPSortAlg, ::Base.Sort.Ordering) = x
 
 """
     struct BFS <: ShortestPathAlgorithm
@@ -24,11 +20,24 @@ but no distance matrix is specified.
 - (optional) multiple sources
 - all destinations
 """
-struct BFS{T<:Base.Sort.Algorithm} <: ShortestPathAlgorithm
-    sort_alg::T
+struct BFS{T} <: ShortestPathAlgorithm
+    traversal::T
 end
 
-BFS() = BFS(NOOPSort)
+BFS() = BFS(Traversals.BFS())
+
+mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
+    parents::Vector{U}
+    dists::Vector{U}
+    n_level::U
+end
+
+@inline initfn!(s::BFSSPState, u) = s.dists[u] = 0
+@inline function newvisitfn!(s::BFSSPState, u, v) 
+        s.dists[v] = s.n_level
+        s.parents[v] = u
+end
+@inline postlevelfn!(s::BFSSPState{U}) where U = s.n_level += one(U)
 
 struct BFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
@@ -38,42 +47,19 @@ end
 function shortest_paths(
     g::AbstractGraph{U},
     ss::AbstractVector{U},
-    alg::BFS,
-    ) where U<:Integer
-
+    alg::BFS
+   ) where U <: Integer
 
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
-    visited = falses(n)
-    n_level = one(U)
-    cur_level = Vector{U}()
-    sizehint!(cur_level, n)
-    next_level = Vector{U}()
-    sizehint!(next_level, n)
-    @inbounds for s in ss
-        dists[s] = zero(U)
-        visited[s] = true
-        push!(cur_level, s)
-    end
-    while !isempty(cur_level)
-        @inbounds for v in cur_level
-            @inbounds @simd for i in outneighbors(g, v)
-                if !visited[i]
-                    push!(next_level, i)
-                    dists[i] = n_level
-                    parents[i] = v
-                    visited[i] = true
-                end
-            end
-        end
-        n_level += one(U)
-        empty!(cur_level)
-        cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg=alg.sort_alg)
-    end
-    return BFSResult(parents, dists)
+    state = BFSSPState(parents, dists, one(U))
+    Traversals.traverse_graph(g, ss, alg.traversal, state)
+    return BFSResult(state.parents, state.dists)
 end
+
+
+
 
 shortest_paths(g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS) where {U<:Integer} = shortest_paths(g, U.(ss), alg)
 shortest_paths(g::AbstractGraph{U}, s::Integer, alg::BFS) where {U<:Integer} = shortest_paths(g, Vector{U}([s]), alg)

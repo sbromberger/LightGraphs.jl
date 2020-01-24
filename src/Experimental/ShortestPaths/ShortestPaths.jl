@@ -1,11 +1,12 @@
 module ShortestPaths
 using SparseArrays: sparse
 using LightGraphs
+using LightGraphs.Experimental.Traversals
 using LightGraphs: AbstractGraph, AbstractEdge
 using LightGraphs.SimpleGraphs: AbstractSimpleGraph
-
 using DataStructures:PriorityQueue, enqueue!, dequeue!
 
+import LightGraphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
 
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment
@@ -55,7 +56,6 @@ include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
-include("bfsvisit.jl")
 
 
 ################################
@@ -200,6 +200,5 @@ export ShortestPathAlgorithm
 export paths, dists, shortest_paths, has_negative_weight_cycle
 export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
-export traverse_graph, AbstractTraversalState, DefaultTraversalState, visited_vertices, bfssp
 
 end  # module
