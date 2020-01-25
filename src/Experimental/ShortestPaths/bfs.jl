@@ -25,6 +25,7 @@ struct BFS{T} <: ShortestPathAlgorithm
 end
 
 BFS() = BFS(Traversals.BFS())
+BFS(a::Base.Sort.Algorithm) = BFS(Traversals.BFS(a))
 
 mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
     parents::Vector{U}
@@ -54,7 +55,7 @@ function shortest_paths(
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
     state = BFSSPState(parents, dists, one(U))
-    Traversals.traverse_graph(g, ss, alg.traversal, state)
+    Traversals.traverse_graph!(g, ss, alg.traversal, state)
     return BFSResult(state.parents, state.dists)
 end
 

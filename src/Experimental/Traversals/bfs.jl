@@ -124,9 +124,9 @@ mutable struct DistanceState{T<:Integer} <: AbstractTraversalState
     n_level::T
 end
 
-@inline initfn!(s::GDistanceState{T}, u) where T = s.distances[u] = zero(T)
-@inline newvisitfn!(s::GDistanceState, u, v) = s.distances[v] = s.n_level
-@inline postlevelfn!(s::GDistanceState{T}) where T = s.n_level += one(T)
+@inline initfn!(s::DistanceState{T}, u) where T = s.distances[u] = zero(T)
+@inline newvisitfn!(s::DistanceState, u, v) = s.distances[v] = s.n_level
+@inline postlevelfn!(s::DistanceState{T}) where T = s.n_level += one(T)
 
 """
     distances(g, s; sort_alg=QuickSort)
