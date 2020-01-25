@@ -1,5 +1,3 @@
-# Code in this file inspired by NetworkX.
-
 """
     core_number(g)
 
@@ -39,35 +37,50 @@ julia> core_number(g)
 """
 function core_number(g::AbstractGraph{T}) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
-    degrees = degree(g)
-    vs = sortperm(degrees)
-    bin_boundaries = [1]
-    curr_degree = 0
-    for (i, v) in enumerate(vs)
-        if degrees[v] > curr_degree
-            append!(bin_boundaries, repeat([i], (degrees[v] - curr_degree)))
-            curr_degree = degrees[v]
-        end
+    n = nv(g)
+    deg = T.(degree(g)) # degree should really return T.
+    maxdeg = maximum(deg)
+    bin = zeros(T, maxdeg+1)
+    vert = zeros(T, n)
+    pos = zeros(T, n)
+    for v = 1:n
+        bin[deg[v]+1] += one(T)
     end
-    vertex_pos = sortperm(vs)
-    # initial guesses for core is degree
-    core = degrees
-    nbrs = [Set(all_neighbors(g, v)) for v in vertices(g)]
-    for v in vs
-        for u in nbrs[v]
-            if core[u] > core[v]
-                pop!(nbrs[u], v)
-                pos = vertex_pos[u]
-                bin_start = bin_boundaries[core[u] + 1]
-                vertex_pos[u] = bin_start
-                vertex_pos[vs[bin_start]] = pos
-                vs[bin_start], vs[pos] = vs[pos], vs[bin_start]
-                bin_boundaries[core[u] + 1] += 1
-                core[u] -= 1
+    start = one(T)
+    for d = zero(T):maxdeg
+        num = bin[d+1]
+        bin[d+1] = start
+        start += num
+    end
+    for v in vertices(g)
+        pos[v] = bin[deg[v]+1]
+        vert[pos[v]] = v
+        bin[deg[v]+1] += one(T)
+    end
+    for d = maxdeg:-1:one(T)
+       bin[d+1] = bin[d]
+    end
+    bin[1] = one(T)
+    for i = 1:n
+        v = vert[i]
+        for u in all_neighbors(g, v)
+            if deg[u] > deg[v]
+                du = deg[u]
+                pu = pos[u]
+                pw = bin[du+1]
+                w = vert[pw]
+                if u != w
+                    pos[u] = pw
+                    vert[pu] = w
+                    pos[w] = pu
+                    vert[pw] = u
+                end
+                bin[du+1] += one(T)
+                deg[u] -= one(T)
             end
         end
     end
-    return core
+    return deg
 end
 
 """
