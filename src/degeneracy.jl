@@ -40,6 +40,8 @@ julia> core_number(g)
 function core_number(g::AbstractGraph{T}) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     degrees = degree(g)
+    visited = Set{Int}() # we'll use this repeatedly.
+    sizehint!(visited, maximum(degrees))
     vs = sortperm(degrees)
     bin_boundaries = [1]
     curr_degree = 0
@@ -52,11 +54,11 @@ function core_number(g::AbstractGraph{T}) where T
     vertex_pos = sortperm(vs)
     # initial guesses for core is degree
     core = degrees
-    nbrs = [Set(all_neighbors(g, v)) for v in vertices(g)]
     for v in vs
-        for u in nbrs[v]
-            if core[u] > core[v]
-                pop!(nbrs[u], v)
+        empty!(visited)
+        for u in all_neighbors(g, v)
+            if core[u] > core[v] && !(u ∈ visited)
+                push!(visited, u)
                 pos = vertex_pos[u]
                 bin_start = bin_boundaries[core[u] + 1]
                 vertex_pos[u] = bin_start
