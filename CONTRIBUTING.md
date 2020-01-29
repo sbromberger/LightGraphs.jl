@@ -96,4 +96,4 @@ Branch pr/999 set up to track remote branch pr/999 from origin.
 Switched to a new branch 'pr/999'
 ```
 
-Now you can test a PR by running `git fetch && git checkout pr/PRNUMBER && julia -e 'Pkg.test("LightGraphs")`
+Now you can test a PR by running `git fetch && git checkout pr/PRNUMBER && julia -e 'Pkg.test("LightGraphs")'`
