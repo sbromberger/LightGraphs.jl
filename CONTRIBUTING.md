@@ -3,12 +3,13 @@
 We welcome all possible contributors and ask that you read these guidelines before starting to work on this project. Following these guidelines will reduce friction and improve the speed at which your code gets merged.
 
 ## Bug reports
-If you notice code that is incorrect/crashes/too slow please file a bug report. The report should be raised as a github issue with a minimal working example that reproduces the error message. The example should include any data needed. If the problem is incorrectness, then please post the correct result along with an incorrect result.
+If you notice code that crashes, is incorrect, or is too slow, please file a bug report. The report should be raised as a github issue with a minimal working example that reproduces the condition. The example should include any data needed. If the problem is incorrectness, then please post the correct result along with an incorrect result.
 
 Please include version numbers of all relevant libraries and Julia itself.
 
 ## Development guidelines
 
+- Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
 - PRs should contain one logical enhancement to the codebase.
 - Squash commits in a PR.
 - Open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
@@ -18,13 +19,12 @@ Please include version numbers of all relevant libraries and Julia itself.
     - PRs introducing dependencies on third-party non-core "leaf" packages (no subdependencies except for Julia Base / Standard Library packages) are less ok.
     - PRs introducing dependencies on third-party non-core non-leaf packages (that is, third-party packages that have dependencies on one or more other third-party packages) require strict scrutiny and will likely not be accepted without some compelling reason (urgent bugfix or much-needed functionality).
 
-- Put type assertions on all function arguments where conflict may arise (use abstract types, Union, or Any if necessary).
-- If the algorithm was presented in a paper, include a reference to the paper (i.e. a proper academic citation along with an eprint link).
-- Take steps to ensure that code works on graphs with multiple connected components efficiently.
-- Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
+- Put type assertions on all function arguments where conflict may arise (use abstract types, `Union`, or `Any` if necessary).
+- If the algorithm was presented in a paper, include a reference to the paper (_e.g._, a proper academic citation along with an eprint link).
+- Take steps to ensure that code works correctly and efficiently on disconnected graphs.
 - We can accept code that does not work for directed graphs as long as it comes with an explanation of what it would take to make it work for directed graphs.
-- Style point: prefer the short circuiting conditional over if/else when convenient, and where state is not explicitly being mutated (*e.g.*, `condition && error("message")` is good; `condition && i += 1` is not).
-- When possible write code to reuse memory. For example:
+- Prefer the short circuiting conditional over `if`/`else` when convenient, and where state is not explicitly being mutated (*e.g.*, `condition && error("message")` is good; `condition && i += 1` is not).
+- Write code to reuse memory wherever possible. For example:
 ```julia
 function f(g, v)
     storage = Vector{Int}(undef, nv(g))
@@ -53,7 +53,7 @@ end
 This gives users the option of reusing memory and improving performance.
 
 ### Minimizing use of internal struct fields
-Since LightGraphs supports multiple implementations of the graph datastructure using the `AbstractGraph` [type](https://juliagraphs.github.io/LightGraphs.jl/latest/types.html#AbstractGraph-Type-1) you should refrain as much as reasonably practicable from using the internal fields of structs such as `fadjlist`. Instead, you should use the functions provided in the api. Code that is instrumental to defining a concrete graph type can use the internal structure of that type for example graph generators in `/src/StaticGraphs/generators/staticgraphs.jl` use the `fadjlist` field in order to construct graphs efficiently.
+Since LightGraphs supports multiple implementations of the graph datastructure using the `AbstractGraph` [type](https://juliagraphs.github.io/LightGraphs.jl/latest/types.html#AbstractGraph-Type-1), you should refrain from using the internal fields of structs such as `fadjlist`. Instead, you should use the functions provided in the api. Code that is instrumental to defining a concrete graph type can use the internal structure of that type for example graph generators in `/src/StaticGraphs/generators/staticgraphs.jl` use the `fadjlist` field in order to construct graphs efficiently.
 
 ## Git usage
 
@@ -96,4 +96,4 @@ Branch pr/999 set up to track remote branch pr/999 from origin.
 Switched to a new branch 'pr/999'
 ```
 
-Now you can test a PR by running `git fetch && git checkout pr/PRNUMBER && julia -e 'Pkg.test("LightGraphs")`
+Now you can test a PR by running `git fetch && git checkout pr/PRNUMBER && julia -e 'Pkg.test("LightGraphs")'`
