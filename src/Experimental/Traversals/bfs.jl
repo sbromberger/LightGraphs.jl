@@ -20,7 +20,7 @@ BFS() = BFS(NOOPSort)
 """
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector{U},
+    ss::AbstractVector,
     alg::BFS,
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
@@ -34,9 +34,10 @@ function traverse_graph!(
     next_level = Vector{U}()
     sizehint!(next_level, n)
     @inbounds for s in ss
-        visited[s] = true
-        push!(cur_level, s)
-        initfn!(state, s)
+        us = U(s)
+        visited[us] = true
+        push!(cur_level, us)
+        initfn!(state, us)
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
@@ -59,8 +60,8 @@ function traverse_graph!(
     return state
 end
 
-traverse_graph!(g, s::Integer, alg, state, neighborfn) = traverse_graph!(g, [s], alg, state, neighborfn)
-traverse_graph!(g, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
+traverse_graph!(g::AbstractGraph, s::Integer, alg, state, neighborfn) = traverse_graph!(g, [s], alg, state, neighborfn)
+traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
 
 struct VisitState{T<:Integer} <: AbstractTraversalState
     visited::Vector{T}
@@ -78,17 +79,19 @@ starting at vertex `s` (vertices `ss`).
 """
 function visited_vertices(
     g::AbstractGraph{U},
-    ss::AbstractVector{U},
+    ss::AbstractVector,
     alg::TraversalAlgorithm
     ) where U<:Integer
 
     v = Vector{U}()
     sizehint!(v, nv(g))  # actually just the largest connected component, but we'll use this.
-    s = VisitState(v)
-    traverse_graph!(g, ss, alg, s)
+    state = VisitState(v)
+    traverse_graph!(g, ss, alg, state)
 
     return state.visited
 end
+
+visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = visited_vertices(g, [s], alg)
 
 """
     parents(g, s, alg, dir=:out)
@@ -129,29 +132,15 @@ end
 @inline postlevelfn!(s::DistanceState{T}) where T = s.n_level += one(T)
 
 """
-    distances(g, s; sort_alg=QuickSort)
-    distances(g, ss; sort_alg=QuickSort)
+    distances(g, s, alg)
+    distances(g, ss, alg)
 
-Return a vector filled with the geodesic distances of vertices in  `g` from vertex
-`s` / unique vertices `ss`. For vertices in disconnected components the default
-distance is `typemax(T)`.
-
-An optional sorting algorithm may be specified (see Performance section).
-
-### Performance
-`gdistances` uses `QuickSort` internally for its default sorting algorithm, since it performs
-the best of the algorithms built into Julia Base. However, passing a `RadixSort` (available via
-[SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
-significant performance improvements on larger graphs.
+Return a vector filled with the geodesic distances of vertices in  `g` from vertex `s` / unique vertices `ss`
+using traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s; sort_alg=QuickSort) where T
+function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm) where T
     d = fill(typemax(T), nv(g))
-    state = DistanceState(d, 1)
-    traverse_graph!(g, s, BFS(sort_alg), state)
+    state = DistanceState(d, one(T))
+    traverse_graph!(g, s, alg, state)
     return state.distances
 end
-
-
-    
-
-
