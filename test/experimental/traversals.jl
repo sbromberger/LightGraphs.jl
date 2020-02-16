@@ -4,7 +4,6 @@ const LET = LightGraphs.Experimental.Traversals
     @testset "BFS" begin
         g1= smallgraph(:house)
         dg1 = path_digraph(6); add_edge!(dg1, 2, 6)
-        dg2 = SimpleDiGraph(4); add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
 
         b1 = LET.BFS()
         @test b1 == LET.BFS(LET.NOOPSort)
