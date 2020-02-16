@@ -29,16 +29,20 @@ are listed in order of occurrence in the traversal:
 - `newvisitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`: runs when a new neighbor `v` of vertex `u` is discovered.
 - `postvisitfn!(<:AbstractTraversalState, u::Integer)`: runs after neighborhood discovery for vertex `u`.
 - `postlevelfn!(<:AbstractTraversalState)`: runs after each traversal level.
+
+Each of these functions should return a boolean. If the return value of the function is `false`, the traversal will return the state
+immediately. Otherwise, the traversal will continue.
+
 For better performance, use the `@inline` directive and make your functions branch-free.
 """
 abstract type AbstractTraversalState end
 
-@inline initfn!(::AbstractTraversalState, u) = nothing
-@inline previsitfn!(::AbstractTraversalState, u) = nothing
-@inline newvisitfn!(::AbstractTraversalState, u, v) = nothing
-@inline visitfn!(::AbstractTraversalState, u, v) = nothing
-@inline postvisitfn!(::AbstractTraversalState, u) = nothing
-@inline postlevelfn!(::AbstractTraversalState) = nothing
+@inline initfn!(::AbstractTraversalState, u) = true
+@inline previsitfn!(::AbstractTraversalState, u) = true
+@inline newvisitfn!(::AbstractTraversalState, u, v) = true
+@inline visitfn!(::AbstractTraversalState, u, v) = true
+@inline postvisitfn!(::AbstractTraversalState, u) = true
+@inline postlevelfn!(::AbstractTraversalState) = true
 @inline neighborfn(::AbstractTraversalState) = outneighbors
 
 ##############
@@ -51,8 +55,14 @@ struct VisitState{T<:Integer} <: AbstractTraversalState
     visited::Vector{T}
 end
 
-@inline initfn!(s::VisitState, u) = push!(s.visited, u)
-@inline newvisitfn!(s::VisitState, u, v) = push!(s.visited, v)
+@inline function initfn!(s::VisitState, u)
+    push!(s.visited, u)
+    return true
+end
+@inline function newvisitfn!(s::VisitState, u, v)
+    push!(s.visited, v)
+    return true
+end
 
 """
     visited_vertices(g, s, alg)
@@ -97,7 +107,11 @@ mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
 end
 
-@inline newvisitfn!(s::ParentState, u, v) = s.parents[v] = u
+@inline function newvisitfn!(s::ParentState, u, v) 
+    s.parents[v] = u
+    return true
+end
+
 function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn::Function) where T
     parents = zeros(T, nv(g))
     state = ParentState(parents)

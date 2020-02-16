@@ -16,7 +16,8 @@ BFS() = BFS(NOOPSort)
     traverse_graph!(g, s, alg, state, neighborfn=outneighbors)
     traverse_graph!(g, ss, alg, state, neighborfn=outneighbors)
 
-    Traverse a graph `g` starting at vertex `s` / vertices `ss` using algorithm `alg`, maintaining state in [`AbstractTraversalState`](@ref) `state`. Next vertices to be visited are determined by `neighborfn` (default `outneighbors`).
+    Traverse a graph `g` starting at vertex `s` / vertices `ss` using algorithm `alg`, maintaining state in [`AbstractTraversalState`](@ref) `state`. Next vertices to be visited are determined by `neighborfn` (default `outneighbors`). Return `true` if traversal finished; `false` if one of the visit functions caused an early termination.
+    
 """
 function traverse_graph!(
     g::AbstractGraph{U},
@@ -37,27 +38,27 @@ function traverse_graph!(
         us = U(s)
         visited[us] = true
         push!(cur_level, us)
-        initfn!(state, us)
+        initfn!(state, us) || return false
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            previsitfn!(state, v)
+            previsitfn!(state, v) || return false
             @inbounds @simd for i in neighborfn(g, v)
-                visitfn!(state, v, i)
+                visitfn!(state, v, i) || return false
                 if !visited[i]
-                    newvisitfn!(state, v, i)
+                    newvisitfn!(state, v, i) || return false
                     push!(next_level, i)
                     visited[i] = true
                 end
             end
-            postvisitfn!(state, v)
+            postvisitfn!(state, v) || return false
         end
-        postlevelfn!(state)
+        postlevelfn!(state) || return false
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
         sort!(cur_level, alg=alg.sort_alg)
     end
-    return state
+    return true
 end
 
 mutable struct DistanceState{T<:Integer} <: AbstractTraversalState
@@ -65,9 +66,18 @@ mutable struct DistanceState{T<:Integer} <: AbstractTraversalState
     n_level::T
 end
 
-@inline initfn!(s::DistanceState{T}, u) where T = s.distances[u] = zero(T)
-@inline newvisitfn!(s::DistanceState, u, v) = s.distances[v] = s.n_level
-@inline postlevelfn!(s::DistanceState{T}) where T = s.n_level += one(T)
+@inline function initfn!(s::DistanceState{T}, u) where T 
+    s.distances[u] = zero(T)
+    return true
+end
+@inline function newvisitfn!(s::DistanceState, u, v) 
+    s.distances[v] = s.n_level
+    return true
+end
+@inline function postlevelfn!(s::DistanceState{T}) where T
+    s.n_level += one(T)
+    return true
+end
 
 """
     distances(g, s, alg=BFS())
