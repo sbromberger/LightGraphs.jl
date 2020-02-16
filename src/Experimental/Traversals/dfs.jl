@@ -99,24 +99,18 @@ mutable struct CycleState{T<:Integer} <: AbstractTraversalState
     w::T
 end
 
-# 1 = visited
-# 2 = vcolor 2
-# @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
 @inline function previsitfn!(s::CycleState{T}, u) where T
     s.w = 0
     return true
 end
 @inline function visitfn!(s::CycleState{T}, u, v) where T 
-    # println("visitfn $s, $u, $v")
     return s.vcolor[v] != one(T)
 end
 @inline function newvisitfn!(s::CycleState{T}, u, v) where T 
-    # println("newvisitfn $s, $u, $v")
     s.w = v
     return true
 end
 @inline function postvisitfn!(s::CycleState{T}, u) where T 
-    # println("postvisitfn $s $u")
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else

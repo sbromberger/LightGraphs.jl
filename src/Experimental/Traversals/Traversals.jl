@@ -120,9 +120,32 @@ function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neigh
     return state.parents
 end
 
+
 include("bfs.jl")
 include("dfs.jl")
 
-export visited_vertices, parents, distances, topological_sort
+function tree(p::AbstractVector{T}) where T <: Integer
+    n = T(length(p))
+    t = DiGraph{T}(n)
+    for (v, u) in enumerate(p)
+        if u > zero(T) && u != v
+            add_edge!(t, u, v)
+        end
+    end
+    return t
+end
+
+"""
+    tree(g, s)
+
+Return an ordered vector of vertices representing a directed acyclic graph based on
+depth-first traversal of the graph `g` starting with source vertex `s`.
+"""
+function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors)
+    p = parents(g, s, alg, neighborfn)
+    return tree(p)
+end
+
+export visited_vertices, parents, distances, topological_sort, tree
 
 end  # module
