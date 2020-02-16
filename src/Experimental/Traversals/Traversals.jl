@@ -18,17 +18,16 @@ abstract type TraversalAlgorithm end
     abstract type AbstractTraversalState
 
 `AbstractTraversalState` is the abstract type used to hold mutable states
-for various traversal algorithms (see `traverse_graph`](@ref)).
+for various traversal algorithms (see [`traverse_graph!`](@ref)).
 
 When creating concrete types, you should override the following functions where relevant. These functions
 are listed in order of occurrence in the traversal:
-- `neighborfn(<:AbstractTraversalState)`: use `outneighbors` (default) or `inneighbors`.
-- `initfn!(<:AbstractTraversalState, u::Integer)`: runs prior to traversal, used to set initial state.
-- `previsitfn!(<:AbstractTraversalState, u::Integer)`: runs prior to neighborhood discovery for vertex `u`.
-- `visitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`: runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
-- `newvisitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`: runs when a new neighbor `v` of vertex `u` is discovered.
-- `postvisitfn!(<:AbstractTraversalState, u::Integer)`: runs after neighborhood discovery for vertex `u`.
-- `postlevelfn!(<:AbstractTraversalState)`: runs after each traversal level.
+- [`initfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to traversal, used to set initial state.
+- [`previsitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
+- [`visitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
+- [`newvisitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs when a new neighbor `v` of vertex `u` is discovered.
+- [`postvisitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs after neighborhood discovery for vertex `u`.
+- [`postlevelfn!(<:AbstractTraversalState)`](@ref): runs after each traversal level.
 
 Each of these functions should return a boolean. If the return value of the function is `false`, the traversal will return the state
 immediately. Otherwise, the traversal will continue.
@@ -37,17 +36,67 @@ For better performance, use the `@inline` directive and make your functions bran
 """
 abstract type AbstractTraversalState end
 
+"""
+    initfn!(state, u)
+
+Modify [`AbstractTraversalState`](@ref) `state` on initialization of traversal
+with source vertices, and return `true` if successful; `false` otherwise.
+`initfn!` will be called once for each vertex passed to [`traverse_graph!`](@ref).
+"""
 @inline initfn!(::AbstractTraversalState, u) = true
+
+"""
+    previsitfn!(state, u)
+
+Modify [`AbstractTraversalState`](@ref) `state` before examining neighbors of vertex `u`,
+and return `true` if successful; `false` otherwise.
+"""
 @inline previsitfn!(::AbstractTraversalState, u) = true
+
+"""
+    newvisitfn!(state, u, v)
+
+Modify [`AbstractTraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered,
+and return `true` if successful; `false` otherwise.
+"""
 @inline newvisitfn!(::AbstractTraversalState, u, v) = true
+
+"""
+    visitfn!(state, u, v)
+
+Modify [`AbstractTraversalState`](@ref) `state` when the edge between `u` and `v` is encountered,
+and return `true` if successful; `false` otherwise. Note: `visitfn!` may be called multiple times
+per edge, depending on the traversal algorithm, for a function that operates on the first occurrence
+only, use [`newvisitfn!`](@ref).
+"""
 @inline visitfn!(::AbstractTraversalState, u, v) = true
+
+"""
+    postvisitfn!(state, u)
+
+Modify [`AbstractTraversalState`](@ref) `state` after having examined all neighbors of vertex `u`,
+and return `true` if successful; `false` otherwise.
+"""
 @inline postvisitfn!(::AbstractTraversalState, u) = true
+"""
+    postlevelfn!(state)
+
+Modify [`AbstractTraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm,
+and return `true` if successful; `false` otherwise.
+"""
 @inline postlevelfn!(::AbstractTraversalState) = true
-@inline neighborfn(::AbstractTraversalState) = outneighbors
 
 ##############
 # functions common to both BFS and DFS
 ##############
+"""
+    traverse_graph!(g, s, alg, state, neighborfn=outneighbors)
+    traverse_graph!(g, ss, alg, state, neighborfn=outneighbors)
+
+Traverse a graph `g` from source vertex `s` / vertices `ss` keeping track of `state`. Return `true` if
+traversal finished normally; `false` if one of the visit functions returned `false` (see )
+
+"""
 traverse_graph!(g::AbstractGraph, s::Integer, alg, state, neighborfn) = traverse_graph!(g, [s], alg, state, neighborfn)
 traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
 
@@ -87,21 +136,6 @@ end
 
 visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = visited_vertices(g, [s], alg)
 
-"""
-    parents(g, s, alg, dir=:out)
-
-Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
-vertex `s`. If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are acceptable
-values).
-
-### Performance
-This implementation is designed to perform well on large graphs. There are
-implementations which are marginally faster in practice for smaller graphs,
-but the performance improvements using this implementation on large graphs
-can be significant.
-"""
-parents(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, dir = :out) =
-    (dir == :out) ? parents(g, s, alg, outneighbors) : parents(g, s, alg, inneighbors)
 
 mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
@@ -112,7 +146,20 @@ end
     return true
 end
 
-function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn::Function) where T
+"""
+    parents(g, s, alg, neighborfn=outneighbors)
+
+Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
+vertex `s`. If `neighborfn` is specified, use the corresponding neighbor-generation function ([`inneighbors`](@ref)r
+and [`outneighbors`](@ref) are valid values).
+
+### Performance
+This implementation is designed to perform well on large graphs. There are
+implementations which are marginally faster in practice for smaller graphs,
+but the performance improvements using this implementation on large graphs
+can be significant.
+"""
+function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn=outneighbors) where T
     parents = zeros(T, nv(g))
     state = ParentState(parents)
 
@@ -124,6 +171,11 @@ end
 include("bfs.jl")
 include("dfs.jl")
 
+"""
+    tree(p)
+
+Return a directed acyclic graph based on a [`parents`](@ref) vector `p`.
+"""
 function tree(p::AbstractVector{T}) where T <: Integer
     n = T(length(p))
     t = DiGraph{T}(n)
@@ -136,10 +188,10 @@ function tree(p::AbstractVector{T}) where T <: Integer
 end
 
 """
-    tree(g, s)
+    tree(g, s, alg, neighborfn=outneighbors)
 
-Return an ordered vector of vertices representing a directed acyclic graph based on
-depth-first traversal of the graph `g` starting with source vertex `s`.
+Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex `s`
+using algorithm `alg` with neighbor function `neighborfn`.
 """
 function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors)
     p = parents(g, s, alg, neighborfn)

@@ -1,6 +1,19 @@
 using LightGraphs.Experimental.Traversals
 const LET = LightGraphs.Experimental.Traversals
+struct DummyTraversalState <: LET.AbstractTraversalState end
+
 @testset "Traversals" begin
+    d = DummyTraversalState()
+    @test LET.initfn!(d, 1) == true
+    @test LET.previsitfn!(d, 1) == true
+    @test LET.visitfn!(d, 1, 2) == true
+    @test LET.newvisitfn!(d, 1, 2) == true
+    @test LET.postvisitfn!(d, 1) == true
+    @test LET.postlevelfn!(d) == true
+
+    x = [3,1,2]
+    @test sort!(x, 3, 1, LET.NOOPSort, Base.Sort.ForwardOrdering()) == x
+
     @testset "BFS" begin
         g1= smallgraph(:house)
         dg1 = path_digraph(6); add_edge!(dg1, 2, 6)
@@ -86,6 +99,8 @@ const LET = LightGraphs.Experimental.Traversals
         end
         @testset "directed" begin
             for dg in testgraphs(dg1)
+                dg2 = copy(dg)
+                add_edge!(dg2, 6, 1)
                 v1 = @inferred LET.visited_vertices(dg, 1, d)
                 v2 = @inferred LET.visited_vertices(dg, [1], d)
                 @test v1 == v2 == [1, 2, 4, 5, 3, 6, 7]
@@ -95,10 +110,14 @@ const LET = LightGraphs.Experimental.Traversals
 
                 ts1 = @inferred LET.topological_sort(dg)
                 @test ts1 == [1, 3, 7, 6, 2, 5, 4]
+                @test_throws LET.CycleError topological_sort(dg2)
 
                 t1 = @inferred LET.tree(dg, 2, d)
                 t2 = @inferred LET.tree(p1)
                 @test t1 == t2
+
+                @test !LET.is_cyclic(dg1)
+                @test LET.is_cyclic(dg2)
             end
         end
     end
