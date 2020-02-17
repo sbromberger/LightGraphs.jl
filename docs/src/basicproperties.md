@@ -13,7 +13,8 @@ The following is an overview of functions for accessing graph properties. For fu
 Note: to use the `has_edge(g, e)` method safely, it is important to understand the conditions under which edges are equal to each other. These conditions are defined by the `has_edge(g::G,e)` method **as defined** by the graph type `G`. The default behavior is to check `has_edge(g,src(e),dst(e))`. This distinction exists to allow new graph types such as MetaGraphs or MultiGraphs to distinguish between edges with the same source and destination but potentially different properties.
 - `has_self_loops` Checks for self-loops.
 - `is_directed` Checks if graph is directed.
-- `eltype` Returns element type of graphs.
+- `eltype` Returns the element type of the graph.
+- `has_contiguous_vertices` Checks if contiguous vertices from one to `nv(g)` can be assumed for the graph type.
 
 ## Vertex Properties
 
