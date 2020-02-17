@@ -12,10 +12,10 @@ As such, *LightGraphs.jl* is the central package of the JuliaGraphs ecosystem. A
 
 ## Basic library examples
 
-The *LightGraphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `PathGraph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+The *LightGraphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `path_graph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia
-julia> g = PathGraph(6)
+julia> g = path_graph(6)
 
 # Number of vertices
 julia> nv(g)

@@ -4,7 +4,7 @@
     n = 10
     m = n * (n - 1) / 2
     c = ones(Int, n)
-    gint = CompleteGraph(n)
+    gint = complete_graph(n)
     for g in testgraphs(gint)
       @test @inferred(modularity(g, c)) == 0
     end
@@ -14,7 +14,7 @@
       @test @inferred(modularity(g, c)) == 0
     end
 
-    barbell = blockdiag(CompleteGraph(3), CompleteGraph(3))
+    barbell = blockdiag(complete_graph(3), complete_graph(3))
     add_edge!(barbell, 1, 4)
     c = [1, 1, 1, 2, 2, 2]
 

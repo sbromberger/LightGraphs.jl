@@ -79,8 +79,8 @@ function reverse end
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
-    h.fadjlist = deepcopy(g.badjlist)
-    h.badjlist = deepcopy(g.fadjlist)
+    h.fadjlist = deepcopy_adjlist(g.badjlist)
+    h.badjlist = deepcopy_adjlist(g.fadjlist)
     h.ne = gne
     return h
 end
@@ -287,7 +287,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where T <: AbstractGraph
+function union(g::T, h::T) where T <: AbstractSimpleGraph
     gnv = nv(g)
     hnv = nv(h)
 
@@ -320,7 +320,7 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = join(StarGraph(3), PathGraph(2))
+julia> g = join(star_graph(3), path_graph(2))
 {5, 9} undirected simple Int64 graph
 
 julia> collect(edges(g))
@@ -361,7 +361,7 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = crosspath(3, PathGraph(3))
+julia> g = crosspath(3, path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
@@ -383,7 +383,7 @@ julia> collect(edges(g))
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
-    p = PathGraph(len)
+    p = path_graph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
 end
@@ -458,7 +458,7 @@ Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = CycleGraph(4);
+julia> g = cycle_graph(4);
 
 julia> size(g, 1)
 4
@@ -494,14 +494,14 @@ Return the default adjacency matrix of `g`.
 """
 sparse(g::AbstractGraph) = adjacency_matrix(g)
 
-length(g::AbstractGraph) = nv(g) * nv(g)
+length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 issymmetric(g::AbstractGraph) = !is_directed(g)
 
 """
     cartesian_product(g, h)
 
-Return the (cartesian product)[https://en.wikipedia.org/wiki/Cartesian_product_of_graphs]
+Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
@@ -512,7 +512,7 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = cartesian_product(StarGraph(3), PathGraph(3))
+julia> g = cartesian_product(star_graph(3), path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
@@ -553,7 +553,7 @@ end
 """
     tensor_product(g, h)
 
-Return the (tensor product)[https://en.wikipedia.org/wiki/Tensor_product_of_graphs]
+Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
 ### Implementation Notes
@@ -564,7 +564,7 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = tensor_product(StarGraph(3), PathGraph(3))
+julia> g = tensor_product(star_graph(3), path_graph(3))
 {9, 8} undirected simple Int64 graph
 
 julia> collect(edges(g))
@@ -613,7 +613,7 @@ of `vlist`.
 
 ### Usage Examples
 ```doctestjl
-julia> g = CompleteGraph(10)
+julia> g = complete_graph(10)
 
 julia> sg, vmap = induced_subgraph(g, 5:8)
 
@@ -725,7 +725,7 @@ Create a new graph where all vertices in `vs` have been aliased to the same vert
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> collect(edges(g))
 4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
@@ -787,7 +787,7 @@ Supports [`SimpleGraph`](@ref) only.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(5);
+julia> g = path_graph(5);
 
 julia> collect(edges(g))
 4-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:

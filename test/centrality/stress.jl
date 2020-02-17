@@ -12,7 +12,7 @@
         @test length(x2) == 50
     end
 
-    g1 = CycleGraph(4)
+    g1 = cycle_graph(4)
     add_vertex!(g1)
     add_edge!(g1, 4, 5)
     for g in testgraphs(g1)

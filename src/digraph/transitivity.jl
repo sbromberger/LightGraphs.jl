@@ -15,32 +15,27 @@ function transitiveclosure! end
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
     tp = reverse(topological_sort_by_dfs(cg))
-    sr = Array{Array{eltype(cg),1},1}(undef,nv(cg))
-    for i in vertices(cg)
-        sr[i] = [0]
-    end
+    sr = [Vector{eltype(cg)}() for _ in vertices(cg)]
+
     x = selflooped ? 0 : 1
     for comp in scc
         for j in 1:(length(comp)-x)
             for k in (j+x):length(comp)
-                add_edge!(g,comp[j],comp[k])
-                add_edge!(g,comp[k],comp[j])
+                add_edge!(g, comp[j], comp[k])
+                add_edge!(g, comp[k], comp[j])
             end
         end
     end
     for u in tp
-        for v in outneighbors(cg,u)
-            union!(sr[u],sr[v],[v])
+        for v in outneighbors(cg, u)
+            union!(sr[u], sr[v], [v])
         end
     end
     for i in vertices(cg)
         for u in scc[i]
             for j in sr[i]
-                if j == 0
-                    continue
-                end
                 for v in scc[j]
-                    add_edge!(g,u,v)
+                    add_edge!(g, u, v)
                 end
             end
         end
@@ -62,7 +57,7 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 
@@ -128,7 +123,7 @@ Time complexity is ``\\mathcal{O}(|V||E|)``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteDiGraph(3), CompleteDiGraph(3));
+julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 

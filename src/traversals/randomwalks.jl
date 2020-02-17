@@ -1,11 +1,12 @@
 """
-    randomwalk(g, s, niter)
+    randomwalk(g, s, niter; seed=-1)
 
 Perform a random walk on graph `g` starting at vertex `s` and continuing for
 a maximum of `niter` steps. Return a vector of vertices visited in order.
 """
-function randomwalk(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} where T
+function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
+    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -15,13 +16,13 @@ function randomwalk(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph
         i += 1
         nbrs = outneighbors(g, currs)
         length(nbrs) == 0 && break
-        currs = rand(nbrs)
+        currs = rand(rng, nbrs)
     end
     return visited[1:(i - 1)]
 end
 
 """
-    non_backtracking_randomwalk(g, s, niter)
+    non_backtracking_randomwalk(g, s, niter; seed=-1)
 
 Perform a non-backtracking random walk on directed graph `g` starting at
 vertex `s` and continuing for a maximum of `niter` steps. Return a
@@ -29,8 +30,9 @@ vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
+    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -42,14 +44,14 @@ function non_backtracking_randomwalk end
     nbrs = outneighbors(g, currs)
     length(nbrs) == 0 && return visited[1:(i - 1)]
     prev = currs
-    currs = rand(nbrs)
+    currs = rand(rng, nbrs)
 
     while i <= niter
         push!(visited, currs)
         i += 1
         nbrs = outneighbors(g, currs)
         length(nbrs) == 1 && break
-        idnext = rand(1:(length(nbrs) - 1))
+        idnext = rand(rng, 1:(length(nbrs) - 1))
         next = nbrs[idnext]
         if next == prev
             next = nbrs[end]
@@ -61,8 +63,9 @@ function non_backtracking_randomwalk end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
+    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -74,10 +77,10 @@ end
         i += 1
         nbrs = outneighbors(g, currs)
         length(nbrs) == 0 && break
-        next = rand(nbrs)
+        next = rand(rng, nbrs)
         if next == prev
             length(nbrs) == 1 && break
-            idnext = rand(1:(length(nbrs) - 1))
+            idnext = rand(rng, 1:(length(nbrs) - 1))
             next = nbrs[idnext]
             if next == prev
                 next = nbrs[end]
@@ -90,13 +93,15 @@ end
 end
 
 """
-    saw(g, s, niter)
+    self_avoiding_walk(g, s, niter; seed=-1)
+
 Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
 Return a vector of vertices visited in order.
 """
-function saw(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} where T
+function self_avoiding_walk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
+    rng = getRNG(seed)
     visited = Vector{T}()
     svisited = Set{T}()
     sizehint!(visited, niter)
@@ -109,7 +114,7 @@ function saw(g::AG, s::Integer, niter::Integer) where AG <: AbstractGraph{T} whe
         i += 1
         nbrs = setdiff(Set(outneighbors(g, currs)), svisited)
         length(nbrs) == 0 && break
-        currs = rand(collect(nbrs))
+        currs = rand(rng, collect(nbrs))
     end
     return visited[1:(i - 1)]
 end

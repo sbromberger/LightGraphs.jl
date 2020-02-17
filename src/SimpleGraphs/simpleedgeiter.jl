@@ -1,7 +1,7 @@
 """
     SimpleEdgeIter
 
-The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraphs`.
+The function [`edges`](@ref) returns a `SimpleEdgeIter` for `AbstractSimpleGraph`s.
 The iterates are in lexicographical order, smallest first. The iterator is valid for
 one pass over the edges, and is invalidated by changes to the graph.
 
@@ -9,7 +9,7 @@ one pass over the edges, and is invalidated by changes to the graph.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> es = edges(g)
 SimpleEdgeIter 2
@@ -25,51 +25,60 @@ struct SimpleEdgeIter{G} <: AbstractEdgeIter
     g::G
 end
 
-struct SimpleEdgeIterState{T<:Integer}
-    s::T  # src vertex or zero if done
-    di::Int # index into adj of dest vertex
-end
-
 eltype(::Type{SimpleEdgeIter{SimpleGraph{T}}}) where {T} = SimpleGraphEdge{T}
 eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
 
-function edge_start(g::AbstractSimpleGraph{T}) where T
-    s = one(T)
-    @inbounds while s <= nv(g)
-        isempty(fadj(g, s)) || return SimpleEdgeIterState(s, 1)
-        s += one(T)
-    end
-    return SimpleEdgeIterState(zero(T), 1)
-end
+@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1) ) where {G <: AbstractSimpleGraph; !IsDirected{G}}
+    g = eit.g
+    fadjlist = fadj(g)
+    T = eltype(g)
+    n = T(nv(g))
+    u, i = state
 
-function edge_next(g::AbstractSimpleGraph, 
-    state::SimpleEdgeIterState{T}) where {T <: Integer}
-    s = state.s
-    di = state.di
-    e = SimpleEdge(s, fadj(g, s)[di])
-    di += 1
-    @inbounds while s <= nv(g)
-        sadj = fadj(g, s)
-        while di <= length(sadj)
-            if is_directed(g) || s <= sadj[di]
-                return e, SimpleEdgeIterState(s, di)
-            end
-            di += 1
+    @inbounds while u < n
+        list_u = fadjlist[u]
+        if i > length(list_u)
+            u += one(u)
+            i = searchsortedfirst(fadjlist[u], u)
+            continue
         end
-        s += one(T)
-        di = 1
+        e = SimpleEdge(u, list_u[i])
+        state = (u, i + 1)
+        return e, state
     end
-    return e, SimpleEdgeIterState(zero(T), 1)
+
+    @inbounds (n == 0 || i > length(fadjlist[n])) && return nothing
+
+    e = SimpleEdge(n, n)
+    state = (u, i + 1)
+    return e, state
 end
 
-function iterate(eit::SimpleEdgeIter{G}) where {G<:AbstractSimpleGraph}
-    state = edge_start(eit.g)
-    return iterate(eit, state)
-end
+@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1) ) where {G <: AbstractSimpleGraph; IsDirected{G}}
+    g = eit.g
+    fadjlist = fadj(g)
+    T = eltype(g)
+    n = T(nv(g))
+    u, i = state
 
-function iterate(eit::SimpleEdgeIter{G}, state::SimpleEdgeIterState{T}) where {T,G<:AbstractSimpleGraph{T}}
-    state.s == zero(T) && return nothing
-    return edge_next(eit.g, state)
+    n == 0 && return nothing
+
+    @inbounds while true
+        list_u = fadjlist[u]
+        if i > length(list_u)
+            u == n && return nothing
+
+            u += one(u)
+            list_u = fadjlist[u]
+            i = 1
+            continue
+        end
+        e = SimpleEdge(u, list_u[i])
+        state = (u, i + 1)
+        return e, state
+    end
+
+    return nothing
 end
 
 length(eit::SimpleEdgeIter) = ne(eit.g)
@@ -108,4 +117,3 @@ end
 in(e, es::SimpleEdgeIter) = has_edge(es.g, e)
 
 show(io::IO, eit::SimpleEdgeIter) = write(io, "SimpleEdgeIter $(ne(eit.g))")
-show(io::IO, s::SimpleEdgeIterState) = write(io, "SimpleEdgeIterState [$(s.s), $(s.di)]")

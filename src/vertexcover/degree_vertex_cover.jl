@@ -20,11 +20,11 @@ Memory: O(|V|)
 ```jldoctest
 julia> using LightGraphs
 
-julia> vertex_cover(PathGraph(3), DegreeVertexCover())
+julia> vertex_cover(path_graph(3), DegreeVertexCover())
 1-element Array{Int64,1}:
  2
 
-julia> vertex_cover(CycleGraph(3), DegreeVertexCover())
+julia> vertex_cover(cycle_graph(3), DegreeVertexCover())
 2-element Array{Int64,1}:
  1
  3
@@ -53,3 +53,4 @@ function vertex_cover(
     end
     return LightGraphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
+

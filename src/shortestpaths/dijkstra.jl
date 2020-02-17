@@ -23,16 +23,19 @@ Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal inf
 predecessors of a given vertex.
 
 ### Performance
-Use a matrix type for `distmx` that is implemented in [row-major matrix format](https://en.wikipedia.org/wiki/Row-_and_column-major_order) 
-for better run-time.
-Eg. Set the type of `distmx` to `Transpose{Int64, SparseMatrixCSC{Int64,Int64}}` 
-instead of `SparseMatrixCSC{Int64,Int64}`.
+If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
+That is, assuming `D` is the sparse distance matrix:
+```
+D = transpose(sparse(transpose(D)))
+```
+Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
+when multiple calls to `dijkstra_shortest_paths` with the distance matrix are planned.
 
 # Examples
 ```jldoctest
 julia> using LightGraphs
 
-julia> ds = dijkstra_shortest_paths(CycleGraph(5), 2);
+julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
 
 julia> ds.dists
 5-element Array{Int64,1}:
@@ -42,7 +45,7 @@ julia> ds.dists
  2
  2
 
-julia> ds = dijkstra_shortest_paths(PathGraph(5), 2);
+julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
 
 julia> ds.dists
 5-element Array{Int64,1}:

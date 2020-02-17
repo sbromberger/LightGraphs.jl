@@ -18,20 +18,20 @@
         @test (d == [1,])
     end
     
-    g3 = StarGraph(5)
+    g3 = star_graph(5)
     for g in testgraphs(g1)
         d = @inferred(dominating_set(g, DegreeDominatingSet()))
         @test (d == [1,])
     end
     
-    g4 = CompleteGraph(5)
+    g4 = complete_graph(5)
     for g in testgraphs(g4)
         d = @inferred(dominating_set(g, DegreeDominatingSet()))
         @test length(d)== 1  
     end
 
-    #PathGraph(5) with additional edge 2-5
-    g5 = PathGraph(5)
+    #path_graph(5) with additional edge 2-5
+    g5 = path_graph(5)
     add_edge!(g5, 2, 5)
     for g in testgraphs(g5)
         d = @inferred(dominating_set(g, DegreeDominatingSet()))

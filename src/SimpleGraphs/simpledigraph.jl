@@ -9,6 +9,25 @@ mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
+
+    function SimpleDiGraph{T}(
+            ne::Int,
+            fadjlist::Vector{Vector{T}},
+            badjlist::Vector{Vector{T}}
+    ) where T
+
+        throw_if_invalid_eltype(T)
+        return new(ne, fadjlist, badjlist)
+    end
+end
+
+function SimpleDiGraph(
+        ne::Int,
+        fadjlist::Vector{Vector{T}},
+        badjlist::Vector{Vector{T}}
+) where T
+
+    return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
 
 
@@ -116,7 +135,7 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = CompleteDiGraph(5)
+julia> g = complete_digraph(5)
 julia> SimpleDiGraph{UInt8}(g)
 {5, 20} directed simple UInt8 graph
 ```
@@ -138,7 +157,7 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = PathGraph(Int8(5))
+julia> g = path_graph(Int8(5))
 julia> SimpleDiGraph(g)
 {5, 8} directed simple Int8 graph
 ```
@@ -146,8 +165,8 @@ julia> SimpleDiGraph(g)
 function SimpleDiGraph(g::AbstractSimpleGraph)
     h = SimpleDiGraph(nv(g))
     h.ne = ne(g) * 2 - num_self_loops(g)
-    h.fadjlist = deepcopy(fadj(g))
-    h.badjlist = deepcopy(badj(g))
+    h.fadjlist = deepcopy_adjlist(fadj(g))
+    h.badjlist = deepcopy_adjlist(badj(g))
     return h
 end
 
@@ -251,27 +270,40 @@ end
     push!(badjlist[d], s)
 end
 
+# Try to get the eltype from the first element
 function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
-    T = Union{}
+
+    next = iterate(iter)
+    if (next === nothing)
+        return SimpleDiGraph(0)
+    end
+
+    e = first(next)
+    E = typeof(e)
+    if !(E <: SimpleGraphEdge{<: Integer})
+        throw(DomainError(iter, "Edges must be of type SimpleEdge{T <: Integer}"))
+    end
+
+    T = eltype(e)
+    g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}() 
     badjlist = Vector{Vector{T}}() 
-    @inbounds(
-    for e in iter
-        typeof(e) <: SimpleDiGraphEdge ||
-                        throw(ArgumentError("iter must be an iterator over SimpleEdge"))
-        s, d = src(e), dst(e)
-        (s >= 1 && d >= 1) || continue
-        if T != eltype(e)
-            T = typejoin(T, eltype(e)) 
-            fadjlist = convert(Vector{Vector{T}}, fadjlist)
-            badjlist = convert(Vector{Vector{T}}, badjlist)
-        end
-        add_to_lists!(fadjlist, badjlist, s, d)
-    end)
 
-    T == Union{} && return SimpleDiGraph(0)
+    while next != nothing
+        (e, state) = next
+
+        if !(e isa E)
+            throw(DomainError(iter, "Edges must all have the same type."))
+        end
+        s, d = src(e), dst(e)
+        if ((s >= 1) & (d >= 1))
+            add_to_lists!(fadjlist, badjlist, s, d)
+        end
+
+        next = iterate(iter, state)
+    end
+
     neg  = cleanupedges!(fadjlist, badjlist)
-    g = SimpleDiGraph{T}()
     g.fadjlist = fadjlist
     g.badjlist = badjlist
     g.ne = neg
@@ -279,17 +311,20 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     return g
 end
 
-function _SimpleDiGraphFromIterator(iter, ::Type{SimpleDiGraphEdge{T}}) where T <: Integer
+function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
+
+    g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}() 
     badjlist = Vector{Vector{T}}() 
+
     @inbounds(
     for e in iter
         s, d = src(e), dst(e)
         (s >= 1 && d >= 1) || continue
         add_to_lists!(fadjlist, badjlist, s, d)
+
     end)
 
-    g = SimpleDiGraph{T}()
     neg  = cleanupedges!(fadjlist, badjlist)
     g.fadjlist = fadjlist
     g.badjlist = badjlist
@@ -324,14 +359,20 @@ julia> collect(edges(h))
 ```
 """
 function SimpleDiGraphFromIterator(iter)::SimpleDiGraph
-    if Base.IteratorEltype(iter) == Base.EltypeUnknown()
-        return _SimpleDiGraphFromIterator(iter)
+
+    if Base.IteratorEltype(iter) == Base.HasEltype()
+        E = eltype(iter)
+        if (E <: SimpleGraphEdge{<: Integer} && isconcretetype(E))
+            T = eltype(E)
+            if isconcretetype(T)
+                return _SimpleDiGraphFromIterator(iter, T)
+            end
+        end
     end
-    if eltype(iter) <: SimpleGraphEdge && isconcretetype(eltype(iter))
-        return _SimpleDiGraphFromIterator(iter, eltype(iter))
-    end
+
     return _SimpleDiGraphFromIterator(iter)
 end
+
 
 
 edgetype(::SimpleDiGraph{T}) where T <: Integer = SimpleGraphEdge{T}
@@ -342,7 +383,7 @@ badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
 copy(g::SimpleDiGraph{T}) where T <: Integer =
-SimpleDiGraph{T}(g.ne, deepcopy(g.fadjlist), deepcopy(g.badjlist))
+SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -351,9 +392,7 @@ ne(g) == ne(h) &&
 fadj(g) == fadj(h) &&
 badj(g) == badj(h)
 
-is_directed(g::SimpleDiGraph) = true
-is_directed(::Type{SimpleDiGraph}) = true
-is_directed(::Type{SimpleDiGraph{T}}) where T = true
+is_directed(::Type{<:SimpleDiGraph}) = true
 
 function has_edge(g::SimpleDiGraph{T}, s, d) where T
     verts = vertices(g)

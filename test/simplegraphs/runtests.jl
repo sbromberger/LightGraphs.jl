@@ -1,9 +1,14 @@
 using LightGraphs.SimpleGraphs
 
 import LightGraphs.SimpleGraphs: fadj, badj, adj
+import LightGraphs.edgetype, LightGraphs.has_edge
 using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
+struct DummySimpleEdge <: AbstractSimpleEdge{Int} end
+DummySimpleEdge(x...) = DummySimpleEdge()
+LightGraphs.edgetype(g::DummySimpleGraph) = DummySimpleEdge
+has_edge(::DummySimpleGraph, ::DummySimpleEdge) = true
 
 # function to check if the invariants for SimpleGraph and SimpleDiGraph holds
 function isvalid_simplegraph(g::SimpleGraph{T}) where {T <: Integer}
@@ -75,7 +80,7 @@ end
 
 const simplegraphtestdir = dirname(@__FILE__)
 
-tests = [
+const simple_tests = [
     "simplegraphs",
     "simpleedge",
     "simpleedgeiter",
@@ -86,7 +91,7 @@ tests = [
 ]
 
 @testset "LightGraphs.SimpleGraphs" begin
-    for t in tests
+    for t in simple_tests
         tp = joinpath(simplegraphtestdir, "$(t).jl")
         include(tp)
     end

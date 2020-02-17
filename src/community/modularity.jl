@@ -43,7 +43,7 @@ where:
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteGraph(3), CompleteGraph(3));
+julia> barbell = blockdiag(complete_graph(3), complete_graph(3));
 
 julia> add_edge!(barbell, 1, 4);
 

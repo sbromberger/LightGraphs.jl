@@ -178,6 +178,7 @@ true
 """
 is_weakly_connected(g) = is_connected(g)
 
+
 """
     strongly_connected_components(g)
 
@@ -196,25 +197,46 @@ julia> strongly_connected_components(g)
 2-element Array{Array{Int64,1},1}:
  [3]
  [1, 2]
+
+
+julia> g=SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components(g)
+4-element Array{Array{Int64,1},1}:
+ [8, 9]      
+ [5, 6, 7]   
+ [1, 2, 3, 4]
+ [10, 11]    
+
 ```
 """
+
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
     count = one_t
+    
+    
     index = zeros(T, nvg)         # first time in which vertex is discovered
     stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-    sizehint!(stack, nvg)
-    sizehint!(components, nvg)
 
-    for s in vertices(g)
+    
+    dfs_stack = Vector{T}()
+    
+    @inbounds for s in vertices(g)
         if index[s] == zero_t
             index[s] = count
             lowlink[s] = count
@@ -224,21 +246,22 @@ function strongly_connected_components end
             count = count + one_t
 
             # start dfs from 's'
-            dfs_stack = Vector{T}([s])
+            push!(dfs_stack, s) 
+            
             while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
-                for n in outneighbors(g, v)
-                    if index[n] == zero_t
+                @inbounds for v_neighbor in outneighbors(g, v)
+                    if index[v_neighbor] == zero_t
                         # unvisited neighbor found
-                        u = n
+                        u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[n]
+                    elseif onstack[v_neighbor]
                         # we have already seen n, but can update the lowlink of v
                         # which has the effect of possibly keeping v on the stack until n is ready to pop.
                         # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[n])
+                        lowlink[v] = min(lowlink[v], index[v_neighbor])
                     end
                 end
                 if u == zero_t
@@ -247,10 +270,11 @@ function strongly_connected_components end
                     # time to start popping.
                     popped = pop!(dfs_stack)
                     lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
+                    
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
                         component = Vector{T}()
-                        sizehint!(component, length(stack))
+                        
                         while !isempty(stack) #break when popped == v
                             # drain stack until we see v.
                             # everything on the stack until we see v is in the SCC rooted at v.
@@ -263,8 +287,11 @@ function strongly_connected_components end
                                 break
                             end
                         end
-                        push!(components, reverse(component))
+                        
+                        reverse!(component)
+                        push!(components, component)
                     end
+                    
                 else #LABEL A
                     # add unvisited neighbor to dfs
                     index[u] = count
@@ -272,6 +299,7 @@ function strongly_connected_components end
                     onstack[u] = true
                     parents[u] = v
                     count = count + one_t
+                    
                     push!(stack, u)
                     push!(dfs_stack, u)
                     # next iteration of while loop will expand the DFS tree from u.
@@ -281,6 +309,158 @@ function strongly_connected_components end
     end
 
     return components
+end
+
+
+"""
+    strongly_connected_components_kosaraju(g)
+
+Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm. 
+(https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
+
+Return an array of arrays, each of which is the entire connected component.
+
+### Performance
+Time Complexity : O(|E|+|V|)
+Space Complexity : O(|V|) {Excluding the memory required for storing graph}
+
+|V| = Number of vertices
+|E| = Number of edges
+
+### Examples
+```jldoctest
+
+julia> g=SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+
+julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
+{3, 2} directed simple Int64 graph
+
+julia> strongly_connected_components_kosaraju(g)
+3-element Array{Array{Int64,1},1}:
+ [1]
+ [2]
+ [3]
+
+
+julia> g=SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
+13-element Array{Tuple{Int64,Int64},1}:
+ (1, 2)  
+ (2, 3)  
+ (3, 4)  
+ (4, 1)  
+ (3, 5)  
+ (5, 6)  
+ (6, 7)  
+ (7, 5)  
+ (5, 8)  
+ (8, 9)  
+ (9, 8)  
+ (10, 11)
+ (11, 10)
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components_kosaraju(g)
+4-element Array{Array{Int64,1},1}:
+ [11, 10]    
+ [2, 3, 4, 1]
+ [6, 7, 5]   
+ [9, 8]      
+
+```
+"""
+
+function strongly_connected_components_kosaraju end
+@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+       
+   nvg = nv(g)    
+
+   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
+   
+   order = Vector{T}()         # Vector which will store the order in which vertices are visited
+   sizehint!(order, nvg)    
+   
+   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
+   
+   dfs_stack = Vector{T}()   # Stack used for dfs
+    
+   # dfs1
+   @inbounds for v in vertices(g)
+       
+       color[v] != 0  && continue  
+       color[v] = 1
+       
+       # Start dfs from v
+       push!(dfs_stack, v)   # Push v to the stack
+       
+       while !isempty(dfs_stack)
+           u = dfs_stack[end]
+           w = zero(T)
+       
+           for u_neighbor in outneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
+                   break
+               end
+           end
+           
+           if w != 0
+               push!(dfs_stack, w)
+               color[w] = 1
+           else
+               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
+               color[u] = 2
+               pop!(dfs_stack)    
+           end
+       end
+   end
+    
+   @inbounds for i in vertices(g)
+        color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
+   end
+   
+   # dfs2
+   @inbounds for i in 1:nvg
+    
+       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
+       color[v] != 0  && continue  
+       color[v] = 1
+       
+       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
+       
+       # Start dfs from v
+       push!(dfs_stack, v)   # Push v to the stack
+      
+       while !isempty(dfs_stack)
+           u = dfs_stack[end]
+           w = zero(T)
+       
+           for u_neighbor in inneighbors(g, u)
+               if  color[u_neighbor] == 0
+                   w = u_neighbor
+                   break
+               end
+           end
+           
+           if w != 0
+               push!(dfs_stack, w)
+               color[w] = 1
+           else
+               color[u] = 2
+               push!(component, u)   # Push u to the vector component
+               pop!(dfs_stack)    
+           end
+       end
+       
+       push!(components, component)
+   end
+ 
+   return components
 end
 
 
@@ -420,10 +600,9 @@ end
 
 """
     neighborhood(g, v, d, distmx=weights(g))
-    
 
 Return a vector of each vertex in `g` at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`. 
+may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -461,8 +640,8 @@ neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weigh
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
 
-Return a tuple of each vertex at a geodesic distance less than or equal to `d`, where distances
-may be specified by `distmx`, along with its distance from `v`.
+Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to `d`, along with
+its distance from `v`. Non-negative distances may be specified by `distmx`.
 
 ### Optional Arguments
 - `dir=:out`: If `g` is directed, this argument specifies the edge direction
@@ -506,48 +685,54 @@ neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}
 
 
 function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
-    d < 0 && return Vector{Tuple{T,U}}()
-    neighs = Vector{T}()
-    push!(neighs, v)
-    Q = Vector{T}()
-    push!(Q, v)
-    seen = falses(nv(g))
-    dists = fill(typemax(U), nv(g))
-    dists[v] = zero(U)
-    while !isempty(Q)
-        src = popfirst!(Q)
-        seen[src] && continue
-        seen[src] = true
-        currdist = dists[src]
-        vertexneighbors = neighborfn(g, src)
-        @inbounds for vertex in vertexneighbors
-            if !seen[vertex] 
-                vdist = currdist + distmx[src, vertex]
-                if vdist <= d
-                    push!(Q, vertex)
-                    push!(neighs, vertex)
-                    dists[vertex] = vdist
+    Q = Vector{Tuple{T,U}}()
+    d < zero(U) && return Q
+    push!(Q, (v,zero(U),) )
+    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
+    for (src,currdist) in Q
+        currdist >= d && continue
+        for dst in neighborfn(g,src)
+            if !seen[dst]
+                seen[dst]=true
+                if currdist+distmx[src,dst] <= d
+                    push!(Q, (dst , currdist+distmx[src,dst],))
                 end
             end
         end
     end
-    return [(x::T, dists[x]::U) for x in neighs]
+    return Q
 end
 
 """
     isgraphical(degs)
 
-Return true if the degree sequence `degs` is graphical, according to
-[Erdös-Gallai condition](http://mathworld.wolfram.com/GraphicSequence.html).
+Return true if the degree sequence `degs` is graphical.
+A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.
 
 ### Performance
-    Time complexity: ``\\mathcal{O}(|degs|^2)``
+Time complexity: ``\\mathcal{O}(|degs|*\\log(|degs|))``.
+
+### Implementation Notes
+According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
+```
+for each integer r <= n-1
 """
-function isgraphical(degs::Vector{Int})
+function isgraphical(degs::Vector{<:Integer})
     iseven(sum(degs)) || return false
-    n = length(degs)
-    for r = 1:(n - 1)
-        cond = sum(i -> degs[i], 1:r) <= r * (r - 1) + sum(i -> min(r, degs[i]), (r + 1):n)
+    sorted_degs = sort(degs, rev = true)
+    n = length(sorted_degs)
+    cur_sum = zero(UInt64)
+    mindeg = Vector{UInt64}(undef, n)
+    @inbounds for i = 1:n
+        mindeg[i] = min(i, sorted_degs[i])
+    end
+    cum_min = sum(mindeg)
+    @inbounds for r = 1:(n - 1)
+        cur_sum += sorted_degs[r]
+        cum_min -= mindeg[r]
+        cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
     end
     return true

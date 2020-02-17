@@ -1,7 +1,19 @@
-# This file contans the common interface for LightGraphs.
-# TODO 0.7: reevaluate use of errors here.
+# This file contains the common interface for LightGraphs.
 
-_NI(m) = error("Not implemented: $m")
+"""
+    NotImplementedError{M}(m)
+
+`Exception` thrown when a method from the `AbstractGraph` interface
+is not implemented by a given graph type.
+"""
+struct NotImplementedError{M} <: Exception
+    m::M
+    NotImplementedError(m::M) where {M} = new{M}(m)
+end
+
+Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not implemented.")
+
+_NI(m) = throw(NotImplementedError(m))
 
 """
     AbstractEdge
@@ -137,7 +149,7 @@ Return the number of edges in `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> ne(g)
 2
@@ -172,7 +184,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
-For [`AbstractSimpleGraph`](@ref)s it returns a `SimpleEdgeIter`.
+For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
 The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
 calls to [`has_edge`](@ref).
 
@@ -184,7 +196,7 @@ is invalidated by changes to `g`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> g = PathGraph(3);
+julia> g = path_graph(3);
 
 julia> collect(edges(g))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
@@ -195,10 +207,11 @@ julia> collect(edges(g))
 edges(g) = _NI("edges")
 
 """
-    is_directed(g)
+    is_directed(G)
 
-Return `true` if the graph is a directed graph; `false` otherwise.
-
+Return `true` if the graph type `G` is a directed graph; `false` otherwise.
+New graph types must implement `is_directed(::Type{<:G})`.
+The method can also be called with `is_directed(g::G)`
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -206,11 +219,14 @@ julia> using LightGraphs
 julia> is_directed(SimpleGraph(2))
 false
 
+julia> is_directed(SimpleGraph)
+false
+
 julia> is_directed(SimpleDiGraph(2))
 true
 ```
 """
-is_directed(g) = _NI("is_directed")
+is_directed(::G) where {G} = is_directed(G)
 is_directed(::Type{T}) where T = _NI("is_directed")
 
 """
@@ -266,7 +282,9 @@ has_edge(g, e) = has_edge(g, src(e), dst(e))
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
-Returns a reference, not a copy. Do not modify result.
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
@@ -286,7 +304,9 @@ inneighbors(x, v) = _NI("inneighbors")
 Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
-Returns a reference, not a copy. Do not modify result.
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
@@ -300,16 +320,22 @@ julia> outneighbors(g, 4)
 outneighbors(x, v) = _NI("outneighbors")
 
 """
-    zero(g)
+    zero(G)
 
-Return a zero-vertex, zero-edge version of the same type of graph as `g`.
+Return a zero-vertex, zero-edge version of the graph type `G`.
+The fallback is defined for graph values `zero(g::G) = zero(G)`.
 
 # Examples
 ```jldoctest
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
+julia> zero(typeof(g))
+{0, 0} directed simple Int64 graph
+
 julia> zero(g)
 {0, 0} directed simple Int64 graph
 ```
 """
-zero(g::AbstractGraph) = _NI("zero")
+zero(::Type{<:AbstractGraph}) = _NI("zero")
+
+zero(g::G) where {G<: AbstractGraph} = zero(G)

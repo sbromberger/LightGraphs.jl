@@ -148,6 +148,12 @@ using ArnoldiMethod
         @test symmetrize(adjmat, :tril).A == tril(adjmat.A) + tril(adjmat.A)'
         @test symmetrize(adjmat, :sum).A == adjmat.A + adjmat.A
 
+        @test issymmetric(StochasticAdjacency(adjmat)) == false
+        @test issymmetric(AveragingAdjacency(adjmat)) == false
+
+        normalized_adjmat = NormalizedAdjacency(adjmat)
+        @test issymmetric(normalized_adjmat) == issymmetric(normalized_adjmat.A)
+
         @test_throws ArgumentError symmetrize(adjmat, :fake)
     end
 
@@ -211,4 +217,21 @@ using ArnoldiMethod
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; mindim=10)
     @test all(sd .>= 0)
+
+    @testset "Noop" begin
+        @testset "Noop broadcasted with * is identity" begin
+            testobjects = [1, "string", 'c', cycle_graph(3), [1,2,3], sin, Noop()]
+            for object in testobjects
+                @test Noop() .* object === object
+            end
+        end
+
+        @testset "Noop * is identity" begin
+            testobjects = [1, "string", 'c', cycle_graph(3), [1,2,3], sin, Noop()]
+            for object in testobjects
+                @test Noop() * object === object
+            end
+        end
+    end
+
 end

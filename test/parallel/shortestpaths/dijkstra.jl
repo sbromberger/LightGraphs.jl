@@ -1,9 +1,9 @@
 @testset "Parallel.Dijkstra" begin
-    g4 = PathDiGraph(5)
+    g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
     #Testing multisource On undirected Graph
-    g3 = PathGraph(5)
+    g3 = path_graph(5)
     d = [0 1 2 3 4; 1 0 1 0 1; 2 1 0 11 12; 3 0 11 0 5; 4 1 19 5 0]
 
     for g in testgraphs(g3)
@@ -49,7 +49,7 @@
 
 
     #Testing multisource On directed Graph
-    g3 = PathDiGraph(5)
+    g3 = path_digraph(5)
     d = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
     for g in testdigraphs(g3)
