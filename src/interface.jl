@@ -197,6 +197,7 @@ julia> collect(vertices(SimpleGraph(4)))
 ```
 """
 function vertices end
+
 @traitfn function vertices(g::AG::(!HasContiguousVertices)) where {AG <: AbstractGraph}
     return _NI("vertices")
 end
@@ -276,7 +277,7 @@ function has_vertex end
     return _NI("has_vertex")
 end
 
-@traitfn function vertices(g::G::(HasContiguousVertices), v) where {G}
+@traitfn function has_vertex(g::G::(HasContiguousVertices), v) where {G}
     return 0 < v <= nv(g)
 end
 
