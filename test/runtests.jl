@@ -70,6 +70,7 @@ tests = [
     "centrality/radiality",
     "utils",
     "deprecations",
+    "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
     "steinertree/steiner_tree",

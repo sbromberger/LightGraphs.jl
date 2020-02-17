@@ -7,7 +7,7 @@ using ArnoldiMethod
 using Statistics: mean
 
 using Inflate: InflateGzipStream
-using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
+using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
@@ -142,7 +142,7 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst, prim_mst,
+boruvka_mst, kruskal_mst, prim_mst,
 
 #steinertree
 steiner_tree,
@@ -255,6 +255,7 @@ include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
 include("community/clique_percolation.jl")
+include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("steinertree/steiner_tree.jl")
