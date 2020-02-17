@@ -55,9 +55,9 @@ always contiguous integers starting at 1.
 Method implemented by graph types to indicate whether their vertices are
 contiguous numbers. Defaults to true.
 """
-has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
+has_contiguous_vertices(::Type{G}) where {G <: AbstractGraph} = true
 
-has_contiguous_vertices(G) = true
+has_contiguous_vertices(g::G) where {G <: AbstractGraph} = has_contiguous_vertices(G)
 
 #
 # Interface for AbstractEdges
