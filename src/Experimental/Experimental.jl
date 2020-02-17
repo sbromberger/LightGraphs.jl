@@ -15,6 +15,7 @@ description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
 include("vf2.jl") # Julian implementation of VF2 algorithm
+include("Traversals/Traversals.jl")
 include("ShortestPaths/ShortestPaths.jl")
 
 end
