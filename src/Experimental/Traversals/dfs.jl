@@ -59,16 +59,13 @@ end
     return true
 end
 @inline function visitfn!(s::TopoSortState{T}, u, v) where T 
-    # println("visitfn $s, $u, $v")
     return s.vcolor[v] != one(T)
 end
 @inline function newvisitfn!(s::TopoSortState{T}, u, v) where T 
-    # println("newvisitfn $s, $u, $v")
     s.w = v
     return true
 end
 @inline function postvisitfn!(s::TopoSortState{T}, u) where T 
-    # println("postvisitfn $s $u")
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -84,7 +81,6 @@ end
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
     for v in vertices(g)
-        # println("new vertex loop $v with state $state")
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
         if !traverse_graph!(g, v, DFS(), state)
@@ -124,6 +120,7 @@ end
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
+        state.vcolor[v] = 1
         !traverse_graph!(g, v, DFS(), state) && return true
     end
     return false
