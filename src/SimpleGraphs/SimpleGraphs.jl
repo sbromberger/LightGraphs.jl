@@ -12,6 +12,7 @@ import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
+    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
 
 using Random: GLOBAL_RNG, AbstractRNG
@@ -19,7 +20,6 @@ using Random: GLOBAL_RNG, AbstractRNG
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
     SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
-    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
     random_regular_digraph, random_configuration_model, random_tournament_digraph,
@@ -122,10 +122,9 @@ function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
 end
 
 """
-    rem_vertex!(g, v)
+    rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 
-Remove the vertex `v` from graph `g`. Return `false` if removal fails
-(e.g., if vertex is not in the graph); `true` otherwise.
+Remove the vertex from the graph.
 
 ### Performance
 Time complexity is ``\\mathcal{O}(k^2)``, where ``k`` is the max of the degrees
@@ -137,19 +136,6 @@ data structures indexed by edges or vertices in the graph, since
 internally the removal is performed swapping the vertices `v`  and ``|V|``,
 and removing the last vertex ``|V|`` from the graph. After removal the
 vertices in `g` will be indexed by ``1:|V|-1``.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph(2);
-
-julia> rem_vertex!(g, 2)
-true
-
-julia> rem_vertex!(g, 2)
-false
-```
 """
 function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     v in vertices(g) || return false

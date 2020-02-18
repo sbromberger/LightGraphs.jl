@@ -33,7 +33,7 @@ is_ordered, add_vertices!, indegree, outdegree, degree,
 neighbors, all_neighbors, common_neighbors,
 has_self_loops, num_self_loops, density, squash, weights,
 
-# simplegraphs
+# mutations
 add_edge!, add_vertex!, add_vertices!, rem_edge!, rem_vertex!, rem_vertices!,
 
 # decomposition
@@ -189,9 +189,10 @@ include("interface.jl")
 include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
-
+include("mutation.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
+
 """
     Graph
 
