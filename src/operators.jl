@@ -780,9 +780,6 @@ connect to the new merged vertex.
 
 Return a vector with new vertex values are indexed by the original vertex indices.
 
-### Implementation Notes
-Supports [`SimpleGraph`](@ref) only.
-
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -857,4 +854,24 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     g.ne = sum(degree(g, i) for i in vertices(g)) / 2
 
     return new_vertex_ids
+end
+
+# special case for digraphs
+@traitfn function merge_vertices!(g::::IsDirected, v::Vector{U})  where U <: Integer
+    v0 = minimum(v)
+    vs = Set(v)
+    for t in vs
+        for u in outneighbors(g, t)
+            if !(u in vs)
+                add_edge!(g, v0, u)
+            end
+        end
+        for u in inneighbors(g, t)
+            if !(u in vs)
+                add_edge!(g, u, v0)
+            end
+        end
+    end
+    delete!(vs, v0)
+    return rem_vertices!(g, collect(vs))
 end

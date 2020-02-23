@@ -104,6 +104,14 @@
             @test ne(h2) == 3
             @test nv(h2) == 5
         end
+
+        @testset "merge vertices digraph" begin
+            d0 = path_digraph(10)
+            d1 = path_digraph(10)
+            merge_vertices!(d1,[4,5,6])
+            @test length(edges(d0)) == 9
+            @test length(edges(d1)) == 7
+        end
     end
 
     @testset "$g" for g in testlargegraphs(g4)
