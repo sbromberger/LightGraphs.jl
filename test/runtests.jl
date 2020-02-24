@@ -85,6 +85,7 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
     "experimental/experimental"
+    "digraph/Dominator_Tree.jl"
 ]
 
 @testset "LightGraphs" begin
