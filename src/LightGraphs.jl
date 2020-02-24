@@ -48,6 +48,9 @@ spectral_distance, edit_distance,
 # edit path cost functions
 MinkowskiCost, BoundedMinkowskiCost,
 
+#Dominator Tree
+Dominator_Tree,
+
 # operators
 complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
@@ -214,6 +217,8 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
+include("digraph/Dominator_Tree.jl")
+
 include("cycles/johnson.jl")
 include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
