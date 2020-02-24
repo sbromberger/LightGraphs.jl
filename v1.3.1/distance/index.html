@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Distance · LightGraphs</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>LightGraphs</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Getting Started</a></li><li><a class="toctext" href="../graphtypes/">Choosing A Graph Type</a></li><li><a class="toctext" href="../types/">LightGraphs Types</a></li><li><a class="toctext" href="../basicproperties/">Accessing Properties</a></li><li><a class="toctext" href="../generators/">Making and Modifying Graphs</a></li><li><a class="toctext" href="../persistence/">Reading / Writing Graphs</a></li><li><a class="toctext" href="../operators/">Operators</a></li><li><a class="toctext" href="../plotting/">Plotting Graphs</a></li><li><a class="toctext" href="../pathing/">Path and Traversal</a></li><li><a class="toctext" href="../coloring/">Coloring</a></li><li class="current"><a class="toctext" href>Distance</a><ul class="internal"><li><a class="toctext" href="#Full-Docs-1">Full Docs</a></li></ul></li><li><a class="toctext" href="../centrality/">Centrality Measures</a></li><li><a class="toctext" href="../linalg/">Linear Algebra</a></li><li><a class="toctext" href="../matching/">Matching</a></li><li><a class="toctext" href="../community/">Community Structures</a></li><li><a class="toctext" href="../degeneracy/">Degeneracy</a></li><li><a class="toctext" href="../integration/">Integration with other packages</a></li><li><a class="toctext" href="../experimental/">Experimental Functionality</a></li><li><a class="toctext" href="../parallel/">Parallel Algorithms</a></li><li><a class="toctext" href="../contributing/">Contributing</a></li><li><a class="toctext" href="../developing/">Developer Notes</a></li><li><a class="toctext" href="../license/">License Information</a></li><li><a class="toctext" href="../citing/">Citing LightGraphs</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Distance</a></li></ul><a class="edit-page" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/docs/src/distance.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Distance</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Distance-1" href="#Distance-1">Distance</a></h1><p><em>LightGraphs.jl</em> includes the following distance measurements:</p><ul><li><a href="#LightGraphs.BoundedMinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}"><code>LightGraphs.BoundedMinkowskiCost</code></a></li><li><a href="#LightGraphs.MinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}"><code>LightGraphs.MinkowskiCost</code></a></li><li><a href="#LightGraphs.center-Tuple{Array{T,1} where T}"><code>LightGraphs.center</code></a></li><li><a href="#LightGraphs.diameter-Tuple{Array{T,1} where T}"><code>LightGraphs.diameter</code></a></li><li><a href="#LightGraphs.eccentricity-Union{Tuple{T}, Tuple{AbstractGraph,Integer}, Tuple{AbstractGraph,Integer,AbstractArray{T,2}}} where T&lt;:Real"><code>LightGraphs.eccentricity</code></a></li><li><a href="#LightGraphs.edit_distance-Tuple{AbstractGraph,AbstractGraph}"><code>LightGraphs.edit_distance</code></a></li><li><a href="#LightGraphs.periphery-Tuple{Array{T,1} where T}"><code>LightGraphs.periphery</code></a></li><li><a href="#LightGraphs.radius-Tuple{Array{T,1} where T}"><code>LightGraphs.radius</code></a></li><li><a href="#LightGraphs.transitiveclosure"><code>LightGraphs.transitiveclosure</code></a></li><li><a href="#LightGraphs.transitiveclosure!"><code>LightGraphs.transitiveclosure!</code></a></li></ul><h2><a class="nav-anchor" id="Full-Docs-1" href="#Full-Docs-1">Full Docs</a></h2><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.BoundedMinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}" href="#LightGraphs.BoundedMinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}"><code>LightGraphs.BoundedMinkowskiCost</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">BoundedMinkowskiCost(μ₁, μ₂)</code></pre><p>Return value similar to <a href="#LightGraphs.MinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}"><code>MinkowskiCost</code></a>, but ensure costs smaller than 2τ.</p><p><strong>Optional Arguments</strong></p><p><code>p=1</code>: the p value for p-norm calculation. <code>τ=1</code>: value specifying half of the upper limit of the Minkowski cost.</p></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/edit_distance.jl#L135-L143">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.MinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}" href="#LightGraphs.MinkowskiCost-Tuple{AbstractArray{T,1} where T,AbstractArray{T,1} where T}"><code>LightGraphs.MinkowskiCost</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">MinkowskiCost(μ₁, μ₂; p::Real=1)</code></pre><p>For labels μ₁ on the vertices of graph G₁ and labels μ₂ on the vertices of graph G₂, compute the p-norm cost of substituting vertex u ∈ G₁ by vertex v ∈ G₂.</p><p><strong>Optional Arguments</strong></p><p><code>p=1</code>: the p value for p-norm calculation.</p></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/edit_distance.jl#L121-L130">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.center-Tuple{Array{T,1} where T}" href="#LightGraphs.center-Tuple{Array{T,1} where T}"><code>LightGraphs.center</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">center(eccentricities)
+center(g, distmx=weights(g))</code></pre><p>Given a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph&#39;s radius (that is, the set of vertices with the smallest eccentricity).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; using LightGraphs
+
+julia&gt; center(star_graph(5))
+1-element Array{Int64,1}:
+ 1
+
+julia&gt; center(path_graph(5))
+1-element Array{Int64,1}:
+ 3</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/distance.jl#L165-L185">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.diameter-Tuple{Array{T,1} where T}" href="#LightGraphs.diameter-Tuple{Array{T,1} where T}"><code>LightGraphs.diameter</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">diameter(eccentricities)
+diameter(g, distmx=weights(g))</code></pre><p>Given a graph and optional distance matrix, or a vector of precomputed eccentricities, return the maximum eccentricity of the graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; using LightGraphs
+
+julia&gt; diameter(star_graph(5))
+2
+
+julia&gt; diameter(path_graph(5))
+4</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/distance.jl#L87-L104">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.eccentricity-Union{Tuple{T}, Tuple{AbstractGraph,Integer}, Tuple{AbstractGraph,Integer,AbstractArray{T,2}}} where T&lt;:Real" href="#LightGraphs.eccentricity-Union{Tuple{T}, Tuple{AbstractGraph,Integer}, Tuple{AbstractGraph,Integer,AbstractArray{T,2}}} where T&lt;:Real"><code>LightGraphs.eccentricity</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">eccentricity(g[, v][, distmx])
+eccentricity(g[, vs][, distmx])</code></pre><p>Return the eccentricity[ies] of a vertex / vertex list <code>v</code> or a set of vertices  <code>vs</code> defaulting to the entire graph. An optional matrix of edge distances may be supplied; if missing, edge distances default to <code>1</code>.</p><p>The eccentricity of a vertex is the maximum shortest-path distance between it and all other vertices in the graph.</p><p>The output is either a single float (when a single vertex is provided) or a vector of floats corresponding to the vertex vector. If no vertex vector is provided, the vector returned corresponds to each vertex in the graph.</p><p><strong>Performance</strong></p><p>Because this function must calculate shortest paths for all vertices supplied in the argument list, it may take a long time.</p><p><strong>Implementation Notes</strong></p><p>The eccentricity vector returned by <code>eccentricity()</code> may be used as input for the rest of the distance measures below. If an eccentricity vector is provided, it will be used. Otherwise, an eccentricity vector will be calculated for each call to the function. It may therefore be more efficient to calculate, store, and pass the eccentricities if multiple distance measures are desired.</p><p>An infinite path length is represented by the <code>typemax</code> of the distance matrix.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia&gt; eccentricity(g, 1)
+2
+
+julia&gt; eccentricity(g, [1; 2])
+2-element Array{Int64,1}:
+ 2
+ 1
+
+julia&gt; eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
+2-element Array{Float64,1}:
+ 2.5
+ 0.5</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/distance.jl#L24-L69">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.edit_distance-Tuple{AbstractGraph,AbstractGraph}" href="#LightGraphs.edit_distance-Tuple{AbstractGraph,AbstractGraph}"><code>LightGraphs.edit_distance</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">edit_distance(G₁::AbstractGraph, G₂::AbstractGraph)</code></pre><p>Compute the edit distance between graphs <code>G₁</code> and <code>G₂</code>. Return the minimum edit cost and edit path to transform graph <code>G₁</code> into graph <code>G₂</code><code>. An edit path consists of a sequence of pairs of vertices</code><code>(u,v) ∈ [0,|G₁|] × [0,|G₂|]</code>` representing vertex operations:</p><ul><li><span>$(0,v)$</span>: insertion of vertex <span>$v ∈ G₂$</span></li><li><span>$(u,0)$</span>: deletion of vertex <span>$u ∈ G₁$</span></li><li><span>$(u&gt;0,v&gt;0)$</span>: substitution of vertex <span>$u ∈ G₁$</span> by vertex <span>$v ∈ G₂$</span></li></ul><p><strong>Optional Arguments</strong></p><ul><li><code>insert_cost::Function=v-&gt;1.0</code></li><li><code>delete_cost::Function=u-&gt;1.0</code></li><li><code>subst_cost::Function=(u,v)-&gt;0.5</code></li></ul><p>By default, the algorithm uses constant operation costs. The user can provide classical Minkowski costs computed from vertex labels μ₁ (for G₁) and μ₂ (for G₂) in order to further guide the search, for example:</p><pre><code class="language-none">edit_distance(G₁, G₂, subst_cost=MinkowskiCost(μ₁, μ₂))</code></pre><ul><li><code>heuristic::Function=DefaultEditHeuristic</code>: a custom heuristic provided to the A*</li></ul><p>search in case the default heuristic is not satisfactory.</p><p><strong>Performance</strong></p><ul><li>Given two graphs <span>$|G₁| &lt; |G₂|$</span>, <code>edit_distance(G₁, G₂)</code> is faster to</li></ul><p>compute than <code>edit_distance(G₂, G₁)</code>. Consider swapping the arguments if involved costs are equivalent.</p><ul><li>The use of simple Minkowski costs can improve performance considerably.</li><li>Exploit vertex attributes when designing operation costs.</li></ul><p><strong>References</strong></p><ul><li>RIESEN, K., 2015. Structural Pattern Recognition with Graph Edit Distance: Approximation Algorithms and Applications. (Chapter 2)</li></ul><p><strong>Author</strong></p><ul><li>Júlio Hoffimann Mendes (juliohm@stanford.edu)</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia&gt; g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia&gt; edit_distance(g1, g2)
+(3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/edit_distance.jl#L1-L52">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.periphery-Tuple{Array{T,1} where T}" href="#LightGraphs.periphery-Tuple{Array{T,1} where T}"><code>LightGraphs.periphery</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">periphery(eccentricities)
+periphery(g, distmx=weights(g))</code></pre><p>Given a graph and optional distance matrix, or a vector of precomputed eccentricities, return the set of all vertices whose eccentricity is equal to the graph&#39;s diameter (that is, the set of vertices with the largest eccentricity).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; using LightGraphs
+
+julia&gt; periphery(star_graph(5))
+4-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+
+julia&gt; periphery(path_graph(5))
+2-element Array{Int64,1}:
+ 1
+ 5</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/distance.jl#L109-L134">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.radius-Tuple{Array{T,1} where T}" href="#LightGraphs.radius-Tuple{Array{T,1} where T}"><code>LightGraphs.radius</code></a> — <span class="docstring-category">Method</span>.</div><div><div><pre><code class="language-julia">radius(eccentricities)
+radius(g, distmx=weights(g))</code></pre><p>Given a graph and optional distance matrix, or a vector of precomputed eccentricities, return the minimum eccentricity of the graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; using LightGraphs
+
+julia&gt; radius(star_graph(5))
+1
+
+julia&gt; radius(path_graph(5))
+2</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/distance.jl#L143-L160">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.transitiveclosure" href="#LightGraphs.transitiveclosure"><code>LightGraphs.transitiveclosure</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">transitiveclosure(g, selflooped=false)</code></pre><p>Compute the transitive closure of a directed graph, using DFS. Return a graph representing the transitive closure. If <code>selflooped</code> is <code>true</code>, add self loops to the graph.</p><p><strong>Performance</strong></p><p>Time complexity is <span>$\mathcal{O}(|E||V|)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; using LightGraphs
+
+julia&gt; barbell = blockdiag(complete_digraph(3), complete_digraph(3));
+
+julia&gt; add_edge!(barbell, 1, 4);
+
+julia&gt; collect(edges(barbell))
+13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 1 =&gt; 3
+ Edge 1 =&gt; 4
+ Edge 2 =&gt; 1
+ Edge 2 =&gt; 3
+ Edge 3 =&gt; 1
+ Edge 3 =&gt; 2
+ Edge 4 =&gt; 5
+ Edge 4 =&gt; 6
+ Edge 5 =&gt; 4
+ Edge 5 =&gt; 6
+ Edge 6 =&gt; 4
+ Edge 6 =&gt; 5
+
+julia&gt; collect(edges(transitiveclosure(barbell)))
+21-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 1 =&gt; 3
+ Edge 1 =&gt; 4
+ Edge 1 =&gt; 5
+ Edge 1 =&gt; 6
+ Edge 2 =&gt; 1
+ Edge 2 =&gt; 3
+ Edge 2 =&gt; 4
+ Edge 2 =&gt; 5
+ Edge 2 =&gt; 6
+ Edge 3 =&gt; 1
+ Edge 3 =&gt; 2
+ Edge 3 =&gt; 4
+ Edge 3 =&gt; 5
+ Edge 3 =&gt; 6
+ Edge 4 =&gt; 5
+ Edge 4 =&gt; 6
+ Edge 5 =&gt; 4
+ Edge 5 =&gt; 6
+ Edge 6 =&gt; 4
+ Edge 6 =&gt; 5</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/digraph/transitivity.jl#L46-L104">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="LightGraphs.transitiveclosure!" href="#LightGraphs.transitiveclosure!"><code>LightGraphs.transitiveclosure!</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">transitiveclosure!(g, selflooped=false)</code></pre><p>Compute the transitive closure of a directed graph, using DFS. If <code>selflooped</code> is true, add self loops to the graph.</p><p><strong>Performance</strong></p><p>Time complexity is <span>$\mathcal{O}(|E||V|)$</span>.</p><p><strong>Implementation Notes</strong></p><p>This version of the function modifies the original graph.</p></div></div><a class="source-link" target="_blank" href="https://github.com/JuliaGraphs/LightGraphs.jl/blob/a63d2f7c410cff8df7cb45a1d2e5334071252a2c/src/digraph/transitivity.jl#L1-L12">source</a></section><footer><hr/><a class="previous" href="../coloring/"><span class="direction">Previous</span><span class="title">Coloring</span></a><a class="next" href="../centrality/"><span class="direction">Next</span><span class="title">Centrality Measures</span></a></footer></article></body></html>
