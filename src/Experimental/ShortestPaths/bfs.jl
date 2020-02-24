@@ -38,9 +38,9 @@ end
     return true
 end
 @inline function newvisitfn!(s::BFSSPState, u, v) 
-        s.dists[v] = s.n_level
-        s.parents[v] = u
-        return true
+    s.dists[v] = s.n_level
+    s.parents[v] = u
+    return true
 end
 @inline function postlevelfn!(s::BFSSPState{U}) where U
     s.n_level += one(U)
