@@ -43,8 +43,8 @@ function Dominator_Tree(g::AG, source) where {T, AG<:AbstractGraph{T}}
       
   =#
   
-  childs=zeros(UInt8,nv(g)) # the  child u of a node w of the the node that its suntree has a big size and its has a semi_dominator snaller than w 
-  ancesstor=zeros(UInt8,nv(g)) # the  ancesstor u of node w is the cuurent parent of w in the forest  
+  childs=zeros(T,nv(g)) # the  child u of a node w of the the node that its suntree has a big size and its has a semi_dominator snaller than w 
+  ancesstor=zeros(T,nv(g)) # the  ancesstor u of node w is the cuurent parent of w in the forest  
   labels=zeros(T,nv(g))       # the label u of node w is the result of accumalteing some of its parents nodes in the operation of path decompostion 
 
   parent[source]=1
