@@ -566,3 +566,32 @@ function rem_vertices!(g::SimpleDiGraph{T},
 
     return reverse_vmap
 end
+
+function all_neighbors(g::SimpleDiGraph{T}, u::T) where T
+   common = Vector{T}()
+   i, j = 1, 1
+   in_nbrs, out_nbrs = inneighbors(g, u), outneighbors(g, u)
+   in_len, out_len = length(in_nbrs), length(out_nbrs)
+   while i <= in_len && j <= out_len
+       if in_nbrs[i] < out_nbrs[j]
+           push!(common, in_nbrs[i])
+           i += 1
+       elseif in_nbrs[i] > out_nbrs[j]
+           push!(common, out_nbrs[j])
+           j += 1
+       else
+           push!(common, in_nbrs[i])
+           i += 1
+           j += 1
+       end
+   end
+   while i <= in_len
+       push!(common, in_nbrs[i])
+       i += 1
+   end
+   while j <= out_len
+       push!(common, out_nbrs[j])
+       j += 1
+   end
+   return common
+end
