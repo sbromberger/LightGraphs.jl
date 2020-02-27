@@ -6,37 +6,48 @@ a nive algorithm for fininding the dominator ,
  if y is dominated by x then it must be the case that preorder of y is smaller than x’s ,
  then the immediate dominator of u is the node that has the bigest preorder among the dominators of u,
  then  if ignor some node u, perform a dfs,and couldnot  reach some node v,then v is dominated by u,
- the biggest such a node is the immediate dominator 
- 
+ the biggest such a node is the immediate dominator
+
 =#
-function naivedom(g,r)
+function naivedom(g::AG,r)  where {T, AG<:AbstractGraph{T}}
 
-  domin=Array{UInt8,1}(undef,nv(g))
+  domin=zeros(T,nv(g))
+  # this array will mark the nodes that are reachable
+  vi1=zeros(T,nv(g))
 
+  #this function make a dfs with exclding some node the nodes that cannot ne reached are dominated by this node
   function testnode(u)
-    vi2=zeros(UInt8,nv(g))
-    vi2[u]=1
+    #visit array
+    vi2=falses(nv(g))
+    #making vi2[u] equal to true will prevent any path to go Through it
+    vi2[u]=true
     function dfs2(u)
-      t=vi2[u]
-      if t==1
-        return
-      end
-      vi2[u]=1
+      vi2[u]==true&&return
+      vi2[u]=true
 
       for w in outneighbors(g,u)
         dfs2(w)
       end
     end
       dfs2(r)
+
+      #=we look for the node that havn’t been reached after we exculde u but was reachable before
+      and declar u as its dominator , the last node to do that is the immediate domintor=#
+
       for i in vertices(g)
-        if vi2[i]==0
+
+        if vi2[i]==false && vi1[i]==true
           domin[i]=u
         end
       end
+
     end
 
 
-  vi1=zeros(UInt8,nv(g))
+
+
+  #=sort the node by preorder to ensure that we will testnode(v) after all of ancesstors of v,
+   which mean that the last node of dominators of u  to declare itself as the dominator of u, is the immediate dominator of u=#
   ordered=Array{}([])
   function dfs1(u)
     if vi1[u]==1
@@ -52,11 +63,13 @@ function naivedom(g,r)
   for i in ordered
     testnode(i)
   end
+
+
   domin[r]=0
   return domin
 end
 
-function generate_connected_digraph(n,d,seed)
+function generate_flow_digraph(n,d,seed)
   s=Vector{}([])
   push!(s,1)
   visit=zeros(Int,n)
@@ -83,66 +96,60 @@ function generate_connected_digraph(n,d,seed)
    return g
  end
 
+function dom_tree_test_withgraph(g::AG, source) where {T, AG<:AbstractGraph{T}}
 
-function domtest(n,d,seed)
 
-#=  g=generate_connected_digraph(n,d)
-  list=bfs_parents(g,1)
-  println()
-  ind=0
-  for i in 1:nv(g)
-    println(i)
-    println(outneighbors(g,i))
-    println(inneighbors(g,i))
-  end
-  d1=naivedom(g,1)
-  
-  for i in list
-    ind+=1
-    if i!=0
-    print(d1[ind], " ")
-  end
-  end
-  println()
-  d2=dominator(g,1)
-  
-  ind=0
-  for i in list
-    ind+=1
-    if i!=0
-    print(d2[ind], " ")
-  end
-  end
-  =#
-  g=generate_connected_digraph(n,d,seed)
-  list=bfs_parents(g,1)
-  d1=naivedom(g,1)
-  d2=Dominator_Tree(g,1)
-  ind=0
-  for i in list
-    ind+=1
-    if i!=0
-      @test d1[ind]==d2[ind] 
-    
-  
-  end
+
+d3=Dominator_Tree(g,source)
+d2=naivedom(g,source)
+d1=dominator_Tree(g,source)
+@test d1==d2 && d2==d3
+return
+end
+function domtreetest(n,d,seed)
+
+
+  g=generate_flow_digraph(n,d,seed)
+
+  dom_tree_test_withgraph(g,1)
+
 end
 
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @testset "test domintor" begin
-  domtest(30,3,22)
-  domtest(100,3,123)
 
-  domtest(50,4,1254)
-  domtest(10,3,77)
-  domtest(15,3,677)
-  domtest(15,3,877)
-  domtest(15,3,5)
-  domtest(15,3,10)
+  g=LightGraphs.binary_tree(6)
+  dom_tree_test_withgraph(g,1)
+  domtreetest(30,3,22)
+  domtreetest(100,3,123)
 
-  domtest(20,4,992)
+  domtreetest(50,4,1254)
+  domtreetest(10,3,77)
+  domtreetest(15,3,677)
+  domtreetest(15,3,877)
+  domtreetest(15,3,5)
+  domtreetest(15,3,10)
 
-  
+  domtreetest(20,4,992)
+
+
 end
