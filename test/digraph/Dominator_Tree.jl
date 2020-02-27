@@ -136,8 +136,7 @@ end
 
 @testset "test domintor tree" begin
 
-  g=LightGraphs.binary_tree(6)
-  dom_tree_test_withgraph(g,1)
+ 
   domtreetest(30,3,22)
   domtreetest(100,3,123)
 
