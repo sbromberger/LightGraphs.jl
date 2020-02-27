@@ -43,7 +43,7 @@
     end
 
     # test for extra cliques bug
-    @testset "does not find extra cliques"
+    @testset "does not find extra cliques" begin
       h = SimpleGraph(7)
       add_edge!(h, 1, 3)
       add_edge!(h, 2, 6)
