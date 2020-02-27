@@ -1,9 +1,10 @@
 @testset "Label propagation" begin
     n = 10
     g10 = complete_graph(n)
-    for g in testgraphs(g10)
+    @testset "$g" for g in testgraphs(g10)
         z = copy(g)
         for k = 2:5
+            Random.seed!(0)
             z = blockdiag(z, g)
             add_edge!(z, (k - 1) * n, k * n)
             c, ch = @inferred(label_propagation(z))

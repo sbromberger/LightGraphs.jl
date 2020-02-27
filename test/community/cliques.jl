@@ -17,11 +17,11 @@
 
     gx = SimpleGraph(3)
     add_edge!(gx, 1, 2)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       @test test_cliques(g, Array[[1, 2], [3]])
     end
     add_edge!(gx, 2, 3)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       @test test_cliques(g, Array[[1, 2], [2, 3]])
     end
     # Test for "pivotdonenbrs not defined" bug
@@ -35,7 +35,7 @@
     add_edge!(h, 3, 6)
     add_edge!(h, 5, 6)
 
-    for g in testgraphs(h)
+    @testset "$g" for g in testgraphs(h)
       @test !isempty(@inferred(maximal_cliques(g)))
     end
 
@@ -49,7 +49,7 @@
     add_edge!(h, 4, 5)
     add_edge!(h, 4, 7)
     add_edge!(h, 5, 7)
-    for g in testgraphs(h)
+    @testset "$g" for g in testgraphs(h)
       @test test_cliques(h, Array[[7, 4, 5], [2, 6], [3, 5], [3, 6], [3, 1]])
     end
 end
