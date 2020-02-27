@@ -100,10 +100,9 @@ function dom_tree_test_withgraph(g::AG, source) where {T, AG<:AbstractGraph{T}}
 
 
 
-d3=Dominator_Tree(g,source)
 d2=naivedom(g,source)
 d1=dominator_Tree(g,source)
-@test d1==d2 && d2==d3
+@test d1==d2 
 return
 end
 function domtreetest(n,d,seed)
@@ -135,7 +134,7 @@ end
 
 
 
-@testset "test domintor" begin
+@testset "test domintor tree" begin
 
   g=LightGraphs.binary_tree(6)
   dom_tree_test_withgraph(g,1)
