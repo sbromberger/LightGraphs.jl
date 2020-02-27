@@ -61,20 +61,7 @@ function dominator_Tree(g::AG, source) where {T, AG<:DiGraph{T}}
   counter=Int(0)
 
 
-  #=function dfs(v)
-    counter=counter+1
-    semi[v]=counter
-    verticesar[Int(counter)]=v
-    bucktes[v]=Array{T}([])
-    for w in outneighbors(g,v)
-      if parent[w]==0
-        parent[w]=v
-        dfs(w)
-      end
-    end
-
-    end
-    dfs(source)=#
+  
     s=Vector{}([])
     ptr=1
     counter=1
@@ -115,14 +102,14 @@ function dominator_Tree(g::AG, source) where {T, AG<:DiGraph{T}}
     let the semi dominator be u then u has two childern v1,v2 one of them is an ancesstor of w in the dfs tree,
     the other is either 
     1-w itself 
-    2- has a descendant c that has a croos edge to w 
-    -in the first case w will have an in_edge to u, because we scan backwards semi[u] will have the intial vaule preorder of u
+    2- has a descendant c that has a cross edge to w 
+    -in the first case w will have an inneighbors to u, because we scan backwards semi[u] will have the intial vaule preorder of u
     -in the second case v2 would have a preorder numper grater than w , so by the time we reach w,
      v2 and its all descendants would have been processed, we know that if u is the semi dominator of w,
      then the eval(j) for any j in the path between w and c will be w,
      the proof of the last claim
       let z be smei[eval(j)] to some j
-      is that it is impossibe for z to be greater than w because semi[v2] is at most w,
+       it is impossibe for z to be greater than w because semi[v2] is at most w,
       and if semi[eval(j)] is smaller than w then there is two disjoint paths from z to u,
       one passes by w and the other passes by eval(j), which contradicts that w is the semi domintor of u    
       =#
@@ -161,14 +148,14 @@ function dominator_Tree(g::AG, source) where {T, AG<:DiGraph{T}}
           y=eval(z)
           if semi[y]>=semi[p]
             #=
-            if there is no node that has semi dominator smaller that z’s ,
+            if there is no node between z and its semi dominator that has semi dominator smaller that z’s ,
             then dom[z]=semi dominator[z],
             note that semi[p]=preorder of p, because p havn’t been processed yet
             =#
             dom[z]=p
             
           else
-            # else we will declare implicitly that z has the same domina as y  
+        # else we will declare implicitly that z has the same dominator as y  
            dom[z]=y
 
           end
@@ -275,13 +262,13 @@ function produce_eval_link(n,accumfun::Function,T::DataType)
   to one of u’s descendants, it will not consider any ancesstor of u, because ancesstor[u] still equals to zero,
   so we must ensure always that whenever eval occurs to one of u’s descendants  all the nodes between v and u have
   semi dominator greater than v, or we don’t care about v or its ancesstors, to maintain the correctness of the algorithm .
-  for maore details look at "TARJAN, R.E. Applications of path compression on balanced trees. " section 5
+  for maore details look at "TARJAN, R.E. Applications of path compression on balanced trees. " section 5.
   =#
 
   function link(v,w)
    #=
     now we know the semi dominator of w and
-    want all its descendants that have semi dominator greater than w’s, to cosider w
+    want all its descendants that have semi dominator greater than w’s, to cosider w.
     
    =#
       s = w
@@ -292,13 +279,15 @@ function produce_eval_link(n,accumfun::Function,T::DataType)
         
         if size[s]+s2>=2*size[childs[s]]
           #=
-          now child[s] will refer to s as its ancesstor
+          now child[s] will refer to s as its ancesstor.
           =#
           ancesstor[childs[s]] = s
           childs[s] = childs[childs[s]]
        else
-         #=to ensure the balance we might swap some edges but the algorithm still correct
-         becasue at the end label[s] will be equal to label w=# 
+         #=
+         to ensure the balance we might swap some edges but the algorithm still correct
+        becasue at the end label[s] will be equal to label w.
+         =# 
          size[childs[s]] = size[s]
          s=ancesstor[s] = childs[s]
        end
@@ -309,14 +298,14 @@ function produce_eval_link(n,accumfun::Function,T::DataType)
      labels[s] = labels[w]
 
      #=
-     at this point of the algorithm [s child[s] child[child[s]] ...] is a sorted linked list accroding to thier semi dominator
+     at this point of the algorithm [s child[s] child[child[s]] ...] is a sorted linked list accroding to thier semi dominator.
      
 
      =#
 
 
       #=
-      finnaly make w implicitly descendant of v
+      finnaly make w implicitly descendant of v.
       =#
      size[v]+= size[w]
      if size[v] < 2*size[w]
@@ -330,8 +319,8 @@ function produce_eval_link(n,accumfun::Function,T::DataType)
 
      #=
      for maore details look at "TARJAN, R.E. Applications of path compression on balanced trees. " section 5
-     althought that algorithm is modified because we don’t know the semi dominator of v untill we process all of its descendants,
-     plus as far as any eval operation occurs before reaching v in the backwards loop above semi[v] is not important 
+     that algorithm is modified because we don’t know the semi dominator of v untill we process all of its descendants,
+     plus as far as any eval operation occurs before reaching v in the backwards loop  semi[v] is not important .
 
      =#
    end
