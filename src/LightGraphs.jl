@@ -49,7 +49,7 @@ spectral_distance, edit_distance,
 MinkowskiCost, BoundedMinkowskiCost,
 
 #Dominator Tree
-Dominator_Tree,
+dominator_Tree,
 
 # operators
 complement, reverse, reverse!, blockdiag, union, intersect,
