@@ -129,6 +129,7 @@ import Random
 
         @test @inferred(inneighbors(g, 2)) == [1]
         @test @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
+        @test @inferred Set(all_neighbors(g, 2)) == Set(union(outneighbors(g, 2), inneighbors(g, 2)))
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
