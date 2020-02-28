@@ -1,7 +1,7 @@
 @testset "Label propagation" begin
     n = 10
     g10 = complete_graph(n)
-    for g in testgraphs(g10)
+    @testset "$g" for g in testgraphs(g10)
         z = copy(g)
         for k = 2:5
             z = blockdiag(z, g)
@@ -9,9 +9,9 @@
             c, ch = @inferred(label_propagation(z))
             a = collect(n:n:(k * n))
             a = Int[div(i - 1, n) + 1 for i = 1:(k * n)]
-          # check the number of communities
+            # check the number of communities
             @test length(unique(a)) == length(unique(c))
-          # check the partition
+            # check the partition
             @test a == c
         end
     end
