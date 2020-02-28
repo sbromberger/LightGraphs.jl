@@ -1,72 +1,81 @@
 @testset "D'Esopo-Pape" begin
 
-    g4 = path_digraph(5)
-    d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
-    d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-    @testset "generic tests: $g" for g in testdigraphs(g4)
-        y = @inferred(desopo_pape_shortest_paths(g, 2, d1))
-        z = @inferred(desopo_pape_shortest_paths(g, 2, d2))
-        @test y.parents == z.parents == [0, 0, 2, 3, 4]
-        @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-    end
-        
-    gx = path_graph(5)
-    add_edge!(gx, 2, 4)
-    d = ones(Int, 5, 5)
-    d[2, 3] = 100
-    @testset "cycles: $g" for g in testgraphs(gx)
-        z = @inferred(desopo_pape_shortest_paths(g, 1, d))
-        @test z.dists == [0, 1, 3, 2, 3]
-        @test z.parents == [0, 1, 4, 2, 4]
+    @testset "generic tests" begin
+        g4 = path_digraph(5)
+        d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
+        d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
+        @testset "$g" for g in testdigraphs(g4)
+            y = @inferred(desopo_pape_shortest_paths(g, 2, d1))
+            z = @inferred(desopo_pape_shortest_paths(g, 2, d2))
+            @test y.parents == z.parents == [0, 0, 2, 3, 4]
+            @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
+        end
     end
 
-    m = [0 2 2 0 0; 2 0 0 0 3; 2 0 0 1 2;0 0 1 0 1;0 3 2 1 0]
-    G = SimpleGraph(5)
-    add_edge!(G, 1, 2)
-    add_edge!(G, 1, 3)
-    add_edge!(G, 2, 5)
-    add_edge!(G, 3, 5)
-    add_edge!(G, 3, 4)
-    add_edge!(G, 4, 5)
+    @testset "cycles" begin
+        gx = path_graph(5)
+        add_edge!(gx, 2, 4)
+        d = ones(Int, 5, 5)
+        d[2, 3] = 100
+        @testset "$g" for g in testgraphs(gx)
+            z = @inferred(desopo_pape_shortest_paths(g, 1, d))
+            @test z.dists == [0, 1, 3, 2, 3]
+            @test z.parents == [0, 1, 4, 2, 4]
+        end
+        m = [0 2 2 0 0; 2 0 0 0 3; 2 0 0 1 2;0 0 1 0 1;0 3 2 1 0]
+        G = SimpleGraph(5)
+        add_edge!(G, 1, 2)
+        add_edge!(G, 1, 3)
+        add_edge!(G, 2, 5)
+        add_edge!(G, 3, 5)
+        add_edge!(G, 3, 4)
+        add_edge!(G, 4, 5)
 
-    @testset "more cycles: $g" for g in testgraphs(G)
-        y = @inferred(desopo_pape_shortest_paths(g, 1, m))
-        @test y.parents == [0, 1, 1, 3, 3]
-        @test y.dists == [0, 2, 2, 3, 4]
+        @testset "$g" for g in testgraphs(G)
+            y = @inferred(desopo_pape_shortest_paths(g, 1, m))
+            @test y.parents == [0, 1, 1, 3, 3]
+            @test y.dists == [0, 2, 2, 3, 4]
+        end
     end
 
-    G = SimpleGraph(5)
-    add_edge!(G, 2, 2)
-    add_edge!(G, 1, 2)
-    add_edge!(G, 1, 3)
-    add_edge!(G, 3, 3)
-    add_edge!(G, 1, 5)
-    add_edge!(G, 2, 4)
-    add_edge!(G, 4, 5)
-    m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
-    @testset "self loops: $g" for g in testgraphs(G)
-        z = @inferred(desopo_pape_shortest_paths(g, 1 , m))
-        y = @inferred(dijkstra_shortest_paths(g, 1, m))
-        @test isapprox(z.dists, y.dists)
+    @testset "self loops" begin
+        G = SimpleGraph(5)
+        add_edge!(G, 2, 2)
+        add_edge!(G, 1, 2)
+        add_edge!(G, 1, 3)
+        add_edge!(G, 3, 3)
+        add_edge!(G, 1, 5)
+        add_edge!(G, 2, 4)
+        add_edge!(G, 4, 5)
+        m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
+        @testset "$g" for g in testgraphs(G)
+            z = @inferred(desopo_pape_shortest_paths(g, 1 , m))
+            y = @inferred(dijkstra_shortest_paths(g, 1, m))
+            @test isapprox(z.dists, y.dists)
+        end
     end
 
-    G = SimpleGraph(5)
-    add_edge!(G, 1, 2)
-    add_edge!(G, 1, 3)
-    add_edge!(G, 4, 5)
-    inf = typemax(eltype(G))
-    @testset "disconnected: $g" for g in testgraphs(G)
-        z = @inferred(desopo_pape_shortest_paths(g, 1))
-        @test z.dists == [0, 1, 1, inf, inf]
-        @test z.parents == [0, 1, 1, 0, 0]
+    @testset "disconnected" begin
+        G = SimpleGraph(5)
+        add_edge!(G, 1, 2)
+        add_edge!(G, 1, 3)
+        add_edge!(G, 4, 5)
+        inf = typemax(eltype(G))
+        @testset "$g" for g in testgraphs(G)
+            z = @inferred(desopo_pape_shortest_paths(g, 1))
+            @test z.dists == [0, 1, 1, inf, inf]
+            @test z.parents == [0, 1, 1, 0, 0]
+        end
     end
 
-    G = SimpleGraph(3)
-    inf = typemax(eltype(G))
-    @testset "empty: $g" for g in testgraphs(G)
-        z = @inferred(desopo_pape_shortest_paths(g, 1))
-        @test z.dists == [0, inf, inf]
-        @test z.parents == [0, 0, 0]
+    @testset "empty" begin
+        G = SimpleGraph(3)
+        inf = typemax(eltype(G))
+        @testset "$g" for g in testgraphs(G)
+            z = @inferred(desopo_pape_shortest_paths(g, 1))
+            @test z.dists == [0, inf, inf]
+            @test z.parents == [0, 0, 0]
+        end
     end
 
     @testset "random simple graphs" begin
@@ -135,20 +144,22 @@
         @test isapprox(z.dists, y.dists)
     end
 
-    @testset "smallgraphs: $s" for s in [
-        :bull, :chvatal, :cubical, :desargues, 
-        :diamond, :dodecahedral, :frucht, :heawood, 
-        :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte, 
-        :tetrahedral, :truncatedcube, :truncatedtetrahedron,
-        :truncatedtetrahedron_dir
-     ]
-        G = smallgraph(s)
-        z = desopo_pape_shortest_paths(G, 1)
-        y = dijkstra_shortest_paths(G, 1)
-        @test isapprox(z.dists, y.dists)
+    @testset "smallgraphs" begin
+        @testset "$s" for s in [
+            :bull, :chvatal, :cubical, :desargues,
+            :diamond, :dodecahedral, :frucht, :heawood,
+            :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
+            :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
+            :tetrahedral, :truncatedcube, :truncatedtetrahedron,
+            :truncatedtetrahedron_dir
+         ]
+            G = smallgraph(s)
+            z = desopo_pape_shortest_paths(G, 1)
+            y = dijkstra_shortest_paths(G, 1)
+            @test isapprox(z.dists, y.dists)
+        end
     end
-    
+
     @testset "errors" begin
         g = Graph()
         @test_throws DomainError desopo_pape_shortest_paths(g, 1)
