@@ -1,13 +1,11 @@
 """
     struct Johnson <: ShortestPathAlgorithm
-        maxdist::Float64
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
-No additional configuration parameters are specified or required.
 
-`maxdist` (default: `Inf`) specifies the maximum path distance beyond which all path distances
-are assumed to be infinite (that is, they do not exist).
+### Optional Fields
+`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `Johnson` supports the following shortest-path functionality:

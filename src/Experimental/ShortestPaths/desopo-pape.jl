@@ -3,7 +3,9 @@
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
-No fields are specified or required.
+
+### Optional Fields
+`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `DEsopoPape` supports the following shortest-path functionality:

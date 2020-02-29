@@ -12,9 +12,11 @@ end
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 to compute shortest paths. Optional fields for this structure include
-- all_paths::Bool - set to `true` to calculate all (redundant, equivalent) paths to a given destination
-- track_vertices::Bool - set to `true` to keep a running list of visited vertices (used for specific
+- `all_paths::Bool` - set to `true` to calculate all (redundant, equivalent) paths to a given destination
+- `track_vertices::Bool` - set to `true` to keep a running list of visited vertices (used for specific
   centrality calculations; generally not needed).
+- `maxdist::Float64` (default: `Inf`) specifies the maximum path distance beyond which all path distances
+   are assumed to be infinite (that is, they do not exist).
 
 `Dijkstra` is the default algorithm used when a distance matrix is specified.
 

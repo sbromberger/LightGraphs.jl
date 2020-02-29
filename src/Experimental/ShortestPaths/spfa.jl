@@ -13,7 +13,9 @@ using LightGraphs: nv, weights, outneighbors
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
-No additional configuration parameters are specified or required.
+
+### Optional Fields
+`maxdist` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `SPFA` supports the following shortest-path functionality:

@@ -15,6 +15,10 @@ penalty.
 `BFS` is the default algorithm used when a source is specified
 but no distance matrix is specified.
 
+### Optional Fields
+`maxdist::Int64` (default: `typemax(Int64)`) specifies the maximum path distance, in terms of number of edges, 
+beyond which all path distances are assumed to be infinite (that is, they do not exist).
+
 ### Implementation Notes
 `BFS` supports the following shortest-path functionality:
 - (optional) multiple sources
