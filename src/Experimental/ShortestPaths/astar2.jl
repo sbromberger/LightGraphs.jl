@@ -1,12 +1,12 @@
-function extract_a_star_route(parents::Vector{Int},s::Int, u::Int)
-    route = Int[]
+function extract_a_star_route(parents::Vector{T},s::Integer, u::Integer) where {T<:Integer}
+    route = Vector{T}()
     index = u
     push!(route,index)
     while index != s
         index = parents[index]
         push!(route, index)
     end
-    reverse!(route)
+    return reverse(route)
 end
 
 struct AStar2{F<:Function} <: ShortestPathAlgorithm
@@ -39,7 +39,7 @@ however significantly improved in terms of performance.
 """
 function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::AbstractMatrix{T}, alg::AStar2) where {U<:Integer, T<:Real}
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
-    frontier = PriorityQueue{Tuple{T, U},T}()
+    frontier = PriorityQueue{Tuple{T, U}, T}()
     frontier[(zero(T), U(s))] = zero(T)
     nvg = nv(g)
     visited = falses(nvg)
@@ -49,9 +49,9 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
     colormap[s] = 1
     @inbounds while !isempty(frontier)
         (cost_so_far, u) = dequeue!(frontier)
-        u == t && return AStarResult(extract_a_star_route(parents,s,u), cost_so_far)
+        u == t && return AStarResult(extract_a_star_route(parents, s, u), cost_so_far)
         for v in LightGraphs.outneighbors(g, u)
-            if get(colormap, v, 0) < 2
+            if colormap[v] < 2
                 dist = distmx[u, v]
                 colormap[v] = 1
                 path_cost = cost_so_far + dist
@@ -59,13 +59,11 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
                     visited[v] = true
                     parents[v] = u
                     dists[v] = path_cost
-                    enqueue!(frontier,
-                            (path_cost, v),
-                            path_cost + alg.heuristic(v,t))
+                    enqueue!(frontier, (path_cost, v), path_cost + alg.heuristic(v, t))
                 elseif path_cost < dists[v]
                     parents[v] = u
                     dists[v] = path_cost
-                    frontier[path_cost, v] = path_cost + alg.heuristic(v,t)
+                    frontier[path_cost, v] = path_cost + alg.heuristic(v, t)
                 end
             end
         end
