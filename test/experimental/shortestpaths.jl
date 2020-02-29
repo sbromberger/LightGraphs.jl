@@ -281,6 +281,17 @@ end
             y = shortest_paths(G, 1, Dijkstra())
             @test isapprox(z.dists, y.dists)
         end
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 1 2 0 0 1; 1 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 0.1; 1 0 0 0 0.1 0])
+
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, 3, m, DEsopoPape(maxdist=3)))
+                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+            end
+        end 
         
         @testset "errors" begin
             g = Graph()

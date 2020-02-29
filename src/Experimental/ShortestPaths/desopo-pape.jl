@@ -10,13 +10,18 @@ No fields are specified or required.
 - non-negative distance matrices / weights
 - all destinations
 """
-struct DEsopoPape <: ShortestPathAlgorithm end
+struct DEsopoPape <: ShortestPathAlgorithm 
+    maxdist::AbstractFloat
+end
+
+DEsopoPape(; maxdist=NaN) = DEsopoPape(maxdist)
+
 struct DEsopoPapeResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
 
-function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, ::DEsopoPape)
+function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, alg::DEsopoPape)
     T = eltype(distmx)
     U = eltype(g)
     nvg = nv(g)
@@ -34,6 +39,11 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
         
         for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
+
+            if alt > alg.maxdist
+                continue
+            end
+
             if (dists[v] > alt)
                 dists[v] = alt
                 parents[v] = u
