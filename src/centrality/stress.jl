@@ -36,9 +36,10 @@ function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
     isdir = is_directed(g)
 
     stress = zeros(Int, n_v)
+    dstate = Dijkstra(all_paths=true, track_vertices=true)
     for s in vs
         if degree(g, s) > 0
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = shortest_paths(g, s, Dijkstra)
             _stress_accumulate_basic!(stress, state, g, s)
         end
     end
@@ -49,7 +50,7 @@ stress_centrality(g::AbstractGraph, k::Integer) =
     stress_centrality(g, sample(vertices(g), k))
 
 function _stress_accumulate_basic!(stress::Vector{<:Integer},
-    state::DijkstraState,
+    state::DijkstraResult,
     g::AbstractGraph,
     si::Integer)
 

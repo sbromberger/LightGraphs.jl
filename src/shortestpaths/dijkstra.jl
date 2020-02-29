@@ -1,9 +1,4 @@
-"""
-    struct DijkstraState{T, U}
-
-An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
-"""
-struct DijkstraState{T <: Real,U <: Integer} <: AbstractPathState
+struct DijkstraResult{T, U<:Integer}  <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -12,57 +7,43 @@ struct DijkstraState{T <: Real,U <: Integer} <: AbstractPathState
 end
 
 """
-    dijkstra_shortest_paths(g, srcs, distmx=weights(g));
+    struct Dijkstra <: ShortestPathAlgorithm
 
-Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-on a graph, computing shortest distances between `srcs` and all other vertices.
-Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal information.
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+to compute shortest paths. Optional fields for this structure include
+- all_paths::Bool - set to `true` to calculate all (redundant, equivalent) paths to a given destination
+- track_vertices::Bool - set to `true` to keep a running list of visited vertices (used for specific
+  centrality calculations; generally not needed).
 
-### Optional Arguments
-- `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
-predecessors of a given vertex.
+`Dijkstra` is the default algorithm used when a distance matrix is specified.
+
+### Implementation Notes
+`Dijkstra` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- (optional) multiple sources
+- all destinations
+- redundant equivalent path tracking
+- vertex tracking
 
 ### Performance
-If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
-That is, assuming `D` is the sparse distance matrix:
+If using a sparse matrix for `distmx` in [`shortest_paths`](@ref), you *may* achieve better performance
+by passing in a transpose of its sparse transpose. That is, assuming `D` is the sparse distance matrix:
 ```
 D = transpose(sparse(transpose(D)))
 ```
-Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy should only be used
-when multiple calls to `dijkstra_shortest_paths` with the distance matrix are planned.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
-
-julia> ds.dists
-5-element Array{Int64,1}:
- 1
- 0
- 1
- 2
- 2
-
-julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
-
-julia> ds.dists
-5-element Array{Int64,1}:
- 1
- 0
- 1
- 2
- 3
-```
+Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
+should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
 """
-function dijkstra_shortest_paths(g::AbstractGraph,
-    srcs::Vector{U},
-    distmx::AbstractMatrix{T}=weights(g);
-    allpaths=false,
-    trackvertices=false
-    ) where T <: Real where U <: Integer
+struct Dijkstra <: ShortestPathAlgorithm
+    all_paths::Bool
+    track_vertices::Bool
+end
 
+Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
+
+
+function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -86,7 +67,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     while !isempty(H)
         u = dequeue!(H)
 
-        if trackvertices
+        if alg.track_vertices
             push!(closest_vertices, u)
         end
 
@@ -100,7 +81,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
                 parents[v] = u
 
                 pathcounts[v] += pathcounts[u]
-                if allpaths
+                if alg.all_paths
                     preds[v] = [u;]
                 end
                 H[v] = alt
@@ -109,21 +90,21 @@ function dijkstra_shortest_paths(g::AbstractGraph,
                 parents[v] = u
                 #615
                 pathcounts[v] = pathcounts[u]
-                if allpaths
+                if alg.all_paths
                     resize!(preds[v], 1)
                     preds[v][1] = u
                 end
                 H[v] = alt
             elseif alt == dists[v]
                 pathcounts[v] += pathcounts[u]
-                if allpaths
+                if alg.all_paths
                     push!(preds[v], u)
                 end
             end
         end
     end
 
-    if trackvertices
+    if alg.track_vertices
         for s in vertices(g)
             if !visited[s]
                 push!(closest_vertices, s)
@@ -137,8 +118,10 @@ function dijkstra_shortest_paths(g::AbstractGraph,
         empty!(preds[src])
     end
 
-    return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
+    return DijkstraResult{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false) =
-dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices)
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
+# If we don't specify an algorithm, use dijkstra.
+shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix) = shortest_paths(g, s, distmx, Dijkstra())
+

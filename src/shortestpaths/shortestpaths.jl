@@ -1,13 +1,3 @@
-module ShortestPaths
-using SparseArrays: sparse
-using LightGraphs
-using LightGraphs.Experimental.Traversals
-using LightGraphs: AbstractGraph, AbstractEdge
-using LightGraphs.SimpleGraphs: AbstractSimpleGraph
-using DataStructures:PriorityQueue, enqueue!, dequeue!
-
-import LightGraphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
-
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment
 #     threaded::Bool
@@ -47,15 +37,6 @@ See [`AStar`](@ref), [`BellmanFord`](@ref), [`BFS`](@ref),
 usage details.
 """
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
-
-include("astar.jl")
-include("bellman-ford.jl")
-include("bfs.jl")
-include("desopo-pape.jl")
-include("dijkstra.jl")
-include("floyd-warshall.jl")
-include("johnson.jl")
-include("spfa.jl")
 
 
 ################################
@@ -195,10 +176,3 @@ false
 """
 has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = has_negative_weight_cycle(g, distmx, BellmanFord())
 has_negative_weight_cycle(g::AbstractSimpleGraph) = false
-
-export ShortestPathAlgorithm
-export paths, dists, shortest_paths, has_negative_weight_cycle
-export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
-export NegativeCycleError
-
-end  # module

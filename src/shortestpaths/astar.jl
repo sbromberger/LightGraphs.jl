@@ -3,17 +3,41 @@
 
 # A* shortest-path algorithm
 
+"""
+    struct AStar <: ShortestPathAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
+An optional `heuristic` function may be supplied. If missing, the heuristic is set to
+`n -> 0`.
+
+### Implementation Notes
+`AStar` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- single destination
+"""
+struct AStar{F<:Function} <: ShortestPathAlgorithm
+    heuristic::F
+end
+
+AStar(T::Type=Float64) = AStar(n -> zero(T))
+
+struct AStarResult{T, U<:Integer} <: ShortestPathResult
+    path::Vector{U}
+    dist::T
+end
+
 function reconstruct_path!(total_path, # a vector to be filled with the shortest path
     came_from, # a vector holding the parent of each node in the A* exploration
     end_idx, # the end vertex
     g) # the graph
 
-    E = edgetype(g)
     curr_idx = end_idx
     while came_from[curr_idx] != curr_idx
-        pushfirst!(total_path, E(came_from[curr_idx], curr_idx))
+        pushfirst!(total_path, came_from[curr_idx])
         curr_idx = came_from[curr_idx]
     end
+    push!(total_path, end_idx)
 end
 
 function a_star_impl!(g, # the graph
@@ -26,8 +50,8 @@ function a_star_impl!(g, # the graph
     distmx,
     heuristic)
 
-    E = edgetype(g)
-    total_path = Vector{E}()
+    T = eltype(g)
+    total_path = Vector{T}()
 
     @inbounds while !isempty(open_set)
         current = dequeue!(open_set)
@@ -39,7 +63,7 @@ function a_star_impl!(g, # the graph
 
         closed_set[current] = true
 
-        for neighbor in LightGraphs.outneighbors(g, current)
+        for neighbor in outneighbors(g, current)
             closed_set[neighbor] && continue
 
             tentative_g_score = g_score[current] + distmx[current, neighbor]
@@ -55,22 +79,22 @@ function a_star_impl!(g, # the graph
     return total_path
 end
 
-"""
-    a_star(g, s, t[, distmx][, heuristic])
+function calc_dist(path, distmx)
+    T = eltype(distmx)
+    isempty(path) && return typemax(T)
+    rest_of_path = copy(path)
+    dist = zero(T)
+    u = pop!(rest_of_path)
+    while !isempty(rest_of_path)
+        v = pop!(rest_of_path)
+        dist += distmx[u, v]
+        u = v
+    end
+    return dist
+end
 
-Return a vector of edges comprising the shortest path between vertices `s` and `t`
-using the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
-An optional heuristic function and edge distance matrix may be supplied. If missing,
-the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heuristic is set to
-`n -> 0`.
-"""
-function a_star(g::AbstractGraph{U},  # the g
-    s::Integer,                       # the start vertex
-    t::Integer,                       # the end vertex
-    distmx::AbstractMatrix{T}=weights(g),
-    heuristic::Function=n -> zero(T)) where {T, U}
-
-    E = Edge{eltype(g)}
+function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar)
+    T = eltype(distmx)
 
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
@@ -84,10 +108,18 @@ function a_star(g::AbstractGraph{U},  # the g
     g_score[s] = 0
 
     f_score = fill(Inf, nv(g))
-    f_score[s] = heuristic(s)
+    f_score[s] = alg.heuristic(s)
 
     came_from = -ones(Integer, nv(g))
     came_from[s] = s
 
-    a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, heuristic)
+    path = a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, alg.heuristic)
+    return AStarResult(path, calc_dist(path, distmx))
 end
+
+shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) = shortest_paths(g, s, t, weights(g), alg)
+paths(s::AStarResult) = [s.path]
+paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
+dists(s::AStarResult) = [[s.dist]]
+dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
+

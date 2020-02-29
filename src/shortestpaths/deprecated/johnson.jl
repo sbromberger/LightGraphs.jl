@@ -1,30 +1,34 @@
+
 """
-    struct Johnson <: ShortestPathAlgorithm
+    struct JohnsonState{T, U}
 
-The structure used to configure and specify that [`shortest_paths`](@ref)
-should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
-No additional configuration parameters are specified or required.
+An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
+"""
+struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
+    dists::Matrix{T}
+    parents::Matrix{U}
+end
 
-### Implementation Notes
-`Johnson` supports the following shortest-path functionality:
-- non-negative distance matrices / weights
-- all-pairs shortest paths
+"""
+    johnson_shortest_paths(g, distmx=weights(g))
+
+Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
+to compute the shortest paths between all pairs of vertices in graph `g` using an
+optional distance matrix `distmx`.
+
+Return a [`LightGraphs.JohnsonState`](@ref) with relevant
+traversal information.
 
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson <: ShortestPathAlgorithm end
+function johnson_shortest_paths(g::AbstractGraph{U},
+    distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
-struct JohnsonResult{T, U<:Integer} <: ShortestPathResult
-    parents::Matrix{U}
-    dists::Matrix{T}
-end
-
-function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson) where {T, U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
-    wt_transform = LightGraphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
+    wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
     
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
@@ -57,12 +61,10 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
         end
     end
 
-    return JohnsonResult(parents, dists)
+    return JohnsonState(dists, parents)
 end
 
-shortest_paths(g::AbstractGraph, alg::Johnson) = shortest_paths(g, weights(g), alg)
-
-function paths(s::JohnsonResult{T, U}, v::Integer) where {T, U <: Integer}
+function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where U <: Integer
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
@@ -81,5 +83,5 @@ function paths(s::JohnsonResult{T, U}, v::Integer) where {T, U <: Integer}
     return paths
 end
 
-paths(s::JohnsonResult) = [paths(s, v) for v in 1:size(s.parents, 1)]
-paths(st::JohnsonResult, s::Integer, d::Integer) = paths(st, s)[d]
+enumerate_paths(s::JohnsonState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
+enumerate_paths(st::JohnsonState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]

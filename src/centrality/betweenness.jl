@@ -54,9 +54,10 @@ function betweenness_centrality(g::AbstractGraph,
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
+    dstate = Dijkstra(all_paths=true, track_vertices=true)
     for s in vs
         if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+            state = shortest_paths(g, s, distmx, dstate)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -79,7 +80,7 @@ betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weig
 
 
 function _accumulate_basic!(betweenness::Vector{Float64},
-    state::DijkstraState,
+    state::DijkstraResult,
     g::AbstractGraph,
     si::Integer)
 
@@ -107,7 +108,7 @@ function _accumulate_basic!(betweenness::Vector{Float64},
 end
 
 function _accumulate_endpoints!(betweenness::Vector{Float64},
-    state::DijkstraState,
+    state::DijkstraResult,
     g::AbstractGraph,
     si::Integer)
 

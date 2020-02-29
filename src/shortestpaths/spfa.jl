@@ -6,53 +6,34 @@
 #
 ###################################################################
 
-using Base.Threads
-
-
-"""
-    spfa_shortest_paths(g, s, distmx=weights(g))
-
-Compute shortest paths between a source `s` and all
-other nodes in graph `g` using the [Shortest Path Faster Algorithm]
-(https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
-
-# Examples
-
-```jldoctest
-julia> g = complete_graph(3);
-
-julia> d = [1 -3 1; -3 1 1; 1 1 1];
-
-julia> spfa_shortest_paths(g, 1, d)
-
-ERROR: LightGraphs.NegativeCycleError()
-
-julia> g = complete_graph(4);
-
-julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
-
-julia> spfa_shortest_paths(gx, 1, d)
-
-4-element Array{Int64,1}:
-  0
-  0
- -1
-  0
-```
+using LightGraphs: nv, weights, outneighbors
 
 """
+    struct SPFA <: ShortestPathAlgorithm
 
-function spfa_shortest_paths(
-    graph::AbstractGraph{U},
-    source::Integer,
-    distmx::AbstractMatrix{T}=weights(graph)
-    ) where T<:Real where U<:Integer
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
+No additional configuration parameters are specified or required.
+
+### Implementation Notes
+`SPFA` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- all destinations
+"""
+struct SPFA <: ShortestPathAlgorithm end
+struct SPFAResult{T, U<:Integer} <: ShortestPathResult
+    parents::Vector{U}
+    dists::Vector{T}
+end
+
+function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMatrix{T}, alg::SPFA) where {T, U<:Integer}
 
 
-    nvg = nv(graph)
+    nvg = nv(g)
 
     (source in 1:nvg) || throw(DomainError(source, "source should be in between 1 and $nvg"))
-    dists = fill(typemax(T),nvg)
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
     dists[source] = 0
 
     count = zeros(U, nvg)           # Vector to store the count of number of times a vertex goes in the queue.
@@ -66,10 +47,11 @@ function spfa_shortest_paths(
         v = popfirst!(queue)
         inqueue[v] = false
 
-        @inbounds for v_neighbor in outneighbors(graph,v)
+        @inbounds for v_neighbor in outneighbors(g, v)
             d = distmx[v,v_neighbor]
             if dists[v] + d < dists[v_neighbor]      # Relaxing edges
                 dists[v_neighbor] = dists[v] + d
+                parents[v_neighbor] = v
 
                 if !inqueue[v_neighbor]
                     push!(queue,v_neighbor)
@@ -86,10 +68,10 @@ function spfa_shortest_paths(
         end
     end
 
-    return dists
+    return SPFAResult(parents, dists)
 end
 
-has_negative_edge_cycle_spfa(g::AbstractGraph) = false
+shortest_paths(g::AbstractGraph, s::Integer, alg::SPFA) = shortest_paths(g, s, weights(g), alg)
 
 """
 Function which returns true if there is any negative weight cycle in the graph.
@@ -100,28 +82,25 @@ julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
 
-julia> has_negative_edge_cycle_spfa(g, d)
+julia> has_negative_weight_cycle(g, d, SPFA())
 true
 
 julia> g = complete_graph(4);
 
 julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 
-julia> has_negative_edge_cycle_spfa(g, d);
+julia> has_negative_weight_cycle(g, d, SPFA());
 false
 ```
-
 """
-function has_negative_edge_cycle_spfa(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}
-    ) where T<:Real where U<:Integer
-
+function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg::SPFA)
     try
-        spfa_shortest_paths(g, 1, distmx)
+        shortest_paths(g, 1, distmx, alg)
     catch e
-        isa(e, NegativeCycleError) && return true
+        isa(e, ShortestPaths.NegativeCycleError) && return true
     end
 
     return false
 end
+has_negative_weight_cycle(g::AbstractGraph, ::SPFA) = false
+

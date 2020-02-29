@@ -1,39 +1,39 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
+
 """
-    struct FloydWarshallState{T, U}
+    struct FloydWarshall <: ShortestPathAlgorithm
 
-An [`AbstractPathState`](@ref) designed for Floyd-Warshall shortest-paths calculations.
-"""
-struct FloydWarshallState{T,U<:Integer} <: AbstractPathState
-    dists::Matrix{T}
-    parents::Matrix{U}
-end
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm).
+No additional configuration parameters are specified or required.
 
-@doc """
-    floyd_warshall_shortest_paths(g, distmx=weights(g))
+`FloydWarshall` is the default all-pairs algorithm used when no source is specified.
 
-Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
-to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@ref) with relevant
-traversal information.
+### Implementation Notes
+`FloydWarshall` supports the following shortest-path functionality:
+- non-negative distance matrices / weights
+- all-pairs shortest paths
 
 ### Performance
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
-function floyd_warshall_shortest_paths(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g)
-) where T<:Real where U<:Integer
+struct FloydWarshall <: ShortestPathAlgorithm end
+struct FloydWarshallResult{T, U<:Integer} <: ShortestPathResult
+    dists::Matrix{T}
+    parents::Matrix{U}
+end
+
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydWarshall) where {T, U<:Integer}
     nvg = nv(g)
     # if we do checkbounds here, we can use @inbounds later
     checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
 
-    dists = fill(typemax(T), (Int(nvg), Int(nvg)))
+    fwdists = fill(typemax(T), (Int(nvg), Int(nvg)))
     parents = zeros(U, (Int(nvg), Int(nvg)))
 
     @inbounds for v in vertices(g)
-        dists[v, v] = zero(T)
+        fwdists[v, v] = zero(T)
     end
     undirected = !is_directed(g)
     @inbounds for e in edges(g)
@@ -42,39 +42,39 @@ function floyd_warshall_shortest_paths(
 
         d = distmx[u, v]
 
-        dists[u, v] = min(d, dists[u, v])
+        fwdists[u, v] = min(d, fwdists[u, v])
         parents[u, v] = u
         if undirected
-            dists[v, u] = min(d, dists[v, u])
+            fwdists[v, u] = min(d, fwdists[v, u])
             parents[v, u] = v
         end
     end
 
     @inbounds for pivot in vertices(g)
-        # Relax dists[u, v] = min(dists[u, v], dists[u, pivot]+dists[pivot, v]) for all u, v
+        # Relax fwdists[u, v] = min(fwdists[u, v], fwdists[u, pivot]+fwdists[pivot, v]) for all u, v
         for v in vertices(g)
-            d = dists[pivot, v]
+            d = fwdists[pivot, v]
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d) 
-                if dists[u, v] > ans
-                    dists[u, v] = ans
+                ans = (fwdists[u, pivot] == typemax(T) ? typemax(T) : fwdists[u, pivot] + d) 
+                if fwdists[u, v] > ans
+                    fwdists[u, v] = ans
                     parents[u, v] = p
                 end
             end
         end
     end
-    fws = FloydWarshallState(dists, parents)
+    fws = FloydWarshallResult(fwdists, parents)
     return fws
 end
 
-function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U<:Integer
+function paths(s::FloydWarshallResult{T, U}, v::Integer) where {T, U<:Integer}
     pathinfo = s.parents[v, :]
-    paths = Vector{Vector{U}}()
+    fwpaths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
         if (i == v) || (s.dists[v, i] == typemax(T))
-            push!(paths, Vector{U}())
+            push!(fwpaths, Vector{U}())
         else
             path = Vector{U}()
             currpathindex = U(i)
@@ -86,11 +86,17 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
                     currpathindex = pathinfo[currpathindex]
                 end
             end
-            push!(paths, reverse(path))
+            push!(fwpaths, reverse(path))
         end
     end
-    return paths
+    return fwpaths
 end
 
-enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
-enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]
+shortest_paths(g::AbstractGraph, alg::FloydWarshall) = shortest_paths(g, weights(g), alg)
+
+# If we don't specify an algorithm AND there's no source, use Floyd-Warshall.
+shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
+    shortest_paths(g, distmx, FloydWarshall())
+
+paths(s::FloydWarshallResult) = [paths(s, v) for v in 1:size(s.parents, 1)]
+paths(st::FloydWarshallResult, s::Integer, d::Integer) = paths(st, s)[d]

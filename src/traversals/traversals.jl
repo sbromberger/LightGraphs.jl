@@ -1,11 +1,3 @@
-module Traversals
-
-# This module does not export much. The primary reasons are that exporting would increase the
-# likelihood of name conflicts, and because the functions here should be used only by developers
-# to create new graph algorithms that rely on breadth-first or depth-first search traversals.
-
-using LightGraphs
-using SimpleTraits
 """
     abstract type TraversalAlgorithm
 
@@ -167,10 +159,6 @@ function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neigh
     return state.parents
 end
 
-
-include("bfs.jl")
-include("dfs.jl")
-
 """
     tree(p)
 
@@ -197,7 +185,3 @@ function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn:
     p = parents(g, s, alg, neighborfn)
     return tree(p)
 end
-
-export visited_vertices, parents, distances, topological_sort, tree
-
-end  # module

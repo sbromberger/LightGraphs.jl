@@ -1,130 +1,127 @@
-# DFS implementation optimized from http://www.cs.nott.ac.uk/~psznza/G5BADS03/graphs2.pdf
-# Depth-first visit / traversal
+import Base.showerror
+struct CycleError <: Exception end
+Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
-"""
-    is_cyclic(g)
+struct DFS <: TraversalAlgorithm end
 
-Return `true` if graph `g` contains a cycle.
-
-### Implementation Notes
-Uses DFS.
-"""
-function is_cyclic end
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
-    vcolor = zeros(UInt8, nv(g))
-    for v in vertices(g)
-        vcolor[v] != 0 && continue
-        S = Vector{T}([v])
-        vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
-            w = 0
-            for n in outneighbors(g, u)
-                if vcolor[n] == 1
-                    return true
-                elseif vcolor[n] == 0
-                    w = n
-                    break
-                end
-            end
-            if w != 0
-                vcolor[w] = 1
-                push!(S, w)
-            else
-                vcolor[u] = 2
-                pop!(S)
-            end
-        end
+function traverse_graph!(
+    g::AbstractGraph{U},
+    ss::AbstractVector,
+    alg::DFS,
+    state::AbstractTraversalState,
+    neighborfn::Function=outneighbors
+    ) where U<:Integer
+    
+    n = nv(g)
+    visited = falses(n)
+    S = Vector{U}()
+    sizehint!(S, length(ss))
+    @inbounds for s in ss
+        us = U(s)
+        visited[us] = true
+        push!(S, us)
+        initfn!(state, us) || return false
     end
-    return false
-end
-
-# Topological sort using DFS
-"""
-    topological_sort_by_dfs(g)
-
-Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
-graph `g` as a vector of vertices in topological order.
-"""
-function topological_sort_by_dfs end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
-    vcolor = zeros(UInt8, nv(g))
-    verts = Vector{T}()
-    for v in vertices(g)
-        vcolor[v] != 0 && continue
-        S = Vector{T}([v])
-        vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
-            w = 0
-            for n in outneighbors(g, u)
-                if vcolor[n] == 1
-                    error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
-                elseif vcolor[n] == 0
-                    w = n
-                    break
-                end
-            end
-            if w != 0
-                vcolor[w] = 1
-                push!(S, w)
-            else
-                vcolor[u] = 2
-                push!(verts, u)
-                pop!(S)
-            end
-        end
-    end
-    return reverse(verts)
-end
-
-"""
-    dfs_tree(g, s)
-
-Return an ordered vector of vertices representing a directed acyclic graph based on
-depth-first traversal of the graph `g` starting with source vertex `s`.
-"""
-dfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
-
-"""
-    dfs_parents(g, s[; dir=:out])
-
-Perform a depth-first search of graph `g` starting from vertex `s`.
-Return a vector of parent vertices indexed by vertex. If `dir` is specified,
-use the corresponding edge direction (`:in` and `:out` are acceptable values).
-
-### Implementation Notes
-This version of DFS is iterative.
-"""
-dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
-(dir == :out) ? _dfs_parents(g, s, outneighbors) : _dfs_parents(g, s, inneighbors)
-
-function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
-    parents = zeros(T, nv(g))
-
-    seen = zeros(Bool, nv(g))
-    S = Vector{T}([s])
-    seen[s] = true
-    parents[s] = s
     while !isempty(S)
         v = S[end]
-        u = 0
-        for n in neighborfn(g, v)
-            if !seen[n]
-                u = n
+        previsitfn!(state, v) || return false
+        new_neighbor_found = false
+        @inbounds for i in neighborfn(g, v)
+            visitfn!(state, v, i) || return false
+            if !visited[i]  # find the first unvisited neighbor
+                newvisitfn!(state, v, i) || return false
+                new_neighbor_found = true
+                visited[i] = true
+                push!(S, i)
                 break
             end
         end
-        if u == 0
+        postvisitfn!(state, v) || return false
+        if !new_neighbor_found  # no more new neighbors. Let's go to the next source vertex.
+            postlevelfn!(state) || return false
             pop!(S)
-        else
-            seen[u] = true
-            push!(S, u)
-            parents[u] = v
         end
     end
-    return parents
+    return true
+end
+
+mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
+    vcolor::Vector{UInt8}
+    verts :: Vector{T}
+    w::T
+end
+
+# 1 = visited
+# 2 = vcolor 2
+# @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
+@inline function previsitfn!(s::TopoSortState{T}, u) where T
+    s.w = 0
+    return true
+end
+@inline function visitfn!(s::TopoSortState{T}, u, v) where T 
+    return s.vcolor[v] != one(T)
+end
+@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T 
+    s.w = v
+    return true
+end
+@inline function postvisitfn!(s::TopoSortState{T}, u) where T 
+    if s.w != 0
+        s.vcolor[s.w] = one(T)
+    else
+        s.vcolor[u] = T(2)
+        push!(s.verts, u)
+    end
+    return true
+end
+
+
+@traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+    vcolor = zeros(UInt8, nv(g))
+    verts = Vector{T}()
+    state = TopoSortState(vcolor, verts, zero(T))
+    for v in vertices(g)
+        state.vcolor[v] != 0 && continue
+        state.vcolor[v] = 1
+        if !traverse_graph!(g, v, DFS(), state)
+            throw(CycleError())
+        end
+    end
+    return reverse(state.verts)
+end
+
+mutable struct CycleState{T<:Integer} <: AbstractTraversalState
+    vcolor::Vector{UInt8}
+    w::T
+end
+
+@inline function previsitfn!(s::CycleState{T}, u) where T
+    s.w = 0
+    return true
+end
+@inline function visitfn!(s::CycleState{T}, u, v) where T 
+    return s.vcolor[v] != one(T)
+end
+@inline function newvisitfn!(s::CycleState{T}, u, v) where T 
+    s.w = v
+    return true
+end
+@inline function postvisitfn!(s::CycleState{T}, u) where T 
+    if s.w != 0
+        s.vcolor[s.w] = one(T)
+    else
+        s.vcolor[u] = T(2)
+    end
+    return true
+end
+
+@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+    vcolor = zeros(UInt8, nv(g))
+    state = CycleState(vcolor, zero(T))
+    @inbounds for v in vertices(g)
+        state.vcolor[v] != 0 && continue
+        state.vcolor[v] = 1
+        !traverse_graph!(g, v, DFS(), state) && return true
+    end
+    return false
 end
