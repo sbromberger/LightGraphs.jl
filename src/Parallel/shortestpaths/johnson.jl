@@ -1,5 +1,5 @@
-function johnson_shortest_paths(g::AbstractGraph{U},
-distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
+function parallel_shortest_paths(g::AbstractGraph{U},
+distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -18,7 +18,7 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
     end
 
 
-    dijk_state = Parallel.dijkstra_shortest_paths(g, vertices(g), distmx)
+    dijk_state = parallel_shortest_paths(g, vertices(g), distmx, Dijkstra())
     dists = dijk_state.dists
     parents = dijk_state.parents
 
@@ -34,6 +34,7 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
         end
     end
 
-    return JohnsonState(dists, parents)
+    return JohnsonResult(dists, parents)
 end
 
+parallel_shortest_paths(g::AbstractGraph, js::Johnson) = parallel_shortest_paths(g, weights(g), js)

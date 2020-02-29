@@ -1,9 +1,4 @@
-function bellman_ford_shortest_paths(
-    g::AbstractGraph{U},
-    sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(g)
-    ) where T<:Real where U<:Integer
-
+function parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, distmx::AbstractMatrix{T}=weights(g)) where {T<:Real, U<:Integer}
     nvg = nv(g)
     active = Set{U}()
     sizehint!(active, nv(g))
@@ -21,8 +16,11 @@ function bellman_ford_shortest_paths(
     end
 
     isempty(active) || throw(LightGraphs.NegativeCycleError())
-    return BellmanFordState(parents, dists)
+    return BellmanFordResults(parents, dists)
 end
+
+parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, bf::BellmanFord) where {T<:Real, U<:Integer} =
+    parallel_shortest_paths(g, sources, weights(g), bf)
 
 #Helper function used due to performance bug in @threads.
 function _loop_body!(
@@ -62,11 +60,10 @@ function has_negative_edge_cycle(
     distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
     try
-        Parallel.bellman_ford_shortest_paths(g, vertices(g), distmx)
+        Parallel.parallel_shortest_paths(g, vertices(g), distmx, BellmanFord())
     catch e
         isa(e, LightGraphs.NegativeCycleError) && return true
     end
     return false
 end
-
 

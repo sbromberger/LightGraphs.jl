@@ -1,6 +1,3 @@
-using LightGraphs.Experimental.Traversals
-
-
 """
     struct BFS <: ShortestPathAlgorithm
 

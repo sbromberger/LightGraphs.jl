@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Parallel.dijkstra_shortest_paths calculation.
 """
-struct MultipleDijkstraState{T <: Real,U <: Integer} <: AbstractPathState
+struct ParallelDijkstraResult{T <: Real,U <: Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -16,9 +16,8 @@ Compute the shortest paths between all pairs of vertices in graph `g` by running
 an optional distance matrix `distmx`. Return a [`Parallel.MultipleDijkstraState`](@ref) with relevant
 traversal information.
 """
-function dijkstra_shortest_paths(g::AbstractGraph{U},
-    sources::AbstractVector=vertices(g),
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U
+function parallel_shortest_paths(g::AbstractGraph{U},
+    sources::AbstractVector, distmx::AbstractMatrix{T}, ::Dijkstra) where T <: Real where U
 
     n_v = nv(g)
     r_v = length(sources)
@@ -33,6 +32,8 @@ function dijkstra_shortest_paths(g::AbstractGraph{U},
         parents[i, :] = state.parents
     end
 
-    result = MultipleDijkstraState(sdata(dists), sdata(parents))
-    return result
+    return ParallelDijkstraResult(sdata(dists), sdata(parents))
 end
+parallel_shortest_paths(g::AbstractGraph, ds::Dijkstra) = parallel_shortest_paths(g, vertices(g), weights(g), ds)
+parallel_shortest_paths(g::AbstractGraph, sources::AbstractVector, ds::Dijkstra) = parallel_shortest_paths(g, sources, weights(g), ds)
+parallel_shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, ds::Dijkstra) = parallel_shortest_paths(g, vertices(g), distmx, ds)

@@ -87,10 +87,12 @@ simplecycles_limited_length,
 mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
-a_star, dijkstra_shortest_paths, bellman_ford_shortest_paths,
-spfa_shortest_paths,has_negative_edge_cycle_spfa,has_negative_edge_cycle, enumerate_paths,
-johnson_shortest_paths, floyd_warshall_shortest_paths, transitiveclosure!, transitiveclosure, transitivereduction,
-yen_k_shortest_paths, desopo_pape_shortest_paths,
+shortest_paths, AStar, BFS, BellmanFord, DesopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
+AStarResult, BFSResult, BellmanFordResult, DesopoPapeResult, DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult,
+has_negative_weight_cycle, 
+
+# transitivity
+transitiveclosure!, transitiveclosure, transitivereduction,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -187,7 +189,6 @@ and tutorials are available at the
 LightGraphs
 include("interface.jl")
 include("utils.jl")
-include("deprecations.jl")
 include("core.jl")
 
 include("SimpleGraphs/SimpleGraphs.jl")
@@ -213,39 +214,26 @@ a `Graph` or `DiGraph`.
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
-include("digraph/transitivity.jl")
+include("transitivity.jl")
 include("cycles/johnson.jl")
 include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("cycles/limited_length.jl")
-include("traversals/traversals.jl")
-include("traversals/bfs.jl")
-include("traversals/bipartition.jl")
-include("traversals/greedy_color.jl")
-include("traversals/dfs.jl")
-include("traversals/maxadjvisit.jl")
-include("traversals/randomwalks.jl")
-include("traversals/diffusion.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("edit_distance.jl")
+include("Traversals/Traversals.jl")
 include("shortestpaths/shortestpaths.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
+include("shortestpaths/bfs.jl")
 include("shortestpaths/dijkstra.jl")
 include("shortestpaths/johnson.jl")
 include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("shortestpaths/spfa.jl")
-include("shortestpaths/deprecated/astar.jl")
-include("shortestpaths/deprecated/bellman-ford.jl")
-include("shortestpaths/deprecated/dijkstra.jl")
-include("shortestpaths/deprecated/johnson.jl")
-include("shortestpaths/deprecated/desopo-pape.jl")
-include("shortestpaths/deprecated/floyd-warshall.jl")
-include("shortestpaths/deprecated/spfa.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
@@ -281,6 +269,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("deprecations.jl")
 
 using .LinAlg
 end # module

@@ -1,3 +1,9 @@
+module Traversals
+
+using SimpleTraits
+
+import LightGraphs: AbstractGraph, IsDirected
+
 """
     abstract type TraversalAlgorithm
 
@@ -184,4 +190,13 @@ using algorithm `alg` with neighbor function `neighborfn`.
 function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors)
     p = parents(g, s, alg, neighborfn)
     return tree(p)
+end
+
+include("bfs.jl")
+include("bipartition.jl")
+include("dfs.jl")
+include("diffusion.jl")
+include("greedy_color.jl")
+include("maxadjvisit.jl")
+include("randomwalks.jl")
 end

@@ -1,15 +1,14 @@
 """
-    simplecycles_hawick_james(g)
+    struct HawickJames <: AbstractSimpleCycleAlgorithm
 
-Find circuits (including self-loops) in `g` using the algorithm
-of Hawick & James.
+A `SimpleCycleAlgorithm` that specifies the use of Hawick & James.
 
 ### References
 - Hawick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
 """
-function simplecycles_hawick_james end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function simplecycles_hawick_james(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+struct HawickJames <: AbstractSimpleCycleAlgorithm end
+
+@traitfn function simplecycles(g::AG::IsDirected, ::HawickJames) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)
     B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)

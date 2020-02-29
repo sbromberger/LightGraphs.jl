@@ -36,6 +36,7 @@ Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4
 function gdistances!(
     g::AbstractGraph{T}, 
     sources::Vector{<:Integer},
+    parents::Vector{T},
     vert_level::Vector{T};
     queue_segment_size::Integer=20
     ) where T <:Integer
@@ -55,6 +56,7 @@ function gdistances!(
     for s in sources    
         visited[s] = true
         vert_level[s] = zero(T)
+        parents[s] = zero(T)
     end
     partition_sources!(cur_level_t, sources, queue_explored_t)
     is_cur_level_t_empty = isempty(sources)
@@ -90,6 +92,7 @@ function gdistances!(
                             # Data race, but first read on visited[i] always succeeds
                             if !visited[i]
                                 vert_level[i] = n_level
+                                parents[i] = v
                                 #Concurrent visited[i] = true always succeeds
                                 visited[i] = true
                                 push!(next_level, i)
@@ -112,7 +115,7 @@ function gdistances!(
         end               
     end
 
-    return vert_level
+    return BFSResult(parents=parents, dists=vert_level)
 end
 
 gdistances!(g::AbstractGraph{T}, source::Integer, vert_level::Vector{T}; queue_segment_size::Integer=20) where T<:Integer = 
@@ -137,3 +140,7 @@ gdistances!(g, sources, Vector{T}(undef, nv(g)); queue_segment_size=20)
 
 gdistances(g::AbstractGraph{T}, source::Integer; queue_segment_size::Integer=20) where T<:Integer = 
 gdistances!(g, [source,], Vector{T}(undef, nv(g)); queue_segment_size=20)
+
+parallel_shortest_paths(g::AbstractGraph, sources::Vector, bs::BFS; queue_segment_size::Integer) = gdistances(g, sources, queue_segnment_size)
+parallel_shortest_paths(g::AbstractGraph, source::Integer, bs::BFS; queue_segment_size::Integer) = gdistances(g, [source,], queue_segnment_size)
+
