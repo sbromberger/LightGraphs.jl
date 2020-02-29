@@ -3,7 +3,9 @@
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
-No additional configuration parameters are specified or required.
+
+### Optional Fields
+`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `Johnson` supports the following shortest-path functionality:
@@ -13,14 +15,18 @@ No additional configuration parameters are specified or required.
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson <: ShortestPathAlgorithm end
+struct Johnson <: ShortestPathAlgorithm 
+    maxdist::Float64
+end
+
+Johnson(; maxdist=typemax(Float64)) = Johnson(maxdist)
 
 struct JohnsonResult{T, U<:Integer} <: ShortestPathResult
     parents::Matrix{U}
     dists::Matrix{T}
 end
 
-function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson) where {T, U<:Integer}
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, alg::Johnson) where {T, U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
@@ -41,7 +47,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
     dists = Matrix{T}(undef, nvg, nvg)
     parents = Matrix{U}(undef, nvg, nvg)
     for v in vertices(g)
-        dijk_state = dijkstra_shortest_paths(g, v, distmx)
+        dijk_state = shortest_paths(g, v, distmx, Dijkstra(maxdist=alg.maxdist))
         dists[v, :] = dijk_state.dists
         parents[v, :] = dijk_state.parents
     end
