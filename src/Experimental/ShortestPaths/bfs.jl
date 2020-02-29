@@ -22,17 +22,17 @@ but no distance matrix is specified.
 """
 struct BFS{T} <: ShortestPathAlgorithm
     traversal::T
-    maxdist::Integer
+    maxdist::Int64
 end
 
-BFS(; maxdist=typemax(UInt64)) = BFS(Traversals.BFS(), maxdist)
-BFS(a::Base.Sort.Algorithm; maxdist=typemax(UInt64)) = BFS(Traversals.BFS(a), maxdist)
+BFS(; maxdist=typemax(Int64)) = BFS(Traversals.BFS(), maxdist)
+BFS(a::Base.Sort.Algorithm; maxdist=typemax(Int64)) = BFS(Traversals.BFS(a), maxdist)
 
 mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
-    max_level::Base.RefValue{U}
+    max_level::Base.RefValue{Int64}
 end
 
 @inline function initfn!(s::BFSSPState, u)
@@ -63,8 +63,7 @@ function shortest_paths(
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
-    maxdist = alg.maxdist > typemax(U) ? typemax(U) : convert(U, alg.maxdist)
-    state = BFSSPState(parents, dists, one(U), Ref(maxdist))
+    state = BFSSPState(parents, dists, one(U), Ref(alg.maxdist))
     Traversals.traverse_graph!(g, ss, alg.traversal, state)
     return BFSResult(state.parents, state.dists)
 end

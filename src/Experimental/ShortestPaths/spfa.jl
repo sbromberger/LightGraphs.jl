@@ -21,10 +21,10 @@ No additional configuration parameters are specified or required.
 - all destinations
 """
 struct SPFA <: ShortestPathAlgorithm 
-    maxdist::AbstractFloat
+    maxdist::Float64
 end
 
-SPFA(; maxdist=NaN) = SPFA(maxdist)
+SPFA(; maxdist=typemax(Float64)) = SPFA(maxdist)
 
 struct SPFAResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
@@ -56,9 +56,7 @@ function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMa
             d = distmx[v,v_neighbor]
             alt = dists[v] + d
 
-            if alt > alg.maxdist
-                continue
-            end
+            alt > alg.maxdist && continue
 
             if alt < dists[v_neighbor]         # Relaxing edges
                 dists[v_neighbor] = alt

@@ -38,10 +38,10 @@ should only be used when multiple calls to [`shortest_paths`](@ref) with the dis
 struct Dijkstra <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool
-    maxdist::AbstractFloat
+    maxdist::Float64
 end
 
-Dijkstra(;all_paths=false, track_vertices=false, maxdist=NaN) = 
+Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64)) = 
     Dijkstra(all_paths, track_vertices, maxdist)
 
 function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
@@ -76,9 +76,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         for v in outneighbors(g, u)
             alt = d + distmx[u, v]
 
-            if alt > alg.maxdist
-                continue
-            end
+            alt > alg.maxdist && continue
 
             if !visited[v]
                 visited[v] = true

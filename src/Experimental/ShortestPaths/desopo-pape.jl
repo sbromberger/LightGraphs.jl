@@ -11,10 +11,10 @@ No fields are specified or required.
 - all destinations
 """
 struct DEsopoPape <: ShortestPathAlgorithm 
-    maxdist::AbstractFloat
+    maxdist::Float64
 end
 
-DEsopoPape(; maxdist=NaN) = DEsopoPape(maxdist)
+DEsopoPape(; maxdist=typemax(Float64)) = DEsopoPape(maxdist)
 
 struct DEsopoPapeResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
@@ -40,9 +40,7 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
         for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
 
-            if alt > alg.maxdist
-                continue
-            end
+            alt > alg.maxdist && continue
 
             if (dists[v] > alt)
                 dists[v] = alt
