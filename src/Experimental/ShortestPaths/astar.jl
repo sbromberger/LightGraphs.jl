@@ -67,7 +67,7 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
         end
         colormap[u] = 2
     end
-    return AStarResult(Vector{U}(), Inf)
+    return AStarResult(Vector{U}(), typemax(T))
 end
 
 
