@@ -49,6 +49,7 @@ usage details.
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
 
 include("astar.jl")
+include("astar2.jl")
 include("bellman-ford.jl")
 include("bfs.jl")
 include("desopo-pape.jl")
@@ -198,7 +199,7 @@ has_negative_weight_cycle(g::AbstractSimpleGraph) = false
 
 export ShortestPathAlgorithm
 export paths, dists, shortest_paths, has_negative_weight_cycle
-export Dijkstra, AStar, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
+export Dijkstra, AStar, AStar2, BellmanFord, FloydWarshall, DEsopoPape, Johnson, SPFA, BFS
 export NegativeCycleError
 
 end  # module
