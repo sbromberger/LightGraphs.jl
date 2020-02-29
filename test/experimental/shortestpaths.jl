@@ -120,6 +120,16 @@ end
         @test m2 isa ShortestPaths.BFSResult
         @test m1.dists == [0, 0, 1, 2, 1]
         @test m2.dists == [0, 0, 1, 2, 1]
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(8)
+            add_edge!(G, 1, 3)
+            
+            for g in testgraphs(G)
+                b = shortest_paths(g, 1, BFS(maxdist=2))
+                @test b.dists == [0, 1, 1, 2, typemax(eltype(b.dists)), typemax(eltype(b.dists)), 2, 1]
+            end
+        end
     end
 
     @testset "DEsopoPape" begin
