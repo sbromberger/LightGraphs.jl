@@ -13,14 +13,21 @@ using LightGraphs: nv, weights, outneighbors
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
-No additional configuration parameters are specified or required.
+
+### Optional Fields
+`maxdist` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `SPFA` supports the following shortest-path functionality:
 - non-negative distance matrices / weights
 - all destinations
 """
-struct SPFA <: ShortestPathAlgorithm end
+struct SPFA <: ShortestPathAlgorithm 
+    maxdist::Float64
+end
+
+SPFA(; maxdist=typemax(Float64)) = SPFA(maxdist)
+
 struct SPFAResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
@@ -49,8 +56,12 @@ function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMa
 
         @inbounds for v_neighbor in outneighbors(g, v)
             d = distmx[v,v_neighbor]
-            if dists[v] + d < dists[v_neighbor]      # Relaxing edges
-                dists[v_neighbor] = dists[v] + d
+            alt = dists[v] + d
+
+            alt > alg.maxdist && continue
+
+            if alt < dists[v_neighbor]         # Relaxing edges
+                dists[v_neighbor] = alt
                 parents[v_neighbor] = v
 
                 if !inqueue[v_neighbor]
