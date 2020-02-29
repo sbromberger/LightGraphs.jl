@@ -1,6 +1,5 @@
 """
     struct YenState{T, U}
-
 Designed for yen k-shortest-paths calculations.
 """
 struct YenState{T,U <: Integer} <: AbstractPathState
@@ -11,7 +10,6 @@ end
 
 """
     yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);
-
 Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
 on a graph, computing k-shortest distances between `source` and `target` other vertices.
 Return a [`YenState`](@ref) that contains distances and paths.
@@ -25,8 +23,10 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     source == target && return YenState{T,U}([U(0)], [[source]])
 
-    dj = dijkstra_shortest_paths(g, source, distmx)
-    path = enumerate_paths(dj)[target]
+    alg = LightGraphs.Experimental.ShortestPaths.Dijkstra(maxdist=maxdist)
+    dj = LightGraphs.Experimental.ShortestPaths.shortest_paths(g, source, distmx, alg)
+
+    path = LightGraphs.Experimental.ShortestPaths.paths(dj, target)
     isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
 
     dists = Array{T,1}()
@@ -100,4 +100,3 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     return YenState{T,U}(dists, A)
 end
-
