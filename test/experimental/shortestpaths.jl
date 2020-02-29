@@ -374,6 +374,18 @@ end
             dm = @inferred(shortest_paths(g, 1, Dijkstra(all_paths=true, track_vertices=true)))
             @test dm.closest_vertices == [1, 2, 3, 4, 5]
         end
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 1 2 0 0 1; 1 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 0.1; 1 0 0 0 0.1 0])
+
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, 3, m, Dijkstra(all_paths=true, maxdist=3)))
+                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+                @test ds.pathcounts == [2, 1, 1, 0, 0, 2]
+            end
+        end 
     end
 
     @testset "FloydWarshall" begin
