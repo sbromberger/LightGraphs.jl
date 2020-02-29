@@ -20,7 +20,12 @@ No additional configuration parameters are specified or required.
 - non-negative distance matrices / weights
 - all destinations
 """
-struct SPFA <: ShortestPathAlgorithm end
+struct SPFA <: ShortestPathAlgorithm 
+    maxdist::AbstractFloat
+end
+
+SPFA(; maxdist=NaN) = SPFA(maxdist)
+
 struct SPFAResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
@@ -49,8 +54,14 @@ function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMa
 
         @inbounds for v_neighbor in outneighbors(g, v)
             d = distmx[v,v_neighbor]
-            if dists[v] + d < dists[v_neighbor]      # Relaxing edges
-                dists[v_neighbor] = dists[v] + d
+            alt = dists[v] + d
+
+            if alt > alg.maxdist
+                continue
+            end
+
+            if alt < dists[v_neighbor]         # Relaxing edges
+                dists[v_neighbor] = alt
                 parents[v_neighbor] = v
 
                 if !inqueue[v_neighbor]
