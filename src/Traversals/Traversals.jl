@@ -208,7 +208,6 @@ include("diffusion.jl")
 include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
-end
 
 export distances, has_path
 export is_bipartite, bipartite_map
@@ -217,3 +216,4 @@ export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 export diffusion, diffusion_rate
 export greedy_color
 export mincut, maximum_adjacency_visit
+end #module
