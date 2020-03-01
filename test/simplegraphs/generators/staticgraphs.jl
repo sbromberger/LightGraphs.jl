@@ -538,17 +538,23 @@
     end
    @testset "Friendship Graphs" begin
         # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node 
-        for n in [-5,0,10, 15, 20]
+        for n in [10, 15, 20]
          g=friendship_graph(n)
          @test length(connected_components(g)) == 1
          @test articulation(g) == [1]
          cc=biconnected_components(g)
-         @test length(cc) == max(1,n)
+         @test length(cc) == n
          for i in 1:n
             @test length(cc[i]) == 3 # the only biconnected simple graph of 3 edges is c3 
          end
+            
         end
         
+        
+         for i in [-5,0]
+             g=friendship_graph(n) 
+             @test nv(g)==1
+        end
     end
     
 end
