@@ -28,36 +28,6 @@
         end
     end # basic connectivity testset
 
-    @testset "digraph basic connectivity" begin
-        g10 = SimpleDiGraph(4)
-        add_edge!(g10, 1, 3)
-        add_edge!(g10, 2, 4)
-        @testset "$g" for g in testdigraphs(g10)
-            @test @inferred(is_bipartite(g))
-        end
-
-        add_edge!(g10, 1, 4)
-        @testset "$g" for g in testdigraphs(g10)
-            @test @inferred(is_bipartite(g))
-        end
-
-        g10 = SimpleDiGraph(20)
-        @testset "$g" for g in testdigraphs(g10)
-            gc = copy(g)
-            for m = 1:50
-                i = rand(1:10)
-                j = rand(11:20)
-                if rand() < 0.5
-                    i, j = j, i
-                end
-                if !has_edge(gc, i, j)
-                    add_edge!(gc, i, j)
-                    @test @inferred(is_bipartite(gc))
-                end
-            end
-        end
-    end # digraph testset
-
     @testset "strongly connected components" begin
         # graph from https://en.wikipedia.org/wiki/Strongly_connected_component
         h = SimpleDiGraph(8)

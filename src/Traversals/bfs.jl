@@ -95,13 +95,16 @@ function distances(g::AbstractGraph{T}, s, alg::BFS=BFS()) where T
 end
 
 mutable struct PathState{T} <: AbstractTraversalState
+    u::T
     v::T
-    excluded_vertices::Vector{T}
+    exclude_vertices::Vector{T}
+    vertices_in_exclude::Bool # set to true if the source or dest are in excludes.
 end
 
 @inline function preinitfn!(s::PathState, visited)
-    visited[s.excluded_vertices] .= true
-    return true
+    visited[s.exclude_vertices] .= true
+    s.vertices_in_exclude = visited[s.u] | visited[s.v]
+    return !s.vertices_in_exclude
 end
 @inline newvisitfn!(s::PathState, u, v) = s.v != v 
 
@@ -110,11 +113,18 @@ end
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `excluded_vertices`. 
+is in `exclude_vertices`. 
+
+
+### Performance Notes
+sorting `exclude_vertices` prior to calling the function may result in improved performance.
 """ 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BFS=BFS(); excluded_vertices=Vector{T}()) where {T}
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BFS=BFS(); exclude_vertices=Vector{T}()) where {T}
     u == v && return true
-    state = PathState(T(v), T.(excluded_vertices))
-    return !traverse_graph!(g, u, alg, state)
+    state = PathState(T(u), T(v), T.(exclude_vertices), false)
+    result = traverse_graph!(g, u, alg, state)
+    # if traverse_graph is false, check the shortcircuit val.
+    result && return false
+    return !state.vertices_in_exclude
 end
 

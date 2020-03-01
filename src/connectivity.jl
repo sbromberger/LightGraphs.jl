@@ -502,8 +502,9 @@ function period end
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = tree(ShortestPaths.shortest_paths(g, 1))
-    levels      = gdistances(g_bfs_tree, 1)
+    g_bfs = ShortestPaths.shortest_paths(g, 1)
+    g_bfs_tree  = tree(g_bfs)
+    levels      = dists(g_bfs)
     tree_diff   = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
 

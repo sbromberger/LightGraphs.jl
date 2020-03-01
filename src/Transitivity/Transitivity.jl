@@ -1,5 +1,12 @@
+module Transitivity
+
+using LightGraphs
+using SimpleTraits
+using LightGraphs.SimpleGraphs
+using LightGraphs.Traversals
+
 """
-    transitiveclosure!(g, selflooped=false)
+    transitive_closure!(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using DFS.
 If `selflooped` is true, add self loops to the graph.
@@ -10,11 +17,11 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 ### Implementation Notes
 This version of the function modifies the original graph.
 """
-function transitiveclosure! end
-@traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
+function transitive_closure! end
+@traitfn function transitive_closure!(g::::IsDirected, selflooped=false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
-    tp = reverse(topological_sort_by_dfs(cg))
+    tp = reverse(topological_sort(cg, DFS()))
     sr = [Vector{eltype(cg)}() for _ in vertices(cg)]
 
     x = selflooped ? 0 : 1
@@ -44,7 +51,7 @@ function transitiveclosure! end
 end
 
 """
-    transitiveclosure(g, selflooped=false)
+    transitive_closure(g, selflooped=false)
 
 Compute the transitive closure of a directed graph, using DFS.
 Return a graph representing the transitive closure. If `selflooped`
@@ -77,7 +84,7 @@ julia> collect(edges(barbell))
  Edge 6 => 4
  Edge 6 => 5
 
-julia> collect(edges(transitiveclosure(barbell)))
+julia> collect(edges(transitive_closure(barbell)))
 21-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
@@ -102,13 +109,13 @@ julia> collect(edges(transitiveclosure(barbell)))
  Edge 6 => 5
 ```
 """
-function transitiveclosure(g::DiGraph, selflooped = false)
+function transitive_closure(g::DiGraph, selflooped = false)
     copyg = copy(g)
-    return transitiveclosure!(copyg, selflooped)
+    return transitive_closure!(copyg, selflooped)
 end
 
 """
-    transitivereduction(g; selflooped=false)
+    transitive_reduction(g; selflooped=false)
 
 Compute the transitive reduction of  a directed graph. If the graph contains
 cycles, each strongly connected component is replaced by a directed cycle and
@@ -143,7 +150,7 @@ julia> collect(edges(barbell))
  Edge 6 => 4
  Edge 6 => 5
 
-julia> collect(edges(transitivereduction(barbell)))
+julia> collect(edges(transitive_reduction(barbell)))
 7-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 4
@@ -154,8 +161,8 @@ julia> collect(edges(transitivereduction(barbell)))
  Edge 6 => 4
 ```
 """
-function transitivereducion end
-@traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
+function transitive_reduction end
+@traitfn function transitive_reduction(g::::IsDirected; selflooped::Bool=false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
 
@@ -217,3 +224,7 @@ function transitivereducion end
 
     return resultg
 end
+
+export transitive_closure, transitive_reduction
+
+end # module

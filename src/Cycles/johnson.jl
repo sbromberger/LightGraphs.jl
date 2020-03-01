@@ -30,7 +30,7 @@ struct Johnson <: SimpleCycleAlgorithm
     ceiling::Int
 end
 
-Johnson() = Johnson(false, 10e6)
+Johnson(;iterative=false, ceiling=10e6) = Johnson(iterative, ceiling)
 
 """
     max_simple_cycles(dg::::IsDirected, byscc::Bool = true)
@@ -64,7 +64,7 @@ end
 
 """
 ```
-type JohnsonVisitor{T<:Integer} <: Visitor{T}
+struct JohnsonVisitor{T<:Integer} <: Visitor{T}
     stack::Vector{T}
     blocked::BitVector
     blockedmap::Vector{Set{T}}
@@ -86,7 +86,6 @@ struct JohnsonVisitor{T <: Integer} <: Visitor{T}
     stack::Vector{T}
     blocked::BitVector
     blockedmap::Vector{Set{T}}
-    allcycles::Vector{Vector{T}}
 end
 
 function JohnsonVisitor(dg)
@@ -170,7 +169,7 @@ end
 
 
 @traitfn simple_cycles(dg::::IsDirected, j::Johnson) =
-    j.iterative ? _johnson_simple_cycles_iter(dg) : _johnson_simple_cycles_recursive(dg)
+    j.iterative ? _johnson_simple_cycles_iter(dg, j.ceiling) : _johnson_simple_cycles_recursive(dg)
 
 @traitfn function _johnson_simple_cycles_recursive(dg::::IsDirected)
     T = eltype(dg)
@@ -256,64 +255,22 @@ end
     end
 end
 
-"""
-    count_simple_cycles(dg::DiGraph, ::SimpleCyclesAlgorithm)
-
-Count the number of cycles in a directed graph, using a specific algorithm (default:
-`Johnson`). Return the minimum of the ceiling and the number of cycles.
-
-### Implementation Notes
-If the algorithm supports it, the `ceiling` parameter of the `SimpleCycleAlgorithm` structure may be
-used to avoid memory overload if there are a lot of cycles in the graph. You can use the function
-[`max_simple_cycles()`](@ref) to get an idea of the theoretical maximum number or cycles.
-
-# Examples
-```jldoctest
-julia> simple_cycles_count(complete_digraph(6))
-409
-```
-"""
-function count_simple_cycles end
 @traitfn function count_simple_cycles(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}}
     len = 0
     ceiling = j.ceiling
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
         len += 1
     end
     return len
 end
 
-@traitfn _johnson_simple_cycles_iter(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}} =
-    return collect(Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T}), j.ceiling))::Vector{Vector{T}}
+@traitfn _johnson_simple_cycles_iter(dg::AG::IsDirected, ceiling::Int) where {T, AG <: AbstractGraph{T}} =
+    return collect(Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
 
-"""
-    simple_cycles_length(dg::DiGraph, ::SimpleCycleAlgorithm)
-
-Search all cycles of the given directed graph, using an appropriate `SimpleCycleAlgorithm`
-(default: `Johnson`). Return a tuple representing the cycle length and the number of cycles.
-
-### Implementation Notes
-If the algorithm supports it, the `ceiling` parameter of the `SimpleCycleAlgorithm` structure may be
-used to avoid memory overload if there are a lot of cycles in the graph. You can use the function
-[`max_simple_cycles()`](@ref) to get an idea of the theoretical maximum number or cycles.
-If the `ceiling` is reached (`ncycles = ceiling`), the output is only a subset of the cycles lengths.
-
-### References
-- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
-
-# Examples
-```jldoctest
-julia> simple_cycles_length(complete_digraph(16), Johnson())
-([0, 1, 1, 1, 1, 1, 2, 10, 73, 511, 3066, 15329, 61313, 183939, 367876, 367876], 1000000)
-
-julia> simplecycleslength(wheel_digraph(16))
-([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], 1)
-```
-"""
 @traitfn function simple_cycles_length(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}}
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, j.ceiling)
+    for cycle in Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T})::Channel{Vector{T}}, j.ceiling)
         cyclelength[length(cycle)] += 1
         ncycles += 1
     end

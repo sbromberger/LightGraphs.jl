@@ -17,12 +17,23 @@
 @deprecate bellman_ford_shortest_paths(g::AbstractGraph, s::Integer) shortest_paths(g, s, BellmanFord())
 @deprecate bellman_ford_shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix) shortest_paths(g, s, distmx, BellmanFord())
 
-@deprecate maxsimplecycles max_simple_cycles
-@deprecate simplecyclescount count_simple_cycles
-@deprecate simplecycleslength(g, ceil) simple_cycles_length(g, Johnson(ceiling=ceil))
+@deprecate maxsimplecycles Cycles.max_simple_cycles
+@deprecate simplecycles(g) Cycles.simple_cycles(g, Cycles.Johnson())
+@deprecate simplecyclescount Cycles.count_simple_cycles
+@deprecate simplecycles_hawick_james(g) Cycles.simple_cycles(g, Cycles.HawickJames())
+@deprecate simplecycles_limited_length(g, n) Cycles.simple_cycles(g, Cycles.LimitedLength(n))
+@deprecate simplecycles_limited_length(g, n, ceiling) Cycles.simple_cycles(g, Cycles.LimitedLength(n, ceiling))
+@deprecate simplecycleslength(g, ceil) Cycles.simple_cycles_length(g, Cycles.Johnson(ceiling=ceil))
+@deprecate karp_minimum_cycle_mean(g) Cycles.minimum_cycle_mean(g, Cycles.Karp())
+@deprecate karp_minimum_cycle_mean(g, distmx) Cycles.minimum_cycle_mean(g, distmx, Cycles.Karp())
+
 @deprecate enumerate_paths paths
 @deprecate bfs_tree(g, v) tree(shortest_paths(g, v, BFS()))
 @deprecate dfs_tree(g, v) tree(shortest_paths(g, v, DFS()))
-@deprecate gdistances distances
+@deprecate bfs_parents(g, v) parents(shortest_paths(g, v, BFS()))
+@deprecate gdistances ShortestPaths.distances
+@deprecate topological_sort_by_dfs(g) Traversals.topological_sort(g, Traversals.DFS())
+@deprecate transitivereduction transitive_reduction
+@deprecate transitiveclosure transitive_closure
 
-export maxsimplescycles, simplecyclescount, simplecycleslength, enumerate_paths, bfs_tree, dfs_tree
+export maxsimplescycles, simplecyclescount, simplecycleslength, enumerate_paths, bfs_tree, dfs_tree, transitivereduction, transitiveclosure

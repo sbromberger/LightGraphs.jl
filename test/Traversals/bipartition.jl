@@ -1,6 +1,6 @@
 @testset "Bipartiteness" begin
     g6 = smallgraph(:house)
-    for g in testgraphs(g6)
+    @testset "$g" for g in testgraphs(g6)
         @test @inferred(!is_bipartite(g))
     end
 
@@ -11,6 +11,33 @@
 
     for g in testgraphs(gx)
         @test @inferred(is_bipartite(g))
+    end
+    g10 = SimpleDiGraph(4)
+    add_edge!(g10, 1, 3)
+    add_edge!(g10, 2, 4)
+    @testset "$g" for g in testdigraphs(g10)
+        @test @inferred(is_bipartite(g))
+    end
+
+    add_edge!(g10, 1, 4)
+    @testset "$g" for g in testdigraphs(g10)
+        @test @inferred(is_bipartite(g))
+    end
+
+    g10 = SimpleDiGraph(20)
+    @testset "$g" for g in testdigraphs(g10)
+        gc = copy(g)
+        for m = 1:50
+            i = rand(1:10)
+            j = rand(11:20)
+            if rand() < 0.5
+                i, j = j, i
+            end
+            if !has_edge(gc, i, j)
+                add_edge!(gc, i, j)
+                @test @inferred(is_bipartite(gc))
+            end
+        end
     end
 
     g10 = complete_graph(10)

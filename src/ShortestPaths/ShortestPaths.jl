@@ -8,7 +8,9 @@ module ShortestPaths
      
 using LightGraphs
 using LightGraphs.Traversals
+import LightGraphs.Traversals: tree
 using DataStructures: PriorityQueue, dequeue!, enqueue!
+using SparseArrays: sparse
 
 import Base: ==
 import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
@@ -172,22 +174,6 @@ vertices) of parents.
 """
 parents(state::ShortestPathResult, v::Integer) = state.parents[v]
 parents(state::ShortestPathResult) = state.parents
-
-"""
-    tree(parents)
-
-    Convert a [`ShortestPathResult`](@ref) or a parents array into a directed graph.
-"""
-function tree(parents::AbstractVector{T}) where T <: Integer
-    n = T(length(parents))
-    t = DiGraph{T}(n)
-    for (v, u) in enumerate(parents)
-        if u > zero(T)  && u != v
-            add_edge!(t, u, v)
-        end
-    end
-    return t
-end
 
 tree(r::ShortestPathResult) = tree(parents(r))
 

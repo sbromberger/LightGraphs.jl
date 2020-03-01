@@ -3,7 +3,9 @@
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
-No additional configuration parameters are specified or required.
+
+### Optional Fields
+`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `Johnson` supports the following shortest-path functionality:
@@ -13,18 +15,22 @@ No additional configuration parameters are specified or required.
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson <: ShortestPathAlgorithm end
+struct Johnson <: ShortestPathAlgorithm 
+    maxdist::Float64
+end
+
+Johnson(; maxdist=typemax(Float64)) = Johnson(maxdist)
 
 struct JohnsonResult{T, U<:Integer} <: ShortestPathResult
     parents::Matrix{U}
     dists::Matrix{T}
 end
 
-function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson) where {T, U<:Integer}
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, alg::Johnson) where {T, U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
-    wt_transform = LightGraphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
+    wt_transform = dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
     
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
@@ -38,17 +44,17 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
     end
 
 
-    dists = Matrix{T}(undef, nvg, nvg)
-    parents = Matrix{U}(undef, nvg, nvg)
+    jdists = Matrix{T}(undef, nvg, nvg)
+    jparents = Matrix{U}(undef, nvg, nvg)
     for v in vertices(g)
-        dijk_state = shortest_paths(g, v, distmx, Dijkstra())
-        dists[v, :] = dists(dijk_state)
-        parents[v, :] = parents(dijk_state)
+        dijk_state = shortest_paths(g, v, distmx, Dijkstra(maxdist=alg.maxdist))
+        jdists[v, :] = dists(dijk_state)
+        jparents[v, :] = parents(dijk_state)
     end
 
-    broadcast!(-, dists, dists, wt_transform)
+    broadcast!(-, jdists, jdists, wt_transform)
     for v in vertices(g)
-        dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+        jdists[:, v] .+= wt_transform[v] #Vertical traversal prefered
     end
 
     if type_distmx.mutable
@@ -57,7 +63,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
         end
     end
 
-    return JohnsonResult(parents, dists)
+    return JohnsonResult(jparents, jdists)
 end
 
 shortest_paths(g::AbstractGraph, alg::Johnson) = shortest_paths(g, weights(g), alg)

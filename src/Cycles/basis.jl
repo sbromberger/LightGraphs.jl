@@ -3,7 +3,8 @@
 """
     cycle_basis(g, root=nothing)
 
-Return a list of cycles which form a basis for cycles of graph `g`, optionally starting at node `root`.
+Return a list of cycles which form a basis for cycles of graph `g`,
+optionally starting at node `root`.
 
 A basis for cycles of a network is a minimal collection of
 cycles such that any cycle in the network can be written

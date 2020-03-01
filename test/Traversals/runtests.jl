@@ -1,4 +1,5 @@
 using LightGraphs.Traversals
+using LightGraphs.ShortestPaths: parents, shortest_paths
 
 const travtestdir = dirname(@__FILE__)
 

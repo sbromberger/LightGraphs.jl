@@ -193,6 +193,7 @@ function tree(p::AbstractVector{T}) where T <: Integer
     return t
 end
 
+
 """
     tree(g, s, alg, neighborfn=outneighbors)
 
@@ -212,9 +213,10 @@ include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
-export distances, has_path
+export tree, parents
+export BFS, distances, has_path
 export is_bipartite, bipartite_map
-export is_cyclic 
+export DFS, is_cyclic, topological_sort, CycleError 
 export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 export diffusion, diffusion_rate
 export greedy_color

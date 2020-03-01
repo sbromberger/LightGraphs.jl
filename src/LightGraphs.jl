@@ -57,7 +57,6 @@ induced_subgraph, egonet, merge_vertices!, merge_vertices,
 # bipartition
 
 # dfs
-is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
 
 # coloring
 
@@ -68,17 +67,14 @@ condensation, attracting_components, neighborhood, neighborhood_dists,
 isgraphical,
 
 # cycles
-simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
-simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
-simplecycles_limited_length,
+# simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
+# simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
+# simplecycles_limited_length,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
 # shortest_paths, AStar, BFS, BellmanFord, DesopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
 # AStarResult, BFSResult, BellmanFordResult, DesopoPapeResult, DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult,
 # has_negative_weight_cycle, 
-
-# transitivity
-transitiveclosure!, transitiveclosure, transitivereduction,
 
 # centrality
 betweenness_centrality, closeness_centrality, degree_centrality,
@@ -188,12 +184,12 @@ a `Graph` or `DiGraph`.
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
-include("transitivity.jl")
 include("Cycles/Cycles.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("edit_distance.jl")
 include("Traversals/Traversals.jl")
+include("Transitivity/Transitivity.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")

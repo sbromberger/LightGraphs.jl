@@ -8,7 +8,7 @@ A `SimpleCycleAlgorithm` that specifies the use of Hawick & James.
 """
 struct HawickJames <: SimpleCycleAlgorithm end
 
-@traitfn function simplecycles(g::AG::IsDirected, ::HawickJames) where {T, AG<:AbstractGraph{T}}
+@traitfn function simple_cycles(g::AG::IsDirected, ::HawickJames) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)
     B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)

@@ -21,25 +21,21 @@ testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
 tests = [
-    "simplegraphs/runtests",
-    "linalg/runtests",
-    "parallel/runtests",
-    "shortestpaths/runtests",
+    "SimpleGraphs/runtests",
+    "LinAlg/runtests",
+    "Parallel/runtests",
+    "ShortestPaths/runtests",
     "interface",
     "core",
     "operators",
     "degeneracy",
     "distance",
-    "digraph/transitivity",
-    "cycles/hawick-james",
-    "cycles/johnson",
-    "cycles/karp",
-    "cycles/basis",
-    "cycles/limited_length",
+    "Transitivity/runtests",
+    "Cycles/runtests",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
-    "traversals/runtests",
+    "Traversals/runtests",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
@@ -71,7 +67,7 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
-    "experimental/experimental"
+    "Experimental/runtests"
 ]
 
 @testset "LightGraphs" begin

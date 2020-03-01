@@ -123,15 +123,14 @@ end
     return true
 end
 
-
-@traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort(g::AG::IsDirected, alg::DFS=DFS()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
     for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        if !traverse_graph!(g, v, DFS(), state)
+        if !traverse_graph!(g, v, alg, state)
             throw(CycleError())
         end
     end

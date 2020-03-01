@@ -1,6 +1,9 @@
 # Karp, R. M.
 # A characterization of the minimum cycle mean in a digraph
 # Discrete Mathematics, 1978, 23, 309 - 311
+
+struct Karp <: SimpleCycleAlgorithm end
+
 function _karp_minimum_cycle_mean(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
@@ -86,19 +89,7 @@ function _karp_minimum_cycle_mean(
     return component[walk[I]], λmin
 end
 
-"""
-    karp_minimum_cycle_mean(g[, distmx])
-
-Return minimum cycle mean of the directed graph `g` with optional edge weights contained in `distmx`.
-
-### References
-- [Karp](http://dx.doi.org/10.1016/0012-365X(78)90011-0).
-"""
-function karp_minimum_cycle_mean end
-@traitfn function karp_minimum_cycle_mean(
-    g::::IsDirected,
-    distmx::AbstractMatrix = weights(g)
-    )
+@traitfn function minimum_cycle_mean(g::::IsDirected, distmx::AbstractMatrix, ::Karp)
     cycle = Int[]
     λmin = Inf
     for component in strongly_connected_components(g)
@@ -108,5 +99,5 @@ function karp_minimum_cycle_mean end
             λmin = λ
         end
     end
-    cycle, λmin
+    return cycle, λmin
 end
