@@ -12,6 +12,10 @@ penalty.
 `BFS` is the default algorithm used when a source is specified
 but no distance matrix is specified.
 
+### Optional Fields
+`maxdist::Int64` (default: `typemax(Int64)`) specifies the maximum path distance, in terms of number of edges, 
+beyond which all path distances are assumed to be infinite (that is, they do not exist).
+
 ### Implementation Notes
 `BFS` supports the following shortest-path functionality:
 - (optional) multiple sources
@@ -19,15 +23,17 @@ but no distance matrix is specified.
 """
 struct BFS{T} <: ShortestPathAlgorithm
     traversal::T
+    maxdist::Int64
 end
 
-BFS() = BFS(Traversals.BFS())
-BFS(a::Base.Sort.Algorithm) = BFS(Traversals.BFS(a))
+BFS(; maxdist=typemax(Int64)) = BFS(Traversals.BFS(), maxdist)
+BFS(a::Base.Sort.Algorithm; maxdist=typemax(Int64)) = BFS(Traversals.BFS(a), maxdist)
 
 mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
+    maxdist::U
 end
 
 @inline function initfn!(s::BFSSPState, u)
@@ -41,7 +47,7 @@ end
 end
 @inline function postlevelfn!(s::BFSSPState{U}) where U
     s.n_level += one(U)
-    return true
+    return s.n_level <= s.maxdist
 end
 
 struct BFSResult{U<:Integer} <: ShortestPathResult
@@ -58,7 +64,8 @@ function shortest_paths(
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
-    state = BFSSPState(parents, dists, one(U))
+    md = alg.maxdist > typemax(U) ? typemax(U) : U(alg.maxdist)
+    state = BFSSPState(parents, dists, one(U), md)
     Traversals.traverse_graph!(g, ss, alg.traversal, state)
     return BFSResult(state.parents, state.dists)
 end
