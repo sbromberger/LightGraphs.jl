@@ -771,8 +771,8 @@ consisting of n copies of the cycle graph C3 with a common vertex`.
 """
 
 function friendship_graph(n::T) where {T <: Integer} 
-    n <= 0 && return SimpleGraph{T}(1)
-    g = SimpleGraph{T}(2 * n + 1)
+    n <= 0 && return SimpleGraph(1)
+    g = SimpleGraph(2 * n + 1)
     indx = one(T)
     while indx <= n
         u = indx * 2 
