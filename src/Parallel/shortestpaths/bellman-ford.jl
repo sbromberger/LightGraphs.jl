@@ -1,4 +1,4 @@
-function parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, distmx::AbstractMatrix{T}=weights(g)) where {T<:Real, U<:Integer}
+function parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, distmx::AbstractMatrix{T}, ::BellmanFord) where {T<:Real, U<:Integer}
     nvg = nv(g)
     active = Set{U}()
     sizehint!(active, nv(g))
@@ -15,12 +15,18 @@ function parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:
         isempty(active) && break
     end
 
-    isempty(active) || throw(LightGraphs.NegativeCycleError())
-    return BellmanFordResults(parents, dists)
+    isempty(active) || throw(NegativeCycleError())
+    return BellmanFordResult(parents, dists)
 end
 
 parallel_shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, bf::BellmanFord) where {T<:Real, U<:Integer} =
     parallel_shortest_paths(g, sources, weights(g), bf)
+
+parallel_shortest_paths(g::AbstractGraph{U}, s::Integer, bf::BellmanFord) where {T<:Real, U<:Integer} =
+    parallel_shortest_paths(g, [s], bf)
+    
+parallel_shortest_paths(g::AbstractGraph{U}, s::Integer, distmx::AbstractMatrix, bf::BellmanFord) where {T<:Real, U<:Integer} =
+    parallel_shortest_paths(g, [s], distmx, bf)
 
 #Helper function used due to performance bug in @threads.
 function _loop_body!(

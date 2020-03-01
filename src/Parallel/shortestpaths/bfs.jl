@@ -115,11 +115,11 @@ function gdistances!(
         end               
     end
 
-    return BFSResult(parents=parents, dists=vert_level)
+    return BFSResult(parents, vert_level)
 end
 
-gdistances!(g::AbstractGraph{T}, source::Integer, vert_level::Vector{T}; queue_segment_size::Integer=20) where T<:Integer = 
-gdistances!(g, [source,], vert_level; queue_segment_size=20)
+gdistances!(g::AbstractGraph{T}, source::Integer, parents::Vector{T}, vert_level::Vector{T}; queue_segment_size::Integer=20) where T<:Integer = 
+    gdistances!(g, [source,], parents, vert_level; queue_segment_size=20)
 
 """
     gdistances(g, sources; queue_segment_size=20)
@@ -136,11 +136,11 @@ For denser graphs, a smaller value of `queue_segment_size` could improve perform
 Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
 """
 gdistances(g::AbstractGraph{T}, sources::Vector{<:Integer}; queue_segment_size::Integer=20) where T<:Integer = 
-gdistances!(g, sources, Vector{T}(undef, nv(g)); queue_segment_size=20)
+    gdistances!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)); queue_segment_size=queue_segment_size)
 
 gdistances(g::AbstractGraph{T}, source::Integer; queue_segment_size::Integer=20) where T<:Integer = 
-gdistances!(g, [source,], Vector{T}(undef, nv(g)); queue_segment_size=20)
+    gdistances(g, [source,]; queue_segment_size=queue_segment_size)
 
-parallel_shortest_paths(g::AbstractGraph, sources::Vector, bs::BFS; queue_segment_size::Integer) = gdistances(g, sources, queue_segnment_size)
-parallel_shortest_paths(g::AbstractGraph, source::Integer, bs::BFS; queue_segment_size::Integer) = gdistances(g, [source,], queue_segnment_size)
+parallel_shortest_paths(g::AbstractGraph, sources::Vector, bs::BFS; queue_segment_size::Integer) = gdistances(g, sources, queue_segment_size)
+parallel_shortest_paths(g::AbstractGraph, source::Integer, bs::BFS; queue_segment_size::Integer) = gdistances(g, [source,], queue_segment_size)
 

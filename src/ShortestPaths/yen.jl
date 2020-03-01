@@ -2,7 +2,7 @@
     struct YenState{T, U}
 Designed for yen k-shortest-paths calculations.
 """
-struct YenState{T,U <: Integer} <: AbstractPathState
+struct YenResult{T,U <: Integer} <: ShortestPathResult
     dists::Vector{T}
     paths::Vector{Vector{U}}
 end
@@ -72,7 +72,7 @@ function yen_k_shortest_paths(g::AbstractGraph,
             end
 
             # Calculate the spur path from the spur node to the sink
-            djspur = dijkstra_shortest_paths(gcopy, spurnode, distmx)
+            djspur = shortest_paths(gcopy, spurnode, distmx, Dijkstra())
             spurpath = enumerate_paths(djspur)[target]
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path

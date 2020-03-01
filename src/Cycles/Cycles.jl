@@ -1,4 +1,9 @@
-abstract struct SimpleCycleAlgorithm end
+module Cycles
+
+using LightGraphs
+using SimpleTraits
+
+abstract type SimpleCycleAlgorithm end
 
 
 include("basis.jl")
@@ -38,3 +43,5 @@ max_simple_cycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
 
 export HawickJames, Johnson
 export cycle_basis, simple_cycles
+
+end # module

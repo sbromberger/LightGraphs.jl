@@ -1,8 +1,7 @@
 module Traversals
 
+using LightGraphs
 using SimpleTraits
-
-import LightGraphs: AbstractGraph, IsDirected
 
 """
     abstract type TraversalAlgorithm

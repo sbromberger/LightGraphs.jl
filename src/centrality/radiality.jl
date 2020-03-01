@@ -41,9 +41,9 @@ function radiality_centrality(g::AbstractGraph)::Vector{Float64}
     meandists = zeros(Float64, n_v)
     dmtr = 0.0
     for v in vs
-        d = dijkstra_shortest_paths(g, v)
-        dmtr = max(dmtr, maximum(d.dists))
-        meandists[v] = sum(d.dists) / (n_v - 1) # ignore the source vx
+        d = shortest_paths(g, v, Dijkstra())
+        dmtr = max(dmtr, maximum(dists(d)))
+        meandists[v] = sum(dists(d)) / (n_v - 1) # ignore the source vx
     end
     meandists = (dmtr + 1) .- (meandists)
     return meandists ./ dmtr

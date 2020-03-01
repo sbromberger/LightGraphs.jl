@@ -4,7 +4,7 @@ distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
     nvg = nv(g)
     type_distmx = typeof(distmx)
 #Change when parallel implementation of Bellman Ford available
-    wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
+wt_transform = dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
 
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
@@ -19,8 +19,8 @@ distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
 
 
     dijk_state = parallel_shortest_paths(g, vertices(g), distmx, Dijkstra())
-    dists = dijk_state.dists
-    parents = dijk_state.parents
+    dists = dists(dijk_state)
+    parents = parents(dijk_state)
 
 
     broadcast!(-, dists, dists, wt_transform)

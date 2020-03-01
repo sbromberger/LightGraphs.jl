@@ -41,9 +41,9 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
     dists = Matrix{T}(undef, nvg, nvg)
     parents = Matrix{U}(undef, nvg, nvg)
     for v in vertices(g)
-        dijk_state = dijkstra_shortest_paths(g, v, distmx)
-        dists[v, :] = dijk_state.dists
-        parents[v, :] = dijk_state.parents
+        dijk_state = shortest_paths(g, v, distmx, Dijkstra())
+        dists[v, :] = dists(dijk_state)
+        parents[v, :] = parents(dijk_state)
     end
 
     broadcast!(-, dists, dists, wt_transform)

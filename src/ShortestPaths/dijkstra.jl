@@ -124,4 +124,3 @@ end
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
 # If we don't specify an algorithm, use dijkstra.
 shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix) = shortest_paths(g, s, distmx, Dijkstra())
-

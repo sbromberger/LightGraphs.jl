@@ -58,7 +58,7 @@ function steiner_tree end
     parents = Matrix{T}(undef, nvg, nvg_mc)
 
     for (i, v) in enumerate(term_to_actual)
-        d_s = dijkstra_shortest_paths(g, v, distmx)
+        d_s = LightGraphs.ShortestPaths.shortest_paths(g, v, distmx, Dijkstra())
         @inbounds parents[:, i] = d_s.parents
         @inbounds distmx_mc[:, i] = @view d_s.dists[term_to_actual]
     end

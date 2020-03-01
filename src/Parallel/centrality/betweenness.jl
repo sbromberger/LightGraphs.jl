@@ -21,7 +21,7 @@ function distr_betweenness_centrality(g::AbstractGraph,
     betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+            state = shortest_paths(g, s, distmx, Dijkstra(all_paths=true, track_vertices=true))
             if endpoints
                 LightGraphs._accumulate_endpoints!(temp_betweenness, state, g, s)
             else
@@ -53,7 +53,7 @@ function threaded_betweenness_centrality(g::AbstractGraph,
     vs_active = findall((x)->degree(g, x) > 0, vs) # 0 might be 1?
 
     Base.Threads.@threads for s in vs_active
-        state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+        state = shortest_paths(g, s, distmx, Dijkstra(all_paths=true, track_vertices=true))
         if endpoints
             LightGraphs._accumulate_endpoints!(local_betweenness[Base.Threads.threadid()], state, g, s)
         else

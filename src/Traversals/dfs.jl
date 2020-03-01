@@ -45,6 +45,53 @@ function traverse_graph!(
     return true
 end
 
+function traverse_graph2!(
+    g::AbstractGraph{U},
+    ss::AbstractVector,
+    alg::DFS,
+    state::AbstractTraversalState,
+    neighborfn::Function=outneighbors
+    ) where U<:Integer
+
+    n = nv(g)
+    visited = falses(n)
+    S = Vector{U}()
+    @inbounds for s in ss
+        us = U(s)
+        visited[us] = true
+        initfn!(state, us) || return false
+    end
+
+    while !isempty(S)
+        v = pop!(S)
+        previsitfn!(state, v) || return false
+        new_neighbor_found = false
+        @inbounds for i in neighbors(g, v)
+            visitfn!(state, v, i)
+            if !visited[i]
+                newvisitfn!(state, v, i) || return false
+                visited[i] = true
+                push!(S, i)
+                new_neighbor_found = true
+            end
+        end
+        postvisitfn!(state, v) || return false
+        if !new_neighbor_found
+            postlevelfn!(state) || return false
+        end
+    end
+    return true
+end
+
+traverse_graph2!(
+    g::AbstractGraph{U},
+    s::Integer,
+    alg::DFS,
+    state::AbstractTraversalState,
+    neighborfn::Function=outneighbors
+   ) where U<:Integer = traverse_graph2!(g, [s], alg, state, neighborfn)
+
+
 mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
     vcolor::Vector{UInt8}
     verts :: Vector{T}
@@ -122,6 +169,17 @@ end
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
         !traverse_graph!(g, v, DFS(), state) && return true
+    end
+    return false
+end
+
+@traitfn function is_cyclic2(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+    vcolor = zeros(UInt8, nv(g))
+    state = CycleState(vcolor, zero(T))
+    @inbounds for v in vertices(g)
+        state.vcolor[v] != 0 && continue
+        state.vcolor[v] = 1
+        !traverse_graph2!(g, v, DFS(), state) && return true
     end
     return false
 end

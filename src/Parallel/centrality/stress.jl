@@ -16,7 +16,7 @@ function distr_stress_centrality(g::AbstractGraph,
     stress = @distributed (+) for s in vs
         temp_stress = zeros(Int64, n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = LightGraphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = shortest_paths(g, s, Dijkstra(all_paths=true, track_vertices=true))
             LightGraphs._stress_accumulate_basic!(temp_stress, state, g, s)
         end
         temp_stress
@@ -36,7 +36,7 @@ function threaded_stress_centrality(g::AbstractGraph,
 
     Base.Threads.@threads for s in vs
         if degree(g, s) > 0  # this might be 1?
-            state = LightGraphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = shortest_paths(g, s, Dijkstra(all_paths=true, track_vertices=true))
             LightGraphs._stress_accumulate_basic!(local_stress[Base.Threads.threadid()], state, g, s)
         end
     end

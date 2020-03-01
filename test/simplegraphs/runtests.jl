@@ -2,6 +2,7 @@ using LightGraphs.SimpleGraphs
 
 import LightGraphs.SimpleGraphs: fadj, badj, adj
 import LightGraphs.edgetype, LightGraphs.has_edge
+import LightGraphs.Traversals: is_cyclic
 using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end

@@ -1,5 +1,6 @@
 using LightGraphs
 using LightGraphs.Parallel
+using LightGraphs.ShortestPaths
 using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 

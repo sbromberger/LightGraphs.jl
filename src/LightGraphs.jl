@@ -87,9 +87,9 @@ simplecycles_limited_length,
 mincut, maximum_adjacency_visit,
 
 # a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
-shortest_paths, AStar, BFS, BellmanFord, DesopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
-AStarResult, BFSResult, BellmanFordResult, DesopoPapeResult, DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult,
-has_negative_weight_cycle, 
+# shortest_paths, AStar, BFS, BellmanFord, DesopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
+# AStarResult, BFSResult, BellmanFordResult, DesopoPapeResult, DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult,
+# has_negative_weight_cycle, 
 
 # transitivity
 transitiveclosure!, transitiveclosure, transitivereduction,
@@ -215,29 +215,17 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("transitivity.jl")
-include("cycles/johnson.jl")
-include("cycles/hawick-james.jl")
-include("cycles/karp.jl")
-include("cycles/basis.jl")
-include("cycles/limited_length.jl")
+include("Cycles/Cycles.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("edit_distance.jl")
 include("Traversals/Traversals.jl")
-include("shortestpaths/shortestpaths.jl")
-include("shortestpaths/astar.jl")
-include("shortestpaths/bellman-ford.jl")
-include("shortestpaths/bfs.jl")
-include("shortestpaths/dijkstra.jl")
-include("shortestpaths/johnson.jl")
-include("shortestpaths/desopo-pape.jl")
-include("shortestpaths/floyd-warshall.jl")
-include("shortestpaths/yen.jl")
-include("shortestpaths/spfa.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
+include("ShortestPaths/ShortestPaths.jl")
+include("centrality/Centrality.jl") # TODO: make this a module
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")

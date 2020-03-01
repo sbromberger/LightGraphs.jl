@@ -1,21 +1,21 @@
 """
     struct Parallel.MultipleDijkstraState{T, U}
 
-An [`AbstractPathState`](@ref) designed for Parallel.dijkstra_shortest_paths calculation.
+A [`ShortestPathResult`](@ref) designed for parallel Dijkstra shortest paths calculation.
 """
 struct ParallelDijkstraResult{T <: Real,U <: Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-"""
-    Parallel.dijkstra_shortest_paths(g, sources=vertices(g), distmx=weights(g))
-
-Compute the shortest paths between all pairs of vertices in graph `g` by running
-[`dijkstra_shortest_paths`] for every vertex and using an optional list of source vertex `sources` and
-an optional distance matrix `distmx`. Return a [`Parallel.MultipleDijkstraState`](@ref) with relevant
-traversal information.
-"""
+# """
+#     Parallel.dijkstra_shortest_paths(g, sources=vertices(g), distmx=weights(g))
+#
+# Compute the shortest paths between all pairs of vertices in graph `g` by running
+# [`dijkstra_shortest_paths`] for every vertex and using an optional list of source vertex `sources` and
+# an optional distance matrix `distmx`. Return a [`Parallel.MultipleDijkstraState`](@ref) with relevant
+# traversal information.
+# """
 function parallel_shortest_paths(g::AbstractGraph{U},
     sources::AbstractVector, distmx::AbstractMatrix{T}, ::Dijkstra) where T <: Real where U
 
@@ -27,7 +27,7 @@ function parallel_shortest_paths(g::AbstractGraph{U},
     parents = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
-        state = LightGraphs.dijkstra_shortest_paths(g, sources[i], distmx)
+        state = shortest_paths(g, sources[i], distmx, Dijkstra())
         dists[i, :] = state.dists
         parents[i, :] = state.parents
     end

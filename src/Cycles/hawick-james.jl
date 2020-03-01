@@ -1,12 +1,12 @@
 """
-    struct HawickJames <: AbstractSimpleCycleAlgorithm
+    struct HawickJames <: SimpleCycleAlgorithm
 
 A `SimpleCycleAlgorithm` that specifies the use of Hawick & James.
 
 ### References
 - Hawick & James, "Enumerating Circuits and Loops in Graphs with Self-Arcs and Multiple-Arcs", 2008
 """
-struct HawickJames <: AbstractSimpleCycleAlgorithm end
+struct HawickJames <: SimpleCycleAlgorithm end
 
 @traitfn function simplecycles(g::AG::IsDirected, ::HawickJames) where {T, AG<:AbstractGraph{T}}
     nvg = nv(g)

@@ -27,7 +27,7 @@ julia> cycle_basis(g)
 ### References
 * Paton, K. An algorithm for finding a fundamental set of cycles of a graph. Comm. ACM 12, 9 (Sept 1969), 514-518. [https://dl.acm.org/citation.cfm?id=363232]
 """
-function cycle_basis(g::AbstractSimpleGraph, root=nothing)
+function cycle_basis(g::AbstractGraph, root=nothing)
     T = eltype(g)
     cycles = Vector{Vector{T}}()
 

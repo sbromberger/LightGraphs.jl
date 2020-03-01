@@ -1,6 +1,6 @@
 @testset "Parallel.Stress" begin
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
-    c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
+    c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), Int))
     for g in testdigraphs(gint)
 
         z  = LightGraphs.stress_centrality(g)

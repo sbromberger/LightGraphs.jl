@@ -1,7 +1,8 @@
 module Parallel
 
 using LightGraphs
-using LightGraphs: sample, BFS, Johnson, Dijkstra, BellmanFord, FloydWarshall, JohnsonResult, BellmanFordResult, FloydWarshallResult, BFSResult, ShortestPathResult
+using LightGraphs: sample
+using LightGraphs.ShortestPaths: BFS, Johnson, Dijkstra, BellmanFord, FloydWarshall, JohnsonResult, BellmanFordResult, FloydWarshallResult, BFSResult, ShortestPathResult, NegativeCycleError, shortest_paths, dists, parents
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
@@ -28,6 +29,6 @@ include("dominatingset/minimal_dom_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/random_vertex_cover.jl")
 
-export parallel_shortest_paths, ParallelDijkstraResult
+export parallel_shortest_paths, ParallelDijkstraResult, gdistances
 
 end

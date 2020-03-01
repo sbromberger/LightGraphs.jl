@@ -50,7 +50,7 @@ function parallel_shortest_paths(
     for pivot in vertices(g)
         _loopbody!(pivot, nvg, dists, parents) #Due to bug in @threads
     end
-    fws = FloydWarshallResults(dists, parents)
+    fws = FloydWarshallResult(dists, parents)
     return fws
 end
 

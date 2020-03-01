@@ -1,7 +1,7 @@
 abstract type Visitor{T <: Integer} end
 
 """
-    struct Johnson <: AbstractSimpleCycleAlgorithm
+    struct Johnson <: SimpleCycleAlgorithm
         iterative::Bool
         ceiling::Int
 
@@ -25,7 +25,7 @@ graph if the `ceiling` is not reached; a subset of them otherwise.
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
-struct Johnson <: AbstractCycleAlgorithm
+struct Johnson <: SimpleCycleAlgorithm
     iterative::Bool
     ceiling::Int
 end
@@ -169,7 +169,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Intege
 end
 
 
-@traitfn function simple_cycles(dg::::IsDirected, j::Johnson) =
+@traitfn simple_cycles(dg::::IsDirected, j::Johnson) =
     j.iterative ? _johnson_simple_cycles_iter(dg) : _johnson_simple_cycles_recursive(dg)
 
 @traitfn function _johnson_simple_cycles_recursive(dg::::IsDirected)
@@ -283,7 +283,7 @@ function count_simple_cycles end
     return len
 end
 
-@traitfn _johnson_simple_cycles_iter(dg::AG::IsDirected, j::JohnsonState) where {T, AG <: AbstractGraph{T}} =
+@traitfn _johnson_simple_cycles_iter(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}} =
     return collect(Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T}), j.ceiling))::Vector{Vector{T}}
 
 """
