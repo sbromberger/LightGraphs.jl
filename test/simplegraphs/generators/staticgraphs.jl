@@ -536,5 +536,18 @@
         @test_throws DomainError lollipop_graph(0, 1)
         @test_throws DomainError lollipop_graph(-1, -1)
     end
+   @testset "Graphs" begin  
+        for n in [10, 15, 20]
+         g=friendship_graph(n)
+         compents=biconnected_components(g)
+         @test length(connected_components(g)) == 1
+         @test articulation(g) == [1]
+         @test length(compents) == n
+         for i in 1:n
+            @test length(compents[i]) == 3
+         end
+        end
+    end
+    
 end
 
