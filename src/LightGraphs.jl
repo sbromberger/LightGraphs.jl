@@ -133,7 +133,7 @@ TutteGraph, CompleteGraph, CompleteBipartiteGraph, CompleteMultipartiteGraph,
 TuranGraph, CompleteDiGraph, StarGraph, StarDigraph, PathGraph, PathDiGraph,
 CycleGraph, CycleDiGraph, WheelGraph, WheelDiGraph, Grid, BinaryTree,
 Doublebinary_tree, RoachGraph, CliqueGraph, LadderGraph, Circularladder_graph,
-BarbellGraph, LollipopGraph,
+BarbellGraph, LollipopGraph, 
 
 #smallgraphs
 smallgraph,
