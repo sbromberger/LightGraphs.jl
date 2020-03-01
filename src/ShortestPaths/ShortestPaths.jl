@@ -10,6 +10,7 @@ using LightGraphs
 using LightGraphs.Traversals
 using DataStructures: PriorityQueue, dequeue!, enqueue!
 
+import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
