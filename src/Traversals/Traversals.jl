@@ -19,6 +19,7 @@ for various traversal algorithms (see [`traverse_graph!`](@ref)).
 
 When creating concrete types, you should override the following functions where relevant. These functions
 are listed in order of occurrence in the traversal:
+- [`preinitfn!(<:AbstractTraversalState, visited::BitVector)`](@ref): runs after visited initialization, used to modify initial visited state.
 - [`initfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to traversal, used to set initial state.
 - [`previsitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
 - [`visitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
@@ -33,6 +34,15 @@ For better performance, use the `@inline` directive and make your functions bran
 """
 abstract type AbstractTraversalState end
 
+"""
+    preinitfn!(state, visited)
+
+Modify [`AbstractTraversalState`](@ref) `state` after intiialization of the visited
+bitvector; and return `true` if successful; `false` otherwise. `preinitfn!` will
+be called once. It is typically used to modify the `visited` bitvector before
+traversals begin.
+"""
+@inline preinitfn!(::AbstractTraversalState, visited) = true
 """
     initfn!(state, u)
 
@@ -199,3 +209,11 @@ include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 end
+
+export distances, has_path
+export is_bipartite, bipartite_map
+export is_cyclic 
+export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
+export diffusion, diffusion_rate
+export greedy_color
+export mincut, maximum_adjacency_visit

@@ -26,11 +26,11 @@ import LightGraphs: tree
         end
     end
 
-    @testset "gdistances" begin
+    @testset "distances" begin
         for g in testgraphs(g6)
-            @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
-            @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
-            @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
+            @test @inferred(distances(g, 2)) == @inferred(distances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
+            @test @inferred(distances(g, [1, 2])) == [0, 0, 1, 1, 2]
+            @test @inferred(distances(g, [])) == fill(typemax(eltype(g)), 5)
         end
     end
 

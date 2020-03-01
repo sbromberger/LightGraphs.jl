@@ -3,7 +3,6 @@
 
 # The Bellman Ford algorithm for single-source shortest path
 
-struct NegativeCycleError <: Exception end
 
 """
     struct BellmanFord <: ShortestPathAlgorithm

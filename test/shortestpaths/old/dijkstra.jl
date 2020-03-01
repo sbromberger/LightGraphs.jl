@@ -14,10 +14,10 @@
         z = @inferred(dijkstra_shortest_paths(g, 2, d2; allpaths=true))
         @test z.predecessors[3] == y.predecessors[3] == [2]
 
-        @test @inferred(enumerate_paths(z)) == enumerate_paths(y)
-        @test @inferred(enumerate_paths(z))[4] ==
-          enumerate_paths(z, 4) ==
-          enumerate_paths(y, 4) == [2, 3, 4]
+        @test @inferred(paths(z)) == paths(y)
+        @test @inferred(paths(z))[4] ==
+          paths(z, 4) ==
+          paths(y, 4) == [2, 3, 4]
     end
 
     gx = path_graph(5)

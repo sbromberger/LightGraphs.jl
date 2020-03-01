@@ -34,6 +34,7 @@ function traverse_graph!(
     sizehint!(cur_level, n)
     next_level = Vector{U}()
     sizehint!(next_level, n)
+    preinitfn!(state, visited) || return false
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
@@ -92,3 +93,28 @@ function distances(g::AbstractGraph{T}, s, alg::BFS=BFS()) where T
     traverse_graph!(g, s, alg, state)
     return state.distances
 end
+
+mutable struct PathState{T} <: AbstractTraversalState
+    v::T
+    excluded_vertices::Vector{T}
+end
+
+@inline function preinitfn!(s::PathState, visited)
+    visited[s.excluded_vertices] .= true
+    return true
+end
+@inline newvisitfn!(s::PathState, u, v) = s.v != v 
+
+"""
+    has_path(g::AbstractGraph, u, v, alg=BFS(); exclude_vertices=Vector())
+
+Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
+`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
+is in `excluded_vertices`. 
+""" 
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BFS=BFS(); excluded_vertices=Vector{T}()) where {T}
+    u == v && return true
+    state = PathState(T(v), T.(excluded_vertices))
+    return !traverse_graph!(g, u, alg, state)
+end
+

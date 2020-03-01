@@ -7,11 +7,12 @@
         for g in testgraphs(g3), dg in testdigraphs(g4)
             y = @inferred(shortest_paths(g, 1, 4, d1, AStar()))
             @test y == @inferred(shortest_paths(dg, 1, 4, d1, AStar())) ==
-            @inferred(shortest_paths(g, 1, 4, d2, AStar()))
+                @inferred(shortest_paths(g, 1, 4, d2, AStar()))
             @test paths(y) == [y.path]
             @test_throws ArgumentError paths(y, 2)
             @test dists(y) == [[y.dist]]
             @test_throws ArgumentError dists(y, 2)
+            @test_throws LightGraphs.NotImplementedError parents(y)
 
             z = @inferred(shortest_paths(dg, 4, 1, AStar()))
             @test isempty(z.path)

@@ -7,6 +7,7 @@
 # Deprecated for more explicit function name. Can be removed for version 2.0.
 @deprecate saw self_avoiding_walk
 
+
 @deprecate a_star(g::AbstractGraph, s::Integer, t::Integer) shortest_paths(g, s, t, AStar())
 @deprecate a_star(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix) shortest_paths(g, s, t, distmx, AStar())
 @deprecate a_star(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, heuristic::Function) shortest_paths(g, s, t, distmx, AStar(heuristic=heuristic))
@@ -19,3 +20,9 @@
 @deprecate maxsimplecycles max_simple_cycles
 @deprecate simplecyclescount count_simple_cycles
 @deprecate simplecycleslength(g, ceil) simple_cycles_length(g, Johnson(ceiling=ceil))
+@deprecate enumerate_paths paths
+@deprecate bfs_tree(g, v) tree(shortest_paths(g, v, BFS()))
+@deprecate dfs_tree(g, v) tree(shortest_paths(g, v, DFS()))
+@deprecate gdistances distances
+
+export maxsimplescycles, simplecyclescount, simplecycleslength, enumerate_paths, bfs_tree, dfs_tree

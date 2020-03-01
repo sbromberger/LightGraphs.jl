@@ -58,6 +58,7 @@ function traverse_graph2!(
     S = Vector{U}()
     @inbounds for s in ss
         us = U(s)
+        push!(S, us)
         visited[us] = true
         initfn!(state, us) || return false
     end
@@ -162,6 +163,7 @@ end
     return true
 end
 
+@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
 @traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))

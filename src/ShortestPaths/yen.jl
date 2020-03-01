@@ -73,7 +73,7 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
             # Calculate the spur path from the spur node to the sink
             djspur = shortest_paths(gcopy, spurnode, distmx, Dijkstra())
-            spurpath = enumerate_paths(djspur)[target]
+            spurpath = paths(djspur)[target]
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path
                 pathtotal = [rootpath[1:(end - 1)]; spurpath]

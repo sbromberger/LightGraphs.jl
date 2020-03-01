@@ -10,9 +10,12 @@ using LightGraphs
 using LightGraphs.Traversals
 using DataStructures: PriorityQueue, dequeue!, enqueue!
 
+import Base: ==
 import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
+
+struct NegativeCycleError <: Exception end
 
 """
     ShortestPathResult <: AbstractGraphResult
@@ -23,11 +26,12 @@ results of a shortest-path calculation using a specific
 
 In general, the fields in these structs should not be
 accessed directly; use the [`dists`](@ref) and
-[`paths`](@ref) functions to obtain the results of the
+[`parents`](@ref) functions to obtain the results of the
 calculation.
 """
 abstract type ShortestPathResult <: AbstractGraphResult end
 
+==(a::T, b::T) where {T<:ShortestPathResult} = parents(a) == parents(b) && dists(a) == dists(b)
 
 """
     ShortestPathAlgorithm <: AbstractGraphAlgorithm
@@ -97,7 +101,6 @@ shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = sho
 """
     paths(state[, v])
     paths(state[, vs])
-    paths(state[, v, d]))
 
 Given the output of a [`shortest_paths`](@ref) calculation of type
 [`ShortestPathResult`](@ref), return a vector (indexed by vertex)
@@ -118,19 +121,19 @@ will return a vector (indexed by destination vertex) of paths from source `v`
 to all other vertices. In addition, `paths(state, v, d)` will return a vector
 representing the path from vertex `v` to vertex `d`.
 """
-function paths(state::ShortestPathResult, vs::AbstractVector{<:Integer})
-    parents = state.parents
-    T = eltype(parents)
+function paths(result::ShortestPathResult, vs::AbstractVector{<:Integer})
+    p = parents(result)
+    T = eltype(p)
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
     for i = 1:num_vs
         all_paths[i] = Vector{T}()
         index = T(vs[i])
-        if parents[index] != 0 || parents[index] == index
-            while parents[index] != 0
+        if p[index] != 0 || p[index] == index
+            while p[index] != 0
                 pushfirst!(all_paths[i], index)
-                index = parents[index]
+                index = p[index]
             end
             pushfirst!(all_paths[i], index)
         end
@@ -138,8 +141,8 @@ function paths(state::ShortestPathResult, vs::AbstractVector{<:Integer})
     return all_paths
 end
 
-paths(state::ShortestPathResult, v::Integer) = paths(state, [v])[1]
-paths(state::ShortestPathResult) = paths(state, [1:length(state.parents);])
+paths(result::ShortestPathResult, v::Integer) = paths(result, [v])[1]
+paths(result::ShortestPathResult) = paths(result, [1:length(parents(result));])
 
 """
     dists(state[, v])
@@ -167,8 +170,8 @@ For [`ShortestPathAlgorithm`](@ref)s that compute all-pairs shortest
 paths, `parents(state)` will return a matrix (indexed by source and destination
 vertices) of parents.
 """
-parents(state::ShortestPathResult, v::Integer) = state.dists[v]
-parents(state::ShortestPathResult) = state.dists
+parents(state::ShortestPathResult, v::Integer) = state.parents[v]
+parents(state::ShortestPathResult) = state.parents
 
 """
     tree(parents)
@@ -187,51 +190,6 @@ function tree(parents::AbstractVector{T}) where T <: Integer
 end
 
 tree(r::ShortestPathResult) = tree(parents(r))
-
-"""
-    enumerate_paths(state[, vs])
-
-Given a shortest path result `result` of type `ShortestPathResult`, return a
-vector (indexed by vertex) of the paths between the source vertex used to
-compute the result and a single destination vertex, a list of destination
-vertices, or the entire graph. For multiple destination vertices, each
-path is represented by a vector of vertices on the path between the source and
-the destination. Nonexistent paths will be indicated by an empty vector. For
-single destinations, the path is represented by a single vector of vertices,
-and will be length 0 if the path does not exist.
-#
-### Implementation Notes
-For [`FloydWarshallResult`](@ref), please note that the output is a bit different,
-since this algorithm calculates all shortest paths for all pairs of vertices:
-`enumerate_paths(result)` will return a vector (indexed by source vertex) of
-vectors (indexed by destination vertex) of paths. `enumerate_paths(result, v)`
-will return a vector (indexed by destination vertex) of paths from source `v`
-to all other vertices. In addition, `enumerate_paths(result, v, d)` will return
-a vector representing the path from vertex `v` to vertex `d`.
-"""
-function enumerate_paths(result::ShortestPathResult, vs::Vector{<:Integer})
-    p = parents(result)
-    T = eltype(p)
-
-    num_vs = length(vs)
-    all_paths = Vector{Vector{T}}(undef, num_vs)
-    for i = 1:num_vs
-        all_paths[i] = Vector{T}()
-        index = T(vs[i])
-        if p[index] != 0 || p[index] == index
-            while p[index] != 0
-                push!(all_paths[i], index)
-                index = p[index]
-            end
-            push!(all_paths[i], index)
-            reverse!(all_paths[i])
-        end
-    end
-    return all_paths
-end
-
-enumerate_paths(result::ShortestPathResult, v) = enumerate_paths(result, [v])[1]
-enumerate_paths(result::ShortestPathResult) = enumerate_paths(result, [1:length(result.parents);])
 
 """
     has_negative_weight_cycle(g[, distmx=weights(g), alg=BellmanFord()])
@@ -270,8 +228,10 @@ include("johnson.jl")
 include("spfa.jl")
 include("yen.jl")
 
+export NegativeCycleError
+
 export shortest_paths, AStar, BFS, BellmanFord, DEsopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
-    has_negative_weight_cycle, dists, parents, tree, enumerate_paths
+    has_negative_weight_cycle, dists, parents, tree, paths
 
 export AStarResult, BFSResult, BellmanFordResult, DEsopoPapeResult, DijkstraResult,
     FloydWarshallResult, JohnsonResult, SPFAResult, YenResult

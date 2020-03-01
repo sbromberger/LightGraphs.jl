@@ -68,7 +68,7 @@ function has_negative_edge_cycle(
     try
         Parallel.parallel_shortest_paths(g, vertices(g), distmx, BellmanFord())
     catch e
-        isa(e, LightGraphs.NegativeCycleError) && return true
+        isa(e, NegativeCycleError) && return true
     end
     return false
 end

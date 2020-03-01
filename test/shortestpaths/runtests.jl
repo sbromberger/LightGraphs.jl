@@ -1,17 +1,15 @@
 using LightGraphs.ShortestPaths
-
-using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths
 using SparseArrays
 
-using LightGraphs.Experimental.Traversals: NOOPSort
+using LightGraphs.Traversals: NOOPSort
 import Base.==
 function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
    return a.path == b.path && a.dist == b.dist
 end
 
-const testdir = dirname(@__FILE__)
+const sptestdir = dirname(@__FILE__)
 
-const tests = [
+sptests = [
     "astar.jl"
     "bellman-ford.jl"
     "bfs.jl"
@@ -27,8 +25,9 @@ const tests = [
 @testset "LightGraphs.ShortestPaths" begin
     @test !has_negative_weight_cycle(path_graph(5))
     @test !has_negative_weight_cycle(path_digraph(5))
-    for t in tests
-        tp = joinpath(testdir, "$t")
+    for t in sptests
+        println("shortest paths: testing $t")
+        tp = joinpath(sptestdir, "$t")
         include(tp)
     end
 end

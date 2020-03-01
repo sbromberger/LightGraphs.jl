@@ -24,6 +24,12 @@ struct AStarResult{T, U<:Integer} <: ShortestPathResult
     dist::T
 end
 
+function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
+   return a.path == b.path && a.dist == b.dist
+end
+
+parents(::AStarResult) = LightGraphs.NotImplementedError("parents")
+
 function reconstruct_path(parents::Vector{T},s::Integer, u::Integer) where {T<:Integer}
     route = Vector{T}()
     index = u
