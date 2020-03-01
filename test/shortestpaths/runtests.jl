@@ -17,8 +17,6 @@ sptests = [
     "dijkstra.jl"
     "floyd-warshall.jl"
     "johnson.jl"
-    "old"
-    "runtests.jl"
     "spfa.jl"
 ]
 
