@@ -551,7 +551,7 @@
         end
         
         
-         for i in [-5,0]
+         for n in [-5,0]
              g=friendship_graph(n) 
              @test nv(g)==1
         end
