@@ -11,35 +11,38 @@ function traverse_graph!(
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
     ) where U<:Integer
-    
+
     n = nv(g)
     visited = falses(n)
+    parents = zeros(U, n)
     S = Vector{U}()
-    sizehint!(S, length(ss))
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
+        parents[us] = us
         push!(S, us)
         initfn!(state, us) || return false
     end
+
     while !isempty(S)
         v = S[end]
-        previsitfn!(state, v) || return false
-        new_neighbor_found = false
-        @inbounds for i in neighborfn(g, v)
-            visitfn!(state, v, i) || return false
-            if !visited[i]  # find the first unvisited neighbor
-                newvisitfn!(state, v, i) || return false
-                new_neighbor_found = true
+        previsitfn!(state, visited, v) || return false
+
+        @inbounds for i in neighbors(g, v)
+            visitfn!(state, visited, v, i) || return false
+            if !visited[i]
+                newvisitfn!(state, visited, v, i) || return false
                 visited[i] = true
+                parents[i] = v
                 push!(S, i)
-                break
             end
         end
-        postvisitfn!(state, v) || return false
-        if !new_neighbor_found  # no more new neighbors. Let's go to the next source vertex.
-            postlevelfn!(state) || return false
+
+        postvisitfn!(state, visited, v)
+        while (!isempty(S) && S[end] == v) 
+            postlevelfn!(state, visited, v) || return false
             pop!(S)
+            v = parents[v]
         end
     end
     return true
