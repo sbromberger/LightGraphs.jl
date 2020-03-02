@@ -11,40 +11,63 @@ function traverse_graph!(
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
     ) where U<:Integer
-    
+
     n = nv(g)
     visited = falses(n)
-    S = Vector{U}()
+    S = Vector{Tuple{U,U}}()
     sizehint!(S, length(ss))
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
-        push!(S, us)
+        push!(S, (us,0))
         initfn!(state, us) || return false
     end
+
+    ptr = one(U)
+
     while !isempty(S)
-        v = S[end]
+        v,_ = S[end]
         previsitfn!(state, v) || return false
-        new_neighbor_found = false
-        @inbounds for i in neighborfn(g, v)
+
+        my_neighbours=neighborfn(g, v)
+        @inbounds while ptr<=length(my_neighbours)
+            i = my_neighbours[ptr]
             visitfn!(state, v, i) || return false
             if !visited[i]  # find the first unvisited neighbor
                 newvisitfn!(state, v, i) || return false
-                new_neighbor_found = true
+
                 visited[i] = true
-                push!(S, i)
+                push!(S, (i,ptr+1))
                 break
             end
+            ptr+=1
         end
+
+
         postvisitfn!(state, v) || return false
-        if !new_neighbor_found  # no more new neighbors. Let's go to the next source vertex.
+
+ #= if ptr > length(my_neighbours)
+ then, we have finched all childern of the node,
+  and the next time we pop from the stack we will be in the parent of the current
+  node, then we would like to continue from we stoped,
+else, we have found an new unvisited child, so we will make ptr = 1
+
+
+=#
+
+
+        if ptr > length(my_neighbours)
             postlevelfn!(state) || return false
-            pop!(S)
+            _ , ptr =pop!(S)
+        else
+            ptr = 1 # we will enter new node new node
         end
+
+
+
     end
     return true
 end
-
 mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
     vcolor::Vector{UInt8}
     verts :: Vector{T}
@@ -58,14 +81,14 @@ end
     s.w = 0
     return true
 end
-@inline function visitfn!(s::TopoSortState{T}, u, v) where T 
+@inline function visitfn!(s::TopoSortState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T 
+@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::TopoSortState{T}, u) where T 
+@inline function postvisitfn!(s::TopoSortState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -99,14 +122,14 @@ end
     s.w = 0
     return true
 end
-@inline function visitfn!(s::CycleState{T}, u, v) where T 
+@inline function visitfn!(s::CycleState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T 
+@inline function newvisitfn!(s::CycleState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::CycleState{T}, u) where T 
+@inline function postvisitfn!(s::CycleState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
