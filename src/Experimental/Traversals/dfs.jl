@@ -19,31 +19,33 @@ function traverse_graph!(
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
-        parents[us] = us
         push!(S, us)
         initfn!(state, us) || return false
     end
 
     while !isempty(S)
         v = S[end]
+        if parents[v] != zero(U)
+            newvisitfn!(state, visited, parents[v], v) || return false
+        end
         previsitfn!(state, visited, v) || return false
 
         @inbounds for i in neighbors(g, v)
             visitfn!(state, visited, v, i) || return false
             if !visited[i]
-                newvisitfn!(state, visited, v, i) || return false
                 visited[i] = true
                 parents[i] = v
                 push!(S, i)
             end
         end
 
-        postvisitfn!(state, visited, v)
         while (!isempty(S) && S[end] == v) 
-            postlevelfn!(state, visited, v) || return false
+            postvisitfn!(state, visited, v) || return false
             pop!(S)
             v = parents[v]
         end
+
+        # postlevelfn!(state, visited, v)
     end
     return true
 end
@@ -54,30 +56,20 @@ mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
     w::T
 end
 
-# 1 = visited
-# 2 = vcolor 2
-# @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
+# 1 = visited, currently in stack
+# 2 = visited, done / not in stack
 @inline function previsitfn!(s::TopoSortState{T}, u) where T
-    s.w = 0
+    s.vcolor[u] = one(T)
     return true
 end
 @inline function visitfn!(s::TopoSortState{T}, u, v) where T 
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T 
-    s.w = v
-    return true
-end
 @inline function postvisitfn!(s::TopoSortState{T}, u) where T 
-    if s.w != 0
-        s.vcolor[s.w] = one(T)
-    else
-        s.vcolor[u] = T(2)
-        push!(s.verts, u)
-    end
+    s.vcolor[u] = T(2)
+    push!(s.verts, u)
     return true
 end
-
 
 @traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
@@ -99,22 +91,14 @@ mutable struct CycleState{T<:Integer} <: AbstractTraversalState
 end
 
 @inline function previsitfn!(s::CycleState{T}, u) where T
-    s.w = 0
+    s.vcolor[u] = one(T)
     return true
 end
 @inline function visitfn!(s::CycleState{T}, u, v) where T 
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T 
-    s.w = v
-    return true
-end
-@inline function postvisitfn!(s::CycleState{T}, u) where T 
-    if s.w != 0
-        s.vcolor[s.w] = one(T)
-    else
-        s.vcolor[u] = T(2)
-    end
+@inline function postvisitfn!(s::CycleState{T}, u) where T
+    s.vcolor[u] = T(2)
     return true
 end
 
