@@ -88,7 +88,7 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
             for g in testgraphs(g1)
                 v1 = @inferred LET.visited_vertices(g, 1, d)
                 v2 = @inferred LET.visited_vertices(g, [1], d)
-                @test v1 == v2 == [1, 2, 4, 5, 3, 6, 7]
+                @test v1 == v2 == [1, 3, 7, 6, 2, 5, 4]
                 p1 = @inferred LET.parents(g, 2, d)
                 @test p1 == [2, 0, 1, 2, 2, 3, 3]
 
@@ -103,13 +103,13 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
                 add_edge!(dg2, 6, 1)
                 v1 = @inferred LET.visited_vertices(dg, 1, d)
                 v2 = @inferred LET.visited_vertices(dg, [1], d)
-                @test v1 == v2 == [1, 2, 4, 5, 3, 6, 7]
+                @test v1 == v2 == [1, 3, 7, 6, 2, 5, 4]
 
                 p1 = @inferred LET.parents(dg, 2, d)
                 @test p1 == [0, 0, 0, 2, 2, 0, 0]
 
                 ts1 = @inferred LET.topological_sort(dg)
-                @test ts1 == [1, 3, 7, 6, 2, 5, 4]
+                @test ts1 == [1, 2, 4, 5, 3, 6, 7]
                 @test_throws LET.CycleError topological_sort(dg2)
 
                 t1 = @inferred LET.tree(dg, 2, d)
