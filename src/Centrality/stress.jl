@@ -1,12 +1,17 @@
 """
-    stress_centrality(g[, vs])
-    stress_centrality(g, k)
+    struct Stress{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+        k::Int
+        vs::T
+    end
 
-Calculate the [stress centrality](http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.7/#stressDist)
-of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
-vertices. Return a vector representing the centrality calculated for each node in `g`.
+A struct representing an algorithm to calculate the [stress centrality](http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.7/#stressDist)
+of a graph `g` across all vertices, a specified subset of vertices `vs`, and/or a random subset of `k` vertices.
 
 The stress centrality of a vertex ``n`` is defined as the number of shortest paths passing through ``n``.
+
+### Optional Arguments
+- `k=0`: If `k>0`, randomly sample `k` vertices from `vs` if provided, or from `vertices(g)` if empty.
+- `vs=[]`: if `vs` is nonempty, run betweenness centrality only from these vertices.
 
 ### References
 - Barabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell's functional organization. Nat Rev Genet 5 (2004) 101-113
@@ -16,13 +21,13 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 ```jldoctest
 julia> using LightGraphs
 
-julia> stress_centrality(star_graph(3))
+julia> centrality(star_graph(3), Stress())
 3-element Array{Int64,1}:
  2
  0
  0
 
-julia> stress_centrality(cycle_graph(4))
+ julia> centrality(cycle_graph(4), Stress())
 4-element Array{Int64,1}:
  2
  2
@@ -30,9 +35,20 @@ julia> stress_centrality(cycle_graph(4))
  2
 ```
 """
-function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
+struct Stress{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+    k::Int
+    vs::T
+end
+
+Stress(;k=0, vs=Vector{Int}()) = Stress(k, vs)
+
+function centrality(g::AbstractGraph, alg::Stress)
     n_v = nv(g)
-    k = length(vs)
+    vs = isempty(alg.vs) ? vertices(g) : alg.vs
+    if alg.k > 0
+        select!(vs, alg.k)
+    end
+
     isdir = is_directed(g)
 
     stress = zeros(Int, n_v)
@@ -46,15 +62,12 @@ function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
     return stress
 end
 
-stress_centrality(g::AbstractGraph, k::Integer) =
-    stress_centrality(g, sample(vertices(g), k))
-
 function _stress_accumulate_basic!(stress::Vector{<:Integer},
     state::DijkstraResult,
     g::AbstractGraph,
     si::Integer)
 
-    n_v = length(state.parents) # this is the ttl number of vertices
+    n_v = length(parents(state)) # this is the ttl number of vertices
     δ = zeros(Int, n_v)
     P = state.predecessors
 

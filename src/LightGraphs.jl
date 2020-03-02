@@ -76,10 +76,10 @@ isgraphical,
 # AStarResult, BFSResult, BellmanFordResult, DesopoPapeResult, DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult,
 # has_negative_weight_cycle, 
 
-# centrality
-betweenness_centrality, closeness_centrality, degree_centrality,
-indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
-eigenvector_centrality, stress_centrality, radiality_centrality,
+# # centrality
+# betweenness_centrality, closeness_centrality, degree_centrality,
+# indegree_centrality, outdegree_centrality, katz_centrality, pagerank,
+# eigenvector_centrality, stress_centrality, radiality_centrality,
 
 # spectral
 adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
@@ -190,20 +190,12 @@ include("distance.jl")
 include("edit_distance.jl")
 include("Traversals/Traversals.jl")
 include("Transitivity/Transitivity.jl")
-include("linalg/LinAlg.jl")
+include("LinAlg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
 include("ShortestPaths/ShortestPaths.jl")
-include("centrality/Centrality.jl") # TODO: make this a module
-include("centrality/betweenness.jl")
-include("centrality/closeness.jl")
-include("centrality/stress.jl")
-include("centrality/degree.jl")
-include("centrality/katz.jl")
-include("centrality/pagerank.jl")
-include("centrality/eigenvector.jl")
-include("centrality/radiality.jl")
+include("Centrality/Centrality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
 include("community/core-periphery.jl")

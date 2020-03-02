@@ -1,9 +1,8 @@
 """
-    radiality_centrality(g)
+    struct Radiality end
 
-Calculate the [radiality centrality](http://www.cbmc.it/fastcent/doc/Radiality.htm)
-of a graph `g` across all vertices. Return a vector representing the centrality
-calculated for each node in `g`.
+A struct describing an algorithm to calculate the [radiality centrality](http://www.cbmc.it/fastcent/doc/Radiality.htm)
+of a graph `g` across all vertices.
 
 The radiality centrality ``R_u`` of a vertex ``u`` is defined as
 ``
@@ -20,21 +19,23 @@ length of the shortest path from ``u`` to ``v``.
 ```jldoctest
 julia> using LightGraphs
 
-julia> radiality_centrality(star_graph(4))
+julia> centrality(star_graph(4), Radiality())
 4-element Array{Float64,1}:
  1.0               
  0.6666666666666666
  0.6666666666666666
  0.6666666666666666
 
-julia> radiality_centrality(path_graph(3))
+ julia> centrality(path_graph(3), Radiality())
 3-element Array{Float64,1}:
  0.75
  1.0 
  0.75
 ```
 """
-function radiality_centrality(g::AbstractGraph)::Vector{Float64}
+struct Radiality <: CentralityMeasure end
+
+function centrality(g::AbstractGraph, ::Radiality)::Vector{Float64}
     n_v = nv(g)
     vs = vertices(g)
 

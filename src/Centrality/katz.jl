@@ -22,18 +22,29 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-    katz_centrality(g, α=0.3)
+    struct Katz <: CentralityMeasure
+        α::Float64=0.3)
 
-Calculate the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
+A struct describing an algorithm to calculate the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
 of the graph `g` optionally parameterized by `α`. Return a vector representing
 the centrality calculated for each node in `g`.
+
+### Optional Parameters
+- `α::Real=0.3`: the Katz centrality attenuation factor.
+
 """
-function katz_centrality(g::AbstractGraph, α::Real=0.3)
+struct Katz{T<:Real} <: CentralityMeasure
+    α::T
+end
+
+Katz(; α::Real=0.3) = Katz(α)
+
+function centrality(g::AbstractGraph, alg::Katz)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = sparse(one(Float64) * I, nvg, nvg)
     A = adjacency_matrix(g, Bool; dir=:in)
-    v = (spI - α * A) \ v
+    v = (spI - alg.α * A) \ v
     v /=  norm(v)
     return v
 end

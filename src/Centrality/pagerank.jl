@@ -1,43 +1,50 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
-using Base.Threads
-
 """
-    pagerank(g, α=0.85, n=100, ϵ=1.0e-6)
+    struct PageRank <: CentralityMeasure
+        α::Float64
+        n::Integer
+        ϵ::Float64
+    end
 
-Calculate the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the
+A structure representing an algorithm to calculate the [PageRank](https://en.wikipedia.org/wiki/PageRank) of the
 graph `g` parameterized by damping factor `α`, number of iterations 
-`n`, and convergence threshold `ϵ`. Return a vector representing the
-centrality calculated for each node in `g`, or an error if convergence
-is not reached within `n` iterations.
+`n`, and convergence threshold `ϵ`. 
+
+### Optional Arguments
+- `α::Float64=0.85`: the damping factor
+- `n::Integer=100`: the number of iterations to run
+- `ϵ::Float64=1.0e-6`: the convergence threshold above which a [`ConvergenceError`](@ref) is thrown.
 """
-function pagerank(
-    g::AbstractGraph{U}, 
-    α=0.85, 
-    n::Integer=100,
-    ϵ=1.0e-6
-    ) where U <: Integer
+struct PageRank <: CentralityMeasure
+    α::Float64
+    n::Integer
+    ϵ::Float64
+end
+PageRank(;α=0.85, n=100, ϵ=1.0e-6) = PageRank(α, n, ϵ)
+
+function centrality(g::AbstractGraph{U},  alg::PageRank) where {U<:Integer}
     α_div_outdegree = Vector{Float64}(undef,nv(g))
     dangling_nodes = Vector{U}()
     for v in vertices(g)
         if outdegree(g, v) == 0
             push!(dangling_nodes, v)
         end
-        α_div_outdegree[v] = (α/outdegree(g, v))
+        α_div_outdegree[v] = (alg.α/outdegree(g, v))
     end
     N = Int(nv(g))
     # solution vector and temporary vector
     x = fill(1.0 / N, N)
     xlast = copy(x)
-    for _ in 1:n
+    for _ in 1:alg.n
         dangling_sum = 0.0
         for v in dangling_nodes
             dangling_sum += x[v]
         end
         # flow from teleprotation
         for v in vertices(g)
-            xlast[v] = (1 - α + α * dangling_sum) * (1.0 / N)
+            xlast[v] = (1 - alg.α + alg.α * dangling_sum) * (1.0 / N)
         end
         # flow from edges
         
@@ -52,9 +59,9 @@ function pagerank(
             err += abs(xlast[v] - x[v])
             x[v] = xlast[v]
         end
-        if (err < N * ϵ)
+        if (err < N * alg.ϵ)
             return x
         end
     end
-    error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
+    throw(ConvergenceError("Pagerank did not converge after $(alg.n) iterations."))
 end

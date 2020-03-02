@@ -1,14 +1,16 @@
 # Betweenness centrality measures
 # TODO - weighted, separate unweighted, edge betweenness
 
-
 """
-    betweenness_centrality(g[, vs])
-    betweenness_centrality(g, k)
-
-Calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
-of a graph `g` across all vertices, a specified subset of vertices `vs`, or a random subset of `k`
-vertices. Return a vector representing the centrality calculated for each node in `g`.
+    struct Betweenness{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+        normalize::Bool
+        endpoints::Bool
+        k::Int
+        vs::U
+    end
+        
+A struct representing an algorithm to calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
+of a graph `g` across all vertices, a specified subset of vertices `vs`, and/or a random subset of `k` vertices. 
 
 ### Optional Arguments
 - `normalize=true`: If true, normalize the betweenness values by the
@@ -16,6 +18,9 @@ total number of possible distinct paths between all pairs in the graphs.
 For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
 and for a directed graph, ``{(|V|-1)(|V|-2)}``.
 - `endpoints=false`: If true, include endpoints in the shortest path count.
+- `k=0`: If `k>0`, randomly sample `k` vertices from `vs` if provided, or from `vertices(g)` if empty.
+- `vs=[]`: if `vs` is nonempty, run betweenness centrality only from these vertices.
+
 Betweenness centrality is defined as:
 ``
 bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
@@ -29,13 +34,13 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 ```jldoctest
 julia> using LightGraphs
 
-julia> betweenness_centrality(star_graph(3))
+julia> centrality(star_graph(3), Betweenness())
 3-element Array{Float64,1}:
  1.0
  0.0
  0.0
 
-julia> betweenness_centrality(path_graph(4))
+ julia> centrality(path_graph(4), Betweenness())
 4-element Array{Float64,1}:
  0.0
  0.6666666666666666
@@ -43,12 +48,25 @@ julia> betweenness_centrality(path_graph(4))
  0.0
 ```
 """
-function betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    endpoints=false)
+struct Betweenness{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+    normalize::Bool
+    endpoints::Bool
+    k::Int
+    vs::T
+end
 
+Betweenness(; normalize=true, endpoints=false, k=0, vs=Vector{Int}()) = Betweenness(normalize, endpoints, k, vs)
+
+function centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Betweenness)
+    vs = isempty(alg.vs) ? vertices(g) : alg.vs
+    if alg.k > 0
+        sample!(vs, alg.k)
+    end
+
+    return _betweenness_centrality(g, vs, distmx, alg.normalize, alg.endpoints)
+end
+
+function _betweenness_centrality(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, normalize::Bool, endpoints::Bool)
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
@@ -57,11 +75,11 @@ function betweenness_centrality(g::AbstractGraph,
     dstate = Dijkstra(all_paths=true, track_vertices=true)
     for s in vs
         if degree(g, s) > 0  # this might be 1?
-            state = shortest_paths(g, s, distmx, dstate)
+            result = shortest_paths(g, s, distmx, dstate)
             if endpoints
-                _accumulate_endpoints!(betweenness, state, g, s)
+                _accumulate_endpoints!(betweenness, result, g, s)
             else
-                _accumulate_basic!(betweenness, state, g, s)
+                _accumulate_basic!(betweenness, result, g, s)
             end
         end
     end
@@ -74,10 +92,6 @@ function betweenness_centrality(g::AbstractGraph,
 
     return betweenness
 end
-
-betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
-
 
 function _accumulate_basic!(betweenness::Vector{Float64},
     state::DijkstraResult,
@@ -155,7 +169,6 @@ function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, di
             scale = scale * n / k
         end
         betweenness .*= scale
-
     end
     return nothing
 end

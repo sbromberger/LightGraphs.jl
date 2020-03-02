@@ -1,8 +1,10 @@
 """
-    closeness_centrality(g, distmx=weights(g); normalize=true)
+    struct Closeness <: CentralityMeasure
+        normalize::Bool
+    end
 
-Calculate the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality)
-of the graph `g`. Return a vector representing the centrality calculated for each node in `g`.
+A struct representing an algorithm to calculate the [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality)
+of the graph `g`.
 
 ### Optional Arguments
 - `normalize=true`: If true, normalize the centrality value of each
@@ -13,7 +15,7 @@ from node `n`.
 ```jldoctest
 julia> using LightGraphs
 
-julia> closeness_centrality(star_graph(5))
+julia> centrality(star_graph(5), Closeness())
 5-element Array{Float64,1}:
  1.0
  0.5714285714285714
@@ -21,7 +23,7 @@ julia> closeness_centrality(star_graph(5))
  0.5714285714285714
  0.5714285714285714
 
-julia> closeness_centrality(path_graph(4))
+ julia> centrality(path_graph(4), Closeness())
 4-element Array{Float64,1}:
  0.5
  0.75
@@ -29,10 +31,13 @@ julia> closeness_centrality(path_graph(4))
  0.5
 ```
 """
-function closeness_centrality(g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
-    normalize=true)
+struct Closeness <: CentralityMeasure
+    normalize::Bool
+end
 
+Closeness(;normalize=true) = Closeness(normalize)
+
+function centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness)
     n_v = nv(g)
     closeness = zeros(n_v)
 
@@ -46,7 +51,7 @@ function closeness_centrality(g::AbstractGraph,
             l = length(δ) - 1
             if σ > 0
                 closeness[u] = l / σ
-                if normalize
+                if alg.normalize
                     n = l / (n_v - 1)
                     closeness[u] *= n
                 end

@@ -1,7 +1,8 @@
 """
-    eigenvector_centrality(g)
+    struct Eigenvector <: CentralityMeasure
 
-Compute the eigenvector centrality for the graph `g`.
+A struct representing an algorithm to compute the eigenvector centrality
+for the graph `g`.
 
 Eigenvector centrality computes the centrality for a node based on the
 centrality of its neighbors. The eigenvector centrality for node `i` is
@@ -24,4 +25,5 @@ eigenvector of the adjacency matrix \$\\mathbf{A}\$.
 - Mark E. J. Newman: Networks: An Introduction.
        Oxford University Press, USA, 2010, pp. 169.
 """
-eigenvector_centrality(g::AbstractGraph) = abs.(vec(eigs(adjacency_matrix(g), which=LM(), nev=1)[2]))::Vector{Float64}
+struct Eigenvector <: CentralityMeasure end
+centrality(g::AbstractGraph, ::Eigenvector) = abs.(vec(eigs(adjacency_matrix(g), which=LM(), nev=1)[2]))::Vector{Float64}
