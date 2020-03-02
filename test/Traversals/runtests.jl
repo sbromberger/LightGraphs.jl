@@ -15,7 +15,6 @@ travtests = [
 
 @testset "LightGraphs.Traversals" begin
     for t in travtests
-        println("traversals: testing $t")
         tp = joinpath(travtestdir, "$t")
         include(tp)
     end

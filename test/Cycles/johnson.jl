@@ -11,11 +11,11 @@
         @test count_simple_cycles(g) == 0
         @test length(simple_cycles(g)) == 0
         @test isempty(simple_cycles(g)) == true
-        @test isempty(simple_cycles(g, Johnson(iterative=true))) == true
-        @test simple_cycles_length(g, Johnson()) == (zeros(5), 0)
-        @test count_simple_cycles(g, Johnson(ceiling=10)) == 0
-        @test isempty(simple_cycles(g, Johnson(iterative=true, ceiling=10))) == true
-        @test simple_cycles_length(g, Johnson(ceiling=10)) == (zeros(5), 0)
+        @test isempty(simple_cycles(g, Cycles.Johnson(iterative=true))) == true
+        @test simple_cycles_length(g, Cycles.Johnson()) == (zeros(5), 0)
+        @test count_simple_cycles(g, Cycles.Johnson(ceiling=10)) == 0
+        @test isempty(simple_cycles(g, Cycles.Johnson(iterative=true, ceiling=10))) == true
+        @test simple_cycles_length(g, Cycles.Johnson(ceiling=10)) == (zeros(5), 0)
     end
 
     @testset "max_simple_cycles(4)" begin
@@ -25,11 +25,11 @@
     @testset "complete digraph" for g in testgraphs(completedg)
         @test max_simple_cycles(g) == 20
         @test length(simple_cycles(g)) == 20
-        @test simple_cycles(g) == @inferred(simple_cycles(g, Johnson(iterative=true)))
+        @test simple_cycles(g) == @inferred(simple_cycles(g, Cycles.Johnson(iterative=true)))
         @test count_simple_cycles(g) == 20
         @test simple_cycles_length(g) == ([0, 6, 8, 6], 20)
-        @test count_simple_cycles(g, Johnson(ceiling=10)) == 10
-        @test simple_cycles_length(g, Johnson(ceiling=10))[2] == 10
+        @test count_simple_cycles(g, Cycles.Johnson(ceiling=10)) == 10
+        @test simple_cycles_length(g, Cycles.Johnson(ceiling=10))[2] == 10
     end
 
     @testset "triangle" for g in testgraphs(triangle)
@@ -40,7 +40,7 @@
     @testset "quadrangle" for g in testgraphs(quadrangle)
         quadranglelengths, quadrangletotal = simple_cycles_length(DiGraph(g))
         @test sum(quadranglelengths) == quadrangletotal
-        @test simple_cycles(DiGraph(g)) == @inferred(simple_cycles(DiGraph(g), Johnson(iterative=true)))
+        @test simple_cycles(DiGraph(g)) == @inferred(simple_cycles(DiGraph(g), Cycles.Johnson(iterative=true)))
     end
 
     @testset "pentagon" for g in testgraphs(pentagon)
@@ -62,7 +62,7 @@
         @test [1, 2, 3] in cycles || [2, 3, 1] in cycles || [3, 1, 2] in cycles
         @test length(cycles) == 3
 
-        cycles2 = simple_cycles(g, Johnson(iterative=true))
+        cycles2 = simple_cycles(g, Cycles.Johnson(iterative=true))
         @test [3] in cycles2
         @test [4] in cycles2
         @test [1, 2, 3] in cycles2 || [2, 3, 1] in cycles2 || [3, 1, 2] in cycles2

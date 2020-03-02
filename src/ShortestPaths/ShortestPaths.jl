@@ -8,7 +8,7 @@ module ShortestPaths
      
 using LightGraphs
 using LightGraphs.Traversals
-import LightGraphs.Traversals: tree
+import LightGraphs.Traversals: tree, parents
 using DataStructures: PriorityQueue, dequeue!, enqueue!
 using SparseArrays: sparse
 

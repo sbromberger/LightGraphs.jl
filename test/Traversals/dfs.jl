@@ -1,4 +1,4 @@
-@testset "DFS" begin
+@testset "DepthFirst" begin
 
   g5 = SimpleDiGraph(4)
   add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
@@ -6,7 +6,7 @@
 
   @testset "dfs tree" begin
       for g in testdigraphs(g5)
-          z = @inferred(tree(g, 1, DFS()))
+          z = @inferred(tree(g, 1, DepthFirst()))
           @test ne(z) == 3 && nv(z) == 4
           @test !has_edge(z, 1, 3)
           @test !is_cyclic(g)

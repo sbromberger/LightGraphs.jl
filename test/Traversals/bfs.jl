@@ -1,4 +1,4 @@
-@testset "BFS" begin
+@testset "BreadthFirst" begin
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
@@ -6,7 +6,7 @@
 
     @testset "bfs tree and bfs parents" begin
         for g in testdigraphs(g5)
-            sp = shortest_paths(g, 1, LightGraphs.ShortestPaths.BFS())
+            sp = shortest_paths(g, 1, BFS())
             z = @inferred(tree(sp))
             t = parents(sp)
             @test t == [0, 1, 1, 3]
@@ -15,7 +15,7 @@
 
         for g in testgraphs(g6)
             n = nv(g)
-            sp = shortest_paths(g, 1, LightGraphs.ShortestPaths.BFS())
+            sp = shortest_paths(g, 1, BFS())
             p = parents(sp)
             @test length(p) == n
             t1 = @inferred(tree(sp))
@@ -29,7 +29,7 @@
 
     @testset "distances" begin
         for g in testgraphs(g6)
-            @test @inferred(distances(g, 2)) == @inferred(distances(g, 2, BFS(MergeSort))) == [1, 0, 2, 1, 2]
+            @test @inferred(distances(g, 2)) == @inferred(distances(g, 2, BreadthFirst(MergeSort))) == [1, 0, 2, 1, 2]
             @test @inferred(distances(g, [1, 2])) == [0, 0, 1, 1, 2]
             @test @inferred(distances(g, [])) == fill(typemax(eltype(g)), 5)
         end

@@ -2,12 +2,12 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
-struct DFS <: TraversalAlgorithm end
+struct DepthFirst <: TraversalAlgorithm end
 
 function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
-    alg::DFS,
+    alg::DepthFirst,
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
     ) where U<:Integer
@@ -48,7 +48,7 @@ end
 function traverse_graph2!(
     g::AbstractGraph{U},
     ss::AbstractVector,
-    alg::DFS,
+    alg::DepthFirst,
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
     ) where U<:Integer
@@ -87,7 +87,7 @@ end
 traverse_graph2!(
     g::AbstractGraph{U},
     s::Integer,
-    alg::DFS,
+    alg::DepthFirst,
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
    ) where U<:Integer = traverse_graph2!(g, [s], alg, state, neighborfn)
@@ -123,7 +123,7 @@ end
     return true
 end
 
-@traitfn function topological_sort(g::AG::IsDirected, alg::DFS=DFS()) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
@@ -169,7 +169,7 @@ end
     @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        !traverse_graph!(g, v, DFS(), state) && return true
+        !traverse_graph!(g, v, DepthFirst(), state) && return true
     end
     return false
 end
@@ -180,7 +180,7 @@ end
     @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        !traverse_graph2!(g, v, DFS(), state) && return true
+        !traverse_graph2!(g, v, DepthFirst(), state) && return true
     end
     return false
 end

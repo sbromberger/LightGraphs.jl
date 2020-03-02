@@ -29,10 +29,10 @@
 
 @deprecate enumerate_paths paths
 @deprecate bfs_tree(g, v) tree(shortest_paths(g, v, BFS()))
-@deprecate dfs_tree(g, v) tree(shortest_paths(g, v, DFS()))
+@deprecate dfs_tree(g, v) tree(shortest_paths(g, v, DepthFirst()))
 @deprecate bfs_parents(g, v) parents(shortest_paths(g, v, BFS()))
 @deprecate gdistances ShortestPaths.distances
-@deprecate topological_sort_by_dfs(g) Traversals.topological_sort(g, Traversals.DFS())
+@deprecate topological_sort_by_dfs(g) Traversals.topological_sort(g, Traversals.DepthFirst())
 @deprecate transitivereduction transitive_reduction
 @deprecate transitiveclosure transitive_closure
 

@@ -21,7 +21,7 @@ function transitive_closure! end
 @traitfn function transitive_closure!(g::::IsDirected, selflooped=false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
-    tp = reverse(topological_sort(cg, DFS()))
+    tp = reverse(topological_sort(cg, DepthFirst()))
     sr = [Vector{eltype(cg)}() for _ in vertices(cg)]
 
     x = selflooped ? 0 : 1
@@ -225,6 +225,6 @@ function transitive_reduction end
     return resultg
 end
 
-export transitive_closure, transitive_reduction
+export transitive_closure, transitive_closure!, transitive_reduction
 
 end # module

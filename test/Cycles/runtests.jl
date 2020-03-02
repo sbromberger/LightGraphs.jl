@@ -12,7 +12,6 @@ cycletests = [
 
 @testset "LightGraphs.Cycles" begin
     for t in cycletests
-        println("cycles: testing $t")
         tp = joinpath(cycletestdir, "$t")
         include(tp)
     end

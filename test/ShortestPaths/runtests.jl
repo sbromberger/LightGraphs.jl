@@ -24,7 +24,6 @@ sptests = [
     @test !has_negative_weight_cycle(path_graph(5))
     @test !has_negative_weight_cycle(path_digraph(5))
     for t in sptests
-        println("shortest paths: testing $t")
         tp = joinpath(sptestdir, "$t")
         include(tp)
     end

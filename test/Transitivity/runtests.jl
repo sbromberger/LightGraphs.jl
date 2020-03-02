@@ -8,7 +8,6 @@ transtests = [
 
 @testset "LightGraphs.Transitivity" begin
     for t in transtests
-        println("transitivity: testing $t")
         tp = joinpath(transtestdir, "$t")
         include(tp)
     end

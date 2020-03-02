@@ -9,8 +9,8 @@ using Random: shuffle, shuffle!, randsubseq!
 """
     abstract type TraversalAlgorithm
 
-`TraversalAlgorithm` is the abstract type used to specify breadth-first traversal (`BFS`) or
-depth-first traversal (`DFS`) for the various traversal functions.
+`TraversalAlgorithm` is the abstract type used to specify breadth-first traversal (`BreadthFirst`) or
+depth-first traversal (`DepthFirst`) for the various traversal functions.
 """
 abstract type TraversalAlgorithm end
 
@@ -97,7 +97,7 @@ and return `true` if successful; `false` otherwise.
 @inline postlevelfn!(::AbstractTraversalState) = true
 
 ##############
-# functions common to both BFS and DFS
+# functions common to both BreadthFirst and DepthFirst
 ##############
 """
     traverse_graph!(g, s, alg, state, neighborfn=outneighbors)
@@ -214,9 +214,9 @@ include("maxadjvisit.jl")
 include("randomwalks.jl")
 
 export tree, parents
-export BFS, distances, has_path
+export BreadthFirst, distances, has_path
 export is_bipartite, bipartite_map
-export DFS, is_cyclic, topological_sort, CycleError 
+export DepthFirst, is_cyclic, topological_sort, CycleError 
 export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 export diffusion, diffusion_rate
 export greedy_color

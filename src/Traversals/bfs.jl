@@ -6,11 +6,11 @@ const NOOPSort = NOOPSortAlg()
 
 sort!(x, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
 
-struct BFS{T<:Base.Sort.Algorithm} <: TraversalAlgorithm
+struct BreadthFirst{T<:Base.Sort.Algorithm} <: TraversalAlgorithm
     sort_alg::T
 end
 
-BFS() = BFS(NOOPSort)
+BreadthFirst() = BreadthFirst(NOOPSort)
 
 """
     traverse_graph!(g, s, alg, state, neighborfn=outneighbors)
@@ -22,7 +22,7 @@ BFS() = BFS(NOOPSort)
 function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
-    alg::BFS,
+    alg::BreadthFirst,
     state::AbstractTraversalState,
     neighborfn::Function=outneighbors
     ) where U<:Integer
@@ -81,13 +81,13 @@ end
 end
 
 """
-    distances(g, s, alg=BFS())
-    distances(g, ss, alg=BFS())
+    distances(g, s, alg=BreadthFirst())
+    distances(g, ss, alg=BreadthFirst())
 
 Return a vector filled with the geodesic distances of vertices in  `g` from vertex `s` / unique vertices `ss`
-using BFS traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
+using BreadthFirst traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s, alg::BFS=BFS()) where T
+function distances(g::AbstractGraph{T}, s, alg::BreadthFirst=BreadthFirst()) where T
     d = fill(typemax(T), nv(g))
     state = DistanceState(d, one(T))
     traverse_graph!(g, s, alg, state)
@@ -109,7 +109,7 @@ end
 @inline newvisitfn!(s::PathState, u, v) = s.v != v 
 
 """
-    has_path(g::AbstractGraph, u, v, alg=BFS(); exclude_vertices=Vector())
+    has_path(g::AbstractGraph, u, v, alg=BreadthFirst(); exclude_vertices=Vector())
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
@@ -119,7 +119,7 @@ is in `exclude_vertices`.
 ### Performance Notes
 sorting `exclude_vertices` prior to calling the function may result in improved performance.
 """ 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BFS=BFS(); exclude_vertices=Vector{T}()) where {T}
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BreadthFirst=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
     u == v && return true
     state = PathState(T(u), T(v), T.(exclude_vertices), false)
     result = traverse_graph!(g, u, alg, state)
