@@ -767,8 +767,9 @@ end
 
 """
     friendship_graph(n)
-Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph)
-consisting of n copies of the cycle graph C3 with a common vertex`,
+
+Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph).
+A friendship consisting of n copies of the cycle graph C3 with a common vertex`,
 the center vertex will always be 1, if n was <= 0 the function will return
 single node graph
 
