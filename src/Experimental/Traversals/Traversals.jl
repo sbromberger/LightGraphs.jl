@@ -52,6 +52,7 @@ Modify [`AbstractTraversalState`](@ref) `state` before examining neighbors of ve
 and return `true` if successful; `false` otherwise.
 """
 @inline previsitfn!(::AbstractTraversalState, u) = true
+@inline previsitfn!(T::AbstractTraversalState, vis::BitVector, u) = previsitfn!(T, u)
 
 """
     newvisitfn!(state, u, v)
@@ -60,6 +61,7 @@ Modify [`AbstractTraversalState`](@ref) `state` when the first edge between `u` 
 and return `true` if successful; `false` otherwise.
 """
 @inline newvisitfn!(::AbstractTraversalState, u, v) = true
+@inline newvisitfn!(T::AbstractTraversalState, vis::BitVector, u, v) = newvisitfn!(T, u, v)
 
 """
     visitfn!(state, u, v)
@@ -70,6 +72,7 @@ per edge, depending on the traversal algorithm, for a function that operates on 
 only, use [`newvisitfn!`](@ref).
 """
 @inline visitfn!(::AbstractTraversalState, u, v) = true
+@inline visitfn!(T::AbstractTraversalState, vis::BitVector, u, v) = visitfn!(T, u, v)
 
 """
     postvisitfn!(state, u)
@@ -78,6 +81,8 @@ Modify [`AbstractTraversalState`](@ref) `state` after having examined all neighb
 and return `true` if successful; `false` otherwise.
 """
 @inline postvisitfn!(::AbstractTraversalState, u) = true
+@inline postvisitfn!(T::AbstractTraversalState, vis::BitVector, u) = postvisitfn!(T, u)
+
 """
     postlevelfn!(state)
 
@@ -85,6 +90,8 @@ Modify [`AbstractTraversalState`](@ref) `state` before moving to the next vertex
 and return `true` if successful; `false` otherwise.
 """
 @inline postlevelfn!(::AbstractTraversalState) = true
+@inline postlevelfn!(T::AbstractTraversalState, u) = postlevelfn!(T)
+@inline postlevelfn!(T::AbstractTraversalState, vis::BitVector, u) = postlevelfn!(T, u)
 
 ##############
 # functions common to both BFS and DFS
