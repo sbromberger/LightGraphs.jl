@@ -3,7 +3,7 @@ module Experimental
 using LightGraphs
 using LightGraphs.SimpleGraphs
 using Base.Threads
-import LightGraphs: nv, degree, add_edge!, neighbors, is_directed
+import LightGraphs: nv, degree, add_edge!, outneighbors, is_directed
 
 export description,
     PKC,
