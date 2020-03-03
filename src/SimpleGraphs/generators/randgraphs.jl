@@ -39,7 +39,7 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=Random.GLOBAL
     return g
 end
 
-SimpleGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where T <: Integer =
+SimpleGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T <: Integer} =
     SimpleGraph{T}(nv, ne, rng=rng)
 
 """
@@ -905,7 +905,7 @@ end
 # A constructor for StochasticBlockModel that uses the sizes of the blocks
 # and the affinity matrix. This construction implies that consecutive
 # vertices will be in the same blocks, except for the block boundaries.
-function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix; rng::AbstractRNG=Random.GLOBAL_RNG)
+function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
@@ -915,7 +915,7 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix;
         end
         nodemap[i] = j
     end
-    return StochasticBlockModel(csum[end], nodemap, affinities, rng=rng)
+    return StochasticBlockModel(csum[end], nodemap, affinities)
 end
 
 
@@ -936,19 +936,17 @@ end
 function StochasticBlockModel(internalp::Real,
                               externalp::Real,
                               size::Integer,
-                              numblocks::Integer;
-                              rng::AbstractRNG=Random.GLOBAL_RNG)
+                              numblocks::Integer)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
-    StochasticBlockModel(sizes, B, rng=rng)
+    StochasticBlockModel(sizes, B)
 end
 
 function StochasticBlockModel(internalp::Vector{<:Real},
                               externalp::Real,
-                              sizes::Vector{<:Integer};
-                              rng::AbstractRNG=Random.GLOBAL_RNG)
+                              sizes::Vector{<:Integer})
     B = sbmaffinity(internalp, externalp, sizes)
-    return StochasticBlockModel(sizes, B, rng=rng)
+    return StochasticBlockModel(sizes, B)
 end
 
 const biclique = ones(2, 2) - Matrix{Float64}(I, 2, 2)
@@ -974,8 +972,8 @@ end
 nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where {T <: Integer} =
     nearbipartiteaffinity(sizes, between, inter) .+ noise
 
-nearbipartiteSBM(sizes, between, inter, noise; rng::AbstractRNG=Random.GLOBAL_RNG) =
-    StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise), rng=rng)
+nearbipartiteSBM(sizes, between, inter, noise) =
+    StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise))
 
 """
     random_pair(rng, n)
@@ -1038,8 +1036,8 @@ Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled according to the stochastic block model `smb`.
 The element type is the type of `nv`.
 """
-SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
-    SimpleGraph(nvg, neg, make_edgestream(sbm))
+SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel; rng=Random.GLOBAL_RNG) =
+    SimpleGraph(nvg, neg, make_edgestream(sbm, rng))
 
 #TODO: this documentation needs work. sbromberger 20170326
 """
