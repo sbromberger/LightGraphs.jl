@@ -2,7 +2,7 @@
     modularity(g, c, distmx=weights(g), γ=1.0)
 
 Return a value representing Newman's modularity `Q` for the undirected and 
-directed graph `g` given the partitioning vector `c`. This medthod also support 
+directed graph `g` given the partitioning vector `c`. This method also supports
 weighted graphs if the distance matrix is provided.
 
 Modularity ``Q`` for undirected graph:
@@ -16,9 +16,9 @@ Q = \\frac{1}{m} \\sum_{c} \\left( e_{c} - \\gamma \\frac{K_c^{in} K_c^{out}}{m}
 ```
 
 where:
-- ``m``: m is the total number of edges in the network 
+- ``m``: total number of edges in the network 
 - ``e_c``: number of edges in community ``c``
-- ``K_c``: is the sum of the degrees of the nodes in community ``c`` or the 
+- ``K_c``: sum of the degrees of the nodes in community ``c`` or the 
   sum of the weighted degree of the nodes in community ``c`` when the graph is 
   weighted. ``K_c^{in}`` sum of the in-degrees of the nodes in community ``c``.
 
@@ -43,7 +43,7 @@ where:
 ```jldoctest
 julia> using LightGraphs
 
-julia> barbell = blockdiag(CompleteGraph(3), CompleteGraph(3));
+julia> barbell = blockdiag(complete_graph(3), complete_graph(3));
 
 julia> add_edge!(barbell, 1, 4);
 

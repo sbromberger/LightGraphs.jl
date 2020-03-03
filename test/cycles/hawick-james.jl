@@ -31,14 +31,14 @@
 
     # Path DiGraph
     ex2_size = 10
-    ex2 = testgraphs(PathDiGraph(ex2_size))
+    ex2 = testgraphs(path_digraph(ex2_size))
     @testset "empty" for g in ex2
         @test isempty(simplecycles_hawick_james(g))
     end
 
     # Complete DiGraph
     ex3_size = 5
-    ex3 = testgraphs(CompleteDiGraph(ex3_size))
+    ex3 = testgraphs(complete_digraph(ex3_size))
     @testset "length" for g in ex3
         ex3_circuits = simplecycles_hawick_james(g)
         @test length(ex3_circuits) == length(unique(ex3_circuits))

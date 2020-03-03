@@ -13,7 +13,7 @@
         end
     end
 
-    g5w = WheelGraph(5); g5wd = WheelDiGraph(5)
+    g5w = wheel_graph(5); g5wd = wheel_digraph(5)
     @testset "degree functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == 4

@@ -1,6 +1,6 @@
 @testset "Shortest_Path_Faster_Algorithm" begin
     @testset "Generic tests for graphs" begin
-        g4 = PathDiGraph(5)
+        g4 = path_digraph(5)
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
         for g in testdigraphs(g4)
@@ -9,7 +9,7 @@
         end
 
         @testset "Graph with cycle" begin
-            gx = PathGraph(5)
+            gx = path_graph(5)
             add_edge!(gx, 2, 4)
             d = ones(Int, 5, 5)
             d[2, 3] = 100
@@ -99,42 +99,42 @@
     end
 
     @testset "Different types of graph" begin
-        G = CompleteGraph(9)
+        G = complete_graph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = CompleteDiGraph(9)
+        G = complete_digraph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = CycleGraph(9)
+        G = cycle_graph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = CycleDiGraph(9)
+        G = cycle_digraph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = StarGraph(9)
+        G = star_graph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = WheelGraph(9)
+        G = wheel_graph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = RoachGraph(9)
+        G = roach_graph(9)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = CliqueGraph(5, 19)
+        G = clique_graph(5, 19)
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
@@ -154,7 +154,7 @@
     end
 
     @testset "Normal graph" begin
-        g4 = PathDiGraph(5)
+        g4 = path_digraph(5)
 
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
         d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
@@ -178,7 +178,7 @@
 
     @testset "Negative Cycle" begin
         # Negative Cycle 1
-        gx = CompleteGraph(3)
+        gx = complete_graph(3)
         for g in testgraphs(gx)
             d = [1 -3 1; -3 1 1; 1 1 1]
             @test_throws LightGraphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
@@ -190,7 +190,7 @@
         end
 
         # Negative cycle of length 3 in graph of diameter 4
-        gx = CompleteGraph(4)
+        gx = complete_graph(4)
         d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
         for g in testgraphs(gx)
             @test_throws LightGraphs.NegativeCycleError spfa_shortest_paths(g, 1, d)

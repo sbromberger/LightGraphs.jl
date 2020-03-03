@@ -48,7 +48,7 @@ mincut
 ```@docs
 randomwalk
 non_backtracking_randomwalk
-saw
+self_avoiding_walk
 ```
 
 ## Connectivity / Bipartiteness
@@ -154,7 +154,7 @@ information, accessible via the type:
 Holds a vector of distances computed, indexed by source vertex.
 
 `.parents`
-Holds a vector of parents of each source vertex. The parent of a source vertex
+Holds a vector of parents of each vertex on the paths. The parent of a source vertex
 is always `0`.
 
 (`YenState` substitutes `.paths` for `.parents`.)

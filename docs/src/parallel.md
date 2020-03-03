@@ -7,7 +7,7 @@ serial versions in the main module. In order to use parallel versions of the alg
 using LightGraphs
 import LightGraphs.Parallel
 
-g = PathGraph(10)
+g = path_graph(10)
 bc = Parallel.betweenness_centrality(g)
 ```
 

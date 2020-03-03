@@ -1,5 +1,5 @@
 @testset "Parallel.Distance" begin
-    g4 = PathDiGraph(5)
+    g4 = path_digraph(5)
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a1 = SimpleGraph(adjmx1)

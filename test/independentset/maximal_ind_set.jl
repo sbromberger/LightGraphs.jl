@@ -18,19 +18,19 @@
         isempty(z)
     end
   
-    g3 = StarGraph(5)
+    g3 = star_graph(5)
     for g in testgraphs(g3)
         z = @inferred(independent_set(g, MaximalIndependentSet(); rng=MersenneTwister(3)))
         @test (length(z)== 1 || length(z)== 4)
     end
     
-    g4 = CompleteGraph(5)
+    g4 = complete_graph(5)
     for g in testgraphs(g4)
         z = @inferred(independent_set(g, MaximalIndependentSet(); rng=MersenneTwister(3)))
         @test length(z)== 1 #Exactly one vertex 
     end
 
-    g5 = PathGraph(5)
+    g5 = path_graph(5)
     for g in testgraphs(g5)
         z = @inferred(independent_set(g, MaximalIndependentSet(); rng=MersenneTwister(3)))
         sort!(z)

@@ -8,15 +8,15 @@ import Random
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ArgumentError SimpleGraph(adjmx2)
 
-    @test_throws ErrorException badj(DummySimpleGraph())
+    @test_throws LightGraphs.NotImplementedError badj(DummySimpleGraph())
 
-    @test @inferred(ne(SimpleGraph(PathDiGraph(5)))) == 4
+    @test @inferred(ne(SimpleGraph(path_digraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
     @test @inferred(!is_directed(SimpleGraph{Int}))
 
     @test @inferred(eltype(SimpleDiGraph())) == Int
     @test @inferred(eltype(SimpleDiGraph(adjmx2))) == Int
-    @test @inferred(ne(SimpleDiGraph(PathGraph(5)))) == 8
+    @test @inferred(ne(SimpleDiGraph(path_graph(5)))) == 8
     @test @inferred(is_directed(SimpleDiGraph))
     @test @inferred(is_directed(SimpleDiGraph{Int}))
 
@@ -26,7 +26,7 @@ import Random
         @test @inferred(add_vertices!(gbig, 10) == 0)
     end
 
-    gdx = PathDiGraph(4)
+    gdx = path_digraph(4)
     gx = SimpleGraph()
     for g in testgraphs(gx)
         T = eltype(g)
@@ -42,7 +42,7 @@ import Random
         @test sprint(show, g) == "{5, 0} directed simple $T graph"
     end
 
-    gx = PathGraph(4)
+    gx = path_graph(4)
     for g in testgraphs(gx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
@@ -56,13 +56,13 @@ import Random
         @test @inferred(has_edge(g, 3, 2))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleGraph(4)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_graph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleGraph(4)
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == cycle_graph(4)
         @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = copy(g)
-        @test add_edge!(gc, 4, 1) && gc == CycleGraph(4)
+        @test add_edge!(gc, 4, 1) && gc == cycle_graph(4)
 
         @test @inferred(inneighbors(g, 2)) == @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [1, 3]
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
@@ -103,7 +103,7 @@ import Random
         @test @inferred(has_edge(g, e))
     end
 
-    gdx = PathDiGraph(4)
+    gdx = path_digraph(4)
     for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
@@ -119,16 +119,17 @@ import Random
         @test @inferred(!has_edge(g, 2, 30))
 
         gc = copy(g)
-        @test @inferred(add_edge!(gc, 4 => 1)) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
         gc = copy(g)
-        @test @inferred(add_edge!(gc, (4, 1))) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, (4, 1))) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, (4, 1))) && has_edge(gc, (0x04, 0x01))
         gc = @inferred(copy(g))
-        @test @inferred(add_edge!(gc, 4, 1)) && gc == CycleDiGraph(4)
+        @test @inferred(add_edge!(gc, 4, 1)) && gc == cycle_digraph(4)
 
         @test @inferred(inneighbors(g, 2)) == [1]
         @test @inferred(outneighbors(g, 2)) == @inferred(neighbors(g, 2)) == [3]
+        @test @inferred Set(all_neighbors(g, 2)) == Set(union(outneighbors(g, 2), inneighbors(g, 2)))
         @test @inferred(add_vertex!(gc))   # out of order, but we want it for issubset
         @test @inferred(g ⊆ gc)
         @test @inferred(has_vertex(gc, 5))
@@ -168,7 +169,7 @@ import Random
         @test @inferred(has_edge(g, e))
     end
 
-    gx = CompleteGraph(4)
+    gx = complete_graph(4)
     for g in testgraphs(gx)
         h = Graph(g)
         @test g == h
@@ -178,7 +179,7 @@ import Random
     end
 
 
-    gdx = CompleteDiGraph(4)
+    gdx = complete_digraph(4)
     for g in testdigraphs(gdx)
         h = DiGraph(g)
         @test g == h
@@ -187,22 +188,33 @@ import Random
         @test g != h
     end
     # tests for #820
-    g = CompleteGraph(3)
+    g = complete_graph(3)
     add_edge!(g, 3, 3)
     rem_vertex!(g, 1)
     @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
-    g = PathDiGraph(3)
+    g = path_digraph(3)
     add_edge!(g, 3, 3)
     rem_vertex!(g, 1)
     @test nv(g) == 2 && ne(g) == 2 && has_edge(g, 1, 1)
 
-     # Tests for constructors from iterators of edges
-    let
+    @testset "Cannot create graphs for noncrete integer type $T" for T in [Signed, Integer]
+
+        @test_throws DomainError SimpleGraph{T}()
+        @test_throws DomainError SimpleGraph{T}(one(T))
+
+        @test_throws DomainError SimpleDiGraph{T}()
+        @test_throws DomainError SimpleDiGraph{T}(one(T))
+    end
+
+    # Tests for constructors from iterators of edges
+    @testset "Constructors from edge lists" begin
         g_undir = erdos_renyi(200, 100; rng=MersenneTwister(0))
         add_edge!(g_undir, 200, 1) # ensure that the result uses all vertices
         add_edge!(g_undir, 2, 2) # add a self-loop
-        for g in testgraphs(g_undir)
+
+        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testgraphs(g_undir)
+
             # We create an edge list, shuffle it and reverse half of its edges
             # using this edge list should result in the same graph
             edge_list = [e for e in edges(g)]
@@ -238,7 +250,8 @@ import Random
         g_dir = erdos_renyi(200, 100; is_directed=true, rng=MersenneTwister(0))
         add_edge!(g_dir, 200, 1)
         add_edge!(g_dir, 2, 2)
-        for g in testdigraphs(g_dir)
+
+        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testdigraphs(g_dir)
             # We create an edge list and shuffle it
             edge_list = [e for e in edges(g)]
             shuffle!(MersenneTwister(0), edge_list)
@@ -269,18 +282,31 @@ import Random
         # SimpleGraphFromIterator of an empty iterator should result
         # in an empty graph of default edgetype
         empty_iter = (x for x in [])
-        @test SimpleGraphFromIterator(empty_iter) == SimpleGraph(0)
-        @test SimpleDiGraphFromIterator(empty_iter) == SimpleDiGraph(0)
-        @test edgetype(SimpleGraphFromIterator(empty_iter)) == edgetype(SimpleGraph(0))
-        @test edgetype(SimpleDiGraphFromIterator(empty_iter)) == edgetype(SimpleDiGraph(0))
+        @testset "SimpleGraphFromIterator for empty iterator" begin
+            @test SimpleGraphFromIterator(empty_iter) == SimpleGraph(0)
+            @test edgetype(SimpleGraphFromIterator(empty_iter)) == edgetype(SimpleGraph(0))
+        end
+        @testset "SimpleGraphDiFromIterator for empty iterator" begin
+            @test SimpleDiGraphFromIterator(empty_iter) == SimpleDiGraph(0)
+            @test edgetype(SimpleDiGraphFromIterator(empty_iter)) == edgetype(SimpleDiGraph(0))
+        end
+
+        @testset "SimpleGraphFromIterator for wrong edge types" begin
+            @test_throws DomainError SimpleGraphFromIterator( (i for i in 1:2) )
+        end
+
+        @testset "SimpleDiGraphFromIterator for wrong edge types" begin
+            @test_throws DomainError SimpleDiGraphFromIterator( (SimpleDiGraphEdge(1,2), "a string") )
+        end
 
         # check if multiple edges && multiple self-loops result in the
         # correct number of edges & vertices
         # edges using integers < 1 should be ignored
         g_undir = SimpleGraph(0)
-        for g in testgraphs(g_undir)
-            T = edgetype(g)
-            edge_list = T.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
+        @testset "SimpleGraphFromIterator with self-loops and multiple edges, edgetype $(edgetype(g))" for g in testgraphs(SimpleGraph(0))
+
+            E = edgetype(g)
+            edge_list = E.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -303,10 +329,11 @@ import Random
             @test ne(g4) == 2
             @test ne(g5) == 2
         end
-        g_dir = SimpleDiGraph(0)
-        for g in testdigraphs(g_dir)
-            T = edgetype(g)
-            edge_list = T.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
+
+        @testset "SimpleDiGraphFromIterator with self-loops and multiple edges, edgetype $(edgetype(g))" for g in testdigraphs(SimpleDiGraph(0))
+
+            E = edgetype(g)
+            edge_list = E.([(4, 4),(1, 2),(4, 4),(1, 2),(4, 4),(2, 1),(0, 1),(1, 0),(0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -332,49 +359,48 @@ import Random
 
         # test for iterators where the type of the elements can only be determined at runtime
         g_undir = SimpleGraph(0)
-        for g in testgraphs(g_undir)
+        @testset "SimpleGraphFromIterator with edgelist of eltype Any" for g in testgraphs(g_undir)
             T = edgetype(g)
             edge_list_good = Any[ T.(1, 2), T.(3, 4) ]
             edge_list_bad =  Any[ T.(1, 2), Int64(1) ]
 
             g1 = SimpleGraphFromIterator(edge_list_good)
             @test edgetype(g1) == T
-            @test_throws ArgumentError SimpleGraphFromIterator(edge_list_bad)
+            @test_throws DomainError SimpleGraphFromIterator(edge_list_bad)
         end
         g_dir = SimpleDiGraph(0)
-        for g in testdigraphs(g_dir)
+        @testset "SimpleGraphDiFromIterator with edgelist of eltype Any" for g in testdigraphs(g_dir)
             T = edgetype(g)
             edge_list_good = Any[ T.(1, 2), T.(3, 4) ]
             edge_list_bad =  Any[ T.(1, 2), Int64(1) ]
 
             g1 = SimpleDiGraphFromIterator(edge_list_good)
             @test edgetype(g1) == T
-            @test_throws ArgumentError SimpleDiGraphFromIterator(edge_list_bad)
+            @test_throws DomainError SimpleDiGraphFromIterator(edge_list_bad)
         end
 
-        # If there are edges of multiple types, they should be propagated
-        # to a common supertype
-        edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
-        edge_list_2 = Any[Edge{Int16}(1, 2), Edge{Int8}(3, 4)]
-        g1_undir = SimpleGraphFromIterator(edge_list_1)
-        g2_undir = SimpleGraphFromIterator(edge_list_2)
-        g1_dir = SimpleGraphFromIterator(edge_list_1)
-        g2_dir = SimpleGraphFromIterator(edge_list_2)
 
-        @test Int8 <: eltype(g1_undir)
-        @test Int16 <: eltype(g1_undir)
-        @test Int8 <: eltype(g2_undir)
-        @test Int16 <: eltype(g2_undir)
-        @test Int8 <: eltype(g1_dir)
-        @test Int16 <: eltype(g1_dir)
-        @test Int8 <: eltype(g2_dir)
-        @test Int16 <: eltype(g2_dir)
+        @testset "SimpleGraphFromIterator with edgelist of eltype Any" begin
+            # If there are edges of multiple types, the construction should fail
+            edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
+            edge_list_2 = Any[Edge{Int16}(1, 2), Edge{Int8}(3, 4)]
+            @test_throws DomainError SimpleGraphFromIterator(edge_list_1)
+            @test_throws DomainError SimpleGraphFromIterator(edge_list_2)
+        end
+
+
+        @testset "SimpleDiGraphFromIterator with edgelist of eltype Any" begin
+            edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
+            edge_list_2 = Any[Edge{Int16}(1, 2), Edge{Int8}(3, 4)]
+            @test_throws DomainError SimpleDiGraphFromIterator(edge_list_1)
+            @test_throws DomainError SimpleDiGraphFromIterator(edge_list_2)
+        end
     end
 
     # test for rem_vertices!
     let
-        g_undir = CompleteGraph(5)
-        g_dir = CompleteDiGraph(5)
+        g_undir = complete_graph(5)
+        g_dir = complete_digraph(5)
         for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
             T = eltype(g)
 
@@ -386,7 +412,7 @@ import Random
 
             g4 = copy(g)
             vmap = rem_vertices!(g4, T[3], keep_order=true)
-            @test g4 == (is_directed(g) ? CompleteDiGraph(T(4)) : CompleteGraph(T(4)))
+            @test g4 == (is_directed(g) ? complete_digraph(T(4)) : complete_graph(T(4)))
             @test vmap == [1, 2, 4, 5]
             @test isvalid_simplegraph(g4)
 
@@ -400,7 +426,7 @@ import Random
 
             g2 = copy(g)
             vmap = rem_vertices!(g2, T[2, 1, 4], keep_order=false)
-            @test g2 == (is_directed(g) ? CompleteDiGraph(T(2)) : CompleteGraph(T(2)))
+            @test g2 == (is_directed(g) ? complete_digraph(T(2)) : complete_graph(T(2)))
             @test sort(vmap) == [3, 5]
             @test isvalid_simplegraph(g2)
 

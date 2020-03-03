@@ -79,7 +79,7 @@ end
 
 Return the label with greatest frequency.
 """
-function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
+function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer; rng = Random.GLOBAL_RNG)
     @inbounds for i = 1:c.neigh_last - 1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -101,7 +101,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
     end
     # ties breaking randomly
-    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
+    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos, rng=Random.GLOBAL_RNG)
 
     result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos

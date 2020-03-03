@@ -3,48 +3,57 @@
 
 # A* shortest-path algorithm
 
-function a_star_impl!(g::AbstractGraph,# the graph
-    t, # the end vertex
-    frontier,               # an initialized heap containing the active vertices
-    colormap::Vector{UInt8},  # an (initialized) color-map to indicate status of vertices
-    distmx::AbstractMatrix,
-    heuristic::Function)
+function reconstruct_path!(total_path, # a vector to be filled with the shortest path
+    came_from, # a vector holding the parent of each node in the A* exploration
+    end_idx, # the end vertex
+    g) # the graph
 
-    E = Edge{eltype(g)}
-
-    @inbounds while !isempty(frontier)
-        (cost_so_far, path, u) = dequeue!(frontier)
-        if u == t
-            return path
-        end
-
-        for v in LightGraphs.outneighbors(g, u)
-
-            if get(colormap, v, 0) < 2
-                dist = distmx[u, v]
-                colormap[v] = 1
-                new_path = cat(path, E(u, v), dims=1)
-                path_cost = cost_so_far + dist
-                enqueue!(frontier,
-                    (path_cost, new_path, v),
-                    path_cost + heuristic(v)
-                )
-            end
-        end
-        colormap[u] = 2
+    E = edgetype(g)
+    curr_idx = end_idx
+    while came_from[curr_idx] != curr_idx
+        pushfirst!(total_path, E(came_from[curr_idx], curr_idx))
+        curr_idx = came_from[curr_idx]
     end
-    Vector{E}()
 end
 
-"""
-    empty_colormap(nv)
+function a_star_impl!(g, # the graph
+    goal, # the end vertex
+    open_set, # an initialized heap containing the active vertices
+    closed_set, # an (initialized) color-map to indicate status of vertices
+    g_score, # a vector holding g scores for each node
+    f_score, # a vector holding f scores for each node
+    came_from, # a vector holding the parent of each node in the A* exploration
+    distmx,
+    heuristic)
 
-Return a collection that maps vertices of type `typof(nv)` to UInt8.
-In case `nv` is an integer type, this will be a vector of zeros. Currently does
-not work for other types. The idea is, that this can be extended to arbitrary
-vertex types in the future.
-"""
-empty_colormap(nv::Integer) = zeros(UInt8, nv)
+    E = edgetype(g)
+    total_path = Vector{E}()
+
+    @inbounds while !isempty(open_set)
+        current = dequeue!(open_set)
+
+        if current == goal
+            reconstruct_path!(total_path, came_from, current, g)
+            return total_path
+        end
+
+        closed_set[current] = true
+
+        for neighbor in LightGraphs.outneighbors(g, current)
+            closed_set[neighbor] && continue
+
+            tentative_g_score = g_score[current] + distmx[current, neighbor]
+
+            if tentative_g_score < g_score[neighbor]
+                g_score[neighbor] = tentative_g_score
+                priority = tentative_g_score + heuristic(neighbor)
+                open_set[neighbor] = priority
+                came_from[neighbor] = current
+            end
+        end
+    end
+    return total_path
+end
 
 """
     a_star(g, s, t[, distmx][, heuristic])
@@ -65,10 +74,20 @@ function a_star(g::AbstractGraph{U},  # the g
 
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
-    # heuristic (under)estimating distance to target
-    frontier = PriorityQueue{Tuple{T,Vector{E},U},T}()
-    frontier[(zero(T), Vector{E}(), U(s))] = zero(T)
-    colormap = empty_colormap(nv(g))
-    colormap[s] = 1
-    a_star_impl!(g, U(t), frontier, colormap, distmx, heuristic)
+
+    open_set = PriorityQueue{Integer, T}()
+    enqueue!(open_set, s, 0)
+
+    closed_set = zeros(Bool, nv(g))
+
+    g_score = fill(Inf, nv(g))
+    g_score[s] = 0
+
+    f_score = fill(Inf, nv(g))
+    f_score[s] = heuristic(s)
+
+    came_from = -ones(Integer, nv(g))
+    came_from[s] = s
+
+    a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, heuristic)
 end

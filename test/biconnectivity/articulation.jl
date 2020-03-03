@@ -24,14 +24,14 @@
         @test art == ans
     end
     for level in 1:6
-        btree = LightGraphs.BinaryTree(level)
+        btree = LightGraphs.binary_tree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
             artpts = @inferred(articulation(tree))
             @test artpts == collect(1:(2^(level - 1) - 1))
         end
     end
 
-    hint = blockdiag(WheelGraph(5), WheelGraph(5))
+    hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(articulation(h)) == [5, 6]

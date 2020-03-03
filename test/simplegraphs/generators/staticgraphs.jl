@@ -1,54 +1,54 @@
 @testset "Static graphs" begin
     @testset "DiGraphs" begin
-        g = @inferred(CompleteDiGraph(5))
+        g = @inferred(complete_digraph(5))
         @test nv(g) == 5 && ne(g) == 20
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = CompleteDiGraph(0)
+        g = complete_digraph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteDiGraph(1)
+        g = complete_digraph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = CompleteDiGraph(2)
+        g = complete_digraph(2)
         @test nv(g) == 2 && ne(g) == 2
-        g = @inferred CompleteDiGraph(Int8(127))
+        g = @inferred complete_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127 * (127 - 1)
         @test eltype(g) == Int8
     end
 
     @testset "Graphs" begin
-        g = @inferred(CompleteGraph(5))
+        g = @inferred(complete_graph(5))
         @test nv(g) == 5 && ne(g) == 10
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = CompleteGraph(0)
+        g = complete_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteGraph(1)
+        g = complete_graph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = CompleteGraph(2)
+        g = complete_graph(2)
         @test nv(g) == 2 && ne(g) == 1
-        g = @inferred CompleteGraph(Int8(127))
+        g = @inferred complete_graph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127 * (127 - 1) ÷ 2
         @test eltype(g) == Int8
     end
 
 
     @testset "Bipartite Graphs" begin
-        g = @inferred(CompleteBipartiteGraph(5, 8))
+        g = @inferred(complete_bipartite_graph(5, 8))
         @test nv(g) == 13 && ne(g) == 40
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = CompleteBipartiteGraph(0,0)
+        g = complete_bipartite_graph(0,0)
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteBipartiteGraph(5,0)
+        g = complete_bipartite_graph(5,0)
         @test nv(g) == 5 && ne(g) == 0
-        g = CompleteBipartiteGraph(0,5)
+        g = complete_bipartite_graph(0,5)
         @test nv(g) == 5 && ne(g) == 0
-        g = @inferred CompleteBipartiteGraph(Int8(100), Int8(27))
+        g = @inferred complete_bipartite_graph(Int8(100), Int8(27))
         @test nv(g) == 127 && ne(g) == 100 * 27
         @test eltype(g) == Int8
-        g = CompleteBipartiteGraph(Int8(127), Int8(0))
+        g = complete_bipartite_graph(Int8(127), Int8(0))
         @test nv(g) == 127 && ne(g) == 0
-        g = CompleteBipartiteGraph(Int8(0), Int8(127))
+        g = complete_bipartite_graph(Int8(0), Int8(127))
         @test nv(g) == 127 && ne(g) == 0
     end
 
@@ -88,34 +88,34 @@
     end
 
     @testset "Multipartite Graphs" begin
-        g = @inferred(CompleteMultipartiteGraph([5, 8, 3]))
+        g = @inferred(complete_multipartite_graph([5, 8, 3]))
         @test nv(g) == 16 && ne(g) == 79
         @test isvalid_simplegraph(g)
         @test iscompletemultipartite(g, [5, 8, 3])
         # tests for extreme values
-        g = CompleteMultipartiteGraph([0, 0, 0])
+        g = complete_multipartite_graph([0, 0, 0])
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteMultipartiteGraph(Int[])
+        g = complete_multipartite_graph(Int[])
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteMultipartiteGraph([5, 0, 3])
+        g = complete_multipartite_graph([5, 0, 3])
         @test nv(g) == 8 && ne(g) == 15
         @test iscompletemultipartite(g, [5, 0, 3])
-        g = CompleteMultipartiteGraph(Int8[100, 25, 2])
+        g = complete_multipartite_graph(Int8[100, 25, 2])
         @test nv(g) == 127 && ne(g) == 2750
         @test eltype(g) == Int8
         @test iscompletemultipartite(g, [100, 25, 2])
-        g = CompleteMultipartiteGraph([0, 10, 0, 2, 0, 3, 0, 0, 6, 0])
+        g = complete_multipartite_graph([0, 10, 0, 2, 0, 3, 0, 0, 6, 0])
         @test nv(g) == 21 && ne(g) == 146
         @test iscompletemultipartite(g, [0, 10, 0, 2, 0, 3, 0, 0, 6, 0])
-        g = CompleteMultipartiteGraph([5, 3, -1])
+        g = complete_multipartite_graph([5, 3, -1])
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteMultipartiteGraph([-5, 0, -11])
+        g = complete_multipartite_graph([-5, 0, -11])
         @test nv(g) == 0 && ne(g) == 0
-        g = CompleteMultipartiteGraph([5, 3])
-        h = CompleteMultipartiteGraph([5, 0, 3])
-        j = CompleteMultipartiteGraph([0, 5, 0, 3, 0, 0])
+        g = complete_multipartite_graph([5, 3])
+        h = complete_multipartite_graph([5, 0, 3])
+        j = complete_multipartite_graph([0, 5, 0, 3, 0, 0])
         @test g == h == j
-        @test_throws InexactError CompleteMultipartiteGraph(Int8[100, 20, 20])
+        @test_throws InexactError complete_multipartite_graph(Int8[100, 20, 20])
     end
 
     function retrievepartitions(n, r)
@@ -132,187 +132,193 @@
     end
 
     @testset "Turan Graphs" begin
-        g = @inferred(TuranGraph(13, 4))
+        g = @inferred(turan_graph(13, 4))
         @test nv(g) == 13 && ne(g) == 63
         @test isvalid_simplegraph(g)
         @test iscompletemultipartite(g, retrievepartitions(13, 4))
         # testing smaller int types
-        g = TuranGraph(Int8(11), Int8(6))
+        g = turan_graph(Int8(11), Int8(6))
         @test nv(g) == 11 && ne(g) == 50
         @test iscompletemultipartite(g, retrievepartitions(11, 6))
-        g = TuranGraph(Int16(35), Int16(17))
+        g = turan_graph(Int16(35), Int16(17))
         @test nv(g) == 35 && ne(g) == 576
         @test iscompletemultipartite(g, retrievepartitions(35, 17))
         # tests for extreme values
-        g = TuranGraph(15,15)
+        g = turan_graph(15,15)
         @test nv(g) == 15 && ne(g) == 105
         @test iscompletemultipartite(g, retrievepartitions(15, 15))
-        g = TuranGraph(10, 1)
+        g = turan_graph(10, 1)
         @test nv(g) == 10 && ne(g) == 0
         @test iscompletemultipartite(g, retrievepartitions(10, 1))
-        @test_throws DomainError TuranGraph(3,0)
-        @test_throws DomainError TuranGraph(0,4)
-        @test_throws DomainError TuranGraph(3,4)
-        @test_throws DomainError TuranGraph(-1,5)
-        @test_throws DomainError TuranGraph(3,-6)
+        @test_throws DomainError turan_graph(3,0)
+        @test_throws DomainError turan_graph(0,4)
+        @test_throws DomainError turan_graph(3,4)
+        @test_throws DomainError turan_graph(-1,5)
+        @test_throws DomainError turan_graph(3,-6)
     end
 
     @testset "Star Graphs" begin
-        g = @inferred(StarGraph(5))
+        g = @inferred(star_graph(5))
         @test nv(g) == 5 && ne(g) == 4
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = StarGraph(0)
+        g = star_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = StarGraph(1)
+        g = star_graph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = StarGraph(2)
+        g = star_graph(2)
         @test nv(g) == 2 && ne(g) == 1
-        g = @inferred StarGraph(Int8(127))
+        g = @inferred star_graph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127 - 1
         @test eltype(g) == Int8
     end
 
     @testset "Star DiGraphs" begin
-        g = @inferred(StarDiGraph(5))
+        g = @inferred(star_digraph(5))
         @test nv(g) == 5 && ne(g) == 4
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = StarDiGraph(0)
+        g = star_digraph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = StarDiGraph(1)
+        g = star_digraph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = StarDiGraph(2)
+        g = star_digraph(2)
         @test nv(g) == 2 && ne(g) == 1
         @test first(edges(g)) == Edge(1, 2) # edges should point outwards from vertex 1
-        g = @inferred StarDiGraph(Int8(127))
+        g = @inferred star_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127 - 1
         @test eltype(g) == Int8
 
     end
 
     @testset "Path DiGraphs" begin
-        g = @inferred(PathDiGraph(5))
+        g = @inferred(path_digraph(5))
         @test nv(g) == 5 && ne(g) == 4
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = PathDiGraph(0)
+        g = path_digraph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = PathDiGraph(1)
+        g = path_digraph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = @inferred PathDiGraph(Int8(127))
+        g = @inferred path_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 126
         @test eltype(g) == Int8
 
     end
 
     @testset "Path Graphs" begin
-        g = @inferred(PathGraph(5))
+        g = @inferred(path_graph(5))
         @test nv(g) == 5 && ne(g) == 4
         @test isvalid_simplegraph(g)
         # tests for extreme values
-        g = PathGraph(0)
+        g = path_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = PathGraph(1)
+        g = path_graph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = @inferred PathGraph(Int8(127))
+        g = @inferred path_graph(Int8(127))
         @test nv(g) == 127 && ne(g) == 126
         @test eltype(g) == Int8
     end
 
     @testset "Cycle DiGraphs" begin
-        g = @inferred(CycleDiGraph(5))
+        g = @inferred(cycle_digraph(5))
         @test nv(g) == 5 && ne(g) == 5
         @test isvalid_simplegraph(g)
          # tests for extreme values
-        g = CycleDiGraph(0)
+        g = cycle_digraph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = CycleDiGraph(1)
+        g = cycle_digraph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = CycleDiGraph(2)
+        g = cycle_digraph(2)
         @test nv(g) == 2 && ne(g) == 2
-        g = @inferred CycleDiGraph(Int8(127))
+        g = @inferred cycle_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127
         @test eltype(g) == Int8
     end
 
     @testset "Cycle Graphs" begin
-        g = @inferred(CycleGraph(5))
+        g = @inferred(cycle_graph(5))
         @test nv(g) == 5 && ne(g) == 5
         @test isvalid_simplegraph(g)
          # tests for extreme values
-        g = CycleGraph(0)
+        g = cycle_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = CycleGraph(1)
+        g = cycle_graph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = CycleGraph(2)
+        g = cycle_graph(2)
         @test nv(g) == 2 && ne(g) == 1
-        g = @inferred CycleGraph(Int8(127))
+        g = @inferred cycle_graph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127
         @test eltype(g) == Int8
     end
 
     @testset "Wheel DiGraphs" begin
-        g = @inferred(WheelDiGraph(5))
+        g = @inferred(wheel_digraph(5))
         @test nv(g) == 5 && ne(g) == 8
         @test isvalid_simplegraph(g)
           # tests for extreme values
-        g = WheelDiGraph(0)
+        g = wheel_digraph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = WheelDiGraph(1)
+        g = wheel_digraph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = WheelDiGraph(2)
+        g = wheel_digraph(2)
         @test nv(g) == 2 && ne(g) == 1
-        g = WheelDiGraph(3)
+        g = wheel_digraph(3)
         @test nv(g) == 3 && ne(g) == 4
-        g = @inferred WheelDiGraph(Int8(127))
+        g = @inferred wheel_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 2 * 126
         @test eltype(g) == Int8
     end
 
     @testset "Wheel Graphs" begin
-        g = @inferred(WheelGraph(5))
+        g = @inferred(wheel_graph(5))
         @test nv(g) == 5 && ne(g) == 8
         @test isvalid_simplegraph(g)
           # tests for extreme values
-        g = WheelGraph(0)
+        g = wheel_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = WheelGraph(1)
+        g = wheel_graph(1)
         @test nv(g) == 1 && ne(g) == 0
-        g = WheelGraph(2)
+        g = wheel_graph(2)
         @test nv(g) == 2 && ne(g) == 1
-        g = WheelGraph(3)
+        g = wheel_graph(3)
         @test nv(g) == 3 && ne(g) == 3
-        g = @inferred WheelGraph(Int8(127))
+        g = @inferred wheel_graph(Int8(127))
         @test nv(g) == 127 && ne(g) == 2 * 126
         @test eltype(g) == Int8
     end
 
-    @testset "Grids" begin
-        g = @inferred(Grid([3, 3, 4]))
+    @testset "grids" begin
+        g = @inferred(grid([3, 3, 4]))
         @test nv(g) == 3 * 3 * 4
         @test ne(g) == 75
         @test Δ(g) == 6
         @test δ(g) == 3
         @test isvalid_simplegraph(g)
 
-        g = @inferred(Grid([3, 3, 4], periodic=true))
+        g2 = @inferred(grid((3, 3, 4)))
+        @test g2 == g
+
+        g = @inferred(grid([3, 3, 4], periodic=true))
         @test nv(g) == 3 * 3 * 4
         @test ne(g) == 108
         @test Δ(g) == 6
         @test δ(g) == 6
         @test isvalid_simplegraph(g)
+
+        g2 = @inferred(grid((3, 3, 4), periodic=true))
+        @test g2 == g
     end
 
     @testset "Clique Graphs" begin
-        g = @inferred(CliqueGraph(3, 5))
+        g = @inferred(clique_graph(3, 5))
         @test nv(g) == 15 && ne(g) == 20
-        @test g[1:3] == CompleteGraph(3)
+        @test g[1:3] == complete_graph(3)
         @test isvalid_simplegraph(g)
     end
 
     @testset "Binary Trees" begin
-        g = @inferred(crosspath(3, BinaryTree(2)))
+        g = @inferred(crosspath(3, binary_tree(2)))
         # f = Vector{Vector{Int}}[[2 3 4];
         # [1 5];
         # [1 6];
@@ -329,9 +335,9 @@
         Adj = sparse(I, J, V)
         @test Adj == sparse(g)
         @test isvalid_simplegraph(g)
-        @test_throws DomainError BinaryTree(Int8(8))
+        @test_throws DomainError binary_tree(Int8(8))
 
-        g = @inferred(DoubleBinaryTree(3))
+        g = @inferred(double_binary_tree(3))
         # [[3, 2, 8]
         # [4, 1, 5]
         # [1, 6, 7]
@@ -355,7 +361,7 @@
     end
 
     @testset "Roach Graphs" begin
-        rg3 = @inferred(RoachGraph(3))
+        rg3 = @inferred(roach_graph(3))
         # [3]
         # [4]
         # [1, 5]
@@ -390,23 +396,23 @@
     end
 
     @testset "Ladder Graphs" begin
-        g = @inferred(LadderGraph(5))
+        g = @inferred(ladder_graph(5))
         @test nv(g) == 10 && ne(g) == 13
         @test isvalid_simplegraph(g)
         @test isladdergraph(g)
         # tests for extreme values
-        g = LadderGraph(0)
+        g = ladder_graph(0)
         @test nv(g) == 0 && ne(g) == 0
-        g = LadderGraph(1)
+        g = ladder_graph(1)
         @test nv(g) == 2 && ne(g) == 1
-        g = @inferred LadderGraph(-1)
+        g = @inferred ladder_graph(-1)
         @test nv(g) == 0 && ne(g) == 0
-        g = LadderGraph(Int8(63))
+        g = ladder_graph(Int8(63))
         @test nv(g) == 126 && ne(g) == 187
         @test eltype(g) == Int8
         @test isladdergraph(g)
         # tests for errors
-        @test_throws InexactError LadderGraph(Int8(64))
+        @test_throws InexactError ladder_graph(Int8(64))
     end
 
     function iscircularladdergraph(g)
@@ -418,30 +424,30 @@
       end
       return true
     end
-    
+
     @testset "Circular Ladder Graphs" begin
-        g = @inferred(CircularLadderGraph(5))
+        g = @inferred(circular_ladder_graph(5))
         @test nv(g) == 10 && ne(g) == 15
         @test isvalid_simplegraph(g)
         @test iscircularladdergraph(g)
         # tests for extreme values
-        g = CircularLadderGraph(3)
+        g = circular_ladder_graph(3)
         @test nv(g) == 6 && ne(g) == 9
         @test iscircularladdergraph(g)
-        g = CircularLadderGraph(Int8(63))
+        g = circular_ladder_graph(Int8(63))
         @test nv(g) == 126 && ne(g) == 189
         @test eltype(g) == Int8
         @test iscircularladdergraph(g)
         # tests for errors
-        @test_throws InexactError CircularLadderGraph(Int8(64))
-        @test_throws DomainError CircularLadderGraph(-1)
-        @test_throws DomainError CircularLadderGraph(0)
-        @test_throws DomainError CircularLadderGraph(1)
-        @test_throws DomainError CircularLadderGraph(2)
+        @test_throws InexactError circular_ladder_graph(Int8(64))
+        @test_throws DomainError circular_ladder_graph(-1)
+        @test_throws DomainError circular_ladder_graph(0)
+        @test_throws DomainError circular_ladder_graph(1)
+        @test_throws DomainError circular_ladder_graph(2)
     end
 
     # checking that the nodes are organized correctly
-    # see the docstring implementation notes for LollipopGraph
+    # see the docstring implementation notes for lollipop_graph
     function isbarbellgraph(g, n1, n2)
       nv(g) != n1+n2 && return false
       ne(g) != n1*(n1-1)÷2+n2*(n2-1)÷2 +1 && return false
@@ -462,32 +468,32 @@
     end
 
     @testset "Barbell Graphs" begin
-        g = @inferred(BarbellGraph(5, 6))
+        g = @inferred(barbell_graph(5, 6))
         @test nv(g) == 11 && ne(g) == 26
         @test isvalid_simplegraph(g)
         @test isbarbellgraph(g, 5, 6)
-        g = BarbellGraph(Int8(5), Int8(6))
+        g = barbell_graph(Int8(5), Int8(6))
         @test nv(g) == 11 && ne(g) == 26
         @test isvalid_simplegraph(g)
         @test isbarbellgraph(g, 5, 6)
         # extreme values
-        g = BarbellGraph(1, 5)
+        g = barbell_graph(1, 5)
         @test nv(g) == 6 && ne(g) == 11
         @test isbarbellgraph(g, 1, 5)
-        g = BarbellGraph(5, 1)
+        g = barbell_graph(5, 1)
         @test nv(g) == 6 && ne(g) == 11
         @test isbarbellgraph(g, 5, 1)
-        g = BarbellGraph(1, 1)
+        g = barbell_graph(1, 1)
         @test nv(g) == 2 && ne(g) == 1
         @test isbarbellgraph(g, 1, 1)
-        @test_throws OverflowError BarbellGraph(Int8(100), Int8(50))
-        @test_throws DomainError BarbellGraph(1, 0)
-        @test_throws DomainError BarbellGraph(0, 1)
-        @test_throws DomainError BarbellGraph(-1, -1)
+        @test_throws OverflowError barbell_graph(Int8(100), Int8(50))
+        @test_throws DomainError barbell_graph(1, 0)
+        @test_throws DomainError barbell_graph(0, 1)
+        @test_throws DomainError barbell_graph(-1, -1)
     end
 
     # checking that the nodes are organized correctly
-    # see the docstring implementation notes for LollipopGraph
+    # see the docstring implementation notes for lollipop_graph
     function islollipopgraph(g, n1, n2)
       nv(g) != n1+n2 && return false
       ne(g) != n1*(n1-1)÷2+n2 && return false
@@ -507,28 +513,28 @@
     end
 
     @testset "Lollipop Graphs" begin
-        g = @inferred(LollipopGraph(3, 5))
+        g = @inferred(lollipop_graph(3, 5))
         @test nv(g) == 8 && ne(g) == 8
         @test isvalid_simplegraph(g)
         @test islollipopgraph(g, 3, 5)
-        g = LollipopGraph(Int8(7), Int8(6))
+        g = lollipop_graph(Int8(7), Int8(6))
         @test nv(g) == 13 && ne(g) == 27
         @test isvalid_simplegraph(g)
         @test islollipopgraph(g, 7, 6)
         # extreme values
-        g = LollipopGraph(1, 3)
+        g = lollipop_graph(1, 3)
         @test nv(g) == 4 && ne(g) == 3
         @test islollipopgraph(g, 1, 3)
-        g = LollipopGraph(3, 1)
+        g = lollipop_graph(3, 1)
         @test nv(g) == 4 && ne(g) == 4
         @test islollipopgraph(g, 3, 1)
-        g = LollipopGraph(1, 1)
+        g = lollipop_graph(1, 1)
         @test nv(g) == 2 && ne(g) == 1
         @test islollipopgraph(g, 1, 1)
-        @test_throws OverflowError LollipopGraph(Int8(100), Int8(50))
-        @test_throws DomainError LollipopGraph(1, 0)
-        @test_throws DomainError LollipopGraph(0, 1)
-        @test_throws DomainError LollipopGraph(-1, -1)
+        @test_throws OverflowError lollipop_graph(Int8(100), Int8(50))
+        @test_throws DomainError lollipop_graph(1, 0)
+        @test_throws DomainError lollipop_graph(0, 1)
+        @test_throws DomainError lollipop_graph(-1, -1)
     end
 end
 

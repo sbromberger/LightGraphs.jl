@@ -40,10 +40,10 @@
         @test nv(er) == 10
         @test is_directed(er) == false
 
-        @test erdos_renyi(5, 1.0) == CompleteGraph(5)
-        @test erdos_renyi(5, 1.0, is_directed=true) == CompleteDiGraph(5)
-        @test erdos_renyi(5, 2.1) == CompleteGraph(5)
-        @test erdos_renyi(5, 2.1, is_directed=true) == CompleteDiGraph(5)
+        @test erdos_renyi(5, 1.0) == complete_graph(5)
+        @test erdos_renyi(5, 1.0, is_directed=true) == complete_digraph(5)
+        @test erdos_renyi(5, 2.1) == complete_graph(5)
+        @test erdos_renyi(5, 2.1, is_directed=true) == complete_digraph(5)
     end
 
     @testset "expected degree" begin
@@ -343,7 +343,7 @@
         @test !is_cyclic(rog)
 
         # testing if returned graph is acyclic and valid ComplexGraph
-        rog2 = random_orientation_dag(CompleteGraph(5))
+        rog2 = random_orientation_dag(complete_graph(5))
         @test isvalid_simplegraph(rog2)
         @test !is_cyclic(rog2)
 

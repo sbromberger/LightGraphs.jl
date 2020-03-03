@@ -1,5 +1,5 @@
 @testset "Prim" begin
-    g4 = CompleteGraph(4)
+    g4 = complete_graph(4)
 
     distmx = [
       0  1  5  6
