@@ -1,4 +1,27 @@
 """
+    struct ThreadedBFS <: ShortestPathAlgorithm
+        queue_segment_size::Int
+    end
+
+The structure used to configure a threaded implementation of [`LightGraphs.ShortestPaths.BFS`](@ref) with
+dynamic load balancing.
+
+### Optional Arguments
+- `queue_segment_size = 20`: The number of vertices a thread can claim from a queue
+at a time. For graphs with uniform degree, a larger value of `queue_segment_size` may
+improve performance.
+
+### References
+- [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
+Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
+"""
+struct ThreadedBFS <: ShortestPathAlgorithm
+    queue_segment_size::Int
+end
+
+ThreadedBFS(; queue_segment_size=20) = ThreadedBFS(queue_segment_size)
+
+"""
     partition_sources!(queue_list, sources)
 
 Partition `sources` using [`LightGraphs.unweighted_contiguous_partition`](@ref) and place
@@ -18,27 +41,12 @@ function partition_sources!(
     end
 end
 
-"""
-    gdistances!(g, sources, vert_level; queue_segment_size=20)
-    gdistances!(g, source, vert_level; queue_segment_size=20)
-
-Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
-
-### Optional Arguments
-- `queue_segment_size = 20`: It is the number of vertices a thread can claim from a queue
-at a time. For graphs with uniform degree, a larger value of `queue_segment_size` could
-improve performance.
-
-### References
-- [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
-Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
-"""
-function gdistances!(
+function _bfs_parallel_shortest_paths!(
     g::AbstractGraph{T}, 
     sources::Vector{<:Integer},
     parents::Vector{T},
-    vert_level::Vector{T};
-    queue_segment_size::Integer=20
+    vert_level::Vector{T},
+    queue_segment_size::Integer
     ) where T <:Integer
  
     nvg = nv(g)
@@ -118,29 +126,23 @@ function gdistances!(
     return BFSResult(parents, vert_level)
 end
 
-gdistances!(g::AbstractGraph{T}, source::Integer, parents::Vector{T}, vert_level::Vector{T}; queue_segment_size::Integer=20) where T<:Integer = 
-    gdistances!(g, [source,], parents, vert_level; queue_segment_size=20)
 
-"""
-    gdistances(g, sources; queue_segment_size=20)
-    gdistances(g, source; queue_segment_size=20)
+# """
+#     parallel_distances(g, sources; queue_segment_size=20)
+#     parallel_distances(g, source; queue_segment_size=20)
+#     
+# Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
+#
+# ### Optional Arguments
+# - `queue_segment_size = 20`: the number of vertices a thread can claim from a queue at a time.
+# For denser graphs, a smaller value of `queue_segment_size` could improve performance.
+#
+# ### References
+# - [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
+# Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
+# """
+shortest_paths(g::AbstractGraph{T}, sources::Vector{<:Integer}, alg::ThreadedBFS) where T<:Integer = 
+    _bfs_parallel_shortest_paths!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)), alg.queue_segment_size)
 
-Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
 
-### Optional Arguments
-- `queue_segment_size = 20`: It is the number of vertices a thread can claim from a queue at a time.
-For denser graphs, a smaller value of `queue_segment_size` could improve performance.
-
-### References
-- [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
-Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
-"""
-gdistances(g::AbstractGraph{T}, sources::Vector{<:Integer}; queue_segment_size::Integer=20) where T<:Integer = 
-    gdistances!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)); queue_segment_size=queue_segment_size)
-
-gdistances(g::AbstractGraph{T}, source::Integer; queue_segment_size::Integer=20) where T<:Integer = 
-    gdistances(g, [source,]; queue_segment_size=queue_segment_size)
-
-parallel_shortest_paths(g::AbstractGraph, sources::Vector, bs::BFS; queue_segment_size::Integer) = gdistances(g, sources, queue_segment_size)
-parallel_shortest_paths(g::AbstractGraph, source::Integer, bs::BFS; queue_segment_size::Integer) = gdistances(g, [source,], queue_segment_size)
-
+shortest_paths(g::AbstractGraph, s::Integer, alg::ThreadedBFS) = shortest_paths(g, [s], alg)

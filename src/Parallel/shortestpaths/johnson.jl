@@ -1,5 +1,12 @@
-function parallel_shortest_paths(g::AbstractGraph{U},
-distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
+"""
+    struct ParallelJohnson <: ShortestPathAlgorithm end
+
+A struct representing a parallel implementation of the Johnson shortest-paths algorithm.
+"""
+struct ParallelJohnson <: ShortestPathAlgorithm end
+
+function shortest_paths(g::AbstractGraph{U},
+    distmx::AbstractMatrix{T}, ::ParallelJohnson) where {T<:Real, U<:Integer}
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -18,10 +25,9 @@ distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
     end
 
 
-    dijk_state = parallel_shortest_paths(g, vertices(g), distmx, Dijkstra())
+    dijk_state = shortest_paths(g, vertices(g), distmx, ParallelDijkstra())
     d = dists(dijk_state)
     p = parents(dijk_state)
-
 
     broadcast!(-, d, d, wt_transform)
     for v in vertices(g)
@@ -37,4 +43,4 @@ distmx::AbstractMatrix{T}, ::Johnson) where T <: Real where U <: Integer
     return JohnsonResult(p, d)
 end
 
-parallel_shortest_paths(g::AbstractGraph, js::Johnson) = parallel_shortest_paths(g, weights(g), js)
+shortest_paths(g::AbstractGraph, alg::ParallelJohnson) = shortest_paths(g, weights(g), alg)

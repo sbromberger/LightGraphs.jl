@@ -26,7 +26,7 @@ struct BFS{T} <: ShortestPathAlgorithm
     maxdist::Int64
 end
 
-BFS(; maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(), maxdist)
+BFS(; traversal=Traversals.BreadthFirst(), maxdist=typemax(Int64)) = BFS(traversal, maxdist)
 BFS(a::Base.Sort.Algorithm; maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(a), maxdist)
 
 mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
