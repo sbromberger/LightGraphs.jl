@@ -53,6 +53,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "Traversals/runtests",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",

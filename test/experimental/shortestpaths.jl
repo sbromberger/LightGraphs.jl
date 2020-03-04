@@ -1,7 +1,7 @@
-using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths
+using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths, LightGraphs.Traversals
 using SparseArrays
 
-using LightGraphs.Experimental.Traversals: NOOPSort
+using LightGraphs.Traversals: NOOPSort
 import Base.==
 function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
    return a.path == b.path && a.dist == b.dist
@@ -102,12 +102,12 @@ end
         for g in testgraphs(g1, g2)
             d = shortest_paths(g, 1, Dijkstra())
             b = shortest_paths(g, 1, BFS())
-            q = shortest_paths(g, 1, BFS(Base.Sort.QuickSort))
+            q = shortest_paths(g, 1, BFS(sort_alg=Base.Sort.QuickSort))
             @test dists(d) == dists(b) && paths(d) == paths(b)
             @test dists(b) == dists(q) && paths(b) == paths(q)
             d2 = shortest_paths(g, [1, 3], Dijkstra())
-            b2 = shortest_paths(g, [1, 3], BFS(NOOPSort))
-            q2 = shortest_paths(g, [1, 3], BFS(Base.Sort.MergeSort))
+            b2 = shortest_paths(g, [1, 3], BFS(sort_alg=Traversals.NOOPSort))
+            q2 = shortest_paths(g, [1, 3], BFS(sort_alg=Base.Sort.MergeSort))
             @test dists(d2) == dists(b2) && paths(d2) == paths(b2)
             @test dists(b2) == dists(q2) && paths(b2) == paths(q2)
         end
