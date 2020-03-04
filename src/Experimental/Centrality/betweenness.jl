@@ -45,17 +45,13 @@ julia> centrality(path_graph(4))
 """
 
 struct Betweenness <: CentralityAlgorithm end
-struct BetweennessResult{T, U<:Integer} <: CentralityPathResult
-    dists::Matrix{T}
-    parents::Matrix{U}
-end
 
 function centrality(g::AbstractGraph,
     vs::AbstractVector=vertices(g),
     distmx::AbstractMatrix=weights(g);
     normalize=true,
-    endpoints=false,
-    ::Betweenness)
+    endpoints=false;
+    alg=::Betweenness)
 
     n_v = nv(g)
     k = length(vs)
@@ -82,8 +78,8 @@ function centrality(g::AbstractGraph,
     return betweenness
 end
 
-centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false, ::Betweenness) =
-    centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints, ::Betweenness)
+centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false; alg::Betweenness) =
+    centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints; alg::Betweenness)
 
 
 function _accumulate_basic!(betweenness::Vector{Float64},

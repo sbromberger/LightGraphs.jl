@@ -15,9 +15,9 @@ abstract type AbstractGraphAlgorithm end
 Concrete subtypes of `CentralityAlgorithm` are used to specify
 the type of centrality calculation used by [`centrality`](@ref).
 See [`Betweenness`](@ref), [`Closeness`](@ref), [`Degree`](@ref),
-[`Eigenvector`](@ref), [`Katz`](@ref), [`PageRank`](@ref),
-[`Radiality`](@ref), and [`Stress`](@ref) for specific requirements and
-usage details.
+[`InDegree`](@ref), [`OutDegree`](@ref), [`Eigenvector`](@ref), [`Katz`](@ref),
+[`PageRank`](@ref), [`Radiality`](@ref), and [`Stress`](@ref) for specific
+requirements and usage details.
 """
 abstract type CentralityAlgorithm <: AbstractGraphAlgorithm end
 
@@ -44,15 +44,19 @@ See `CentralityAlgorithm` for more details on the algorithm specifications.
 ### Examples
 ```
 g = star_graph(3)
+
 s1 = centrality(g)                   # `alg` defaults to `Betweenness`
 s2 = centrality(g, 0.3)              # `alg` defaults to `Katz`
 s3 = centrality(g, 0.3, 100, 1.0e-6) # `alg` defaults to `PageRank`
-s4 = centrality(g, Closeness())
-s5 = centrality(g, Radiality())
+s4 = centrality(g, alg=Closeness())
+s5 = centrality(g, alg=Radiality())
 ```
 """
+centrality(g::AbstractGraph) = centrality(g, alg=Betweenness())
+centrality(g::AbstractGraph, α, n::Integer, ϵ) = centrality(g, α, n, ϵ, alg=Katz())
+centrality(g::AbstractGraph, α) = centrality(g, α, alg=PageRank())
 
 export CentralityAlgorithm
-export Betweenness, Closeness, Degree, Eigenvector, Katz, PageRank, Radiality, Stress
+export Betweenness, Closeness, Degree, InDegree, OutDegree Eigenvector, Katz, PageRank, Radiality, Stress
 
 end  # module
