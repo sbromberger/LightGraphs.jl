@@ -10,7 +10,8 @@ export description,
     has_induced_subgraphisomorph, count_induced_subgraphisomorph, all_induced_subgraphisomorph,
     has_subgraphisomorph, count_subgraphisomorph, all_subgraphisomorph,
 
-    ShortestPaths
+    ShortestPaths,
+    Centrality
 description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
