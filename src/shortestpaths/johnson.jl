@@ -16,19 +16,11 @@ Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
 optional distance matrix `distmx`.
 
-### Implementation Notes
-If the parameter parallel is set true, dijkstra_shortest_paths will run in parallel.
-Parallel bellman_ford_shortest_paths is currently unavailable
 Return a [`LightGraphs.JohnsonState`](@ref) with relevant
 traversal information.
-Behaviour in case of negative cycle depends on bellman_ford_shortest_paths.
-Throws NegativeCycleError() if a negative cycle is present.
 
 ### Performance
 Complexity: O(|V|*|E|)
-If distmx is not mutable or of type, DefaultDistance than a sparse matrix will be produced using distmx.
-In the case that distmx is immutable, to reduce memory overhead,  
-if edge (a, b) does not exist in g then distmx[a, b] should be set to 0.
 """
 function johnson_shortest_paths(g::AbstractGraph{U},
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer

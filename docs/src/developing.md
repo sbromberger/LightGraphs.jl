@@ -7,7 +7,7 @@ All LightGraphs functions rely on a standard API to function. As long as your gr
 within the LightGraphs package should just work:
 
 - [`edges`](@ref)
-- [Base.eltype](https://docs.julialang.org/en/v1/stdlib/collections/#Base.eltype)
+- [Base.eltype](https://docs.julialang.org/en/latest/base/collections/#Base.eltype)
 - [`edgetype`](@ref) (example: `edgetype(g::CustomGraph) = LightGraphs.SimpleEdge{eltype(g)})`)
 - [`has_edge`](@ref)
 - [`has_vertex`](@ref)

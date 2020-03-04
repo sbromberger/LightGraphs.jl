@@ -13,7 +13,7 @@ SimpleEdge(p::Pair) = SimpleEdge(p.first, p.second)
 SimpleEdge{T}(p::Pair) where T<:Integer = SimpleEdge(T(p.first), T(p.second))
 SimpleEdge{T}(t::Tuple) where T<:Integer = SimpleEdge(T(t[1]), T(t[2]))
 
-eltype(e::ET) where ET<:AbstractSimpleEdge{T} where T = T
+eltype(::Type{<:ET}) where ET<:AbstractSimpleEdge{T} where T = T
 
 # Accessors
 src(e::AbstractSimpleEdge) = e.src

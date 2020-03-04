@@ -7,7 +7,7 @@ using ArnoldiMethod
 using Statistics: mean
 
 using Inflate: InflateGzipStream
-using DataStructures: IntDisjointSets, PriorityQueue, Queue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!
+using DataStructures: IntDisjointSets, PriorityQueue, Queue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
@@ -61,7 +61,7 @@ gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 is_bipartite, bipartite_map,
 
 # dfs
-is_cyclic, topological_sort_by_dfs, dfs_tree,
+is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
 
 # random
 randomwalk, self_avoiding_walk, non_backtracking_randomwalk,
@@ -118,10 +118,22 @@ label_propagation, maximal_cliques, clique_percolation,
 
 #generators
 complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
+complete_bipartite_graph, complete_multipartite_graph, turan_graph,
+complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
+binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
+circular_ladder_graph, barbell_graph, lollipop_graph,
 
-complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph, star_digraph,
-path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree, double_binary_tree, roach_graph,
-clique_graph, ladder_graph, circular_ladder_graph, barbell_graph, lollipop_graph,
+#generator deprecations
+BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
+DodecahedralGraph, FruchtGraph, HeawoodGraph, HouseGraph, HouseXGraph,
+IcosahedralGraph, KarateGraph, KrackhardtKiteGraph, MoebiusKantorGraph,
+OctahedralGraph, PappusGraph, PetersenGraph, SedgewickMazeGraph, TetrahedralGraph,
+TruncatedCubeGraph, TruncatedTetrahedronGraph, TruncatedTetrahedronDiGraph,
+TutteGraph, CompleteGraph, CompleteBipartiteGraph, CompleteMultipartiteGraph,
+TuranGraph, CompleteDiGraph, StarGraph, StarDigraph, PathGraph, PathDiGraph,
+CycleGraph, CycleDiGraph, WheelGraph, WheelDiGraph, Grid, BinaryTree,
+Doublebinary_tree, RoachGraph, CliqueGraph, LadderGraph, Circularladder_graph,
+BarbellGraph, LollipopGraph,
 
 #smallgraphs
 smallgraph,
@@ -130,7 +142,7 @@ smallgraph,
 euclidean_graph,
 
 #minimum_spanning_trees
-kruskal_mst, prim_mst,
+boruvka_mst, kruskal_mst, prim_mst,
 
 #steinertree
 steiner_tree,
@@ -243,6 +255,7 @@ include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
 include("community/clique_percolation.jl")
+include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("steinertree/steiner_tree.jl")
