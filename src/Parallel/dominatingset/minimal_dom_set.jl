@@ -1,5 +1,5 @@
 """
-    dominating_set(g, reps, MinimalDominatingSet(); parallel=:threads, seed=-1)
+    dominating_set(g, reps, MinimalDominatingSet(); parallel=:threads, rng=Random.GLOBAL_RNG)
 
 Perform [`LightGraphs.dominating_set(g, MinimalDominatingSet())`](@ref) `reps` times in parallel
 and return the solution with the fewest vertices.
@@ -7,11 +7,11 @@ and return the solution with the fewest vertices.
 ### Optional Arguements
 - `parallel=:threads`: If `parallel=:distributed` then the multiprocessor implementation is
 used. This implementation is more efficient if `reps` is large.
-- If `seed >= 0`, a random generator of each process/thread is seeded with this value.
+- `rng` as random number generator.
 """
-function dominating_set(g::AbstractGraph{T}, reps::Integer, alg::MinimalDominatingSet; parallel=:threads, seed=-1) where T <: Integer
+function dominating_set(g::AbstractGraph{T}, reps::Integer, alg::MinimalDominatingSet; parallel=:threads, rng_func= () -> Random.GLOBAL_RNG) where {T <: Integer}
     function gen_func(g::AbstractGraph{T})
-        rng = seed > 0 ? MersenneTwister(seed) : Random.GLOBAL_RNG
+        rng = rng_func()
         LightGraphs.dominating_set(g, alg; rng=rng)
     end
     compare_func(x::Vector{T}, y::Vector{T}) = length(x) < length(y)
