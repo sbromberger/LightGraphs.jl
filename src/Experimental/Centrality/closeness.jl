@@ -34,7 +34,7 @@ struct Closeness <: CentralityAlgorithm
 
 function centrality(g::AbstractGraph,
     distmx::AbstractMatrix=weights(g);
-    normalize=true;
+    normalize=true,
     alg::Closeness)
 
     n_v = nv(g)

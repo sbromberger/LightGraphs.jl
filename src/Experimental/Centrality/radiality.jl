@@ -37,7 +37,7 @@ julia> centrality(path_graph(3), alg=Radiality())
 
 struct Radiality <: CentralityAlgorithm
 
-function centrality(g::AbstractGraph; alg::Radiality::Vector{Float64}
+function centrality(g::AbstractGraph; alg::Radiality)::Vector{Float64}
     n_v = nv(g)
     vs = vertices(g)
 

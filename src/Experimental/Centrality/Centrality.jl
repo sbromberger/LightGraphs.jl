@@ -57,6 +57,6 @@ centrality(g::AbstractGraph, α, n::Integer, ϵ) = centrality(g, α, n, ϵ, alg=
 centrality(g::AbstractGraph, α) = centrality(g, α, alg=PageRank())
 
 export CentralityAlgorithm
-export Betweenness, Closeness, Degree, InDegree, OutDegree Eigenvector, Katz, PageRank, Radiality, Stress
+export Betweenness, Closeness, Degree, InDegree, OutDegree, Eigenvector, Katz, PageRank, Radiality, Stress
 
 end  # module

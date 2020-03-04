@@ -50,7 +50,7 @@ function centrality(g::AbstractGraph,
     vs::AbstractVector=vertices(g),
     distmx::AbstractMatrix=weights(g);
     normalize=true,
-    endpoints=false;
+    endpoints=false,
     alg=::Betweenness)
 
     n_v = nv(g)
