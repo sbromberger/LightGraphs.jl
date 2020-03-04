@@ -7,12 +7,12 @@ using LightGraphs:
     sample!
 
 """
-    SimpleGraph{T}(nv, ne; rng=Random.GLOBAL_RNG)
+    SimpleGraph(nv, ne; rng=Random.GLOBAL_RNG)
 
-Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
-The graph is sampled uniformly from all such graphs.
-A random number generator `rng` can be provided.
-If not specified, the element type `T` is the type of `nv`.
+Construct a random `SimpleGraph` with `nv` vertices and `ne` edges.
+The graph is sampled uniformly from all such graphs. A random
+number generator `rng` can be provided. If not specified,
+the graph is parameterized by the type of `nv`.
 
 ### See also
 [`erdos_renyi`](@ref)
@@ -23,27 +23,26 @@ julia> SimpleGraph(5, 7)
 {5, 7} undirected simple Int64 graph
 ```
 """
-function SimpleGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where T <: Integer
-    tnv = T(nv)
+function SimpleGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T<:Integer}
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne))
+    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(nv, maxe - ne))
 
-    g = SimpleGraph(tnv)
+    g = SimpleGraph(nv)
 
     while g.ne < ne
-        source = rand(rng, one(T):tnv)
-        dest = rand(rng, one(T):tnv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g, source, dest)
     end
     return g
 end
 
-SimpleGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T <: Integer} =
-    SimpleGraph{T}(nv, ne, rng=rng)
+SimpleGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T<:Integer} =
+    SimpleGraph(T(nv), ne, rng=rng)
 
 """
-    SimpleDiGraph{T}(nv, ne; rng=Random.GLOBAL_RNG)
+    SimpleDiGraph(nv, ne; rng=Random.GLOBAL_RNG)
 
 Construct a random `SimpleDiGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled uniformly from all such graphs.
@@ -59,23 +58,22 @@ julia> SimpleDiGraph(5, 7)
 {5, 7} directed simple Int64 graph
 ```
 """
-function SimpleDiGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where T <: Integer
-    tnv = T(nv)
+function SimpleDiGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T<:Integer}
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne))
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(nv, maxe - ne))
 
-    g = SimpleDiGraph(tnv)
+    g = SimpleDiGraph(nv)
     while g.ne < ne
-        source = rand(rng, one(T):tnv)
-        dest = rand(rng, one(T):tnv)
+        source = rand(rng, one(T):nv)
+        dest = rand(rng, one(T):nv)
         source != dest && add_edge!(g, source, dest)
     end
     return g
 end
 
-SimpleDiGraph(nv::T, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where T <: Integer =
-    SimpleDiGraph{Int}(nv, ne, rng=rng)
+SimpleDiGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=Random.GLOBAL_RNG) where {T<:Integer} =
+    SimpleDiGraph(T(nv), ne, rng=rng)
 
 """
     randbn(n, p, rng=Random.GLOBAL_RNG)
