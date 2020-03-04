@@ -1,10 +1,9 @@
 module Traversals
 
 using LightGraphs
-using LightGraphs: getRNG
 using SimpleTraits
 using DataStructures: PriorityQueue, enqueue!, dequeue!
-using Random: shuffle, shuffle!, randsubseq!
+using Random: shuffle, shuffle!, randsubseq!, GLOBAL_RNG
 
 """
     abstract type TraversalAlgorithm
