@@ -141,7 +141,7 @@ mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
 end
 
-@inline function newvisitfn!(s::ParentState, u, v) 
+@inline function newvisitfn!(s::ParentState, u, v)
     s.parents[v] = u
     return true
 end
@@ -198,6 +198,6 @@ function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn:
     return tree(p)
 end
 
-export visited_vertices, parents, distances, topological_sort, tree
+export visited_vertices, parents, distances, topological_sort, tree, TraversalAlgorithm, traverse_graph!, DFS, BFS
 
 end  # module

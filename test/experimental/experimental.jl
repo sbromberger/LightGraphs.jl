@@ -1,5 +1,5 @@
 const exptestdir = dirname(@__FILE__)
-tests = ["isomorphism", "shortestpaths", "traversals"]
+tests = ["isomorphism", "shortestpaths", "traversals", "biconnect"]
 
 @testset "Experimental" begin
     @test length(description()) > 1
