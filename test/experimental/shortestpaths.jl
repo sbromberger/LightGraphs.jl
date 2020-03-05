@@ -120,6 +120,16 @@ end
         @test m2 isa ShortestPaths.BFSResult
         @test m1.dists == [0, 0, 1, 2, 1]
         @test m2.dists == [0, 0, 1, 2, 1]
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(8)
+            add_edge!(G, 1, 3)
+            
+            for g in testgraphs(G)
+                b = shortest_paths(g, 1, BFS(maxdist=2))
+                @test b.dists == [0, 1, 1, 2, typemax(eltype(b.dists)), typemax(eltype(b.dists)), 2, 1]
+            end
+        end
     end
 
     @testset "DEsopoPape" begin
@@ -271,6 +281,17 @@ end
             y = shortest_paths(G, 1, Dijkstra())
             @test isapprox(z.dists, y.dists)
         end
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
+
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, 3, m, DEsopoPape(maxdist=3)))
+                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+            end
+        end 
         
         @testset "errors" begin
             g = Graph()
@@ -374,6 +395,17 @@ end
             dm = @inferred(shortest_paths(g, 1, Dijkstra(all_paths=true, track_vertices=true)))
             @test dm.closest_vertices == [1, 2, 3, 4, 5]
         end
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
+
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, 3, m, Dijkstra(maxdist=3)))
+                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+            end
+        end 
     end
 
     @testset "FloydWarshall" begin
@@ -455,6 +487,17 @@ end
         for g in testdigraphs(g5)
             z = @inferred(shortest_paths(g, d, Johnson()))
             @test z.dists == [0 1 -3 2 -4; 3 0 -4 1 -1; 7 4 0 5 3; 2 -1 -5 0 -2; 8 5 1 6 0]
+        end 
+
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
+
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, m, Johnson(maxdist=3)))
+                @test ds.dists == [0 2 2 3 2 1; 2 0 1 Inf Inf 3; 2 1 0 Inf Inf 3; 3 Inf Inf 0 1 2; 2 Inf Inf 1 0 1; 1 3 3 2 1 0]
+            end
         end 
     end
 
@@ -657,6 +700,16 @@ end
                 @test has_negative_weight_cycle(g, d, SPFA())
             end
         end
+        
+        @testset "maximum distance setting limits paths found" begin
+            G = cycle_graph(6)
+            add_edge!(G, 1, 3)
+            m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
+            for g in testgraphs(G)
+                ds = @inferred(shortest_paths(G, 3, m, SPFA(maxdist=3)))
+                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+            end
+        end 
     end
 end
