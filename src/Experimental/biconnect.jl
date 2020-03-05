@@ -15,7 +15,7 @@ mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalS
     biconnected_comps::Vector{Vector{E}}
     id::Int
     vcolor::Vector{UInt8}
-    verts :: Vector{UInt8}
+    verts::Vector{UInt8}
     w::UInt8
 end
 
@@ -25,38 +25,39 @@ end
     return Biconnections(zeros(Int, n), zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, zeros(UInt8, nv(g)), Vector{UInt8}(), UInt8(0))
 end
 
-@inline function previsitfn!(state::Biconnections{T}, u) where T
+@inline function previsitfn!(s::Biconnections{T}, u) where T
     children[u] = 0
-    state.id += 1
-    state.depth[u] = state.id
-    state.low[u] = state.depth[u]
+    s.id += 1
+    s.depth[u] = s.id
+    s.low[u] = s.depth[u]
     return true
 end
-@inline function visitfn!(s::Biconnections{T}, u, v) where T
-    return s.vcolor[v] != one(T)
-end
-@inline function newvisitfn!(state::Biconnections{T}, v, w) where T
-    if state.depth[w] == 0
+@inline function visitfn!(s::Biconnections{T}, v, w) where T
+    if s.depth[w] == 0
         E = type(w)
         children[v] += 1
-        push!(state.stack, E(min(v, w), max(v, w)))
-        state.low[v] = min(state.low[v], state.low[w])
+        push!(s.stack, E(min(v, w), max(v, w)))
+        s.low[v] = min(s.low[v], s.low[w])
 
         #Checking the root, and then the non-roots if they are articulation points
-        if (u == v && children[v] > 1) || (u != v && state.low[w] >= state.depth[v])
+        if (u == v && children[v] > 1) || (u != v && s.low[w] >= s.depth[v])
             e = E(0, 0)  #Invalid Edge, used for comparison only
             st = Vector{E}()
             while e != E(min(v, w), max(v, w))
-                e = pop!(state.stack)
+                e = pop!(s.stack)
                 push!(st, e)
             end
-            push!(state.biconnected_comps, st)
+            push!(s.biconnected_comps, st)
         end
 
-    elseif w != u && state.low[v] > state.depth[w]
-        push!(state.stack, E(min(v, w), max(v, w)))
-        state.low[v] = state.depth[w]
+    elseif w != u && s.low[v] > s.depth[w]
+        push!(s.stack, E(min(v, w), max(v, w)))
+        s.low[v] = s.depth[w]
     end
+    return s.vcolor[v] != one(T)
+end
+@inline function newvisitfn!(s::Biconnections{T}, u, v) where T
+    s.w = v
     return true
 end
 @inline function postvisitfn!(s::Biconnections{T}, u) where T
@@ -136,6 +137,6 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     # TODO [1] isn't friendly
-    traverse_graph!(g, [1], DFS(), state)
+    traverse_graph!(g, [1], DFS(), state, outneighbors)
     return state.biconnected_comps
 end
