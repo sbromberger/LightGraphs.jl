@@ -34,9 +34,8 @@ end
 end
 @inline function visitfn!(s::Biconnections{T}, v, w) where T
     if s.depth[w] == 0
-        E = type(w)
         children[v] += 1
-        push!(s.stack, E(min(v, w), max(v, w)))
+        push!(s.stack, T(min(v, w), max(v, w)))
         s.low[v] = min(s.low[v], s.low[w])
 
         #Checking the root, and then the non-roots if they are articulation points
@@ -137,6 +136,6 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     # TODO [1] isn't friendly
-    traverse_graph!(g, [1], DFS(), state, outneighbors)
+    traverse_graph!(g, edges(g), DFS(), state, outneighbors)
     return state.biconnected_comps
 end
