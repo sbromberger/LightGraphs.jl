@@ -32,12 +32,12 @@ end
 end
 @inline function visitfn!(s::Biconnections{T}, u, v) where T
     if s.depth[v] == 0
-        children[u] += 1
+        s.children[u] += 1
         push!(s.stack, E(min(u, v), max(u, v)))
         s.low[v] = min(s.low[u], s.low[v])
 
         #Checking the root, and then the non-roots if they are articulation points
-        if (u == v && children > 1) || (u != v && s.low[v] >= s.depth[u])
+        if (u == v && s.children > 1) || (u != v && s.low[v] >= s.depth[u])
             e = E(0, 0)  #Invalid Edge, used for comparison only
             st = Vector{E}()
             while e != E(min(u, v), max(u, v))
@@ -60,44 +60,6 @@ end
 end
 @inline function postvisitfn!(s::Biconnections{T}, u) where T
     return true
-end
-
-"""
-    visit!(g, state, u, v)
-
-Perform a DFS visit storing the depth and low-points of each vertex.
-"""
-function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Integer) where {E}
-    # E === Edge{eltype(g)}
-
-    children = 0
-    state.id += 1
-    state.depth[v] = state.id
-    state.low[v] = state.depth[v]
-
-    for w in outneighbors(g, v)
-        if state.depth[w] == 0
-            children += 1
-            push!(state.stack, E(min(v, w), max(v, w)))
-            visit!(g, state, v, w)
-            state.low[v] = min(state.low[v], state.low[w])
-
-            #Checking the root, and then the non-roots if they are articulation points
-            if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = E(0, 0)  #Invalid Edge, used for comparison only
-                st = Vector{E}()
-                while e != E(min(v, w), max(v, w))
-                    e = pop!(state.stack)
-                    push!(st, e)
-                end
-                push!(state.biconnected_comps, st)
-            end
-
-        elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, E(min(v, w), max(v, w)))
-            state.low[v] = state.depth[w]
-        end
-    end
 end
 
 """
