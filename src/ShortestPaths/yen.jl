@@ -15,7 +15,7 @@ struct Yen <: ShortestPathAlgorithm
     maxdist::Float64
 end
 
-Yen(;k=1, maxdist=Inf) = Yen(1, maxdist)
+Yen(;k=1, maxdist=Inf) = Yen(k, maxdist)
 
 """
     struct YenResult{T, U}
@@ -32,10 +32,10 @@ function shortest_paths(g::AbstractGraph, source::U, target::U, distmx::Abstract
 
     source == target && return YenResult{T,U}([U(0)], [[source]])
 
-    dalg = LightGraphs.Experimental.ShortestPaths.Dijkstra(maxdist=alg.maxdist)
-    dj = LightGraphs.Experimental.ShortestPaths.shortest_paths(g, source, distmx, dalg)
+    dalg = Dijkstra(maxdist=alg.maxdist)
+    dj = shortest_paths(g, source, distmx, dalg)
 
-    path = LightGraphs.Experimental.ShortestPaths.paths(dj, target)
+    path = paths(dj, target)
     isempty(path) && return YenResult{T,U}(Vector{T}(), Vector{Vector{U}}())
 
     dists = Array{T,1}()
@@ -102,7 +102,7 @@ function shortest_paths(g::AbstractGraph, source::U, target::U, distmx::Abstract
         isempty(B) && break
         mindistB = peek(B)[2]
         # The path with minimum distance in B is higher than maxdist
-        mindistB > maxdist && break
+        mindistB > alg.maxdist && break
         push!(dists, peek(B)[2])
         push!(A, dequeue!(B))
     end

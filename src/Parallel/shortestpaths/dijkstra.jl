@@ -36,7 +36,7 @@ function shortest_paths(g::AbstractGraph{U},
     pathcounts = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
-        state = shortest_paths(g, sources[i], distmx, Dijkstra())
+        state = shortest_paths(g, sources[i], distmx, ShortestPaths.Dijkstra())
         dists[i, :] = state.dists
         parents[i, :] = state.parents
         pathcounts[i, :] = state.pathcounts
@@ -45,4 +45,6 @@ function shortest_paths(g::AbstractGraph{U},
     return ParallelDijkstraResult(sdata(dists), sdata(parents), sdata(pathcounts))
 end
 
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::ParallelDijkstra) = shortest_paths(g, [s], distmx, ds)
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::ParallelDijkstra) = shortest_paths(g, [s], distmx, alg)
+shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::ParallelDijkstra) = shortest_paths(g, vertices(g), distmx, alg)
+shortest_paths(g::AbstractGraph, alg::ParallelDijkstra) = shortest_paths(g, vertices(g), weights(g), alg)

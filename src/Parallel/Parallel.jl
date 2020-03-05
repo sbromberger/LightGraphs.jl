@@ -5,12 +5,16 @@ using LightGraphs: sample, AbstractPathState
 using LightGraphs.ShortestPaths
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
+using LightGraphs.ShortestPaths: NegativeCycleError
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
+import Random
 using Random:shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
+import LightGraphs.ShortestPaths: shortest_paths
 
+include("shortestpaths/deprecated.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
 include("shortestpaths/floyd-warshall.jl")
@@ -29,4 +33,5 @@ include("dominatingset/minimal_dom_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/random_vertex_cover.jl")
 
+export ParallelJohnson, ParallelDijkstra, ThreadedBellmanFord, ThreadedFloydWarshall
 end
