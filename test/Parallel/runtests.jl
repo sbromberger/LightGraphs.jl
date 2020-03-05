@@ -11,6 +11,7 @@ tests = [
     "centrality/radiality",
     "centrality/stress",
     "distance",
+    "shortestpaths/bfs",
     "shortestpaths/bellman-ford",
     "shortestpaths/dijkstra",
     "shortestpaths/floyd-warshall",

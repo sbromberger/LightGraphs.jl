@@ -9,7 +9,9 @@
     for g in testgraphs(g3)
         z  = shortest_paths(g, d, FloydWarshall())
         zp = @inferred(shortest_paths(g, collect(1:5), d, ParallelDijkstra()))
+        zp2 = @inferred(shortest_paths(g, d, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
+        @test all(isapprox(dists(z), dists(zp2)))
 
         for i in 1:5
             state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true));
@@ -35,7 +37,9 @@
 
         z  = shortest_paths(g, FloydWarshall())
         zp = @inferred(shortest_paths(g, [1, 2], ParallelDijkstra()))
+        zp2 = @inferred(shortest_paths(g, ParallelDijkstra()))
         @test all(isapprox(dists(z)[1:2, :], dists(zp)))
+        @test all(isapprox(dists(zp2)[1:2, :], dists(zp)))
 
         for i in 1:2
             state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
@@ -49,6 +53,7 @@
         zp = shortest_paths(g, ParallelDijkstra)
         for i in vertices(g)
             @test ShortestPaths.dists(zp[i]) == shortest_paths(g, i, ShortestPaths.Dijkstra())
+            @test shortest_paths(g, i, ParallelDijkstra()) == shortest_paths(g, i, ShortestPaths.Dijkstra())
         end
 
     end
