@@ -1,7 +1,10 @@
 @testset "Parallel.Floyd Warshall" begin
     g3 = path_graph(5)
     d = [0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]
+    d2 = ones(nv(g3), nv(g3))
     for g in testgraphs(g3)
+        @test @inferred(shortest_paths(g, ThreadedFloydWarshall())) == shortest_paths(g, d2, ShortestPaths.FloydWarshall)
+
         z = @inferred(shortest_paths(g, d, ThreadedFloydWarshall()))
         @test z.dists[3, :][:] == [7, 6, 0, 11, 27]
         @test z.parents[3, :][:] == [2, 3, 0, 3, 4]

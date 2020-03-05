@@ -20,12 +20,12 @@
             end
         end
 
-        z  = shortest_paths(g, FloydWarshall())
-        zp = @inferred(shortest_paths(g, ParallelDijkstra()))
+        z  = shortest_paths(g, d, FloydWarshall())
+        zp = @inferred(shortest_paths(g, d, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
 
         for i in 1:5
-            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, d, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -45,6 +45,12 @@
                 end
             end
         end
+
+        zp = shortest_paths(g, ParallelDijkstra)
+        for i in vertices(g)
+            @test ShortestPaths.dists(zp[i]) == shortest_paths(g, i, ShortestPaths.Dijkstra())
+        end
+
     end
 
 
