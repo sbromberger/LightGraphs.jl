@@ -1,4 +1,4 @@
-@testset "Parallel.Dijkstra" begin
+@testset "Parallel.ParallelDijkstra" begin
     g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
@@ -8,11 +8,11 @@
 
     for g in testgraphs(g3)
         z  = shortest_paths(g, d, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, collect(1:5), d, Dijkstra()))
+        zp = @inferred(shortest_paths(g, collect(1:5), d, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
 
         for i in 1:5
-            state = shortest_paths(g, i, Dijkstra(all_paths=true));
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true));
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -21,11 +21,11 @@
         end
 
         z  = shortest_paths(g, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, Dijkstra()))
+        zp = @inferred(shortest_paths(g, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
 
         for i in 1:5
-            state = shortest_paths(g, i, Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -34,11 +34,11 @@
         end
 
         z  = shortest_paths(g, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, [1, 2], Dijkstra()))
+        zp = @inferred(shortest_paths(g, [1, 2], ParallelDijkstra()))
         @test all(isapprox(dists(z)[1:2, :], dists(zp)))
 
         for i in 1:2
-            state = shortest_paths(g, i, Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -54,11 +54,11 @@
 
     for g in testdigraphs(g3)
         z  = shortest_paths(g, d, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, collect(1:5), d, Dijkstra()))
+        zp = @inferred(shortest_paths(g, collect(1:5), d, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
 
         for i in 1:5
-            state = shortest_paths(g, i, Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(z)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -67,11 +67,11 @@
         end
 
         z  = shortest_paths(g, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, Dijkstra()))
+        zp = @inferred(shortest_paths(g, ParallelDijkstra()))
         @test all(isapprox(dists(z), dists(zp)))
 
         for i in 1:5
-            state = shortest_paths(g, i, Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]
@@ -80,11 +80,11 @@
         end
 
         z  = shortest_paths(g, FloydWarshall())
-        zp = @inferred(parallel_shortest_paths(g, [1, 2], Dijkstra()))
+        zp = @inferred(shortest_paths(g, [1, 2], ParallelDijkstra()))
         @test all(isapprox(dists(z)[1:2, :], dists(zp)))
 
         for i in 1:2
-            state = shortest_paths(g, i, Dijkstra(all_paths=true))
+            state = shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if parents(zp)[i, j] != 0
                     @test parents(zp)[i, j] in state.predecessors[j]

@@ -27,11 +27,11 @@
         gx = complete_graph(3)
         for g in testgraphs(gx)
             d = [1 -3 1; -3 1 1; 1 1 1]
-            @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
+            @test_throws LightGraphs.ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
             @test has_negative_weight_cycle(g, d, BellmanFord())
 
             d = [1 -1 1; -1 1 1; 1 1 1]
-            @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
+            @test_throws LightGraphs.ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
             @test has_negative_weight_cycle(g, d, BellmanFord())
             @test has_negative_weight_cycle(g, d)
         end
@@ -40,7 +40,7 @@
         gx = complete_graph(4)
         d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
         for g in testgraphs(gx)
-            @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
+            @test_throws LightGraphs.ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
             @test has_negative_weight_cycle(g, d)
         end
     end
