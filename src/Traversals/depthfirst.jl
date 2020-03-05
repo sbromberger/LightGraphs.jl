@@ -1,4 +1,4 @@
-import Base.showerror
+import Base.ohowerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
