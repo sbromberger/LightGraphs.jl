@@ -61,7 +61,7 @@ function bipartite_map(g::AbstractGraph{T}) where T
             end
         end
     end
-    return UInt8.(colors).+(one(UInt8))
+    return UInt8.(colors) .+ (one(UInt8))
 end
 
 """
