@@ -5,7 +5,7 @@
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
     for g in testdigraphs(g4)
         y = @inferred(shortest_paths(g, [2], d1, ThreadedBellmanFord()))
-        z = @inferred(shortest_paths(g, [2], d2, ThreadedBellmanFord()))
+        z = @inferred(shortest_paths(g, 2, d2, ThreadedBellmanFord()))
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
         @test @inferred(paths(z))[2] == []
         @test @inferred(paths(z))[4] == paths(z, 4) == [2, 3, 4]
@@ -13,7 +13,7 @@
 
 
         y = @inferred(shortest_paths(g, [2], d1, ThreadedBellmanFord()))
-        z = @inferred(shortest_paths(g, [2], d2, ThreadedBellmanFord()))
+        z = @inferred(shortest_paths(g, 2, d2, ThreadedBellmanFord()))
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
         @test @inferred(paths(z))[2] == []
         @test @inferred(paths(z))[4] == paths(z, 4) == [2, 3, 4]
