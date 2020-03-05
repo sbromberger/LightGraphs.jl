@@ -85,7 +85,7 @@ for g in testgraphs(gx)
     # In a Path network,
     # number of nodes infected (minus 1)
     # is equal to number of successes of a
-    # Burnoulli process.
+    # Bernoulli process.
     # So if p = 0.2, in 5 steps (seed +
     # 4 trials) expected value is 0.8,
     # with standard deviation 0.8.
