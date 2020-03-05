@@ -14,19 +14,19 @@ mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalS
     stack::Vector{E}
     biconnected_comps::Vector{Vector{E}}
     id::Int
-    vcolor::Vector{UInt8}
-    verts::Vector{UInt8}
-    w::UInt8
+    vcolor::Vector{Int}
+    verts::Vector{Int}
+    w::Int
 end
 
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}
-    return Biconnections(zeros(Int, n), zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, zeros(UInt8, nv(g)), Vector{UInt8}(), UInt8(0))
+    return Biconnections(zeros(Int, n), zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, zeros(Int, nv(g)), Vector{Int}(), Int(0))
 end
 
 @inline function previsitfn!(s::Biconnections{T}, u) where T
-    children[u] = 0
+    s.children[u] = 0
     s.id += 1
     s.depth[u] = s.id
     s.low[u] = s.depth[u]
@@ -34,12 +34,12 @@ end
 end
 @inline function visitfn!(s::Biconnections{T}, v, w) where T
     if s.depth[w] == 0
-        children[v] += 1
+        s.children[v] += 1
         push!(s.stack, T(min(v, w), max(v, w)))
         s.low[v] = min(s.low[v], s.low[w])
 
         #Checking the root, and then the non-roots if they are articulation points
-        if (u == v && children[v] > 1) || (u != v && s.low[w] >= s.depth[v])
+        if (u == v && s.children[v] > 1) || (u != v && s.low[w] >= s.depth[v])
             e = E(0, 0)  #Invalid Edge, used for comparison only
             st = Vector{E}()
             while e != E(min(v, w), max(v, w))
@@ -136,6 +136,6 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     # TODO [1] isn't friendly
-    traverse_graph!(g, edges(g), DFS(), state, outneighbors)
+    traverse_graph!(g, [1], DFS(), state, outneighbors)
     return state.biconnected_comps
 end
