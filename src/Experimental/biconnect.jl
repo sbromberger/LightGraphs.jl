@@ -32,7 +32,10 @@ end
     state.low[u] = state.depth[u]
     return true
 end
-@inline function visitfn!(state::Biconnections{T}, v, w) where T
+@inline function visitfn!(s::Biconnections{T}, u, v) where T
+    return s.vcolor[v] != one(T)
+end
+@inline function newvisitfn!(state::Biconnections{T}, v, w) where T
     if state.depth[w] == 0
         E = type(w)
         children[v] += 1
@@ -54,9 +57,6 @@ end
         push!(state.stack, E(min(v, w), max(v, w)))
         state.low[v] = state.depth[w]
     end
-end
-@inline function newvisitfn!(s::Biconnections{T}, u, v) where T
-    s.w = v
     return true
 end
 @inline function postvisitfn!(s::Biconnections{T}, u) where T
