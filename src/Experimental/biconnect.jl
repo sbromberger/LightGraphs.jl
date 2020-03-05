@@ -9,8 +9,8 @@ A state type for depth-first search that finds the biconnected components.
 """
 mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalState
     low::Vector{Int}
-    depth::Vector{Int}
-    children::Vector{Int}
+    discovery::Vector{Int}
+    grandparent::Int
     stack::Vector{E}
     biconnected_comps::Vector{Vector{E}}
     id::Int
@@ -19,35 +19,30 @@ end
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}
-    return Biconnections(zeros(Int, n), zeros(Int, n),  zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0)
+    return Biconnections(zeros(Int, n), zeros(Int, n), 0, Vector{E}(), Vector{Vector{E}}(), 0)
 end
 @inline function previsitfn!(s::Biconnections{E}, u, v) where E
-    s.children[u] = 0
-    s.id +=1
-    s.depth[u] = s.id
-    s.low[u] = s.depth[u]
+    s.grandparent = s.id
 end
 @inline function visitfn!(s::Biconnections{E}, u, v) where E
-    if s.depth[v] == 0
-        s.children[u] += 1
-        push!(s.stack, E(min(u, v), max(u, v)))
-        s.low[v] = min(s.low[u], s.low[v])
-
-        #Checking the root, and then the non-roots if they are articulation points
-        if (u == v && s.children[u] > 1) || (u != v && s.low[v] >= s.depth[u])
-            e = E(0, 0)  #Invalid Edge, used for comparison only
-            st = Vector{E}()
-            while e != E(min(u, v), max(u, v))
-                e = pop!(s.stack)
-                push!(st, e)
+    if s.grandparent != v
+        if s.discovery[v] <= s.discovery[u]
+            if (s.discovery[v] > 0)
+              s.low[u] = min(s.low[u], s.discovery[v])
             end
-            push!(s.biconnected_comps, st)
-        end
-
-        elseif u != v && s.low[u] > s.depth[v]
             push!(s.stack, E(min(u, v), max(u, v)))
-            s.low[u] = s.depth[v]
         end
+    end
+    return true
+end
+
+@inline function newvisitfn!(s::Biconnections{E}, u, v) where E
+    if s.grandparent ~= v
+        s.id +=1
+        s.discovery[u] = s.id
+        s.low[u] = s.id
+        s.grandparent = u
+    end
     return true
 end
 
@@ -81,7 +76,7 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     for u in 1:nv(g)
-        if state.depth[u] == 0
+        if state.discovery[u] == 0
             traverse_graph!(g, [u], DFS(), state, outneighbors)
         end
         if !isempty(state.stack)
