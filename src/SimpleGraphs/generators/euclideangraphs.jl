@@ -1,5 +1,5 @@
 """
-    euclidean_graph(N, d; seed=-1, L=1., p=2., cutoff=-1., bc=:open)
+    euclidean_graph(N, d; rng=Random.GLOBAL_RNG, L=1., p=2., cutoff=-1., bc=:open)
 
 Generate `N` uniformly distributed points in the box ``[0,L]^{d}``
 and return a Euclidean graph, a map containing the distance on each edge and
@@ -20,9 +20,7 @@ Dict{LightGraphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
   Edge 4 => 5 => 0.168372
 ```
 """
-function euclidean_graph(N::Int, d::Int;
-    L=1., seed = -1, kws...)
-    rng = LightGraphs.getRNG(seed)
+function euclidean_graph(N::Int, d::Int; L=1., rng::AbstractRNG=Random.GLOBAL_RNG, kws...)
     points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end

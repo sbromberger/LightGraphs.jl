@@ -59,13 +59,12 @@ mutable struct NeighComm{T<:Integer}
 end
 
 """
-    range_shuffle!(r, a; seed=-1)
+    range_shuffle!(r, a; rng=Random.GLOBAL_RNG)
 
 Fast shuffle Array `a` in UnitRange `r`.
-Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
+Uses `rng` to provide the random number generator, defaulting to `Random.GLOBAL_RNG`.
 """
-function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
-    rng = getRNG(seed)
+function range_shuffle!(r::UnitRange, a::AbstractVector; rng::AbstractRNG=Random.GLOBAL_RNG)
     (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
     @inbounds for i = length(r):-1:2
         j = rand(rng, 1:i)
@@ -80,7 +79,7 @@ end
 
 Return the label with greatest frequency.
 """
-function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
+function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer; rng = Random.GLOBAL_RNG)
     @inbounds for i = 1:c.neigh_last - 1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -102,7 +101,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
     end
     # ties breaking randomly
-    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
+    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos, rng=Random.GLOBAL_RNG)
 
     result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos
