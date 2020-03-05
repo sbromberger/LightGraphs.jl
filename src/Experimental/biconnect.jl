@@ -130,7 +130,6 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     for u in 1:nv(g)
-        state.visited[u] = true
         traverse_graph!(g, [u], DFS(), state, outneighbors)
     end
     if !isempty(state.stack)
