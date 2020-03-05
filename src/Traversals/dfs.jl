@@ -2,8 +2,8 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
-struct DepthFirst <: TraversalAlgorithm
-    neighborfn::Function
+struct DepthFirst{F<:Function} <: TraversalAlgorithm
+    neighborfn::F
 end
 
 DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)

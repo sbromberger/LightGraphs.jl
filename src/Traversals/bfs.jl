@@ -6,8 +6,8 @@ const NOOPSort = NOOPSortAlg()
 
 sort!(x, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
 
-struct BreadthFirst{T<:Base.Sort.Algorithm} <: TraversalAlgorithm
-    neighborfn::Function
+struct BreadthFirst{F<:Function, T<:Base.Sort.Algorithm} <: TraversalAlgorithm
+    neighborfn::F
     sort_alg::T
 end
 
