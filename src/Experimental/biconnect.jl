@@ -24,10 +24,6 @@ end
 end
 
 @inline function previsitfn!(s::Biconnections{T}, u) where T
-    s.children[u] = 0
-    s.id +=1
-    s.depth[u] = s.id
-    s.low[u] = s.depth[u]
     return true
 end
 @inline function visitfn!(s::Biconnections{T}, u, v) where T
@@ -54,11 +50,13 @@ end
     return true
 end
 @inline function newvisitfn!(s::Biconnections{T}, u, v) where T
-    parent[v] = u
-    s.w = v
     return true
 end
 @inline function postvisitfn!(s::Biconnections{T}, u) where T
+    s.children[u] = 0
+    s.id +=1
+    s.depth[u] = s.id
+    s.low[u] = s.depth[u]
     return true
 end
 
