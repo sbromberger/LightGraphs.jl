@@ -9,7 +9,7 @@ module ShortestPaths
 using LightGraphs
 using LightGraphs.Traversals
 import LightGraphs.Traversals: tree, parents
-using DataStructures: PriorityQueue, dequeue!, enqueue!
+using DataStructures: PriorityQueue, dequeue!, enqueue!, peek
 using SparseArrays: sparse
 
 import Base: ==

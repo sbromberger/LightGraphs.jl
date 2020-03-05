@@ -62,7 +62,7 @@ function has_negative_edge_cycle(
     distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
     try
-        Parallel.parallel_shortest_paths(g, vertices(g), distmx, BellmanFord())
+        shortest_paths(g, vertices(g), distmx, ThreadedBellmanFord())
     catch e
         isa(e, NegativeCycleError) && return true
     end
