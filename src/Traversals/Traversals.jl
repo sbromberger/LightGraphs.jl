@@ -210,7 +210,7 @@ include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
-export tree, parents
+export tree, parents, visited_vertices
 export BreadthFirst, distances, has_path
 export is_bipartite, bipartite_map
 export DepthFirst, is_cyclic, topological_sort, CycleError 

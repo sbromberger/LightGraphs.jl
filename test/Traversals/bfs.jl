@@ -69,21 +69,12 @@
             @test !has_path(g, 1, 2; exclude_vertices=[1])
         end 
     end
-    
-    function istree(p::Vector{T}, maxdepth, n::T) where T<:Integer
-        flag = true
-        for i in one(T):n
-            s = i
-            depth = 0
-            while p[s] > 0 && p[s] != s
-                s = p[s]
-                depth += 1
-                if depth > maxdepth
-                    return false
-                end
-            end
+    @testset "visited_vertices" begin
+        gt = binary_tree(3)
+        for g in testgraphs(gt)
+            @test visited_vertices(g, 1, BreadthFirst()) == 1:7
         end
-        return flag
     end
+
     
 end
