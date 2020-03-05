@@ -16,13 +16,13 @@ function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where
     for u in vertices(g)
         label[u] != zero(T) && continue
         label[u] = u
-        Q = Vector{T}()
-        push!(Q, u)
+        Q = Queue{T}()
+        enqueue!(Q, u)
         while !isempty(Q)
-            src = popfirst!(Q)
+            src = dequeue!(Q)
             for vertex in all_neighbors(g, src)
                 if label[vertex] == zero(T)
-                    push!(Q, vertex)
+                    enqueue!(Q, vertex)
                     label[vertex] = u
                 end
             end
