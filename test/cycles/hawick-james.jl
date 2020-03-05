@@ -58,7 +58,8 @@
 
     # These test cases cover a bug that occurred in a previous version
     @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
-        g = erdos_renyi(n, k, is_directed=true, seed=seed)
+        Random.seed!(seed)
+        g = erdos_renyi(n, k, is_directed=true)
         cycles1 = simplecycles(g)
         cycles2 = simplecycles_hawick_james(g)
         foreach(sort!, cycles1)
