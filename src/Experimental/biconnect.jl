@@ -13,7 +13,7 @@ mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalS
     children::Vector{Int}
     stack::Vector{E}
     biconnected_comps::Vector{Vector{E}}
-    id::int
+    id::Int
 end
 
 
