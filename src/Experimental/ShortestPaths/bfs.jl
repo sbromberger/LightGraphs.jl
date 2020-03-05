@@ -1,6 +1,3 @@
-using LightGraphs.Experimental.Traversals
-
-
 """
     struct BFS <: ShortestPathAlgorithm
 
@@ -29,8 +26,7 @@ struct BFS{T} <: ShortestPathAlgorithm
     maxdist::Int64
 end
 
-BFS(; maxdist=typemax(Int64)) = BFS(Traversals.BFS(), maxdist)
-BFS(a::Base.Sort.Algorithm; maxdist=typemax(Int64)) = BFS(Traversals.BFS(a), maxdist)
+BFS(; sort_alg=Traversals.NOOPSort, neighborfn=outneighbors, maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(sort_alg=sort_alg, neighborfn=neighborfn), maxdist)
 
 mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
     parents::Vector{U}
@@ -72,9 +68,6 @@ function shortest_paths(
     Traversals.traverse_graph!(g, ss, alg.traversal, state)
     return BFSResult(state.parents, state.dists)
 end
-
-
-
 
 shortest_paths(g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS) where {U<:Integer} = shortest_paths(g, U.(ss), alg)
 shortest_paths(g::AbstractGraph{U}, s::Integer, alg::BFS) where {U<:Integer} = shortest_paths(g, Vector{U}([s]), alg)
