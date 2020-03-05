@@ -1,10 +1,17 @@
-function johnson_shortest_paths(g::AbstractGraph{U},
-distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
+"""
+    struct ParallelJohnson <: ShortestPathAlgorithm end
+
+A struct representing a parallel implementation of the Johnson shortest-paths algorithm.
+"""
+struct ParallelJohnson <: ShortestPathAlgorithm end
+
+function shortest_paths(g::AbstractGraph{U},
+    distmx::AbstractMatrix{T}, ::ParallelJohnson) where {T<:Real, U<:Integer}
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
-#Change when parallel implementation of Bellman Ford available
-    wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
+    #Change when parallel implementation of Bellman Ford available
+    wt_transform = dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
 
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
@@ -18,14 +25,13 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
     end
 
 
-    dijk_state = Parallel.dijkstra_shortest_paths(g, vertices(g), distmx)
-    dists = dijk_state.dists
-    parents = dijk_state.parents
+    dijk_state = shortest_paths(g, vertices(g), distmx, ParallelDijkstra())
+    d = dists(dijk_state)
+    p = parents(dijk_state)
 
-
-    broadcast!(-, dists, dists, wt_transform)
+    broadcast!(-, d, d, wt_transform)
     for v in vertices(g)
-        dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+        d[:, v] .+= wt_transform[v] #Vertical traversal prefered
     end
 
     if type_distmx.mutable
@@ -34,6 +40,7 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
         end
     end
 
-    return JohnsonState(dists, parents)
+    return JohnsonResult(p, d)
 end
 
+shortest_paths(g::AbstractGraph, alg::ParallelJohnson) = shortest_paths(g, weights(g), alg)

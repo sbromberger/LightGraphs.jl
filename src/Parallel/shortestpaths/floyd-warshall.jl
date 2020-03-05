@@ -1,3 +1,10 @@
+"""
+    struct ThreadedFloydWarshall <: ShortestPathAlgorithm end
+
+A struct representing a threaded implementation of the Floyd-Warshall shortest-paths algorithm.
+"""
+struct ThreadedFloydWarshall <: ShortestPathAlgorithm end
+
 #Helper function used due to performance bug in @threads. 
 function _loopbody!(
     pivot::U, 
@@ -21,10 +28,7 @@ function _loopbody!(
     end
 end
 
-function floyd_warshall_shortest_paths(
-    g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g)
-) where T<:Real where U<:Integer
+function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::ThreadedFloydWarshall) where {T<:Real,U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), (Int(nvg), Int(nvg)))
     parents = zeros(U, (Int(nvg), Int(nvg)))
@@ -50,7 +54,8 @@ function floyd_warshall_shortest_paths(
     for pivot in vertices(g)
         _loopbody!(pivot, nvg, dists, parents) #Due to bug in @threads
     end
-    fws = FloydWarshallState(dists, parents)
-    return fws
+    return FloydWarshallResult(dists, parents)
 end
+
+shortest_paths(g::AbstractGraph, alg::ThreadedFloydWarshall) = shortest_paths(g, weights(g), alg)
 
