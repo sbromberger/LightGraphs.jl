@@ -7,7 +7,7 @@ using SimpleTraits
 
 A state type for depth-first search that finds the biconnected components.
 """
-mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalState
+mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
     low::Vector{Int}
     depth::Vector{Int}
     children::Vector{Int}
@@ -16,17 +16,18 @@ mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalS
     id::Int
 end
 
-
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}
     return Biconnections(zeros(Int, n), zeros(Int, n),  zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0)
 end
-
-@inline function previsitfn!(s::Biconnections{T}, u) where T
-    return true
+@inline function previsitfn!(s::Biconnections{E}, u, v) where E
+    s.children[u] = 0
+    s.id +=1
+    s.depth[u] = s.id
+    s.low[u] = s.depth[u]
 end
-@inline function visitfn!(s::Biconnections{T}, u, v) where T
+@inline function visitfn!(s::Biconnections{E}, u, v) where E
     if s.depth[v] == 0
         s.children[u] += 1
         push!(s.stack, E(min(u, v), max(u, v)))
@@ -47,16 +48,6 @@ end
             push!(s.stack, E(min(u, v), max(u, v)))
             s.low[u] = s.depth[v]
         end
-    return true
-end
-@inline function newvisitfn!(s::Biconnections{T}, u, v) where T
-    return true
-end
-@inline function postvisitfn!(s::Biconnections{T}, u) where T
-    s.children[u] = 0
-    s.id +=1
-    s.depth[u] = s.id
-    s.low[u] = s.depth[u]
     return true
 end
 
@@ -90,7 +81,9 @@ function biconnected_components2 end
 @traitfn function biconnected_components2(g::::(!IsDirected))
     state = Biconnections(g)
     for u in 1:nv(g)
-        traverse_graph!(g, [u], DFS(), state, outneighbors)
+        if state.depth[u] == 0
+            traverse_graph!(g, [u], DFS(), state, outneighbors)
+        end
         if !isempty(state.stack)
             push!(state.biconnected_comps, reverse(state.stack))
             empty!(state.stack)
