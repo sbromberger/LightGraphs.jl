@@ -1,5 +1,5 @@
 using LightGraphs
-using LightGraphs.Experimental.Traversals
+using LightGraphs.Experimental
 using LightGraphs: AbstractGraph, AbstractEdge
 using SimpleTraits
 """
@@ -77,7 +77,7 @@ function biconnected_components2 end
     state = Biconnections(g)
     for u in 1:nv(g)
         if state.discovery[u] == 0
-            traverse_graph!(g, [u], DFS(), state, outneighbors)
+            Traversals.traverse_graph!(g, [u], Traversals.DFS(), state, outneighbors)
         end
         if !isempty(state.stack)
             push!(state.biconnected_comps, reverse(state.stack))
