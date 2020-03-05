@@ -37,4 +37,10 @@
         end
     end
   
+    @testset "visited_vertices" begin
+        gt = binary_tree(3)
+        for g in testgraphs(gt)
+            @test visited_vertices(g, 1, DepthFirst()) == [1, 2, 4, 5, 3, 6, 7]
+        end
+    end
 end
