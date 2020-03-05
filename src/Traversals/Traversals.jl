@@ -202,9 +202,9 @@ function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm)
     return tree(p)
 end
 
-include("bfs.jl")
+include("breadthfirst.jl")
 include("bipartition.jl")
-include("dfs.jl")
+include("depthfirst.jl")
 include("diffusion.jl")
 include("greedy_color.jl")
 include("maxadjvisit.jl")

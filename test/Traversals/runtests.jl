@@ -5,9 +5,9 @@ using LightGraphs.Traversals
 const travtestdir = dirname(@__FILE__)
 
 travtests = [
-    "bfs.jl"
+    "breadthfirst.jl"
     "bipartition.jl"
-    "dfs.jl"
+    "depthfirst.jl"
     "diffusion.jl"
     "greedy_color.jl"
     "maxadjvisit.jl"

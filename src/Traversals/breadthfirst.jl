@@ -94,7 +94,7 @@ function distances(g::AbstractGraph{T}, s, alg::BreadthFirst=BreadthFirst()) whe
     return state.distances
 end
 
-mutable struct PathState{T} <: AbstractTraversalState
+mutable struct PathState{T<:Integer} <: AbstractTraversalState
     u::T
     v::T
     exclude_vertices::Vector{T}
