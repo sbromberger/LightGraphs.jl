@@ -62,7 +62,7 @@ function diffusion(g::AbstractGraph{T},
         # Record only new infections
         setdiff!(new_infections, infected_vertices)
         if !isempty(watch_set)
-            vertices_per_step[step] = T.(collect(intersect(new_infections, watch_set)))
+            vertices_per_step[step] = [T(x) for x in intersect(new_infections, watch_set)]
         else
             vertices_per_step[step] = collect(new_infections)
         end
@@ -92,4 +92,3 @@ diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
     ) = diffusion_rate(diffusion(g, p, n,
             initial_infections=initial_infections,
             watch=watch, normalize=normalize))
-
