@@ -7,7 +7,7 @@ using SimpleTraits
 
 A state type for depth-first search that finds the biconnected components.
 """
-mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
+mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalState
     low::Vector{Int}
     depth::Vector{Int}
     children::Vector{Int}
@@ -34,7 +34,7 @@ end
         s.low[v] = min(s.low[u], s.low[v])
 
         #Checking the root, and then the non-roots if they are articulation points
-        if (u == v && s.children > 1) || (u != v && s.low[v] >= s.depth[u])
+        if (u == v && s.children[u] > 1) || (u != v && s.low[v] >= s.depth[u])
             e = E(0, 0)  #Invalid Edge, used for comparison only
             st = Vector{E}()
             while e != E(min(u, v), max(u, v))
