@@ -1,16 +1,16 @@
 module Traversals
 
-# This module does not export much. The primary reasons are that exporting would increase the
-# likelihood of name conflicts, and because the functions here should be used only by developers
-# to create new graph algorithms that rely on breadth-first or depth-first search traversals.
-
 using LightGraphs
+using LightGraphs: getRNG
 using SimpleTraits
+using DataStructures: PriorityQueue, enqueue!, dequeue!
+using Random: shuffle, shuffle!, randsubseq!
+
 """
     abstract type TraversalAlgorithm
 
-`TraversalAlgorithm` is the abstract type used to specify breadth-first traversal (`BFS`) or
-depth-first traversal (`DFS`) for the various traversal functions.
+`TraversalAlgorithm` is the abstract type used to specify breadth-first traversal (`BreadthFirst`) or
+depth-first traversal (`DepthFirst`) for the various traversal functions.
 """
 abstract type TraversalAlgorithm end
 
@@ -22,6 +22,7 @@ for various traversal algorithms (see [`traverse_graph!`](@ref)).
 
 When creating concrete types, you should override the following functions where relevant. These functions
 are listed in order of occurrence in the traversal:
+- [`preinitfn!(<:AbstractTraversalState, visited::BitVector)`](@ref): runs after visited initialization, used to modify initial visited state.
 - [`initfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to traversal, used to set initial state.
 - [`previsitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
 - [`visitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
@@ -36,6 +37,15 @@ For better performance, use the `@inline` directive and make your functions bran
 """
 abstract type AbstractTraversalState end
 
+"""
+    preinitfn!(state, visited)
+
+Modify [`AbstractTraversalState`](@ref) `state` after intiialization of the visited
+bitvector; and return `true` if successful; `false` otherwise. `preinitfn!` will
+be called once. It is typically used to modify the `visited` bitvector before
+traversals begin.
+"""
+@inline preinitfn!(::AbstractTraversalState, visited) = true
 """
     initfn!(state, u)
 
@@ -87,17 +97,15 @@ and return `true` if successful; `false` otherwise.
 @inline postlevelfn!(::AbstractTraversalState) = true
 
 ##############
-# functions common to both BFS and DFS
+# functions common to both BreadthFirst and DepthFirst
 ##############
 """
-    traverse_graph!(g, s, alg, state, neighborfn=outneighbors)
-    traverse_graph!(g, ss, alg, state, neighborfn=outneighbors)
+    traverse_graph!(g, s, alg, state)
+    traverse_graph!(g, ss, alg, state)
 
 Traverse a graph `g` from source vertex `s` / vertices `ss` keeping track of `state`. Return `true` if
 traversal finished normally; `false` if one of the visit functions returned `false` (see )
-
 """
-traverse_graph!(g::AbstractGraph, s::Integer, alg, state, neighborfn) = traverse_graph!(g, [s], alg, state, neighborfn)
 traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
 
 struct VisitState{T<:Integer} <: AbstractTraversalState
@@ -147,11 +155,10 @@ end
 end
 
 """
-    parents(g, s, alg, neighborfn=outneighbors)
+    parents(g, s, alg)
 
 Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
-vertex `s`. If `neighborfn` is specified, use the corresponding neighbor-generation function ([`inneighbors`](@ref)r
-and [`outneighbors`](@ref) are valid values).
+vertex `s`. 
 
 ### Performance
 This implementation is designed to perform well on large graphs. There are
@@ -159,17 +166,13 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn=outneighbors) where T
+function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm) where T
     parents = zeros(T, nv(g))
     state = ParentState(parents)
 
-    traverse_graph!(g, s, alg, state, neighborfn)
+    traverse_graph!(g, s, alg, state)
     return state.parents
 end
-
-
-include("bfs.jl")
-include("dfs.jl")
 
 """
     tree(p)
@@ -187,17 +190,32 @@ function tree(p::AbstractVector{T}) where T <: Integer
     return t
 end
 
+
 """
-    tree(g, s, alg, neighborfn=outneighbors)
+    tree(g, s, alg)
 
 Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex `s`
-using algorithm `alg` with neighbor function `neighborfn`.
+using algorithm `alg`.
 """
-function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors)
-    p = parents(g, s, alg, neighborfn)
+function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm)
+    p = parents(g, s, alg)
     return tree(p)
 end
 
-export visited_vertices, parents, distances, topological_sort, tree
+include("breadthfirst.jl")
+include("bipartition.jl")
+include("depthfirst.jl")
+include("diffusion.jl")
+include("greedy_color.jl")
+include("maxadjvisit.jl")
+include("randomwalks.jl")
 
-end  # module
+export tree, parents, visited_vertices
+export BreadthFirst, distances, has_path
+export is_bipartite, bipartite_map
+export DepthFirst, is_cyclic, topological_sort, CycleError 
+export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
+export diffusion, diffusion_rate
+export greedy_color
+export mincut, maximum_adjacency_visit
+end #module
