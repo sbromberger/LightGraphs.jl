@@ -43,17 +43,17 @@ function bipartite_map(g::AbstractGraph{T}) where T
     end
     seen = zeros(Bool, nvg)
     colors = zeros(Bool, nvg)
-    for cc in ccs
-        Q = Vector{T}()
+    Q = Queue{T}()
+    @inbounds for cc in ccs
         s = cc[1]
-        push!(Q, s)
+        enqueue!(Q, s)
         bipartitemap = zeros(UInt8, nvg)
         while !isempty(Q)
-            u = popfirst!(Q)
+            u = dequeue!(Q)
             for v in outneighbors(g, u)
                 if !seen[v]
                     colors[v] = !colors[u]
-                    push!(Q, v)
+                    enqueue!(Q, v)
                     seen[v] = true
                 elseif colors[v] == colors[u]
                     return Vector{UInt8}()
