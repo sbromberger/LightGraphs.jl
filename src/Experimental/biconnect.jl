@@ -25,10 +25,12 @@ end
 
 @inline function visitfn!(s::Biconnections{E}, u, v) where E
     if s.grandparent != v
-        if s.discovery[v] <= s.discovery[u]
-            if (s.discovery[v] > 0)
-              s.low[u] = min(s.low[u], s.discovery[v])
+        if s.discovery[v] > 0
+            if s.discovery[v] <= s.discovery[u]
+                s.low[u] = min(s.low[u], s.discovery[v])
+                push!(s.stack, E(min(u, v), max(u, v)))
             end
+        else
             push!(s.stack, E(min(u, v), max(u, v)))
         end
     end
@@ -37,13 +39,24 @@ end
 
 @inline function newvisitfn!(s::Biconnections{E}, u, v) where E
     if s.grandparent != v
-        s.id +=1
-        s.discovery[v] = s.id
-        s.low[v] = s.id
-        s.grandparent = u
+        s.id += 1
+        s.discovery[u] = s.id
+        s.low[u] = s.id
     end
     return true
 end
+
+@inline function postvisitfn!(s::Biconnections{E}, v) where E
+    s.grandparent = v
+    if s.low[v] >= s.discovery[s.grandparent]
+        if !isempty(s.stack)
+            push!(s.biconnected_comps, reverse(s.stack))
+            empty!(s.stack)
+        end
+    end
+    return true
+end
+
 
 """
     biconnected_components2(g) -> Vector{Vector{Edge{eltype(g)}}}
@@ -77,10 +90,6 @@ function biconnected_components2 end
     for u in 1:nv(g)
         if state.discovery[u] == 0
             Traversals.traverse_graph!(g, [u], Traversals.DFS(), state, outneighbors)
-        end
-        if !isempty(state.stack)
-            push!(state.biconnected_comps, unique(reverse(state.stack)))
-            empty!(state.stack)
         end
     end
     return state.biconnected_comps
