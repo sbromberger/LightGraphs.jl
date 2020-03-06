@@ -16,14 +16,13 @@ mutable struct Biconnections{E <: AbstractEdge} <: Traversals.AbstractTraversalS
     id::Int
 end
 
+
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}
     return Biconnections(zeros(Int, n), zeros(Int, n), 0, Vector{E}(), Vector{Vector{E}}(), 0)
 end
-@inline function previsitfn!(s::Biconnections{E}, u, v) where E
-    s.grandparent = s.id
-end
+
 @inline function visitfn!(s::Biconnections{E}, u, v) where E
     if s.grandparent != v
         if s.discovery[v] <= s.discovery[u]
@@ -37,10 +36,10 @@ end
 end
 
 @inline function newvisitfn!(s::Biconnections{E}, u, v) where E
-    if s.grandparent ~= v
+    if s.grandparent != v
         s.id +=1
-        s.discovery[u] = s.id
-        s.low[u] = s.id
+        s.discovery[v] = s.id
+        s.low[v] = s.id
         s.grandparent = u
     end
     return true
@@ -80,7 +79,7 @@ function biconnected_components2 end
             Traversals.traverse_graph!(g, [u], Traversals.DFS(), state, outneighbors)
         end
         if !isempty(state.stack)
-            push!(state.biconnected_comps, reverse(state.stack))
+            push!(state.biconnected_comps, unique(reverse(state.stack)))
             empty!(state.stack)
         end
     end
