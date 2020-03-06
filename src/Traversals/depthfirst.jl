@@ -12,7 +12,7 @@ function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
     alg::DepthFirst,
-    state::AbstractTraversalState,
+    state::TraversalState,
     ) where U<:Integer
 
     n = nv(g)
@@ -60,7 +60,7 @@ function traverse_graph!(
     return true
 end
 
-mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
+mutable struct TopoSortState{T<:Integer} <: TraversalState
     vcolor::Vector{UInt8}
     verts::Vector{T}
     w::T
@@ -105,7 +105,7 @@ end
     return reverse(state.verts)
 end
 
-mutable struct CycleState{T<:Integer} <: AbstractTraversalState
+mutable struct CycleState{T<:Integer} <: TraversalState
     vcolor::Vector{UInt8}
     w::T
 end

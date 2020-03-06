@@ -28,7 +28,7 @@ end
 
 BFS(; sort_alg=Traversals.NOOPSort, neighborfn=outneighbors, maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(sort_alg=sort_alg, neighborfn=neighborfn), maxdist)
 
-mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
+mutable struct BFSSPState{U} <: Traversals.TraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U

@@ -1,10 +1,16 @@
 module Traversals
 
+using Base.Threads
+using Distributed
 using LightGraphs
 using LightGraphs: getRNG
 using SimpleTraits
 using DataStructures: PriorityQueue, enqueue!, dequeue!
 using Random: shuffle, shuffle!, randsubseq!
+import Base:show
+
+struct TraversalError <: Exception end
+show(io::IO, ::TraversalError) = println(io, "An error was encountered while traversing the graph.")
 
 """
     abstract type TraversalAlgorithm
@@ -15,86 +21,124 @@ depth-first traversal (`DepthFirst`) for the various traversal functions.
 abstract type TraversalAlgorithm end
 
 """
-    abstract type AbstractTraversalState
+    abstract type ParallelTraversalAlgorithm <: TraversalAlgorithm
 
-`AbstractTraversalState` is the abstract type used to hold mutable states
+`ParallelTraversalAlgorithm` is the abstract type used to specify a threaded or distributed traversal
+for the various traversal functions.
+"""
+abstract type ParallelTraversalAlgorithm <: TraversalAlgorithm end
+
+"""
+    abstract type ThreadedTraversalAlgorithm <: ParallelTraversalAlgorithm
+
+`ThreadedTraversalAlgorithm` is the abstract type used to specify a threaded traversal
+for the various traversal functions.
+"""
+abstract type ThreadedTraversalAlgorithm <: ParallelTraversalAlgorithm end
+
+"""
+    abstract type DistributedTraversalAlgorithm <: ParallelTraversalAlgorithm
+
+`DistributedTraversalAlgorithm` is the abstract type used to specify a distributed (multi-node)
+traversal for the various traversal functions.
+"""
+abstract type DistributedTraversalAlgorithm <: ParallelTraversalAlgorithm end
+
+"""
+    abstract type TraversalState
+
+`TraversalState` is the abstract type used to hold mutable states
 for various traversal algorithms (see [`traverse_graph!`](@ref)).
 
 When creating concrete types, you should override the following functions where relevant. These functions
 are listed in order of occurrence in the traversal:
-- [`preinitfn!(<:AbstractTraversalState, visited::BitVector)`](@ref): runs after visited initialization, used to modify initial visited state.
-- [`initfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to traversal, used to set initial state.
-- [`previsitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
-- [`visitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
-- [`newvisitfn!(<:AbstractTraversalState, u::Integer, v::Integer)`](@ref): runs when a new neighbor `v` of vertex `u` is discovered.
-- [`postvisitfn!(<:AbstractTraversalState, u::Integer)`](@ref): runs after neighborhood discovery for vertex `u`.
-- [`postlevelfn!(<:AbstractTraversalState)`](@ref): runs after each traversal level.
+- [`preinitfn!(<:TraversalState, visited::BitVector)`](@ref): runs after visited initialization, used to modify initial visited state.
+- [`initfn!(<:TraversalState, u::Integer)`](@ref): runs prior to traversal, used to set initial state.
+- [`previsitfn!(<:TraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
+- [`visitfn!(<:TraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
+- [`newvisitfn!(<:TraversalState, u::Integer, v::Integer)`](@ref): runs when a new neighbor `v` of vertex `u` is discovered.
+- [`postvisitfn!(<:TraversalState, u::Integer)`](@ref): runs after neighborhood discovery for vertex `u`.
+- [`postlevelfn!(<:TraversalState)`](@ref): runs after each traversal level.
 
 Each of these functions should return a boolean. If the return value of the function is `false`, the traversal will return the state
 immediately. Otherwise, the traversal will continue.
 
 For better performance, use the `@inline` directive and make your functions branch-free.
 """
-abstract type AbstractTraversalState end
+abstract type TraversalState end
 
 """
     preinitfn!(state, visited)
 
-Modify [`AbstractTraversalState`](@ref) `state` after intiialization of the visited
+Modify [`TraversalState`](@ref) `state` after intiialization of the visited
 bitvector; and return `true` if successful; `false` otherwise. `preinitfn!` will
 be called once. It is typically used to modify the `visited` bitvector before
 traversals begin.
 """
-@inline preinitfn!(::AbstractTraversalState, visited) = true
+@inline preinitfn!(::TraversalState, visited) = true
 """
     initfn!(state, u)
 
-Modify [`AbstractTraversalState`](@ref) `state` on initialization of traversal
+Modify [`TraversalState`](@ref) `state` on initialization of traversal
 with source vertices, and return `true` if successful; `false` otherwise.
 `initfn!` will be called once for each vertex passed to [`traverse_graph!`](@ref).
 """
-@inline initfn!(::AbstractTraversalState, u) = true
+@inline initfn!(::TraversalState, u) = true
 
 """
     previsitfn!(state, u)
+    previsitfn!(state, u, t)
 
-Modify [`AbstractTraversalState`](@ref) `state` before examining neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise.
+Modify [`TraversalState`](@ref) `state` before examining neighbors of vertex `u`,
+and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID
+or the processID will be passed in `t`.
 """
-@inline previsitfn!(::AbstractTraversalState, u) = true
+@inline previsitfn!(::TraversalState, u) = true
+@inline previsitfn!(s::TraversalState, u, ::Integer) = previsitfn!(s, u)
 
 """
     newvisitfn!(state, u, v)
+    newvisitfn!(state, u, v, t)
 
-Modify [`AbstractTraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered,
-and return `true` if successful; `false` otherwise.
+Modify [`TraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered,
+and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID
+or the processID will be passed in `t`.
+
 """
-@inline newvisitfn!(::AbstractTraversalState, u, v) = true
+@inline newvisitfn!(::TraversalState, u, v) = true
+@inline newvisitfn!(s::TraversalState, u, v, t::Integer) = newvisitfn!(s, u, v)
 
 """
     visitfn!(state, u, v)
+    visitfn!(state, u, v, t)
 
-Modify [`AbstractTraversalState`](@ref) `state` when the edge between `u` and `v` is encountered,
+Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is encountered,
 and return `true` if successful; `false` otherwise. Note: `visitfn!` may be called multiple times
 per edge, depending on the traversal algorithm, for a function that operates on the first occurrence
-only, use [`newvisitfn!`](@ref).
+only, use [`newvisitfn!`](@ref). For parallel algorithms, the threadID or the processID will be passed
+in `t`.
 """
-@inline visitfn!(::AbstractTraversalState, u, v) = true
+@inline visitfn!(::TraversalState, u, v) = true
+@inline visitfn!(s::TraversalState, u, v, t::Integer) = visitfn!(s, u, v)
 
 """
     postvisitfn!(state, u)
+    postvisitfn!(state, u, t)
 
-Modify [`AbstractTraversalState`](@ref) `state` after having examined all neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise.
+Modify [`TraversalState`](@ref) `state` after having examined all neighbors of vertex `u`,
+and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID or the
+processID will be passed in `t`
 """
-@inline postvisitfn!(::AbstractTraversalState, u) = true
+@inline postvisitfn!(::TraversalState, u) = true
+@inline postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
+
 """
     postlevelfn!(state)
 
-Modify [`AbstractTraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm,
+Modify [`TraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm,
 and return `true` if successful; `false` otherwise.
 """
-@inline postlevelfn!(::AbstractTraversalState) = true
+@inline postlevelfn!(::TraversalState) = true
 
 ##############
 # functions common to both BreadthFirst and DepthFirst
@@ -108,7 +152,7 @@ traversal finished normally; `false` if one of the visit functions returned `fal
 """
 traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
 
-struct VisitState{T<:Integer} <: AbstractTraversalState
+struct VisitState{T<:Integer} <: TraversalState
     visited::Vector{T}
 end
 
@@ -116,6 +160,9 @@ end
     push!(s.visited, u)
     return true
 end
+
+# note: since `newvisitfn!(s, u, v, t)` defaults to calling `newvisitfn!(s, u, v)`, this function
+# by default creates the necessary visitor functions for parallel traversals.
 @inline function newvisitfn!(s::VisitState, u, v)
     push!(s.visited, v)
     return true
@@ -145,10 +192,12 @@ end
 visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = visited_vertices(g, [s], alg)
 
 
-mutable struct ParentState{T<:Integer} <: AbstractTraversalState
+mutable struct ParentState{T<:Integer} <: TraversalState
     parents::Vector{T}
 end
 
+# note: since `newvisitfn!(s, u, v, t)` defaults to calling `newvisitfn!(s, u, v)`, this function
+# by default creates the necessary visitor functions for parallel traversals.
 @inline function newvisitfn!(s::ParentState, u, v) 
     s.parents[v] = u
     return true
@@ -197,12 +246,51 @@ end
 Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex `s`
 using algorithm `alg`.
 """
-function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm)
-    p = parents(g, s, alg)
-    return tree(p)
+tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = tree(parents(g, s, alg))
+
+@inline dists(s::TraversalState) = s.distances
+
+function distances!(g::AbstractGraph{T}, s, alg::TraversalAlgorithm, state::TraversalState) where T
+    traverse_graph!(g, s, alg, state) || throw(TraversalError())
+    return dists(state)
+end
+
+mutable struct PathState{T<:Integer} <: TraversalState
+    u::T
+    v::T
+    exclude_vertices::Vector{T}
+    vertices_in_exclude::Bool # set to true if the source or dest are in excludes.
+end
+
+@inline function preinitfn!(s::PathState, visited)
+    visited[s.exclude_vertices] .= true
+    s.vertices_in_exclude = visited[s.u] | visited[s.v]
+    return !s.vertices_in_exclude
+end
+@inline newvisitfn!(s::PathState, u, v) = s.v != v 
+
+"""
+    has_path(g::AbstractGraph, u, v, alg=BreadthFirst(); exclude_vertices=Vector())
+
+Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
+`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
+is in `exclude_vertices`. 
+
+
+### Performance Notes
+sorting `exclude_vertices` prior to calling the function may result in improved performance.
+""" 
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
+    u == v && return true
+    state = PathState(T(u), T(v), T.(exclude_vertices), false)
+    result = traverse_graph!(g, u, alg, state)
+    # if traverse_graph is false, check the shortcircuit val.
+    result && return false
+    return !state.vertices_in_exclude
 end
 
 include("breadthfirst.jl")
+include("threadedbreadthfirst.jl")
 include("bipartition.jl")
 include("depthfirst.jl")
 include("diffusion.jl")
@@ -210,8 +298,10 @@ include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
-export tree, parents, visited_vertices
-export BreadthFirst, distances, has_path
+export TraversalError
+export tree, parents, visited_vertices, dists, distances!, has_path
+export BreadthFirst, distances
+export ThreadedBreadthFirst
 export is_bipartite, bipartite_map
 export DepthFirst, is_cyclic, topological_sort, CycleError 
 export randomwalk, self_avoiding_walk, non_backtracking_randomwalk

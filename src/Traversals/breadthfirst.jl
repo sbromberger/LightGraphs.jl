@@ -17,15 +17,14 @@ BreadthFirst(; neighborfn=outneighbors, sort_alg=NOOPSort) = BreadthFirst(neighb
     traverse_graph!(g, s, alg, state)
     traverse_graph!(g, ss, alg, state)
 
-    Traverse a graph `g` starting at vertex `s` / vertices `ss` using algorithm `alg`, maintaining state in [`AbstractTraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit functions caused an early termination.
+    Traverse a graph `g` starting at vertex `s` / vertices `ss` using algorithm `alg`, maintaining state in [`TraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit functions caused an early termination.
     
 """
 function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
     alg::BreadthFirst,
-    state::AbstractTraversalState,
-    ) where U<:Integer
+    state::TraversalState) where {U<:Integer}
 
 
     n = nv(g)
@@ -62,7 +61,7 @@ function traverse_graph!(
     return true
 end
 
-mutable struct DistanceState{T<:Integer} <: AbstractTraversalState
+mutable struct DistanceState{T<:Integer} <: TraversalState
     distances::Vector{T}
     n_level::T
 end
@@ -87,44 +86,5 @@ end
 Return a vector filled with the geodesic distances of vertices in  `g` from vertex `s` / unique vertices `ss`
 using BreadthFirst traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s, alg::BreadthFirst=BreadthFirst()) where T
-    d = fill(typemax(T), nv(g))
-    state = DistanceState(d, one(T))
-    traverse_graph!(g, s, alg, state)
-    return state.distances
-end
-
-mutable struct PathState{T<:Integer} <: AbstractTraversalState
-    u::T
-    v::T
-    exclude_vertices::Vector{T}
-    vertices_in_exclude::Bool # set to true if the source or dest are in excludes.
-end
-
-@inline function preinitfn!(s::PathState, visited)
-    visited[s.exclude_vertices] .= true
-    s.vertices_in_exclude = visited[s.u] | visited[s.v]
-    return !s.vertices_in_exclude
-end
-@inline newvisitfn!(s::PathState, u, v) = s.v != v 
-
-"""
-    has_path(g::AbstractGraph, u, v, alg=BreadthFirst(); exclude_vertices=Vector())
-
-Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
-`exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `exclude_vertices`. 
-
-
-### Performance Notes
-sorting `exclude_vertices` prior to calling the function may result in improved performance.
-""" 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::BreadthFirst=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
-    u == v && return true
-    state = PathState(T(u), T(v), T.(exclude_vertices), false)
-    result = traverse_graph!(g, u, alg, state)
-    # if traverse_graph is false, check the shortcircuit val.
-    result && return false
-    return !state.vertices_in_exclude
-end
-
+distances(g::AbstractGraph{T}, s, alg::BreadthFirst=BreadthFirst()) where T =
+    distances!(g, s, alg, DistanceState(fill(typemax(T), nv(g)), one(T)))
