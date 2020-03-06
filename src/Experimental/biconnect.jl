@@ -23,6 +23,14 @@ end
     return Biconnections(zeros(Int, n), zeros(Int, n), 0, Vector{E}(), Vector{Vector{E}}(), 0)
 end
 
+@inline function initfn!(s::Biconnections{E}, u, v) where E
+    return true
+end
+
+@inline function previsitfn!(s::Biconnections{E}, u) where E
+    return true
+end
+
 @inline function visitfn!(s::Biconnections{E}, u, v) where E
     if s.grandparent != v
         if s.discovery[v] > 0
@@ -57,6 +65,9 @@ end
     return true
 end
 
+@inline function postlevelfn!(s::Biconnections{E}, u) where E
+    return true
+end
 
 """
     biconnected_components2(g) -> Vector{Vector{Edge{eltype(g)}}}
