@@ -32,7 +32,8 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
     parents = zeros(U, nvg)
     state = Vector{Int8}()
     state = fill(Int8(2), nvg)
-    q = U[src]
+    q = Deque{U}()
+    push!(q, src)
     @inbounds dists[src] = 0
 
     @inbounds while !isempty(q)
