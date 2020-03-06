@@ -42,7 +42,7 @@ end
 
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::ThreadedBreadthFirst,
     state::TraversalState) where {U<:Integer}
  
@@ -54,7 +54,7 @@ function traverse_graph!(
     next_level_t = [sizehint!(Vector{U}(), cld(n, n_t)) for _ in Base.OneTo(n_t)]
     cur_level_t = [sizehint!(Vector{U}(), cld(n, n_t)) for _ in Base.OneTo(n_t)]
     cur_front_t = ones(U, n_t)
-    retvals_t = ones(Bool, n_t)
+    retval = Atomic{Bool}(true) # this is a shared atomic boolean for visit function checks.
     queue_explored_t = zeros(Bool, n_t)
 
     preinitfn!(state, visited) || return false
@@ -77,14 +77,14 @@ function traverse_graph!(
             @inbounds next_level = next_level_t[thread_id]
 
             @inbounds for t_range in (thread_id:n_t, 1:(thread_id-1)), t in t_range
-                all(retvals_t) || break
+                retval[] || break
                 queue_explored_t[t] && continue
                 cur_level = cur_level_t[t]
                 cur_len = length(cur_level)
 
                 # Explore cur_level_t[t] one segment at a time.
                 while true 
-                    all(retvals_t) || break
+                    retval[] || break
                     local_front = cur_front_t[t]  # Data race, but first read always succeeds
                     cur_front_t[t] += segment_size # Failure of increment is acceptable
 
@@ -94,22 +94,35 @@ function traverse_graph!(
                         cur_level[local_front] = zero(U)
                         local_front += one(U)
 
-                        (retvals_t[t] &= previsitfn!(state, v, t)) || break
+                        if !previsitfn!(state, v, t) 
+                            atomic_and!(retval, false)
+                            break
+                        end
+
                         # Check if v was successfully read.
                         visited[v] || continue
                         # (visited[v] && vert_level[v] == n_level-one(U)) || continue
                         for i in alg.neighborfn(g, v)
-                            (retvals_t[t] &= visitfn!(state, v, i, t)) || return false
+                            if !visitfn!(state, v, i, t)
+                                atomic_and!(retval, false)
+                                break
+                            end
                             # Data race, but first read on visited[i] always succeeds
                             if !visited[i]
-                                (retvals_t[t] &= newvisitfn!(state, v, i, t)) || break
+                                if !newvisitfn!(state, v, i, t)
+                                    atomic_and!(retval, false)
+                                    break
+                                end
                                 # vert_level[i] = n_level
                                 #Concurrent visited[i] = true always succeeds
                                 visited[i] = true
                                 push!(next_level, i)
                             end
                         end
-                        (retvals_t[t] &= postvisitfn!(state, v, t)) || break
+                        if !postvisitfn!(state, v, t)
+                            atomic_and!(retval, false)
+                            break
+                        end
                     end   
                 end
                 queue_explored_t[t] = true        
@@ -127,26 +140,5 @@ function traverse_graph!(
             is_cur_level_t_empty = is_cur_level_t_empty && queue_explored_t[t]
         end               
     end
-    return all(retvals_t)
+    return retval[]
 end
-
-# initfn! and postlevelfn! are inherited from the non-threaded version.
-# we only override newvisitfn! here because the threaded version requires
-# an additional parameter `t` which is the threadID. `distances` doesn't need it
-# but other algorithms might.
-
-@inline function newvisitfn!(s::LightGraphs.Traversals.DistanceState, u, v, t::Integer)
-    s.distances[v] = s.n_level
-    return true
-end
-
-distances(g::AbstractGraph{T}, s, alg::ThreadedBreadthFirst) where T =
-    distances!(g, s, alg, LightGraphs.Traversals.DistanceState(fill(typemax(T), nv(g)), one(T)))
-
-mutable struct ThreadedPathState{T<:Integer} <: TraversalState
-    u::T
-    v::T
-    exclude_vertices::Vector{T}
-    vertices_in_exclude::Bool
-end
-

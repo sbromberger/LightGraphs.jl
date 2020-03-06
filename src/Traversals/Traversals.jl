@@ -3,12 +3,19 @@ module Traversals
 using Base.Threads
 using Distributed
 using LightGraphs
-using LightGraphs: getRNG
+using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
 using DataStructures: PriorityQueue, enqueue!, dequeue!
 using Random: shuffle, shuffle!, randsubseq!
 import Base:show
 
+"""
+    TraversalError <: Exception
+
+An exception thrown by a traversal function indicating that a visitor function called by
+[`traverse_graph!`](@ref) returned false. For some functions (notably [`has_path`](@ref)),
+a return value of `false` does not indicate an error and therefore no exception is thrown.
+"""
 struct TraversalError <: Exception end
 show(io::IO, ::TraversalError) = println(io, "An error was encountered while traversing the graph.")
 
@@ -63,6 +70,9 @@ are listed in order of occurrence in the traversal:
 Each of these functions should return a boolean. If the return value of the function is `false`, the traversal will return the state
 immediately. Otherwise, the traversal will continue.
 
+For [`ParallelTraversalState`], each `visit` function may receive an additional `t::Integer` argument that specifies either the
+thread ID (for [`ThreadedTraversalState`](@ref)) or the cpu ID (for [`DistributedTraversalState`](@ref)).
+
 For better performance, use the `@inline` directive and make your functions branch-free.
 """
 abstract type TraversalState end
@@ -90,8 +100,8 @@ with source vertices, and return `true` if successful; `false` otherwise.
     previsitfn!(state, u, t)
 
 Modify [`TraversalState`](@ref) `state` before examining neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID
-or the processID will be passed in `t`.
+and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
+or the CPU ID will be passed in `t`.
 """
 @inline previsitfn!(::TraversalState, u) = true
 @inline previsitfn!(s::TraversalState, u, ::Integer) = previsitfn!(s, u)
@@ -101,8 +111,8 @@ or the processID will be passed in `t`.
     newvisitfn!(state, u, v, t)
 
 Modify [`TraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID
-or the processID will be passed in `t`.
+and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
+or the CPU ID will be passed in `t`.
 
 """
 @inline newvisitfn!(::TraversalState, u, v) = true
@@ -115,7 +125,7 @@ or the processID will be passed in `t`.
 Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is encountered,
 and return `true` if successful; `false` otherwise. Note: `visitfn!` may be called multiple times
 per edge, depending on the traversal algorithm, for a function that operates on the first occurrence
-only, use [`newvisitfn!`](@ref). For parallel algorithms, the threadID or the processID will be passed
+only, use [`newvisitfn!`](@ref). For parallel algorithms, the thread ID or the CPU ID will be passed
 in `t`.
 """
 @inline visitfn!(::TraversalState, u, v) = true
@@ -126,8 +136,8 @@ in `t`.
     postvisitfn!(state, u, t)
 
 Modify [`TraversalState`](@ref) `state` after having examined all neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the threadID or the
-processID will be passed in `t`
+and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID or the
+CPU ID will be passed in `t`.
 """
 @inline postvisitfn!(::TraversalState, u) = true
 @inline postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
@@ -148,7 +158,7 @@ and return `true` if successful; `false` otherwise.
     traverse_graph!(g, ss, alg, state)
 
 Traverse a graph `g` from source vertex `s` / vertices `ss` keeping track of `state`. Return `true` if
-traversal finished normally; `false` if one of the visit functions returned `false` (see )
+traversal finished normally; `false` if one of the visit functions returned `false`.
 """
 traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
 
@@ -169,15 +179,14 @@ end
 end
 
 """
-    visited_vertices(g, s, alg)
     visited_vertices(g, ss, alg)
 
 Return a vector representing the vertices of `g` visited in order by [`TraversalAlgorithm`](@ref) `alg`
-starting at vertex `s` (vertices `ss`).
+starting at vertex/vertices `ss`.
 """
 function visited_vertices(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::TraversalAlgorithm
     ) where U<:Integer
 
@@ -188,9 +197,6 @@ function visited_vertices(
 
     return state.visited
 end
-
-visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = visited_vertices(g, [s], alg)
-
 
 mutable struct ParentState{T<:Integer} <: TraversalState
     parents::Vector{T}
@@ -204,10 +210,10 @@ end
 end
 
 """
-    parents(g, s, alg)
+    parents(g, ss, alg)
 
 Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
-vertex `s`. 
+vertex/vertices `ss`. 
 
 ### Performance
 This implementation is designed to perform well on large graphs. There are
@@ -215,11 +221,11 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm) where T
+function parents(g::AbstractGraph{T}, ss, alg::TraversalAlgorithm) where T
     parents = zeros(T, nv(g))
     state = ParentState(parents)
 
-    traverse_graph!(g, s, alg, state)
+    traverse_graph!(g, ss, alg, state)
     return state.parents
 end
 
@@ -241,16 +247,50 @@ end
 
 
 """
-    tree(g, s, alg)
+    tree(g, ss, alg)
 
-Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex `s`
-using algorithm `alg`.
+Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex/vertices
+`ss` using algorithm `alg`.
 """
-tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = tree(parents(g, s, alg))
+tree(g::AbstractGraph, ss, alg::TraversalAlgorithm) = tree(parents(g, ss, alg))
 
-@inline dists(s::TraversalState) = s.distances
+"""
+    distances(s::TraversalState)
 
-function distances!(g::AbstractGraph{T}, s, alg::TraversalAlgorithm, state::TraversalState) where T
+Return a vector filled with the distances previously calculated and stored in
+[`TraversalState`](@ref) `s`. Unreachable vertices are indicated by a distance
+of `typemax(eltype(distances(s)))`.
+"""
+@inline distances(s::TraversalState) = s.distances
+
+mutable struct DistanceState{T<:Integer} <: TraversalState
+    distances::Vector{T}
+    n_level::T
+end
+
+@inline function initfn!(s::DistanceState{T}, u) where T 
+    s.distances[u] = zero(T)
+    return true
+end
+@inline function newvisitfn!(s::DistanceState, u, v) 
+    s.distances[v] = s.n_level
+    return true
+end
+@inline function postlevelfn!(s::DistanceState{T}) where T
+    s.n_level += one(T)
+    return true
+end
+
+"""
+    distances(g::AbstractGraph{T}, ss, alg)
+
+Return a vector filled with the geodesic distances of vertices in  `g` from
+source/sources `ss`. If `ss` is a collection of vertices each element should
+be unique. For vertices unreachable from any vertex in `ss` the distance is
+`typemax(T)`.
+"""
+function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm) where T
+    state = DistanceState(fill(typemax(T), nv(g)), one(T))
     traverse_graph!(g, s, alg, state) || throw(TraversalError())
     return dists(state)
 end
@@ -270,7 +310,7 @@ end
 @inline newvisitfn!(s::PathState, u, v) = s.v != v 
 
 """
-    has_path(g::AbstractGraph, u, v, alg=BreadthFirst(); exclude_vertices=Vector())
+    has_path(g::AbstractGraph, u, v, alg; exclude_vertices=Vector())
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
@@ -280,7 +320,9 @@ is in `exclude_vertices`.
 ### Performance Notes
 sorting `exclude_vertices` prior to calling the function may result in improved performance.
 """ 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm; exclude_vertices=Vector{T}()) where {T}
+# TODO 2.0.0: default to BreadthFirst() here. We can't do it yet because LightGraphs.has_path has the same signature and
+# we'll get conflicts.
     u == v && return true
     state = PathState(T(u), T(v), T.(exclude_vertices), false)
     result = traverse_graph!(g, u, alg, state)
@@ -288,6 +330,7 @@ function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlg
     result && return false
     return !state.vertices_in_exclude
 end
+
 
 include("breadthfirst.jl")
 include("threadedbreadthfirst.jl")
@@ -299,8 +342,8 @@ include("maxadjvisit.jl")
 include("randomwalks.jl")
 
 export TraversalError
-export tree, parents, visited_vertices, dists, distances!, has_path
-export BreadthFirst, distances
+export tree, parents, visited_vertices, dists, distances, has_path
+export BreadthFirst
 export ThreadedBreadthFirst
 export is_bipartite, bipartite_map
 export DepthFirst, is_cyclic, topological_sort, CycleError 

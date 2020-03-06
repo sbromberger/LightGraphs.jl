@@ -14,15 +14,15 @@ end
 BreadthFirst(; neighborfn=outneighbors, sort_alg=NOOPSort) = BreadthFirst(neighborfn, sort_alg)
 
 """
-    traverse_graph!(g, s, alg, state)
     traverse_graph!(g, ss, alg, state)
 
-    Traverse a graph `g` starting at vertex `s` / vertices `ss` using algorithm `alg`, maintaining state in [`TraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit functions caused an early termination.
-    
+    Traverse a graph `g` starting at vertex/vertices `ss` using algorithm `alg`, maintaining state in
+    [`TraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit
+    functions caused an early termination.
 """
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::BreadthFirst,
     state::TraversalState) where {U<:Integer}
 
@@ -61,30 +61,3 @@ function traverse_graph!(
     return true
 end
 
-mutable struct DistanceState{T<:Integer} <: TraversalState
-    distances::Vector{T}
-    n_level::T
-end
-
-@inline function initfn!(s::DistanceState{T}, u) where T 
-    s.distances[u] = zero(T)
-    return true
-end
-@inline function newvisitfn!(s::DistanceState, u, v) 
-    s.distances[v] = s.n_level
-    return true
-end
-@inline function postlevelfn!(s::DistanceState{T}) where T
-    s.n_level += one(T)
-    return true
-end
-
-"""
-    distances(g, s, alg=BreadthFirst())
-    distances(g, ss, alg=BreadthFirst())
-
-Return a vector filled with the geodesic distances of vertices in  `g` from vertex `s` / unique vertices `ss`
-using BreadthFirst traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
-"""
-distances(g::AbstractGraph{T}, s, alg::BreadthFirst=BreadthFirst()) where T =
-    distances!(g, s, alg, DistanceState(fill(typemax(T), nv(g)), one(T)))

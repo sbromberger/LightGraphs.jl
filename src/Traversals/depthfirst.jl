@@ -10,7 +10,7 @@ DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::DepthFirst,
     state::TraversalState,
     ) where U<:Integer
@@ -91,7 +91,13 @@ end
 end
 
 
-@traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+"""
+    topological_sort(g)
+
+Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
+graph `g` as a vector of vertices in topological order.
+"""
+@traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
@@ -130,7 +136,7 @@ end
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
@@ -141,4 +147,4 @@ end
     return false
 end
 
-@traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
+@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
