@@ -1,12 +1,55 @@
 """
-    randomwalk(g, s, niter; seed=-1)
+    abstract type WalkAlgorithm
 
-Perform a random walk on graph `g` starting at vertex `s` and continuing for
-a maximum of `niter` steps. Return a vector of vertices visited in order.
+An abstract type representing a graph walking algorithm.    
 """
-function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
+abstract type WalkAlgorithm end
+
+"""
+    struct RandomWalk <: WalkAlgorithm
+
+A struct describing a random graph walk algorithm.
+
+### Optional Arguments
+- `nonbacktracking::Bool`: set to `true` if the random walk should be non-backtracking (default: `false`).
+- `niter::Integer`: the number of iterations that the random walk should perform (default: `1`).
+- `rng::AbstractRNG`: the random number generator to use (default: `Random.GLOBAL_RNG`).
+"""
+struct RandomWalk{T<:Integer, R<:AbstractRNG} <: WalkAlgorithm
+    nonbacktracking::Bool
+    niter::T
+    rng::R
+end
+RandomWalk(;nonbacktracking=false, niter=1, rng=GLOBAL_RNG) = RandomWalk(nonbacktracking, niter, rng)
+
+"""
+    struct SelfAvoidingWalk <: WalkAlgorithm
+
+A struct describing a self-avoiding graph walk algorithm.
+
+### Optional Arguments
+- `niter::Integer`: the number of iterations that the random walk should perform (default: `1`).
+- `rng::AbstractRNG`: the random number generator to use (default: `Random.GLOBAL_RNG`)
+"""
+struct SelfAvoidingWalk{T<:Integer, R<:AbstractRNG} <: WalkAlgorithm
+    niter::T
+    rng::R
+end
+SelfAvoidingWalk(; niter=1, rng=GLOBAL_RNG) = SelfAvoidingWalk(niter, rng)
+
+"""
+    walk(g, s, alg)
+
+Perform a graph walk on graph `g` starting at vertex `s` using [`WalkAlgorithm`](@ref) `alg`.
+Return a vector of vertices visited in order.
+"""
+walk(g::AbstractGraph, s::Integer, alg::SelfAvoidingWalk) = self_avoiding_walk(g, s, alg.niter, alg.rng)
+walk(g::AbstractGraph, s::Integer, alg::RandomWalk) =
+    alg.nonbacktracking ?   non_backtracking_randomwalk(g, s, alg.niter, alg.rng) :
+                            randomwalk(g, s, alg.niter, alg.rng)
+
+function randomwalk(g::AbstractGraph{T}, s::Integer, niter::Integer, rng::AbstractRNG) where {T}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -21,18 +64,8 @@ function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <:
     return visited[1:(i - 1)]
 end
 
-"""
-    non_backtracking_randomwalk(g, s, niter; seed=-1)
-
-Perform a non-backtracking random walk on directed graph `g` starting at
-vertex `s` and continuing for a maximum of `niter` steps. Return a
-vector of vertices visited in order.
-"""
-function non_backtracking_randomwalk end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer, rng::AbstractRNG) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -62,10 +95,8 @@ function non_backtracking_randomwalk end
     return visited[1:(i - 1)]
 end
 
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer, rng::AbstractRNG) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -92,16 +123,8 @@ end
     return visited[1:(i - 1)]
 end
 
-"""
-    self_avoiding_walk(g, s, niter; seed=-1)
-
-Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
-on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
-Return a vector of vertices visited in order.
-"""
-function self_avoiding_walk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
+function self_avoiding_walk(g::AG, s::Integer, niter::Integer, rng::AbstractRNG) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
     visited = Vector{T}()
     svisited = Set{T}()
     sizehint!(visited, niter)

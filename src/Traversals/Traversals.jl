@@ -6,7 +6,7 @@ using LightGraphs
 using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
 using DataStructures: PriorityQueue, enqueue!, dequeue!
-using Random: shuffle, shuffle!, randsubseq!
+using Random: shuffle, shuffle!, randsubseq!, AbstractRNG, GLOBAL_RNG
 import Base:show
 
 """
@@ -154,13 +154,12 @@ and return `true` if successful; `false` otherwise.
 # functions common to both BreadthFirst and DepthFirst
 ##############
 """
-    traverse_graph!(g, s, alg, state)
     traverse_graph!(g, ss, alg, state)
 
-Traverse a graph `g` from source vertex `s` / vertices `ss` keeping track of `state`. Return `true` if
+Traverse a graph `g` from source vertex/vertices `ss` keeping track of `state`. Return `true` if
 traversal finished normally; `false` if one of the visit functions returned `false`.
 """
-traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
+function traverse_graph! end
 
 struct VisitState{T<:Integer} <: TraversalState
     visited::Vector{T}
@@ -282,17 +281,17 @@ end
 end
 
 """
-    distances(g::AbstractGraph{T}, ss, alg)
+    distances(g::AbstractGraph{T}, ss, alg=BreadthFirst())
 
 Return a vector filled with the geodesic distances of vertices in  `g` from
 source/sources `ss`. If `ss` is a collection of vertices each element should
 be unique. For vertices unreachable from any vertex in `ss` the distance is
 `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm) where T
+function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm=BreadthFirst()) where T
     state = DistanceState(fill(typemax(T), nv(g)), one(T))
     traverse_graph!(g, s, alg, state) || throw(TraversalError())
-    return dists(state)
+    return distances(state)
 end
 
 mutable struct PathState{T<:Integer} <: TraversalState
@@ -320,9 +319,7 @@ is in `exclude_vertices`.
 ### Performance Notes
 sorting `exclude_vertices` prior to calling the function may result in improved performance.
 """ 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm; exclude_vertices=Vector{T}()) where {T}
-# TODO 2.0.0: default to BreadthFirst() here. We can't do it yet because LightGraphs.has_path has the same signature and
-# we'll get conflicts.
+function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
     u == v && return true
     state = PathState(T(u), T(v), T.(exclude_vertices), false)
     result = traverse_graph!(g, u, alg, state)
@@ -341,14 +338,15 @@ include("greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
-export TraversalError
-export tree, parents, visited_vertices, dists, distances, has_path
-export BreadthFirst
-export ThreadedBreadthFirst
-export is_bipartite, bipartite_map
-export DepthFirst, is_cyclic, topological_sort, CycleError 
-export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
-export diffusion, diffusion_rate
-export greedy_color
-export mincut, maximum_adjacency_visit
+# TODO 2.0.0: uncomment this
+# export TraversalError
+# export tree, parents, visited_vertices, dists, distances, has_path
+# export BreadthFirst
+# export ThreadedBreadthFirst
+# export is_bipartite, bipartite_map
+# export DepthFirst, is_cyclic, topological_sort, CycleError 
+# export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
+# export diffusion, diffusion_rate
+# export FixedColoring, RandomColoring, DegreeColoring, greedy_color
+# export mincut, maximum_adjacency_visit
 end #module

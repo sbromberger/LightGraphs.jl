@@ -16,9 +16,9 @@ BreadthFirst(; neighborfn=outneighbors, sort_alg=NOOPSort) = BreadthFirst(neighb
 """
     traverse_graph!(g, ss, alg, state)
 
-    Traverse a graph `g` starting at vertex/vertices `ss` using algorithm `alg`, maintaining state in
-    [`TraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit
-    functions caused an early termination.
+Traverse a graph `g` starting at vertex/vertices `ss` using algorithm `alg`, maintaining state in
+[`TraversalState`](@ref) `state`. Return `true` if traversal finished; `false` if one of the visit
+functions caused an early termination.
 """
 function traverse_graph!(
     g::AbstractGraph{U},

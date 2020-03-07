@@ -92,19 +92,19 @@ end
 
 
 """
-    topological_sort(g)
+    topological_sort(g, alg=DepthFirst())
 
-Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
-graph `g` as a vector of vertices in topological order.
+Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed graph `g`
+using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological order.
 """
-@traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
     for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        if !traverse_graph!(g, v, DepthFirst(), state)
+        if !traverse_graph!(g, v, alg, state)
             throw(CycleError())
         end
     end
@@ -136,15 +136,15 @@ end
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        !traverse_graph!(g, v, DepthFirst(), state) && return true
+        !traverse_graph!(g, v, alg, state) && return true
     end
     return false
 end
 
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
+@traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0

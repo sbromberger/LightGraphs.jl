@@ -39,6 +39,8 @@ function partition_sources!(
         empty_list[i] = isempty(p)
     end
 end
+partition_sources!(queue_list::Vector{Vector{T}}, source::Integer, empty_list::Vector{Bool}) where {T<:Integer} =
+    partition_sources!(queue_list, [source], empty_list)
 
 function traverse_graph!(
     g::AbstractGraph{U},
