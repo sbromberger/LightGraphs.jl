@@ -185,7 +185,7 @@ end
 
 @inline function visitfn!(s::BiconnectionState{E}, u, v) where E
 
-    v == s.parent[end] || s.depth[u] < s.depth[v] && return true
+    (v == s.parent[end] || s.depth[u] < s.depth[v]) && return true
 
     push!(s.stack, E(min(v, u), max(v, u)))
     if s.depth[v] != 0
