@@ -99,7 +99,7 @@
             final_value = 0.0
 
             for i in 1:20
-                result = @inferred(diffusion_rate(g, p, 11, initial_infections=[1]))
+                result = @inferred(LT.diffusion_rate(g, p, 11, initial_infections=[1]))
                 final_value += result[11]
 
             end

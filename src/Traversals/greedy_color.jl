@@ -93,17 +93,6 @@ end
 fixed_greedy_color(g, seq) = fixed_greedy_color(g, _->seq)
 
 """
-    degree_greedy_color(g)
-
-Color graph `g` iteratively in the descending order of the degree of the vertices.
-"""
-function degree_greedy_color(g::AbstractGraph{T})::Coloring{T} where {T <: Integer} 
-    seq = convert(Vector{T}, sortperm(degree(g), rev=true)) 
-    return perm_greedy_color(g, seq)
-end
-
-
-"""
     random_greedy_color(g, niter, rng)
 
 Color the graph `g` iteratively in a random order using a greedy heuristic
