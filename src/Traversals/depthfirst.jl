@@ -219,7 +219,7 @@ function Biconnections(g)
 end
 
  function biconnected_components(g::SimpleGraph)
-    state = Biconnections5(g)
+    state = Biconnections(g)
     for u in vertices(g)
         if state.depth[u] == 0
             push!(state.parent,-1)
