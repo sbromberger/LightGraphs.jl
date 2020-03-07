@@ -155,7 +155,7 @@ mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
     up::Bool
     lastnode::Int
     lastlow::Int
-    childern_stack::Vector{Int}
+    have_childern::Vector{Bool}
     parent::Vector{Int}
 end
 
@@ -164,7 +164,7 @@ end
 
 @inline function previsitfn!(s::Biconnections{E}, u) where E
     if s.up == false
-        push!(s.childern_stack,0)
+        push!(s.have_childern, false)
         s.id+=1
         s.depth[u] = s.id
         push!(s.low,s.id)
@@ -192,21 +192,21 @@ end
         s.low[end] = min(s.low[end], s.depth[v])
     else
         push!(s.parent,u)
-        s.childern_stack[end]+=1
+        s.have_childern[end]|= true
         s.up = false
     end
     return true
 end
 
 @inline function postvisitfn!(s::Biconnections{E}, u) where E
-    if s.childern_stack[end] == 0
+    if s.have_childern[end] == false
         s.up = true
     end
 
     if s.up
         s.lastnode = u
         s.lastlow = pop!(s.low)
-        pop!(s.childern_stack)
+        pop!(s.have_childern)
         pop!(s.parent)
     end
 
@@ -216,7 +216,7 @@ end
 function Biconnections(g)
     n = nv(g)
     E = Edge{eltype(g)}
-    return Biconnections(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1,-1,Vector{Int}(), Vector{Int}())
+    return Biconnections(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Bool}(), Vector{Int}())
 end
 
 
