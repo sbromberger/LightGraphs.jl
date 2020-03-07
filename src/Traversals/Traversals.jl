@@ -149,7 +149,7 @@ mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
 end
 
-@inline function newvisitfn!(s::ParentState, u, v) 
+@inline function newvisitfn!(s::ParentState, u, v)
     s.parents[v] = u
     return true
 end
@@ -158,7 +158,7 @@ end
     parents(g, s, alg)
 
 Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
-vertex `s`. 
+vertex `s`.
 
 ### Performance
 This implementation is designed to perform well on large graphs. There are
@@ -213,7 +213,7 @@ include("randomwalks.jl")
 export tree, parents, visited_vertices
 export BreadthFirst, distances, has_path
 export is_bipartite, bipartite_map
-export DepthFirst, is_cyclic, topological_sort, CycleError 
+export DepthFirst, is_cyclic, topological_sort, CycleError, biconnected_components
 export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 export diffusion, diffusion_rate
 export greedy_color

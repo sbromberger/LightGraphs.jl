@@ -142,3 +142,90 @@ end
 end
 
 @traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
+
+
+
+mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
+    low::Vector{Int}
+    depth::Vector{Int}
+    stack::Vector{E}
+    biconnected_comps::Vector{Vector{E}}
+    id::Int
+    up::Bool
+    lastnode::Int
+    lastlow::Int
+    childern_stack::Vector{Int}
+    parent::Vector{Int}
+end
+
+
+
+
+@inline function previsitfn!(s::Biconnections{E}, u) where E
+    if s.up == false
+        push!(s.childern_stack,0)
+        s.id+=1
+        s.depth[u] = s.id
+        push!(s.low,s.id)
+    elseif s.depth[u] <= s.lastlow
+        w = s.lastnode
+        e = E(0, 0)  #Invalid Edge, used for comparison only
+        st = Vector{E}()
+        while e != E(min(u, w), max(u, w)) && !isempty(s.stack)
+            e = pop!(s.stack)
+            push!(st, e)
+        end
+        push!(s.biconnected_comps, st)
+    elseif s.low[end] > s.lastlow
+        s.low[end] = s.lastlow
+    end
+    return true
+end
+
+@inline function visitfn!(s::Biconnections{E}, u, v) where E
+    if v == s.parent[end] || s.depth[u] < s.depth[v]
+        return true
+    end
+    push!(s.stack, E(min(v, u), max(v, u)))
+    if s.depth[v] != 0
+        s.low[end] = min(s.low[end], s.depth[v])
+    else
+        push!(s.parent,u)
+        s.childern_stack[end]+=1
+        s.up = false
+    end
+    return true
+end
+
+@inline function postvisitfn!(s::Biconnections{E}, u) where E
+    if s.childern_stack[end] == 0
+        s.up = true
+    end
+
+    if s.up
+        s.lastnode = u
+        s.lastlow = pop!(s.low)
+        pop!(s.childern_stack)
+        pop!(s.parent)
+    end
+
+    return true
+end
+
+function Biconnections(g)
+    n = nv(g)
+    E = Edge{eltype(g)}
+    return Biconnections(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1,-1,Vector{Int}(), Vector{Int}())
+end
+
+@traitfn function biconnected_components(g::SimpleGraph)
+    state = Biconnections5(g)
+    for u in vertices(g)
+        if state.depth[u] == 0
+            push!(state.parent,-1)
+            state.up = false
+            traverse_graph!(g, u, DFS(), state)
+        end
+    end
+    return state.biconnected_comps
+end
