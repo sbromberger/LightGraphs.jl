@@ -1,3 +1,4 @@
+# TODO 2.0.0: Remove this file
 """
     partition_sources!(queue_list, sources)
 

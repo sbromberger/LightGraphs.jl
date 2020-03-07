@@ -1,3 +1,4 @@
+# TODO 2.0.0: Remove this file
 function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where {T <: Integer}
     best = @distributed (LightGraphs.Traversals.best_color) for i in 1:reps
         seq = shuffle(vertices(g))
