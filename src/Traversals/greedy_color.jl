@@ -28,7 +28,7 @@ sortest degree).
 struct FixedColoring{F} <: ColoringAlgorithm
     ordering::F
 end
-FixedColoring(;ordering::AbstractVector) = FixedColor(ordering=_->ordering)
+FixedColoring(;ordering::AbstractVector) = FixedColoring(_->ordering)
 
 """
     DegreeColoring

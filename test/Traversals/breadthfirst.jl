@@ -1,8 +1,16 @@
+import LightGraphs.Traversals: preinitfn!, TraversalState
 @testset "BreadthFirst" begin
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
+    struct DummyState <: LT.TraversalState end
+
+    @testset "default traverse_graph!" begin
+        for g in testdigraphs(g5)
+            @test LT.traverse_graph!(g, 1, LT.BreadthFirst(), DummyState())
+        end
+    end
 
     @testset "bfs tree and bfs parents" begin
         for g in testdigraphs(g5)
@@ -25,11 +33,21 @@
         end
     end
 
+    function test_traversal_error(g::AbstractGraph, s, state::TraversalState)
+        LT.traverse_graph!(g, s, LT.BreadthFirst(), state) || throw(LT.TraversalError())
+        return true
+    end
+
     @testset "distances" begin
+        LT.preinitfn!(::DummyState, u) = false
+
         for g in testgraphs(g6)
             @test @inferred(LT.distances(g, 2)) == @inferred(LT.distances(g, 2, LT.BreadthFirst(sort_alg=MergeSort))) == [1, 0, 2, 1, 2]
+
             @test @inferred(LT.distances(g, [1, 2])) == [0, 0, 1, 1, 2]
             @test @inferred(LT.distances(g, [])) == fill(typemax(eltype(g)), 5)
+
+            @test_throws LT.TraversalError test_traversal_error(g, 1, DummyState())
         end
     end
 

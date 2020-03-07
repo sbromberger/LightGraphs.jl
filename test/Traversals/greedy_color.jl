@@ -3,7 +3,11 @@
     g3 = star_graph(10)
 
     for g in testgraphs(g3)
-        for alg in [LT.DegreeColoring(), LT.RandomColoring(niter=5), LT.FixedColoring(sortperm(vertices(g), rev=true))]
+        for alg in [
+                    LT.DegreeColoring(),
+                    LT.RandomColoring(niter=5),
+                    LT.FixedColoring(ordering=sortperm(vertices(g), rev=true))
+                   ]
             C = @inferred(LT.greedy_color(g, alg))
             C2 = @inferred(LT.greedy_color(g))
             @test C.num_colors == C2.num_colors == 2
