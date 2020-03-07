@@ -13,6 +13,7 @@ travtests = [
     "depthfirst.jl"
     "diffusion.jl"
     "greedy_color.jl"
+    "threaded_greedy_color.jl"
     "maxadjvisit.jl"
     "randomwalks.jl"
 ]

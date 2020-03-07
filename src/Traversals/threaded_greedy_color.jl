@@ -16,12 +16,12 @@ struct ThreadedRandomColoring{T<:Integer, R<:AbstractRNG} <: ThreadedColoringAlg
     niter::T
     rng::R
 end
-ThreadedRandomColoring(; niter=1, rng=Random.GLOBAL_RNG) = ThreadedRandomColoring(niter, rng)
+ThreadedRandomColoring(; niter=1, rng=GLOBAL_RNG) = ThreadedRandomColoring(niter, rng)
 
 function greedy_color(g::AbstractGraph{T}, alg::ThreadedRandomColoring) where {T <: Integer}
-    best = @distributed (LightGraphs.Traversals.best_color) for i in 1:alg.niter
+    best = @distributed (best_color) for i in 1:alg.niter
         seq = shuffle(alg.rng, vertices(g))
-        greedy_color(g, FixedColor(seq))
+        greedy_color(g, FixedColoring(seq))
     end
-    return convert(LightGraphs.Traversals.Coloring{T}, best)
+    return convert(Coloring{T}, best)
 end
