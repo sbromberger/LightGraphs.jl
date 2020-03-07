@@ -38,23 +38,23 @@ function getindex(q::ThreadQueue{T}, iter) where T
 end
 
 # Traverses the vertices in the queue and adds newly found successors to the queue.
-function bfskernel(
-        next::ThreadQueue, # Thread safe queue to add vertices to
-        g::AbstractGraph, # The graph
-        parents::Array{Atomic{T}}, # Parents array
-        level::Array{T} # Vertices in the current frontier
-    ) where T <: Integer
-    @threads for src in level
-        vertexneighbors = neighbors(g, src) # Get the neighbors of the vertex
-        for vertex in vertexneighbors
-            # Atomically check and set parent value if not set yet.
-            parent = atomic_cas!(parents[vertex], zero(T), src)
-            if parent == 0
-                push!(next, vertex) #Push onto queue if newly found
-            end
-        end
-    end
-end
+# function bfskernel(
+#         next::ThreadQueue, # Thread safe queue to add vertices to
+#         g::AbstractGraph, # The graph
+#         parents::Array{Atomic{T}}, # Parents array
+#         level::Array{T} # Vertices in the current frontier
+#     ) where T <: Integer
+#     @threads for src in level
+#         vertexneighbors = neighbors(g, src) # Get the neighbors of the vertex
+#         for vertex in vertexneighbors
+#             # Atomically check and set parent value if not set yet.
+#             parent = atomic_cas!(parents[vertex], zero(T), src)
+#             if parent == 0
+#                 push!(next, vertex) #Push onto queue if newly found
+#             end
+#         end
+#     end
+# end
 
 """
     bfs_tree!(g, src, parents)
