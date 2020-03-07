@@ -146,6 +146,7 @@ end
 
 
 mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
+
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}
@@ -224,7 +225,7 @@ end
         if state.depth[u] == 0
             push!(state.parent,-1)
             state.up = false
-            traverse_graph!(g, u, DFS(), state)
+            traverse_graph!(g, u, DepthFirst(), state)
         end
     end
     return state.biconnected_comps
