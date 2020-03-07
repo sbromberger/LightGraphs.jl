@@ -218,7 +218,7 @@ function Biconnections(g)
     return Biconnections(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1,-1,Vector{Int}(), Vector{Int}())
 end
 
-@traitfn function biconnected_components(g::SimpleGraph)
+ function biconnected_components(g::SimpleGraph)
     state = Biconnections5(g)
     for u in vertices(g)
         if state.depth[u] == 0
