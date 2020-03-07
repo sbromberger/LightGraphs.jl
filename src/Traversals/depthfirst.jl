@@ -145,17 +145,17 @@ end
 
 
 
-mutable struct Biconnections{E <: AbstractEdge} <: AbstractTraversalState
+mutable struct BiconnectionState{E <: AbstractEdge} <: AbstractTraversalState
 
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}
-    biconnected_comps::Vector{Vector{E}}
+   BiconnectionState ::Vector{Vector{E}}
     id::Int
     up::Bool
     lastnode::Int
     lastlow::Int
-    have_childern::Vector{Bool}
+    have_children::Vector{Bool}
     parent::Vector{Int}
 end
 
@@ -164,7 +164,7 @@ end
 
 @inline function previsitfn!(s::Biconnections{E}, u) where E
     if s.up == false
-        push!(s.have_childern, false)
+        push!(s.have_children, false)
         s.id+=1
         s.depth[u] = s.id
         push!(s.low,s.id)
@@ -176,7 +176,7 @@ end
             e = pop!(s.stack)
             push!(st, e)
         end
-        push!(s.biconnected_comps, st)
+        push!(s.biconnections , st)
     elseif s.low[end] > s.lastlow
         s.low[end] = s.lastlow
     end
@@ -184,39 +184,39 @@ end
 end
 
 @inline function visitfn!(s::Biconnections{E}, u, v) where E
-    if v == s.parent[end] || s.depth[u] < s.depth[v]
-        return true
-    end
+
+    v == s.parent[end] || s.depth[u] < s.depth[v] && return true
+
     push!(s.stack, E(min(v, u), max(v, u)))
     if s.depth[v] != 0
         s.low[end] = min(s.low[end], s.depth[v])
     else
         push!(s.parent,u)
-        s.have_childern[end]|= true
+        s.have_children[end]|= true
         s.up = false
     end
     return true
 end
 
 @inline function postvisitfn!(s::Biconnections{E}, u) where E
-    if s.have_childern[end] == false
+    if s.have_children[end] == false
         s.up = true
     end
 
     if s.up
         s.lastnode = u
         s.lastlow = pop!(s.low)
-        pop!(s.have_childern)
+        pop!(s.have_children)
         pop!(s.parent)
     end
 
     return true
 end
 
-function Biconnections(g)
+function BiconnectionState(g)
     n = nv(g)
     E = Edge{eltype(g)}
-    return Biconnections(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Bool}(), Vector{Int}())
+    return BiconnectionState(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Bool}(), Vector{Int}())
 end
 
 
@@ -252,7 +252,7 @@ julia> biconnected_components(cycle_graph(5))
 
 
  function biconnected_components(g::SimpleGraph)
-    state = Biconnections(g)
+    state = BiconnectionState(g)
     for u in vertices(g)
         if state.depth[u] == 0
             push!(state.parent,-1)
@@ -260,5 +260,5 @@ julia> biconnected_components(cycle_graph(5))
             traverse_graph!(g, u, DepthFirst(), state)
         end
     end
-    return state.biconnected_comps
+    return state.biconnections
 end
