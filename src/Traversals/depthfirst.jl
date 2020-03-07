@@ -150,7 +150,7 @@ mutable struct BiconnectionState{E <: AbstractEdge} <: AbstractTraversalState
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}
-   BiconnectionState ::Vector{Vector{E}}
+    components::Vector{Vector{E}}
     id::Int
     up::Bool
     lastnode::Int
@@ -162,7 +162,7 @@ end
 
 
 
-@inline function previsitfn!(s::Biconnections{E}, u) where E
+@inline function previsitfn!(s::BiconnectionState{E}, u) where E
     if s.up == false
         push!(s.have_children, false)
         s.id+=1
@@ -176,14 +176,14 @@ end
             e = pop!(s.stack)
             push!(st, e)
         end
-        push!(s.biconnections , st)
+        push!(s.components , st)
     elseif s.low[end] > s.lastlow
         s.low[end] = s.lastlow
     end
     return true
 end
 
-@inline function visitfn!(s::Biconnections{E}, u, v) where E
+@inline function visitfn!(s::BiconnectionState{E}, u, v) where E
 
     v == s.parent[end] || s.depth[u] < s.depth[v] && return true
 
@@ -198,7 +198,7 @@ end
     return true
 end
 
-@inline function postvisitfn!(s::Biconnections{E}, u) where E
+@inline function postvisitfn!(s::BiconnectionState{E}, u) where E
     if s.have_children[end] == false
         s.up = true
     end
@@ -260,5 +260,5 @@ julia> biconnected_components(cycle_graph(5))
             traverse_graph!(g, u, DepthFirst(), state)
         end
     end
-    return state.biconnections
+    return state.components
 end
