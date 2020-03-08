@@ -23,7 +23,7 @@ function traverse_graph!(
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
-        push!(S, (us, 0))
+        push!(S, (us, 1))
         initfn!(state, us) || return false
     end
 
