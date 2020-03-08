@@ -142,3 +142,52 @@ end
 end
 
 @traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
+
+############ toposort2
+#
+mutable struct TopoSortState2{T<:Integer} <: AbstractTraversalState
+    vcolor::Vector{UInt8}
+    verts::Vector{T}
+    targetvert::T
+    nneighs::T
+end
+
+function previsitfn!(s::TopoSortState2, u)
+    s.targetvert = u
+    s.nneighs = 0
+    println("targeting $u")
+    return true
+end
+
+function newvisitfn!(s::TopoSortState2, u, v)
+    s.nneighs += 1
+    println("nneighs now $(s.nneighs)")
+    s.vcolor[v] = max(1, s.vcolor[v])
+    return true
+end
+
+function postlevelfn!(s::TopoSortState2)
+    if s.nneighs == 0 && s.vcolor[s.targetvert] != 2
+        println("no neighbors")
+        push!(s.verts, s.targetvert)
+        s.vcolor[s.targetvert] = 2
+        s.targetvert = 0
+        s.nneighs = 0
+    else
+        println("postlevel with $(s.nneighs) neighbors")
+    end
+    return true
+end
+
+function toposort2(g)
+    state = TopoSortState2(zeros(UInt8, nv(g)), Vector{eltype(g)}(), 0, 0)
+    for v in vertices(g)
+        state.vcolor[v] != 0 && continue
+        state.vcolor[v] = 1
+        if !traverse_graph!(g, v, DepthFirst(), state)
+            throw(CycleError())
+        end
+    end
+    return reverse(state.verts)
+    
+end
