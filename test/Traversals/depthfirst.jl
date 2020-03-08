@@ -8,6 +8,8 @@
     #for #1337
     ge = SimpleDiGraph(3)
     add_edge!(ge, 3, 1); add_edge!(ge, 1, 2)
+    gts = SimpleDiGraph(5)
+    add_edge!(gts, 1, 2); add_edge!(gts, 2, 3); add_edge!(gts, 2, 4); add_edge!(gts, 3, 4); add_edge!(gts, 5, 3)
     
     @testset "dfs tree" begin
         for g in testdigraphs(g5)
@@ -35,6 +37,9 @@
     
         for g in testdigraphs(ge)
             @test @inferred(topological_sort(g)) == [3, 1, 2]
+        end
+        for g in testdigraphs(gts)
+            @test @inferred(topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ] 
         end
     end
   
