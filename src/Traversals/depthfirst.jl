@@ -51,6 +51,41 @@ function traverse_graph!(
     return true
 end
 
+mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
+    vis::BitArray
+    rec::BitArray
+    verts::Vector{T}
+end
+
+@inline function preinitfn!(s::TopoSortState, visited)
+    visited .= s.vis
+    return true
+end
+@inline function previsitfn!(s::TopoSortState, u)
+    s.vis[u] = true
+    s.rec[u] = true
+    return true
+end
+@inline function visitfn!(s::TopoSortState, u, v)
+    return !s.rec[v]
+end
+@inline function postvisitfn!(s::TopoSortState, u)
+    s.rec[u] = false
+    push!(s.verts, u)
+    return true
+end
+
+@traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+    state = TopoSortState(falses(nv(g)), falses(nv(g)), Vector{T}())
+    @inbounds for v in vertices(g)
+        state.vis[v] && continue
+        if !traverse_graph!(g, v, DepthFirst(), state)
+            throw(CycleError())
+        end
+    end
+    return reverse(state.verts)
+end
+
 mutable struct CycleState <: AbstractTraversalState
     vis::BitArray
     rec::BitArray
