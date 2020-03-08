@@ -96,7 +96,7 @@ end
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
     for v in vertices(g)
-        state.vcolor[v] != 0 && continue
+        length(inneighbors(g,v)) != 0 && continue
         state.vcolor[v] = 1
         if !traverse_graph!(g, v, DepthFirst(), state)
             throw(CycleError())
