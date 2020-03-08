@@ -181,7 +181,7 @@ end
 
 function toposort2(g)
     state = TopoSortState2(zeros(UInt8, nv(g)), Vector{eltype(g)}(), zero(eltype(g)), zero(eltype(g)))
-    for v in vertices(g)
+    @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
         if !traverse_graph!(g, v, DepthFirst(), state)
