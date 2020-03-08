@@ -12,11 +12,11 @@ function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
     alg::DepthFirst,
-    state::AbstractTraversalState
+    state::AbstractTraversalState,
+    visited::BitArray = falses(nv(g))
     ) where U<:Integer
 
     n = nv(g)
-    visited = falses(n)
     S = Vector{Tuple{U,U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
@@ -51,18 +51,30 @@ function traverse_graph!(
     return true
 end
 
+function traverse_whole_graph!(
+    g::AbstractGraph{U},
+    alg::DepthFirst,
+    state::AbstractTraversalState
+    ) where U<:Integer
+
+    visited = falses(nv(g))
+    for v in vertices(g)
+        if !visited[v]
+            !traverse_graph!(g, [v], DepthFirst(), state, visited) && return false
+        end
+    end
+    return true
+end
+
 mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
-    vis::BitArray
     rec::BitArray
     verts::Vector{T}
 end
 
 @inline function preinitfn!(s::TopoSortState, visited)
-    visited .= s.vis
     return true
 end
 @inline function previsitfn!(s::TopoSortState, u)
-    s.vis[u] = true
     s.rec[u] = true
     return true
 end
@@ -76,27 +88,21 @@ end
 end
 
 @traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
-    state = TopoSortState(falses(nv(g)), falses(nv(g)), Vector{T}())
-    @inbounds for v in vertices(g)
-        state.vis[v] && continue
-        if !traverse_graph!(g, v, DepthFirst(), state)
-            throw(CycleError())
-        end
+    state = TopoSortState(falses(nv(g)), Vector{T}())
+    if !traverse_whole_graph!(g, DepthFirst(), state)
+        throw(CycleError())
     end
     return reverse(state.verts)
 end
 
 mutable struct CycleState <: AbstractTraversalState
-    vis::BitArray
     rec::BitArray
 end
 
 @inline function preinitfn!(s::CycleState, visited)
-    visited .= s.vis
     return true
 end
 @inline function previsitfn!(s::CycleState, u)
-    s.vis[u] = true
     s.rec[u] = true
     return true
 end
@@ -109,11 +115,8 @@ end
 end
 
 @traitfn function is_cyclic(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
-    state = CycleState(falses(nv(g)), falses(nv(g)))
-    @inbounds for v in vertices(g)
-        state.vis[v] && continue
-        !traverse_graph!(g, v, DepthFirst(), state) && return true
-    end
+    state = CycleState(falses(nv(g)))
+    !traverse_whole_graph!(g, DepthFirst(), state) && return true
     return false
 end
 
