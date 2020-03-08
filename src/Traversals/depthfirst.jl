@@ -12,7 +12,7 @@ function traverse_graph!(
     g::AbstractGraph{U},
     ss::AbstractVector,
     alg::DepthFirst,
-    state::AbstractTraversalState,
+    state::AbstractTraversalState
     ) where U<:Integer
 
     n = nv(g)
@@ -23,119 +23,60 @@ function traverse_graph!(
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
-        push!(S, (us, 0))
+        push!(S, (us, 1))
         initfn!(state, us) || return false
     end
 
-    ptr = one(U)
-
     while !isempty(S)
-        v, _ = S[end]
+        v, ptr = pop!(S)
         previsitfn!(state, v) || return false
 
-        neighs=alg.neighborfn(g, v)
+        neighs = alg.neighborfn(g, v)
         @inbounds while ptr <= length(neighs)
             i = neighs[ptr]
             visitfn!(state, v, i) || return false
             if !visited[i]  # find the first unvisited neighbor
                 newvisitfn!(state, v, i) || return false
                 visited[i] = true
-                push!(S, (i, ptr+1))
+                push!(S, (v, ptr+1))
+                push!(S, (i, 1))
                 break
             end
             ptr += 1
         end
-        postvisitfn!(state, v) || return false
-        # if ptr > length(neighs) then we have finished all children of the node,
-        # and the next time we pop from the stack we will be in the parent of the current
-        # node. We would like to continue from where we stoped, otherwise we have found
-        # a new unvisited child, so we will make ptr = 1
         if ptr > length(neighs)
-            postlevelfn!(state) || return false
-            _, ptr =pop!(S)
-        else
-            ptr = 1 # we will enter new node
+            postvisitfn!(state, v) || return false
         end
     end
     return true
 end
 
-mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
-    vcolor::Vector{UInt8}
-    verts::Vector{T}
-    w::T
+mutable struct CycleState <: AbstractTraversalState
+    vis::BitArray
+    rec::BitArray
 end
 
-# 1 = visited
-# 2 = vcolor 2
-# @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
-@inline function previsitfn!(s::TopoSortState{T}, u) where T
-    s.w = 0
+@inline function preinitfn!(s::CycleState, visited)
+    visited .= s.vis
     return true
 end
-@inline function visitfn!(s::TopoSortState{T}, u, v) where T
-    return s.vcolor[v] != one(T)
-end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T
-    s.w = v
+@inline function previsitfn!(s::CycleState, u)
+    s.vis[u] = true
+    s.rec[u] = true
     return true
 end
-@inline function postvisitfn!(s::TopoSortState{T}, u) where T
-    if s.w != 0
-        s.vcolor[s.w] = one(T)
-    else
-        s.vcolor[u] = T(2)
-        push!(s.verts, u)
-    end
-    return true
+@inline function visitfn!(s::CycleState, u, v)
+    return !s.rec[v]
 end
-
-
-@traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
-    vcolor = zeros(UInt8, nv(g))
-    verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))
-    for v in vertices(g)
-        state.vcolor[v] != 0 && continue
-        state.vcolor[v] = 1
-        if !traverse_graph!(g, v, DepthFirst(), state)
-            throw(CycleError())
-        end
-    end
-    return reverse(state.verts)
-end
-
-mutable struct CycleState{T<:Integer} <: AbstractTraversalState
-    vcolor::Vector{UInt8}
-    w::T
-end
-
-@inline function previsitfn!(s::CycleState{T}, u) where T
-    s.w = 0
-    return true
-end
-@inline function visitfn!(s::CycleState{T}, u, v) where T
-    return s.vcolor[v] != one(T)
-end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T
-    s.w = v
-    return true
-end
-@inline function postvisitfn!(s::CycleState{T}, u) where T
-    if s.w != 0
-        s.vcolor[s.w] = one(T)
-    else
-        s.vcolor[u] = T(2)
-    end
+@inline function postvisitfn!(s::CycleState, u)
+    s.rec[u] = false
     return true
 end
 
 @traitfn function is_cyclic(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
-    vcolor = zeros(UInt8, nv(g))
-    state = CycleState(vcolor, zero(T))
+    state = CycleState(falses(nv(g)), falses(nv(g)))
     @inbounds for v in vertices(g)
-        state.vcolor[v] != 0 && continue
-        state.vcolor[v] = 1
+        state.vis[v] && continue
         !traverse_graph!(g, v, DepthFirst(), state) && return true
     end
     return false
