@@ -98,7 +98,7 @@ end
     
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
  
-    traverse_graph(g, sources, DepthFirst(), state) || throw(CycleError())
+    traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
       
     length(state.verts) == nv(g) || throw(CycleError())
     return reverse!(state.verts)
