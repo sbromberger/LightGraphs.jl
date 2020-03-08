@@ -3,7 +3,9 @@
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     gx = cycle_digraph(3)
-  
+    gt = SimpleDiGraph(3)
+    add_edge!(gt,1 ,2); add_edge!(gt,2 ,3); add_edge!(gt,3 ,2)
+    
     @testset "dfs tree" begin
         for g in testdigraphs(g5)
             z = @inferred(tree(g, 1, DepthFirst()))
@@ -19,6 +21,11 @@
         end
   
         for g in testdigraphs(gx)
+            @test @inferred(is_cyclic(g))
+            @test_throws CycleError topological_sort(g)      
+        end
+    
+        for g in testdigraphs(gt)
             @test @inferred(is_cyclic(g))
             @test_throws CycleError topological_sort(g)      
         end
