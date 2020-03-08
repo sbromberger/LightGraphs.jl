@@ -95,11 +95,11 @@ end
     vcolor = zeros(UInt8, nv(g))
    verts = Vector{T}()
    state = TopoSortState(vcolor, verts, zero(T))
-   source = filter(x -> length(inneighbors(g, x)) == 0, vertices(g) )
+   source = filter(x -> isempty(inneighbors(g, x)), vertices(g) )
+    
    if length(source) == 0
        throw(CycleError())
    end
-
    if !traverse_graph!(g, source , DepthFirst(), state)
            throw(CycleError())
     end
