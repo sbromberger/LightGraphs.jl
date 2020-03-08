@@ -3,13 +3,7 @@
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     gx = cycle_digraph(3)
-    gt = SimpleDiGraph(3)
-    add_edge!(gt,1 ,2); add_edge!(gt,2 ,3); add_edge!(gt,3 ,2)
-    #for #1337
-    ge = SimpleDiGraph(3)
-    add_edge!(ge, 3, 1); add_edge!(ge, 1, 2)
-    gts = SimpleDiGraph(5)
-    add_edge!(gts, 1, 2); add_edge!(gts, 2, 3); add_edge!(gts, 2, 4); add_edge!(gts, 3, 4); add_edge!(gts, 5, 3)
+    
     
     @testset "dfs tree" begin
         for g in testdigraphs(g5)
@@ -19,8 +13,18 @@
             @test !is_cyclic(g)
         end
     end
+    
+        #graph with cycle which is reachabel from the source
+        gt = SimpleDiGraph(3)
+        add_edge!(gt,1 ,2); add_edge!(gt,2 ,3); add_edge!(gt,3 ,2)
+        #for #1337
+        ge = SimpleDiGraph(3)
+        add_edge!(ge, 3, 1); add_edge!(ge, 1, 2)
+        # graph with two sources
+        gts = SimpleDiGraph(5)
+        add_edge!(gts, 1, 2); add_edge!(gts, 2, 3); add_edge!(gts, 2, 4); add_edge!(gts, 3, 4); add_edge!(gts, 5, 3)
   
-    @testset "topological_sort" begin
+        @testset "topological_sort" begin
         for g in testdigraphs(g5)
             @test @inferred(topological_sort(g)) == [1, 2, 3, 4]
         end
