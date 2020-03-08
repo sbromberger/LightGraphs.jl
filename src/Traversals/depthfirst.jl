@@ -96,20 +96,12 @@ end
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
     
-    sources = filter(x -> isempty(inneighbors(g, x)), vertices(g))
-   
-   
-       
-    if !traverse_graph!(g, sources , DepthFirst(), state)
-         throw(CycleError())
-    end
+    sources = filter(x -> indegree(g, x) == 0, vertices(g))
+ 
+    traverse_graph(g, sources, DepthFirst(), state) || throw(CycleError())
       
-    
-    if length(state.verts) == nv(g)
-        return reverse(state.verts)
-    else
-        throw(CycleError())
-    end
+    length(state.verts) == nv(g) || throw(CycleError())
+    return reverse!(state.verts)
 end
 
 mutable struct CycleState{T<:Integer} <: AbstractTraversalState
