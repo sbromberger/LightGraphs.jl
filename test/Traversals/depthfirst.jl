@@ -1,5 +1,5 @@
 @testset "DepthFirst" begin
-  
+
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     gx = cycle_digraph(3)
@@ -12,7 +12,7 @@
             @test !is_cyclic(g)
         end
     end
-    
+
     @testset "topological_sort" begin
         for g in testdigraphs(g5)
             @test @inferred(topological_sort(g)) == [1, 2, 3, 4]
@@ -45,7 +45,7 @@
             @test @inferred(topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ] 
         end
     end
-  
+
     @testset "is_cyclic" begin
         for g in testgraphs(path_graph(2))
             @test @inferred(is_cyclic(g))
@@ -60,7 +60,7 @@
             @test !is_cyclic(g)
         end
     end
-  
+
     @testset "visited_vertices" begin
         gt = binary_tree(3)
         for g in testgraphs(gt)
