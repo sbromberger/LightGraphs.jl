@@ -2,6 +2,10 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
+struct ExceedingOutputError <: Exception end
+Base.showerror(io::IO, e::ExceedingOutputError) = print(io, "the function produced an output Exceeds the numper of vertices")
+
+
 struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
@@ -100,7 +104,9 @@ end
  
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
       
-    length(state.verts) == nv(g) || throw(CycleError())
+    length(state.verts) < nv(g) && throw(CycleError())
+    length(state.verts) > nv(g) && throw(ExceedingOutputError())
+    
     return reverse!(state.verts)
 end
 
