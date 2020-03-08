@@ -92,18 +92,21 @@ end
 
 
 @traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
-    vcolor = zeros(UInt8, nv(g))
+   vcolor = zeros(UInt8, nv(g))
    verts = Vector{T}()
    state = TopoSortState(vcolor, verts, zero(T))
-   source = filter(x -> isempty(inneighbors(g, x)), vertices(g) )
-    
-   if length(source) == 0
-       throw(CycleError())
-   end
-   if !traverse_graph!(g, source , DepthFirst(), state)
-           throw(CycleError())
+   for v in vertices(g)
+       if isempty(inneighbors(g, v))
+           if !traverse_graph!(g, v , DepthFirst(), state)
+               throw(CycleError())
+           end
+       end
     end
-   return reverse(state.verts)
+    if length(state.verts) == nv(g)
+        return reverse(state.verts)
+    else
+        throw(CycleError())
+    end
 end
 
 mutable struct CycleState{T<:Integer} <: AbstractTraversalState
