@@ -7,7 +7,7 @@ using ArnoldiMethod
 using Statistics: mean
 
 using Inflate: InflateGzipStream
-using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
+using DataStructures: IntDisjointSets, PriorityQueue, Queue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
@@ -219,6 +219,7 @@ include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("cycles/limited_length.jl")
+include("Traversals/Traversals.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")

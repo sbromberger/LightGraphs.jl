@@ -116,7 +116,7 @@
     end
 
     # From issue #1268
-    @testset "no paths are returned if every path is longer than maxdist" begin 
+    @testset "no paths are returned if every path is longer than maxdist" begin
         g = cycle_digraph(10)
         ds = @inferred(yen_k_shortest_paths(g, 2, 1, weights(g), 2, maxdist=2))
         @test isempty(ds.paths)

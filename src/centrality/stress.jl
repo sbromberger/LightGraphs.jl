@@ -75,4 +75,3 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     end
     return nothing
 end
-

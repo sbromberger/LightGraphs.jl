@@ -9,7 +9,7 @@ the \$i^{th}\$ element of \$\\mathbf{x}\$ in the equation
 ``
     \\mathbf{Ax} = λ \\mathbf{x}
 ``
-where \$\\mathbf{A}\$ is the adjacency matrix of the graph `g` 
+where \$\\mathbf{A}\$ is the adjacency matrix of the graph `g`
 with eigenvalue λ.
 
 By virtue of the Perron–Frobenius theorem, there is a unique and positive

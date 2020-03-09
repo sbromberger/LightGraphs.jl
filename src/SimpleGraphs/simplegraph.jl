@@ -205,9 +205,9 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     nvg = zero(T)
     @inbounds(
     for e in edge_list
-        nvg = max(nvg, src(e), dst(e)) 
+        nvg = max(nvg, src(e), dst(e))
     end)
-   
+
     list_sizes = ones(Int, nvg)
     degs = zeros(Int, nvg)
     @inbounds(
@@ -219,7 +219,7 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
             degs[d] += 1
         end
     end)
-    
+
     fadjlist = Vector{Vector{T}}(undef, nvg)
     @inbounds(
     for v in 1:nvg
@@ -230,10 +230,10 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     for e in edge_list
         s, d = src(e), dst(e)
         (s >= 1 && d >= 1) || continue
-        fadjlist[s][list_sizes[s]] = d 
+        fadjlist[s][list_sizes[s]] = d
         list_sizes[s] += 1
-        if s != d 
-            fadjlist[d][list_sizes[d]] = s 
+        if s != d
+            fadjlist[d][list_sizes[d]] = s
             list_sizes[d] += 1
         end
     end)
@@ -277,7 +277,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
 
     T = eltype(e)
     g = SimpleGraph{T}()
-    fadjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
 
     while next != nothing
         (e, state) = next
@@ -304,7 +304,7 @@ end
 function _SimpleGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
 
     g = SimpleGraph{T}()
-    fadjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
 
     @inbounds(
     for e in iter
@@ -369,8 +369,8 @@ Return the backwards adjacency list of a graph. If `v` is specified,
 return only the adjacency list for that vertex.
 
 ###Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
 """
 badj(g::SimpleGraph) = fadj(g)
@@ -384,9 +384,9 @@ Return the adjacency list of a graph. If `v` is specified, return only the
 adjacency list for that vertex.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
-the array behind this reference may be modified too, but this is not guaranteed. 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 """
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
@@ -489,15 +489,15 @@ function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s] 
+    @inbounds list = g.fadjlist[s]
     index = searchsortedfirst(list, d)
-    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
+    @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph
     deleteat!(list, index)
 
     g.ne -= 1
     s == d && return true  # selfloop
 
-    @inbounds list = g.fadjlist[d] 
+    @inbounds list = g.fadjlist[d]
     index = searchsortedfirst(list, s)
     deleteat!(list, index)
     return true  # edge successfully removed

@@ -75,25 +75,25 @@ distmx_third = [
     0.26    0.36    0       0.17    0       0       0.4     0.34        0       0       0       0
     0       0.29    0.17    0       0       0       0.52    0           0       0       0       0
     0.38    0       0       0       0       0.35    0.93    0.37        0       0       0       0
-    0       0.32    0       0       0.35    0       0       0.28        0       0       0       0  
-    0.58    0       0.4     0.52    0.93    0       0       0           0       0       0       0       
+    0       0.32    0       0       0.35    0       0       0.28        0       0       0       0
+    0.58    0       0.4     0.52    0.93    0       0       0           0       0       0       0
     0.16    0.19    0.34    0       0.37    0.28    0       0           0       0       0       0
     0       0       0       0       0       0       0       0           0       1       5       6
     0       0       0       0       0       0       0       0           1       0       4       10
     0       0       0       0       0       0       0       0           5       4       0       3
-    0       0       0       0       0       0       0       0           6       10      3       0       
+    0       0       0       0       0       0       0       0           6       10      3       0
 ]
 
 gd = SimpleGraph(distmx_third)
 
-vec3 = Vector{Edge}([Edge(1, 8), Edge(2, 8), Edge(3, 4), 
-                    Edge(5, 6), Edge(6, 8), Edge(3, 7), 
+vec3 = Vector{Edge}([Edge(1, 8), Edge(2, 8), Edge(3, 4),
+                    Edge(5, 6), Edge(6, 8), Edge(3, 7),
                     Edge(9, 10), Edge(11,12),
                     Edge(1, 3), Edge(10,11)])
 weight_vec3 = sum(distmx_third[src(e),dst(e)] for e in vec3)
 
 max_vec3 = Vector{Edge}([Edge(1, 7), Edge(2, 3), Edge(3, 7),
-                        Edge(4, 7), Edge(5, 7), Edge(5, 6), 
+                        Edge(4, 7), Edge(5, 7), Edge(5, 6),
                         Edge(5, 8), Edge(9,12), Edge(10,12), Edge(9,11)])
 weight_max_vec3 = sum(distmx_third[src(e),dst(e)] for e in max_vec3)
 

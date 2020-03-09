@@ -53,38 +53,38 @@
     end
 
     function iscompletemultipartite(g, partitions)
-      sum(partitions) != nv(g) && return false
-      n = nv(g)
+        sum(partitions) != nv(g) && return false
+        n = nv(g)
 
-      edges = 0
-      for p in partitions
-        edges += p*(Int(n)-p)
-      end
-      edges = div(edges, 2)
-
-      edges != ne(g) && return false
-
-      cur = 1
-      for p in partitions
-        currange = cur:(cur+p-1)
-        lowerrange = 1:(cur-1)
-        upperrange = (cur+p):n
-        for u in currange
-          for v in currange # check that no vertices are connected to vertices in the same partition
-            has_edge(g, u, v) && return false
-          end
-
-          for v in lowerrange # check all lower partition vertices
-            !has_edge(g, u, v) && return false
-          end
-
-          for v in upperrange # check all higher partition vertices
-            !has_edge(g, u, v) && return false
-          end
+        edges = 0
+        for p in partitions
+            edges += p*(Int(n)-p)
         end
-        cur += p
-      end
-      return true
+        edges = div(edges, 2)
+
+        edges != ne(g) && return false
+
+        cur = 1
+        for p in partitions
+            currange = cur:(cur+p-1)
+            lowerrange = 1:(cur-1)
+            upperrange = (cur+p):n
+            for u in currange
+                for v in currange # check that no vertices are connected to vertices in the same partition
+                    has_edge(g, u, v) && return false
+                end
+
+                for v in lowerrange # check all lower partition vertices
+                    !has_edge(g, u, v) && return false
+                end
+
+                for v in upperrange # check all higher partition vertices
+                    !has_edge(g, u, v) && return false
+                end
+            end
+            cur += p
+        end
+        return true
     end
 
     @testset "Multipartite Graphs" begin
@@ -119,16 +119,16 @@
     end
 
     function retrievepartitions(n, r)
-      partitions = partitions = Vector{Int}(undef, r)
-      c = cld(n,r)
-      f = fld(n,r)
-      for i in 1:(n%r)
-        partitions[i] = c
-      end
-      for i in ((n%r)+1):r
-        partitions[i] = f
-      end
-      return partitions
+        partitions = partitions = Vector{Int}(undef, r)
+        c = cld(n,r)
+        f = fld(n,r)
+        for i in 1:(n%r)
+            partitions[i] = c
+        end
+        for i in ((n%r)+1):r
+            partitions[i] = f
+        end
+        return partitions
     end
 
     @testset "Turan Graphs" begin
@@ -383,16 +383,16 @@
     end
 
     function isladdergraph(g)
-      n = nv(g)÷2
-      !(degree(g, 1) == degree(g, n) == degree(g, n+1) == degree(g, 2*n) == 2) && return false
-      !(has_edge(g, 1, n+1) && has_edge(g, n, 2*n)) && return false
-      !(has_edge(g, 1, 2) && has_edge(g, n, n-1) && has_edge(g, n+1, n+2) && has_edge(g, 2*n, 2*n-1) ) && return false
-      for i in 2:(n-1)
-        !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
-        !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
-        !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
-      end
-      return true
+        n = nv(g)÷2
+        !(degree(g, 1) == degree(g, n) == degree(g, n+1) == degree(g, 2*n) == 2) && return false
+        !(has_edge(g, 1, n+1) && has_edge(g, n, 2*n)) && return false
+        !(has_edge(g, 1, 2) && has_edge(g, n, n-1) && has_edge(g, n+1, n+2) && has_edge(g, 2*n, 2*n-1) ) && return false
+        for i in 2:(n-1)
+            !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
+            !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
+            !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
+        end
+        return true
     end
 
     @testset "Ladder Graphs" begin
@@ -416,13 +416,13 @@
     end
 
     function iscircularladdergraph(g)
-      n = nv(g)÷2
-      for i in 1:n
-        !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
-        !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
-        !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
-      end
-      return true
+        n = nv(g) ÷ 2
+        for i in 1:n
+            !(degree(g, i) == 3 && degree(g, n+i) == 3) && return false
+            !(has_edge(g, i, i%n +1) && has_edge(g, i, i+n)) && return false
+            !(has_edge(g, n+i,n+(i%n +1)) && has_edge(g, n+i, i)) && return false
+        end
+        return true
     end
 
     @testset "Circular Ladder Graphs" begin
@@ -449,22 +449,22 @@
     # checking that the nodes are organized correctly
     # see the docstring implementation notes for lollipop_graph
     function isbarbellgraph(g, n1, n2)
-      nv(g) != n1+n2 && return false
-      ne(g) != n1*(n1-1)÷2+n2*(n2-1)÷2 +1 && return false
-      for i in 1:n1
-        for j in (i+1):n1
-          !has_edge(g, i, j) && return false
+        nv(g) != n1 + n2 && return false
+        ne(g) != n1 * (n1 - 1) ÷ 2 + n2 * (n2 - 1) ÷2 +1 && return false
+        for i in 1:n1
+            for j in (i + 1):n1
+                !has_edge(g, i, j) && return false
+            end
         end
-      end
 
-      for i in n1 .+ 1:n2
-        for j in (i+1):(n1+n2)
-          !has_edge(g, i, j) && return false
+        for i in n1 .+ 1:n2
+            for j in (i+1):(n1+n2)
+                !has_edge(g, i, j) && return false
+            end
         end
-      end
 
-      !has_edge(g, n1, n1+1) && return false
-      return true
+        !has_edge(g, n1, n1+1) && return false
+        return true
     end
 
     @testset "Barbell Graphs" begin
@@ -495,21 +495,21 @@
     # checking that the nodes are organized correctly
     # see the docstring implementation notes for lollipop_graph
     function islollipopgraph(g, n1, n2)
-      nv(g) != n1+n2 && return false
-      ne(g) != n1*(n1-1)÷2+n2 && return false
-      for i in 1:n1
-        for j in (i+1):n1
-          !has_edge(g, i, j) && return false
+        nv(g) != n1+n2 && return false
+        ne(g) != n1*(n1-1)÷2+n2 && return false
+        for i in 1:n1
+            for j in (i+1):n1
+                !has_edge(g, i, j) && return false
+            end
         end
-      end
 
-      for i in n1 .+ 1:(n2-1)
-        !has_edge(g, i, i+1) && return false
-      end
+        for i in n1 .+ 1:(n2-1)
+            !has_edge(g, i, i+1) && return false
+        end
 
-      !has_edge(g, n1, n1+1) && return false
+        !has_edge(g, n1, n1+1) && return false
 
-      return true
+        return true
     end
 
     @testset "Lollipop Graphs" begin
@@ -540,21 +540,19 @@
     @testset "Friendship Graphs" begin
        # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
        for n in [10, 15, 20]
-        g=friendship_graph(n)
+           g=friendship_graph(n)
 
-        @test has_self_loops(g) == false
-        @test is_directed(g) == false
-        @test indegree(g,1) == 2 * n
-        @test nv(g) == 2 * n + 1
-        for v in 2:nv(g)
-            @test indegree(g,v) == 2
-        end
+           @test has_self_loops(g) == false
+           @test is_directed(g) == false
+           @test indegree(g,1) == 2 * n
+           @test nv(g) == 2 * n + 1
+           for v in 2:nv(g)
+               @test indegree(g,v) == 2
+           end
        end
 
-
-        for n in [-5,0]
-            g=friendship_graph(n)
-            @test nv(g)==1
-       end
-   end
-end
+       for n in [-5,0]
+           g=friendship_graph(n)
+           @test nv(g)==1
+      end
+  end

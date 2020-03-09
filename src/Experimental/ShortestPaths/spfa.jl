@@ -22,7 +22,7 @@ should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Sh
 - non-negative distance matrices / weights
 - all destinations
 """
-struct SPFA <: ShortestPathAlgorithm 
+struct SPFA <: ShortestPathAlgorithm
     maxdist::Float64
 end
 
@@ -114,4 +114,3 @@ function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg
     return false
 end
 has_negative_weight_cycle(g::AbstractGraph, ::SPFA) = false
-

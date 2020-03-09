@@ -78,7 +78,7 @@ bellman_ford_shortest_paths(
 has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
-    g::AbstractGraph{U}, 
+    g::AbstractGraph{U},
     distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
     try
@@ -133,4 +133,3 @@ end
 
 enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
 enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
-

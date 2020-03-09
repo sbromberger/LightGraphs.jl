@@ -72,7 +72,7 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
     )
     if compress !== nothing
         if !compress
-            @info("Note: the `compress` keyword is no longer supported in LightGraphs. Saving uncompressed.") 
+            @info("Note: the `compress` keyword is no longer supported in LightGraphs. Saving uncompressed.")
         else
             Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
         end
@@ -108,7 +108,7 @@ function savegraph(fn::AbstractString, d::Dict{T,U},
     compress === nothing ||
     Base.depwarn("Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
         io = open(fn, "w")
-    
+
     try
         return savegraph(io, d, format)
     catch

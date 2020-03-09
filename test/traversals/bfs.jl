@@ -1,4 +1,3 @@
-import LightGraphs: tree
 @testset "BFS" begin
 
     g5 = SimpleDiGraph(4)
@@ -18,7 +17,7 @@ import LightGraphs: tree
             parents = bfs_parents(g, 1)
             @test length(parents) == n
             t1 = @inferred(bfs_tree(g, 1))
-            t2 = tree(parents)
+            t2 = LightGraphs.Traversals.tree(parents)
             @test t1 == t2
             @test is_directed(t2)
             @test typeof(t2) <: AbstractGraph
@@ -31,6 +30,8 @@ import LightGraphs: tree
             @test @inferred(gdistances(g, 2)) == @inferred(gdistances(g, 2; sort_alg = MergeSort)) == [1, 0, 2, 1, 2]
             @test @inferred(gdistances(g, [1, 2])) == [0, 0, 1, 1, 2]
             @test @inferred(gdistances(g, [])) == fill(typemax(eltype(g)), 5)
+            vert_lvl = zeros(eltype(g), nv(g))
+            @test gdistances(g, 2) == gdistances!(g, 2, vert_lvl)
         end
     end
 
