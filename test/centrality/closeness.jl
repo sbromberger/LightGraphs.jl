@@ -27,7 +27,7 @@
         @test z[1] == z[2] == 0.25
         @test z[3] == z[4] == z[5] == 0.0
     end
-    
+
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     a1 = SimpleGraph(adjmx1)
     for g in testgraphs(a1)

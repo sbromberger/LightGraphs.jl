@@ -1,6 +1,6 @@
 @testset "Minimal Dominating Set" begin
-  
- 
+
+
     g0 = SimpleGraph(0)
     for g in testgraphs(g0)
         for parallel in [:threads, :distributed]
@@ -28,7 +28,7 @@
             @test (length(d)== 1 || (length(d)== 4 && minimum(d) > 1 ))
         end
     end
-  
+
     g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)

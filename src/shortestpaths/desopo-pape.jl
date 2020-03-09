@@ -40,7 +40,7 @@ julia> ds.dists
  3
 ```
 """
-function desopo_pape_shortest_paths(g::AbstractGraph, 
+function desopo_pape_shortest_paths(g::AbstractGraph,
     src::Integer,
     distmx::AbstractMatrix{T} = weights(g)) where T <: Real
     U = eltype(g)
@@ -52,17 +52,17 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
     state = fill(Int8(2), nvg)
     q = U[src]
     @inbounds dists[src] = 0
-    
+
     @inbounds while !isempty(q)
         u = popfirst!(q)
         state[u] = 0
-        
+
         for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
             if (dists[v] > alt)
                 dists[v] = alt
                 parents[v] = u
-                
+
                 if state[v] == 2
                     state[v] = 1
                     push!(q, v)
@@ -73,6 +73,6 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
             end
         end
     end
-    
+
     return DEsopoPapeState{T, U}(parents, dists)
 end

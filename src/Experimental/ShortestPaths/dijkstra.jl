@@ -43,7 +43,7 @@ struct Dijkstra <: ShortestPathAlgorithm
     maxdist::Float64
 end
 
-Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64)) = 
+Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64)) =
     Dijkstra(all_paths, track_vertices, maxdist)
 
 function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
@@ -129,4 +129,3 @@ end
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
 # If we don't specify an algorithm, use dijkstra.
 shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix) = shortest_paths(g, s, distmx, Dijkstra())
-

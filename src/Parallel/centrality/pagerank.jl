@@ -1,10 +1,10 @@
 function pagerank(
-    g::AbstractGraph{U}, 
-    α=0.85, 
-    n=100::Integer, 
+    g::AbstractGraph{U},
+    α=0.85,
+    n=100::Integer,
     ϵ=1.0e-6
     ) where U <: Integer
-    
+
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
     partitions = LightGraphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
