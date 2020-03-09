@@ -1,60 +1,3 @@
-"""
-    Biconnections
-
-A state type for depth-first search that finds the biconnected components.
-"""
-mutable struct Biconnections{E <: AbstractEdge}
-    low::Vector{Int}
-    depth::Vector{Int}
-    stack::Vector{E}
-    biconnected_comps::Vector{Vector{E}}
-    id::Int
-end
-
-@traitfn function Biconnections(g::::(!IsDirected))
-    n = nv(g)
-    E = Edge{eltype(g)}
-    return Biconnections(zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0)
-end
-
-
-"""
-    visit!(g, state, u, v)
-
-Perform a DFS visit storing the depth and low-points of each vertex.
-"""
-function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Integer) where {E}
-    # E === Edge{eltype(g)}
-
-    children = 0
-    state.id += 1
-    state.depth[v] = state.id
-    state.low[v] = state.depth[v]
-
-    for w in outneighbors(g, v)
-        if state.depth[w] == 0
-            children += 1
-            push!(state.stack, E(min(v, w), max(v, w)))
-            visit!(g, state, v, w)
-            state.low[v] = min(state.low[v], state.low[w])
-
-            #Checking the root, and then the non-roots if they are articulation points
-            if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = E(0, 0)  #Invalid Edge, used for comparison only
-                st = Vector{E}()
-                while e != E(min(v, w), max(v, w))
-                    e = pop!(state.stack)
-                    push!(st, e)
-                end
-                push!(state.biconnected_comps, st)
-            end
-
-        elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, E(min(v, w), max(v, w)))
-            state.low[v] = state.depth[w]
-        end
-    end
-end
 
 """
     biconnected_components(g) -> Vector{Vector{Edge{eltype(g)}}}
@@ -84,16 +27,68 @@ julia> biconnected_components(cycle_graph(5))
 """
 function biconnected_components end
 @traitfn function biconnected_components(g::::(!IsDirected))
-    state = Biconnections(g)
-    for u in vertices(g)
-        if state.depth[u] == 0
-            visit!(g, state, u, u)
-        end
+        n = nv(g)
+        S = Array{Tuple{Int, Int}, 1}(undef,n)
+        E = Edge{eltype(g)}
+        edge_st = Vector{E}()
+        components = Vector{Vector{E}}()
+        us = one(Int)
+        idx = zero(Int)
+        low = zeros(Int, nv(g))
+        pre = zeros(Int, nv(g))
+        stack_ptr = zero(Int)
+    @inbounds for us in vertices(g)
+        pre[us] == 0 || continue
+        stack_ptr+=1
+        S[stack_ptr] = (us, 1)
 
-        if !isempty(state.stack)
-            push!(state.biconnected_comps, reverse(state.stack))
-            empty!(state.stack)
+        ptr = one(Int)
+
+        while stack_ptr > 0
+            v, _ = S[stack_ptr]
+            if ptr == 1
+                idx+=1
+                low[v] = pre[v] = idx
+            end
+
+            neighs = outneighbors(g, v)
+             while ptr <= length(neighs)
+                i = neighs[ptr]
+
+                if pre[i] ==  0
+                    push!(edge_st, E(min(i, v), max(i, v)))
+                    stack_ptr+=1
+                    S[stack_ptr] = (i, ptr+1)
+                    break
+                elseif (!(stack_ptr > 1 && i == S[stack_ptr-1][1])) && pre[i] < low[v]
+                    low[v] = pre[i]
+                    push!(edge_st, E(min(v, i), max(v, i)))
+                end
+
+                ptr += 1
+            end
+
+            if ptr > length(neighs)
+                _, ptr = S[stack_ptr]
+                stack_ptr-=1
+                if stack_ptr >= 1
+                    p, _ = S[stack_ptr]
+                   if low[v] < low[p]
+                        low[p] = low[v]
+                    elseif low[v] >= pre[p]
+                    e = E(0, 0) 
+                    st = Vector{E}()
+                    while e != E(min(p, v), max(p, v))
+                        e = pop!(edge_st)
+                        push!(st, e)
+                    end
+                    push!(components, st)
+                    end
+                end
+            else
+                ptr = 1
+            end
         end
     end
-    return state.biconnected_comps
-end
+        return components
+    end
