@@ -103,6 +103,7 @@ end
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
       
     length(state.verts) < nv(g) && throw(CycleError())
+    length(state.verts) > nv(g) && throw(TraversalError())
     
     
     return reverse!(state.verts)
