@@ -2,7 +2,7 @@ stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g); parallel=:di
 parallel == :distributed ? distr_stress_centrality(g, vs) : threaded_stress_centrality(g, vs)
 
 stress_centrality(g::AbstractGraph, k::Integer; parallel=:distributed) =
-parallel == :distributed ? distr_stress_centrality(g, sample(vertices(g), k)) : 
+parallel == :distributed ? distr_stress_centrality(g, sample(vertices(g), k)) :
 threaded_stress_centrality(g, sample(vertices(g), k))
 
 function distr_stress_centrality(g::AbstractGraph,

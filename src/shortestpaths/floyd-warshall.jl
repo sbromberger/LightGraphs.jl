@@ -57,7 +57,7 @@ function floyd_warshall_shortest_paths(
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d) 
+                ans = (dists[u, pivot] == typemax(T) ? typemax(T) : dists[u, pivot] + d)
                 if dists[u, v] > ans
                     dists[u, v] = ans
                     parents[u, v] = p

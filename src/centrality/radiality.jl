@@ -10,7 +10,7 @@ The radiality centrality ``R_u`` of a vertex ``u`` is defined as
 R_u = \\frac{D_g + 1 - \\frac{\\sum_{v∈V}d_{u,v}}{|V|-1}}{D_g}
 ``
 
-where ``D_g`` is the diameter of the graph and ``d_{u,v}`` is the 
+where ``D_g`` is the diameter of the graph and ``d_{u,v}`` is the
 length of the shortest path from ``u`` to ``v``.
 
 ### References
@@ -22,7 +22,7 @@ julia> using LightGraphs
 
 julia> radiality_centrality(star_graph(4))
 4-element Array{Float64,1}:
- 1.0               
+ 1.0
  0.6666666666666666
  0.6666666666666666
  0.6666666666666666
@@ -30,7 +30,7 @@ julia> radiality_centrality(star_graph(4))
 julia> radiality_centrality(path_graph(3))
 3-element Array{Float64,1}:
  0.75
- 1.0 
+ 1.0
  0.75
 ```
 """

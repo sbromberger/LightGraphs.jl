@@ -25,7 +25,7 @@ adjoint(d::DefaultDistance) = d
     eccentricity(g[, v][, distmx])
     eccentricity(g[, vs][, distmx])
 
-Return the eccentricity[ies] of a vertex / vertex list `v` or a set of vertices 
+Return the eccentricity[ies] of a vertex / vertex list `v` or a set of vertices
 `vs` defaulting to the entire graph. An optional matrix of edge distances may
 be supplied; if missing, edge distances default to `1`.
 
@@ -87,7 +87,7 @@ eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
 """
     diameter(eccentricities)
     diameter(g, distmx=weights(g))
-    
+
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
@@ -109,7 +109,7 @@ diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
 """
     periphery(eccentricities)
     periphery(g, distmx=weights(g))
-    
+
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is
 equal to the graph's diameter (that is, the set of vertices with the
@@ -137,13 +137,13 @@ function periphery(eccentricities::Vector)
     return filter(x -> eccentricities[x] == diam, 1:length(eccentricities))
 end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = 
+periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     periphery(eccentricity(g, distmx))
 
 """
     radius(eccentricities)
     radius(g, distmx=weights(g))
-    
+
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the minimum eccentricity of the graph.
 
@@ -165,7 +165,7 @@ radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
 """
     center(eccentricities)
     center(g, distmx=weights(g))
-    
+
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the set of all vertices whose eccentricity is equal
 to the graph's radius (that is, the set of vertices with the smallest eccentricity).
