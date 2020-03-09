@@ -27,9 +27,9 @@
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         c = @inferred(vertex_cover(g, RandomVertexCover(); seed=3))
-        @test length(c)== 4 #All except one vertex 
+        @test length(c)== 4 #All except one vertex
     end
-    
+
     g5 = path_graph(5)
     for g in testgraphs(g5)
         c = @inferred(vertex_cover(g, RandomVertexCover(); seed=3))

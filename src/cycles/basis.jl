@@ -66,7 +66,7 @@ function cycle_basis(g::AbstractSimpleGraph, root=nothing)
                     push!(used[nbr], z)
                 end
             end
-        end  
+        end
         setdiff!(gnodes,keys_pred)
         isempty(gnodes) && break
         r = pop!(gnodes)

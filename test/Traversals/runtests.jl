@@ -24,4 +24,3 @@ travtests = [
         include(tp)
     end
 end
-

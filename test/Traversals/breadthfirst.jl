@@ -68,24 +68,25 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         for (i, j) in [(1, 2), (2, 3), (2, 4), (4, 5), (3, 5)]
             add_edge!(gx, i, j)
         end
-        for g in testgraphs(gx)  
-            @test LT.has_path(g, 1, 5)
-            @test LT.has_path(g, 1, 2)
-            @test LT.has_path(g, 1, 5; exclude_vertices=[3])
-            @test LT.has_path(g, 1, 5; exclude_vertices=[4])
-            @test !LT.has_path(g, 1, 5; exclude_vertices=[3, 4])
-            @test LT.has_path(g, 5, 1)
-            @test LT.has_path(g, 5, 1; exclude_vertices=[3])
-            @test LT.has_path(g, 5, 1; exclude_vertices=[4])
-            @test !LT.has_path(g, 5, 1; exclude_vertices=[3, 4])
-            
+
+        for g in testgraphs(gx)
+            @test has_path(g, 1, 5)
+            @test has_path(g, 1, 2)
+            @test has_path(g, 1, 5; exclude_vertices=[3])
+            @test has_path(g, 1, 5; exclude_vertices=[4])
+            @test !has_path(g, 1, 5; exclude_vertices=[3, 4])
+            @test has_path(g, 5, 1)
+            @test has_path(g, 5, 1; exclude_vertices=[3])
+            @test has_path(g, 5, 1; exclude_vertices=[4])
+            @test !has_path(g, 5, 1; exclude_vertices=[3, 4])
+
             # Edge cases
-            @test !LT.has_path(g, 1, 6)
-            @test !LT.has_path(g, 6, 1)  
-            @test LT.has_path(g, 1, 1) # inseparable 
-            @test !LT.has_path(g, 1, 2; exclude_vertices=[2])
-            @test !LT.has_path(g, 1, 2; exclude_vertices=[1])
-        end 
+            @test !has_path(g, 1, 6)
+            @test !has_path(g, 6, 1)
+            @test has_path(g, 1, 1) # inseparable
+            @test !has_path(g, 1, 2; exclude_vertices=[2])
+            @test !has_path(g, 1, 2; exclude_vertices=[1])
+        end
     end
     @testset "visited_vertices" begin
         gt = binary_tree(3)

@@ -2,6 +2,8 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
+
+
 struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
@@ -23,7 +25,7 @@ function traverse_graph!(
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
-        push!(S, (us, 0))
+        push!(S, (us, 1))
         initfn!(state, us) || return false
     end
 
@@ -100,15 +102,14 @@ using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological 
 @traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))
-    for v in vertices(g)
-        state.vcolor[v] != 0 && continue
-        state.vcolor[v] = 1
-        if !traverse_graph!(g, v, alg, state)
-            throw(CycleError())
-        end
-    end
-    return reverse(state.verts)
+    state = TopoSortState(vcolor, verts, zero(T))    
+    sources = filter(x -> indegree(g, x) == 0, vertices(g))
+ 
+    traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
+      
+    length(state.verts) < nv(g) && throw(CycleError())
+    length(state.verts) > nv(g) && throw(TraversalError())
+    return reverse!(state.verts)
 end
 
 mutable struct CycleState{T<:Integer} <: TraversalState

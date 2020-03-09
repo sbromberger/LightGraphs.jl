@@ -5,7 +5,7 @@ struct RandomVertexCover end
 """
     vertex_cover(g, RandomVertexCover(); seed=-1)
 
-Find a set of vertices such that every edge in `g` has some vertex in the set as 
+Find a set of vertices such that every edge in `g` has some vertex in the set as
 atleast one of its end point.
 
 ### Implementation Notes
@@ -24,10 +24,10 @@ function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
     seed::Int=-1
-    ) where T <: Integer 
+    ) where T <: Integer
 
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error
-    nvg = nv(g)  
+    nvg = nv(g)
     in_cover = falses(nvg)
     length_cover = 0
 
@@ -42,4 +42,3 @@ function vertex_cover(
 
     return LightGraphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
-

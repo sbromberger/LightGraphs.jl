@@ -9,7 +9,7 @@
         @test y.parents == z.parents == [0, 0, 2, 3, 4]
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
     end
-        
+
     gx = path_graph(5)
     add_edge!(gx, 2, 4)
     d = ones(Int, 5, 5)
@@ -136,10 +136,10 @@
     end
 
     @testset "smallgraphs: $s" for s in [
-        :bull, :chvatal, :cubical, :desargues, 
-        :diamond, :dodecahedral, :frucht, :heawood, 
+        :bull, :chvatal, :cubical, :desargues,
+        :diamond, :dodecahedral, :frucht, :heawood,
         :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte, 
+        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
         :tetrahedral, :truncatedcube, :truncatedtetrahedron,
         :truncatedtetrahedron_dir
      ]
@@ -148,7 +148,7 @@
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
     end
-    
+
     @testset "errors" begin
         g = Graph()
         @test_throws DomainError desopo_pape_shortest_paths(g, 1)

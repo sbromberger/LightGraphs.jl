@@ -1,5 +1,5 @@
 @testset "Minimal Dominating Set" begin
- 
+
     g0 = SimpleGraph(0)
     for g in testgraphs(g0)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); seed=3))
@@ -23,7 +23,7 @@
         d = @inferred(dominating_set(g, MinimalDominatingSet(); seed=3))
         @test (length(d)== 1 || (length(d)== 4 && minimum(d) > 1 ))
     end
-    
+
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); seed=3))

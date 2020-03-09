@@ -19,11 +19,11 @@ function update_dominated!(
 
     @inbounds if !dominated[v]
         dominated[v] = true
-        if !in_dom_set[v] 
+        if !in_dom_set[v]
             degree_queue[v] -= 1
         end
         @inbounds @simd for u in neighbors(g, v)
-            if !in_dom_set[u] 
+            if !in_dom_set[u]
                 degree_queue[u] -= ifelse(in_dom_set[u], 0, 1)
             end
         end
@@ -36,9 +36,9 @@ end
 Obtain a [dominating set](https://en.wikipedia.org/wiki/Dominating_set) using a greedy heuristic.
 
 ### Implementation Notes
-A vertex is said to be dominated if it is in the dominating set or adjacent to a vertex 
+A vertex is said to be dominated if it is in the dominating set or adjacent to a vertex
 in the dominating set.
-Initialise the dominating set to an empty set and iteratively choose the vertex that would 
+Initialise the dominating set to an empty set and iteratively choose the vertex that would
 dominate the most undominated vertices.
 
 ### Performance
@@ -49,9 +49,9 @@ Approximation Factor: `ln(maximum(degree(g)))+2`
 function dominating_set(
     g::AbstractGraph{T},
     alg::DegreeDominatingSet
-    ) where T <: Integer 
+    ) where T <: Integer
 
-    nvg = nv(g)  
+    nvg = nv(g)
     in_dom_set = falses(nvg)
     dominated = falses(nvg)
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g) .+ 1))
@@ -67,6 +67,6 @@ function dominating_set(
             update_dominated!(g, degree_queue, u, dominated, in_dom_set)
         end
     end
-    
+
     return LightGraphs.findall!(in_dom_set, Vector{T}(undef, length_ds))
 end
