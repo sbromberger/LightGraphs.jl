@@ -31,7 +31,7 @@
     @testset "one cycle" for g in testgraphs(ex)
         ex_cyclebasis = cycle_basis(g)
         evaluate(ex_cyclebasis,expected_cyclebasis)
-    end    
+    end
 
     # Graph with 2 of 3 cycles forming a basis
     elist = [(1,2),(1,3),(2,3),(2,4),(3,4)]

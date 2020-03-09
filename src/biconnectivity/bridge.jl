@@ -29,7 +29,7 @@ function bridges end
     low = zeros(T, nv(g)) #keeps track of the earliest accesible time of a vertex in DFS-stack, effect of having back-edges is considered here
     pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
     bridges = Edge{T}[]   #keeps record of the bridge-edges
-    
+
     # We iterate over all vertices, and if they have already been visited (pre != 0), we don't start a DFS from that vertex.
     # The purpose is to create a DFS forest.
     @inbounds for u in vertices(g)
@@ -39,7 +39,7 @@ function bridges end
         w::T = zero(T) #children of v
         cnt::T = one(T) # keeps record of the time
         first_time = true
-        
+
         #start of DFS
         while !isempty(s) || first_time
             first_time = false
@@ -60,7 +60,7 @@ function bridges end
                 end
                 wi += 1
             end
-            
+
             # here, we're iterating of all the childen of vertex v, if unvisited, we start a DFS from that child, else we update the low[v] as the edge is a back-edge.
             while wi <= length(v_neighbors)
                 w = v_neighbors[wi]
@@ -69,7 +69,7 @@ function bridges end
                 if pre[w] == 0
                     push!(s, (wi, u, v)) # the stack states are (index of child, currently visiting vertex, parent vertex of the child)
                     #updates the value for stimulating DFS from top of the stack
-                    wi = 0 
+                    wi = 0
                     u = v
                     v = w
                     break
@@ -80,8 +80,8 @@ function bridges end
             end
             wi < 1 && continue
         end
-        
+
     end
-    
+
     return bridges
 end

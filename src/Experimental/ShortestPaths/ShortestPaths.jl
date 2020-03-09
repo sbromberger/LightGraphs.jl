@@ -14,7 +14,7 @@ import LightGraphs.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, post
 #     parallel::Bool
 #     LGEnvironment() = new(false, false)
 # end
-     
+
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
@@ -74,7 +74,7 @@ between sets of vertices in graph `g`. Depending on the algorithm specified,
 other information may be required: (e.g., a distance matrix `distmx`, and/or
 a target vertex `t`). Some algorithms will accept multiple source vertices
 `s`; algorithms that do not accept any source vertex `s` produce all-pairs
-shortest paths. 
+shortest paths.
 
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 

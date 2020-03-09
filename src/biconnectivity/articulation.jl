@@ -71,14 +71,14 @@ function articulation end
             end
             wi < 1 && continue
         end
-        
+
         if children > 1
             is_articulation_pt[u] = true
         end
     end
-    
+
     articulation_points = Vector{T}()
-    
+
     for u in findall(is_articulation_pt)
         push!(articulation_points, T(u))
     end

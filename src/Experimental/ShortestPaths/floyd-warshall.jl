@@ -57,7 +57,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydW
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (fwdists[u, pivot] == typemax(T) ? typemax(T) : fwdists[u, pivot] + d) 
+                ans = (fwdists[u, pivot] == typemax(T) ? typemax(T) : fwdists[u, pivot] + d)
                 if fwdists[u, v] > ans
                     fwdists[u, v] = ans
                     parents[u, v] = p

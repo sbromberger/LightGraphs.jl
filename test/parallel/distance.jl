@@ -25,5 +25,5 @@
         @test @inferred(LightGraphs.periphery(y)) == @inferred(Parallel.periphery(g, distmx2)) == [1]
         @test @inferred(LightGraphs.radius(y)) == @inferred(Parallel.radius(g, distmx2)) == 4.2
         @test @inferred(LightGraphs.center(y)) == @inferred(Parallel.center(g, distmx2)) == [2]
-    end    
+    end
 end

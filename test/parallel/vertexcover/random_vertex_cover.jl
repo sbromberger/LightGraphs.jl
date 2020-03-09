@@ -31,12 +31,12 @@
             @test (length(c)== 2 && (c[1] == 1 || c[2] == 1))
         end
     end
-    
+
     g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)
             c = @inferred(Parallel.vertex_cover(g, 4, RandomVertexCover(); parallel=parallel))
-            @test length(c)== 4 #All except one vertex 
+            @test length(c)== 4 #All except one vertex
         end
     end
 

@@ -17,17 +17,17 @@
         z = @inferred(independent_set(g, MaximalIndependentSet(); seed=3))
         isempty(z)
     end
-  
+
     g3 = star_graph(5)
     for g in testgraphs(g3)
         z = @inferred(independent_set(g, MaximalIndependentSet(); seed=3))
         @test (length(z)== 1 || length(z)== 4)
     end
-    
+
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         z = @inferred(independent_set(g, MaximalIndependentSet(); seed=3))
-        @test length(z)== 1 #Exactly one vertex 
+        @test length(z)== 1 #Exactly one vertex
     end
 
     g5 = path_graph(5)

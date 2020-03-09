@@ -188,4 +188,3 @@ function normalized_cut(g::AbstractGraph,
 
     return _recursive_normalized_cut(W, thres, num_cuts)
 end
-
