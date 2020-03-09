@@ -2,7 +2,7 @@
 
 
     g0 = SimpleGraph(0)
-    for parallel in [:threads, :distributed]    
+    for parallel in [:threads, :distributed]
         for g in testgraphs(g0)
             z = @inferred(Parallel.independent_set(g, 4, MaximalIndependentSet(); parallel=parallel))
             @test isempty(z)
@@ -24,7 +24,7 @@
             isempty(z)
         end
     end
-      
+
     g3 = star_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g3)
@@ -32,12 +32,12 @@
             @test (length(z)== 1 || length(z)== 4)
         end
     end
-    
+
     g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)
             z = @inferred(Parallel.independent_set(g, 4, MaximalIndependentSet(); parallel=parallel))
-            @test length(z)== 1 #Exactly one vertex 
+            @test length(z)== 1 #Exactly one vertex
         end
     end
 

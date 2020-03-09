@@ -120,7 +120,7 @@ function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where T <: Integer where U <
 
     g = SimpleDiGraph(T(dima))
     @inbounds for i in findall(adjmx .!= zero(U))
-        add_edge!(g, i[1], i[2])    
+        add_edge!(g, i[1], i[2])
     end
     return g
 end
@@ -214,9 +214,9 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integ
     nvg = zero(T)
     @inbounds(
     for e in edge_list
-        nvg = max(nvg, src(e), dst(e)) 
+        nvg = max(nvg, src(e), dst(e))
     end)
-   
+
     list_sizes_out = ones(Int, nvg)
     list_sizes_in = ones(Int, nvg)
     degs_out = zeros(Int, nvg)
@@ -228,7 +228,7 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integ
         degs_out[s] += 1
         degs_in[d] += 1
     end)
-    
+
     fadjlist = Vector{Vector{T}}(undef, nvg)
     badjlist = Vector{Vector{T}}(undef, nvg)
     @inbounds(
@@ -241,9 +241,9 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integ
     for e in edge_list
         s, d = src(e), dst(e)
         (s >= 1 && d >= 1) || continue
-        fadjlist[s][list_sizes_out[s]] = d 
+        fadjlist[s][list_sizes_out[s]] = d
         list_sizes_out[s] += 1
-        badjlist[d][list_sizes_in[d]] = s 
+        badjlist[d][list_sizes_in[d]] = s
         list_sizes_in[d] += 1
     end)
 
@@ -286,8 +286,8 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
 
     T = eltype(e)
     g = SimpleDiGraph{T}()
-    fadjlist = Vector{Vector{T}}() 
-    badjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
+    badjlist = Vector{Vector{T}}()
 
     while next != nothing
         (e, state) = next
@@ -314,8 +314,8 @@ end
 function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
 
     g = SimpleDiGraph{T}()
-    fadjlist = Vector{Vector{T}}() 
-    badjlist = Vector{Vector{T}}() 
+    fadjlist = Vector{Vector{T}}()
+    badjlist = Vector{Vector{T}}()
 
     @inbounds(
     for e in iter
@@ -433,14 +433,14 @@ function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s] 
+    @inbounds list = g.fadjlist[s]
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) || return false   # edge not in graph
     deleteat!(list, index)
 
     g.ne -= 1
 
-    @inbounds list = g.badjlist[d] 
+    @inbounds list = g.badjlist[d]
     index = searchsortedfirst(list, s)
     deleteat!(list, index)
     return true # edge successfully removed
@@ -484,7 +484,7 @@ function rem_vertices!(g::SimpleDiGraph{T},
             end
         end
     else
-        # traverse the vertex list and replace vertices that get removed 
+        # traverse the vertex list and replace vertices that get removed
         # with the furthest one to the back that does not get removed
         i = 1
         j = length(remove)

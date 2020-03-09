@@ -29,7 +29,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
-    
+
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
     end
@@ -37,7 +37,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     #Weight transform not needed if all weights are positive.
     if type_distmx !=  LightGraphs.DefaultDistance
         for e in edges(g)
-            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
 

@@ -28,8 +28,8 @@ end
 """
 	steiner_tree(g, term_vert, distmx=weights(g))
 
-Return an approximately minimum steiner tree of connected, undirected graph `g` with positive edge 
-weights represented by `distmx` using [Approximate Steiner Tree](https://en.wikipedia.org/wiki/Steiner_tree_problem#Approximating_the_Steiner_tree). 
+Return an approximately minimum steiner tree of connected, undirected graph `g` with positive edge
+weights represented by `distmx` using [Approximate Steiner Tree](https://en.wikipedia.org/wiki/Steiner_tree_problem#Approximating_the_Steiner_tree).
 The minimum steiner tree problem involves finding a subset of edges in `g` of minimum weight such
 that all the vertices in `term_vert` are connected.
 
@@ -74,15 +74,15 @@ function steiner_tree end
         s = term_to_actual[i]
         t = term_to_actual[dst(e)]
         while s != t
-            t_next = parents[t, i] 
-            push!(expanded_mst, Edge(min(t_next, t), max(t_next, t))) 
+            t_next = parents[t, i]
+            push!(expanded_mst, Edge(min(t_next, t), max(t_next, t)))
             t = t_next
         end
     end
 
     # Compute the MST of the expanded graph
-    mst_mst_mc = kruskal_mst(SimpleGraph(expanded_mst), distmx)    
-        
+    mst_mst_mc = kruskal_mst(SimpleGraph(expanded_mst), distmx)
+
     # Remove non-terminal leaves
     return filter_non_term_leaves!(SimpleGraph(mst_mst_mc), term_to_actual)
 end

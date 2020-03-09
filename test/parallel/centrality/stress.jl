@@ -7,13 +7,13 @@
         zd = @inferred(Parallel.stress_centrality(g; parallel=:distributed))
         @test z == zd == c
         zt = @inferred(Parallel.stress_centrality(g; parallel=:threads))
-        @test z == zt == c 
+        @test z == zt == c
 
         xd = Parallel.stress_centrality(g, 3; parallel=:distributed)
         @test length(xd) == 50
         xt = Parallel.stress_centrality(g, 3; parallel=:threasd)
         @test length(xt) == 50
-        
+
         xd2 = Parallel.stress_centrality(g, collect(1:20); parallel=:distributed)
         @test length(xd2) == 50
         xt2 = Parallel.stress_centrality(g, collect(1:20); parallel=:threads)

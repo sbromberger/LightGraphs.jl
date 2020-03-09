@@ -125,7 +125,7 @@ using a DFS algorithm.
 ### Implementation Notes
 Implements Johnson's CIRCUIT function. This is a recursive version.
 Modifies the vector of cycles, when needed.
- 
+
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """

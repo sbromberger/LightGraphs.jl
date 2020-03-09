@@ -20,7 +20,7 @@
 
         for g in testdigraphs(gx)
             @test @inferred(is_cyclic(g))
-            @test_throws CycleError topological_sort(g)      
+            @test_throws CycleError topological_sort(g)
         end
 
         #graph with cycle which is reachable from the source

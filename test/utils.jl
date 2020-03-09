@@ -18,7 +18,7 @@
     end
 
     # tests if isbounded has the correct behaviour
-    bounded_int_types = [Int8, Int16, Int32, Int64, Int128, 
+    bounded_int_types = [Int8, Int16, Int32, Int64, Int128,
                          UInt8, UInt16, UInt32, UInt64, UInt128,
                          Int, Bool]
     unbounded_int_types = [BigInt, Signed, Unsigned, Integer, Union{Int8, UInt8}]
