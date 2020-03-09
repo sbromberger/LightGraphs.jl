@@ -96,7 +96,7 @@ end
 ==(e1::SimpleEdgeIter, e2::Set{SimpleEdge}) = _isequal(e1, e2)
 ==(e1::Set{SimpleEdge}, e2::SimpleEdgeIter) = _isequal(e2, e1)
 
-function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter) 
+function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     g = e1.g
     h = e2.g
     ne(g) == ne(h) || return false
@@ -111,7 +111,7 @@ function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     for i in m+1:nv(h)
         isempty(fadj(h, i)) || return false
     end
-    return true   
+    return true
 end
 
 in(e, es::SimpleEdgeIter) = has_edge(es.g, e)

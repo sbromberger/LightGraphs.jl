@@ -17,17 +17,17 @@
         c = @inferred(independent_set(g, DegreeIndependentSet()))
         @test isempty(c)
     end
-      
+
     g3 = star_graph(5)
     for g in testgraphs(g3)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
         @test sort(c) == [2, 3, 4, 5]
     end
-    
+
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
-        @test length(c)== 1 #Exactly one vertex 
+        @test length(c)== 1 #Exactly one vertex
     end
 
     #path_graph(5) with additional edge 2-5

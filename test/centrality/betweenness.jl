@@ -27,7 +27,7 @@
 
         @test @inferred(betweenness_centrality(s1)) == [0, 1, 0]
         @test @inferred(betweenness_centrality(s2)) == [0, 0.5, 0]
-
+    
         g = SimpleGraph(2)
         add_edge!(g, 1, 2)
         z = @inferred(betweenness_centrality(g; normalize=true))
@@ -35,7 +35,6 @@
         z2  = @inferred(betweenness_centrality(g, vertices(g)))
         z3  = @inferred(betweenness_centrality(g, [vertices(g);]))
         @test z == z2 == z3
-
 
         z = @inferred(betweenness_centrality(g3; normalize=false))
         @test z[1] == z[5] == 0.0

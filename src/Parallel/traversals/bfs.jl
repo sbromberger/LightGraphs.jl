@@ -95,7 +95,7 @@ function bfs_tree(g::AbstractGraph, source::T, nv::T) where T <: Integer
     next = ThreadQueue(T, nv) # Initialize threadqueue
     parents = [Atomic{T}(0) for i = 1:nv] # Create parents array
     Parallel.bfs_tree!(next, g, source, parents)
-    LightGraphs.tree([i[] for i in parents])
+    LightGraphs.Traversals.tree([i[] for i in parents])
 end
 
 function bfs_tree(g::AbstractGraph, source::T) where T <: Integer

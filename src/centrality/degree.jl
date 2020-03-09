@@ -32,7 +32,7 @@ julia> using LightGraphs
 
 julia> degree_centrality(star_graph(4))
 4-element Array{Float64,1}:
- 1.0               
+ 1.0
  0.3333333333333333
  0.3333333333333333
  0.3333333333333333

@@ -101,7 +101,7 @@ using ArnoldiMethod
         @test eigs(lapl, which=LR())[1][1] > 2.0
         @test eigs(sparse(lapl), which=SR())[1][2] > 0.0
         @test eigs(sparse(lapl), which=SR())[1][1] < 1e-7
-        
+
         lhat = NormalizedLaplacian(adjhat)
         @test eigs(lhat, which=LR())[1][1] < 2.0 + 1e-9
     end

@@ -51,7 +51,7 @@ function _karp_minimum_cycle_mean(
             jbest = j
         end
     end
-    
+
     iszero(jbest) && return U[], Inf
 
     # Backward walk from jbest

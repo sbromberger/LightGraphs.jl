@@ -10,7 +10,7 @@ The algorithm requires that all edges have different weights to correctly genera
 ### Optional Arguments
 - `minimize=true`: if set to `false`, calculate the maximum spanning tree.
 """
-function boruvka_mst end 
+function boruvka_mst end
 
 @traitfn function boruvka_mst(g::AG::(!IsDirected),
         distmx::AbstractMatrix{T} = weights(g);
@@ -23,7 +23,7 @@ function boruvka_mst end
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nv(g) - 1)
     weight = zero(T)
-    
+
     while true
         cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
         # find cheapest edge that connects two components
@@ -48,7 +48,7 @@ function boruvka_mst end
         # add cheapest edges to the tree
         for v in vertices(g)
             if cheapest[v] !== nothing
-                edge = cheapest[v]        
+                edge = cheapest[v]
                 if !in_same_set(djset, src(edge), dst(edge))
                     weight += distmx[src(edge), dst(edge)]
                     union!(djset, src(edge), dst(edge))
