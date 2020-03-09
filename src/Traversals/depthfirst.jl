@@ -148,7 +148,6 @@ end
 @traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
 
 
-
 mutable struct BiconnectionState{E <: AbstractEdge} <: AbstractTraversalState
 
     low::Vector{Int}
@@ -159,16 +158,13 @@ mutable struct BiconnectionState{E <: AbstractEdge} <: AbstractTraversalState
     up::Bool
     lastnode::Int
     lastlow::Int
-    have_children::Vector{Bool}
     parent::Vector{Int}
 end
 
 
-
-
 @inline function previsitfn!(s::BiconnectionState{E}, u) where E
-    if s.up == false
-        push!(s.have_children, false)
+    if !s.up 
+        s.up = true
         s.id+=1
         s.depth[u] = s.id
         push!(s.low,s.id)
@@ -188,7 +184,6 @@ end
 end
 
 @inline function visitfn!(s::BiconnectionState{E}, u, v) where E
-
     (v == s.parent[end] || s.depth[u] < s.depth[v]) && return true
 
     push!(s.stack, E(min(v, u), max(v, u)))
@@ -196,21 +191,16 @@ end
         s.low[end] = min(s.low[end], s.depth[v])
     else
         push!(s.parent,u)
-        s.have_children[end]|= true
         s.up = false
     end
     return true
 end
 
 @inline function postvisitfn!(s::BiconnectionState{E}, u) where E
-    if s.have_children[end] == false
-        s.up = true
-    end
-
+    
     if s.up
         s.lastnode = u
         s.lastlow = pop!(s.low)
-        pop!(s.have_children)
         pop!(s.parent)
     end
 
@@ -220,40 +210,31 @@ end
 function BiconnectionState(g)
     n = nv(g)
     E = Edge{eltype(g)}
-    return BiconnectionState(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Bool}(), Vector{Int}())
+    return BiconnectionState(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Int}())
 end
 
 
 """
     biconnected_components(g) -> Vector{Vector{Edge{eltype(g)}}}
-
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)
 of an undirected graph `g`and return a vector of vectors containing each
 biconnected component.
-
 Performance:
 Time complexity is ``\\mathcal{O}(|V|)``.
-
 # Examples
 ```jldoctest
 julia> using LightGraphs
-
 julia> biconnected_components(star_graph(5))
 4-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:
  [Edge 1 => 3]
  [Edge 1 => 4]
  [Edge 1 => 5]
  [Edge 1 => 2]
-
 julia> biconnected_components(cycle_graph(5))
 1-element Array{Array{LightGraphs.SimpleGraphs.SimpleEdge,1},1}:
  [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]
 ```
 """
-
-
-
-
 
  function biconnected_components(g::SimpleGraph)
     state = BiconnectionState(g)
