@@ -19,30 +19,30 @@
         end
 
         for g in testdigraphs(gx)
-            @test @inferred(is_cyclic(g))
-            @test_throws CycleError topological_sort(g)
+            @test @inferred(LT.is_cyclic(g))
+            @test_throws LT.CycleError LT.topological_sort(g)
         end
 
         #graph with cycle which is reachable from the source
         gt = SimpleDiGraph(3)
         add_edge!(gt, 1, 2); add_edge!(gt, 2, 3); add_edge!(gt, 3, 2)
         for g in testdigraphs(gt)
-            @test @inferred(is_cyclic(g))
-            @test_throws CycleError topological_sort(g)      
+            @test @inferred(LT.is_cyclic(g))
+            @test_throws LT.CycleError LT.topological_sort(g)      
         end
 
         #for #1337
         ge = SimpleDiGraph(3)
         add_edge!(ge, 3, 1); add_edge!(ge, 1, 2)
         for g in testdigraphs(ge)
-            @test @inferred(topological_sort(g)) == [3, 1, 2]
+            @test @inferred(LT.topological_sort(g)) == [3, 1, 2]
         end
 
         # graph with two sources
         gts = SimpleDiGraph(5)
         add_edge!(gts, 1, 2); add_edge!(gts, 2, 3); add_edge!(gts, 2, 4); add_edge!(gts, 3, 4); add_edge!(gts, 5, 3)
         for g in testdigraphs(gts)
-            @test @inferred(topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ] 
+            @test @inferred(LT.topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ] 
         end
     end
 
