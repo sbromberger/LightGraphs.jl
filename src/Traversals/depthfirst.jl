@@ -71,18 +71,18 @@ end
 # 1 = visited
 # 2 = vcolor 2
 # @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
-@inline function previsitfn!(s::TopoSortState{T}, u) where T
+function previsitfn!(s::TopoSortState{T}, u) where T
     s.w = 0
     return true
 end
-@inline function visitfn!(s::TopoSortState{T}, u, v) where T
+function visitfn!(s::TopoSortState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T
+function newvisitfn!(s::TopoSortState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::TopoSortState{T}, u) where T
+function postvisitfn!(s::TopoSortState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -119,18 +119,18 @@ mutable struct CycleState{T<:Integer} <: TraversalState
     w::T
 end
 
-@inline function previsitfn!(s::CycleState{T}, u) where T
+function previsitfn!(s::CycleState{T}, u) where T
     s.w = 0
     return true
 end
-@inline function visitfn!(s::CycleState{T}, u, v) where T
+function visitfn!(s::CycleState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T
+function newvisitfn!(s::CycleState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::CycleState{T}, u) where T
+function postvisitfn!(s::CycleState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
