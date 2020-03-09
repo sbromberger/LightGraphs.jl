@@ -15,7 +15,7 @@ should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_alg
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson <: ShortestPathAlgorithm 
+struct Johnson <: ShortestPathAlgorithm
     maxdist::Float64
 end
 
@@ -39,7 +39,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, alg::Joh
     #Weight transform not needed if all weights are positive.
     if type_distmx !=  LightGraphs.DefaultDistance
         for e in edges(g)
-            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
 

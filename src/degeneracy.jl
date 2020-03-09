@@ -37,7 +37,7 @@ julia> core_number(g)
 """
 function core_number(g::AbstractGraph{T}) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
-    n = nv(g)    
+    n = nv(g)
     deg = T.(degree(g)) # this will contain core number for each vertex of graph
     maxdeg = maximum(deg) # maximum degree of a vertex in graph
     bin = zeros(T, maxdeg+1) # used for bin-sort and storing starting positions of bins
@@ -48,7 +48,7 @@ function core_number(g::AbstractGraph{T}) where T
     for v = 1:n
         bin[deg[v]+1] += one(T)
     end
-    # from bin sizes determine starting positions of bins in array vert 
+    # from bin sizes determine starting positions of bins in array vert
     start = one(T)
     for d = zero(T):maxdeg
         num = bin[d+1]
@@ -132,7 +132,7 @@ julia> k_core(g, 2)
  2
  3
  4
- 5    
+ 5
 ```
 """
 function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
@@ -200,7 +200,7 @@ end
 """
     k_crust(g[, k]; corenum=core_number(g))
 
-Return a vector of vertices in the k-crust of `g`. 
+Return a vector of vertices in the k-crust of `g`.
 If `k` is not specified, return the crust of the core with
 the largest degree.
 
@@ -257,7 +257,7 @@ end
 """
     k_corona(g, k; corenum=core_number(g))
 
-Return a vector of vertices in the k-corona of `g`. 
+Return a vector of vertices in the k-corona of `g`.
 
 The k-corona is the subgraph of vertices in the [`k-core`](@ref k_core) which
 have exactly `k` neighbors in the k-core.

@@ -13,7 +13,7 @@ penalty.
 but no distance matrix is specified.
 
 ### Optional Fields
-`maxdist::Int64` (default: `typemax(Int64)`) specifies the maximum path distance, in terms of number of edges, 
+`maxdist::Int64` (default: `typemax(Int64)`) specifies the maximum path distance, in terms of number of edges,
 beyond which all path distances are assumed to be infinite (that is, they do not exist).
 
 ### Implementation Notes
@@ -29,7 +29,7 @@ end
 BFS(; traversal=Traversals.BreadthFirst(), maxdist=typemax(Int64)) = BFS(traversal, maxdist)
 BFS(a::Base.Sort.Algorithm; maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(sort_alg=a), maxdist)
 
-mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
+mutable struct BFSSPState{U} <: Traversals.TraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
@@ -40,7 +40,7 @@ end
     s.dists[u] = 0
     return true
 end
-@inline function newvisitfn!(s::BFSSPState, u, v) 
+@inline function newvisitfn!(s::BFSSPState, u, v)
     s.dists[v] = s.n_level
     s.parents[v] = u
     return true

@@ -7,9 +7,9 @@ struct ThreadedFloydWarshall <: ShortestPathAlgorithm end
 
 #Helper function used due to performance bug in @threads. 
 function _loopbody!(
-    pivot::U, 
+    pivot::U,
     nvg::U,
-    dists::Matrix{T}, 
+    dists::Matrix{T},
     parents::Matrix{U}
     ) where T<:Real where U<:Integer
     # Relax dists[u, v] = min(dists[u, v], dists[u, pivot]+dists[pivot, v]) for all u, v
@@ -18,7 +18,7 @@ function _loopbody!(
         if d != typemax(T) && v != pivot
             p = parents[pivot, v]
             @inbounds for u in one(U):nvg
-                ans = (dists[u, pivot] == typemax(T) || u == pivot ? typemax(T) : dists[u, pivot] + d) 
+                ans = (dists[u, pivot] == typemax(T) || u == pivot ? typemax(T) : dists[u, pivot] + d)
                 if dists[u, v] > ans
                     dists[u, v] = ans
                     parents[u, v] = p

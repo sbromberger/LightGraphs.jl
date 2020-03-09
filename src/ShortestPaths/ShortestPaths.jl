@@ -1,11 +1,4 @@
 module ShortestPaths
-# TODO: figure out how we keep environmental params.
-# struct LGEnvironment
-#     threaded::Bool
-#     parallel::Bool
-#     LGEnvironment() = new(false, false)
-# end
-     
 using LightGraphs
 using LightGraphs.Traversals
 import LightGraphs.Traversals: tree, parents
@@ -67,7 +60,7 @@ between sets of vertices in graph `g`. Depending on the algorithm specified,
 other information may be required: (e.g., a distance matrix `distmx`, and/or
 a target vertex `t`). Some algorithms will accept multiple source vertices
 `s`; algorithms that do not accept any source vertex `s` produce all-pairs
-shortest paths. 
+shortest paths.
 
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 

@@ -33,9 +33,9 @@ function _loop_body!(
     active::Set{U}
     ) where T<:Real where U<:Integer
 
-    
+
     prev_dists = deepcopy(dists)
-    
+
     tmp_active = collect(active)
     @threads for v in tmp_active
         prev_dist_vertex = prev_dists[v]
@@ -58,7 +58,7 @@ function _loop_body!(
 end
 
 function has_negative_edge_cycle(
-    g::AbstractGraph{U}, 
+    g::AbstractGraph{U},
     distmx::AbstractMatrix{T}
     ) where T<:Real where U<:Integer
     try

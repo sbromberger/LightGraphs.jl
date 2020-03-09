@@ -537,4 +537,3 @@
         @test_throws DomainError lollipop_graph(-1, -1)
     end
 end
-

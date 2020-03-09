@@ -59,7 +59,7 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
                 dist = distmx[u, v]
                 colormap[v] = 1
                 path_cost = cost_so_far + dist
-                if !visited[v] 
+                if !visited[v]
                     visited[v] = true
                     parents[v] = u
                     dists[v] = path_cost
@@ -82,4 +82,3 @@ paths(s::AStarResult) = [s.path]
 paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
 dists(s::AStarResult) = [[s.dist]]
 dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
-

@@ -20,7 +20,7 @@ function shortest_paths(g::AbstractGraph{U},
 #Weight transform not needed if all weights are positive.
     if type_distmx !=  LightGraphs.DefaultDistance
         for e in edges(g)
-            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
 
