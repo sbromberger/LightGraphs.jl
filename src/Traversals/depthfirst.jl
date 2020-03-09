@@ -12,9 +12,9 @@ DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::DepthFirst,
-    state::AbstractTraversalState,
+    state::TraversalState,
     ) where U<:Integer
 
     n = nv(g)
@@ -62,7 +62,7 @@ function traverse_graph!(
     return true
 end
 
-mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
+mutable struct TopoSortState{T<:Integer} <: TraversalState
     vcolor::Vector{UInt8}
     verts::Vector{T}
     w::T
@@ -71,18 +71,18 @@ end
 # 1 = visited
 # 2 = vcolor 2
 # @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
-@inline function previsitfn!(s::TopoSortState{T}, u) where T
+function previsitfn!(s::TopoSortState{T}, u) where T
     s.w = 0
     return true
 end
-@inline function visitfn!(s::TopoSortState{T}, u, v) where T
+function visitfn!(s::TopoSortState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T
+function newvisitfn!(s::TopoSortState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::TopoSortState{T}, u) where T
+function postvisitfn!(s::TopoSortState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -93,39 +93,44 @@ end
 end
 
 
-@traitfn function topological_sort(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+"""
+    topological_sort(g, alg=DepthFirst())
+
+Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed graph `g`
+using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological order.
+"""
+function topological_sort end
+
+@traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))
-    
+    state = TopoSortState(vcolor, verts, zero(T))    
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
  
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
       
     length(state.verts) < nv(g) && throw(CycleError())
     length(state.verts) > nv(g) && throw(TraversalError())
-    
-    
     return reverse!(state.verts)
 end
 
-mutable struct CycleState{T<:Integer} <: AbstractTraversalState
+mutable struct CycleState{T<:Integer} <: TraversalState
     vcolor::Vector{UInt8}
     w::T
 end
 
-@inline function previsitfn!(s::CycleState{T}, u) where T
+function previsitfn!(s::CycleState{T}, u) where T
     s.w = 0
     return true
 end
-@inline function visitfn!(s::CycleState{T}, u, v) where T
+function visitfn!(s::CycleState{T}, u, v) where T
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T
+function newvisitfn!(s::CycleState{T}, u, v) where T
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::CycleState{T}, u) where T
+function postvisitfn!(s::CycleState{T}, u) where T
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -134,15 +139,15 @@ end
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected, alg::DepthFirst=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
         state.vcolor[v] != 0 && continue
         state.vcolor[v] = 1
-        !traverse_graph!(g, v, DepthFirst(), state) && return true
+        !traverse_graph!(g, v, alg, state) && return true
     end
     return false
 end
 
-@traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
+@traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0

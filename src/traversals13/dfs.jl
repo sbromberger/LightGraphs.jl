@@ -1,4 +1,4 @@
-### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 @deprecate is_cyclic LightGraphs.Traversals.is_cyclic
 # Topological sort using DFS
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
