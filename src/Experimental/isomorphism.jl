@@ -78,7 +78,7 @@ true
 julia> has_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
-### See also 
+### See also
 [`has_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
 function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -117,7 +117,7 @@ true
 julia> has_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
-### See also 
+### See also
 [`has_induced_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
 function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -156,7 +156,7 @@ true
 julia> has_isomorph(g1, g2, vertex_relation=color_rel)
 false
 ```
-### See also 
+### See also
 [`has_induced_subgraphisomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
 function has_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -193,7 +193,7 @@ julia> count_induced_subgraphisomorph(g1, g2)
 julia> count_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1
 ```
-### See also 
+### See also
 [`count_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
 function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -232,7 +232,7 @@ julia> count_subgraphisomorph(g1, g2)
 julia> count_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 2
 ```
-### See also 
+### See also
 [`count_induced_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
 function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -272,7 +272,7 @@ julia> count_isomorph(g1, g2)
 julia> count_isomorph(g1, g2, vertex_relation=color_rel)
 0
 ```
-### See also 
+### See also
 [`count_induced_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`all_isomorph`](@ref)
 """
 function count_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -287,7 +287,7 @@ end
     all_induced_subgraphisomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
 Return all isomorphism from vertex induced subgraphs of `g1` to `g2`.
-The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
+The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
 
@@ -317,13 +317,13 @@ julia> all_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel) |> collec
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(1, 1), (2, 2)]
 ```
-### See also 
+### See also
 [`all_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`count_induced_subgraphisomorph`](@ref)
 """
 function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
                                       vertex_relation::Union{Nothing, Function}=nothing,
                                       edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    all_induced_subgraphisomorph(g1, g2, alg;  
+    all_induced_subgraphisomorph(g1, g2, alg;
         vertex_relation=vertex_relation,
         edge_relation=edge_relation)
 end
@@ -332,7 +332,7 @@ end
     all_subgraphisomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
 Return all isomorphism from  subgraphs of `g1` to `g2`.
-The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
+The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
 
@@ -364,7 +364,7 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(2, 1), (3, 2)]
 ```
-### See also 
+### See also
 [`all_induced_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref)
 """
 function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
@@ -380,7 +380,7 @@ end
     all_isomorph(g1, g2, alg::IsomorphismAlgorithm=VF2(); vertex_relation=nothing, edge_relation=nothing)
 
 Return all isomorphism from `g1` to `g2`.
-The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is 
+The isomorphisms are returned as an iterator of vectors of tuples, where the i-th vector is
 the i-th isomorphism and a tuple (u, v) in this vector means that u ∈ g1 is
 mapped to v ∈ g2.
 
@@ -402,7 +402,7 @@ julia> all_isomorph(star_graph(4), star_graph(4)) |> collect
  [(1, 1), (3, 2), (4, 3), (2, 4)]
  [(1, 1), (4, 2), (2, 3), (3, 4)]
  [(1, 1), (4, 2), (3, 3), (2, 4)]
- 
+
 julia> g1 = cycle_digraph(3); color1 = [1, 1, 2]
 julia> g2 = cycle_digraph(3); color2 = [2, 1, 1]
 julia> color_rel(u, v) = (color1[u] == color2[v])
@@ -415,7 +415,7 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 1-element Array{Array{Tuple{Int64,Int64},1},1}:
  [(3, 1), (1, 2), (2, 3)]
 ```
-### See also 
+### See also
 [`all_induced_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_isomorph`](@ref)
 """
 function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();

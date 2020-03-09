@@ -57,11 +57,11 @@ If the algorithm should look for another isomorphism, then this function should 
 Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
 “A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs”
 """
-function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem; 
-             vertex_relation::Union{Nothing, Function}=nothing, 
+function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem;
+             vertex_relation::Union{Nothing, Function}=nothing,
              edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractSimpleGraph}
     if nv(g1) < nv(g2) || (problemtype == IsomorphismProblem() && nv(g1) != nv(g2))
-        return 
+        return
     end
 
     start_state = VF2State(g1, g2)
@@ -139,7 +139,7 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
         end
         return true
     end
-    
+
 
     @inline function vf2rule_in(u, v, state::VF2State, problemtype)
         count1 = 0
@@ -171,9 +171,9 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        problemtype == IsomorphismProblem() && return count1 == count2   
+        problemtype == IsomorphismProblem() && return count1 == count2
 
-        return count1 >= count2   
+        return count1 >= count2
     end
 
     @inline function vf2rule_out(u, v, state::VF2State, problemtype)
@@ -207,9 +207,9 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        problemtype == IsomorphismProblem() && return count1 == count2   
+        problemtype == IsomorphismProblem() && return count1 == count2
 
-        return count1 >= count2   
+        return count1 >= count2
     end
 
     @inline function vf2rule_new(u, v, state::VF2State, problemtype)
@@ -243,8 +243,8 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
                 count2 += 1
             end
         end
-        problemtype == IsomorphismProblem() && return count1 == count2   
-    
+        problemtype == IsomorphismProblem() && return count1 == count2
+
         return count1 >= count2
     end
 
@@ -258,10 +258,10 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
         return u_selflooped == v_selflooped
     end
 
-    syntactic_feasability = vf2rule_pred(u, v, state, problemtype) && 
-                            vf2rule_succ(u, v, state, problemtype) && 
-                            vf2rule_in(u, v, state, problemtype)   && 
-                            vf2rule_out(u, v, state, problemtype)  && 
+    syntactic_feasability = vf2rule_pred(u, v, state, problemtype) &&
+                            vf2rule_succ(u, v, state, problemtype) &&
+                            vf2rule_in(u, v, state, problemtype)   &&
+                            vf2rule_out(u, v, state, problemtype)  &&
                             vf2rule_new(u, v, state, problemtype)  &&
                             vf2rule_self_loops(u, v, state, problemtype)
     syntactic_feasability || return false
@@ -382,8 +382,8 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
                 found_pair = true
                 if vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
                     vf2update_state!(state, u, v, depth)
-                    keepgoing = vf2match!(state, depth + 1, callback, problemtype, 
-                                          vertex_relation, edge_relation) 
+                    keepgoing = vf2match!(state, depth + 1, callback, problemtype,
+                                          vertex_relation, edge_relation)
                     keepgoing || return false
                     vf2reset_state!(state, u, v, depth)
                 end
@@ -391,7 +391,7 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
         end
     end
     found_pair && return true
-    # If that is not the case we try if there is a pair of unmatched vertices u∈G₁ v∈G₂ that 
+    # If that is not the case we try if there is a pair of unmatched vertices u∈G₁ v∈G₂ that
     # are connected  by an edge coming in from the set M(s) of already matched vertices
     v = 0
     @inbounds for j = 1:n2
@@ -407,7 +407,7 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
                 if vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
                     vf2update_state!(state, u, v, depth)
                     keepgoing = vf2match!(state, depth + 1, callback, problemtype,
-                                          vertex_relation, edge_relation) 
+                                          vertex_relation, edge_relation)
                     keepgoing || return false
                     vf2reset_state!(state, u, v, depth)
                 end
@@ -430,12 +430,12 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
                 if vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
                     vf2update_state!(state, u, v, depth)
                     keepgoing = vf2match!(state, depth + 1, callback, problemtype,
-                                          vertex_relation, edge_relation) 
+                                          vertex_relation, edge_relation)
                     keepgoing || return false
                     vf2reset_state!(state, u, v, depth)
                 end
             end
-        end    
+        end
     end
     return true
 end
@@ -511,7 +511,7 @@ function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg:
         make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
     T = Vector{Tuple{eltype(g1), eltype(g2)}}
     ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem(), 
+        vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem(),
                        vertex_relation=vertex_relation,
                        edge_relation=edge_relation)
     end
@@ -524,7 +524,7 @@ function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
     make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
     T = Vector{Tuple{eltype(g1), eltype(g2)}}
     ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem(), 
+        vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem(),
             vertex_relation=vertex_relation,
             edge_relation=edge_relation)
     end
@@ -538,7 +538,7 @@ function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
     !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
     make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
     ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, IsomorphismProblem(), 
+        vf2(make_callback(c), g1, g2, IsomorphismProblem(),
             vertex_relation=vertex_relation,
             edge_relation=edge_relation)
     end

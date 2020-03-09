@@ -4,7 +4,7 @@
 Perform [Karger Minimum Cut](https://en.wikipedia.org/wiki/Karger%27s_algorithm)
 to find the minimum cut of graph `g` with some probability of success.
 A cut is a partition of `vertices(g)` into two non-empty sets.
-The size of a cut is the number of edges crossing the two non-empty sets. 
+The size of a cut is the number of edges crossing the two non-empty sets.
 
 ### Implementation Notes
 The cut is represented by an integer array.
@@ -55,5 +55,5 @@ count((e::Edge{T})->cut[src(e)] != cut[dst(e)], edges(g))
 Find the crossing edges in a cut of graph `g` where the cut is represented
 by the integer array, `cut`.
 """
-karger_cut_edges(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer = 
+karger_cut_edges(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer =
 [e for e in edges(g) if cut[src(e)] != cut[dst(e)]]

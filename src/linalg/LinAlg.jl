@@ -72,4 +72,3 @@ include("./nonbacktracking.jl")
 
 
 end
-

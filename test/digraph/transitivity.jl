@@ -37,7 +37,7 @@
                 @test g == @inferred(transitivereduction(g))
             end
         end
-        
+
         # transitive reduction of a path is a path again
         @testset "pathgraph reduction" begin
             pathgraph = path_digraph(10)
@@ -49,7 +49,7 @@
                 @test g == @inferred(transitivereduction(gclosure))
             end
         end
-        
+
         # Transitive reduction of a complete graph should be s simple cycle
         @testset "completegraph reduction" begin
             completegraph = complete_digraph(9)
@@ -67,7 +67,7 @@
                 @test g == @inferred(transitivereduction(g))
             end
         end
-         
+
         # transitve reduction should maintain a selfloop only when selflooped==true
         @testset "selfloops reduction" begin
             selfloopgraph = SimpleDiGraph(1)
