@@ -99,6 +99,8 @@ end
 Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed graph `g`
 using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological order.
 """
+function topological_sort end
+
 @traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
