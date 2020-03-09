@@ -65,7 +65,7 @@
 
         adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
         a2 = SimpleDiGraph(adjmx2)
-        for g in testdigraphs(a2)
+        @testset "$g" for g in testdigraphs(a2)
             distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
             c2 = [0.24390243902439027,0.27027027027027023,0.1724137931034483]
             @test isapprox(betweenness_centrality(g, vertices(g), distmx2; normalize=false), [0.0,1.0,0.0])

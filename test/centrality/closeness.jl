@@ -1,5 +1,5 @@
 @testset "Closeness" begin
-    @testset "basic digraph" begin
+    @testset "digraph" begin
         g5 = SimpleDiGraph(4)
         add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
         @testset "$g" for g in testdigraphs(g5)
@@ -23,7 +23,7 @@
         end
     end
 
-    @testset "basic undirected" begin
+    @testset "undirected" begin
         g5 = SimpleGraph(5)
         add_edge!(g5, 1, 2)
         @testset "$g" for g in testgraphs(g5)

@@ -1,5 +1,5 @@
 @testset "Eigenvector" begin
-    @testset "smallgraph" begin
+    @testset "house graph" begin
         g1 = smallgraph(:house)
         @testset "$g" for g in testgraphs(g1)
             y = @inferred(eigenvector_centrality(g))
