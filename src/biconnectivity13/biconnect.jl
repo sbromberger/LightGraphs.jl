@@ -32,21 +32,22 @@ function biconnected_components end
         E = Edge{eltype(g)}
         edge_st = Vector{E}()
         components = Vector{Vector{E}}()
-        us = one(Int)
-        idx = zero(Int)
+        idx = zero(Int)      # preorder counter
         low = zeros(Int, nv(g))
         pre = zeros(Int, nv(g))
-        stack_ptr = zero(Int)
-    @inbounds for us in vertices(g)
-        pre[us] == 0 || continue
-        stack_ptr+=1
-        S[stack_ptr] = (us, 1)
+        #stack pointer to emulate what happens in function call,
+        #that will make us avoid the reallocation of push and pop vector
+        stack_ptr = zero(Int) #stack pointer to emulate what happens in function  call, that will make us avoid the reallocation of push and pop vector
 
+    @inbounds for us in vertices(g)
+        pre[us] == 0 || continue # don’t go to visited nodes again
+        stack_ptr += 1
+        S[stack_ptr] = (us, 1)
         ptr = one(Int)
 
         while stack_ptr > 0
             v, _ = S[stack_ptr]
-            if ptr == 1
+            if ptr == 1  # if ptr == 1 then we all in this node for the first time
                 idx+=1
                 low[v] = pre[v] = idx
             end
@@ -57,7 +58,7 @@ function biconnected_components end
 
                 if pre[i] ==  0
                     push!(edge_st, E(min(i, v), max(i, v)))
-                    stack_ptr+=1
+                    stack_ptr += 1
                     S[stack_ptr] = (i, ptr+1)
                     break
                 elseif (!(stack_ptr > 1 && i == S[stack_ptr-1][1])) && pre[i] < low[v]
@@ -68,15 +69,18 @@ function biconnected_components end
                 ptr += 1
             end
 
+            #if ptr > length(neighs) then i finished my processing
+            # and will return to my parent, else i will go to new node
+
             if ptr > length(neighs)
                 _, ptr = S[stack_ptr]
-                stack_ptr-=1
+                stack_ptr -= 1
                 if stack_ptr >= 1
-                    p, _ = S[stack_ptr]
+                    p, _ = S[stack_ptr]   #  my parent
                    if low[v] < low[p]
                         low[p] = low[v]
-                    elseif low[v] >= pre[p]
-                    e = E(0, 0) 
+                    elseif low[v] >= pre[p] # find if my parent is an articulation point
+                    e = E(0, 0) #Invalid Edge, used for comparison only
                     st = Vector{E}()
                     while e != E(min(p, v), max(p, v))
                         e = pop!(edge_st)
