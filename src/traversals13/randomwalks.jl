@@ -1,5 +1,5 @@
 # TODO 2.0.0: Remove this file
-function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
+function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where {T, AG <: AbstractGraph{T}}
     Base.depwarn("`randomwalk` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.walk`.", :randomwalk)
     rng = LightGraphs.getRNG(seed)
     LightGraphs.Traversals.walk(g, s, LightGraphs.Traversals.RandomWalk(false, niter, rng))
