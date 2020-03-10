@@ -152,7 +152,7 @@ end
 
 
 
-mutable struct BiconnectionState{E <: AbstractEdge} <: AbstractTraversalState
+mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
 
     low::Vector{Int}
     depth::Vector{Int}
