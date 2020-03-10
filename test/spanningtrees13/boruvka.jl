@@ -15,7 +15,7 @@ cost_mst = sum(distmx[src(e),dst(e)] for e in vec_mst)
 max_vec_mst = Vector{Edge}([Edge(1, 4), Edge(2, 4), Edge(1, 3)])
 cost_max_vec_mst = sum(distmx[src(e),dst(e)] for e in max_vec_mst)
 
-for g in testgraphs(g4)
+@testset "$g" for g in testgraphs(g4)
 # Testing Boruvka's algorithm
     res1 = boruvka_mst(g,distmx)
     g1t = SimpleGraph(res1.mst)
@@ -51,7 +51,7 @@ weight_vec2 = sum(distmx_sec[src(e),dst(e)] for e in vec2)
 max_vec2 = Vector{Edge}([Edge(1, 7), Edge(2, 3), Edge(3, 7), Edge(4, 7), Edge(5, 7), Edge(5, 6), Edge(5, 8)])
 weight_max_vec2 = sum(distmx_sec[src(e),dst(e)] for e in max_vec2)
 
-for g in testgraphs(gx)
+@testset "$g" for g in testgraphs(gx)
 
     res3 = boruvka_mst(g, distmx_sec)
     g3t = SimpleGraph(res3.mst)
@@ -98,7 +98,7 @@ max_vec3 = Vector{Edge}([Edge(1, 7), Edge(2, 3), Edge(3, 7),
 weight_max_vec3 = sum(distmx_third[src(e),dst(e)] for e in max_vec3)
 
 
-for g in testgraphs(gd)
+@testset "$g" for g in testgraphs(gd)
 
     res5 = boruvka_mst(g, distmx_third)
     g5t = SimpleGraph(res5.mst)
