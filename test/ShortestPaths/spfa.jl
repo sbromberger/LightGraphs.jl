@@ -1,11 +1,11 @@
-    @testset "SPFA" begin
+    @testset "ShortestPaths.SPFA" begin
         @testset "Generic tests for graphs" begin
             g4 = path_digraph(5)
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
             for g in testdigraphs(g4)
-                y = @inferred(shortest_paths(g, 2, d1, SPFA()))
-                @test y.dists == [Inf, 0, 6, 17, 33]
+                y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.SPFA()))
+                @test Traversals.dists(y) == [Inf, 0, 6, 17, 33]
             end
 
             @testset "Graph with cycle" begin
@@ -14,8 +14,8 @@
                 d = ones(Int, 5, 5)
                 d[2, 3] = 100
                 for g in testgraphs(gx)
-                    z = @inferred(shortest_paths(g, 1, d, SPFA()))
-                    @test z.dists == [0, 1, 3, 2, 3]
+                    z = @inferred(ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA()))
+                    @test Traversals.dists(z) == [0, 1, 3, 2, 3]
                 end
             end
 
@@ -29,8 +29,8 @@
             add_edge!(G, 4, 5)
 
             for g in testgraphs(G)
-                y = @inferred(shortest_paths(g, 1, m, SPFA()))
-                @test y.dists == [0, 2, 2, 3, 4]
+                y = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.SPFA()))
+                @test Traversals.dists(y) == [0, 2, 2, 3, 4]
             end
         end
 
@@ -45,9 +45,9 @@
             add_edge!(G, 4, 5)
             m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
             for g in testgraphs(G)
-                z = @inferred(shortest_paths(g, 1 , m, SPFA()))
-                y = @inferred(shortest_paths(g, 1, m, Dijkstra()))
-                @test isapprox(z.dists, y.dists)
+                z = @inferred(ShortestPaths.shortest_paths(g, 1 , m, ShortestPaths.SPFA()))
+                y = @inferred(ShortestPaths.shortest_paths(g, 1, m,ShortestPaths.Dijkstra()))
+                @test isapprox(Traversals.dists(z), Traversals.dists(y))
             end
         end
 
@@ -58,8 +58,8 @@
             add_edge!(G, 4, 5)
             inf = typemax(eltype(G))
             for g in testgraphs(G)
-                z = @inferred(shortest_paths(g, 1, SPFA()))
-                @test z.dists == [0, 1, 1, inf, inf]
+                z = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA()))
+                @test Traversals.dists(z) == [0, 1, 1, inf, inf]
             end
         end
 
@@ -67,8 +67,8 @@
             G = SimpleGraph(3)
             inf = typemax(eltype(G))
             for g in testgraphs(G)
-                z = @inferred(shortest_paths(g, 1, SPFA()))
-                @test z.dists == [0, inf, inf]
+                z = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA()))
+                @test Traversals.dists(z) == [0, inf, inf]
             end
         end
 
@@ -79,9 +79,9 @@
                     neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                     seed = Int(floor(100*rand()))
                     g = SimpleGraph(nvg, neg; seed = seed)
-                    z = shortest_paths(g, 1, SPFA())
-                    y = shortest_paths(g, 1, Dijkstra())
-                    @test isapprox(z.dists, y.dists)
+                    z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
+                    y = ShortestPaths.shortest_paths(g, 1,ShortestPaths.Dijkstra())
+                    @test isapprox(Traversals.dists(z), Traversals.dists(y))
                 end
             end
 
@@ -91,53 +91,20 @@
                     neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                     seed = Int(floor(100*rand()))
                     g = SimpleDiGraph(nvg, neg; seed = seed)
-                    z = shortest_paths(g, 1, SPFA())
-                    y = shortest_paths(g, 1, Dijkstra())
-                    @test isapprox(z.dists, y.dists)
+                    z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
+                    y = ShortestPaths.shortest_paths(g, 1,ShortestPaths.Dijkstra())
+                    @test isapprox(Traversals.dists(z), Traversals.dists(y))
                 end
             end
         end
 
         @testset "Different types of graph" begin
-            G = complete_graph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = complete_digraph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = cycle_graph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = cycle_digraph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = star_graph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = wheel_graph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = roach_graph(9)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
-
-            G = clique_graph(5, 19)
-            z = shortest_paths(G, 1, SPFA())
-            y = shortest_paths(G, 1, Dijkstra())
-            @test isapprox(z.dists, y.dists)
+            for G in [complete_graph(9), complete_digraph(9), cycle_graph(9), cycle_digraph(9),
+                      star_graph(9), wheel_graph(9), roach_graph(9), clique_graph(5, 19) ]
+                z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
+                y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
+                @test isapprox(Traversals.dists(z), Traversals.dists(y))
+            end
 
             @testset "Small Graphs" begin
                 for s in [:bull, :chvatal, :cubical, :desargues,
@@ -146,9 +113,9 @@
                           :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
                           :tetrahedral, :truncatedcube, :truncatedtetrahedron, :truncatedtetrahedron_dir]
                     G = smallgraph(s)
-                    z = shortest_paths(G, 1, SPFA())
-                    y = shortest_paths(G, 1, Dijkstra())
-                    @test isapprox(z.dists, y.dists)
+                    z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
+                    y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
+                    @test isapprox(Traversals.dists(z), Traversals.dists(y))
                 end
             end
         end
@@ -159,19 +126,19 @@
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
             d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
             for g in testdigraphs(g4)
-                y = @inferred(shortest_paths(g, 2, d1, SPFA()))
-                z = @inferred(shortest_paths(g, 2, d2, SPFA()))
-                @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-                @test @inferred(!has_negative_weight_cycle(g, SPFA()))
-                @test @inferred(!has_negative_weight_cycle(g, d1, SPFA()))
+                y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.SPFA()))
+                z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.SPFA()))
+                @test Traversals.dists(y) == Traversals.dists(z) == [Inf, 0, 6, 17, 33]
+                @test @inferred(!ShortestPaths.has_negative_weight_cycle(g, ShortestPaths.SPFA()))
+                @test @inferred(!ShortestPaths.has_negative_weight_cycle(g, d1, ShortestPaths.SPFA()))
 
 
-                y = @inferred(shortest_paths(g, 2, d1, SPFA()))
-                z = @inferred(shortest_paths(g, 2, d2, SPFA()))
-                @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
-                @test @inferred(!has_negative_weight_cycle(g, SPFA()))
-                z = @inferred(shortest_paths(g, 2, SPFA()))
-                @test z.dists == [typemax(Int), 0, 1, 2, 3]
+                y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.SPFA()))
+                z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.SPFA()))
+                @test Traversals.dists(y) == Traversals.dists(z) == [Inf, 0, 6, 17, 33]
+                @test @inferred(!ShortestPaths.has_negative_weight_cycle(g, ShortestPaths.SPFA()))
+                z = @inferred(ShortestPaths.shortest_paths(g, 2, ShortestPaths.SPFA()))
+                @test Traversals.dists(z) == [typemax(Int), 0, 1, 2, 3]
             end
         end
 
@@ -181,20 +148,20 @@
             gx = complete_graph(3)
             for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_weight_cycle(g, d, SPFA())
+                @test_throws ShortestPaths.NegativeCycleError ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA())
+                @test ShortestPaths.has_negative_weight_cycle(g, d, ShortestPaths.SPFA())
 
                 d = [1 -1 1; -1 1 1; 1 1 1]
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_weight_cycle(g, d, SPFA())
+                @test_throws ShortestPaths.NegativeCycleError ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA())
+                @test ShortestPaths.has_negative_weight_cycle(g, d, ShortestPaths.SPFA())
             end
 
             # Negative cycle of length 3 in graph of diameter 4
             gx = complete_graph(4)
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
             for g in testgraphs(gx)
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
-                @test has_negative_weight_cycle(g, d, SPFA())
+                @test_throws ShortestPaths.NegativeCycleError ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA())
+                @test ShortestPaths.has_negative_weight_cycle(g, d, ShortestPaths.SPFA())
             end
         end
         
@@ -204,8 +171,8 @@
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
             for g in testgraphs(G)
-                ds = @inferred(shortest_paths(G, 3, m, SPFA(maxdist=3)))
-                @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+                ds = @inferred(ShortestPaths.shortest_paths(G, 3, m, ShortestPaths.SPFA(maxdist=3)))
+                @test Traversals.dists(ds) == [2, 1, 0, Inf, Inf, 3]
             end
         end 
     end

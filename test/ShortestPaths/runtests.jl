@@ -10,14 +10,20 @@ end
 const sptestdir = dirname(@__FILE__)
 
 sptests = [
-    "astar.jl"
-    "bellman-ford.jl"
-    "bfs.jl"
-    "desopo-pape.jl"
-    "dijkstra.jl"
-    "floyd-warshall.jl"
-    "johnson.jl"
-    "spfa.jl"
+
+include("astar.jl")
+include("bellman-ford.jl")
+include("bfs.jl")
+include("desopo-pape.jl")
+include("dijkstra.jl")
+include("distributed-dijkstra.jl")
+include("floyd-warshall.jl")
+include("johnson.jl")
+include("distributed-bellman-ford.jl")
+include("distributed-johnson.jl")
+include("spfa.jl")
+include("threaded-bfs.jl")
+include("threaded-floyd-warshall.jl")
 ]
 
 @testset "LightGraphs.ShortestPaths" begin

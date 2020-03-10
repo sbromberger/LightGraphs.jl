@@ -1,16 +1,16 @@
 """
-    struct ParallelDijkstra <: ShortestPathAlgorithm end
+    struct DistributedDijkstra <: ShortestPathAlgorithm end
 
 A struct representing a parallel implementation of the Dijkstra shortest-paths algorithm.
 """
-struct ParallelDijkstra <: ShortestPathAlgorithm end
+struct DistributedDijkstra <: ShortestPathAlgorithm end
 
 """
-    struct ParallelDijkstraResult{T, U}
+    struct DistributedDijkstraResult{T, U}
 
 A [`ShortestPathResult`](@ref) designed for parallel Dijkstra shortest paths calculation.
 """
-struct ParallelDijkstraResult{T <: Real,U <: Integer} <: ShortestPathResult
+struct DistributedDijkstraResult{T <: Real,U <: Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
     pathcounts::Matrix{U}
@@ -25,7 +25,7 @@ end
 # traversal information.
 # """
 function shortest_paths(g::AbstractGraph{U},
-    sources::AbstractVector, distmx::AbstractMatrix{T}, ::ParallelDijkstra) where {T<:Real, U}
+    sources::AbstractVector, distmx::AbstractMatrix{T}, ::DistributedDijkstra) where {T<:Real, U}
 
     n_v = nv(g)
     r_v = length(sources)
@@ -42,9 +42,9 @@ function shortest_paths(g::AbstractGraph{U},
         pathcounts[i, :] = state.pathcounts
     end
 
-    return ParallelDijkstraResult(sdata(dists), sdata(parents), sdata(pathcounts))
+    return DistributedDijkstraResult(sdata(dists), sdata(parents), sdata(pathcounts))
 end
 
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::ParallelDijkstra) = shortest_paths(g, [s], distmx, alg)
-shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::ParallelDijkstra) = shortest_paths(g, vertices(g), distmx, alg)
-shortest_paths(g::AbstractGraph, alg::ParallelDijkstra) = shortest_paths(g, vertices(g), weights(g), alg)
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DistributedDijkstra) = shortest_paths(g, [s], distmx, alg)
+shortest_paths(g::AbstractGraph, distmx::AbstractMatrix, alg::DistributedDijkstra) = shortest_paths(g, vertices(g), distmx, alg)
+shortest_paths(g::AbstractGraph, alg::DistributedDijkstra) = shortest_paths(g, vertices(g), weights(g), alg)

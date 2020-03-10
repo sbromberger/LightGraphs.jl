@@ -1,12 +1,12 @@
 """
-    struct ParallelJohnson <: ShortestPathAlgorithm end
+    struct DistributedJohnson <: ShortestPathAlgorithm end
 
 A struct representing a parallel implementation of the Johnson shortest-paths algorithm.
 """
-struct ParallelJohnson <: ShortestPathAlgorithm end
+struct DistributedJohnson <: ShortestPathAlgorithm end
 
 function shortest_paths(g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}, ::ParallelJohnson) where {T<:Real, U<:Integer}
+    distmx::AbstractMatrix{T}, ::DistributedJohnson) where {T<:Real, U<:Integer}
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -25,7 +25,7 @@ function shortest_paths(g::AbstractGraph{U},
     end
 
 
-    dijk_state = shortest_paths(g, vertices(g), distmx, ParallelDijkstra())
+    dijk_state = shortest_paths(g, vertices(g), distmx, DistributedDijkstra())
     d = dists(dijk_state)
     p = parents(dijk_state)
 
@@ -43,4 +43,4 @@ function shortest_paths(g::AbstractGraph{U},
     return JohnsonResult(p, d)
 end
 
-shortest_paths(g::AbstractGraph, alg::ParallelJohnson) = shortest_paths(g, weights(g), alg)
+shortest_paths(g::AbstractGraph, alg::DistributedJohnson) = shortest_paths(g, weights(g), alg)

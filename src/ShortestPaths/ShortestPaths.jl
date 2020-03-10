@@ -4,6 +4,9 @@ using LightGraphs.Traversals
 import LightGraphs.Traversals: tree, parents
 using DataStructures: PriorityQueue, dequeue!, enqueue!, peek
 using SparseArrays: sparse
+using Distributed: @distributed
+using Base.Threads: @threads
+using SharedArrays: SharedMatrix, sdata
 
 import Base: ==
 import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
@@ -197,22 +200,31 @@ false
 has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix) = has_negative_weight_cycle(g, distmx, BellmanFord())
 has_negative_weight_cycle(g::AbstractGraph) = false
 
+
 include("astar.jl")
 include("bellman-ford.jl")
 include("bfs.jl")
 include("desopo-pape.jl")
 include("dijkstra.jl")
+include("distributed-dijkstra.jl")
+include("distributed-johnson.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
+include("threaded-bellman-ford.jl")
+include("threaded-bfs.jl")
+include("threaded-floyd-warshall.jl")
 include("yen.jl")
 
-export ShortestPathAlgorithm, NegativeCycleError
-
-export shortest_paths, AStar, BFS, BellmanFord, DEsopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen,
-    has_negative_weight_cycle, dists, parents, tree, paths
-
-export ShortestPathResult, AStarResult, BFSResult, BellmanFordResult, DEsopoPapeResult, DijkstraResult,
-    FloydWarshallResult, JohnsonResult, SPFAResult, YenResult
-
+# TODO 2.0.0: uncomment this
+# export ShortestPathAlgorithm, NegativeCycleError
+#
+# export shortest_paths, AStar, BFS, BellmanFord, DEsopoPape, Dijkstra, FloydWarshall, Johnson, SPFA, Yen
+# export ThreadedBFS, DistributedDijkstra, DistributedJohnson, ThreadedBellmanFord
+# export has_negative_weight_cycle, dists, parents, tree, paths
+#
+# export ShortestPathResult, AStarResult, BFSResult, BellmanFordResult, DEsopoPapeResult,
+# export DijkstraResult, FloydWarshallResult, JohnsonResult, SPFAResult, YenResult
+# export DistributedDijkstraResult
+#
 end # module

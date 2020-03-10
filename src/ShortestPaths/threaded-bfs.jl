@@ -41,7 +41,7 @@ function partition_sources!(
     end
 end
 
-function _bfs_parallel_shortest_paths!(
+function _bfs_threaded_shortest_paths!(
     g::AbstractGraph{T}, 
     sources::Vector{<:Integer},
     parents::Vector{T},
@@ -127,22 +127,8 @@ function _bfs_parallel_shortest_paths!(
 end
 
 
-# """
-#     parallel_distances(g, sources; queue_segment_size=20)
-#     parallel_distances(g, source; queue_segment_size=20)
-#     
-# Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
-#
-# ### Optional Arguments
-# - `queue_segment_size = 20`: the number of vertices a thread can claim from a queue at a time.
-# For denser graphs, a smaller value of `queue_segment_size` could improve performance.
-#
-# ### References
-# - [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
-# Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
-# """
 shortest_paths(g::AbstractGraph{T}, sources::Vector{<:Integer}, alg::ThreadedBFS) where T<:Integer = 
-    _bfs_parallel_shortest_paths!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)), alg.queue_segment_size)
+    _bfs_threaded_shortest_paths!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)), alg.queue_segment_size)
 
 
 shortest_paths(g::AbstractGraph, s::Integer, alg::ThreadedBFS) = shortest_paths(g, [s], alg)
