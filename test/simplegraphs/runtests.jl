@@ -93,6 +93,7 @@ const simple_tests = [
 @testset "LightGraphs.SimpleGraphs" begin
     for t in simple_tests
         tp = joinpath(simplegraphtestdir, "$(t).jl")
+        println("Testing $(tp)")
         include(tp)
     end
 end

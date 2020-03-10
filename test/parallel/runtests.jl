@@ -26,6 +26,7 @@ tests = [
 @testset "LightGraphs.Parallel" begin
     for t in tests
         tp = joinpath(testdir, "parallel", "$(t).jl")
+        println("Testing $(tp)")
         include(tp)
     end
 end

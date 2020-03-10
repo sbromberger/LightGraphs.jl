@@ -9,6 +9,7 @@ tests = ["graphmatrices", "spectral"]
 @testset "LightGraphs.LinAlg" begin
     for t in tests
         tp = joinpath(linalgtestdir, "$(t).jl")
+        println("Testing $(tp)")
         include(tp)
     end
 end
