@@ -28,10 +28,7 @@ end
 eltype(::Type{SimpleEdgeIter{SimpleGraph{T}}}) where {T} = SimpleGraphEdge{T}
 eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
 
-@traitfn @inline function iterate(
-    eit::SimpleEdgeIter{G},
-    state = (one(eltype(eit.g)), 1),
-) where {G <: AbstractSimpleGraph; IsDirected{G}}
+@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state = (one(eltype(eit.g)), 1),) where {G <: AbstractSimpleGraph; !IsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)
@@ -57,10 +54,7 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
     return e, state
 end
 
-@traitfn @inline function iterate(
-    eit::SimpleEdgeIter{G},
-    state = (one(eltype(eit.g)), 1),
-) where {G <: AbstractSimpleGraph; IsDirected{G}}
+@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state = (one(eltype(eit.g)), 1),) where {G <: AbstractSimpleGraph; IsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)
