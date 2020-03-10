@@ -150,6 +150,7 @@ end
     return false
 end
 
+@traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
 
 
 mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
