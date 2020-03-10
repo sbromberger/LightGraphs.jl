@@ -2,7 +2,7 @@ function bellman_ford_shortest_paths(
     g::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T} = weights(g),
-) where {T <: Real} where {U <: Integer}
+) where {T<:Real} where {U<:Integer}
 
     nvg = nv(g)
     active = Set{U}()
@@ -31,7 +31,7 @@ function _loop_body!(
     dists::Vector{T},
     parents::Vector{U},
     active::Set{U},
-) where {T <: Real} where {U <: Integer}
+) where {T<:Real} where {U<:Integer}
 
     prev_dists = deepcopy(dists)
 
@@ -59,7 +59,7 @@ end
 function has_negative_edge_cycle(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
-) where {T <: Real} where {U <: Integer}
+) where {T<:Real} where {U<:Integer}
     try
         Parallel.bellman_ford_shortest_paths(g, vertices(g), distmx)
     catch e
