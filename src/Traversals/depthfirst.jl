@@ -95,6 +95,7 @@ end
 
 """
     topological_sort(g, alg=DepthFirst())
+
 Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed graph `g`
 using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological order.
 """
@@ -219,10 +220,11 @@ end
 
 """
     biconnected_components(g) -> Vector{Vector{Edge{eltype(g)}}}
+
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)
-of an undirected graph `g`and return a vector of vectors containing each
+of an undirected graph `g` and return a vector of vectors containing each
 biconnected component.
-Performance:
+### Performance
 Time complexity is ``\\mathcal{O}(|V|)``.
 # Examples
 ```jldoctest
