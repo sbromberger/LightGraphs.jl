@@ -8,10 +8,10 @@
             z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.Dijkstra()))
 
             @test ShortestPaths.parents(y) == ShortestPaths.parents(z) == [0, 0, 2, 3, 4]
-            @test ShortestPaths.dists(y) == ShortestPaths.dists(z) == [Inf, 0, 6, 17, 33]
+            @test ShortestPaths.distances(y) == ShortestPaths.distances(z) == [Inf, 0, 6, 17, 33]
 
-            y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true)))
-            z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true)))
+            y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.Dijkstra(all_paths=true)))
+            z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.Dijkstra(all_paths=true)))
             @test z.predecessors[3] == y.predecessors[3] == [2]
 
             @test @inferred(ShortestPaths.paths(z)) == ShortestPaths.paths(y)
@@ -34,7 +34,7 @@
         # can't find the original source to give the credits
         # @Beatzekatze on github
         spath(target, dijkstraStruct, source) = target == source ? target : [spath(dijkstraStruct.parents[target], dijkstraStruct, source) target]
-        sShortestPaths.paths(ds, targets, source) = [spath(i, ds, source) for i in targets]
+        ShortestPaths.paths(ds, targets, source) = [spath(i, ds, source) for i in targets]
 
         G = Graph(4)
         add_edge!(G, 2, 1)
@@ -50,7 +50,7 @@
         for g in testgraphs(G)
             ds = @inferred(ShortestPaths.shortest_paths(g, 2, w, ShortestPaths.Dijkstra()) )
           # this loop reconstructs the shortest path for vertices 1, 3 and 4
-            @test sShortestPaths.paths(ds, [1, 3, 4], 2) == Array[[2 1],
+            @test ShortestPaths.paths(ds, [1, 3, 4], 2) == Array[[2 1],
                                                 [2 3],
                                                 [2 1 4]]
 
@@ -58,7 +58,7 @@
             w[2, 2] = 10.0
             ds = @inferred(ShortestPaths.shortest_paths(g, 2, w, ShortestPaths.Dijkstra()))
           # this loop reconstructs the shortest path for vertices 1, 3 and 4
-            @test sShortestPaths.paths(ds, [1, 3, 4], 2) == Array[[2 1],
+            @test ShortestPaths.paths(ds, [1, 3, 4], 2) == Array[[2 1],
                                                 [2 3],
                                                 [2 1 4]]
         end
@@ -73,12 +73,12 @@
         add_edge!(G, 3, 4)
         add_edge!(G, 4, 5)
         for g in testgraphs(G)
-            ds = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true)))
+            ds = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.Dijkstra(all_paths=true)))
             @test ds.pathcounts   == [1, 1, 1, 1, 2]
             @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
             @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
 
-            dm = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true, track_vertices=true)))
+            dm = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra(all_paths=true, track_vertices=true)))
             @test dm.pathcounts       == [1, 1, 1, 1, 2]
             @test dm.predecessors     == [[], [1], [1], [3], [2, 3]]
             @test dm.closest_vertices == [1, 2, 3, 5, 4]
@@ -89,7 +89,7 @@
         add_edge!(G, 1, 3)
         add_edge!(G, 4, 5)
         for g in testgraphs(G)
-            dm = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true, track_vertices=true)))
+            dm = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra(all_paths=true, track_vertices=true)))
             @test dm.closest_vertices == [1, 2, 3, 4, 5]
         end
 

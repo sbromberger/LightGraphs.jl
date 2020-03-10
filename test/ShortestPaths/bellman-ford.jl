@@ -6,7 +6,7 @@
 	    for g in testdigraphs(g4)
             y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.BellmanFord()))
             z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.BellmanFord()))
-            @test ShortestPaths.dists(y) == ShortestPaths.dists(z) == [Inf, 0, 6, 17, 33]
+            @test ShortestPaths.distances(y) == ShortestPaths.distances(z) == [Inf, 0, 6, 17, 33]
             @test @inferred(ShortestPaths.paths(z))[2] == []
             @test @inferred(ShortestPaths.paths(z))[4] == ShortestPaths.paths(z, 4) == [2, 3, 4]
             @test @inferred(!ShortestPaths.has_negative_weight_cycle(g, ShortestPaths.BellmanFord()))
@@ -15,12 +15,12 @@
 
             y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.BellmanFord()))
             z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.BellmanFord()))
-            @test Traversals.dists(y) == Traversals.dists(z) == [Inf, 0, 6, 17, 33]
+            @test ShortestPaths.distances(y) == ShortestPaths.distances(z) == [Inf, 0, 6, 17, 33]
             @test @inferred(ShortestPaths.paths(z))[2] == []
             @test @inferred(ShortestPaths.paths(z))[4] == ShortestPaths.paths(z, 4) == [2, 3, 4]
             @test @inferred(!ShortestPaths.has_negative_weight_cycle(g, ShortestPaths.BellmanFord()))
             z = @inferred(ShortestPaths.shortest_paths(g, 2, ShortestPaths.BellmanFord()))
-            @test Traversals.dists(z) == [typemax(Int), 0, 1, 2, 3]
+            @test ShortestPaths.distances(z) == [typemax(Int), 0, 1, 2, 3]
         end
 
         # Negative Cycle

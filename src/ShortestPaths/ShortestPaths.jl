@@ -1,11 +1,11 @@
 module ShortestPaths
 using LightGraphs
 using LightGraphs.Traversals
-import LightGraphs.Traversals: tree, parents
+import LightGraphs.Traversals: tree, parents, distances
 using DataStructures: PriorityQueue, dequeue!, enqueue!, peek
 using SparseArrays: sparse
 using Distributed: @distributed
-using Base.Threads: @threads
+using Base.Threads: @threads, nthreads
 using SharedArrays: SharedMatrix, sdata
 
 import Base: ==
@@ -23,13 +23,13 @@ results of a shortest-path calculation using a specific
 [`ShortestPathAlgorithm`](@ref).
 
 In general, the fields in these structs should not be
-accessed directly; use the [`dists`](@ref) and
+accessed directly; use the [`distances`](@ref) and
 [`parents`](@ref) functions to obtain the results of the
 calculation.
 """
 abstract type ShortestPathResult <: AbstractGraphResult end
 
-==(a::T, b::T) where {T<:ShortestPathResult} = parents(a) == parents(b) && dists(a) == dists(b)
+==(a::T, b::T) where {T<:ShortestPathResult} = parents(a) == parents(b) && distances(a) == distances(b)
 
 """
     ShortestPathAlgorithm <: AbstractGraphAlgorithm
@@ -143,7 +143,7 @@ paths(result::ShortestPathResult, v::Integer) = paths(result, [v])[1]
 paths(result::ShortestPathResult) = paths(result, [1:length(parents(result));])
 
 """
-    dists(state[, v])
+    distances(state[, v])
 
 Given the output of a [`shortest_paths`](@ref) calculation of type
 [`ShortestPathResult`](@ref), return a vector (indexed by vertex)
@@ -151,11 +151,11 @@ of the distances between the source vertex used to compute the
 shortest path and a single destination vertex `v` or the entire graph.
 
 For [`ShortestPathAlgorithm`](@ref)s that compute all-pairs shortest
-paths, `dists(state)` will return a matrix (indexed by source and destination
+paths, `distances(state)` will return a matrix (indexed by source and destination
 vertices) of distances.
 """
-dists(state::ShortestPathResult, v::Integer) = state.dists[v]
-dists(state::ShortestPathResult) = state.dists
+distances(state::ShortestPathResult, v::Integer) = state.dists[v]
+distances(state::ShortestPathResult) = state.dists
 
 """
     parents(state[, v])

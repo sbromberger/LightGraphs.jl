@@ -10,11 +10,11 @@
         z  = ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, collect(1:5), d, ShortestPaths.DistributedDijkstra()))
         zp2 = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z), Traversals.dists(zp)))
-        @test all(isapprox(Traversals.dists(z), Traversals.dists(zp2)))
+        @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp)))
+        @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp2)))
 
         for i in 1:5
-            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true));
+            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true));
             for j in 1:5
                 if Traversals.parents(zp)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]
@@ -24,10 +24,10 @@
 
         z  = ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z), Traversals.dists(zp)))
+        @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp)))
 
         for i in 1:5
-            state = ShortestPaths.shortest_paths(g, i, d, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true))
+            state = ShortestPaths.shortest_paths(g, i, d, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if Traversals.parents(zp)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]
@@ -38,11 +38,11 @@
         z  = ShortestPaths.shortest_paths(g, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, [1, 2], ShortestPaths.DistributedDijkstra()))
         zp2 = @inferred(ShortestPaths.shortest_paths(g, ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z)[1:2, :], Traversals.dists(zp)))
-        @test all(isapprox(Traversals.dists(zp2)[1:2, :], Traversals.dists(zp)))
+        @test all(isapprox(ShortestPaths.distances(z)[1:2, :], ShortestPaths.distances(zp)))
+        @test all(isapprox(ShortestPaths.distances(zp2)[1:2, :], ShortestPaths.distances(zp)))
 
         for i in 1:2
-            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true))
+            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if Traversals.parents(zp)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]
@@ -50,10 +50,9 @@
             end
         end
 
-        zp = ShortestPaths.shortest_paths(g, ShortestPaths.DistributedDijkstra)
+        zp = ShortestPaths.shortest_paths(g, ShortestPaths.DistributedDijkstra())
         for i in vertices(g)
-            @test ShortestPaths.Traversals.dists(zp[i]) == ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra())
-            @test ShortestPaths.shortest_paths(g, i, ShortestPaths.DistributedDijkstra()) == ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra())
+            @test ShortestPaths.distances(ShortestPaths.shortest_paths(g, i, ShortestPaths.DistributedDijkstra()))[1,:] == ShortestPaths.distances(ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra()))
         end
 
     end
@@ -66,10 +65,10 @@
     for g in testdigraphs(g3)
         z  = ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, collect(1:5), d, ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z), Traversals.dists(zp)))
+        @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp)))
 
         for i in 1:5
-            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true))
+            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if Traversals.parents(z)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]
@@ -79,10 +78,10 @@
 
         z  = ShortestPaths.shortest_paths(g, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z), Traversals.dists(zp)))
+        @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp)))
 
         for i in 1:5
-            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true))
+            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if Traversals.parents(zp)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]
@@ -92,10 +91,10 @@
 
         z  = ShortestPaths.shortest_paths(g, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, [1, 2], ShortestPaths.DistributedDijkstra()))
-        @test all(isapprox(Traversals.dists(z)[1:2, :], Traversals.dists(zp)))
+        @test all(isapprox(ShortestPaths.distances(z)[1:2, :], ShortestPaths.distances(zp)))
 
         for i in 1:2
-            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_ShortestPaths.paths=true))
+            state = ShortestPaths.shortest_paths(g, i, ShortestPaths.Dijkstra(all_paths=true))
             for j in 1:5
                 if Traversals.parents(zp)[i, j] != 0
                     @test Traversals.parents(zp)[i, j] in state.predecessors[j]

@@ -1,4 +1,4 @@
-#### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 function floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T}=weights(g)

@@ -1,4 +1,4 @@
-#### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},

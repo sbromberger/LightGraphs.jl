@@ -80,5 +80,5 @@ end
 shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) = shortest_paths(g, s, t, weights(g), alg)
 paths(s::AStarResult) = [s.path]
 paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
-dists(s::AStarResult) = [[s.dist]]
-dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
+distances(s::AStarResult) = [[s.dist]]
+distances(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))

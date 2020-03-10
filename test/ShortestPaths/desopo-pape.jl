@@ -6,7 +6,7 @@
             y = @inferred(ShortestPaths.shortest_paths(g, 2, d1, ShortestPaths.DEsopoPape()))
             z = @inferred(ShortestPaths.shortest_paths(g, 2, d2, ShortestPaths.DEsopoPape()))
             @test y.parents == z.parents == [0, 0, 2, 3, 4]
-            @test Traversals.dists(y) == Traversals.dists(z) == [Inf, 0, 6, 17, 33]
+            @test ShortestPaths.distances(y) == ShortestPaths.distances(z) == [Inf, 0, 6, 17, 33]
         end
             
         gx = path_graph(5)
@@ -15,7 +15,7 @@
         d[2, 3] = 100
         @testset "cycles: $g" for g in testgraphs(gx)
             z = @inferred(ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.DEsopoPape()))
-            @test Traversals.dists(z) == [0, 1, 3, 2, 3]
+            @test ShortestPaths.distances(z) == [0, 1, 3, 2, 3]
             @test z.parents == [0, 1, 4, 2, 4]
         end
 
@@ -31,7 +31,7 @@
         @testset "more cycles: $g" for g in testgraphs(G)
             y = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.DEsopoPape()))
             @test y.parents == [0, 1, 1, 3, 3]
-            @test Traversals.dists(y) == [0, 2, 2, 3, 4]
+            @test ShortestPaths.distances(y) == [0, 2, 2, 3, 4]
         end
 
         G = SimpleGraph(5)
@@ -46,7 +46,7 @@
         @testset "self loops: $g" for g in testgraphs(G)
             z = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.DEsopoPape()))
             y = @inferred(ShortestPaths.shortest_paths(g, 1, m, ShortestPaths.Dijkstra()))
-            @test isapprox(Traversals.dists(z), Traversals.dists(y))
+            @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
         end
 
         G = SimpleGraph(5)
@@ -56,7 +56,7 @@
         inf = typemax(eltype(G))
         @testset "disconnected: $g" for g in testgraphs(G)
             z = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.DEsopoPape()))
-            @test Traversals.dists(z) == [0, 1, 1, inf, inf]
+            @test ShortestPaths.distances(z) == [0, 1, 1, inf, inf]
             @test z.parents == [0, 1, 1, 0, 0]
         end
 
@@ -64,7 +64,7 @@
         inf = typemax(eltype(G))
         @testset "empty: $g" for g in testgraphs(G)
             z = @inferred(ShortestPaths.shortest_paths(g, 1, ShortestPaths.DEsopoPape()))
-            @test Traversals.dists(z) == [0, inf, inf]
+            @test ShortestPaths.distances(z) == [0, inf, inf]
             @test z.parents == [0, 0, 0]
         end
         @testset "random simple graphs" begin
@@ -75,7 +75,7 @@
                 g = SimpleGraph(nvg, neg; seed = seed)
                 z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.DEsopoPape())
                 y = ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra())
-                @test isapprox(Traversals.dists(z), Traversals.dists(y))
+                @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
             end
         end
 
@@ -87,7 +87,7 @@
                 g = SimpleDiGraph(nvg, neg; seed = seed)
                 z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.DEsopoPape())
                 y = ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra())
-                @test isapprox(Traversals.dists(z), Traversals.dists(y))
+                @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
             end
         end
 
@@ -96,7 +96,7 @@
                       star_graph(9), wheel_graph(9), roach_graph(9), clique_graph(5, 19) ]
                 z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.DEsopoPape())
                 y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
-                @test isapprox(Traversals.dists(z), Traversals.dists(y))
+                @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
             end
         end
 
@@ -111,7 +111,7 @@
             G = smallgraph(s)
             z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.DEsopoPape())
             y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
-            @test Traversals.dists(isapprox(z.dists, y))
+            @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
         end
 
         @testset "maximum distance setting limits paths found" begin
@@ -121,7 +121,7 @@
 
             for g in testgraphs(G)
                 ds = @inferred(ShortestPaths.shortest_paths(G, 3, m, ShortestPaths.DEsopoPape(maxdist=3)))
-                @test Traversals.dists(ds) == [2, 1, 0, Inf, Inf, 3]
+                @test ShortestPaths.distances(ds) == [2, 1, 0, Inf, Inf, 3]
             end
         end 
         

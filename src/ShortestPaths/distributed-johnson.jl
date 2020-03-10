@@ -11,7 +11,7 @@ function shortest_paths(g::AbstractGraph{U},
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
-    wt_transform = dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
+    wt_transform = distances(shortest_paths(g, vertices(g), distmx, BellmanFord()))
 
     if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
@@ -26,7 +26,7 @@ function shortest_paths(g::AbstractGraph{U},
 
 
     dijk_state = shortest_paths(g, vertices(g), distmx, DistributedDijkstra())
-    d = dists(dijk_state)
+    d = distances(dijk_state)
     p = parents(dijk_state)
 
     broadcast!(-, d, d, wt_transform)

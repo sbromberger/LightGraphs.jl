@@ -1,4 +1,4 @@
-#### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 function a_star(g::AbstractGraph{U},  # the g
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex

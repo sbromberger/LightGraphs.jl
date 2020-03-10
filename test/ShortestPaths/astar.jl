@@ -6,18 +6,18 @@
         d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
         for g in testgraphs(g3), dg in testdigraphs(g4)
             y = @inferred(ShortestPaths.shortest_paths(g, 1, 4, d1, ShortestPaths.AStar()))
-            @test y == @inferred(ShortestPaths.shortest_paths(dg, 1, 4, d1, ShortestPaths.AStar())) ==
-                @inferred(ShortestPaths.shortest_paths(g, 1, 4, d2, ShortestPaths.AStar()))
+            @test y == @inferred(ShortestPaths.shortest_paths(dg, 1, 4, d1, ShortestPaths.AStar()))
+            @test y == @inferred(ShortestPaths.shortest_paths(g, 1, 4, d2, ShortestPaths.AStar()))
             @test ShortestPaths.paths(y) == [y.path]
             @test_throws ArgumentError ShortestPaths.paths(y, 2)
-            @test Traversals.dists(y) == [[y.dist]]
-            @test_throws ArgumentError Traversals.dists(y, 2)
-            @test_throws LightGraphs.NotImplementedError Traversals.parents(y)
+            @test ShortestPaths.distances(y) == [[y.dist]]
+            @test_throws ArgumentError ShortestPaths.distances(y, 2)
+            @test_throws LightGraphs.NotImplementedError ShortestPaths.parents(y)
 
             z = @inferred(ShortestPaths.shortest_paths(dg, 4, 1, ShortestPaths.AStar()))
             @test isempty(z.path)
             @test isempty(ShortestPaths.paths(z)[1])
-            @test Traversals.dists(z)[1] == [typemax(Int)]
+            @test ShortestPaths.distances(z)[1] == [typemax(Int)]
         end
 
         # test for #1258

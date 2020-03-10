@@ -43,7 +43,7 @@ end
 
 function _bfs_threaded_shortest_paths!(
     g::AbstractGraph{T}, 
-    sources::Vector{<:Integer},
+    sources,
     parents::Vector{T},
     vert_level::Vector{T},
     queue_segment_size::Integer
@@ -127,8 +127,8 @@ function _bfs_threaded_shortest_paths!(
 end
 
 
-shortest_paths(g::AbstractGraph{T}, sources::Vector{<:Integer}, alg::ThreadedBFS) where T<:Integer = 
-    _bfs_threaded_shortest_paths!(g, sources, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)), alg.queue_segment_size)
-
+shortest_paths(g::AbstractGraph{T}, ss::AbstractVector, alg::ThreadedBFS) where T<:Integer = 
+    _bfs_threaded_shortest_paths!(g, ss, Vector{T}(undef, nv(g)), Vector{T}(undef, nv(g)), alg.queue_segment_size)
 
 shortest_paths(g::AbstractGraph, s::Integer, alg::ThreadedBFS) = shortest_paths(g, [s], alg)
+

@@ -1,4 +1,4 @@
-#### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 DijkstraState = LightGraphs.ShortestPaths.DijkstraResult
 
 function dijkstra_shortest_paths(g::AbstractGraph,
