@@ -1,4 +1,3 @@
-abstract type Visitor{T <: Integer} end
 
 """
     ncycles_n_i(n::Integer, i::Integer)
@@ -51,38 +50,7 @@ function maxsimplecycles end
     return c
 end
 
-"""
-```
-type JohnsonVisitor{T<:Integer} <: Visitor{T}
-    stack::Vector{T}
-    blocked::BitVector
-    blockedmap::Vector{Set{T}}
-end
 
-JohnsonVisitor(dg::::IsDirected)
-
-```
-
-Composite type that regroups the information needed for Johnson's algorithm.
-
-`stack` is the stack of visited vertices. `blocked` is a boolean for each
-vertex that tells whether it is blocked or not. `blockedmap` tells which
-vertices to unblock if the key vertex is unblocked.
-
-`JohnsonVisitor` may also be constructed directly from the directed graph.
-"""
-struct JohnsonVisitor{T <: Integer} <: Visitor{T}
-    stack::Vector{T}
-    blocked::BitVector
-    blockedmap::Vector{Set{T}}
-end
-
-function JohnsonVisitor(dg)
-    # dg should be a directed graph, we had some problems with type instability and @traitfn
-    # so we removed the type check for this (Julia v1.1.0), this might change in the future.
-    T = eltype(dg)
-    return JohnsonVisitor(Vector{T}(), falses(nv(dg)), [Set{T}() for i in vertices(dg)])
-end
 
 """
     unblock!{T<:Integer}(v::T, blocked::BitVector, B::Vector{Set{T}})
@@ -94,67 +62,20 @@ not and `B` is the map that tells if the unblocking of one vertex should
 unblock other vertices.
 """
 function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Integer
+    S = Vector{T}()
     blocked[v] = false
-    for w in B[v]
-        delete!(B[v], w)
-        if blocked[w]
-            unblock!(w, blocked, B)
-        end
-    end
-end
-
-"""
-    circuit{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
-    allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T = v)
-
-Return one step of the recursive version of simple cycle detection,
-using a DFS algorithm.
-
-
-* `v`: the vertex considered in this iteration of the DFS
-* `dg`: the digraph from which cycles are computed
-* `visitor`: Informations needed for the cycle computation, contains:
-    * `stack`: the stack of parent vertices
-    * `blocked`: tells whether a vertex has already been explored or not
-    * `blockedmap`: mapping of the blocking / unblocking consequences
-* `allcycles`: output containing the cycles already detected
-* `vmap`: vector map containing the link from the old to the new nodes of the directed graph
-* `startnode = v`: optional argument giving the starting node. In the first iteration,
- the same as v, otherwise it should be passed.
-
-### Implementation Notes
-Implements Johnson's CIRCUIT function. This is a recursive version.
-Modifies the vector of cycles, when needed.
-
-### References
-- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
-"""
-function circuit end
-@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
-allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Integer
-    done = false
-    push!(vis.stack, v)
-    vis.blocked[v] = true
-    for w in outneighbors(dg, v)
-        if w == startnode
-            push!(allcycles, vmap[vis.stack])
-            done = true
-        elseif !vis.blocked[w]
-            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
-        end
-    end
-    if done
-        unblock!(v, vis.blocked, vis.blockedmap)
-    else
-        for w in outneighbors(dg, v)
-            if !in(vis.blockedmap[w], v)
-                push!(vis.blockedmap[w], v)
+    push!(S, v)
+    while !isempty(S)
+        u = pop!(S)
+        for w in B[u]
+            if blocked[w]
+                blocked[w] = false
+                push!(S, w)
             end
         end
     end
-    pop!(vis.stack)
-    return done
 end
+
 
 
 """
@@ -188,37 +109,41 @@ function simplecycles end
     T = eltype(dg)
     sccs = strongly_connected_components(dg)
     cycles = Vector{Vector{T}}()
+
+    function putoncycles(vmap)
+        function f(x)
+            push!(cycles, vmap[x])
+
+        end
+        return f
+    end
+
     for scc in sccs
         for i in 1:length(scc)
             wdg, vmap = induced_subgraph(dg, scc[i:end])
-            visitor = JohnsonVisitor(wdg)
-            circuit(T(1), wdg, visitor, cycles, vmap) # 1 is the startnode.
+            visit(wdg, T(1), putoncycles(vmap)) # 1 is the startnode.
         end
     end
     return cycles
 end
 
-
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
 """
-    circuit_iter{T<:Integer}(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
-    vmap::Vector{T}, cycle::Channel, startnode::T = v)
+visit(
+    g::SimpleDiGraph{U},
+    s::U,
+    finishfunc::Function # what to do when discover a cycle
+    )
 
 Execute one step of the recursive version of simple cycle detection, using a DFS algorithm.
 Return `true` if a circuit has been found in the current exploration.
 
 # Arguments
-* v: the vertex considered in this iteration of the DFS
-* dg: the digraph from which cycles are computed
-* visitor: Informations needed for the cycle computation, contains:
-    * stack: the stack of parent vertices
-    * blocked: tells whether a vertex has already been explored or not
-    * blockedmap: mapping of the blocking / unblocking consequences
-* `vmap`: vector map containing the link from the old to the new nodes of the directed graph
-* `cycle`: storage of the channel
-* startnode = v: optional argument giving the starting node. In the first iteration,
-the same as v, otherwise it should be passed.
+* `s` : the vertex considered in this iteration of the DFS
+* `g`: the digraph from which cycles are computed
+* `finishfunc`: the function to be executed in when discovering a cycle
+
 
 ### Implementation Notes
 Implements the CIRCUIT function from Johnson's algorithm, recursive and iterative version.
@@ -227,36 +152,63 @@ Produces a cycle when needed. Can be used only inside a `Channel`.
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
-function circuit_iter end
-@traitfn function circuit_iter(v::T,
-                               dg::::IsDirected,
-                               vis::JohnsonVisitor{T},
-                               vmap::Vector{T},
-                               cycle::Channel{Vector{T}},
-                               startnode::T=v) where T <: Integer
-    done = false
-    push!(vis.stack, v)
-    vis.blocked[v] = true
-    for w in outneighbors(dg, v)
-        if w == startnode
-            put!(cycle, vmap[vis.stack])
-            done = true
-        elseif !vis.blocked[w]
-            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
-        end
-    end
-    if done
-        unblock!(v, vis.blocked, vis.blockedmap)
-    else
-        for w in outneighbors(dg, v)
-            if !in(vis.blockedmap[w], v)
-                push!(vis.blockedmap[w], v)
+function visit(
+    g::SimpleDiGraph{U},
+    s::U,
+    finishfunc::Function # what to do when discover a cycle
+    ) where U<:Integer
+
+    n = nv(g)
+    blocked = falses(n)
+    S = Vector{Tuple{U,U,Bool}}()
+    ptr = one(U)
+    blockedmap = [Set{U}() for i in 1:n]
+
+    push!(S,(s, 1, false))
+    while !isempty(S)
+        v, _, _ = S[end]
+        neighs = outneighbors(g, v)
+        @inbounds while ptr <= length(neighs)
+            i = neighs[ptr]
+            if i == s
+                finishfunc([i[1] for i in S])
+                S[end] = (v, S[end][2], true)
+            elseif !blocked[i]  # find the first unblocked neighbor
+                blocked[i] = true
+                push!(S, (i, ptr+1, false))
+                break
             end
+            ptr += 1
+        end
+
+        # if ptr > length(neighs) then we have finished all children of the node,
+        # and the next time we pop from the stack we will be in the parent of the current
+        # node. We would like to continue from where we stoped, otherwise we have found
+        # a new unvisited child, so we will make ptr = 1
+        if ptr > length(neighs)
+            _, ptr, done = pop!(S)
+            if done
+              if length(S) >= 1
+                  p, pptr, pdone = S[end]
+                  if pdone
+                    S[end] = (p, pptr, true)
+                  end
+              end
+                unblock!(v, blocked, blockedmap)
+            else
+                for w in outneighbors(g, v)
+                    if !in(blockedmap[w], v)
+                        push!(blockedmap[w],v)
+                    end
+                end
+            end
+        else
+            ptr = 1 # we will enter new node
         end
     end
-    pop!(vis.stack)
-    return done
+    return true
 end
+
 
 
 """
@@ -274,14 +226,22 @@ after a given number of cycles.
 function itercycles end
 @traitfn function itercycles(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
     sccs = strongly_connected_components(dg)
+
+    function putoncycles(vmap)
+        function f(x)
+            push!(cycle, vmap[x])
+
+        end
+        return f
+    end
+
     for scc in sccs
-        while length(scc) >= 1
-            wdg, vmap = induced_subgraph(dg, scc)
-            popfirst!(scc)
-            visitor = JohnsonVisitor(wdg)
-            circuit_iter(T(1), wdg, visitor, vmap, cycle)
+        for i in 1:length(scc)
+            wdg, vmap = induced_subgraph(dg, scc[i:end])
+            visit(wdg, T(1), putoncycles(vmap)) # 1 is the startnode.
         end
     end
+    return cycles
 end
 
 """
