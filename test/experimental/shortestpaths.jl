@@ -7,7 +7,6 @@ function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
    return a.path == b.path && a.dist == b.dist
 end
 @testset "Shortest Paths" begin
-
     g1 = path_graph(5)
     g2 = path_digraph(5)
     s1 = shortest_paths(g1, 1) # bfs
@@ -41,18 +40,17 @@ end
         end
 
         # test for #1258
-
         g = complete_graph(4)
         w = float([1 1 1 4; 1 1 1 1; 1 1 1 1; 4 1 1 1])
         @test length(first(paths(shortest_paths(g, 1, 4, w, AStar())))) == 3
     end
 
     @testset "BellmanFord" begin
-	    g4 = path_digraph(5)
+  	    g4 = path_digraph(5)
 
-	    d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
-	    d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-	    @testset "graph $g" for g in testdigraphs(g4)
+  	    d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
+  	    d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
+  	    @testset "graph $g" for g in testdigraphs(g4)
             y = @inferred(shortest_paths(g, 2, d1, BellmanFord()))
             z = @inferred(shortest_paths(g, 2, d2, BellmanFord()))
             @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -643,7 +641,7 @@ end
             @test isapprox(z.dists, y.dists)
 
             @testset "Small Graphs" begin
-                for s in [:bull, :chvatal, :cubical, :desargues,
+                @testset "Small Graph $s" for s in [:bull, :chvatal, :cubical, :desargues,
                           :diamond, :dodecahedral, :frucht, :heawood,
                           :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
                           :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
@@ -661,7 +659,7 @@ end
 
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
             d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-            @testset "$g" for g in testdigraphs(g4)
+            @testset "Digraph $g" for g in testdigraphs(g4)
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 z = @inferred(shortest_paths(g, 2, d2, SPFA()))
                 @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -682,7 +680,7 @@ end
         @testset "Negative Cycle" begin
             # Negative Cycle 1
             gx = complete_graph(3)
-            @testset "$g" for g in testgraphs(gx)
+            @testset "Negativ Cycle $g" for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
@@ -695,7 +693,7 @@ end
             # Negative cycle of length 3 in graph of diameter 4
             gx = complete_graph(4)
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
-            @testset "$g" for g in testgraphs(gx)
+            @testset "Negative Cycle of length 3 on $g diameter 4" for g in testgraphs(gx)
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
             end
@@ -706,7 +704,7 @@ end
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            @testset "$g" for g in testgraphs(G)
+            @testset "Maximum distance limited on $g" for g in testgraphs(G)
                 ds = @inferred(shortest_paths(G, 3, m, SPFA(maxdist=3)))
                 @test ds.dists == [2, 1, 0, Inf, Inf, 3]
             end
