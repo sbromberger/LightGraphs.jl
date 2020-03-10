@@ -1,13 +1,5 @@
-# Parts of this code was written by @jpfairbanks.
-
-# Parallel Breadth-first search / traversal using a frontier based parallelized
-# approach.
-
-#################################################
-#
-# Parallel frontier based Breadth-first search approach
-#
-#################################################
+# TODO 2.0.0: Remove this file
+const LT = LightGraphs.Traversals
 """
     ThreadQueue
 
@@ -45,25 +37,6 @@ function getindex(q::ThreadQueue{T}, iter) where T
     return q.data[iter]
 end
 
-# Traverses the vertices in the queue and adds newly found successors to the queue.
-function bfskernel(
-        next::ThreadQueue, # Thread safe queue to add vertices to
-        g::AbstractGraph, # The graph
-        parents::Array{Atomic{T}}, # Parents array
-        level::Array{T} # Vertices in the current frontier
-    ) where T <: Integer
-    @threads for src in level
-        vertexneighbors = neighbors(g, src) # Get the neighbors of the vertex
-        for vertex in vertexneighbors
-            # Atomically check and set parent value if not set yet.
-            parent = atomic_cas!(parents[vertex], zero(T), src)
-            if parent == 0
-                push!(next, vertex) #Push onto queue if newly found
-            end
-        end
-    end
-end
-
 """
     bfs_tree!(g, src, parents)
 
@@ -81,13 +54,10 @@ function bfs_tree!(
         source::T, # Source vertex
         parents::Array{Atomic{T}} # Parents array
     ) where T<:Integer
-    parents[source][] = source # Set source to source
-    push!(next, source) # Add source to the queue
-    while !isempty(next)
-        level = next[next.head[]:(next.tail[] - 1)] # Get vertices in the frontier
-        next.head[] = next.tail[] # reset the queue
-        bfskernel(next, g, parents, level) # Find new frontier
-    end
+    Base.depwarn("`Parallel.bfs_tree!` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.parents`.", :bfs_tree!)
+    p = LT.parents(g, source, LT.ThreadedBreadthFirst())
+    p[source] = source # revert to old pre-2.0.0 behavior
+    parents .= Atomic{T}.(p)
     return parents
 end
 
@@ -95,7 +65,8 @@ function bfs_tree(g::AbstractGraph, source::T, nv::T) where T <: Integer
     next = ThreadQueue(T, nv) # Initialize threadqueue
     parents = [Atomic{T}(0) for i = 1:nv] # Create parents array
     Parallel.bfs_tree!(next, g, source, parents)
-    LightGraphs.Traversals.tree([i[] for i in parents])
+    Base.depwarn("`Parallel.bfs_tree` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.parents`.", :bfs_tree!)
+    return LT.tree(g, source, LT.ThreadedBreadthFirst())
 end
 
 function bfs_tree(g::AbstractGraph, source::T) where T <: Integer
