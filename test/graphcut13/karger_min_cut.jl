@@ -3,7 +3,7 @@
     gx = path_graph(5)
 
     #Assumes cut[1] = 1
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
         @test findfirst(isequal(2), cut) ==  findlast(isequal(1), cut)+1
         @test karger_cut_cost(g, cut) == 1
@@ -12,7 +12,7 @@
 
     add_vertex!(gx)
 
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
         @test cut == [1, 1, 1, 1, 1, 2]
         @test karger_cut_cost(g, cut) == 0
@@ -21,7 +21,7 @@
     end
 
     gx = star_graph(5)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
         @test count(isequal(2), cut) == 1
         @test karger_cut_cost(g, cut) == 1
@@ -29,7 +29,7 @@
     end
 
     gx = SimpleGraph(1)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
         @test cut == zeros(Int, 1)
     end

@@ -28,13 +28,13 @@
     w[4, 6] = 1.0
     w[5, 6] = 1.0
 
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 1, w))
       @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
 
     w = SparseMatrixCSC(w)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 1, w))
       @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
@@ -48,25 +48,25 @@
     w[1, 2] = 1.0
     w[4, 3] = 1.0
     w[3, 4] = 1.0
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 0.1, w))
       @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
 
     w = SparseMatrixCSC(w)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 0.1, w))
       @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
 
     w = ones(12, 12)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 0.1, w))
       @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
 
     w = ones(12, 12)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       labels = @inferred(normalized_cut(g, 0.1, w))
       @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
@@ -85,7 +85,7 @@
 
     num_subgraphs = Vector{Int}(undef, 9)
 
-    for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    @testset "$t" for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         labels = @inferred(normalized_cut(g, t))
         @test contiguous(labels) == true
         num_subgraphs[convert(Int, 10*t)] = size(unique(labels), 1)
