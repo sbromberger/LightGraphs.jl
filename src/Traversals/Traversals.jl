@@ -11,6 +11,7 @@ import Base:show
 
 """
     TraversalError <: Exception
+
 An exception thrown by a traversal function indicating that a visitor function called by
 [`traverse_graph!`](@ref) returned false. For some functions (notably [`has_path`](@ref)),
 a return value of `false` does not indicate an error and therefore no exception is thrown.
