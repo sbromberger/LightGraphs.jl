@@ -68,6 +68,7 @@ function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Intege
     while !isempty(S)
         u = pop!(S)
         for w in B[u]
+            delete!(B[v], w)
             if blocked[w]
                 blocked[w] = false
                 push!(S, w)
@@ -190,7 +191,7 @@ function visit(
             if done
               if length(S) >= 1
                   p, pptr, pdone = S[end]
-                  if pdone
+                  if !pdone
                     S[end] = (p, pptr, true)
                   end
               end
