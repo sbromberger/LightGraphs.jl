@@ -30,7 +30,7 @@ julia> stress_centrality(cycle_graph(4))
  2
 ```
 """
-function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
+function stress_centrality(g::AbstractGraph, vs::AbstractVector = vertices(g))
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
@@ -38,7 +38,7 @@ function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
     stress = zeros(Int, n_v)
     for s in vs
         if degree(g, s) > 0
-            state = dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+            state = dijkstra_shortest_paths(g, s; allpaths = true, trackvertices = true)
             _stress_accumulate_basic!(stress, state, g, s)
         end
     end
@@ -48,10 +48,12 @@ end
 stress_centrality(g::AbstractGraph, k::Integer) =
     stress_centrality(g, sample(vertices(g), k))
 
-function _stress_accumulate_basic!(stress::Vector{<:Integer},
+function _stress_accumulate_basic!(
+    stress::Vector{<:Integer},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer)
+    si::Integer,
+)
 
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(Int, n_v)
@@ -65,7 +67,7 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     for w in S  # w is the farthest vertex from si
         for v in P[w]  # get the predecessors of w
             if v > 0
-                δ[v] +=  δ[w] + 1 # increment sp of pred
+                δ[v] += δ[w] + 1 # increment sp of pred
             end
         end
         δ[w] *= length(P[w]) # adjust the # of sps of vertex

@@ -11,7 +11,7 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 This version of the function modifies the original graph.
 """
 function transitiveclosure! end
-@traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
+@traitfn function transitiveclosure!(g::::IsDirected, selflooped = false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
     tp = reverse(topological_sort_by_dfs(cg))
@@ -19,8 +19,8 @@ function transitiveclosure! end
 
     x = selflooped ? 0 : 1
     for comp in scc
-        for j in 1:(length(comp)-x)
-            for k in (j+x):length(comp)
+        for j = 1:(length(comp)-x)
+            for k = (j+x):length(comp)
                 add_edge!(g, comp[j], comp[k])
                 add_edge!(g, comp[k], comp[j])
             end
@@ -155,7 +155,7 @@ julia> collect(edges(transitivereduction(barbell)))
 ```
 """
 function transitivereducion end
-@traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
+@traitfn function transitivereduction(g::::IsDirected; selflooped::Bool = false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
 
@@ -164,14 +164,13 @@ function transitivereducion end
     stack = Vector{eltype(cg)}(undef, nv(cg))
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
 
-# Calculate the transitive reduction of the acyclic condensation graph.
-    @inbounds(
-    for u in vertices(cg)
+    # Calculate the transitive reduction of the acyclic condensation graph.
+    @inbounds(for u in vertices(cg)
         fill!(reachable, false) # vertices reachable from u on a path of length >= 2
         fill!(visited, false)
         stacksize = 0
-        for v in outneighbors(cg,u)
-      @simd for w in outneighbors(cg, v)
+        for v in outneighbors(cg, u)
+            @simd for w in outneighbors(cg, v)
                 if !visited[w]
                     visited[w] = true
                     stacksize += 1
@@ -183,7 +182,7 @@ function transitivereducion end
             v = stack[stacksize]
             stacksize -= 1
             reachable[v] = true
-      @simd for w in outneighbors(cg, v)
+            @simd for w in outneighbors(cg, v)
                 if !visited[w]
                     visited[w] = true
                     stacksize += 1
@@ -191,17 +190,16 @@ function transitivereducion end
                 end
             end
         end
-# Add the edges from the condensation graph to the resulting graph.
-  @simd for v in outneighbors(cg,u)
+        # Add the edges from the condensation graph to the resulting graph.
+        @simd for v in outneighbors(cg, u)
             if !reachable[v]
                 add_edge!(resultg, scc[u][1], scc[v][1])
             end
         end
     end)
 
-# Replace each strongly connected component with a directed cycle.
-    @inbounds(
-    for component in scc
+    # Replace each strongly connected component with a directed cycle.
+    @inbounds(for component in scc
         nvc = length(component)
         if nvc == 1
             if selflooped && has_edge(g, component[1], component[1])
@@ -209,7 +207,7 @@ function transitivereducion end
             end
             continue
         end
-        for i in 1:(nvc-1)
+        for i = 1:(nvc-1)
             add_edge!(resultg, component[i], component[i+1])
         end
         add_edge!(resultg, component[nvc], component[1])

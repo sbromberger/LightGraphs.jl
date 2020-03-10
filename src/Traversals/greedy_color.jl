@@ -3,7 +3,7 @@
 
 Store the number of colors used and mapping from vertex to color
 """
-struct Coloring{T <: Integer}
+struct Coloring{T<:Integer}
     num_colors::T
     colors::Vector{T}
 end
@@ -28,7 +28,7 @@ sortest degree).
 struct FixedColoring{F} <: ColoringAlgorithm
     ordering::F
 end
-FixedColoring(;ordering::AbstractVector) = FixedColoring(_->ordering)
+FixedColoring(; ordering::AbstractVector) = FixedColoring(_ -> ordering)
 
 """
     DegreeColoring
@@ -36,7 +36,7 @@ FixedColoring(;ordering::AbstractVector) = FixedColoring(_->ordering)
 A function that creates a [`FixedColoring`](@ref) that colors a graph iteratively in
 descending order of the degree of the vertices.
 """
-DegreeColoring() = FixedColoring(g-> sortperm(degree(g), rev=true))
+DegreeColoring() = FixedColoring(g -> sortperm(degree(g), rev = true))
 
 """
     struct RandomColoring <: ColoringAlgorithm
@@ -49,12 +49,12 @@ such random colorings.
 - `niter::Int`: the number of times the random coloring should be repeated (default `1`).
 - `rng::AbstractRNG`: a random number generator (default `Random.GLOBAL_RNG`)
 """
-struct RandomColoring{T<:Integer, R<:AbstractRNG} <: ColoringAlgorithm
+struct RandomColoring{T<:Integer,R<:AbstractRNG} <: ColoringAlgorithm
     niter::T
     rng::R
 end
-RandomColoring(; niter=1, rng=GLOBAL_RNG) = RandomColoring(niter, rng)
-    
+RandomColoring(; niter = 1, rng = GLOBAL_RNG) = RandomColoring(niter, rng)
+
 best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 
 """
@@ -63,9 +63,12 @@ best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 `seq[i] = v` implies that vertex v is the ``i^{th}`` vertex to be colored.
 """
-function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} where {T <: Integer}
+function fixed_greedy_color(
+    g::AbstractGraph{T},
+    seqfn::Function,
+)::Coloring{T} where {T<:Integer}
     nvg::T = nv(g)
-    cols = Vector{T}(undef, nvg)  
+    cols = Vector{T}(undef, nvg)
     seen = zeros(Bool, nvg + 1)
 
     for v in seqfn(g)
@@ -79,10 +82,10 @@ function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} w
             end
         end
 
-        for i in one(T):nvg
+        for i = one(T):nvg
             if colors_used[i] == false
                 cols[v] = i
-                break;
+                break
             end
         end
     end
@@ -90,7 +93,7 @@ function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} w
 end
 
 # if we pass in a sequence.
-fixed_greedy_color(g, seq) = fixed_greedy_color(g, _->seq)
+fixed_greedy_color(g, seq) = fixed_greedy_color(g, _ -> seq)
 
 """
     random_greedy_color(g, niter, rng)
@@ -99,11 +102,15 @@ Color the graph `g` iteratively in a random order using a greedy heuristic
 and random number generator `rng`, and choose the best coloring out of
 `niter` such random colorings.
 """
-function random_greedy_color(g::AbstractGraph{T}, niter::Integer, rng::AbstractRNG) where {T <: Integer} 
+function random_greedy_color(
+    g::AbstractGraph{T},
+    niter::Integer,
+    rng::AbstractRNG,
+) where {T<:Integer}
     seq = shuffle(rng, vertices(g))
     best = fixed_greedy_color(g, seq)
 
-    for i in 2:niter
+    for i = 2:niter
         shuffle!(rng, seq)
         best = best_color(best, fixed_greedy_color(g, seq))
     end
@@ -119,7 +126,8 @@ using [`ColoringAlgorithm`](@ref) `alg`.
 The heuristics can be described as choosing a permutation of the vertices and assigning the 
 lowest color index available iteratively in that order.
 """
-greedy_color(g::AbstractGraph, alg::FixedColoring)  = fixed_greedy_color(g, alg.ordering)
-greedy_color(g::AbstractGraph, alg::RandomColoring) = random_greedy_color(g, alg.niter, alg.rng)
+greedy_color(g::AbstractGraph, alg::FixedColoring) = fixed_greedy_color(g, alg.ordering)
+greedy_color(g::AbstractGraph, alg::RandomColoring) =
+    random_greedy_color(g, alg.niter, alg.rng)
 
 greedy_color(g::AbstractGraph) = greedy_color(g, RandomColoring())

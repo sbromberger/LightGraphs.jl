@@ -28,7 +28,10 @@ end
 eltype(::Type{SimpleEdgeIter{SimpleGraph{T}}}) where {T} = SimpleGraphEdge{T}
 eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
 
-@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1) ) where {G <: AbstractSimpleGraph; !IsDirected{G}}
+@traitfn @inline function iterate(
+    eit::SimpleEdgeIter{G},
+    state = (one(eltype(eit.g)), 1),
+) where {G <: AbstractSimpleGraph!IsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)
@@ -54,7 +57,10 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
     return e, state
 end
 
-@traitfn @inline function iterate(eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1) ) where {G <: AbstractSimpleGraph; IsDirected{G}}
+@traitfn @inline function iterate(
+    eit::SimpleEdgeIter{G},
+    state = (one(eltype(eit.g)), 1),
+) where {G <: AbstractSimpleGraphIsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)
@@ -101,14 +107,14 @@ function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     h = e2.g
     ne(g) == ne(h) || return false
     m = min(nv(g), nv(h))
-    for i in 1:m
+    for i = 1:m
         fadj(g, i) == fadj(h, i) || return false
     end
     nv(g) == nv(h) && return true
-    for i in m+1:nv(g)
+    for i = m+1:nv(g)
         isempty(fadj(g, i)) || return false
     end
-    for i in m+1:nv(h)
+    for i = m+1:nv(h)
         isempty(fadj(h, i)) || return false
     end
     return true

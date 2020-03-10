@@ -51,14 +51,14 @@ export convert,
     eigs
 
 function eigs(A; kwargs...)
-    schr =partialschur(A; kwargs...)
+    schr = partialschur(A; kwargs...)
     vals, vectors = partialeigen(schr[1])
     reved = (kwargs[:which] == LR() || kwargs[:which] == LM())
     k::Int = get(kwargs, :nev, length(vals))
     k = min(k, length(vals))
     perm = collect(1:k)
-    if vals[1] isa(Real)
-        perm = sortperm(vals, rev=reved)
+    if vals[1] isa (Real)
+        perm = sortperm(vals, rev = reved)
         perm = perm[1:k]
     end
     λ = vals[perm]

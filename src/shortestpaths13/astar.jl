@@ -3,10 +3,12 @@
 
 # A* shortest-path algorithm
 
-function reconstruct_path!(total_path, # a vector to be filled with the shortest path
+function reconstruct_path!(
+    total_path, # a vector to be filled with the shortest path
     came_from, # a vector holding the parent of each node in the A* exploration
     end_idx, # the end vertex
-    g) # the graph
+    g,
+) # the graph
 
     E = edgetype(g)
     curr_idx = end_idx
@@ -16,7 +18,8 @@ function reconstruct_path!(total_path, # a vector to be filled with the shortest
     end
 end
 
-function a_star_impl!(g, # the graph
+function a_star_impl!(
+    g, # the graph
     goal, # the end vertex
     open_set, # an initialized heap containing the active vertices
     closed_set, # an (initialized) color-map to indicate status of vertices
@@ -24,7 +27,8 @@ function a_star_impl!(g, # the graph
     f_score, # a vector holding f scores for each node
     came_from, # a vector holding the parent of each node in the A* exploration
     distmx,
-    heuristic)
+    heuristic,
+)
 
     E = edgetype(g)
     total_path = Vector{E}()
@@ -64,18 +68,20 @@ An optional heuristic function and edge distance matrix may be supplied. If miss
 the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heuristic is set to
 `n -> 0`.
 """
-function a_star(g::AbstractGraph{U},  # the g
+function a_star(
+    g::AbstractGraph{U},  # the g
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
-    distmx::AbstractMatrix{T}=weights(g),
-    heuristic::Function=n -> zero(T)) where {T, U}
+    distmx::AbstractMatrix{T} = weights(g),
+    heuristic::Function = n -> zero(T),
+) where {T,U}
 
     E = Edge{eltype(g)}
 
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
 
-    open_set = PriorityQueue{Integer, T}()
+    open_set = PriorityQueue{Integer,T}()
     enqueue!(open_set, s, 0)
 
     closed_set = zeros(Bool, nv(g))

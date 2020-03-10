@@ -7,7 +7,7 @@ using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
 using DataStructures: PriorityQueue, enqueue!, dequeue!
 using Random: shuffle, shuffle!, randsubseq!, AbstractRNG, GLOBAL_RNG
-import Base:show
+import Base: show
 
 """
     TraversalError <: Exception
@@ -17,7 +17,8 @@ An exception thrown by a traversal function indicating that a visitor function c
 a return value of `false` does not indicate an error and therefore no exception is thrown.
 """
 struct TraversalError <: Exception end
-show(io::IO, ::TraversalError) = println(io, "An error was encountered while traversing the graph.")
+show(io::IO, ::TraversalError) =
+    println(io, "An error was encountered while traversing the graph.")
 
 """
     abstract type TraversalAlgorithm
@@ -186,8 +187,8 @@ starting at vertex/vertices `ss`.
 function visited_vertices(
     g::AbstractGraph{U},
     ss,
-    alg::TraversalAlgorithm
-    ) where U<:Integer
+    alg::TraversalAlgorithm,
+) where {U<:Integer}
 
     v = Vector{U}()
     sizehint!(v, nv(g))  # actually just the largest connected component, but we'll use this.
@@ -203,7 +204,7 @@ end
 
 # note: since `newvisitfn!(s, u, v, t)` defaults to calling `newvisitfn!(s, u, v)`, this function
 # by default creates the necessary visitor functions for parallel traversals.
-function newvisitfn!(s::ParentState, u, v) 
+function newvisitfn!(s::ParentState, u, v)
     s.parents[v] = u
     return true
 end
@@ -220,7 +221,7 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-function parents(g::AbstractGraph{T}, ss, alg::TraversalAlgorithm) where T
+function parents(g::AbstractGraph{T}, ss, alg::TraversalAlgorithm) where {T}
     parents = zeros(T, nv(g))
     state = ParentState(parents)
 
@@ -233,7 +234,7 @@ end
 
 Return a directed acyclic graph based on a [`parents`](@ref) vector `p`.
 """
-function tree(p::AbstractVector{T}) where T <: Integer
+function tree(p::AbstractVector{T}) where {T<:Integer}
     n = T(length(p))
     t = DiGraph{T}(n)
     for (v, u) in enumerate(p)
@@ -267,15 +268,15 @@ mutable struct DistanceState{T<:Integer} <: TraversalState
     n_level::T
 end
 
-function initfn!(s::DistanceState{T}, u) where T 
+function initfn!(s::DistanceState{T}, u) where {T}
     s.distances[u] = zero(T)
     return true
 end
-function newvisitfn!(s::DistanceState, u, v) 
+function newvisitfn!(s::DistanceState, u, v)
     s.distances[v] = s.n_level
     return true
 end
-function postlevelfn!(s::DistanceState{T}) where T
+function postlevelfn!(s::DistanceState{T}) where {T}
     s.n_level += one(T)
     return true
 end
@@ -288,7 +289,11 @@ source/sources `ss`. If `ss` is a collection of vertices each element should
 be unique. For vertices unreachable from any vertex in `ss` the distance is
 `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm=BreadthFirst()) where T
+function distances(
+    g::AbstractGraph{T},
+    s,
+    alg::TraversalAlgorithm = BreadthFirst(),
+) where {T}
     state = DistanceState(fill(typemax(T), nv(g)), one(T))
     traverse_graph!(g, s, alg, state) || throw(TraversalError())
     return distances(state)
@@ -306,7 +311,7 @@ function preinitfn!(s::PathState, visited)
     s.vertices_in_exclude = visited[s.u] | visited[s.v]
     return !s.vertices_in_exclude
 end
-newvisitfn!(s::PathState, u, v) = s.v != v 
+newvisitfn!(s::PathState, u, v) = s.v != v
 
 """
     has_path(g::AbstractGraph, u, v, alg; exclude_vertices=Vector())
@@ -318,8 +323,14 @@ is in `exclude_vertices`.
 
 ### Performance Notes
 sorting `exclude_vertices` prior to calling the function may result in improved performance.
-""" 
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
+"""
+function has_path(
+    g::AbstractGraph{T},
+    u::Integer,
+    v::Integer,
+    alg::TraversalAlgorithm = BreadthFirst();
+    exclude_vertices = Vector{T}(),
+) where {T}
     u == v && return true
     state = PathState(T(u), T(v), T.(exclude_vertices), false)
     result = traverse_graph!(g, u, alg, state)

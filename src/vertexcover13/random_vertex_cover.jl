@@ -23,8 +23,8 @@ Approximation Factor: 2
 function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
-    seed::Int=-1
-    ) where T <: Integer
+    seed::Int = -1,
+) where {T<:Integer}
 
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error
     nvg = nv(g)

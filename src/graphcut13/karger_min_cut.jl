@@ -18,7 +18,7 @@ If |V| < 2 then `cut[v] = 0` for all `v`.
 Runtime: O(|E|)
 Memory: O(|E|)
 """
-function karger_min_cut(g::AbstractGraph{T}) where T <: Integer
+function karger_min_cut(g::AbstractGraph{T}) where {T<:Integer}
 
     nvg = nv(g)
     nvg < 2 && return zeros(Int, nvg)
@@ -46,8 +46,8 @@ end
 Find the number of crossing edges in a cut of graph `g` where the cut is represented
 by the integer array, `cut`.
 """
-karger_cut_cost(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer =
-count((e::Edge{T})->cut[src(e)] != cut[dst(e)], edges(g))
+karger_cut_cost(g::AbstractGraph{T}, cut::Vector{<:Integer}) where {T<:Integer} =
+    count((e::Edge{T}) -> cut[src(e)] != cut[dst(e)], edges(g))
 
 """
     karger_cut_edges(g, cut)
@@ -55,5 +55,5 @@ count((e::Edge{T})->cut[src(e)] != cut[dst(e)], edges(g))
 Find the crossing edges in a cut of graph `g` where the cut is represented
 by the integer array, `cut`.
 """
-karger_cut_edges(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer =
-[e for e in edges(g) if cut[src(e)] != cut[dst(e)]]
+karger_cut_edges(g::AbstractGraph{T}, cut::Vector{<:Integer}) where {T<:Integer} =
+    [e for e in edges(g) if cut[src(e)] != cut[dst(e)]]

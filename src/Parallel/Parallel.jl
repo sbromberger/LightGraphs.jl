@@ -1,12 +1,13 @@
 module Parallel
 
 using LightGraphs
-using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
+using LightGraphs:
+    sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
-using Random:shuffle
+using Random: shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
 

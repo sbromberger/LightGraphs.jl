@@ -23,8 +23,8 @@ Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
 function floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g)
-) where T<:Real where U<:Integer
+    distmx::AbstractMatrix{T} = weights(g),
+) where {T<:Real} where {U<:Integer}
     nvg = nv(g)
     # if we do checkbounds here, we can use @inbounds later
     checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
@@ -69,10 +69,13 @@ function floyd_warshall_shortest_paths(
     return fws
 end
 
-function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U<:Integer
+function enumerate_paths(
+    s::FloydWarshallState{T,U},
+    v::Integer,
+) where {T} where {U<:Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
-    for i in 1:length(pathinfo)
+    for i = 1:length(pathinfo)
         if (i == v) || (s.dists[v, i] == typemax(T))
             push!(paths, Vector{U}())
         else
@@ -92,5 +95,6 @@ function enumerate_paths(s::FloydWarshallState{T,U}, v::Integer) where T where U
     return paths
 end
 
-enumerate_paths(s::FloydWarshallState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
+enumerate_paths(s::FloydWarshallState) =
+    [enumerate_paths(s, v) for v = 1:size(s.parents, 1)]
 enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]

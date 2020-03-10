@@ -28,12 +28,12 @@ Calculate the [Katz centrality](https://en.wikipedia.org/wiki/Katz_centrality)
 of the graph `g` optionally parameterized by `α`. Return a vector representing
 the centrality calculated for each node in `g`.
 """
-function katz_centrality(g::AbstractGraph, α::Real=0.3)
+function katz_centrality(g::AbstractGraph, α::Real = 0.3)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = sparse(one(Float64) * I, nvg, nvg)
-    A = adjacency_matrix(g, Bool; dir=:in)
+    A = adjacency_matrix(g, Bool; dir = :in)
     v = (spI - α * A) \ v
-    v /=  norm(v)
+    v /= norm(v)
     return v
 end

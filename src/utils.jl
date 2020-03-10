@@ -9,7 +9,7 @@ Sample `k` element from array `a` without repetition and eventually excluding el
 ### Implementation Notes
 Changes the order of the elements in `a`. For a non-mutating version, see [`sample`](@ref).
 """
-function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
+function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude = ())
     minsize = k + length(exclude)
     length(a) < minsize && throw(ArgumentError("vector must be at least size $minsize"))
     res = Vector{eltype(a)}()
@@ -17,17 +17,18 @@ function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
     n = length(a)
     i = 1
     while length(res) < k
-        r = rand(rng, 1:(n - i + 1))
+        r = rand(rng, 1:(n-i+1))
         if !(a[r] in exclude)
             push!(res, a[r])
-            a[r], a[n - i + 1] = a[n - i + 1], a[r]
+            a[r], a[n-i+1] = a[n-i+1], a[r]
             i += 1
         end
     end
     res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), a, k; exclude=exclude)
+sample!(a::AbstractVector, k::Integer; exclude = ()) =
+    sample!(getRNG(), a, k; exclude = exclude)
 
 """
     sample([rng,] r, k)
@@ -40,9 +41,10 @@ Sample `k` element from unit range `r` without repetition and eventually excludi
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+sample(a::AbstractVector, k::Integer; exclude = ()) =
+    sample!(getRNG(), collect(a), k; exclude = exclude)
 
-getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
+getRNG(seed::Integer = -1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
     insorted(item, collection)
@@ -64,7 +66,7 @@ Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
-function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where T<:Integer
+function findall!(A::Union{BitArray{1},Vector{Bool}}, B::Vector{T}) where {T<:Integer}
     len = 0
     @inbounds for (i, a) in enumerate(A)
         if a
@@ -84,15 +86,12 @@ difference in length of the largest and smallest partition is atmost 1.
 ### Performance
 Time: O(required_partitions)
 """
-function unweighted_contiguous_partition(
-    num_items::Integer,
-    required_partitions::Integer
-    )
+function unweighted_contiguous_partition(num_items::Integer, required_partitions::Integer)
 
     left = 1
     part = Vector{UnitRange}(undef, required_partitions)
-    for i in 1:required_partitions
-        len = fld(num_items+i-1, required_partitions)
+    for i = 1:required_partitions
+        len = fld(num_items + i - 1, required_partitions)
         part[i] = left:(left+len-1)
         left += len
     end
@@ -121,8 +120,8 @@ Repeat on indices `right+1:num_items` and one less partition.
 function greedy_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
-    num_items::U=length(weight)
-    ) where U <: Integer
+    num_items::U = length(weight),
+) where {U<:Integer}
 
     suffix_sum = cumsum(reverse(weight))
     reverse!(suffix_sum)
@@ -133,16 +132,15 @@ function greedy_contiguous_partition(
 
     left = one(U)
     for partitions_remain in reverse(1:(required_partitions-1))
-
         left >= num_items && break
 
-        partition_size = weight[left]*partitions_remain #At least one item in each partition
+        partition_size = weight[left] * partitions_remain #At least one item in each partition
         right = left
 
         #Find right: sum(wt[left:right])*partitions_remain and sum(wt[(right+1):num_items]) is balanced
-        while right+one(U) < num_items && partition_size < suffix_sum[right+one(U)]
+        while right + one(U) < num_items && partition_size < suffix_sum[right+one(U)]
             right += one(U)
-            partition_size += weight[right]*partitions_remain
+            partition_size += weight[right] * partitions_remain
         end
         #max( sum(wt[left:right]), sum(wt[(right+1):num_items]) ) = partition_size
         #max( sum(wt[left:(right-1)]), sum(wt[right:num_items]) ) = suffix_sum[right]
@@ -175,17 +173,17 @@ Binary Search for the partitioning over `[fld(sum(weight)-1, required_partitions
 function optimal_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
-    num_items::U=length(weight)
-    ) where U <: Integer
+    num_items::U = length(weight),
+) where {U<:Integer}
 
     item_it = Iterators.take(weight, num_items)
 
     up_bound = sum(item_it) # Smallest known possible value
-    low_bound = fld(up_bound-1, required_partitions) # Largest known impossible value
+    low_bound = fld(up_bound - 1, required_partitions) # Largest known impossible value
 
     # Find optimal balance
-    while up_bound > low_bound+1
-        search_for = fld(up_bound+low_bound, 2)
+    while up_bound > low_bound + 1
+        search_for = fld(up_bound + low_bound, 2)
 
         sum_part = 0
         remain_part = required_partitions
@@ -241,7 +239,7 @@ isbounded(n::BigInt) = false
 
 Returns true if `typemax(T)` of a type `T <: Integer` exists.
 """
-isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
+isbounded(::Type{T}) where {T<:Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """

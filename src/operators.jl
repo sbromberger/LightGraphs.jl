@@ -32,7 +32,7 @@ function complement(g::Graph)
     gnv = nv(g)
     h = SimpleGraph(gnv)
     for i = 1:gnv
-        for j = (i + 1):gnv
+        for j = (i+1):gnv
             if !has_edge(g, i, j)
                 add_edge!(h, i, j)
             end
@@ -75,7 +75,7 @@ Edge 5 => 4
 ```
 """
 function reverse end
-@traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
+@traitfn function reverse(g::G::IsDirected) where {G<:AbstractSimpleGraph}
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
@@ -92,7 +92,7 @@ In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
-@traitfn function reverse!(g::G::IsDirected) where G<:AbstractSimpleGraph
+@traitfn function reverse!(g::G::IsDirected) where {G<:AbstractSimpleGraph}
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
@@ -128,7 +128,7 @@ Edge 7 => 8
 Edge 8 => 6
 ```
 """
-function blockdiag(g::T, h::T) where T <: AbstractGraph
+function blockdiag(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -161,7 +161,7 @@ Edge 2 => 3
 Edge 3 => 1
 ```
 """
-function intersect(g::T, h::T) where T <: AbstractGraph
+function intersect(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -193,7 +193,7 @@ Edge 4 => 5
 Edge 5 => 4
 ```
 """
-function difference(g::T, h::T) where T <: AbstractGraph
+function difference(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -236,7 +236,7 @@ julia> collect(edges(f))
  Edge 2 => 3
 ```
 """
-function symmetric_difference(g::T, h::T) where T <: AbstractGraph
+function symmetric_difference(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -287,7 +287,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where T <: AbstractSimpleGraph
+function union(g::T, h::T) where {T<:AbstractSimpleGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -336,10 +336,10 @@ julia> collect(edges(g))
  Edge 4 => 5
 ```
 """
-function join(g::T, h::T) where T <: AbstractGraph
+function join(g::T, h::T) where {T<:AbstractGraph}
     r = blockdiag(g, h)
     for i in vertices(g)
-        for j = (nv(g) + 1):(nv(g) + nv(h))
+        for j = (nv(g)+1):(nv(g)+nv(h))
             add_edge!(r, i, j)
         end
     end
@@ -382,7 +382,10 @@ julia> collect(edges(g))
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+@traitfn function crosspath(
+    len::Integer,
+    g::AG::(!IsDirected),
+) where {T,AG<:AbstractGraph{T}}
     p = path_graph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -392,7 +395,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize LightGraphs natively.
 # """
-function *(g::Graph, v::Vector{T}) where T <: Real
+function *(g::Graph, v::Vector{T}) where {T<:Real}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -404,7 +407,7 @@ function *(g::Graph, v::Vector{T}) where T <: Real
     return y
 end
 
-function *(g::DiGraph, v::Vector{T}) where T <: Real
+function *(g::DiGraph, v::Vector{T}) where {T<:Real}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -531,7 +534,7 @@ julia> collect(edges(g))
  Edge 8 => 9
 ```
 """
-function cartesian_product(g::G, h::G) where G <: AbstractGraph
+function cartesian_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
@@ -579,7 +582,7 @@ julia> collect(edges(g))
  Edge 3 => 8
 ```
 """
-function tensor_product(g::G, h::G) where G <: AbstractGraph
+function tensor_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
@@ -636,7 +639,10 @@ julia> sg, vmap = induced_subgraph(g, elist)
 julia> @assert sg == g[elist]
 ```
 """
-function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGraph where U <: Integer
+function induced_subgraph(
+    g::T,
+    vlist::AbstractVector{U},
+) where {T<:AbstractGraph} where {U<:Integer}
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
@@ -660,7 +666,10 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGra
 end
 
 
-function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractGraph{T} where T where U <: AbstractEdge
+function induced_subgraph(
+    g::AG,
+    elist::AbstractVector{U},
+) where {AG<:AbstractGraph{T}} where {T} where {U<:AbstractEdge}
     h = zero(g)
     newvid = Dict{T,T}()
     vmap = Vector{T}()
@@ -700,8 +709,13 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 - `dir=:out`: if `g` is directed, this argument specifies the edge direction
 with respect to `v` (i.e. `:in` or `:out`).
 """
-egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    g[neighborhood(g, v, d, distmx, dir=dir)]
+egonet(
+    g::AbstractGraph{T},
+    v::Integer,
+    d::Integer,
+    distmx::AbstractMatrix{U} = weights(g);
+    dir = :out,
+) where {T<:Integer} where {U<:Real} = g[neighborhood(g, v, d, distmx, dir = dir)]
 
 
 
@@ -750,7 +764,8 @@ function merge_vertices(g::AbstractGraph, vs)
     nvnew = nv(g) - length(unique(vs)) + 1
     nvnew <= nv(g) || return g
     (v0, vm) = extrema(vs)
-    v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
+    v0 > 0 ||
+    throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
     labels[vs] .= v0
     shifts = compute_shifts(nv(g), vs[2:end])
@@ -811,7 +826,7 @@ julia> collect(edges(g))
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T}
     vs = sort!(unique(vs))
     merged_vertex = popfirst!(vs)
 
@@ -834,10 +849,11 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
             g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
 
 
-        # Collect connections to new merged vertex
+            # Collect connections to new merged vertex
         else
             nbrs_to_merge = Set{T}()
-            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
+            for element in
+                filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
@@ -851,7 +867,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     end
 
     # Drop excess vertices
-    g.fadjlist = g.fadjlist[1:(end - length(vs))]
+    g.fadjlist = g.fadjlist[1:(end-length(vs))]
 
     # Correct edge counts
     g.ne = sum(degree(g, i) for i in vertices(g)) / 2

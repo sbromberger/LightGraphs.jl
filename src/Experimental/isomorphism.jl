@@ -81,11 +81,21 @@ false
 ### See also
 [`has_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
-function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Bool
+function has_induced_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Bool
 
-        has_induced_subgraphisomorph(g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation)
+    has_induced_subgraphisomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 
 end
 
@@ -120,12 +130,20 @@ false
 ### See also
 [`has_induced_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Bool
-    has_subgraphisomorph(g1, g2, alg;
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
+function has_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Bool
+    has_subgraphisomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -159,12 +177,20 @@ false
 ### See also
 [`has_induced_subgraphisomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function has_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                         vertex_relation::Union{Nothing, Function}=nothing,
-                         edge_relation::Union{Nothing, Function}=nothing)::Bool
-    has_isomorph(g1, g2, alg;
-                  vertex_relation=vertex_relation,
-                  edge_relation=edge_relation)
+function has_isomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Bool
+    has_isomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -196,12 +222,20 @@ julia> count_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 ### See also
 [`count_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`all_induced_subgraphisomorph`](@ref)
 """
-function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                                   vertex_relation::Union{Nothing, Function}=nothing,
-                                   edge_relation::Union{Nothing, Function}=nothing)::Int
-    count_induced_subgraphisomorph(g1,g2, alg;
-                                   vertex_relation=vertex_relation,
-                                   edge_relation=edge_relation)
+function count_induced_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Int
+    count_induced_subgraphisomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -235,13 +269,21 @@ julia> count_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 ### See also
 [`count_induced_subgraphisomorph`](@ref), [`count_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref)
 """
-function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                                   vertex_relation::Union{Nothing, Function}=nothing,
-                                   edge_relation::Union{Nothing, Function}=nothing)::Int
+function count_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Int
 
-     count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, VF2();
-                            vertex_relation=vertex_relation,
-                            edge_relation=edge_relation)
+    count_subgraphisomorph(
+        g1::AbstractGraph,
+        g2::AbstractGraph,
+        VF2();
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -275,12 +317,20 @@ julia> count_isomorph(g1, g2, vertex_relation=color_rel)
 ### See also
 [`count_induced_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`all_isomorph`](@ref)
 """
-function count_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                        vertex_relation::Union{Nothing, Function}=nothing,
-                        edge_relation::Union{Nothing, Function}=nothing)::Int
-    count_isomorph(g1, g2, alg;
-                   vertex_relation=vertex_relation,
-                   edge_relation=edge_relation)
+function count_isomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Int
+    count_isomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -320,12 +370,20 @@ julia> all_induced_subgraphisomorph(g1, g2, vertex_relation=color_rel) |> collec
 ### See also
 [`all_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_induced_subgraphisomorph`](@ref), [`count_induced_subgraphisomorph`](@ref)
 """
-function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                                      vertex_relation::Union{Nothing, Function}=nothing,
-                                      edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    all_induced_subgraphisomorph(g1, g2, alg;
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
+function all_induced_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    all_induced_subgraphisomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -367,13 +425,21 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 ### See also
 [`all_induced_subgraphisomorph`](@ref), [`all_isomorph`](@ref), [`has_subgraphisomorph`](@ref), [`count_subgraphisomorph`](@ref)
 """
-function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                         vertex_relation::Union{Nothing, Function}=nothing,
-                         edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
+function all_subgraphisomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
 
-    all_subgraphisomorph(g1, g2, alg;
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
+    all_subgraphisomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end
 
 """
@@ -418,11 +484,19 @@ julia> all_subgraphisomorph(g1, g2, vertex_relation=color_rel)
 ### See also
 [`all_induced_subgraphisomorph`](@ref), [`all_subgraphisomorph`](@ref), [`has_isomorph`](@ref), [`count_isomorph`](@ref)
 """
-function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::IsomorphismAlgorithm=VF2();
-                 vertex_relation::Union{Nothing, Function}=nothing,
-                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+function all_isomorph(
+    g1::AbstractGraph,
+    g2::AbstractGraph,
+    alg::IsomorphismAlgorithm = VF2();
+    vertex_relation::Union{Nothing,Function} = nothing,
+    edge_relation::Union{Nothing,Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
 
-    all_isomorph(g1, g2, alg;
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
+    all_isomorph(
+        g1,
+        g2,
+        alg;
+        vertex_relation = vertex_relation,
+        edge_relation = edge_relation,
+    )
 end

@@ -16,18 +16,19 @@ each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of sp
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 """
-function diffusion(g::AbstractGraph{T},
-                    p::Real,
-                    n::Integer;
-                    watch::AbstractVector=Vector{Int}(),
-                    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
-                    normalize::Bool=false
-                    ) where T
+function diffusion(
+    g::AbstractGraph{T},
+    p::Real,
+    n::Integer;
+    watch::AbstractVector = Vector{Int}(),
+    initial_infections::AbstractVector = LightGraphs.sample(vertices(g), 1),
+    normalize::Bool = false,
+) where {T}
 
     # Initialize
     watch_set = Set{T}(watch)
     infected_vertices = BitSet(initial_infections)
-    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
+    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i = 1:n]
 
     # Record initial infection
     if !isempty(watch_set)
@@ -40,7 +41,7 @@ function diffusion(g::AbstractGraph{T},
     # Run simulation
     randsubseq_buf = zeros(T, Δout(g))
 
-    for step in 2:n
+    for step = 2:n
         new_infections = Set{T}()
 
         for i in infected_vertices
@@ -84,11 +85,19 @@ diffusion as a vector representing the cumulative number of vertices
 infected at each simulation step, restricted to vertices included
 in `watch`, if specified.
 """
-diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
-diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
-    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
-    watch::AbstractVector=Vector{Int}(),
-    normalize::Bool=false
-    ) = diffusion_rate(diffusion(g, p, n,
-            initial_infections=initial_infections,
-            watch=watch, normalize=normalize))
+diffusion_rate(x::Vector{Vector{T}}) where {T<:Integer} = cumsum(length.(x))
+diffusion_rate(
+    g::AbstractGraph,
+    p::Real,
+    n::Integer;
+    initial_infections::AbstractVector = LightGraphs.sample(vertices(g), 1),
+    watch::AbstractVector = Vector{Int}(),
+    normalize::Bool = false,
+) = diffusion_rate(diffusion(
+    g,
+    p,
+    n,
+    initial_infections = initial_infections,
+    watch = watch,
+    normalize = normalize,
+))

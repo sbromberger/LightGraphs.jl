@@ -7,12 +7,13 @@ An array-like structure that provides distance values of `1` for any `src, dst` 
 """
 struct DefaultDistance <: AbstractMatrix{Int}
     nv::Int
-    DefaultDistance(nv::Int=typemax(Int)) = new(nv)
+    DefaultDistance(nv::Int = typemax(Int)) = new(nv)
 end
 
 DefaultDistance(nv::Integer) = DefaultDistance(Int(nv))
 
-show(io::IO, x::DefaultDistance) = print(io, "$(x.nv) × $(x.nv) default distance matrix (value = 1)")
+show(io::IO, x::DefaultDistance) =
+    print(io, "$(x.nv) × $(x.nv) default distance matrix (value = 1)")
 show(io::IO, z::MIME"text/plain", x::DefaultDistance) = show(io, x)
 
 getindex(::DefaultDistance, s::Integer, d::Integer) = 1
@@ -67,18 +68,22 @@ julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
  0.5
 ```
 """
-function eccentricity(g::AbstractGraph,
+function eccentricity(
+    g::AbstractGraph,
     v::Integer,
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
+    distmx::AbstractMatrix{T} = weights(g),
+) where {T<:Real}
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && @warn("Infinite path length detected for vertex $v")
 
     return e
 end
 
-eccentricity(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g)) = [eccentricity(g, v, distmx) for v in vs]
+eccentricity(
+    g::AbstractGraph,
+    vs::AbstractVector = vertices(g),
+    distmx::AbstractMatrix = weights(g),
+) = [eccentricity(g, v, distmx) for v in vs]
 
 
 eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
@@ -103,7 +108,7 @@ julia> diameter(path_graph(5))
 ```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
-diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
+diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     maximum(eccentricity(g, distmx))
 
 """
@@ -137,7 +142,7 @@ function periphery(eccentricities::Vector)
     return filter(x -> eccentricities[x] == diam, 1:length(eccentricities))
 end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
+periphery(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     periphery(eccentricity(g, distmx))
 
 """
@@ -159,7 +164,7 @@ julia> radius(path_graph(5))
 ```
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
-radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
+radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     minimum(eccentricity(g, distmx))
 
 """
@@ -188,5 +193,5 @@ function center(eccentricities::Vector)
     return filter(x -> eccentricities[x] == rad, 1:length(eccentricities))
 end
 
-center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
+center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
     center(eccentricity(g, distmx))

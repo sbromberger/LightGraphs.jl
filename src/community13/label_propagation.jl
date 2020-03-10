@@ -9,7 +9,7 @@ the second is the convergence history for each node. Will return after
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
+function label_propagation(g::AbstractGraph{T}, maxiter = 1000) where {T}
     n = nv(g)
     n == 0 && return (T[], Int[])
 
@@ -64,9 +64,10 @@ end
 Fast shuffle Array `a` in UnitRange `r`.
 Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
 """
-function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
+function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int = -1)
     rng = getRNG(seed)
-    (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
+    (r.start > 0 && r.stop <= length(a)) ||
+    throw(DomainError(r, "range indices are out of bounds"))
     @inbounds for i = length(r):-1:2
         j = rand(rng, 1:i)
         ii = i + r.start - 1
@@ -81,7 +82,7 @@ end
 Return the label with greatest frequency.
 """
 function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
-    @inbounds for i = 1:c.neigh_last - 1
+    @inbounds for i = 1:c.neigh_last-1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
     c.neigh_last = 1
@@ -102,7 +103,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
     end
     # ties breaking randomly
-    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
+    range_shuffle!(1:c.neigh_last-1, c.neigh_pos)
 
     result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos
@@ -115,9 +116,13 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     return result_lbl
 end
 
-function renumber_labels!(membership::Vector{T}, label_counters::Vector{Int}) where {T <: Integer}
+function renumber_labels!(
+    membership::Vector{T},
+    label_counters::Vector{Int},
+) where {T<:Integer}
     N = length(membership)
-    (maximum(membership) > N || minimum(membership) < 1) && throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
+    (maximum(membership) > N || minimum(membership) < 1) &&
+    throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
     j = one(T)
     @inbounds for i = 1:length(membership)
         k::T = membership[i]

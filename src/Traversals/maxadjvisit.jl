@@ -16,8 +16,7 @@ values that determines the partition in `g` (1 or 2) and `bestcut` is the
 weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
-function mincut(g::AbstractGraph,
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
+function mincut(g::AbstractGraph, distmx::AbstractMatrix{T} = weights(g)) where {T<:Real}
 
     U = eltype(g)
     colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
@@ -66,7 +65,7 @@ function mincut(g::AbstractGraph,
             end
         end
     end
-    return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
+    return (convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
 
@@ -79,10 +78,12 @@ be 1. If `log` (default `false`) is `true`, visitor events will be printed to
 `io`, which defaults to `STDOUT`; otherwise, no event information will be
 displayed.
 """
-function maximum_adjacency_visit(g::AbstractGraph,
+function maximum_adjacency_visit(
+    g::AbstractGraph,
     distmx::AbstractMatrix{T},
-    log::Bool=false,
-    io::IO=stdout) where T <: Real
+    log::Bool = false,
+    io::IO = stdout,
+) where {T<:Real}
 
     U = eltype(g)
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
@@ -119,8 +120,5 @@ function maximum_adjacency_visit(g::AbstractGraph,
     return vertices_order
 end
 
-maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(g,
-    weights(g),
-    false,
-    stdout)
-
+maximum_adjacency_visit(g::AbstractGraph) =
+    maximum_adjacency_visit(g, weights(g), false, stdout)

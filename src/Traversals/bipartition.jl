@@ -34,7 +34,7 @@ julia> bipartite_map(g)
  0x01
 ```
 """
-function bipartite_map(g::AbstractGraph{T}) where T
+function bipartite_map(g::AbstractGraph{T}) where {T}
     nvg = nv(g)
     if !is_directed(g)
         ccs = filter(x -> length(x) >= 2, connected_components(g))

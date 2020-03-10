@@ -3,15 +3,18 @@ function _loopbody!(
     pivot::U,
     nvg::U,
     dists::Matrix{T},
-    parents::Matrix{U}
-    ) where T<:Real where U<:Integer
+    parents::Matrix{U},
+) where {T<:Real} where {U<:Integer}
     # Relax dists[u, v] = min(dists[u, v], dists[u, pivot]+dists[pivot, v]) for all u, v
-    @inbounds @threads for v in one(U):nvg
+    @inbounds @threads for v = one(U):nvg
         d = dists[pivot, v]
         if d != typemax(T) && v != pivot
             p = parents[pivot, v]
-            @inbounds for u in one(U):nvg
-                ans = (dists[u, pivot] == typemax(T) || u == pivot ? typemax(T) : dists[u, pivot] + d)
+            @inbounds for u = one(U):nvg
+                ans = (
+                    dists[u, pivot] == typemax(T) || u == pivot ? typemax(T) :
+                        dists[u, pivot] + d
+                )
                 if dists[u, v] > ans
                     dists[u, v] = ans
                     parents[u, v] = p
@@ -23,13 +26,13 @@ end
 
 function floyd_warshall_shortest_paths(
     g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g)
-) where T<:Real where U<:Integer
+    distmx::AbstractMatrix{T} = weights(g),
+) where {T<:Real} where {U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), (Int(nvg), Int(nvg)))
     parents = zeros(U, (Int(nvg), Int(nvg)))
 
-    for v in 1:nvg
+    for v = 1:nvg
         dists[v, v] = zero(T)
     end
     undirected = !is_directed(g)

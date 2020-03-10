@@ -1,6 +1,7 @@
 import Base.showerror
 struct CycleError <: Exception end
-Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
+Base.showerror(io::IO, e::CycleError) =
+    print(io, "Cycles are not allowed in this function.")
 
 
 
@@ -8,14 +9,14 @@ struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
 
-DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
+DepthFirst(; neighborfn = outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
     ss,
     alg::DepthFirst,
     state::TraversalState,
-    ) where U<:Integer
+) where {U<:Integer}
 
     n = nv(g)
     visited = falses(n)
@@ -35,14 +36,14 @@ function traverse_graph!(
         v, _ = S[end]
         previsitfn!(state, v) || return false
 
-        neighs=alg.neighborfn(g, v)
+        neighs = alg.neighborfn(g, v)
         @inbounds while ptr <= length(neighs)
             i = neighs[ptr]
             visitfn!(state, v, i) || return false
             if !visited[i]  # find the first unvisited neighbor
                 newvisitfn!(state, v, i) || return false
                 visited[i] = true
-                push!(S, (i, ptr+1))
+                push!(S, (i, ptr + 1))
                 break
             end
             ptr += 1
@@ -54,7 +55,7 @@ function traverse_graph!(
         # a new unvisited child, so we will make ptr = 1
         if ptr > length(neighs)
             postlevelfn!(state) || return false
-            _, ptr =pop!(S)
+            _, ptr = pop!(S)
         else
             ptr = 1 # we will enter new node
         end
@@ -71,18 +72,18 @@ end
 # 1 = visited
 # 2 = vcolor 2
 # @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
-function previsitfn!(s::TopoSortState{T}, u) where T
+function previsitfn!(s::TopoSortState{T}, u) where {T}
     s.w = 0
     return true
 end
-function visitfn!(s::TopoSortState{T}, u, v) where T
+function visitfn!(s::TopoSortState{T}, u, v) where {T}
     return s.vcolor[v] != one(T)
 end
-function newvisitfn!(s::TopoSortState{T}, u, v) where T
+function newvisitfn!(s::TopoSortState{T}, u, v) where {T}
     s.w = v
     return true
 end
-function postvisitfn!(s::TopoSortState{T}, u) where T
+function postvisitfn!(s::TopoSortState{T}, u) where {T}
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -101,14 +102,17 @@ using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological 
 """
 function topological_sort end
 
-@traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort(
+    g::AG::IsDirected,
+    alg::TraversalAlgorithm = DepthFirst(),
+) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))    
+    state = TopoSortState(vcolor, verts, zero(T))
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
- 
+
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
-      
+
     length(state.verts) < nv(g) && throw(CycleError())
     length(state.verts) > nv(g) && throw(TraversalError())
     return reverse!(state.verts)
@@ -119,18 +123,18 @@ mutable struct CycleState{T<:Integer} <: TraversalState
     w::T
 end
 
-function previsitfn!(s::CycleState{T}, u) where T
+function previsitfn!(s::CycleState{T}, u) where {T}
     s.w = 0
     return true
 end
-function visitfn!(s::CycleState{T}, u, v) where T
+function visitfn!(s::CycleState{T}, u, v) where {T}
     return s.vcolor[v] != one(T)
 end
-function newvisitfn!(s::CycleState{T}, u, v) where T
+function newvisitfn!(s::CycleState{T}, u, v) where {T}
     s.w = v
     return true
 end
-function postvisitfn!(s::CycleState{T}, u) where T
+function postvisitfn!(s::CycleState{T}, u) where {T}
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -139,7 +143,10 @@ function postvisitfn!(s::CycleState{T}, u) where T
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(
+    g::AG::IsDirected,
+    alg::TraversalAlgorithm = DepthFirst(),
+) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
@@ -150,4 +157,4 @@ end
     return false
 end
 
-@traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0
+@traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm = DepthFirst()) = ne(g) > 0

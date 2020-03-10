@@ -35,12 +35,12 @@ julia> core_number(g)
  0
 ```
 """
-function core_number(g::AbstractGraph{T}) where T
+function core_number(g::AbstractGraph{T}) where {T}
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     n = nv(g)
     deg = T.(degree(g)) # this will contain core number for each vertex of graph
     maxdeg = maximum(deg) # maximum degree of a vertex in graph
-    bin = zeros(T, maxdeg+1) # used for bin-sort and storing starting positions of bins
+    bin = zeros(T, maxdeg + 1) # used for bin-sort and storing starting positions of bins
     vert = zeros(T, n) # contains the set of vertices, sorted by their degrees
     pos = zeros(T, n) # contains positions of vertices in array vert
 
@@ -64,7 +64,7 @@ function core_number(g::AbstractGraph{T}) where T
 
     # recover starting positions of the bins
     for d = maxdeg:-1:one(T)
-       bin[d+1] = bin[d]
+        bin[d+1] = bin[d]
     end
     bin[1] = one(T)
 
@@ -135,7 +135,7 @@ julia> k_core(g, 2)
  5
 ```
 """
-function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
+function k_core(g::AbstractGraph, k = -1; corenum = core_number(g))
     if (k == -1)
         k = maximum(corenum) # max core
     end
@@ -190,7 +190,7 @@ julia> k_shell(g, 2)
  5
 ```
 """
-function k_shell(g::AbstractGraph, k=-1; corenum=core_number(g))
+function k_shell(g::AbstractGraph, k = -1; corenum = core_number(g))
     if k == -1
         k = maximum(corenum)
     end
@@ -247,7 +247,7 @@ julia> k_crust(g, 2)
  6
 ```
 """
-function k_crust(g, k=-1; corenum=core_number(g))
+function k_crust(g, k = -1; corenum = core_number(g))
     if k == -1
         k = maximum(corenum) - 1
     end
@@ -302,10 +302,10 @@ julia> k_corona(g, 3)
 0-element Array{Int64,1}
 ```
 """
-function k_corona(g::AbstractGraph, k; corenum=core_number(g))
+function k_corona(g::AbstractGraph, k; corenum = core_number(g))
     kcore = k_core(g, k)
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)
 
-    return kcore[findall(x-> x == k, kcoredeg)]
+    return kcore[findall(x -> x == k, kcoredeg)]
 end

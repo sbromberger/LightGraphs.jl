@@ -24,8 +24,8 @@ Memory: ``\\mathcal{O}(|V|)``
 function dominating_set(
     g::AbstractGraph{T},
     alg::MinimalDominatingSet;
-    seed::Int=-1
-    ) where T <: Integer
+    seed::Int = -1,
+) where {T<:Integer}
 
     nvg = nv(g)
     in_dom_set = trues(nvg)
@@ -36,8 +36,8 @@ function dominating_set(
     end
 
     for v in randperm(getRNG(seed), nvg)
-    	(dom_degree[v] == 0) && continue #It is not adjacent to any dominating vertex
-    	#Check if any vertex is depending on v to be dominated
+        (dom_degree[v] == 0) && continue #It is not adjacent to any dominating vertex
+        #Check if any vertex is depending on v to be dominated
         dependent = findfirst(u -> !in_dom_set[u] && dom_degree[u] <= 1, neighbors(g, v))
 
         (dependent != nothing) && continue

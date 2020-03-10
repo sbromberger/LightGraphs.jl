@@ -1,17 +1,18 @@
 import Base.Sort, Base.Sort.Algorithm
-import Base:sort!
+import Base: sort!
 
 struct NOOPSortAlg <: Base.Sort.Algorithm end
 const NOOPSort = NOOPSortAlg()
 
 sort!(x, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
 
-struct BreadthFirst{F<:Function, T<:Base.Sort.Algorithm} <: TraversalAlgorithm
+struct BreadthFirst{F<:Function,T<:Base.Sort.Algorithm} <: TraversalAlgorithm
     neighborfn::F
     sort_alg::T
 end
 
-BreadthFirst(; neighborfn=outneighbors, sort_alg=NOOPSort) = BreadthFirst(neighborfn, sort_alg)
+BreadthFirst(; neighborfn = outneighbors, sort_alg = NOOPSort) =
+    BreadthFirst(neighborfn, sort_alg)
 
 """
     traverse_graph!(g, ss, alg, state)
@@ -24,7 +25,8 @@ function traverse_graph!(
     g::AbstractGraph{U},
     ss,
     alg::BreadthFirst,
-    state::TraversalState) where {U<:Integer}
+    state::TraversalState,
+) where {U<:Integer}
 
 
     n = nv(g)
@@ -56,8 +58,7 @@ function traverse_graph!(
         postlevelfn!(state) || return false
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg=alg.sort_alg)
+        sort!(cur_level, alg = alg.sort_alg)
     end
     return true
 end
-

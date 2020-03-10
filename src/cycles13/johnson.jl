@@ -1,4 +1,4 @@
-abstract type Visitor{T <: Integer} end
+abstract type Visitor{T<:Integer} end
 
 """
     ncycles_n_i(n::Integer, i::Integer)
@@ -18,7 +18,7 @@ assuming there are no self-loops.
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
 """
-maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
+maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n-1))
 
 
 """
@@ -36,7 +36,7 @@ A more efficient version is possible.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function maxsimplecycles end
-@traitfn function maxsimplecycles(dg::::IsDirected, byscc::Bool=true)
+@traitfn function maxsimplecycles(dg::::IsDirected, byscc::Bool = true)
     c::BigInt = zero(BigInt)
     n = nv(dg)
     if !byscc
@@ -71,7 +71,7 @@ vertices to unblock if the key vertex is unblocked.
 
 `JohnsonVisitor` may also be constructed directly from the directed graph.
 """
-struct JohnsonVisitor{T <: Integer} <: Visitor{T}
+struct JohnsonVisitor{T<:Integer} <: Visitor{T}
     stack::Vector{T}
     blocked::BitVector
     blockedmap::Vector{Set{T}}
@@ -93,7 +93,7 @@ Unblock the vertices recursively.
 not and `B` is the map that tells if the unblocking of one vertex should
 unblock other vertices.
 """
-function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Integer
+function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where {T<:Integer}
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
@@ -130,8 +130,14 @@ Modifies the vector of cycles, when needed.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit end
-@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
-allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Integer
+@traitfn function circuit(
+    v::T,
+    dg::::IsDirected,
+    vis::JohnsonVisitor{T},
+    allcycles::Vector{Vector{T}},
+    vmap::Vector{T},
+    startnode::T = v,
+) where {T<:Integer}
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
@@ -189,7 +195,7 @@ function simplecycles end
     sccs = strongly_connected_components(dg)
     cycles = Vector{Vector{T}}()
     for scc in sccs
-        for i in 1:length(scc)
+        for i = 1:length(scc)
             wdg, vmap = induced_subgraph(dg, scc[i:end])
             visitor = JohnsonVisitor(wdg)
             circuit(T(1), wdg, visitor, cycles, vmap) # 1 is the startnode.
@@ -228,12 +234,14 @@ Produces a cycle when needed. Can be used only inside a `Channel`.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit_iter end
-@traitfn function circuit_iter(v::T,
-                               dg::::IsDirected,
-                               vis::JohnsonVisitor{T},
-                               vmap::Vector{T},
-                               cycle::Channel{Vector{T}},
-                               startnode::T=v) where T <: Integer
+@traitfn function circuit_iter(
+    v::T,
+    dg::::IsDirected,
+    vis::JohnsonVisitor{T},
+    vmap::Vector{T},
+    cycle::Channel{Vector{T}},
+    startnode::T = v,
+) where {T<:Integer}
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
@@ -272,7 +280,10 @@ after a given number of cycles.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function itercycles end
-@traitfn function itercycles(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
+@traitfn function itercycles(
+    dg::AG::IsDirected,
+    cycle::Channel{Vector{T}},
+) where {T,AG<:AbstractGraph{T}}
     sccs = strongly_connected_components(dg)
     for scc in sccs
         while length(scc) >= 1
@@ -306,9 +317,15 @@ julia> simplecyclescount(complete_digraph(6))
 ```
 """
 function simplecyclescount end
-@traitfn function simplecyclescount(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}}
+@traitfn function simplecyclescount(
+    dg::AG::IsDirected,
+    ceiling = 10^6,
+) where {T,AG<:AbstractGraph{T}}
     len = 0
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(
+        Channel(c -> itercycles(dg, c), ctype = Vector{T})::Channel{Vector{T}},
+        ceiling,
+    )
         len += 1
     end
     return len
@@ -333,8 +350,13 @@ To get an idea of the possible number of cycles, use function
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function simplecycles_iter end
-@traitfn simplecycles_iter(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}} =
-    return collect(Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
+@traitfn simplecycles_iter(
+    dg::AG::IsDirected,
+    ceiling = 10^6,
+) where {T,AG<:AbstractGraph{T}} = return collect(Iterators.take(
+    Channel(c -> itercycles(dg, c), ctype = Vector{T}),
+    ceiling,
+))::Vector{Vector{T}}
 
 """
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
@@ -362,10 +384,16 @@ julia> simplecycleslength(wheel_digraph(16))
 ```
 """
 function simplecycleslength end
-@traitfn function simplecycleslength(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}}
+@traitfn function simplecycleslength(
+    dg::AG::IsDirected,
+    ceiling = 10^6,
+) where {T,AG<:AbstractGraph{T}}
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(
+        Channel(c -> itercycles(dg, c), ctype = Vector{T})::Channel{Vector{T}},
+        ceiling,
+    )
         cyclelength[length(cycle)] += 1
         ncycles += 1
     end

@@ -3,7 +3,7 @@
 
 A state type for depth-first search that finds the biconnected components.
 """
-mutable struct Biconnections{E <: AbstractEdge}
+mutable struct Biconnections{E<:AbstractEdge}
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}

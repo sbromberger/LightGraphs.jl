@@ -52,14 +52,14 @@ function _lg_read_one_graph(f::IO, header::LGHeader)
 end
 
 function _lg_skip_one_graph(f::IO, n_e::Integer)
-    for _ in 1:n_e
+    for _ = 1:n_e
         readline(f)
     end
 end
 
 function _parse_header(s::AbstractString)
     addl_info = false
-    nvstr, nestr, dirundir, graphname = split(s, r"s*,s*", limit=4)
+    nvstr, nestr, dirundir, graphname = split(s, r"s*,s*", limit = 4)
     if occursin(",", graphname) # version number and type
         graphname, _ver, _dtype, graphcode = split(graphname, r"s*,s*")
         ver = parse(Int, _ver)
@@ -117,7 +117,7 @@ end
 Write a graph `g` with name `gname` in a proprietary format
 to the IO stream designated by `io`. Return 1 (number of graphs written).
 """
-function savelg(io::IO, g::AbstractGraph{T}, gname::String) where T
+function savelg(io::IO, g::AbstractGraph{T}, gname::String) where {T}
     header = LGHeader(nv(g), ne(g), is_directed(g), gname, 2, T, "simplegraph")
     # write header line
     line = string(header)

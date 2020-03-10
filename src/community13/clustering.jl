@@ -27,12 +27,12 @@ julia> local_clustering_coefficient(g, [1, 2, 3])
 """
 function local_clustering_coefficient(g::AbstractGraph, v::Integer)
     ntriang, nalltriang = local_clustering(g, v)
-    return nalltriang == 0 ? 0. : ntriang * 1.0 / nalltriang
+    return nalltriang == 0 ? 0.0 : ntriang * 1.0 / nalltriang
 end
 
 function local_clustering_coefficient(g::AbstractGraph, vs = vertices(g))
     ntriang, nalltriang = local_clustering(g, vs)
-    return map(p -> p[2] == 0 ? 0. : p[1] * 1.0 / p[2], zip(ntriang, nalltriang))
+    return map(p -> p[2] == 0 ? 0.0 : p[1] * 1.0 / p[2], zip(ntriang, nalltriang))
 end
 
 function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
@@ -53,11 +53,13 @@ function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::I
     return is_directed(g) ? (tcount, k * (k - 1)) : (div(tcount, 2), div(k * (k - 1), 2))
 end
 
-function local_clustering!(storage::AbstractVector{Bool},
-                           ntriang::AbstractVector{Int},
-                           nalltriang::AbstractVector{Int},
-                           g::AbstractGraph,
-                           vs)
+function local_clustering!(
+    storage::AbstractVector{Bool},
+    ntriang::AbstractVector{Int},
+    nalltriang::AbstractVector{Int},
+    g::AbstractGraph,
+    vs,
+)
     i = 0
     for (i, v) in enumerate(vs)
         ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
@@ -154,6 +156,6 @@ function global_clustering_coefficient(g::AbstractGraph)
         k = degree(g, v)
         ntriangles += k * (k - 1)
     end
-    ntriangles == 0 && return 1.
+    ntriangles == 0 && return 1.0
     return c / ntriangles
 end

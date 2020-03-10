@@ -23,8 +23,8 @@ Approximation Factor: maximum(degree(g))+1
 function independent_set(
     g::AbstractGraph{T},
     alg::MaximalIndependentSet;
-    seed::Int=-1
-    ) where T <: Integer
+    seed::Int = -1,
+) where {T<:Integer}
 
     nvg = nv(g)
     ind_set = Vector{T}()

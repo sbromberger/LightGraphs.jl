@@ -1,27 +1,27 @@
 function pagerank(
     g::AbstractGraph{U},
-    α=0.85,
-    n=100::Integer,
-    ϵ=1.0e-6
-    ) where U <: Integer
+    α = 0.85,
+    n = 100::Integer,
+    ϵ = 1.0e-6,
+) where {U<:Integer}
 
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
     partitions = LightGraphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
-    α_div_outdegree = Vector{Float64}(undef,nv(g))
+    α_div_outdegree = Vector{Float64}(undef, nv(g))
     dangling_nodes = Vector{U}()
     @inbounds for v in vertices(g)
         if outdegree(g, v) == 0
             push!(dangling_nodes, v)
         end
-        α_div_outdegree[v] = (α/outdegree(g, v))
+        α_div_outdegree[v] = (α / outdegree(g, v))
     end
 
     nvg = Int(nv(g))
     # solution vector and temporary vector
     x = fill(1.0 / nvg, nvg)
     xlast = copy(x)
-    @inbounds for _ in 1:n
+    @inbounds for _ = 1:n
         dangling_sum = 0.0
         for v in dangling_nodes
             dangling_sum += x[v]

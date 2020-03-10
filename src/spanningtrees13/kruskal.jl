@@ -9,8 +9,11 @@ undirected graph `g` with optional distance matrix `distmx` using [Kruskal's alg
 """
 function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function kruskal_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g); minimize=true) where {T <: Real, U, AG <: AbstractGraph{U}}
+@traitfn function kruskal_mst(
+    g::AG::(!IsDirected),
+    distmx::AbstractMatrix{T} = weights(g);
+    minimize = true,
+) where {T<:Real,U,AG<:AbstractGraph{U}}
 
     connected_vs = IntDisjointSets(nv(g))
 
@@ -24,7 +27,7 @@ function kruskal_mst end
         push!(weights, distmx[src(e), dst(e)])
     end
 
-    for e in edge_list[sortperm(weights; rev=!minimize)]
+    for e in edge_list[sortperm(weights; rev = !minimize)]
         if !in_same_set(connected_vs, src(e), dst(e))
             union!(connected_vs, src(e), dst(e))
             push!(mst, e)

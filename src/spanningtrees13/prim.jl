@@ -6,12 +6,14 @@ distance matrix `distmx` using [Prim's algorithm](https://en.wikipedia.org/wiki/
 Return a vector of edges.
 """
 function prim_mst end
-@traitfn function prim_mst(g::AG::(!IsDirected),
-    distmx::AbstractMatrix{T}=weights(g)) where {T <: Real, U, AG <: AbstractGraph{U}}
+@traitfn function prim_mst(
+    g::AG::(!IsDirected),
+    distmx::AbstractMatrix{T} = weights(g),
+) where {T<:Real,U,AG<:AbstractGraph{U}}
 
     nvg = nv(g)
 
-    pq = PriorityQueue{U, T}()
+    pq = PriorityQueue{U,T}()
     finished = zeros(Bool, nvg)
     wt = fill(typemax(T), nvg) #Faster access time
     parents = zeros(U, nv(g))

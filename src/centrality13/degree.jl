@@ -1,4 +1,4 @@
-function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize=true)
+function _degree_centrality(g::AbstractGraph, gtype::Integer; normalize = true)
     n_v = nv(g)
     c = zeros(n_v)
     for v in vertices(g)

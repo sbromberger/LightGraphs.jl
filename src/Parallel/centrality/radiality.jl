@@ -1,5 +1,6 @@
-radiality_centrality(g::AbstractGraph; parallel=:distributed) = 
-parallel == :distributed ? distr_radiality_centrality(g) : threaded_radiality_centrality(g)
+radiality_centrality(g::AbstractGraph; parallel = :distributed) =
+    parallel == :distributed ? distr_radiality_centrality(g) :
+    threaded_radiality_centrality(g)
 
 function distr_radiality_centrality(g::AbstractGraph)::Vector{Float64}
     n_v = nv(g)

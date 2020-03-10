@@ -74,14 +74,14 @@ julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
 function modularity(
     g::AbstractGraph,
     c::AbstractVector{<:Integer};
-    distmx::AbstractArray{<:Number}=weights(g),
-    γ=1.0
-    )
+    distmx::AbstractArray{<:Number} = weights(g),
+    γ = 1.0,
+)
 
     m = sum([distmx[src(e), dst(e)] for e in edges(g)])
     m = is_directed(g) ? m : 2 * m
 
-    m == 0 && return 0.
+    m == 0 && return 0.0
     nc = maximum(c)
     kin = zeros(Float32, nc)
     kout = zeros(Float32, nc)
@@ -91,10 +91,10 @@ function modularity(
             c1 = c[u]
             c2 = c[v]
             if c1 == c2
-                Q += distmx[u,v]
+                Q += distmx[u, v]
             end
-            kout[c1] += distmx[u,v]
-            kin[c2] += distmx[u,v]
+            kout[c1] += distmx[u, v]
+            kin[c2] += distmx[u, v]
         end
     end
     Q = Q * m

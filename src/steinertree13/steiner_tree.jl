@@ -5,8 +5,8 @@ Remove edges of `g` so that all non-isolated leaves of `g` are in the set `term_
 """
 function filter_non_term_leaves!(
     g::AbstractGraph{T},
-    term_vert::Vector{<:Integer}
-    ) where T<:Integer
+    term_vert::Vector{<:Integer},
+) where {T<:Integer}
 
     is_term = falses(nv(g))
     is_term[term_vert] .= true
@@ -45,8 +45,8 @@ function steiner_tree end
 @traitfn function steiner_tree(
     g::AG::(!IsDirected),
     term_vert::Vector{<:Integer},
-    distmx::AbstractMatrix{U} = weights(g)
-    ) where {U<:Real, T, AG<:AbstractGraph{T}}
+    distmx::AbstractMatrix{U} = weights(g),
+) where {U<:Real,T,AG<:AbstractGraph{T}}
 
     nvg = nv(g)
     term_to_actual = T.(term_vert)

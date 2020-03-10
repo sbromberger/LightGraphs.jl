@@ -18,7 +18,7 @@ struct NegativeCycleError <: Exception end
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 """
-struct BellmanFordState{T<:Real, U<:Integer} <: AbstractPathState
+struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -34,8 +34,8 @@ Return a [`LightGraphs.BellmanFordState`](@ref) with relevant traversal informat
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(graph)
-    ) where T<:Real where U<:Integer
+    distmx::AbstractMatrix{T} = weights(graph),
+) where {T<:Real} where {U<:Integer}
 
     nvg = nv(graph)
     active = falses(nvg)
@@ -72,15 +72,15 @@ end
 bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     v::Integer,
-    distmx::AbstractMatrix{T} = weights(graph);
-    ) where T<:Real where U<:Integer = bellman_ford_shortest_paths(graph, [v], distmx)
+    distmx::AbstractMatrix{T} = weights(graph);,
+) where {T<:Real} where {U<:Integer} = bellman_ford_shortest_paths(graph, [v], distmx)
 
 has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
     g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}
-    ) where T<:Real where U<:Integer
+    distmx::AbstractMatrix{T},
+) where {T<:Real} where {U<:Integer}
     try
         bellman_ford_shortest_paths(g, vertices(g), distmx)
     catch e
@@ -132,4 +132,5 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
 end
 
 enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
-enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
+enumerate_paths(state::AbstractPathState) =
+    enumerate_paths(state, [1:length(state.parents);])

@@ -10,7 +10,7 @@ to each vertex. The component value is the smallest vertex ID in the component.
 ### Performance
 This algorithm is linear in the number of edges of the graph.
 """
-function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
+function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where {T}
     nvg = nv(g)
     Q = Queue{T}()
     @inbounds for u in vertices(g)
@@ -38,7 +38,7 @@ Convert an array of labels to a map of component id to vertices, and return
 a map with each key corresponding to a given component id
 and each value containing the vertices associated with that component.
 """
-function components_dict(labels::Vector{T}) where T <: Integer
+function components_dict(labels::Vector{T}) where {T<:Integer}
     d = Dict{T,Vector{T}}()
     for (v, l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
@@ -54,7 +54,7 @@ end
 Given a vector of component labels, return a vector of vectors representing the vertices associated
 with a given component id.
 """
-function components(labels::Vector{T}) where T <: Integer
+function components(labels::Vector{T}) where {T<:Integer}
     d = Dict{T,T}()
     c = Vector{Vector{T}}()
     i = one(T)
@@ -96,7 +96,7 @@ julia> connected_components(g)
  [4, 5]
 ```
 """
-function connected_components(g::AbstractGraph{T}) where T
+function connected_components(g::AbstractGraph{T}) where {T}
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -218,7 +218,9 @@ julia> strongly_connected_components(g)
 
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components(
+    g::AG::IsDirected,
+) where {T<:Integer,AG<:AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
@@ -268,7 +270,8 @@ function strongly_connected_components end
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
                     popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
+                    lowlink[parents[popped]] =
+                        min(lowlink[parents[popped]], lowlink[popped])
 
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
@@ -375,91 +378,91 @@ julia> strongly_connected_components_kosaraju(g)
 """
 
 function strongly_connected_components_kosaraju end
-@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components_kosaraju(
+    g::AG::IsDirected,
+) where {T<:Integer,AG<:AbstractGraph{T}}
 
-   nvg = nv(g)
+    nvg = nv(g)
 
-   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
+    components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
 
-   order = Vector{T}()         # Vector which will store the order in which vertices are visited
-   sizehint!(order, nvg)
+    order = Vector{T}()         # Vector which will store the order in which vertices are visited
+    sizehint!(order, nvg)
 
-   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
+    color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
 
-   dfs_stack = Vector{T}()   # Stack used for dfs
+    dfs_stack = Vector{T}()   # Stack used for dfs
 
-   # dfs1
-   @inbounds for v in vertices(g)
+    # dfs1
+    @inbounds for v in vertices(g)
+        color[v] != 0 && continue
+        color[v] = 1
 
-       color[v] != 0  && continue
-       color[v] = 1
+        # Start dfs from v
+        push!(dfs_stack, v)   # Push v to the stack
 
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
+        while !isempty(dfs_stack)
+            u = dfs_stack[end]
+            w = zero(T)
 
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
+            for u_neighbor in outneighbors(g, u)
+                if color[u_neighbor] == 0
+                    w = u_neighbor
+                    break
+                end
+            end
 
-           for u_neighbor in outneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
+            if w != 0
+                push!(dfs_stack, w)
+                color[w] = 1
+            else
+                push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
+                color[u] = 2
+                pop!(dfs_stack)
+            end
+        end
+    end
 
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
-               color[u] = 2
-               pop!(dfs_stack)
-           end
-       end
-   end
-
-   @inbounds for i in vertices(g)
+    @inbounds for i in vertices(g)
         color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
-   end
+    end
 
-   # dfs2
-   @inbounds for i in 1:nvg
+    # dfs2
+    @inbounds for i = 1:nvg
+        v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
+        color[v] != 0 && continue
+        color[v] = 1
 
-       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
-       color[v] != 0  && continue
-       color[v] = 1
+        component = Vector{T}()   # Vector used to store the vertices of one component temporarily
 
-       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
+        # Start dfs from v
+        push!(dfs_stack, v)   # Push v to the stack
 
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
+        while !isempty(dfs_stack)
+            u = dfs_stack[end]
+            w = zero(T)
 
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
+            for u_neighbor in inneighbors(g, u)
+                if color[u_neighbor] == 0
+                    w = u_neighbor
+                    break
+                end
+            end
 
-           for u_neighbor in inneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
+            if w != 0
+                push!(dfs_stack, w)
+                color[w] = 1
+            else
+                color[u] = 2
+                push!(component, u)   # Push u to the vector component
+                pop!(dfs_stack)
+            end
+        end
 
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               color[u] = 2
-               push!(component, u)   # Push u to the vector component
-               pop!(dfs_stack)
-           end
-       end
+        push!(components, component)
+    end
 
-       push!(components, component)
-   end
-
-   return components
+    return components
 end
 
 
@@ -477,7 +480,8 @@ true
 ```
 """
 function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
+@traitfn is_strongly_connected(g::::IsDirected) =
+    length(strongly_connected_components(g)) == 1
 
 """
     period(g)
@@ -495,15 +499,15 @@ julia> period(g)
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function period(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = bfs_tree(g, 1)
-    levels      = gdistances(g_bfs_tree, 1)
-    tree_diff   = difference(g, g_bfs_tree)
+    g_bfs_tree = bfs_tree(g, 1)
+    levels = gdistances(g_bfs_tree, 1)
+    tree_diff = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
 
     divisor = 0
@@ -538,7 +542,7 @@ Edge 2 => 1
 ```
 """
 function condensation end
-@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T <: Integer
+@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where {T<:Integer}
     h = DiGraph{T}(length(scc))
 
     component = Vector{T}(undef, nv(g))
@@ -583,8 +587,8 @@ julia> attracting_components(g)
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    scc  = strongly_connected_components(g)
+@traitfn function attracting_components(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+    scc = strongly_connected_components(g)
     cond = condensation(g, scc)
 
     attracting = Vector{T}()
@@ -633,8 +637,14 @@ julia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 
  5
 ```
 """
-neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    first.(neighborhood_dists(g, v, d, distmx; dir=dir))
+neighborhood(
+    g::AbstractGraph{T},
+    v::Integer,
+    d,
+    distmx::AbstractMatrix{U} = weights(g);
+    dir = :out,
+) where {T<:Integer} where {U<:Real} =
+    first.(neighborhood_dists(g, v, d, distmx; dir = dir))
 
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
@@ -679,22 +689,36 @@ julia> neighborhood_dists(g, 4, 3, dir=:in)
  (1, 3)
 ```
 """
-neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) : _neighborhood(g, v, d, distmx, inneighbors)
+neighborhood_dists(
+    g::AbstractGraph{T},
+    v::Integer,
+    d,
+    distmx::AbstractMatrix{U} = weights(g);
+    dir = :out,
+) where {T<:Integer} where {U<:Real} =
+    (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) :
+    _neighborhood(g, v, d, distmx, inneighbors)
 
 
-function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
+function _neighborhood(
+    g::AbstractGraph{T},
+    v::Integer,
+    d::Real,
+    distmx::AbstractMatrix{U},
+    neighborfn::Function,
+) where {T<:Integer} where {U<:Real}
     Q = Vector{Tuple{T,U}}()
     d < zero(U) && return Q
-    push!(Q, (v,zero(U),) )
-    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
-    for (src,currdist) in Q
+    push!(Q, (v, zero(U)))
+    seen = fill(false, nv(g))
+    seen[v] = true #Bool Vector benchmarks faster than BitArray
+    for (src, currdist) in Q
         currdist >= d && continue
-        for dst in neighborfn(g,src)
+        for dst in neighborfn(g, src)
             if !seen[dst]
-                seen[dst]=true
-                if currdist+distmx[src,dst] <= d
-                    push!(Q, (dst , currdist+distmx[src,dst],))
+                seen[dst] = true
+                if currdist + distmx[src, dst] <= d
+                    push!(Q, (dst, currdist + distmx[src, dst]))
                 end
             end
         end
@@ -728,7 +752,7 @@ function isgraphical(degs::Vector{<:Integer})
         mindeg[i] = min(i, sorted_degs[i])
     end
     cum_min = sum(mindeg)
-    @inbounds for r = 1:(n - 1)
+    @inbounds for r = 1:(n-1)
         cur_sum += sorted_degs[r]
         cum_min -= mindeg[r]
         cond = cur_sum <= (r * (r - 1) + cum_min)

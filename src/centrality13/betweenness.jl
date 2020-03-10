@@ -43,11 +43,13 @@ julia> betweenness_centrality(path_graph(4))
  0.0
 ```
 """
-function betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    endpoints=false)
+function betweenness_centrality(
+    g::AbstractGraph,
+    vs::AbstractVector = vertices(g),
+    distmx::AbstractMatrix = weights(g);
+    normalize = true,
+    endpoints = false,
+)
 
     n_v = nv(g)
     k = length(vs)
@@ -56,7 +58,8 @@ function betweenness_centrality(g::AbstractGraph,
     betweenness = zeros(n_v)
     for s in vs
         if degree(g, s) > 0  # this might be 1?
-            state = dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
+            state =
+                dijkstra_shortest_paths(g, s, distmx; allpaths = true, trackvertices = true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -65,23 +68,32 @@ function betweenness_centrality(g::AbstractGraph,
         end
     end
 
-    _rescale!(betweenness,
-    n_v,
-    normalize,
-    isdir,
-    k)
+    _rescale!(betweenness, n_v, normalize, isdir, k)
 
     return betweenness
 end
 
-betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
+betweenness_centrality(
+    g::AbstractGraph,
+    k::Integer,
+    distmx::AbstractMatrix = weights(g);
+    normalize = true,
+    endpoints = false,
+) = betweenness_centrality(
+    g,
+    sample(vertices(g), k),
+    distmx;
+    normalize = normalize,
+    endpoints = endpoints,
+)
 
 
-function _accumulate_basic!(betweenness::Vector{Float64},
+function _accumulate_basic!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer)
+    si::Integer,
+)
 
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(n_v)
@@ -106,10 +118,12 @@ function _accumulate_basic!(betweenness::Vector{Float64},
     return nothing
 end
 
-function _accumulate_endpoints!(betweenness::Vector{Float64},
+function _accumulate_endpoints!(
+    betweenness::Vector{Float64},
     state::DijkstraState,
     g::AbstractGraph,
-    si::Integer)
+    si::Integer,
+)
 
     n_v = nv(g) # this is the ttl number of vertices
     δ = zeros(n_v)
@@ -133,7 +147,13 @@ function _accumulate_endpoints!(betweenness::Vector{Float64},
     return nothing
 end
 
-function _rescale!(betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Integer)
+function _rescale!(
+    betweenness::Vector{Float64},
+    n::Integer,
+    normalize::Bool,
+    directed::Bool,
+    k::Integer,
+)
     if normalize
         if n <= 2
             do_scale = false

@@ -14,23 +14,23 @@ is not reached within `n` iterations.
 """
 function pagerank(
     g::AbstractGraph{U},
-    α=0.85,
-    n::Integer=100,
-    ϵ=1.0e-6
-    ) where U <: Integer
-    α_div_outdegree = Vector{Float64}(undef,nv(g))
+    α = 0.85,
+    n::Integer = 100,
+    ϵ = 1.0e-6,
+) where {U<:Integer}
+    α_div_outdegree = Vector{Float64}(undef, nv(g))
     dangling_nodes = Vector{U}()
     for v in vertices(g)
         if outdegree(g, v) == 0
             push!(dangling_nodes, v)
         end
-        α_div_outdegree[v] = (α/outdegree(g, v))
+        α_div_outdegree[v] = (α / outdegree(g, v))
     end
     N = Int(nv(g))
     # solution vector and temporary vector
     x = fill(1.0 / N, N)
     xlast = copy(x)
-    for _ in 1:n
+    for _ = 1:n
         dangling_sum = 0.0
         for v in dangling_nodes
             dangling_sum += x[v]

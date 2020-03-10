@@ -194,7 +194,7 @@ represented by the key.
 Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
 overriding `degfn`.
 """
-function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
+function degree_histogram(g::AbstractGraph{T}, degfn = degree) where {T}
     hist = Dict{T,Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
@@ -280,8 +280,7 @@ julia> all_neighbors(g, 3)
 function all_neighbors end
 @traitfn all_neighbors(g::::IsDirected, v::Integer) =
     union(outneighbors(g, v), inneighbors(g, v))
-@traitfn all_neighbors(g::::(!IsDirected), v::Integer) =
-    neighbors(g, v)
+@traitfn all_neighbors(g::::(!IsDirected), v::Integer) = neighbors(g, v)
 
 
 """
@@ -345,7 +344,8 @@ julia> has_self_loops(g)
 true
 ```
 """
-has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGraph) =
+    nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
 
 """
     num_self_loops(g)
@@ -380,10 +380,8 @@ number of possible edges (``|V|×(|V|-1)`` for directed graphs and
 ``\\frac{|V|×(|V|-1)}{2}`` for undirected graphs).
 """
 function density end
-@traitfn density(g::::IsDirected) =
-ne(g) / (nv(g) * (nv(g) - 1))
-@traitfn density(g::::(!IsDirected)) =
-(2 * ne(g)) / (nv(g) * (nv(g) - 1))
+@traitfn density(g::::IsDirected) = ne(g) / (nv(g) * (nv(g) - 1))
+@traitfn density(g::::(!IsDirected)) = (2 * ne(g)) / (nv(g) * (nv(g) - 1))
 
 
 """

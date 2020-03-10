@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for D`Esopo-Pape shortest-path calculations.
 """
-struct DEsopoPapeState{T <:Real, U <: Integer} <: AbstractPathState
+struct DEsopoPapeState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -40,9 +40,11 @@ julia> ds.dists
  3
 ```
 """
-function desopo_pape_shortest_paths(g::AbstractGraph,
+function desopo_pape_shortest_paths(
+    g::AbstractGraph,
     src::Integer,
-    distmx::AbstractMatrix{T} = weights(g)) where T <: Real
+    distmx::AbstractMatrix{T} = weights(g),
+) where {T<:Real}
     U = eltype(g)
     nvg = nv(g)
     (src in 1:nvg) || throw(DomainError(src, "src should be in between 1 and $nvg"))
@@ -74,5 +76,5 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
         end
     end
 
-    return DEsopoPapeState{T, U}(parents, dists)
+    return DEsopoPapeState{T,U}(parents, dists)
 end
