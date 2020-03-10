@@ -25,7 +25,7 @@ end
 
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
         d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-        for g in testgraphs(g3), dg in testdigraphs(g4)
+        @testset "graph $g and digraph $dg" for g in testgraphs(g3), dg in testdigraphs(g4)
             y = @inferred(shortest_paths(g, 1, 4, d1, AStar()))
             @test y == @inferred(shortest_paths(dg, 1, 4, d1, AStar())) ==
             @inferred(shortest_paths(g, 1, 4, d2, AStar()))
@@ -52,7 +52,7 @@ end
 
 	    d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 	    d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-	    for g in testdigraphs(g4)
+	    @testset "graph $g" for g in testdigraphs(g4)
             y = @inferred(shortest_paths(g, 2, d1, BellmanFord()))
             z = @inferred(shortest_paths(g, 2, d2, BellmanFord()))
             @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -74,7 +74,7 @@ end
 
         # Negative Cycle
         gx = complete_graph(3)
-        for g in testgraphs(gx)
+        @testset "$g" for g in testgraphs(gx)
             d = [1 -3 1; -3 1 1; 1 1 1]
             @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
             @test has_negative_weight_cycle(g, d, BellmanFord())
@@ -88,7 +88,7 @@ end
         # Negative cycle of length 3 in graph of diameter 4
         gx = complete_graph(4)
         d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
-        for g in testgraphs(gx)
+        @testset "$g" for g in testgraphs(gx)
             @test_throws NegativeCycleError shortest_paths(g, 1, d, BellmanFord())
             @test has_negative_weight_cycle(g, d)
         end
@@ -99,7 +99,7 @@ end
         g2 = path_digraph(5)
         add_edge!(g1, 2, 5)
         add_edge!(g2, 2, 5)
-        for g in testgraphs(g1, g2)
+        @testset "$g" for g in testgraphs(g1, g2)
             d = shortest_paths(g, 1, Dijkstra())
             b = shortest_paths(g, 1, BFS())
             q = shortest_paths(g, 1, BFS(sort_alg=Base.Sort.QuickSort))
@@ -125,7 +125,7 @@ end
             G = cycle_graph(8)
             add_edge!(G, 1, 3)
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 b = shortest_paths(g, 1, BFS(maxdist=2))
                 @test b.dists == [0, 1, 1, 2, typemax(eltype(b.dists)), typemax(eltype(b.dists)), 2, 1]
             end
@@ -287,7 +287,7 @@ end
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 ds = @inferred(shortest_paths(G, 3, m, DEsopoPape(maxdist=3)))
                 @test ds.dists == [2, 1, 0, Inf, Inf, 3]
             end
@@ -306,7 +306,7 @@ end
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
         d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
 
-        for g in testdigraphs(g4)
+        @testset "$g" for g in testdigraphs(g4)
             y = @inferred(shortest_paths(g, 2, d1, Dijkstra()))
             z = @inferred(shortest_paths(g, 2, d2, Dijkstra()))
 
@@ -327,7 +327,7 @@ end
         add_edge!(gx, 2, 4)
         d = ones(Int, 5, 5)
         d[2, 3] = 100
-        for g in testgraphs(gx)
+        @testset "$g" for g in testgraphs(gx)
             z = @inferred(shortest_paths(g, 1, d, Dijkstra()))
             @test z.dists == [0, 1, 3, 2, 3]
             @test z.parents == [0, 1, 4, 2, 4]
@@ -350,7 +350,7 @@ end
             0. 2. 0. 3.;
             1. 0. 3. 0.]
 
-        for g in testgraphs(G)
+        @testset "$g" for g in testgraphs(G)
             ds = @inferred(shortest_paths(g, 2, w, Dijkstra()) )
           # this loop reconstructs the shortest path for vertices 1, 3 and 4
             @test spaths(ds, [1, 3, 4], 2) == Array[[2 1],
@@ -375,7 +375,7 @@ end
         add_edge!(G, 3, 5)
         add_edge!(G, 3, 4)
         add_edge!(G, 4, 5)
-        for g in testgraphs(G)
+        @testset "$g" for g in testgraphs(G)
             ds = @inferred(shortest_paths(g, 1, m, Dijkstra(all_paths=true)))
             @test ds.pathcounts   == [1, 1, 1, 1, 2]
             @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
@@ -391,7 +391,7 @@ end
         add_edge!(G, 1, 2)
         add_edge!(G, 1, 3)
         add_edge!(G, 4, 5)
-        for g in testgraphs(G)
+        @testset "$g" for g in testgraphs(G)
             dm = @inferred(shortest_paths(g, 1, Dijkstra(all_paths=true, track_vertices=true)))
             @test dm.closest_vertices == [1, 2, 3, 4, 5]
         end
@@ -401,7 +401,7 @@ end
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 ds = @inferred(shortest_paths(G, 3, m, Dijkstra(maxdist=3)))
                 @test ds.dists == [2, 1, 0, Inf, Inf, 3]
             end
@@ -411,7 +411,7 @@ end
     @testset "FloydWarshall" begin
         g3 = path_graph(5)
         d = [0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]
-        for g in testgraphs(g3)
+        @testset "$g" for g in testgraphs(g3)
             z = @inferred(shortest_paths(g, d, FloydWarshall()))
             @test z.dists[3, :][:] == [7, 6, 0, 11, 27]
             @test z.parents[3, :][:] == [2, 3, 0, 3, 4]
@@ -421,7 +421,7 @@ end
         end
         g4 = path_digraph(4)
         d = ones(4, 4)
-        for g in testdigraphs(g4)
+        @testset "$g" for g in testdigraphs(g4)
             z = @inferred(shortest_paths(g, d, FloydWarshall()))
             @test length(paths(z, 4, 3)) == 0
             @test length(paths(z, 4, 1)) == 0
@@ -430,7 +430,7 @@ end
 
         g5 = DiGraph([1 1 1 0 1; 0 1 0 1 1; 0 1 1 0 0; 1 0 1 1 0; 0 0 0 1 1])
         d = [0 3 8 0 -4; 0 0 0 1 7; 0 4 0 0 0; 2 0 -5 0 0; 0 0 0 6 0]
-        for g in testdigraphs(g5)
+        @testset "$g" for g in testdigraphs(g5)
             z = @inferred(shortest_paths(g, d, FloydWarshall()))
             @test z.dists == [0 1 -3 2 -4; 3 0 -4 1 -1; 7 4 0 5 3; 2 -1 -5 0 -2; 8 5 1 6 0]
         end
@@ -465,7 +465,7 @@ end
     @testset "Johnson" begin
         g3 = path_graph(5)
         d = Symmetric([0 1 2 3 4; 1 0 6 7 8; 2 6 0 11 12; 3 7 11 0 16; 4 8 12 16 0])
-        for g in testgraphs(g3)
+        @testset "$g" for g in testgraphs(g3)
             z = @inferred(shortest_paths(g, d, Johnson()))
             @test z.dists[3, :][:] == [7, 6, 0, 11, 27]
             @test z.parents[3, :][:] == [2, 3, 0, 3, 4]
@@ -475,7 +475,7 @@ end
         end
 
         g4 = path_digraph(4)
-        for g in testdigraphs(g4)
+        @testset "$g" for g in testdigraphs(g4)
             z = @inferred(shortest_paths(g, Johnson()))
             @test length(paths(z, 4, 3)) == 0
             @test length(paths(z, 4, 1)) == 0
@@ -484,7 +484,7 @@ end
 
         g5 = DiGraph([1 1 1 0 1; 0 1 0 1 1; 0 1 1 0 0; 1 0 1 1 0; 0 0 0 1 1])
         d = [0 3 8 0 -4; 0 0 0 1 7; 0 4 0 0 0; 2 0 -5 0 0; 0 0 0 6 0]
-        for g in testdigraphs(g5)
+        @testset "$g" for g in testdigraphs(g5)
             z = @inferred(shortest_paths(g, d, Johnson()))
             @test z.dists == [0 1 -3 2 -4; 3 0 -4 1 -1; 7 4 0 5 3; 2 -1 -5 0 -2; 8 5 1 6 0]
         end
@@ -494,7 +494,7 @@ end
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 ds = @inferred(shortest_paths(G, m, Johnson(maxdist=3)))
                 @test ds.dists == [0 2 2 3 2 1; 2 0 1 Inf Inf 3; 2 1 0 Inf Inf 3; 3 Inf Inf 0 1 2; 2 Inf Inf 1 0 1; 1 3 3 2 1 0]
             end
@@ -506,7 +506,7 @@ end
             g4 = path_digraph(5)
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
-            for g in testdigraphs(g4)
+            @testset "$g" for g in testdigraphs(g4)
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 @test y.dists == [Inf, 0, 6, 17, 33]
             end
@@ -516,7 +516,7 @@ end
                 add_edge!(gx, 2, 4)
                 d = ones(Int, 5, 5)
                 d[2, 3] = 100
-                for g in testgraphs(gx)
+                @testset "$g" for g in testgraphs(gx)
                     z = @inferred(shortest_paths(g, 1, d, SPFA()))
                     @test z.dists == [0, 1, 3, 2, 3]
                 end
@@ -531,7 +531,7 @@ end
             add_edge!(G, 3, 4)
             add_edge!(G, 4, 5)
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 y = @inferred(shortest_paths(g, 1, m, SPFA()))
                 @test y.dists == [0, 2, 2, 3, 4]
             end
@@ -547,7 +547,7 @@ end
             add_edge!(G, 2, 4)
             add_edge!(G, 4, 5)
             m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 z = @inferred(shortest_paths(g, 1 , m, SPFA()))
                 y = @inferred(dijkstra_shortest_paths(g, 1, m))
                 @test isapprox(z.dists, y.dists)
@@ -560,7 +560,7 @@ end
             add_edge!(G, 1, 3)
             add_edge!(G, 4, 5)
             inf = typemax(eltype(G))
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 z = @inferred(shortest_paths(g, 1, SPFA()))
                 @test z.dists == [0, 1, 1, inf, inf]
             end
@@ -569,7 +569,7 @@ end
         @testset "Empty graph" begin
             G = SimpleGraph(3)
             inf = typemax(eltype(G))
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 z = @inferred(shortest_paths(g, 1, SPFA()))
                 @test z.dists == [0, inf, inf]
             end
@@ -661,7 +661,7 @@ end
 
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
             d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-            for g in testdigraphs(g4)
+            @testset "$g" for g in testdigraphs(g4)
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 z = @inferred(shortest_paths(g, 2, d2, SPFA()))
                 @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -682,7 +682,7 @@ end
         @testset "Negative Cycle" begin
             # Negative Cycle 1
             gx = complete_graph(3)
-            for g in testgraphs(gx)
+            @testset "$g" for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
@@ -695,7 +695,7 @@ end
             # Negative cycle of length 3 in graph of diameter 4
             gx = complete_graph(4)
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
-            for g in testgraphs(gx)
+            @testset "$g" for g in testgraphs(gx)
                 @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
             end
@@ -706,7 +706,7 @@ end
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 ds = @inferred(shortest_paths(G, 3, m, SPFA(maxdist=3)))
                 @test ds.dists == [2, 1, 0, Inf, Inf, 3]
             end
