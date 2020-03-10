@@ -7,7 +7,10 @@
         @test z.parents[3, :][:] == [2, 3, 0, 3, 4]
 
         @test @inferred(enumerate_paths(z))[2][2] == []
-        @test @inferred(enumerate_paths(z))[2][4] == enumerate_paths(z, 2)[4] == enumerate_paths(z, 2, 4) == [2, 3, 4]
+        @test @inferred(enumerate_paths(z))[2][4] ==
+        enumerate_paths(z, 2)[4] ==
+        enumerate_paths(z, 2, 4) ==
+        [2, 3, 4]
     end
     g4 = path_digraph(4)
     d = ones(4, 4)
@@ -30,7 +33,7 @@
         add_edge!(g, 1, 2)
         add_edge!(g, 2, 2)
         @test enumerate_paths(floyd_warshall_shortest_paths(g)) ==
-            Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
+              Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
 
         g = SimpleDiGraph(2)
         add_edge!(g, 1, 1)
@@ -38,6 +41,6 @@
         add_edge!(g, 2, 1)
         add_edge!(g, 2, 2)
         @test enumerate_paths(floyd_warshall_shortest_paths(g)) ==
-            Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
+              Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
     end
 end

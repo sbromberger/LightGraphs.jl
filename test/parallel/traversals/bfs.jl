@@ -13,23 +13,26 @@
     end
 
     g5 = SimpleDiGraph(4)
-    add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
+    add_edge!(g5, 1, 2)
+    add_edge!(g5, 2, 3)
+    add_edge!(g5, 1, 3)
+    add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 
     for g in testdigraphs(g5)
-      T = eltype(g)
-      z = @inferred(Parallel.bfs_tree(g, T(1)))
-      next = Parallel.ThreadQueue(T, nv(g)) # Initialize threadqueue
-      parents = [Atomic{T}(0) for i = 1:nv(g)] # Create parents array
-      Parallel.bfs_tree!(next, g, T(1), parents)
-      t = [i[] for i in parents]
-      @test t == [T(1), T(1), T(1), T(3)]
-      @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
+        T = eltype(g)
+        z = @inferred(Parallel.bfs_tree(g, T(1)))
+        next = Parallel.ThreadQueue(T, nv(g)) # Initialize threadqueue
+        parents = [Atomic{T}(0) for i = 1:nv(g)] # Create parents array
+        Parallel.bfs_tree!(next, g, T(1), parents)
+        t = [i[] for i in parents]
+        @test t == [T(1), T(1), T(1), T(3)]
+        @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
     end
 
-    function istree(parents::Vector{Atomic{T}}, maxdepth, n::T) where T<:Integer
+    function istree(parents::Vector{Atomic{T}}, maxdepth, n::T) where {T<:Integer}
         flag = true
-        for i in one(T):n
+        for i = one(T):n
             s = i
             depth = 0
             while parents[s][] > 0 && parents[s][] != s

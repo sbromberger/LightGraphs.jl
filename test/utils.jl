@@ -5,23 +5,34 @@
         @test 1 <= e <= 10
     end
 
-    s = @inferred(LightGraphs.sample!([1:10;], 6, exclude=[1, 2]))
+    s = @inferred(LightGraphs.sample!([1:10;], 6, exclude = [1, 2]))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
     end
 
-    s = @inferred(LightGraphs.sample(1:10, 6, exclude=[1, 2]))
+    s = @inferred(LightGraphs.sample(1:10, 6, exclude = [1, 2]))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
     end
 
     # tests if isbounded has the correct behaviour
-    bounded_int_types = [Int8, Int16, Int32, Int64, Int128,
-                         UInt8, UInt16, UInt32, UInt64, UInt128,
-                         Int, Bool]
-    unbounded_int_types = [BigInt, Signed, Unsigned, Integer, Union{Int8, UInt8}]
+    bounded_int_types = [
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        Int128,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
+        UInt128,
+        Int,
+        Bool,
+    ]
+    unbounded_int_types = [BigInt, Signed, Unsigned, Integer, Union{Int8,UInt8}]
     for T in bounded_int_types
         @test LightGraphs.isbounded(T) == true
         @test LightGraphs.isbounded(T(0)) == true
@@ -57,7 +68,10 @@ end
     p = @inferred(LightGraphs.greedy_contiguous_partition([1, 1, 1, 3], 2))
     @test p == [1:3, 4:4]
 
-    p = @inferred(LightGraphs.greedy_contiguous_partition([1, 2, 3, 4, 5, 100, 1, 3, 1, 1], 3))
+    p = @inferred(LightGraphs.greedy_contiguous_partition(
+        [1, 2, 3, 4, 5, 100, 1, 3, 1, 1],
+        3,
+    ))
     @test p == [1:5, 6:6, 7:10]
 
     p = @inferred(LightGraphs.greedy_contiguous_partition([1, 1, 1, 1], 4))
@@ -69,7 +83,10 @@ end
     p = @inferred(LightGraphs.optimal_contiguous_partition([1, 1, 1, 3], 2))
     @test p == [1:3, 4:4]
 
-    p = @inferred(LightGraphs.optimal_contiguous_partition([1, 2, 3, 4, 5, 100, 1, 3, 1, 1], 3))
+    p = @inferred(LightGraphs.optimal_contiguous_partition(
+        [1, 2, 3, 4, 5, 100, 1, 3, 1, 1],
+        3,
+    ))
     @test p == [1:5, 6:6, 7:10]
 
     p = @inferred(LightGraphs.optimal_contiguous_partition([1, 1, 1, 1], 4))

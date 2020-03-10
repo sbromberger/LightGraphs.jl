@@ -5,9 +5,10 @@
     #Assumes cut[1] = 1
     for g in testgraphs(gx)
         cut = @inferred(karger_min_cut(g))
-        @test findfirst(isequal(2), cut) ==  findlast(isequal(1), cut)+1
+        @test findfirst(isequal(2), cut) == findlast(isequal(1), cut) + 1
         @test karger_cut_cost(g, cut) == 1
-        @test karger_cut_edges(g, cut) == [Edge(findlast(isequal(1), cut), findfirst(isequal(2), cut))]
+        @test karger_cut_edges(g, cut) ==
+              [Edge(findlast(isequal(1), cut), findfirst(isequal(2), cut))]
     end
 
     add_vertex!(gx)

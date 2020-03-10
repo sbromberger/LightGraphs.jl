@@ -1,22 +1,26 @@
-import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
+import LightGraphs.Traversals:
+    preinitfn!, initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
 
 @testset "LT.ThreadedBreadthFirst" begin
     g5 = SimpleDiGraph(4)
-    add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
+    add_edge!(g5, 1, 2)
+    add_edge!(g5, 2, 3)
+    add_edge!(g5, 1, 3)
+    add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 
     for g in testdigraphs(g5)
-      T = eltype(g)
-      z = @inferred(LT.tree(g, 1, LT.ThreadedBreadthFirst()))
-      p = @inferred(LT.parents(g, 1, LT.ThreadedBreadthFirst()))
+        T = eltype(g)
+        z = @inferred(LT.tree(g, 1, LT.ThreadedBreadthFirst()))
+        p = @inferred(LT.parents(g, 1, LT.ThreadedBreadthFirst()))
 
-      @test p == T.([0, 1, 1, 3])
-      @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
+        @test p == T.([0, 1, 1, 3])
+        @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
     end
 
-    function istree(p::Vector{T}, maxdepth, n::T) where T<:Integer
+    function istree(p::Vector{T}, maxdepth, n::T) where {T<:Integer}
         flag = true
-        for i in one(T):n
+        for i = one(T):n
             s = i
             depth = 0
             while p[s] > 0 && p[s] != s
@@ -73,4 +77,3 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
     LT.postlevelfn!(::DummyState) = false
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 end
-

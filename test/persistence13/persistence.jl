@@ -15,10 +15,22 @@
     # test :lg
     @testset "LGFormat save single graph" begin
         @test savegraph(f, p1) == 1
-        @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1; compress=true)
+        @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(
+            f,
+            p1;
+            compress = true,
+        )
         @test savegraph(f, p1) == 1
-        @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1, LGFormat(); compress=true)
-        @test_logs (:info,r"Note: the `compress` keyword is no longer supported in LightGraphs") savegraph(f, p1; compress=false)
+        @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(
+            f,
+            p1,
+            LGFormat();
+            compress = true,
+        )
+        @test_logs (
+            :info,
+            r"Note: the `compress` keyword is no longer supported in LightGraphs",
+        ) savegraph(f, p1; compress = false)
         @test savegraph(f, p1, LGFormat()) == 1
         @test savegraph(f, p2) == 1
     end
@@ -35,9 +47,13 @@
         (f, fio) = mktemp()
         @test length(sprint(savegraph, p1, LGFormat())) == 421
         @test length(sprint(savegraph, p2, LGFormat())) == 70
-        gs = loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
+        gs =
+            loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
         @test gs == p2
-        @test_throws ArgumentError loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "badname")
+        @test_throws ArgumentError loadgraph(
+            joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"),
+            "badname",
+        )
     end
 
     @testset "LGFormat save multiple graphs" begin

@@ -56,13 +56,13 @@
             @testset "$g" for g in testgraphs(completegraph)
                 greduced = @inferred(transitivereduction(g))
                 @test length(strongly_connected_components(greduced)) == 1 &&
-                    ne(greduced) == nv(g)
+                      ne(greduced) == nv(g)
             end
         end
 
         # transitive reduction a graph with no edges is the same graph again
         @testset "zero-edge reduction" begin
-        noedgegraph = SimpleDiGraph(7)
+            noedgegraph = SimpleDiGraph(7)
             @testset "$g" for g in testgraphs(noedgegraph)
                 @test g == @inferred(transitivereduction(g))
             end
@@ -73,36 +73,36 @@
             selfloopgraph = SimpleDiGraph(1)
             add_edge!(selfloopgraph, 1, 1)
             @testset "$g" for g in testgraphs(selfloopgraph)
-                @test g == @inferred(transitivereduction(g; selflooped=true));
-                @test g != @inferred(transitivereduction(g; selflooped=false));
+                @test g == @inferred(transitivereduction(g; selflooped = true))
+                @test g != @inferred(transitivereduction(g; selflooped = false))
             end
 
-        # transitive should not maintain selfloops for strongly connected components
-        # of size > 1
+            # transitive should not maintain selfloops for strongly connected components
+            # of size > 1
             selfloopgraph2 = SimpleDiGraph(2)
             add_edge!(selfloopgraph2, 1, 1)
             add_edge!(selfloopgraph2, 1, 2)
             add_edge!(selfloopgraph2, 2, 1)
             add_edge!(selfloopgraph2, 2, 2)
             @testset "$g" for g in testgraphs(selfloopgraph2)
-                @test g != @inferred(transitivereduction(g; selflooped=true));
+                @test g != @inferred(transitivereduction(g; selflooped = true))
             end
         end
 
         # directed barbell graph should result in two cycles connected by a single edge
         @testset "barbell" begin
             barbellgraph = SimpleDiGraph(9)
-            for i in 1:4, j in 1:4
+            for i = 1:4, j = 1:4
                 i == j && continue
                 add_edge!(barbellgraph, i, j)
                 add_edge!(barbellgraph, j, i)
             end
-            for i in 5:9, j in 5:9
+            for i = 5:9, j = 5:9
                 i == j && continue
                 add_edge!(barbellgraph, i, j)
                 add_edge!(barbellgraph, j, i)
             end
-            add_edge!(barbellgraph, 1, 5);
+            add_edge!(barbellgraph, 1, 5)
             @testset "$g" for g in testgraphs(barbellgraph)
                 greduced = @inferred(transitivereduction(g))
                 scc = strongly_connected_components(greduced)

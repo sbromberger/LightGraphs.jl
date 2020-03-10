@@ -20,7 +20,7 @@
         @test z.parents == [0, 1, 4, 2, 4]
     end
 
-    m = [0 2 2 0 0; 2 0 0 0 3; 2 0 0 1 2;0 0 1 0 1;0 3 2 1 0]
+    m = [0 2 2 0 0; 2 0 0 0 3; 2 0 0 1 2; 0 0 1 0 1; 0 3 2 1 0]
     G = SimpleGraph(5)
     add_edge!(G, 1, 2)
     add_edge!(G, 1, 3)
@@ -45,7 +45,7 @@
     add_edge!(G, 4, 5)
     m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
     @testset "self loops: $g" for g in testgraphs(G)
-        z = @inferred(desopo_pape_shortest_paths(g, 1 , m))
+        z = @inferred(desopo_pape_shortest_paths(g, 1, m))
         y = @inferred(dijkstra_shortest_paths(g, 1, m))
         @test isapprox(z.dists, y.dists)
     end
@@ -71,9 +71,9 @@
 
     @testset "random simple graphs" begin
         for i = 1:5
-            nvg = Int(ceil(250*rand()))
-            neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            seed = Int(floor(100*rand()))
+            nvg = Int(ceil(250 * rand()))
+            neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
+            seed = Int(floor(100 * rand()))
             g = SimpleGraph(nvg, neg; seed = seed)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
@@ -83,9 +83,9 @@
 
     @testset "random simple digraphs" begin
         for i = 1:5
-            nvg = Int(ceil(250*rand()))
-            neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-            seed = Int(floor(100*rand()))
+            nvg = Int(ceil(250 * rand()))
+            neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
+            seed = Int(floor(100 * rand()))
             g = SimpleDiGraph(nvg, neg; seed = seed)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
@@ -136,13 +136,29 @@
     end
 
     @testset "smallgraphs: $s" for s in [
-        :bull, :chvatal, :cubical, :desargues,
-        :diamond, :dodecahedral, :frucht, :heawood,
-        :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-        :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
-        :tetrahedral, :truncatedcube, :truncatedtetrahedron,
-        :truncatedtetrahedron_dir
-     ]
+        :bull,
+        :chvatal,
+        :cubical,
+        :desargues,
+        :diamond,
+        :dodecahedral,
+        :frucht,
+        :heawood,
+        :house,
+        :housex,
+        :icosahedral,
+        :krackhardtkite,
+        :moebiuskantor,
+        :octahedral,
+        :pappus,
+        :petersen,
+        :sedgewickmaze,
+        :tutte,
+        :tetrahedral,
+        :truncatedcube,
+        :truncatedtetrahedron,
+        :truncatedtetrahedron_dir,
+    ]
         G = smallgraph(s)
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)

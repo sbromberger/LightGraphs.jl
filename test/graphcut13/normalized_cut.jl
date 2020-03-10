@@ -29,14 +29,14 @@
     w[5, 6] = 1.0
 
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 1, w))
-      @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
+        labels = @inferred(normalized_cut(g, 1, w))
+        @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
 
     w = SparseMatrixCSC(w)
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 1, w))
-      @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
+        labels = @inferred(normalized_cut(g, 1, w))
+        @test labels == [1, 1, 1, 2, 2, 2] || labels == [2, 2, 2, 1, 1, 1]
     end
 
     gx = SimpleGraph(4)
@@ -49,33 +49,33 @@
     w[4, 3] = 1.0
     w[3, 4] = 1.0
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 0.1, w))
-      @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
+        labels = @inferred(normalized_cut(g, 0.1, w))
+        @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
 
     w = SparseMatrixCSC(w)
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 0.1, w))
-      @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
+        labels = @inferred(normalized_cut(g, 0.1, w))
+        @test labels == [1, 1, 2, 2] || labels == [2, 2, 1, 1]
     end
 
     w = ones(12, 12)
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 0.1, w))
-      @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        labels = @inferred(normalized_cut(g, 0.1, w))
+        @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
 
     w = ones(12, 12)
     for g in testgraphs(gx)
-      labels = @inferred(normalized_cut(g, 0.1, w))
-      @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        labels = @inferred(normalized_cut(g, 0.1, w))
+        @test labels == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     end
 
     g = path_graph(50)
 
     function contiguous(labels::Vector{Int})::Bool
         changes = 0
-        for i in 1:length(labels)-1
+        for i = 1:length(labels)-1
             if labels[i] != labels[i+1]
                 changes += 1
             end
@@ -88,12 +88,14 @@
     for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         labels = @inferred(normalized_cut(g, t))
         @test contiguous(labels) == true
-        num_subgraphs[convert(Int, 10*t)] = size(unique(labels), 1)
+        num_subgraphs[convert(Int, 10 * t)] = size(unique(labels), 1)
     end
 
     @test issorted(num_subgraphs) == true
 
 
-    @test any(length(unique(normalized_cut(g,t))) == 4 for t in [0.125, 0.15, 0.16, 0.175, 0.20])
+    @test any(
+        length(unique(normalized_cut(g, t))) == 4 for t in [0.125, 0.15, 0.16, 0.175, 0.20]
+    )
 
 end

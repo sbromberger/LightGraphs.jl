@@ -169,7 +169,7 @@
     px = path_graph(10)
     @testset "Matrix operations: $p" for p in testgraphs(px)
         x = @inferred(p * ones(10))
-        @test  x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
+        @test x[1] == 1.0 && all(x[2:(end-1)] .== 2.0) && x[end] == 1.0
         @test size(p) == (10, 10)
         @test size(p, 1) == size(p, 2) == 10
         @test size(p, 3) == 1
@@ -182,16 +182,20 @@
     end
 
     gx = SimpleDiGraph(4)
-    add_edge!(gx, 1, 2); add_edge!(gx, 2, 3); add_edge!(gx, 1, 3); add_edge!(gx, 3, 4)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 2, 3)
+    add_edge!(gx, 1, 3)
+    add_edge!(gx, 3, 4)
     @testset "Matrix operations: $g" for g in testdigraphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
-        @test sum(g, 1) ==  [0, 1, 2, 1]
-        @test sum(g, 2) ==  [2, 1, 1, 0]
+        @test sum(g, 1) == [0, 1, 2, 1]
+        @test sum(g, 2) == [2, 1, 1, 0]
         @test sum(g) == 4
         @test @inferred(!issymmetric(g))
     end
 
-    nx = 20; ny = 21
+    nx = 20
+    ny = 21
     gx = path_graph(ny)
     @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(gx)
         T = eltype(g)
@@ -204,10 +208,10 @@
     function crosspath_slow(len, h)
         g = h
         m = nv(h)
-        for i in 1:(len - 1)
+        for i = 1:(len-1)
             k = nv(g)
             g = blockdiag(g, h)
-            for v in 1:m
+            for v = 1:m
                 add_edge!(g, v + (k - m), v + k)
             end
         end
@@ -228,7 +232,7 @@
     @testset "Crosspath: $g" for g in testgraphs(g2)
         @test crosspath_slow(2, g) == crosspath(2, g)
     end
-    for i in 3:4
+    for i = 3:4
         gx = path_graph(i)
         @testset "Tensor Product: $g" for g in testgraphs(gx)
             @test length(connected_components(tensor_product(g, g))) == 2
@@ -279,8 +283,11 @@
         @test vm[4] == 8
 
         elist = [
-          SimpleEdge(1, 2), SimpleEdge(2, 3), SimpleEdge(3, 4),
-          SimpleEdge(4, 5), SimpleEdge(5, 1)
+            SimpleEdge(1, 2),
+            SimpleEdge(2, 3),
+            SimpleEdge(3, 4),
+            SimpleEdge(4, 5),
+            SimpleEdge(5, 1),
         ]
         sg, vm = @inferred(induced_subgraph(g, elist))
         @test sg == cycle_graph(5)

@@ -49,10 +49,10 @@
     end
 
     selfloopg = DiGraph([
-        0 1 0 0;
-        0 0 1 0;
-        1 0 1 0;
-        0 0 0 1;
+        0 1 0 0
+        0 0 1 0
+        1 0 1 0
+        0 0 0 1
     ])
 
     @testset "self loops" for g in testgraphs(selfloopg)

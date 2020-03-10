@@ -8,17 +8,17 @@
     @test maximum(x -> x[2], weights) <= sqrt(d)
     @test minimum(x -> x[2], weights) >= 0
     @test maximum(points) <= 1
-    @test minimum(points) >= 0.
+    @test minimum(points) >= 0.0
 
-    g, weights, points = @inferred(euclidean_graph(N, d, bc=:periodic))
+    g, weights, points = @inferred(euclidean_graph(N, d, bc = :periodic))
     @test maximum(x -> x[2], weights) <= sqrt(d / 2)
-    @test minimum(x -> x[2], weights) >= 0.
+    @test minimum(x -> x[2], weights) >= 0.0
     @test maximum(points) <= 1
-    @test minimum(points) >= 0.
+    @test minimum(points) >= 0.0
 
 
-    @test_throws DomainError euclidean_graph(points, L=0.01,  bc=:periodic)
-    @test_throws ArgumentError euclidean_graph(points, bc=:badbc)
+    @test_throws DomainError euclidean_graph(points, L = 0.01, bc = :periodic)
+    @test_throws ArgumentError euclidean_graph(points, bc = :badbc)
 
     # In our algorithm we ensure, that the resulting graph has the same
     # number of vertices as we have points. For this we have a special case,
@@ -29,7 +29,7 @@
         point2 = [0.0, 1.0, 0.0]
         point3 = [0.0, 0.0, 100.0]
         matrix = hcat(point1, point2, point3)
-        g, _ = euclidean_graph(matrix, cutoff= 5.0)
+        g, _ = euclidean_graph(matrix, cutoff = 5.0)
         @test has_edge(g, 1, 2) && ne(g) == 1
         @test nv(g) == 3
     end

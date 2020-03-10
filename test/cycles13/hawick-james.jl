@@ -10,10 +10,7 @@
     add_edge!(ex1, 5, 2)
 
     @testset "subset" for g in testgraphs(ex1)
-        expected_circuits = Vector{Int}[
-            [2, 3, 4, 5],
-            [2, 3, 5]
-        ]
+        expected_circuits = Vector{Int}[[2, 3, 4, 5], [2, 3, 5]]
         ex1_circuits = simplecycles_hawick_james(g)
 
         @test issubset(expected_circuits, ex1_circuits)
@@ -46,8 +43,22 @@
 
     # Almost fully connected DiGraph
     ex4 = SimpleDiGraph(9)
-    for (src, dest) in [(1, 2), (1, 5), (1, 7), (1, 8), (2, 9), (3, 4), (3, 6),
-                        (4, 5), (4, 7), (5, 6), (6, 7), (6, 8), (7, 9), (8, 9)]
+    for (src, dest) in [
+        (1, 2),
+        (1, 5),
+        (1, 7),
+        (1, 8),
+        (2, 9),
+        (3, 4),
+        (3, 6),
+        (4, 5),
+        (4, 7),
+        (5, 6),
+        (6, 7),
+        (6, 8),
+        (7, 9),
+        (8, 9),
+    ]
         add_edge!(ex4, src, dest)
         add_edge!(ex4, dest, src)
     end
@@ -57,8 +68,10 @@
     end
 
     # These test cases cover a bug that occurred in a previous version
-    @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
-        g = erdos_renyi(n, k, is_directed=true, seed=seed)
+    @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3],
+        (n, k) in [(14, 18), (10, 22), (7, 16)]
+
+        g = erdos_renyi(n, k, is_directed = true, seed = seed)
         cycles1 = simplecycles(g)
         cycles2 = simplecycles_hawick_james(g)
         foreach(sort!, cycles1)

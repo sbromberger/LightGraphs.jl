@@ -1,6 +1,9 @@
 @testset "Steiner Tree" begin
 
-    function sum_weight(g::AbstractGraph{<:Integer}, distmx::AbstractMatrix{<:Integer} = weights(g))
+    function sum_weight(
+        g::AbstractGraph{<:Integer},
+        distmx::AbstractMatrix{<:Integer} = weights(g),
+    )
         sum_wt = zero(eltype(g))
         for e in edges(g)
             sum_wt += distmx[src(e), dst(e)]
@@ -8,7 +11,7 @@
         return sum_wt
     end
 
-    approx_factor(t::Integer) = 2-2/t
+    approx_factor(t::Integer) = 2 - 2 / t
 
     g3 = star_graph(5)
     for g in testgraphs(g3)
@@ -37,24 +40,26 @@
         @test sum_weight(g_st) == 8
     end
 
-    d = [0   2   3   4   5
-         2   0   60   80  1
-         3   60   0  120  150
-         4   80  120  0  200
-         5  1  150  200  0]
+    d = [
+        0 2 3 4 5
+        2 0 60 80 1
+        3 60 0 120 150
+        4 80 120 0 200
+        5 1 150 200 0
+    ]
 
     g6 = complete_graph(5)
 
     for g in testgraphs(g6)
         g_st = @inferred(steiner_tree(g, [2, 4, 5], d))
-        @test sum_weight(g_st, d) <= approx_factor(3)*(1+2+4)
+        @test sum_weight(g_st, d) <= approx_factor(3) * (1 + 2 + 4)
     end
 
     d[2, 5] = d[5, 2] = 100
 
     for g in testgraphs(g6)
         g_st = @inferred(steiner_tree(g, [2, 4, 5], d))
-        @test sum_weight(g_st, d) <= approx_factor(3)*(2+4+5)
+        @test sum_weight(g_st, d) <= approx_factor(3) * (2 + 4 + 5)
     end
 
 

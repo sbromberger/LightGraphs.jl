@@ -7,7 +7,10 @@
         @test z.parents[3, :][:] == [2, 3, 0, 3, 4]
 
         @test @inferred(enumerate_paths(z))[2][2] == []
-        @test @inferred(enumerate_paths(z))[2][4] == enumerate_paths(z, 2)[4] == enumerate_paths(z, 2, 4) == [2, 3, 4]
+        @test @inferred(enumerate_paths(z))[2][4] ==
+        enumerate_paths(z, 2)[4] ==
+        enumerate_paths(z, 2, 4) ==
+        [2, 3, 4]
     end
 
     g4 = path_digraph(4)

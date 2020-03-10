@@ -2,7 +2,10 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
 @testset "BreadthFirst" begin
 
     g5 = SimpleDiGraph(4)
-    add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
+    add_edge!(g5, 1, 2)
+    add_edge!(g5, 2, 3)
+    add_edge!(g5, 1, 3)
+    add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
     struct DummyState <: LT.TraversalState end
 
@@ -42,7 +45,9 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         LT.preinitfn!(::DummyState, u) = false
 
         for g in testgraphs(g6)
-            @test @inferred(LT.distances(g, 2)) == @inferred(LT.distances(g, 2, LT.BreadthFirst(sort_alg=MergeSort))) == [1, 0, 2, 1, 2]
+            @test @inferred(LT.distances(g, 2)) ==
+            @inferred(LT.distances(g, 2, LT.BreadthFirst(sort_alg = MergeSort))) ==
+            [1, 0, 2, 1, 2]
 
             @test @inferred(LT.distances(g, [1, 2])) == [0, 0, 1, 1, 2]
             @test @inferred(LT.distances(g, [])) == fill(typemax(eltype(g)), 5)
@@ -53,8 +58,10 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
 
     @testset "is_bipartite" begin
         gx = SimpleGraph(5)
-        add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
-        add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
+        add_edge!(gx, 1, 2)
+        add_edge!(gx, 1, 4)
+        add_edge!(gx, 2, 3)
+        add_edge!(gx, 2, 5)
         add_edge!(gx, 3, 4)
 
         for g in testgraphs(gx)
@@ -72,20 +79,20 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         for g in testgraphs(gx)
             @test LT.has_path(g, 1, 5)
             @test LT.has_path(g, 1, 2)
-            @test LT.has_path(g, 1, 5; exclude_vertices=[3])
-            @test LT.has_path(g, 1, 5; exclude_vertices=[4])
-            @test !LT.has_path(g, 1, 5; exclude_vertices=[3, 4])
+            @test LT.has_path(g, 1, 5; exclude_vertices = [3])
+            @test LT.has_path(g, 1, 5; exclude_vertices = [4])
+            @test !LT.has_path(g, 1, 5; exclude_vertices = [3, 4])
             @test LT.has_path(g, 5, 1)
-            @test LT.has_path(g, 5, 1; exclude_vertices=[3])
-            @test LT.has_path(g, 5, 1; exclude_vertices=[4])
-            @test !LT.has_path(g, 5, 1; exclude_vertices=[3, 4])
+            @test LT.has_path(g, 5, 1; exclude_vertices = [3])
+            @test LT.has_path(g, 5, 1; exclude_vertices = [4])
+            @test !LT.has_path(g, 5, 1; exclude_vertices = [3, 4])
 
             # Edge cases
             @test !LT.has_path(g, 1, 6)
             @test !LT.has_path(g, 6, 1)
             @test LT.has_path(g, 1, 1) # inseparable
-            @test !LT.has_path(g, 1, 2; exclude_vertices=[2])
-            @test !LT.has_path(g, 1, 2; exclude_vertices=[1])
+            @test !LT.has_path(g, 1, 2; exclude_vertices = [2])
+            @test !LT.has_path(g, 1, 2; exclude_vertices = [1])
         end
     end
     @testset "visited_vertices" begin

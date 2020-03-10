@@ -31,10 +31,10 @@
 
     @testset "self loops" begin
         selfloopg = DiGraph([
-            0 1 0 0;
-            0 0 1 0;
-            1 0 1 0;
-            0 0 0 1;
+            0 1 0 0
+            0 0 1 0
+            1 0 1 0
+            0 0 0 1
         ])
         cycles = simplecycles_limited_length(selfloopg, nv(selfloopg))
         @test [3] in cycles

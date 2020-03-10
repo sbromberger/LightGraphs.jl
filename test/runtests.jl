@@ -11,13 +11,15 @@ using Statistics: mean
 
 const testdir = dirname(@__FILE__)
 
-testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)]
+testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] :
+    [g, Graph{UInt8}(g), Graph{Int16}(g)]
 testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
 testdigraphs = testgraphs
 
 # some operations will create a large graph from two smaller graphs. We
 # might error out on very small eltypes.
-testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)] : [g, Graph{UInt16}(g), Graph{Int32}(g)]
+testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)] :
+    [g, Graph{UInt16}(g), Graph{Int32}(g)]
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
 tests = [
@@ -85,7 +87,7 @@ tests = [
     "independentset13/maximal_ind_set",
     "vertexcover13/degree_vertex_cover",
     "vertexcover13/random_vertex_cover",
-    "experimental/experimental"
+    "experimental/experimental",
 ]
 
 @testset "LightGraphs" begin

@@ -9,7 +9,7 @@
     g1 = SimpleGraph(1)
     for g in testgraphs(g1)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
-        @test (c == [1,])
+        @test (c == [1])
     end
 
     add_edge!(g1, 1, 1)
@@ -27,7 +27,7 @@
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         c = @inferred(independent_set(g, DegreeIndependentSet()))
-        @test length(c)== 1 #Exactly one vertex
+        @test length(c) == 1 #Exactly one vertex
     end
 
     #path_graph(5) with additional edge 2-5

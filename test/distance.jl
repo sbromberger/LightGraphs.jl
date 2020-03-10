@@ -52,15 +52,19 @@
         @test d[1:2, 1:2] == LightGraphs.DefaultDistance(2)
         @test d == transpose(d) == adjoint(d)
         @test sprint(show, d) ==
-            stringmime("text/plain", d) ==
-            "$(d.nv) × $(d.nv) default distance matrix (value = 1)"
+        stringmime("text/plain", d) ==
+        "$(d.nv) × $(d.nv) default distance matrix (value = 1)"
     end
 
     @testset "warnings and errors" begin
-    # ensures that eccentricity only throws an error if there is more than one component
+        # ensures that eccentricity only throws an error if there is more than one component
         g1 = SimpleGraph(2)
-        @test_logs (:warn, "Infinite path length detected for vertex 1") match_mode=:any eccentricity(g1)
-        @test_logs (:warn, "Infinite path length detected for vertex 2") match_mode=:any eccentricity(g1)
+        @test_logs (:warn, "Infinite path length detected for vertex 1") match_mode = :any eccentricity(
+            g1,
+        )
+        @test_logs (:warn, "Infinite path length detected for vertex 2") match_mode = :any eccentricity(
+            g1,
+        )
         g2 = path_graph(2)
         @test_logs eccentricity(g2)
     end

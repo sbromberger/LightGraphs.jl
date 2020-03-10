@@ -16,23 +16,16 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
 
     for edgefun2edges in [==]
         @test_throws LightGraphs.NotImplementedError edgefun2edges(dummyedge, dummyedge)
-     end
+    end
 
-    for graphfunbasic in [
-        nv, ne, vertices, edges, is_directed,
-        edgetype, eltype
-    ]
+    for graphfunbasic in [nv, ne, vertices, edges, is_directed, edgetype, eltype]
         @test_throws LightGraphs.NotImplementedError graphfunbasic(dummygraph)
     end
 
-    for graphfun1int in [
-        has_vertex, inneighbors, outneighbors
-    ]
+    for graphfun1int in [has_vertex, inneighbors, outneighbors]
         @test_throws LightGraphs.NotImplementedError graphfun1int(dummygraph, 1)
     end
-    for graphfunedge in [
-        has_edge,
-      ]
+    for graphfunedge in [has_edge]
         @test_throws LightGraphs.NotImplementedError graphfunedge(dummygraph, dummyedge)
         @test_throws LightGraphs.NotImplementedError graphfunedge(dummygraph, 1, 2)
     end

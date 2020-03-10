@@ -5,9 +5,9 @@
 
     for g in testdigraphs(g4)
         x = @inferred(yen_k_shortest_paths(g, 5, 5))
-        @test length(x.dists) == length(x.paths) ==  1
-        @test x.dists[1] ==  0
-        @test x.paths[1] ==  [5]
+        @test length(x.dists) == length(x.paths) == 1
+        @test x.dists[1] == 0
+        @test x.paths[1] == [5]
 
         y = @inferred(yen_k_shortest_paths(g, 2, 5, d1, 1))
         z = @inferred(yen_k_shortest_paths(g, 2, 5, d2, 1))
@@ -20,7 +20,7 @@
         # Remove edge to test empty paths
         rem_edge!(g, 1, 2)
         x = @inferred(yen_k_shortest_paths(g, 1, 5))
-        @test length(x.dists) == length(x.paths) ==  0
+        @test length(x.dists) == length(x.paths) == 0
     end
 
     gx = path_graph(5)
@@ -43,10 +43,12 @@
     add_edge!(G, 1, 4)
     add_edge!(G, 3, 4)
     add_edge!(G, 2, 2)
-    w = [0. 3. 0. 1.;
-        3. 0. 2. 0.;
-        0. 2. 0. 3.;
-        1. 0. 3. 0.]
+    w = [
+        0.0 3.0 0.0 1.0
+        3.0 0.0 2.0 0.0
+        0.0 2.0 0.0 3.0
+        1.0 0.0 3.0 0.0
+    ]
 
     for g in testgraphs(G)
         ds = @inferred(yen_k_shortest_paths(g, 2, 4, w))
@@ -69,8 +71,8 @@
 
         # Test with new short link
         add_edge!(g, 2, 4)
-        w[2, 4] = 1.
-        w[4, 2] = 1.
+        w[2, 4] = 1.0
+        w[4, 2] = 1.0
         ds = @inferred(yen_k_shortest_paths(g, 2, 4, w, 2))
         @test ds.paths == [[2, 4], [2, 1, 4]]
         ds = @inferred(yen_k_shortest_paths(g, 2, 4, w, 3))
@@ -89,16 +91,18 @@
     add_edge!(G, 4, 5)
     add_edge!(G, 4, 6)
     add_edge!(G, 5, 6)
-    w = [0. 3. 2. 0. 0. 0.;
-        0. 0. 0. 4. 0. 0.;
-        0. 1. 0. 2. 3. 0.;
-        0. 0. 0. 0. 2. 1.;
-        0. 0. 0. 0. 0. 2.;
-        0. 0. 0. 0. 0. 0.;]
+    w = [
+        0.0 3.0 2.0 0.0 0.0 0.0
+        0.0 0.0 0.0 4.0 0.0 0.0
+        0.0 1.0 0.0 2.0 3.0 0.0
+        0.0 0.0 0.0 0.0 2.0 1.0
+        0.0 0.0 0.0 0.0 0.0 2.0
+        0.0 0.0 0.0 0.0 0.0 0.0
+    ]
 
     for g in testdigraphs(G)
         ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 3))
-        @test ds.dists == [5., 7., 8.]
+        @test ds.dists == [5.0, 7.0, 8.0]
         @test ds.paths[1] == [1, 3, 4, 6]
         @test ds.paths[2] == [1, 3, 5, 6]
     end
@@ -111,14 +115,14 @@
         ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100))
         @test ds.dists == [4.0, 5.0, 7.0, 7.0, 8.0, 8.0, 8.0, 11.0, 11.0]
 
-        ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100, maxdist=7))
+        ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100, maxdist = 7))
         @test ds.dists == [4.0, 5.0, 7.0, 7.0]
     end
 
     # From issue #1268
     @testset "no paths are returned if every path is longer than maxdist" begin
         g = cycle_digraph(10)
-        ds = @inferred(yen_k_shortest_paths(g, 2, 1, weights(g), 2, maxdist=2))
+        ds = @inferred(yen_k_shortest_paths(g, 2, 1, weights(g), 2, maxdist = 2))
         @test isempty(ds.paths)
     end
 end
