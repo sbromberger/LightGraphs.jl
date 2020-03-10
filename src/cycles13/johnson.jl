@@ -242,7 +242,7 @@ function itercycles end
             visit(wdg, T(1), putoncycles(vmap)) # 1 is the startnode.
         end
     end
-    return cycles
+    return cycle
 end
 
 """
