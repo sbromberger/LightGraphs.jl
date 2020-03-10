@@ -95,7 +95,6 @@ end
 
 """
     topological_sort(g, alg=DepthFirst())
-
 Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed graph `g`
 using [`TraversalAlgorithm`](@ref) `alg` as a vector of vertices in topological order.
 """
@@ -150,8 +149,7 @@ end
     return false
 end
 
-@traitfn is_cyclic(g::::(!IsDirected), alg::DepthFirst=DepthFirst()) = ne(g) > 0
-
+@traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0
 
 mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
 
