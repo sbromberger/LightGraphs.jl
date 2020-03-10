@@ -21,6 +21,7 @@ show(io::IO, ::TraversalError) = println(io, "An error was encountered while tra
 
 """
     abstract type TraversalAlgorithm
+
 `TraversalAlgorithm` is the abstract type used to specify breadth-first traversal (`BreadthFirst`) or
 depth-first traversal (`DepthFirst`) for the various traversal functions.
 """
