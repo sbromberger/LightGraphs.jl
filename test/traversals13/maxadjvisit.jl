@@ -28,7 +28,7 @@
         eweights[s, d] = w
         eweights[d, s] = w
     end
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       @test nv(g) == 8
       @test ne(g) == m
 
@@ -49,7 +49,7 @@
     end
 
     g1 = SimpleGraph(1)
-    for g in testgraphs(g1)
+    @testset "$g" for g in testgraphs(g1)
         @test @inferred(maximum_adjacency_visit(g)) == collect(vertices(g))
         @test @inferred(mincut(g)) == ([1], zero(eltype(g)))
     end

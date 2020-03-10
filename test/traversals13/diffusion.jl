@@ -3,7 +3,7 @@
 
 gx = complete_graph(5)
 
-for g in testgraphs(gx)  # this makes graphs of different eltypes
+@testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Most basic
     @test @inferred(diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
 end
@@ -12,7 +12,7 @@ for i in 1:5
   add_vertex!(gx)
 end
 
-for g in testgraphs(gx)  # this makes graphs of different eltypes
+@testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
 
     ######
     # Check on fully connected, prob = 1
@@ -52,7 +52,7 @@ end
 
 gx = path_graph(5)
 
-for g in testgraphs(gx)  # this makes graphs of different eltypes
+@testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
@@ -66,7 +66,7 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
 end
 
 gx = path_graph(30)
-for g in testgraphs(gx)
+@testset "$g" for g in testgraphs(gx)
     # Check normalize
     @test @inferred(diffusion_rate(g,
                                   1.0,
@@ -116,7 +116,7 @@ end
 
 gx = path_digraph(10)
 
-for g in testdigraphs(gx)
+@testset "$g" for g in testdigraphs(gx)
 
     ######
     # Check on digraphs
