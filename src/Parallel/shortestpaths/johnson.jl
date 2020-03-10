@@ -1,7 +1,7 @@
 function johnson_shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T} = weights(g),
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -19,11 +19,9 @@ function johnson_shortest_paths(
         end
     end
 
-
     dijk_state = Parallel.dijkstra_shortest_paths(g, vertices(g), distmx)
     dists = dijk_state.dists
     parents = dijk_state.parents
-
 
     broadcast!(-, dists, dists, wt_transform)
     for v in vertices(g)

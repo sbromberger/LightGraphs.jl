@@ -72,7 +72,7 @@ function eccentricity(
     g::AbstractGraph,
     v::Integer,
     distmx::AbstractMatrix{T} = weights(g),
-) where {T<:Real}
+) where {T <: Real}
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && @warn("Infinite path length detected for vertex $v")
 
@@ -85,9 +85,7 @@ eccentricity(
     distmx::AbstractMatrix = weights(g),
 ) = [eccentricity(g, v, distmx) for v in vs]
 
-
-eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
-    eccentricity(g, vertices(g), distmx)
+eccentricity(g::AbstractGraph, distmx::AbstractMatrix) = eccentricity(g, vertices(g), distmx)
 
 """
     diameter(eccentricities)
@@ -108,8 +106,7 @@ julia> diameter(path_graph(5))
 ```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
-diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
-    maximum(eccentricity(g, distmx))
+diameter(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) = maximum(eccentricity(g, distmx))
 
 """
     periphery(eccentricities)
@@ -164,8 +161,7 @@ julia> radius(path_graph(5))
 ```
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
-radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
-    minimum(eccentricity(g, distmx))
+radius(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) = minimum(eccentricity(g, distmx))
 
 """
     center(eccentricities)
@@ -193,5 +189,4 @@ function center(eccentricities::Vector)
     return filter(x -> eccentricities[x] == rad, 1:length(eccentricities))
 end
 
-center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) =
-    center(eccentricity(g, distmx))
+center(g::AbstractGraph, distmx::AbstractMatrix = weights(g)) = center(eccentricity(g, distmx))

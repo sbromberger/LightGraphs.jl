@@ -24,7 +24,7 @@ function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
     seed::Int = -1,
-) where {T<:Integer}
+) where {T <: Integer}
 
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error
     nvg = nv(g)

@@ -1,9 +1,6 @@
 @testset "Steiner Tree" begin
 
-    function sum_weight(
-        g::AbstractGraph{<:Integer},
-        distmx::AbstractMatrix{<:Integer} = weights(g),
-    )
+    function sum_weight(g::AbstractGraph{<:Integer}, distmx::AbstractMatrix{<:Integer} = weights(g))
         sum_wt = zero(eltype(g))
         for e in edges(g)
             sum_wt += distmx[src(e), dst(e)]
@@ -33,7 +30,6 @@
         @test ne(g_copy) == 4
     end
 
-
     g5 = grid([5, 5])
     for g in testgraphs(g5)
         g_st = @inferred(steiner_tree(g, [3, 11, 15, 23]))
@@ -61,7 +57,5 @@
         g_st = @inferred(steiner_tree(g, [2, 4, 5], d))
         @test sum_weight(g_st, d) <= approx_factor(3) * (2 + 4 + 5)
     end
-
-
 
 end

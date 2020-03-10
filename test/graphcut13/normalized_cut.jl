@@ -75,7 +75,7 @@
 
     function contiguous(labels::Vector{Int})::Bool
         changes = 0
-        for i = 1:length(labels)-1
+        for i in 1:(length(labels)-1)
             if labels[i] != labels[i+1]
                 changes += 1
             end
@@ -93,9 +93,6 @@
 
     @test issorted(num_subgraphs) == true
 
-
-    @test any(
-        length(unique(normalized_cut(g, t))) == 4 for t in [0.125, 0.15, 0.16, 0.175, 0.20]
-    )
+    @test any(length(unique(normalized_cut(g, t))) == 4 for t in [0.125, 0.15, 0.16, 0.175, 0.20])
 
 end

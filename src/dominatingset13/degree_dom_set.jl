@@ -15,7 +15,7 @@ function update_dominated!(
     v::Integer,
     dominated::BitArray{1},
     in_dom_set::BitArray{1},
-) where {T<:Integer}
+) where {T <: Integer}
 
     @inbounds if !dominated[v]
         dominated[v] = true
@@ -46,7 +46,7 @@ Runtime: ``\\mathcal{O}((|V|+|E|)*log(|V|))``
 Memory: ``\\mathcal{O}(|V|)``
 Approximation Factor: `ln(maximum(degree(g)))+2`
 """
-function dominating_set(g::AbstractGraph{T}, alg::DegreeDominatingSet) where {T<:Integer}
+function dominating_set(g::AbstractGraph{T}, alg::DegreeDominatingSet) where {T <: Integer}
 
     nvg = nv(g)
     in_dom_set = falses(nvg)

@@ -4,7 +4,7 @@ function randomwalk(
     s::Integer,
     niter::Integer;
     seed::Int = -1,
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     Base.depwarn(
         "`randomwalk` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.walk`.",
         :randomwalk,
@@ -13,12 +13,7 @@ function randomwalk(
     LightGraphs.Traversals.walk(g, s, LightGraphs.Traversals.RandomWalk(false, niter, rng))
 end
 
-function non_backtracking_randomwalk(
-    g::AbstractGraph,
-    s::Integer,
-    niter::Integer;
-    seed::Int = -1,
-)
+function non_backtracking_randomwalk(g::AbstractGraph, s::Integer, niter::Integer; seed::Int = -1)
     Base.depwarn(
         "`non_backtracking_randomwalk` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.walk`.",
         :non_backtracking_randomwalk,
@@ -32,7 +27,7 @@ function self_avoiding_walk(
     s::Integer,
     niter::Integer;
     seed::Int = -1,
-) where {AG<:AbstractGraph{T}} where {T}
+) where {AG <: AbstractGraph{T}} where {T}
     Base.depwarn(
         "`self_avoiding_walk` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.walk`.",
         :self_avoiding_walk,

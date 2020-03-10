@@ -13,7 +13,7 @@ generate_reduce(
     comp::Comp,
     reps::Integer;
     parallel = :threads,
-) where {T<:Integer,Comp} =
+) where {T <: Integer, Comp} =
     parallel == :threads ? threaded_generate_reduce(g, gen_func, comp, reps) :
     distr_generate_reduce(g, gen_func, comp, reps)
 
@@ -27,9 +27,9 @@ function distr_generate_reduce(
     gen_func::Function,
     comp::Comp,
     reps::Integer,
-) where {T<:Integer,Comp}
+) where {T <: Integer, Comp}
     # Type assert required for type stability
-    min_set::Vector{T} = @distributed ((x, y) -> comp(x, y) ? x : y) for _ = 1:reps
+    min_set::Vector{T} = @distributed ((x, y) -> comp(x, y) ? x : y) for _ in 1:reps
         gen_func(g)
     end
     return min_set
@@ -45,11 +45,11 @@ function threaded_generate_reduce(
     gen_func::Function,
     comp::Comp,
     reps::Integer,
-) where {T<:Integer,Comp}
+) where {T <: Integer, Comp}
     n_t = Base.Threads.nthreads()
     is_undef = ones(Bool, n_t)
-    min_set = [Vector{T}() for _ = 1:n_t]
-    Base.Threads.@threads for _ = 1:reps
+    min_set = [Vector{T}() for _ in 1:n_t]
+    Base.Threads.@threads for _ in 1:reps
         t = Base.Threads.threadid()
         next_set = gen_func(g)
         if is_undef[t] || comp(next_set, min_set[t])

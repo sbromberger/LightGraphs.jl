@@ -1,6 +1,5 @@
 @testset "Minimal Dominating Set" begin
 
-
     g0 = SimpleGraph(0)
     for g in testgraphs(g0)
         for parallel in [:threads, :distributed]
@@ -78,9 +77,7 @@
                 seed = 0,
             ))
             sort!(d)
-            @test (
-                d == [1, 2, 4] || d == [1, 3] || d == [1, 4] || d == [2, 3] || d == [2, 4]
-            )
+            @test (d == [1, 2, 4] || d == [1, 3] || d == [1, 4] || d == [2, 3] || d == [2, 4])
         end
     end
 
@@ -96,9 +93,7 @@
                 seed = 0,
             ))
             sort!(d)
-            @test (
-                d == [1, 2, 4] || d == [1, 3] || d == [1, 4] || d == [2, 3] || d == [2, 4]
-            )
+            @test (d == [1, 2, 4] || d == [1, 3] || d == [1, 4] || d == [2, 3] || d == [2, 4])
         end
     end
 end

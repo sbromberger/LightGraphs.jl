@@ -173,7 +173,6 @@ using ArnoldiMethod
         @test norm(z) ≈ 0.0 atol = 1e-8
     end
 
-
     n = 10
 
     mat = Float64.(sprand(Bool, n, n, 0.3))
@@ -188,8 +187,6 @@ using ArnoldiMethod
     test_symmetry(mat, n)
     test_punchedmatrix(mat, n)
 
-
-
     """Computes the stationary distribution of a random walk"""
     function stationarydistribution(R::StochasticAdjacency; kwargs...)
         er = eigs(R, nev = 1, which = LR(); kwargs...)
@@ -197,7 +194,7 @@ using ArnoldiMethod
         abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution") # TODO 0.7: should we change the error type to InexactError?
         p = real(er[2][:, 1])
         if p[1] < 0
-            for i = 1:length(p)
+            for i in 1:length(p)
                 p[i] = -p[i]
             end
         end

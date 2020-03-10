@@ -35,7 +35,6 @@
         @test z.paths[1] == [1, 2, 4, 5]
     end
 
-
     G = LightGraphs.Graph()
     add_vertices!(G, 4)
     add_edge!(G, 2, 1)

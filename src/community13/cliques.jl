@@ -24,7 +24,7 @@ julia> maximal_cliques(g)
 """
 function maximal_cliques end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function maximal_cliques(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
+@traitfn function maximal_cliques(g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
     # uncomment this when https://github.com/JuliaLang/julia/issues/23618 is fixed
@@ -55,7 +55,7 @@ function maximal_cliques end
     # union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
     done = Set{T}()
-    stack = Vector{Tuple{Set{T},Set{T},Set{T}}}()
+    stack = Vector{Tuple{Set{T}, Set{T}, Set{T}}}()
     clique_so_far = Vector{T}()
     cliques = Vector{Vector{T}}()
 

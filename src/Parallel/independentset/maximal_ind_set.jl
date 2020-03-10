@@ -13,7 +13,7 @@ independent_set(
     reps::Integer,
     alg::MaximalIndependentSet;
     parallel = :threads,
-) where {T<:Integer} = LightGraphs.Parallel.generate_reduce(
+) where {T <: Integer} = LightGraphs.Parallel.generate_reduce(
     g,
     (g::AbstractGraph{T}) -> LightGraphs.independent_set(g, alg),
     (x::Vector{T}, y::Vector{T}) -> length(x) > length(y),

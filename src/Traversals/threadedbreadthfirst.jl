@@ -13,7 +13,7 @@ at a time (default `20`). For graphs with uniform degree, a larger value of
 - [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
 Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
 """
-struct ThreadedBreadthFirst{F<:Function} <: ThreadedTraversalAlgorithm
+struct ThreadedBreadthFirst{F <: Function} <: ThreadedTraversalAlgorithm
     queue_segment_size::Int
     neighborfn::F
 end
@@ -32,10 +32,9 @@ function partition_sources!(
     queue_list::Vector{Vector{T}},
     sources::Vector{<:Integer},
     empty_list::Vector{Bool},
-) where {T<:Integer}
+) where {T <: Integer}
 
-    partitions =
-        LightGraphs.unweighted_contiguous_partition(length(sources), length(queue_list))
+    partitions = LightGraphs.unweighted_contiguous_partition(length(sources), length(queue_list))
     for (i, p) in enumerate(partitions)
         append!(queue_list[i], sources[p])
         empty_list[i] = isempty(p)
@@ -45,14 +44,14 @@ partition_sources!(
     queue_list::Vector{Vector{T}},
     source::Integer,
     empty_list::Vector{Bool},
-) where {T<:Integer} = partition_sources!(queue_list, [source], empty_list)
+) where {T <: Integer} = partition_sources!(queue_list, [source], empty_list)
 
 function traverse_graph!(
     g::AbstractGraph{U},
     ss,
     alg::ThreadedBreadthFirst,
     state::TraversalState,
-) where {U<:Integer}
+) where {U <: Integer}
 
     n = nv(g)
     n_t = nthreads()

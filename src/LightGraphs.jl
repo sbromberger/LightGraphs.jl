@@ -23,14 +23,7 @@ using DataStructures:
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
-    AbstractRNG,
-    GLOBAL_RNG,
-    MersenneTwister,
-    randperm,
-    randsubseq!,
-    seed!,
-    shuffle,
-    shuffle!
+    AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 

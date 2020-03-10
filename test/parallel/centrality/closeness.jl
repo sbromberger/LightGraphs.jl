@@ -6,17 +6,9 @@
     add_edge!(g5, 3, 4)
 
     for g in testdigraphs(g5)
-        dy = @inferred(Parallel.closeness_centrality(
-            g;
-            normalize = false,
-            parallel = :distributed,
-        ))
+        dy = @inferred(Parallel.closeness_centrality(g; normalize = false, parallel = :distributed))
         @test dy ≈ [0.75, 0.6666666666666666, 1.0, 0.0]
-        ty = @inferred(Parallel.closeness_centrality(
-            g;
-            normalize = false,
-            parallel = :threads,
-        ))
+        ty = @inferred(Parallel.closeness_centrality(g; normalize = false, parallel = :threads))
         @test ty ≈ [0.75, 0.6666666666666666, 1.0, 0.0]
 
         dz = @inferred(Parallel.closeness_centrality(g; parallel = :distributed))

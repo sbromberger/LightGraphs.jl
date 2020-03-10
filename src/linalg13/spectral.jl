@@ -44,12 +44,7 @@ end
     return :($TT)
 end
 
-function _adjacency_matrix(
-    g::AbstractGraph,
-    T::DataType,
-    neighborfn::Function,
-    nzmult::Int = 1,
-)
+function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int = 1)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     TT = _find_correct_type(g)
@@ -57,7 +52,7 @@ function _adjacency_matrix(
 
     rowval = sizehint!(Vector{TT}(), nz)
     selfloops = Vector{TT}()
-    for j = 1:n_v  # this is by column, not by row.
+    for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
         end
@@ -89,17 +84,13 @@ for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both gr
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`.
 """
-function laplacian_matrix(
-    g::AbstractGraph{U},
-    T::DataType = Int;
-    dir::Symbol = :unspec,
-) where {U}
+function laplacian_matrix(g::AbstractGraph{U}, T::DataType = Int; dir::Symbol = :unspec) where {U}
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir = dir)
     s = sum(A; dims = 2)
-    D = convert(SparseMatrixCSC{T,U}, spdiagm(0 => s[:]))
+    D = convert(SparseMatrixCSC{T, U}, spdiagm(0 => s[:]))
     return D - A
 end
 
@@ -224,7 +215,6 @@ end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance(G₁::G, G₂::G) where {G <: AbstractGraph; !IsDirected{G}}
-    nv(G₁) == nv(G₂) ||
-    throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
+    nv(G₁) == nv(G₂) || throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))
 end

@@ -5,7 +5,7 @@
             c = core_periphery_deg(g)
             @test @inferred(degree(g, 1)) == 9
             @test c[1] == 1
-            for i = 2:10
+            for i in 2:10
                 @test c[i] == 2
             end
         end
@@ -19,10 +19,10 @@
             c = @inferred(core_periphery_deg(g))
             @test c[1] == 1
             @test c[11] == 1
-            for i = 2:10
+            for i in 2:10
                 @test c[i] == 2
             end
-            for i = 12:20
+            for i in 12:20
                 @test c[i] == 2
             end
         end

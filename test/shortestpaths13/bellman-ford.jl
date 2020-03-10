@@ -13,7 +13,6 @@
         @test @inferred(!has_negative_edge_cycle(g))
         @test @inferred(!has_negative_edge_cycle(g, d1))
 
-
         y = @inferred(bellman_ford_shortest_paths(g, 2, d1))
         z = @inferred(bellman_ford_shortest_paths(g, 2, d2))
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]

@@ -74,7 +74,7 @@
 
     @testset "Random Graphs" begin
         @testset "Simple graphs" begin
-            for i = 1:5
+            for i in 1:5
                 nvg = Int(ceil(250 * rand()))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                 seed = Int(floor(100 * rand()))
@@ -86,7 +86,7 @@
         end
 
         @testset "Simple DiGraphs" begin
-            for i = 1:5
+            for i in 1:5
                 nvg = Int(ceil(250 * rand()))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                 seed = Int(floor(100 * rand()))
@@ -190,7 +190,6 @@
             @test @inferred(!has_negative_edge_cycle_spfa(g))
             @test @inferred(!has_negative_edge_cycle_spfa(g, d1))
 
-
             y = @inferred(spfa_shortest_paths(g, 2, d1))
             z = @inferred(spfa_shortest_paths(g, 2, d2))
             @test y == z == [Inf, 0, 6, 17, 33]
@@ -199,7 +198,6 @@
             @test z == [typemax(Int), 0, 1, 2, 3]
         end
     end
-
 
     @testset "Negative Cycle" begin
         # Negative Cycle 1

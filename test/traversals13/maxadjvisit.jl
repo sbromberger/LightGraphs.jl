@@ -20,7 +20,6 @@
         (7, 8, 3.0),
     ]
 
-
     m = length(wedges)
     eweights = spzeros(nv(gx), nv(gx))
 

@@ -1,4 +1,4 @@
-const SparseMatrix{T} = SparseMatrixCSC{T,Int}
+const SparseMatrix{T} = SparseMatrixCSC{T, Int}
 
 """
     GraphMatrix{T}
@@ -6,7 +6,6 @@ const SparseMatrix{T} = SparseMatrixCSC{T,Int}
 An abstract type to allow opertions on any type of graph matrix
 """
 abstract type GraphMatrix{T} end
-
 
 """
     Adjacency{T}
@@ -29,16 +28,15 @@ abstract type Laplacian{T} <: GraphMatrix{T} end
 
 The standard adjacency matrix.
 """
-struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
+struct CombinatorialAdjacency{T, S, V} <: Adjacency{T}
     A::S
     D::V
 end
 
 function CombinatorialAdjacency(A::SparseMatrix{T}) where {T}
     D = vec(sum(A, dims = 1))
-    return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
+    return CombinatorialAdjacency{T, SparseMatrix{T}, typeof(D)}(A, D)
 end
-
 
 """
     NormalizedAdjacency{T}
@@ -113,7 +111,6 @@ Broadcast.broadcasted(::typeof(*), ::Noop, x) = x
 
 Diagonal(::Noop) = Noop()
 
-
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
 
 postscalefactor(::Adjacency) = Noop()
@@ -127,7 +124,6 @@ prescalefactor(::Adjacency) = Noop()
 prescalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
 
 prescalefactor(adjmat::StochasticAdjacency) = adjmat.scalefactor
-
 
 struct CombinatorialLaplacian{T} <: Laplacian{T}
     A::CombinatorialAdjacency{T}
@@ -188,20 +184,17 @@ degrees(mat::GraphMatrix) = degrees(adjacency(mat))
 adjacency(lapl::Laplacian) = lapl.A
 adjacency(lapl::GraphMatrix) = lapl.A
 
-
-
 convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
 convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
-
-function sparse(lapl::M) where {M<:Laplacian}
+function sparse(lapl::M) where {M <: Laplacian}
     adjmat = adjacency(lapl)
     A = sparse(adjmat)
     L = sparse(Diagonal(diag(lapl))) - A
     return L
 end
 
-function SparseMatrix(lapl::M) where {M<:GraphMatrix}
+function SparseMatrix(lapl::M) where {M <: GraphMatrix}
     return sparse(lapl)
 end
 
@@ -209,8 +202,6 @@ function sparse(adjmat::Adjacency)
     A = sparse(adjmat.A)
     return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
-
-
 
 function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where {T}
     adjmat = adjacency(lapl)
@@ -224,16 +215,15 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
-*(adjmat::Adjacency{T}, x::AbstractVector{T}) where {T<:Number} =
+*(adjmat::Adjacency{T}, x::AbstractVector{T}) where {T <: Number} =
     postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
 
-*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where {T<:Number} = adjmat.A * x
+*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where {T <: Number} = adjmat.A * x
 
-*(lapl::Laplacian{T}, x::AbstractVector{T}) where {T<:Number} =
+*(lapl::Laplacian{T}, x::AbstractVector{T}) where {T <: Number} =
     (diag(lapl) .* x) - (adjacency(lapl) * x)
 
-
-function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where {T<:Number}
+function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where {T <: Number}
     y = adjmat.A * x
     return y - dot(adjmat.perron, y) * adjmat.perron
 end
@@ -274,7 +264,6 @@ function mul!(Y, lapl::Laplacian, B)
     return Y
 end
 
-
 """
     symmetrize(A::SparseMatrix, which=:or)
 
@@ -314,13 +303,10 @@ Only works on [`Adjacency`](@ref) because the normalizations don't commute with 
 symmetrize(adjmat::CombinatorialAdjacency, which = :or) =
     CombinatorialAdjacency(symmetrize(adjmat.A, which))
 
-
 # per #564
 # @deprecate mul!(Y, A::Noop, B) None
 @deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
 @deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
-
-
 
 """
     LinAlg

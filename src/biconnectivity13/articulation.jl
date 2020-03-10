@@ -20,8 +20,8 @@ julia> articulation(path_graph(5))
 ```
 """
 function articulation end
-@traitfn function articulation(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
-    s = Vector{Tuple{T,T,T}}()
+@traitfn function articulation(g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+    s = Vector{Tuple{T, T, T}}()
     is_articulation_pt = falses(nv(g))
     low = zeros(T, nv(g))
     pre = zeros(T, nv(g))

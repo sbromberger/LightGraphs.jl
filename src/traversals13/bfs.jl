@@ -5,8 +5,7 @@ function bfs_parents(g::AbstractGraph, s::Integer; dir = :out)
         "`bfs_parents` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.parents`.",
         :bfs_parents,
     )
-    z = dir == :out ?
-        LightGraphs.Traversals.parents(g, s, LightGraphs.Traversals.BreadthFirst()) :
+    z = dir == :out ? LightGraphs.Traversals.parents(g, s, LightGraphs.Traversals.BreadthFirst()) :
         LightGraphs.Traversals.parents(
         g,
         s,
@@ -22,19 +21,10 @@ function bfs_tree(g::AbstractGraph, s::Integer; dir = :out)
         :bfs_tree,
     )
     dir == :out ? LightGraphs.Traversals.tree(g, s, LightGraphs.Traversals.BreadthFirst()) :
-    LightGraphs.Traversals.tree(
-        g,
-        s,
-        LightGraphs.Traversals.BreadthFirst(neighborfn = inneighbors),
-    )
+    LightGraphs.Traversals.tree(g, s, LightGraphs.Traversals.BreadthFirst(neighborfn = inneighbors))
 end
 
-function gdistances!(
-    g::AbstractGraph{T},
-    source,
-    vert_level;
-    sort_alg = QuickSort,
-) where {T}
+function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where {T}
     Base.depwarn(
         "`gdistances!` has been deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.traverse_graph!` using `LightGraphs.Traversals.DistanceState`.",
         :gdistances!,

@@ -11,9 +11,9 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g, collect(1:5), d))
         @test all(isapprox(z.dists, zp.dists))
 
-        for i = 1:5
+        for i in 1:5
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end
@@ -24,9 +24,9 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g))
         @test all(isapprox(z.dists, zp.dists))
 
-        for i = 1:5
+        for i in 1:5
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end
@@ -37,16 +37,15 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g, [1, 2]))
         @test all(isapprox(z.dists[1:2, :], zp.dists))
 
-        for i = 1:2
+        for i in 1:2
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end
             end
         end
     end
-
 
     #Testing multisource On directed Graph
     g3 = path_digraph(5)
@@ -57,9 +56,9 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g, collect(1:5), d))
         @test all(isapprox(z.dists, zp.dists))
 
-        for i = 1:5
+        for i in 1:5
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if z.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end
@@ -70,9 +69,9 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g))
         @test all(isapprox(z.dists, zp.dists))
 
-        for i = 1:5
+        for i in 1:5
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end
@@ -83,9 +82,9 @@
         zp = @inferred(Parallel.dijkstra_shortest_paths(g, [1, 2]))
         @test all(isapprox(z.dists[1:2, :], zp.dists))
 
-        for i = 1:2
+        for i in 1:2
             state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths = true)
-            for j = 1:5
+            for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
                 end

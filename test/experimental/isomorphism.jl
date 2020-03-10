@@ -1,6 +1,5 @@
 using Random: MersenneTwister, randperm
 
-
 # helper function that permutates the vertices of a graph
 function shuffle_vertices(g::AbstractGraph, σ)
     G = typeof(g)
@@ -76,7 +75,7 @@ cubic_graphs = [
 # vertex permutated versions of cubic_graphs
 cubic_graphs_perm = []
 _rng = MersenneTwister(1)
-for i = 1:length(cubic_graphs)
+for i in 1:length(cubic_graphs)
     push!(cubic_graphs_perm, shuffle_vertices(cubic_graphs[i], randperm(_rng, 8)))
 end
 
@@ -85,7 +84,7 @@ end
 
     # the cubic graphs should only be isomorph to themself
     # the same holds for subgraph isomorphism and induced subgraph isomorphism
-    for i = 1:length(cubic_graphs), j = 1:length(cubic_graphs)
+    for i in 1:length(cubic_graphs), j in 1:length(cubic_graphs)
         @test (i == j) == has_isomorph(cubic_graphs[i], cubic_graphs[j])
         @test (i == j) == has_subgraphisomorph(cubic_graphs[i], cubic_graphs[j])
         @test (i == j) == has_induced_subgraphisomorph(cubic_graphs[i], cubic_graphs[j])
@@ -93,15 +92,14 @@ end
 
     # the cubic graphs should only be isomorph a permutation of themself
     # the same holds for subgraph isomorphism and induced subgraph isomorphism
-    for i = 1:length(cubic_graphs), j = 1:length(cubic_graphs_perm)
+    for i in 1:length(cubic_graphs), j in 1:length(cubic_graphs_perm)
         @test (i == j) == has_isomorph(cubic_graphs[i], cubic_graphs_perm[j])
         @test (i == j) == has_subgraphisomorph(cubic_graphs[i], cubic_graphs_perm[j])
-        @test (i == j) ==
-              has_induced_subgraphisomorph(cubic_graphs[i], cubic_graphs_perm[j])
+        @test (i == j) == has_induced_subgraphisomorph(cubic_graphs[i], cubic_graphs_perm[j])
     end
 
     # count_isomorph, count_subgraphisomorph and count_induced_subgraphisomorph are commutative
-    for i = 1:length(cubic_graphs)
+    for i in 1:length(cubic_graphs)
         g1 = cubic_graphs[i]
         g2 = cubic_graphs_perm[i]
         @test count_isomorph(g1, g1) ==
@@ -118,7 +116,7 @@ end
         count_subgraphisomorph(g2, g2)
     end
 
-    for i = 1:length(cubic_graphs)
+    for i in 1:length(cubic_graphs)
         g1 = cubic_graphs[i]
         g2 = cubic_graphs_perm[i]
         length(collect(all_isomorph(g1, g1))) == count_isomorph(g1, g2)
@@ -136,19 +134,11 @@ end
     # TODO better tests for vertex_relation and edge_relation
     vrel(u, v) = false
     erel(e1, e2) = false
-    @test has_isomorph(complete_graph(4), complete_graph(4), vertex_relation = vrel) ==
-          false
+    @test has_isomorph(complete_graph(4), complete_graph(4), vertex_relation = vrel) == false
     @test has_isomorph(complete_graph(4), complete_graph(4), edge_relation = erel) == false
-    @test has_subgraphisomorph(
-        complete_graph(4),
-        complete_graph(3),
-        vertex_relation = vrel,
-    ) == false
-    @test has_subgraphisomorph(
-        complete_graph(4),
-        complete_graph(3),
-        edge_relation = erel,
-    ) == false
+    @test has_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation = vrel) ==
+          false
+    @test has_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation = erel) == false
     @test has_induced_subgraphisomorph(
         complete_graph(4),
         complete_graph(3),
@@ -162,16 +152,8 @@ end
 
     @test count_isomorph(complete_graph(4), complete_graph(4), vertex_relation = vrel) == 0
     @test count_isomorph(complete_graph(4), complete_graph(4), edge_relation = erel) == 0
-    @test count_subgraphisomorph(
-        complete_graph(4),
-        complete_graph(3),
-        vertex_relation = vrel,
-    ) == 0
-    @test count_subgraphisomorph(
-        complete_graph(4),
-        complete_graph(3),
-        edge_relation = erel,
-    ) == 0
+    @test count_subgraphisomorph(complete_graph(4), complete_graph(3), vertex_relation = vrel) == 0
+    @test count_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation = erel) == 0
     @test count_induced_subgraphisomorph(
         complete_graph(4),
         complete_graph(3),
@@ -183,22 +165,14 @@ end
         edge_relation = erel,
     ) == 0
 
-    @test isempty(all_isomorph(
-        complete_graph(4),
-        complete_graph(4),
-        vertex_relation = vrel,
-    ))
+    @test isempty(all_isomorph(complete_graph(4), complete_graph(4), vertex_relation = vrel))
     @test isempty(all_isomorph(complete_graph(4), complete_graph(4), edge_relation = erel))
     @test isempty(all_subgraphisomorph(
         complete_graph(4),
         complete_graph(3),
         vertex_relation = vrel,
     ))
-    @test isempty(all_subgraphisomorph(
-        complete_graph(4),
-        complete_graph(3),
-        edge_relation = erel,
-    ))
+    @test isempty(all_subgraphisomorph(complete_graph(4), complete_graph(3), edge_relation = erel))
     @test isempty(all_induced_subgraphisomorph(
         complete_graph(4),
         complete_graph(3),
@@ -214,7 +188,6 @@ end
     @test count_isomorph(complete_graph(4), cycle_graph(4)) == 0
     @test isempty(all_isomorph(complete_graph(4), cycle_graph(4)))
     @test count_subgraphisomorph(complete_graph(3), complete_graph(4)) == 0
-
 
     # this tests triggers the shortcut in the vf2 algorithm if the first graph is smaller than the second one
     @test has_isomorph(complete_graph(3), complete_graph(4)) == false

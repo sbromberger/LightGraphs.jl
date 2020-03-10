@@ -8,7 +8,7 @@
         @test @inferred(diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
     end
 
-    for i = 1:5
+    for i in 1:5
         add_vertex!(gx)
     end
 
@@ -17,7 +17,6 @@
         ######
         # Check on fully connected, prob = 1
         ######
-
 
         # Add disconnected for more dynamics
 
@@ -86,22 +85,11 @@
     gx = path_graph(30)
     for g in testgraphs(gx)
         # Check normalize
-        @test @inferred(diffusion_rate(
-            g,
-            1.0,
-            6,
-            initial_infections = [15],
-            normalize = false,
-        )) == [1, 3, 5, 7, 9, 11]
+        @test @inferred(diffusion_rate(g, 1.0, 6, initial_infections = [15], normalize = false)) ==
+              [1, 3, 5, 7, 9, 11]
 
-
-        @test @inferred(diffusion_rate(
-            g,
-            2.0,
-            6,
-            initial_infections = [15],
-            normalize = true,
-        )) == [1, 3, 5, 7, 9, 11]
+        @test @inferred(diffusion_rate(g, 2.0, 6, initial_infections = [15], normalize = true)) ==
+              [1, 3, 5, 7, 9, 11]
 
         # Test probability accurate
         # In a Path network,
@@ -118,7 +106,7 @@
         for p in [0.2, 0.4]
             final_value = 0.0
 
-            for i = 1:20
+            for i in 1:20
                 result = @inferred(diffusion_rate(g, p, 5, initial_infections = [1]))
                 final_value += result[5]
             end
@@ -134,7 +122,6 @@
         end
     end
 
-
     gx = path_digraph(10)
 
     for g in testdigraphs(gx)
@@ -145,8 +132,7 @@
 
         @test @inferred(diffusion_rate(g, 1.0, 9, initial_infections = [1])) == collect(1:9)
 
-        @test @inferred(diffusion_rate(g, 1.0, 9, initial_infections = [10])) ==
-              ones(Int, 9)
+        @test @inferred(diffusion_rate(g, 1.0, 9, initial_infections = [10])) == ones(Int, 9)
 
         # Check probabilities.
         # See note in analogous tests above for undirected tests.
@@ -157,7 +143,7 @@
         for p in [0.2, 0.4]
             final_value = 0.0
 
-            for i = 1:20
+            for i in 1:20
                 result = @inferred(diffusion_rate(g, p, 11, initial_infections = [1]))
                 final_value += result[11]
 

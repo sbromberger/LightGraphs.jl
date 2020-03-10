@@ -2,11 +2,10 @@
     struct YenState{T, U}
 Designed for yen k-shortest-paths calculations.
 """
-struct YenState{T,U<:Integer} <: AbstractPathState
+struct YenState{T, U <: Integer} <: AbstractPathState
     dists::Vector{T}
     paths::Vector{Vector{U}}
 end
-
 
 """
     yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);
@@ -21,31 +20,31 @@ function yen_k_shortest_paths(
     distmx::AbstractMatrix{T} = weights(g),
     K::Int = 1;
     maxdist = Inf,
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
-    source == target && return YenState{T,U}([U(0)], [[source]])
+    source == target && return YenState{T, U}([U(0)], [[source]])
 
     alg = LightGraphs.Experimental.ShortestPaths.Dijkstra(maxdist = maxdist)
     dj = LightGraphs.Experimental.ShortestPaths.shortest_paths(g, source, distmx, alg)
 
     path = LightGraphs.Experimental.ShortestPaths.paths(dj, target)
-    isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
+    isempty(path) && return YenState{T, U}(Vector{T}(), Vector{Vector{U}}())
 
-    dists = Array{T,1}()
+    dists = Array{T, 1}()
     push!(dists, dj.dists[target])
     A = [path]
     B = PriorityQueue()
     gcopy = deepcopy(g)
 
-    for k = 1:(K-1)
-        for j = 1:length(A[k])
+    for k in 1:(K-1)
+        for j in 1:length(A[k])
             # Spur node is retrieved from the previous k-shortest path, k − 1
             spurnode = A[k][j]
             #  The sequence of nodes from the source to the spur node of the previous k-shortest path
             rootpath = A[k][1:j]
 
             # Store the removed edges
-            edgesremoved = Array{Tuple{Int,Int},1}()
+            edgesremoved = Array{Tuple{Int, Int}, 1}()
             # Remove the links of the previous shortest paths which share the same root path
             for ppath in A
                 if length(ppath) > j && rootpath == ppath[1:j]
@@ -60,7 +59,7 @@ function yen_k_shortest_paths(
 
             # Remove node of root path and calculate dist of it
             distrootpath = 0.0
-            for n = 1:(length(rootpath)-1)
+            for n in 1:(length(rootpath)-1)
                 u = rootpath[n]
                 nei = copy(neighbors(gcopy, u))
                 for v in nei
@@ -100,5 +99,5 @@ function yen_k_shortest_paths(
         push!(A, dequeue!(B))
     end
 
-    return YenState{T,U}(dists, A)
+    return YenState{T, U}(dists, A)
 end

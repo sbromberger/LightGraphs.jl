@@ -1,5 +1,4 @@
-using LightGraphs.Experimental,
-    LightGraphs.Experimental.ShortestPaths, LightGraphs.Traversals
+using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths, LightGraphs.Traversals
 using SparseArrays
 
 using LightGraphs.Traversals: NOOPSort
@@ -74,7 +73,6 @@ end
             @test @inferred(paths(z))[4] == paths(z, 4) == [2, 3, 4]
             @test @inferred(!has_negative_weight_cycle(g, BellmanFord()))
             @test @inferred(!has_negative_weight_cycle(g, d1, BellmanFord()))
-
 
             y = @inferred(shortest_paths(g, 2, d1, BellmanFord()))
             z = @inferred(shortest_paths(g, 2, d2, BellmanFord()))
@@ -224,7 +222,7 @@ end
         end
 
         @testset "random simple graphs" begin
-            for i = 1:5
+            for i in 1:5
                 nvg = Int(ceil(250 * rand()))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                 seed = Int(floor(100 * rand()))
@@ -236,7 +234,7 @@ end
         end
 
         @testset "random simple digraphs" begin
-            for i = 1:5
+            for i in 1:5
                 nvg = Int(ceil(250 * rand()))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                 seed = Int(floor(100 * rand()))
@@ -430,11 +428,7 @@ end
             @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
             @test ds.predecessors == [[], [1], [1], [3], [3, 4]]
 
-            dm = @inferred(shortest_paths(
-                g,
-                1,
-                Dijkstra(all_paths = true, track_vertices = true),
-            ))
+            dm = @inferred(shortest_paths(g, 1, Dijkstra(all_paths = true, track_vertices = true)))
             @test dm.pathcounts == [1, 1, 1, 1, 2]
             @test dm.predecessors == [[], [1], [1], [3], [2, 3]]
             @test dm.closest_vertices == [1, 2, 3, 5, 4]
@@ -445,11 +439,7 @@ end
         add_edge!(G, 1, 3)
         add_edge!(G, 4, 5)
         for g in testgraphs(G)
-            dm = @inferred(shortest_paths(
-                g,
-                1,
-                Dijkstra(all_paths = true, track_vertices = true),
-            ))
+            dm = @inferred(shortest_paths(g, 1, Dijkstra(all_paths = true, track_vertices = true)))
             @test dm.closest_vertices == [1, 2, 3, 4, 5]
         end
 
@@ -517,7 +507,7 @@ end
         @testset "default for no source, no alg" begin
             g = path_graph(4)
             w = zeros(4, 4)
-            for i = 1:3
+            for i in 1:3
                 w[i, i+1] = 1.0
                 w[i+1, i] = 1.0
             end
@@ -655,7 +645,7 @@ end
 
         @testset "Random Graphs" begin
             @testset "Simple graphs" begin
-                for i = 1:5
+                for i in 1:5
                     nvg = Int(ceil(250 * rand()))
                     neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                     seed = Int(floor(100 * rand()))
@@ -667,7 +657,7 @@ end
             end
 
             @testset "Simple DiGraphs" begin
-                for i = 1:5
+                for i in 1:5
                     nvg = Int(ceil(250 * rand()))
                     neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
                     seed = Int(floor(100 * rand()))
@@ -771,7 +761,6 @@ end
                 @test @inferred(!has_negative_weight_cycle(g, SPFA()))
                 @test @inferred(!has_negative_weight_cycle(g, d1, SPFA()))
 
-
                 y = @inferred(shortest_paths(g, 2, d1, SPFA()))
                 z = @inferred(shortest_paths(g, 2, d2, SPFA()))
                 @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -781,27 +770,16 @@ end
             end
         end
 
-
         @testset "Negative Cycle" begin
             # Negative Cycle 1
             gx = complete_graph(3)
             for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(
-                    g,
-                    1,
-                    d,
-                    SPFA(),
-                )
+                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
 
                 d = [1 -1 1; -1 1 1; 1 1 1]
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(
-                    g,
-                    1,
-                    d,
-                    SPFA(),
-                )
+                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
             end
 
@@ -809,12 +787,7 @@ end
             gx = complete_graph(4)
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
             for g in testgraphs(gx)
-                @test_throws ShortestPaths.NegativeCycleError shortest_paths(
-                    g,
-                    1,
-                    d,
-                    SPFA(),
-                )
+                @test_throws ShortestPaths.NegativeCycleError shortest_paths(g, 1, d, SPFA())
                 @test has_negative_weight_cycle(g, d, SPFA())
             end
         end

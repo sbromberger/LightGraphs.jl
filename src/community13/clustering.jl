@@ -91,7 +91,6 @@ function local_clustering(g::AbstractGraph, vs = vertices(g))
     return local_clustering!(storage, ntriang, nalltriang, g, vs)
 end
 
-
 """
     triangles(g[, v])
     triangles(g, vs)
@@ -123,7 +122,6 @@ julia> triangles(g)
 """
 triangles(g::AbstractGraph, v::Integer) = local_clustering(g, v)[1]
 triangles(g::AbstractGraph, vs = vertices(g)) = local_clustering(g, vs)[1]
-
 
 """
     global_clustering_coefficient(g)

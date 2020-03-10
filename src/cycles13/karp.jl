@@ -5,16 +5,16 @@ function _karp_minimum_cycle_mean(
     g::AbstractGraph,
     distmx::AbstractMatrix{T},
     component::Vector{U},
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
-    v2j = Dict{U,Int}()
+    v2j = Dict{U, Int}()
     for (j, v) in enumerate(component)
         v2j[v] = j
     end
     n = length(component)
     F = fill(Inf, n + 1, n)
     F[1, 1] = 0.0
-    for i = 2:n+1
+    for i in 2:(n+1)
         for (j, v) in enumerate(component)
             for u in inneighbors(g, v)
                 k = get(v2j, u, 0)
@@ -44,7 +44,7 @@ function _karp_minimum_cycle_mean(
     λmin = Inf
     jbest = 0
 
-    for j = 1:n
+    for j in 1:n
         λ = maximum(map(i -> (F[n+1, j] - F[i, j]) / (n + 1 - i), 1:n))
         if λ < λmin || (isfinite(λ) && λ ≈ λmin && F[n+1, j] < F[n+1, jbest])
             λmin = λ
@@ -57,7 +57,7 @@ function _karp_minimum_cycle_mean(
     # Backward walk from jbest
     walk = zeros(Int, n + 1)
     walk[n+1] = jbest
-    for i = n:-1:1
+    for i in n:-1:1
         v = component[walk[i+1]]
         dmin = Inf
         for u in inneighbors(g, v)
@@ -75,11 +75,11 @@ function _karp_minimum_cycle_mean(
     # Extract cycle in the walk
     invmap = zeros(Int, n)
     I = 1:0
-    for i = n+1:-1:1
+    for i in (n+1):-1:1
         if iszero(invmap[walk[i]])
             invmap[walk[i]] = i
         else
-            I = i+1:invmap[walk[i]]
+            I = (i+1):invmap[walk[i]]
             break
         end
     end
@@ -95,10 +95,7 @@ Return minimum cycle mean of the directed graph `g` with optional edge weights c
 - [Karp](http://dx.doi.org/10.1016/0012-365X(78)90011-0).
 """
 function karp_minimum_cycle_mean end
-@traitfn function karp_minimum_cycle_mean(
-    g::::IsDirected,
-    distmx::AbstractMatrix = weights(g),
-)
+@traitfn function karp_minimum_cycle_mean(g::::IsDirected, distmx::AbstractMatrix = weights(g))
     cycle = Int[]
     λmin = Inf
     for component in strongly_connected_components(g)

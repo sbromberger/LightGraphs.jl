@@ -17,8 +17,7 @@ An exception thrown by a traversal function indicating that a visitor function c
 a return value of `false` does not indicate an error and therefore no exception is thrown.
 """
 struct TraversalError <: Exception end
-show(io::IO, ::TraversalError) =
-    println(io, "An error was encountered while traversing the graph.")
+show(io::IO, ::TraversalError) = println(io, "An error was encountered while traversing the graph.")
 
 """
     abstract type TraversalAlgorithm
@@ -162,7 +161,7 @@ traversal finished normally; `false` if one of the visit functions returned `fal
 """
 function traverse_graph! end
 
-struct VisitState{T<:Integer} <: TraversalState
+struct VisitState{T <: Integer} <: TraversalState
     visited::Vector{T}
 end
 
@@ -184,11 +183,7 @@ end
 Return a vector representing the vertices of `g` visited in order by [`TraversalAlgorithm`](@ref) `alg`
 starting at vertex/vertices `ss`.
 """
-function visited_vertices(
-    g::AbstractGraph{U},
-    ss,
-    alg::TraversalAlgorithm,
-) where {U<:Integer}
+function visited_vertices(g::AbstractGraph{U}, ss, alg::TraversalAlgorithm) where {U <: Integer}
 
     v = Vector{U}()
     sizehint!(v, nv(g))  # actually just the largest connected component, but we'll use this.
@@ -198,7 +193,7 @@ function visited_vertices(
     return state.visited
 end
 
-mutable struct ParentState{T<:Integer} <: TraversalState
+mutable struct ParentState{T <: Integer} <: TraversalState
     parents::Vector{T}
 end
 
@@ -234,7 +229,7 @@ end
 
 Return a directed acyclic graph based on a [`parents`](@ref) vector `p`.
 """
-function tree(p::AbstractVector{T}) where {T<:Integer}
+function tree(p::AbstractVector{T}) where {T <: Integer}
     n = T(length(p))
     t = DiGraph{T}(n)
     for (v, u) in enumerate(p)
@@ -244,7 +239,6 @@ function tree(p::AbstractVector{T}) where {T<:Integer}
     end
     return t
 end
-
 
 """
     tree(g, ss, alg)
@@ -263,7 +257,7 @@ of `typemax(eltype(distances(s)))`.
 """
 distances(s::TraversalState) = s.distances
 
-mutable struct DistanceState{T<:Integer} <: TraversalState
+mutable struct DistanceState{T <: Integer} <: TraversalState
     distances::Vector{T}
     n_level::T
 end
@@ -289,17 +283,13 @@ source/sources `ss`. If `ss` is a collection of vertices each element should
 be unique. For vertices unreachable from any vertex in `ss` the distance is
 `typemax(T)`.
 """
-function distances(
-    g::AbstractGraph{T},
-    s,
-    alg::TraversalAlgorithm = BreadthFirst(),
-) where {T}
+function distances(g::AbstractGraph{T}, s, alg::TraversalAlgorithm = BreadthFirst()) where {T}
     state = DistanceState(fill(typemax(T), nv(g)), one(T))
     traverse_graph!(g, s, alg, state) || throw(TraversalError())
     return distances(state)
 end
 
-mutable struct PathState{T<:Integer} <: TraversalState
+mutable struct PathState{T <: Integer} <: TraversalState
     u::T
     v::T
     exclude_vertices::Vector{T}
@@ -338,7 +328,6 @@ function has_path(
     result && return false
     return !state.vertices_in_exclude
 end
-
 
 include("breadthfirst.jl")
 include("threadedbreadthfirst.jl")

@@ -13,7 +13,7 @@ vertex_cover(
     reps::Integer,
     alg::RandomVertexCover;
     parallel = :threads,
-) where {T<:Integer} = LightGraphs.Parallel.generate_reduce(
+) where {T <: Integer} = LightGraphs.Parallel.generate_reduce(
     g,
     (g::AbstractGraph{T}) -> LightGraphs.vertex_cover(g, alg),
     (x::Vector{T}, y::Vector{T}) -> length(x) < length(y),

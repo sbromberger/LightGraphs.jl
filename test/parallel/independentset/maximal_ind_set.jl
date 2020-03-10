@@ -1,6 +1,5 @@
 @testset "Maximal Independent Set" begin
 
-
     g0 = SimpleGraph(0)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g0)

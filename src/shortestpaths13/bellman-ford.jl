@@ -18,7 +18,7 @@ struct NegativeCycleError <: Exception end
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 """
-struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
+struct BellmanFordState{T <: Real, U <: Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -35,7 +35,7 @@ function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T} = weights(graph),
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
     nvg = nv(graph)
     active = falses(nvg)
@@ -73,14 +73,14 @@ bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     v::Integer,
     distmx::AbstractMatrix{T} = weights(graph),
-) where {T<:Real} where {U<:Integer} = bellman_ford_shortest_paths(graph, [v], distmx)
+) where {T <: Real} where {U <: Integer} = bellman_ford_shortest_paths(graph, [v], distmx)
 
 has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
     try
         bellman_ford_shortest_paths(g, vertices(g), distmx)
     catch e
@@ -116,7 +116,7 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
-    for i = 1:num_vs
+    for i in 1:num_vs
         all_paths[i] = Vector{T}()
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
@@ -132,5 +132,4 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
 end
 
 enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
-enumerate_paths(state::AbstractPathState) =
-    enumerate_paths(state, [1:length(state.parents);])
+enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents)])

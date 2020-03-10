@@ -1,7 +1,6 @@
 # Betweenness centrality measures
 # TODO - weighted, separate unweighted, edge betweenness
 
-
 """
     betweenness_centrality(g[, vs])
     betweenness_centrality(g, k)
@@ -58,8 +57,7 @@ function betweenness_centrality(
     betweenness = zeros(n_v)
     for s in vs
         if degree(g, s) > 0  # this might be 1?
-            state =
-                dijkstra_shortest_paths(g, s, distmx; allpaths = true, trackvertices = true)
+            state = dijkstra_shortest_paths(g, s, distmx; allpaths = true, trackvertices = true)
             if endpoints
                 _accumulate_endpoints!(betweenness, state, g, s)
             else
@@ -86,7 +84,6 @@ betweenness_centrality(
     normalize = normalize,
     endpoints = endpoints,
 )
-
 
 function _accumulate_basic!(
     betweenness::Vector{Float64},

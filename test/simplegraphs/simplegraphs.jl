@@ -20,7 +20,6 @@ import Random
     @test @inferred(is_directed(SimpleDiGraph))
     @test @inferred(is_directed(SimpleDiGraph{Int}))
 
-
     for gbig in [SimpleGraph(0xff), SimpleDiGraph(0xff)]
         @test @inferred(!add_vertex!(gbig))    # overflow
         @test @inferred(add_vertices!(gbig, 10) == 0)
@@ -182,7 +181,6 @@ import Random
         @test g != h
     end
 
-
     gdx = complete_digraph(4)
     for g in testdigraphs(gdx)
         h = DiGraph(g)
@@ -216,9 +214,7 @@ import Random
         add_edge!(g_undir, 200, 1) # ensure that the result uses all vertices
         add_edge!(g_undir, 2, 2) # add a self-loop
 
-        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testgraphs(
-            g_undir,
-        )
+        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testgraphs(g_undir)
 
             # We create an edge list, shuffle it and reverse half of its edges
             # using this edge list should result in the same graph
@@ -257,10 +253,7 @@ import Random
         add_edge!(g_dir, 200, 1)
         add_edge!(g_dir, 2, 2)
 
-        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in
-                                                                           testdigraphs(
-            g_dir,
-        )
+        @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testdigraphs(g_dir)
             # We create an edge list and shuffle it
             edge_list = [e for e in edges(g)]
             shuffle!(MersenneTwister(0), edge_list)
@@ -297,12 +290,11 @@ import Random
         end
         @testset "SimpleGraphDiFromIterator for empty iterator" begin
             @test SimpleDiGraphFromIterator(empty_iter) == SimpleDiGraph(0)
-            @test edgetype(SimpleDiGraphFromIterator(empty_iter)) ==
-                  edgetype(SimpleDiGraph(0))
+            @test edgetype(SimpleDiGraphFromIterator(empty_iter)) == edgetype(SimpleDiGraph(0))
         end
 
         @testset "SimpleGraphFromIterator for wrong edge types" begin
-            @test_throws DomainError SimpleGraphFromIterator((i for i = 1:2))
+            @test_throws DomainError SimpleGraphFromIterator((i for i in 1:2))
         end
 
         @testset "SimpleDiGraphFromIterator for wrong edge types" begin
@@ -320,8 +312,7 @@ import Random
                                                                                                            testgraphs(SimpleGraph(0))
 
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -349,8 +340,7 @@ import Random
                                                                                                              testdigraphs(SimpleDiGraph(0))
 
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -376,9 +366,7 @@ import Random
 
         # test for iterators where the type of the elements can only be determined at runtime
         g_undir = SimpleGraph(0)
-        @testset "SimpleGraphFromIterator with edgelist of eltype Any" for g in testgraphs(
-            g_undir,
-        )
+        @testset "SimpleGraphFromIterator with edgelist of eltype Any" for g in testgraphs(g_undir)
             T = edgetype(g)
             edge_list_good = Any[T.(1, 2), T.(3, 4)]
             edge_list_bad = Any[T.(1, 2), Int64(1)]
@@ -389,9 +377,7 @@ import Random
         end
         g_dir = SimpleDiGraph(0)
         @testset "SimpleGraphDiFromIterator with edgelist of eltype Any" for g in
-                                                                             testdigraphs(
-            g_dir,
-        )
+                                                                             testdigraphs(g_dir)
             T = edgetype(g)
             edge_list_good = Any[T.(1, 2), T.(3, 4)]
             edge_list_bad = Any[T.(1, 2), Int64(1)]
@@ -401,7 +387,6 @@ import Random
             @test_throws DomainError SimpleDiGraphFromIterator(edge_list_bad)
         end
 
-
         @testset "SimpleGraphFromIterator with edgelist of eltype Any" begin
             # If there are edges of multiple types, the construction should fail
             edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
@@ -409,7 +394,6 @@ import Random
             @test_throws DomainError SimpleGraphFromIterator(edge_list_1)
             @test_throws DomainError SimpleGraphFromIterator(edge_list_2)
         end
-
 
         @testset "SimpleDiGraphFromIterator with edgelist of eltype Any" begin
             edge_list_1 = Any[Edge{Int8}(1, 2), Edge{Int16}(3, 4)]
@@ -470,7 +454,7 @@ import Random
 
         g_undir = erdos_renyi(10, 0.5)
         g_dir = erdos_renyi(10, 0.5, is_directed = true)
-        for u = 1:2:10
+        for u in 1:2:10
             add_edge!(g_undir, u, u)
             add_edge!(g_dir, u, u)
         end

@@ -4,7 +4,7 @@
         @test isempty(next) == true
         push!(next, 1)
         @test next[1][] == 1
-        @threads for i = 2:5
+        @threads for i in 2:5
             push!(next, i)
         end
         @test Set([i[] for i in next[1:5]]) == Set([1, 2, 3, 4, 5])
@@ -23,16 +23,16 @@
         T = eltype(g)
         z = @inferred(Parallel.bfs_tree(g, T(1)))
         next = Parallel.ThreadQueue(T, nv(g)) # Initialize threadqueue
-        parents = [Atomic{T}(0) for i = 1:nv(g)] # Create parents array
+        parents = [Atomic{T}(0) for i in 1:nv(g)] # Create parents array
         Parallel.bfs_tree!(next, g, T(1), parents)
         t = [i[] for i in parents]
         @test t == [T(1), T(1), T(1), T(3)]
         @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
     end
 
-    function istree(parents::Vector{Atomic{T}}, maxdepth, n::T) where {T<:Integer}
+    function istree(parents::Vector{Atomic{T}}, maxdepth, n::T) where {T <: Integer}
         flag = true
-        for i = one(T):n
+        for i in one(T):n
             s = i
             depth = 0
             while parents[s][] > 0 && parents[s][] != s
@@ -50,7 +50,7 @@
         n = nv(g)
         T = eltype(g)
         next = Parallel.ThreadQueue(eltype(g), nv(g)) # Initialize threadqueue
-        parents = [Atomic{T}(0) for i = 1:nv(g)] # Create parents array
+        parents = [Atomic{T}(0) for i in 1:nv(g)] # Create parents array
         @test length(next.data) == n
         @inferred(Parallel.bfs_tree!(next, g, T(1), parents))
         @test istree(parents, n, n)

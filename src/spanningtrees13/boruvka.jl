@@ -16,7 +16,7 @@ function boruvka_mst end
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g);
     minimize = true,
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T <: Real, U, AG <: AbstractGraph{U}}
 
     djset = IntDisjointSets(nv(g))
     # maximizing Z is the same as minimizing -Z
@@ -27,7 +27,7 @@ function boruvka_mst end
     weight = zero(T)
 
     while true
-        cheapest = Vector{Union{edgetype(g),Nothing}}(nothing, nv(g))
+        cheapest = Vector{Union{edgetype(g), Nothing}}(nothing, nv(g))
         # find cheapest edge that connects two components
         found_edge = false
         for edge in edges(g)

@@ -18,9 +18,9 @@ import LightGraphs.Traversals:
         @test nv(z) == T(4) && ne(z) == T(3) && !has_edge(z, 2, 3)
     end
 
-    function istree(p::Vector{T}, maxdepth, n::T) where {T<:Integer}
+    function istree(p::Vector{T}, maxdepth, n::T) where {T <: Integer}
         flag = true
-        for i = one(T):n
+        for i in one(T):n
             s = i
             depth = 0
             while p[s] > 0 && p[s] != s

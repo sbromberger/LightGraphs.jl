@@ -80,7 +80,6 @@ diamond_graph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 4
 
 bull_graph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (2, 3), (2, 4), (3, 5)]))
 
-
 function chvatal_graph()
     e =
         SimpleEdge.([
@@ -131,7 +130,6 @@ function cubical_graph()
     return SimpleGraph(e)
 end
 
-
 function desargues_graph()
     e =
         SimpleEdge.([
@@ -168,7 +166,6 @@ function desargues_graph()
         ])
     return SimpleGraph(e)
 end
-
 
 function dodecahedral_graph()
     e =
@@ -207,7 +204,6 @@ function dodecahedral_graph()
     return SimpleGraph(e)
 end
 
-
 function frucht_graph()
     e =
         SimpleEdge.([
@@ -232,7 +228,6 @@ function frucht_graph()
         ])
     return SimpleGraph(e)
 end
-
 
 function heawood_graph()
     e =
@@ -262,12 +257,10 @@ function heawood_graph()
     return SimpleGraph(e)
 end
 
-
 function house_graph()
     e = SimpleEdge.([(1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5)])
     return SimpleGraph(e)
 end
-
 
 function house_x_graph()
     g = house_graph()
@@ -275,7 +268,6 @@ function house_x_graph()
     add_edge!(g, SimpleEdge(2, 3))
     return g
 end
-
 
 function icosahedral_graph()
     e =
@@ -424,7 +416,6 @@ function krackhardt_kite_graph()
     return SimpleGraph(e)
 end
 
-
 function moebius_kantor_graph()
     e =
         SimpleEdge.([
@@ -456,7 +447,6 @@ function moebius_kantor_graph()
     return SimpleGraph(e)
 end
 
-
 function octahedral_graph()
     e =
         SimpleEdge.([
@@ -475,7 +465,6 @@ function octahedral_graph()
         ])
     return SimpleGraph(e)
 end
-
 
 function pappus_graph()
     e =
@@ -510,7 +499,6 @@ function pappus_graph()
         ])
     return SimpleGraph(e)
 end
-
 
 function petersen_graph()
     e =
@@ -551,10 +539,7 @@ function sedgewick_maze_graph()
     return SimpleGraph(e)
 end
 
-
-tetrahedral_graph() =
-    SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]))
-
+tetrahedral_graph() = SimpleGraph(SimpleEdge.([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]))
 
 function truncated_cube_graph()
     e =
@@ -599,7 +584,6 @@ function truncated_cube_graph()
     return SimpleGraph(e)
 end
 
-
 function truncated_tetrahedron_graph()
     e =
         SimpleEdge.([
@@ -625,7 +609,6 @@ function truncated_tetrahedron_graph()
     return SimpleGraph(e)
 end
 
-
 function truncated_tetrahedron_digraph()
     e =
         SimpleEdge.([
@@ -650,7 +633,6 @@ function truncated_tetrahedron_digraph()
         ])
     return SimpleDiGraph(e)
 end
-
 
 function tutte_graph()
     e =

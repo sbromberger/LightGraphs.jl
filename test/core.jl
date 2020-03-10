@@ -59,7 +59,6 @@
         end
     end
 
-
     @testset "neighbor functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(neighbors(g, 2)) == [1, 3, 5]
@@ -84,7 +83,6 @@
             @test @inferred(num_self_loops(gsl)) == 2
         end
     end
-
 
     @testset "density" begin
         @testset "$g" for g in testgraphs(g5w)

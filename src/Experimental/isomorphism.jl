@@ -10,7 +10,6 @@ An abstract type used for method dispatch on isomorphism functions.
 """
 abstract type IsomorphismAlgorithm end
 
-
 """
     could_have_isomorph(g1, g2)
 
@@ -85,8 +84,8 @@ function has_induced_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Bool
 
     has_induced_subgraphisomorph(
@@ -134,8 +133,8 @@ function has_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Bool
     has_subgraphisomorph(
         g1,
@@ -181,16 +180,10 @@ function has_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Bool
-    has_isomorph(
-        g1,
-        g2,
-        alg;
-        vertex_relation = vertex_relation,
-        edge_relation = edge_relation,
-    )
+    has_isomorph(g1, g2, alg; vertex_relation = vertex_relation, edge_relation = edge_relation)
 end
 
 """
@@ -226,8 +219,8 @@ function count_induced_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Int
     count_induced_subgraphisomorph(
         g1,
@@ -273,8 +266,8 @@ function count_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Int
 
     count_subgraphisomorph(
@@ -321,16 +314,10 @@ function count_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
 )::Int
-    count_isomorph(
-        g1,
-        g2,
-        alg;
-        vertex_relation = vertex_relation,
-        edge_relation = edge_relation,
-    )
+    count_isomorph(g1, g2, alg; vertex_relation = vertex_relation, edge_relation = edge_relation)
 end
 
 """
@@ -374,9 +361,9 @@ function all_induced_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
-)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
     all_induced_subgraphisomorph(
         g1,
         g2,
@@ -429,9 +416,9 @@ function all_subgraphisomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
-)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
 
     all_subgraphisomorph(
         g1,
@@ -488,15 +475,9 @@ function all_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
     alg::IsomorphismAlgorithm = VF2();
-    vertex_relation::Union{Nothing,Function} = nothing,
-    edge_relation::Union{Nothing,Function} = nothing,
-)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
+    vertex_relation::Union{Nothing, Function} = nothing,
+    edge_relation::Union{Nothing, Function} = nothing,
+)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
 
-    all_isomorph(
-        g1,
-        g2,
-        alg;
-        vertex_relation = vertex_relation,
-        edge_relation = edge_relation,
-    )
+    all_isomorph(g1, g2, alg; vertex_relation = vertex_relation, edge_relation = edge_relation)
 end

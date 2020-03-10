@@ -16,12 +16,7 @@
 
             y = @inferred(betweenness_centrality(g, endpoints = true, normalize = false))
             @test round.(y[1:3], digits = 4) ==
-                  round.(
-                [122.10760591498584, 159.0072453120582, 176.39547945994505],
-                digits = 4,
-            )
-
-
+                  round.([122.10760591498584, 159.0072453120582, 176.39547945994505], digits = 4)
 
             x = @inferred(betweenness_centrality(g, 3))
             x2 = @inferred(betweenness_centrality(g, collect(1:20)))
@@ -69,13 +64,7 @@
             [0.0, 6.0, 0.0, 0.0, 6.0, 0.0],
         )
         @test isapprox(
-            betweenness_centrality(
-                g,
-                vertices(g),
-                distmx;
-                normalize = false,
-                endpoints = true,
-            ),
+            betweenness_centrality(g, vertices(g), distmx; normalize = false, endpoints = true),
             [5.0, 11.0, 5.0, 5.0, 11.0, 5.0],
         )
         @test isapprox(
@@ -83,13 +72,7 @@
             [0.0, 0.6000000000000001, 0.0, 0.0, 0.6000000000000001, 0.0],
         )
         @test isapprox(
-            betweenness_centrality(
-                g,
-                vertices(g),
-                distmx;
-                normalize = true,
-                endpoints = true,
-            ),
+            betweenness_centrality(g, vertices(g), distmx; normalize = true, endpoints = true),
             [0.5, 1.1, 0.5, 0.5, 1.1, 0.5],
         )
 
@@ -117,13 +100,7 @@
                 [0.0, 0.5, 0.0],
             )
             @test isapprox(
-                betweenness_centrality(
-                    g,
-                    vertices(g),
-                    distmx2;
-                    normalize = true,
-                    endpoints = true,
-                ),
+                betweenness_centrality(g, vertices(g), distmx2; normalize = true, endpoints = true),
                 [2.0, 2.5, 2.0],
             )
         end

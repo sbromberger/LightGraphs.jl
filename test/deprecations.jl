@@ -41,8 +41,7 @@
         LadderGraph,
         Circularladder_graph,
     ]
-    types_2params =
-        [CompleteBipartiteGraph, LollipopGraph, BarbellGraph, TuranGraph, CliqueGraph]
+    types_2params = [CompleteBipartiteGraph, LollipopGraph, BarbellGraph, TuranGraph, CliqueGraph]
     for G in types_0
         @test_deprecated G()
     end

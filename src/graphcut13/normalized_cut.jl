@@ -18,7 +18,7 @@ function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
     rows = rowvals(W)
     vals = nonzeros(W)
     n = size(W, 2)
-    for i = 1:n
+    for i in 1:n
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
@@ -96,7 +96,7 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
     J2 = Vector{Int}()
     V1 = Vector{Float64}()
     V2 = Vector{Float64}()
-    for i = 1:nv
+    for i in 1:nv
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] == cut[row] == false
@@ -189,7 +189,7 @@ function normalized_cut(
     thres::Real,
     W::AbstractMatrix{T} = adjacency_matrix(g),
     num_cuts::Int = 10,
-) where {T<:Real}
+) where {T <: Real}
 
     return _recursive_normalized_cut(W, thres, num_cuts)
 end

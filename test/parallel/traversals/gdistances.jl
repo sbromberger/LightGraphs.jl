@@ -1,6 +1,5 @@
 @testset "Parallel.BFS" begin
 
-
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2)
     add_edge!(g5, 2, 3)

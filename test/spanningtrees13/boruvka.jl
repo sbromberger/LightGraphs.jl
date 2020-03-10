@@ -129,7 +129,6 @@
     ])
     weight_max_vec3 = sum(distmx_third[src(e), dst(e)] for e in max_vec3)
 
-
     for g in testgraphs(gd)
         res5 = boruvka_mst(g, distmx_third)
         g5t = SimpleGraph(res5.mst)

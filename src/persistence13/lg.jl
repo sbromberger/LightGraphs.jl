@@ -12,7 +12,6 @@
 # header followed by a list of (comma-delimited) edges - src,dst.
 # Multiple graphs may be present in one file.
 
-
 struct LGFormat <: AbstractGraphFormat end
 
 struct LGHeader
@@ -39,7 +38,7 @@ function _lg_read_one_graph(f::IO, header::LGHeader)
     else
         g = Graph{T}(header.nv)
     end
-    for i = 1:header.ne
+    for i in 1:(header.ne)
         line = chomp(readline(f))
         if length(line) > 0
             src_s, dst_s = split(line, r"\s*,\s*")
@@ -52,7 +51,7 @@ function _lg_read_one_graph(f::IO, header::LGHeader)
 end
 
 function _lg_skip_one_graph(f::IO, n_e::Integer)
-    for _ = 1:n_e
+    for _ in 1:n_e
         readline(f)
     end
 end
@@ -85,7 +84,7 @@ end
 Return a dictionary of (name=>graph) loaded from IO stream `io`.
 """
 function loadlg_mult(io::IO)
-    graphs = Dict{String,AbstractGraph}()
+    graphs = Dict{String, AbstractGraph}()
     while !eof(io)
         line = strip(chomp(readline(io)))
         if !(startswith(line, "#") || line == "")
@@ -142,7 +141,6 @@ function savelg_mult(io::IO, graphs::Dict)
     end
     return ng
 end
-
 
 loadgraph(io::IO, gname::String, ::LGFormat) = loadlg(io, gname)
 loadgraphs(io::IO, ::LGFormat) = loadlg_mult(io)

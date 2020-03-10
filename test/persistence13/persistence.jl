@@ -27,10 +27,11 @@
             LGFormat();
             compress = true,
         )
-        @test_logs (
-            :info,
-            r"Note: the `compress` keyword is no longer supported in LightGraphs",
-        ) savegraph(f, p1; compress = false)
+        @test_logs (:info, r"Note: the `compress` keyword is no longer supported in LightGraphs") savegraph(
+            f,
+            p1;
+            compress = false,
+        )
         @test savegraph(f, p1, LGFormat()) == 1
         @test savegraph(f, p2) == 1
     end
@@ -47,8 +48,7 @@
         (f, fio) = mktemp()
         @test length(sprint(savegraph, p1, LGFormat())) == 421
         @test length(sprint(savegraph, p2, LGFormat())) == 70
-        gs =
-            loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
+        gs = loadgraph(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"), "pathdigraph")
         @test gs == p2
         @test_throws ArgumentError loadgraph(
             joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"),
@@ -57,7 +57,7 @@
     end
 
     @testset "LGFormat save multiple graphs" begin
-        d = Dict{String,AbstractGraph}("p1" => p1, "p2" => p2)
+        d = Dict{String, AbstractGraph}("p1" => p1, "p2" => p2)
         @test savegraph(f, d) == 2
     end
 

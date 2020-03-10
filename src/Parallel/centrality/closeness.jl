@@ -3,8 +3,7 @@ closeness_centrality(
     distmx::AbstractMatrix = weights(g);
     normalize = true,
     parallel = :distributed,
-) = parallel == :distributed ?
-    distr_closeness_centrality(g, distmx; normalize = normalize) :
+) = parallel == :distributed ? distr_closeness_centrality(g, distmx; normalize = normalize) :
     threaded_closeness_centrality(g, distmx; normalize = normalize)
 
 function distr_closeness_centrality(

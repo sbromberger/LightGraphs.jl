@@ -42,9 +42,6 @@
     for g in testgraphs(g5)
         c = @inferred(vertex_cover(g, RandomVertexCover(); seed = 3))
         sort!(c)
-        @test (
-            c == [1, 2, 3, 4] ||
-            c == [1, 2, 3, 4, 5] || c == [2, 3, 4] || c == [2, 3, 4, 5]
-        )
+        @test (c == [1, 2, 3, 4] || c == [1, 2, 3, 4, 5] || c == [2, 3, 4] || c == [2, 3, 4, 5])
     end
 end

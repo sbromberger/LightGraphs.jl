@@ -1,6 +1,5 @@
 radiality_centrality(g::AbstractGraph; parallel = :distributed) =
-    parallel == :distributed ? distr_radiality_centrality(g) :
-    threaded_radiality_centrality(g)
+    parallel == :distributed ? distr_radiality_centrality(g) : threaded_radiality_centrality(g)
 
 function distr_radiality_centrality(g::AbstractGraph)::Vector{Float64}
     n_v = nv(g)
@@ -9,7 +8,7 @@ function distr_radiality_centrality(g::AbstractGraph)::Vector{Float64}
     meandists = SharedVector{Float64}(Int(n_v))
     maxdists = SharedVector{Float64}(Int(n_v))
 
-    @sync @distributed for i = 1:n_v
+    @sync @distributed for i in 1:n_v
         d = LightGraphs.dijkstra_shortest_paths(g, vs[i])
         maxdists[i] = maximum(d.dists)
         meandists[i] = sum(d.dists) / (n_v - 1)

@@ -15,7 +15,7 @@ A struct describing a random graph walk algorithm.
 - `niter::Integer`: the number of iterations that the random walk should perform (default: `1`).
 - `rng::AbstractRNG`: the random number generator to use (default: `Random.GLOBAL_RNG`).
 """
-struct RandomWalk{T<:Integer,R<:AbstractRNG} <: WalkAlgorithm
+struct RandomWalk{T <: Integer, R <: AbstractRNG} <: WalkAlgorithm
     nonbacktracking::Bool
     niter::T
     rng::R
@@ -32,7 +32,7 @@ A struct describing a self-avoiding graph walk algorithm.
 - `niter::Integer`: the number of iterations that the random walk should perform (default: `1`).
 - `rng::AbstractRNG`: the random number generator to use (default: `Random.GLOBAL_RNG`)
 """
-struct SelfAvoidingWalk{T<:Integer,R<:AbstractRNG} <: WalkAlgorithm
+struct SelfAvoidingWalk{T <: Integer, R <: AbstractRNG} <: WalkAlgorithm
     niter::T
     rng::R
 end
@@ -50,12 +50,7 @@ walk(g::AbstractGraph, s::Integer, alg::RandomWalk) =
     alg.nonbacktracking ? non_backtracking_randomwalk(g, s, alg.niter, alg.rng) :
     randomwalk(g, s, alg.niter, alg.rng)
 
-function randomwalk(
-    g::AbstractGraph{T},
-    s::Integer,
-    niter::Integer,
-    rng::AbstractRNG,
-) where {T}
+function randomwalk(g::AbstractGraph{T}, s::Integer, niter::Integer, rng::AbstractRNG) where {T}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -76,7 +71,7 @@ end
     s::Integer,
     niter::Integer,
     rng::AbstractRNG,
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -112,7 +107,7 @@ end
     s::Integer,
     niter::Integer,
     rng::AbstractRNG,
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     sizehint!(visited, niter)
@@ -145,7 +140,7 @@ function self_avoiding_walk(
     s::Integer,
     niter::Integer,
     rng::AbstractRNG,
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
     visited = Vector{T}()
     svisited = Set{T}()

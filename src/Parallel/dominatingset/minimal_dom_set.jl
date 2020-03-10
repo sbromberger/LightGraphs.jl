@@ -15,7 +15,7 @@ dominating_set(
     alg::MinimalDominatingSet;
     parallel = :threads,
     seed = -1,
-) where {T<:Integer} = LightGraphs.Parallel.generate_reduce(
+) where {T <: Integer} = LightGraphs.Parallel.generate_reduce(
     g,
     (g::AbstractGraph{T}) -> LightGraphs.dominating_set(g, alg; seed = seed),
     (x::Vector{T}, y::Vector{T}) -> length(x) < length(y),

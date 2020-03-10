@@ -98,7 +98,7 @@ function modularity(
         end
     end
     Q = Q * m
-    @inbounds for i = 1:nc
+    @inbounds for i in 1:nc
         Q -= γ * kin[i] * kout[i]
     end
     return Q / m^2

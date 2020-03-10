@@ -19,7 +19,6 @@ loadgraph(fn::AbstractString) = loadgraph(fn, "graph", LGFormat())
 loadgraph(fn::AbstractString, gname::AbstractString) = loadgraph(fn, gname, LGFormat())
 loadgraph(fn::AbstractString, format::AbstractGraphFormat) = loadgraph(fn, "graph", format)
 
-
 """
     loadgraphs(file, format=LGFormat())
 
@@ -56,7 +55,6 @@ function auto_decompress(io::IO)
     end
     return io
 end
-
 
 """
     savegraph(file, g, gname="graph", format=LGFormat)
@@ -95,12 +93,8 @@ function savegraph(
 end
 
 # without graph name
-savegraph(
-    fn::AbstractString,
-    g::AbstractGraph,
-    format::AbstractGraphFormat;
-    compress = nothing,
-) = savegraph(fn, g, "graph", format, compress = compress)
+savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress = nothing) =
+    savegraph(fn, g, "graph", format, compress = compress)
 
 # without format - default to LGFormat()
 savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress = nothing) =
@@ -117,10 +111,10 @@ Will only work if the file format supports multiple graph types.
 """
 function savegraph(
     fn::AbstractString,
-    d::Dict{T,U},
+    d::Dict{T, U},
     format::AbstractGraphFormat;
     compress = nothing,
-) where {T<:AbstractString} where {U<:AbstractGraph}
+) where {T <: AbstractString} where {U <: AbstractGraph}
     compress === nothing || Base.depwarn(
         "Saving compressed graphs is no longer supported in LightGraphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.",
         :savegraph,

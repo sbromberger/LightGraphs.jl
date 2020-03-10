@@ -7,7 +7,7 @@
         if n < 3
             return true
         end
-        for i = 1:(n-2)
+        for i in 1:(n-2)
             if walk[i+2] == walk[i]
                 return false
             end
@@ -63,12 +63,12 @@
 
     n = 10
     gx = cycle_graph(n)
-    for k = 3:(n-1)
+    for k in 3:(n-1)
         add_edge!(gx, 1, k)
     end
 
     for g in testgraphs(gx)
-        for len = 1:(3*n)
+        for len in 1:(3*n)
             @test test_nbw(g, 1, len)
             @test test_nbw(g, 2, len)
         end
@@ -76,7 +76,7 @@
     #test to make sure it works with self loops.
     add_edge!(gx, 1, 1)
     for g in testgraphs(gx)
-        for len = 1:(3*n)
+        for len in 1:(3*n)
             @test test_nbw(g, 1, len)
             @test test_nbw(g, 2, len)
         end

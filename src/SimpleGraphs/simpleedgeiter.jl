@@ -101,14 +101,14 @@ function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     h = e2.g
     ne(g) == ne(h) || return false
     m = min(nv(g), nv(h))
-    for i = 1:m
+    for i in 1:m
         fadj(g, i) == fadj(h, i) || return false
     end
     nv(g) == nv(h) && return true
-    for i = m+1:nv(g)
+    for i in (m+1):nv(g)
         isempty(fadj(g, i)) || return false
     end
-    for i = m+1:nv(h)
+    for i in (m+1):nv(h)
         isempty(fadj(h, i)) || return false
     end
     return true

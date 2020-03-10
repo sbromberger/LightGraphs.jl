@@ -27,8 +27,7 @@ function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude = ())
     res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude = ()) =
-    sample!(getRNG(), a, k; exclude = exclude)
+sample!(a::AbstractVector, k::Integer; exclude = ()) = sample!(getRNG(), a, k; exclude = exclude)
 
 """
     sample([rng,] r, k)
@@ -66,7 +65,7 @@ Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
-function findall!(A::Union{BitArray{1},Vector{Bool}}, B::Vector{T}) where {T<:Integer}
+function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where {T <: Integer}
     len = 0
     @inbounds for (i, a) in enumerate(A)
         if a
@@ -90,7 +89,7 @@ function unweighted_contiguous_partition(num_items::Integer, required_partitions
 
     left = 1
     part = Vector{UnitRange}(undef, required_partitions)
-    for i = 1:required_partitions
+    for i in 1:required_partitions
         len = fld(num_items + i - 1, required_partitions)
         part[i] = left:(left+len-1)
         left += len
@@ -121,7 +120,7 @@ function greedy_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U = length(weight),
-) where {U<:Integer}
+) where {U <: Integer}
 
     suffix_sum = cumsum(reverse(weight))
     reverse!(suffix_sum)
@@ -174,7 +173,7 @@ function optimal_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U = length(weight),
-) where {U<:Integer}
+) where {U <: Integer}
 
     item_it = Iterators.take(weight, num_items)
 
@@ -239,7 +238,7 @@ isbounded(n::BigInt) = false
 
 Returns true if `typemax(T)` of a type `T <: Integer` exists.
 """
-isbounded(::Type{T}) where {T<:Integer} = isconcretetype(T)
+isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """

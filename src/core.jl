@@ -42,7 +42,7 @@ julia> add_vertices!(g, 2)
 2
 ```
 """
-add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
+add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
 
 """
     indegree(g[, v])
@@ -168,7 +168,6 @@ Return the minimum [`degree`](@ref) of vertices in `g`.
 """
 δ(g) = noallocextreme(degree, (<), typemax(Int), g)
 
-
 """
     noallocextreme(f, comparison, initial, g)
 
@@ -195,7 +194,7 @@ Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be 
 overriding `degfn`.
 """
 function degree_histogram(g::AbstractGraph{T}, degfn = degree) where {T}
-    hist = Dict{T,Int}()
+    hist = Dict{T, Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
             hist[d] = get(hist, d, 0) + 1
@@ -203,7 +202,6 @@ function degree_histogram(g::AbstractGraph{T}, degfn = degree) where {T}
     end
     return hist
 end
-
 
 """
     neighbors(g, v)
@@ -278,10 +276,8 @@ julia> all_neighbors(g, 3)
  ```
 """
 function all_neighbors end
-@traitfn all_neighbors(g::::IsDirected, v::Integer) =
-    union(outneighbors(g, v), inneighbors(g, v))
+@traitfn all_neighbors(g::::IsDirected, v::Integer) = union(outneighbors(g, v), inneighbors(g, v))
 @traitfn all_neighbors(g::::(!IsDirected), v::Integer) = neighbors(g, v)
-
 
 """
     common_neighbors(g, u, v)
@@ -344,8 +340,7 @@ julia> has_self_loops(g)
 true
 ```
 """
-has_self_loops(g::AbstractGraph) =
-    nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
 
 """
     num_self_loops(g)
@@ -382,7 +377,6 @@ number of possible edges (``|V|×(|V|-1)`` for directed graphs and
 function density end
 @traitfn density(g::::IsDirected) = ne(g) / (nv(g) * (nv(g) - 1))
 @traitfn density(g::::(!IsDirected)) = (2 * ne(g)) / (nv(g) * (nv(g) - 1))
-
 
 """
     squash(g)

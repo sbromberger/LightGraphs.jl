@@ -4,7 +4,7 @@
 
 An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 """
-struct JohnsonState{T<:Real,U<:Integer} <: AbstractPathState
+struct JohnsonState{T <: Real, U <: Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -25,7 +25,7 @@ Complexity: O(|V|*|E|)
 function johnson_shortest_paths(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T} = weights(g),
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
@@ -42,7 +42,6 @@ function johnson_shortest_paths(
             distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
-
 
     dists = Matrix{T}(undef, nvg, nvg)
     parents = Matrix{U}(undef, nvg, nvg)
@@ -66,13 +65,10 @@ function johnson_shortest_paths(
     return JohnsonState(dists, parents)
 end
 
-function enumerate_paths(
-    s::JohnsonState{T,U},
-    v::Integer,
-) where {T<:Real} where {U<:Integer}
+function enumerate_paths(s::JohnsonState{T, U}, v::Integer) where {T <: Real} where {U <: Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
-    for i = 1:length(pathinfo)
+    for i in 1:length(pathinfo)
         if (i == v) || (s.dists[v, i] == typemax(T))
             push!(paths, Vector{U}())
         else
@@ -88,5 +84,5 @@ function enumerate_paths(
     return paths
 end
 
-enumerate_paths(s::JohnsonState) = [enumerate_paths(s, v) for v = 1:size(s.parents, 1)]
+enumerate_paths(s::JohnsonState) = [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
 enumerate_paths(st::JohnsonState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]

@@ -16,7 +16,6 @@
     @test maximum(points) <= 1
     @test minimum(points) >= 0.0
 
-
     @test_throws DomainError euclidean_graph(points, L = 0.01, bc = :periodic)
     @test_throws ArgumentError euclidean_graph(points, bc = :badbc)
 

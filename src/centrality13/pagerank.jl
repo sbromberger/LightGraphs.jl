@@ -12,12 +12,7 @@ graph `g` parameterized by damping factor `α`, number of iterations
 centrality calculated for each node in `g`, or an error if convergence
 is not reached within `n` iterations.
 """
-function pagerank(
-    g::AbstractGraph{U},
-    α = 0.85,
-    n::Integer = 100,
-    ϵ = 1.0e-6,
-) where {U<:Integer}
+function pagerank(g::AbstractGraph{U}, α = 0.85, n::Integer = 100, ϵ = 1.0e-6) where {U <: Integer}
     α_div_outdegree = Vector{Float64}(undef, nv(g))
     dangling_nodes = Vector{U}()
     for v in vertices(g)
@@ -30,7 +25,7 @@ function pagerank(
     # solution vector and temporary vector
     x = fill(1.0 / N, N)
     xlast = copy(x)
-    for _ = 1:n
+    for _ in 1:n
         dangling_sum = 0.0
         for v in dangling_nodes
             dangling_sum += x[v]

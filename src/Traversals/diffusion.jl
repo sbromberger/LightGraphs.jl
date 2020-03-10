@@ -28,7 +28,7 @@ function diffusion(
     # Initialize
     watch_set = Set{T}(watch)
     infected_vertices = BitSet(initial_infections)
-    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i = 1:n]
+    vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
 
     # Record initial infection
     if !isempty(watch_set)
@@ -41,7 +41,7 @@ function diffusion(
     # Run simulation
     randsubseq_buf = zeros(T, Δout(g))
 
-    for step = 2:n
+    for step in 2:n
         new_infections = Set{T}()
 
         for i in infected_vertices
@@ -85,7 +85,7 @@ diffusion as a vector representing the cumulative number of vertices
 infected at each simulation step, restricted to vertices included
 in `watch`, if specified.
 """
-diffusion_rate(x::Vector{Vector{T}}) where {T<:Integer} = cumsum(length.(x))
+diffusion_rate(x::Vector{Vector{T}}) where {T <: Integer} = cumsum(length.(x))
 diffusion_rate(
     g::AbstractGraph,
     p::Real,

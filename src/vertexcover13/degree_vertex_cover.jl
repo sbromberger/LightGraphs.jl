@@ -30,7 +30,7 @@ julia> vertex_cover(cycle_graph(3), DegreeVertexCover())
  3
 ```
 """
-function vertex_cover(g::AbstractGraph{T}, alg::DegreeVertexCover) where {T<:Integer}
+function vertex_cover(g::AbstractGraph{T}, alg::DegreeVertexCover) where {T <: Integer}
 
     nvg = nv(g)
     in_cover = falses(nvg)

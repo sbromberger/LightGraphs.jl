@@ -9,9 +9,7 @@ of Hawick & James.
 """
 function simplecycles_hawick_james end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function simplecycles_hawick_james(
-    g::AG::IsDirected,
-) where {T,AG<:AbstractGraph{T}}
+@traitfn function simplecycles_hawick_james(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     nvg = nv(g)
     B = Vector{T}[Vector{T}() for i in vertices(g)]
     blocked = zeros(Bool, nvg)
@@ -53,7 +51,7 @@ function circuit_recursive! end
     B::Vector{Vector{T}},
     stack::Vector{T},
     cycles::Vector{Vector{T}},
-) where {T<:Integer}
+) where {T <: Integer}
     f = false
     push!(stack, v2)
     blocked[v2] = true

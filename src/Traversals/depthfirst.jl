@@ -1,11 +1,8 @@
 import Base.showerror
 struct CycleError <: Exception end
-Base.showerror(io::IO, e::CycleError) =
-    print(io, "Cycles are not allowed in this function.")
+Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
-
-
-struct DepthFirst{F<:Function} <: TraversalAlgorithm
+struct DepthFirst{F <: Function} <: TraversalAlgorithm
     neighborfn::F
 end
 
@@ -16,11 +13,11 @@ function traverse_graph!(
     ss,
     alg::DepthFirst,
     state::TraversalState,
-) where {U<:Integer}
+) where {U <: Integer}
 
     n = nv(g)
     visited = falses(n)
-    S = Vector{Tuple{U,U}}()
+    S = Vector{Tuple{U, U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
     @inbounds for s in ss
@@ -63,7 +60,7 @@ function traverse_graph!(
     return true
 end
 
-mutable struct TopoSortState{T<:Integer} <: TraversalState
+mutable struct TopoSortState{T <: Integer} <: TraversalState
     vcolor::Vector{UInt8}
     verts::Vector{T}
     w::T
@@ -93,7 +90,6 @@ function postvisitfn!(s::TopoSortState{T}, u) where {T}
     return true
 end
 
-
 """
     topological_sort(g, alg=DepthFirst())
 
@@ -105,7 +101,7 @@ function topological_sort end
 @traitfn function topological_sort(
     g::AG::IsDirected,
     alg::TraversalAlgorithm = DepthFirst(),
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
@@ -118,7 +114,7 @@ function topological_sort end
     return reverse!(state.verts)
 end
 
-mutable struct CycleState{T<:Integer} <: TraversalState
+mutable struct CycleState{T <: Integer} <: TraversalState
     vcolor::Vector{UInt8}
     w::T
 end
@@ -146,7 +142,7 @@ end
 @traitfn function is_cyclic(
     g::AG::IsDirected,
     alg::TraversalAlgorithm = DepthFirst(),
-) where {T,AG<:AbstractGraph{T}}
+) where {T, AG <: AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)

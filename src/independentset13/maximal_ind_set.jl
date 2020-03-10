@@ -24,7 +24,7 @@ function independent_set(
     g::AbstractGraph{T},
     alg::MaximalIndependentSet;
     seed::Int = -1,
-) where {T<:Integer}
+) where {T <: Integer}
 
     nvg = nv(g)
     ind_set = Vector{T}()

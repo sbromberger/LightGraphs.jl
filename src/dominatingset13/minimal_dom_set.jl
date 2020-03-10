@@ -25,7 +25,7 @@ function dominating_set(
     g::AbstractGraph{T},
     alg::MinimalDominatingSet;
     seed::Int = -1,
-) where {T<:Integer}
+) where {T <: Integer}
 
     nvg = nv(g)
     in_dom_set = trues(nvg)

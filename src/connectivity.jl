@@ -30,7 +30,6 @@ function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where
     return label
 end
 
-
 """
     components_dict(labels)
 
@@ -38,8 +37,8 @@ Convert an array of labels to a map of component id to vertices, and return
 a map with each key corresponding to a given component id
 and each value containing the vertices associated with that component.
 """
-function components_dict(labels::Vector{T}) where {T<:Integer}
-    d = Dict{T,Vector{T}}()
+function components_dict(labels::Vector{T}) where {T <: Integer}
+    d = Dict{T, Vector{T}}()
     for (v, l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
         push!(vec, v)
@@ -54,8 +53,8 @@ end
 Given a vector of component labels, return a vector of vectors representing the vertices associated
 with a given component id.
 """
-function components(labels::Vector{T}) where {T<:Integer}
-    d = Dict{T,T}()
+function components(labels::Vector{T}) where {T <: Integer}
+    d = Dict{T, T}()
     c = Vector{Vector{T}}()
     i = one(T)
     for (v, l) in enumerate(labels)
@@ -177,7 +176,6 @@ true
 """
 is_weakly_connected(g) = is_connected(g)
 
-
 """
     strongly_connected_components(g)
 
@@ -220,12 +218,11 @@ function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function strongly_connected_components(
     g::AG::IsDirected,
-) where {T<:Integer,AG<:AbstractGraph{T}}
+) where {T <: Integer, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     one_t = one(T)
     nvg = nv(g)
     count = one_t
-
 
     index = zeros(T, nvg)         # first time in which vertex is discovered
     stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
@@ -233,7 +230,6 @@ function strongly_connected_components end
     lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
     parents = zeros(T, nvg)       # parent of every vertex in dfs
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-
 
     dfs_stack = Vector{T}()
 
@@ -270,8 +266,7 @@ function strongly_connected_components end
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
                     popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] =
-                        min(lowlink[parents[popped]], lowlink[popped])
+                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
 
                     if index[v] == lowlink[v]
                         # found a cycle in a completed dfs tree.
@@ -312,7 +307,6 @@ function strongly_connected_components end
 
     return components
 end
-
 
 """
     strongly_connected_components_kosaraju(g)
@@ -380,7 +374,7 @@ julia> strongly_connected_components_kosaraju(g)
 function strongly_connected_components_kosaraju end
 @traitfn function strongly_connected_components_kosaraju(
     g::AG::IsDirected,
-) where {T<:Integer,AG<:AbstractGraph{T}}
+) where {T <: Integer, AG <: AbstractGraph{T}}
 
     nvg = nv(g)
 
@@ -428,7 +422,7 @@ function strongly_connected_components_kosaraju end
     end
 
     # dfs2
-    @inbounds for i = 1:nvg
+    @inbounds for i in 1:nvg
         v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
         color[v] != 0 && continue
         color[v] = 1
@@ -465,7 +459,6 @@ function strongly_connected_components_kosaraju end
     return components
 end
 
-
 """
     is_strongly_connected(g)
 
@@ -480,8 +473,7 @@ true
 ```
 """
 function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected) =
-    length(strongly_connected_components(g)) == 1
+@traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
 
 """
     period(g)
@@ -499,7 +491,7 @@ julia> period(g)
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function period(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+@traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
@@ -542,7 +534,7 @@ Edge 2 => 1
 ```
 """
 function condensation end
-@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where {T<:Integer}
+@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where {T <: Integer}
     h = DiGraph{T}(length(scc))
 
     component = Vector{T}(undef, nv(g))
@@ -587,7 +579,7 @@ julia> attracting_components(g)
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+@traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     scc = strongly_connected_components(g)
     cond = condensation(g, scc)
 
@@ -643,8 +635,7 @@ neighborhood(
     d,
     distmx::AbstractMatrix{U} = weights(g);
     dir = :out,
-) where {T<:Integer} where {U<:Real} =
-    first.(neighborhood_dists(g, v, d, distmx; dir = dir))
+) where {T <: Integer} where {U <: Real} = first.(neighborhood_dists(g, v, d, distmx; dir = dir))
 
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
@@ -695,10 +686,9 @@ neighborhood_dists(
     d,
     distmx::AbstractMatrix{U} = weights(g);
     dir = :out,
-) where {T<:Integer} where {U<:Real} =
+) where {T <: Integer} where {U <: Real} =
     (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) :
     _neighborhood(g, v, d, distmx, inneighbors)
-
 
 function _neighborhood(
     g::AbstractGraph{T},
@@ -706,8 +696,8 @@ function _neighborhood(
     d::Real,
     distmx::AbstractMatrix{U},
     neighborfn::Function,
-) where {T<:Integer} where {U<:Real}
-    Q = Vector{Tuple{T,U}}()
+) where {T <: Integer} where {U <: Real}
+    Q = Vector{Tuple{T, U}}()
     d < zero(U) && return Q
     push!(Q, (v, zero(U)))
     seen = fill(false, nv(g))
@@ -748,11 +738,11 @@ function isgraphical(degs::Vector{<:Integer})
     n = length(sorted_degs)
     cur_sum = zero(UInt64)
     mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i = 1:n
+    @inbounds for i in 1:n
         mindeg[i] = min(i, sorted_degs[i])
     end
     cum_min = sum(mindeg)
-    @inbounds for r = 1:(n-1)
+    @inbounds for r in 1:(n-1)
         cur_sum += sorted_degs[r]
         cum_min -= mindeg[r]
         cond = cur_sum <= (r * (r - 1) + cum_min)

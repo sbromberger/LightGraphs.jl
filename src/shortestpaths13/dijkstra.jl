@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
-struct DijkstraState{T<:Real,U<:Integer} <: AbstractPathState
+struct DijkstraState{T <: Real, U <: Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -62,7 +62,7 @@ function dijkstra_shortest_paths(
     distmx::AbstractMatrix{T} = weights(g);
     allpaths = false,
     trackvertices = false,
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
@@ -71,7 +71,7 @@ function dijkstra_shortest_paths(
 
     pathcounts = zeros(UInt64, nvg)
     preds = fill(Vector{U}(), nvg)
-    H = PriorityQueue{U,T}()
+    H = PriorityQueue{U, T}()
     # fill creates only one array.
 
     for src in srcs
@@ -138,7 +138,7 @@ function dijkstra_shortest_paths(
         empty!(preds[src])
     end
 
-    return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
+    return DijkstraState{T, U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
 dijkstra_shortest_paths(
@@ -147,10 +147,4 @@ dijkstra_shortest_paths(
     distmx::AbstractMatrix = weights(g);
     allpaths = false,
     trackvertices = false,
-) = dijkstra_shortest_paths(
-    g,
-    [src;],
-    distmx;
-    allpaths = allpaths,
-    trackvertices = trackvertices,
-)
+) = dijkstra_shortest_paths(g, [src;], distmx; allpaths = allpaths, trackvertices = trackvertices)

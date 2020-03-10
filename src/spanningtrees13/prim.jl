@@ -9,11 +9,11 @@ function prim_mst end
 @traitfn function prim_mst(
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g),
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T <: Real, U, AG <: AbstractGraph{U}}
 
     nvg = nv(g)
 
-    pq = PriorityQueue{U,T}()
+    pq = PriorityQueue{U, T}()
     finished = zeros(Bool, nvg)
     wt = fill(typemax(T), nvg) #Faster access time
     parents = zeros(U, nv(g))

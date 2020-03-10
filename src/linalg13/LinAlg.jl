@@ -10,7 +10,6 @@ import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
 using ..LightGraphs
 
-
 import Base: convert, size, eltype, ndims, ==, *, length
 
 export convert,
@@ -69,6 +68,5 @@ end
 include("./graphmatrices.jl")
 include("./spectral.jl")
 include("./nonbacktracking.jl")
-
 
 end

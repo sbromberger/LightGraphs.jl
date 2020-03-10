@@ -12,7 +12,7 @@ non-backtracking matrix ``B`` is defined as
 """
 function non_backtracking_matrix(g::AbstractGraph)
     # idedgemap = Dict{Int,Edge}()
-    edgeidmap = Dict{Edge,Int}()
+    edgeidmap = Dict{Edge, Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -61,14 +61,14 @@ Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
 represented in the domain of ``B`` and represents them in the domain of the
 adjacency matrix of `g`.
 """
-struct Nonbacktracking{G<:AbstractGraph}
+struct Nonbacktracking{G <: AbstractGraph}
     g::G
-    edgeidmap::Dict{Edge,Int}
+    edgeidmap::Dict{Edge, Int}
     m::Int
 end
 
 function Nonbacktracking(g::AbstractGraph)
-    edgeidmap = Dict{Edge,Int}()
+    edgeidmap = Dict{Edge, Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -88,7 +88,7 @@ size(nbt::Nonbacktracking, i::Number) = size(nbt)[i]
 eltype(nbt::Nonbacktracking) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking, x::Vector{T}) where {T<:Number}
+function *(nbt::Nonbacktracking, x::Vector{T}) where {T <: Number}
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
@@ -103,7 +103,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where {T<:Number}
 end
 function mul!(C, nbt::Nonbacktracking, B)
     # computs C = A * B
-    for i = 1:size(B, 2)
+    for i in 1:size(B, 2)
         C[:, i] = nbt * B[:, i]
     end
     return C
@@ -131,7 +131,7 @@ sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zero(x)
-    for i = 1:nbt.m
+    for i in 1:(nbt.m)
         y[:, i] = nbt * x[:, i]
     end
     return y
@@ -144,7 +144,7 @@ The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 """
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     T = eltype(nbt.g)
-    for i = one(T):nv(nbt.g), j in neighbors(nbt.g, i)
+    for i in one(T):nv(nbt.g), j in neighbors(nbt.g, i)
         u = nbt.edgeidmap[i > j ? Edge(j, i) : Edge(i, j)]
         vertexspace[i] += edgespace[u]
     end

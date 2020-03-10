@@ -11,11 +11,7 @@ finding short cycles. If you want to find cycles of any length in a
 directed graph, [`simplecycles`](@ref) or [`simplecycles_iter`](@ref) may be more
 efficient.
 """
-function simplecycles_limited_length(
-    graph::AbstractGraph{T},
-    n::Int,
-    ceiling = 10^6,
-) where {T}
+function simplecycles_limited_length(graph::AbstractGraph{T}, n::Int, ceiling = 10^6) where {T}
     cycles = Vector{Vector{T}}()
     n < 1 && return cycles
     cycle = Vector{T}(undef, n)
@@ -43,7 +39,7 @@ end
 # views are completely allocation free this can be expected to be
 # faster.
 function repeated_vertex(v, cycle, n1, n2)
-    for k = n1:n2
+    for k in n1:n2
         cycle[k] == v && return true
     end
     return false

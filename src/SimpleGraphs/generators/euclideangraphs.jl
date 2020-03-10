@@ -56,14 +56,14 @@ julia> g
 """
 function euclidean_graph(points::Matrix; L = 1.0, p = 2.0, cutoff = -1.0, bc = :open)
     d, N = size(points)
-    weights = Dict{SimpleEdge{Int},Float64}()
+    weights = Dict{SimpleEdge{Int}, Float64}()
     cutoff < 0.0 && (cutoff = typemax(Float64))
     if bc == :periodic
         maximum(points) > L &&
         throw(DomainError(maximum(points), "Some points are outside the box of size $L"))
     end
-    for i = 1:N
-        for j = (i+1):N
+    for i in 1:N
+        for j in (i+1):N
             if bc == :open
                 Δ = points[:, i] - points[:, j]
             elseif bc == :periodic

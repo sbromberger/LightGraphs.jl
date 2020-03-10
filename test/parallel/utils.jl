@@ -1,6 +1,6 @@
 @testset "Parallel.Generate Reduce" begin
 
-    function make_vec(g::AbstractGraph{T}) where {T<:Integer}
+    function make_vec(g::AbstractGraph{T}) where {T <: Integer}
         return Vector{T}(undef, nv(g))
     end
 

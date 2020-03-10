@@ -55,8 +55,7 @@
             completegraph = complete_digraph(9)
             @testset "$g" for g in testgraphs(completegraph)
                 greduced = @inferred(transitivereduction(g))
-                @test length(strongly_connected_components(greduced)) == 1 &&
-                      ne(greduced) == nv(g)
+                @test length(strongly_connected_components(greduced)) == 1 && ne(greduced) == nv(g)
             end
         end
 
@@ -92,12 +91,12 @@
         # directed barbell graph should result in two cycles connected by a single edge
         @testset "barbell" begin
             barbellgraph = SimpleDiGraph(9)
-            for i = 1:4, j = 1:4
+            for i in 1:4, j in 1:4
                 i == j && continue
                 add_edge!(barbellgraph, i, j)
                 add_edge!(barbellgraph, j, i)
             end
-            for i = 5:9, j = 5:9
+            for i in 5:9, j in 5:9
                 i == j && continue
                 add_edge!(barbellgraph, i, j)
                 add_edge!(barbellgraph, j, i)

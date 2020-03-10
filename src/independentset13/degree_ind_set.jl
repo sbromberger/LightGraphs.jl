@@ -18,7 +18,7 @@ adjacent to the fewest valid vertices in the independent set until all vertices 
 Runtime: O((|V|+|E|)*log(|V|))
 Memory: O(|V|)
 """
-function independent_set(g::AbstractGraph{T}, alg::DegreeIndependentSet) where {T<:Integer}
+function independent_set(g::AbstractGraph{T}, alg::DegreeIndependentSet) where {T <: Integer}
 
     nvg = nv(g)
     ind_set = Vector{T}()

@@ -5,7 +5,7 @@ const SimpleDiGraphEdge = SimpleEdge
 
 A type representing a directed graph.
 """
-mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
+mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
@@ -21,15 +21,10 @@ mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
     end
 end
 
-function SimpleDiGraph(
-    ne::Int,
-    fadjlist::Vector{Vector{T}},
-    badjlist::Vector{Vector{T}},
-) where {T}
+function SimpleDiGraph(ne::Int, fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}) where {T}
 
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
-
 
 eltype(x::SimpleDiGraph{T}) where {T} = T
 
@@ -46,14 +41,14 @@ julia> SimpleDiGraph(UInt8(10))
 {10, 0} directed simple UInt8 graph
 ```
 """
-function SimpleDiGraph{T}(n::Integer = 0) where {T<:Integer}
-    fadjlist = [Vector{T}() for _ = one(T):n]
-    badjlist = [Vector{T}() for _ = one(T):n]
+function SimpleDiGraph{T}(n::Integer = 0) where {T <: Integer}
+    fadjlist = [Vector{T}() for _ in one(T):n]
+    badjlist = [Vector{T}() for _ in one(T):n]
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
 # SimpleDiGraph(6), SimpleDiGraph(0x5)
-SimpleDiGraph(n::T) where {T<:Integer} = SimpleDiGraph{T}(n)
+SimpleDiGraph(n::T) where {T <: Integer} = SimpleDiGraph{T}(n)
 
 # SimpleDiGraph()
 SimpleDiGraph() = SimpleDiGraph{Int}()
@@ -70,8 +65,7 @@ julia> SimpleDiGraph(UInt8)
 {0, 0} directed simple UInt8 graph
 ```
 """
-SimpleDiGraph(::Type{T}) where {T<:Integer} = SimpleDiGraph{T}(zero(T))
-
+SimpleDiGraph(::Type{T}) where {T <: Integer} = SimpleDiGraph{T}(zero(T))
 
 # SimpleDiGraph(adjmx)
 """
@@ -95,15 +89,14 @@ julia> SimpleDiGraph{Int16}(A2)
 SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
-function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where {T<:Integer} where {U<:Real}
+function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where {T <: Integer} where {U <: Real}
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) ||
-    throw(ArgumentError("Adjacency / distance matrices must be square"))
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     maxc = length(adjmx.colptr)
-    @inbounds for c = 1:(maxc-1)
-        for rind = adjmx.colptr[c]:(adjmx.colptr[c+1]-1)
+    @inbounds for c in 1:(maxc-1)
+        for rind in adjmx.colptr[c]:(adjmx.colptr[c+1]-1)
             isnz = (adjmx.nzval[rind] != zero(U))
             if isnz
                 r = adjmx.rowval[rind]
@@ -115,10 +108,9 @@ function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where {T<:Integer} where {U
 end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
-function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where {T<:Integer} where {U<:Real}
+function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where {T <: Integer} where {U <: Real}
     dima, dimb = size(adjmx)
-    isequal(dima, dimb) ||
-    throw(ArgumentError("Adjacency / distance matrices must be square"))
+    isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
     g = SimpleDiGraph(T(dima))
     @inbounds for i in findall(adjmx .!= zero(U))
@@ -142,7 +134,7 @@ julia> SimpleDiGraph{UInt8}(g)
 {5, 20} directed simple UInt8 graph
 ```
 """
-function SimpleDiGraph{T}(g::SimpleDiGraph) where {T<:Integer}
+function SimpleDiGraph{T}(g::SimpleDiGraph) where {T <: Integer}
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
     return SimpleDiGraph(ne(g), h_fadj, h_badj)
@@ -172,13 +164,12 @@ function SimpleDiGraph(g::AbstractSimpleGraph)
     return h
 end
 
-
 @inbounds function cleanupedges!(
     fadjlist::Vector{Vector{T}},
     badjlist::Vector{Vector{T}},
-) where {T<:Integer}
+) where {T <: Integer}
     neg = 0
-    for v = 1:length(fadjlist)
+    for v in 1:length(fadjlist)
         if !issorted(fadjlist[v])
             sort!(fadjlist[v])
         end
@@ -214,7 +205,7 @@ julia> SimpleDiGraph(el)
 {5, 3} directed simple Int64 graph
 ```
 """
-function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T<:Integer}
+function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T <: Integer}
     nvg = zero(T)
     @inbounds(for e in edge_list
         nvg = max(nvg, src(e), dst(e))
@@ -233,7 +224,7 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T<:Intege
 
     fadjlist = Vector{Vector{T}}(undef, nvg)
     badjlist = Vector{Vector{T}}(undef, nvg)
-    @inbounds(for v = 1:nvg
+    @inbounds(for v in 1:nvg
         fadjlist[v] = Vector{T}(undef, degs_out[v])
         badjlist[v] = Vector{T}(undef, degs_in[v])
     end)
@@ -256,16 +247,15 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T<:Intege
     return g
 end
 
-
 @inbounds function add_to_lists!(
     fadjlist::Vector{Vector{T}},
     badjlist::Vector{Vector{T}},
     s::T,
     d::T,
-) where {T<:Integer}
+) where {T <: Integer}
     nvg = length(fadjlist)
     nvg_new = max(nvg, s, d)
-    for v = (nvg+1):nvg_new
+    for v in (nvg+1):nvg_new
         push!(fadjlist, Vector{T}())
         push!(badjlist, Vector{T}())
     end
@@ -315,7 +305,7 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     return g
 end
 
-function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T<:Integer}
+function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
 
     g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}()
@@ -376,18 +366,13 @@ function SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     return _SimpleDiGraphFromIterator(iter)
 end
 
-
-
-edgetype(::SimpleDiGraph{T}) where {T<:Integer} = SimpleGraphEdge{T}
-
+edgetype(::SimpleDiGraph{T}) where {T <: Integer} = SimpleGraphEdge{T}
 
 badj(g::SimpleDiGraph) = g.badjlist
 badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
-
-copy(g::SimpleDiGraph{T}) where {T<:Integer} =
+copy(g::SimpleDiGraph{T}) where {T <: Integer} =
     SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
-
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
     vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h) && badj(g) == badj(h)
@@ -428,7 +413,6 @@ function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where {T}
     return true  # edge successfully added
 end
 
-
 function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     verts = vertices(g)
@@ -458,7 +442,7 @@ function rem_vertices!(
     g::SimpleDiGraph{T},
     vs::AbstractVector{<:Integer};
     keep_order::Bool = false,
-) where {T<:Integer}
+) where {T <: Integer}
     # check the implementation in simplegraph.jl for more comments
 
     n = nv(g)

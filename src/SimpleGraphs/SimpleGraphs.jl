@@ -5,8 +5,7 @@ using LinearAlgebra
 using LightGraphs
 using SimpleTraits
 
-import Base:
-    eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
+import Base: eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
 
 import LightGraphs:
     _NI,
@@ -99,7 +98,6 @@ export AbstractSimpleGraph,
 # Euclidean graphs
     euclidean_graph
 
-
 """
     AbstractSimpleGraph
 
@@ -109,7 +107,7 @@ An abstract type representing a simple graph structure.
   - `fadjlist::Vector{Vector{Integer}}`
   - `ne::Integer`
 """
-abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
+abstract type AbstractSimpleGraph{T <: Integer} <: AbstractGraph{T} end
 
 function show(io::IO, g::AbstractSimpleGraph{T}) where {T}
     dir = is_directed(g) ? "directed" : "undirected"
@@ -133,13 +131,10 @@ function throw_if_invalid_eltype(T::Type{<:Integer})
     end
 end
 
-
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
-
 
 fadj(g::AbstractSimpleGraph) = g.fadjlist
 fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
-
 
 badj(x...) = _NI("badj")
 
@@ -154,7 +149,7 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
-function issubset(g::T, h::T) where {T<:AbstractSimpleGraph}
+function issubset(g::T, h::T) where {T <: AbstractSimpleGraph}
     nv(g) <= nv(h) || return false
     for u in vertices(g)
         u_nbrs_g = neighbors(g, u)
@@ -269,7 +264,7 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     return true
 end
 
-zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+zero(::Type{G}) where {G <: AbstractSimpleGraph} = G()
 
 include("./simpleedge.jl")
 include("./simpledigraph.jl")

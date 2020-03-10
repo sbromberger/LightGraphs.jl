@@ -11,7 +11,6 @@
         @test @inferred(enumerate_paths(z))[4] == enumerate_paths(z, 4) == [2, 3, 4]
         @test @inferred(!Parallel.has_negative_edge_cycle(g, d1))
 
-
         y = @inferred(Parallel.bellman_ford_shortest_paths(g, [2], d1))
         z = @inferred(Parallel.bellman_ford_shortest_paths(g, [2], d2))
         @test y.dists == z.dists == [Inf, 0, 6, 17, 33]
@@ -25,19 +24,11 @@
     gx = complete_graph(3)
     for g in testgraphs(gx)
         d = [1 -3 1; -3 1 1; 1 1 1]
-        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(
-            g,
-            [1],
-            d,
-        )
+        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(g, [1], d)
         @test Parallel.has_negative_edge_cycle(g, d)
 
         d = [1 -1 1; -1 1 1; 1 1 1]
-        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(
-            g,
-            [1],
-            d,
-        )
+        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(g, [1], d)
         @test Parallel.has_negative_edge_cycle(g, d)
     end
 
@@ -45,11 +36,7 @@
     gx = complete_graph(4)
     d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
     for g in testgraphs(gx)
-        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(
-            g,
-            [1],
-            d,
-        )
+        @test_throws LightGraphs.NegativeCycleError Parallel.bellman_ford_shortest_paths(g, [1], d)
         @test Parallel.has_negative_edge_cycle(g, d)
     end
 end

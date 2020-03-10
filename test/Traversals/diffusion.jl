@@ -5,7 +5,7 @@
         @test @inferred(LT.diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
     end
 
-    for i = 1:5
+    for i in 1:5
         add_vertex!(gx)
     end
 
@@ -108,7 +108,7 @@
         for p in [0.2, 0.4]
             final_value = 0.0
 
-            for i = 1:20
+            for i in 1:20
                 result = @inferred(LT.diffusion_rate(g, p, 5, initial_infections = [1]))
                 final_value += result[5]
             end
@@ -124,7 +124,6 @@
         end
     end
 
-
     gx = path_digraph(10)
 
     for g in testdigraphs(gx)
@@ -133,10 +132,8 @@
         # Check on digraphs
         ######
 
-        @test @inferred(LT.diffusion_rate(g, 1.0, 9, initial_infections = [1])) ==
-              collect(1:9)
-        @test @inferred(LT.diffusion_rate(g, 1.0, 9, initial_infections = [10])) ==
-              ones(Int, 9)
+        @test @inferred(LT.diffusion_rate(g, 1.0, 9, initial_infections = [1])) == collect(1:9)
+        @test @inferred(LT.diffusion_rate(g, 1.0, 9, initial_infections = [10])) == ones(Int, 9)
 
         # Check probabilities.
         # See note in analogous tests above for undirected tests.
@@ -147,7 +144,7 @@
         for p in [0.2, 0.4]
             final_value = 0.0
 
-            for i = 1:20
+            for i in 1:20
                 result = @inferred(LT.diffusion_rate(g, p, 11, initial_infections = [1]))
                 final_value += result[11]
 

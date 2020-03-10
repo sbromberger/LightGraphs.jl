@@ -6,7 +6,7 @@ convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 
 function fille(n)
     t = Array{LightGraphs.Edge,1}(n)
-    for i = 1:n
+    for i in 1:n
         t[i] = LightGraphs.Edge(i, i + 1)
     end
     return t
@@ -14,7 +14,7 @@ end
 
 function fillp(n)
     t = Array{P,1}(n)
-    for i = 1:n
+    for i in 1:n
         t[i] = P(i, i + 1)
     end
     return t
@@ -22,7 +22,7 @@ end
 
 function tsum(t)
     x = 0
-    for i = 1:length(t)
+    for i in 1:length(t)
         u, v = Tuple(t[i])
         x += u
         x += v

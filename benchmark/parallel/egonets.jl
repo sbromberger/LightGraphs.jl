@@ -22,11 +22,10 @@ using BenchmarkTools
             return a
         end
 
-
         function mapvertices(f, g::Graph)
             n = nv(g)
             a = zeros(Int, n)
-            Threads.@threads for i = 1:n
+            Threads.@threads for i in 1:n
                 a[i] = f(g, i)
             end
             return a
@@ -35,7 +34,7 @@ using BenchmarkTools
         function mapvertices_single(f, g)
             n = nv(g)
             a = zeros(Int, n)
-            for i = 1:n
+            for i in 1:n
                 a[i] = f(g, i)
             end
             return a

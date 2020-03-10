@@ -29,7 +29,7 @@
     g10 = SimpleDiGraph(20)
     @testset "$g" for g in testdigraphs(g10)
         gc = copy(g)
-        for m = 1:50
+        for m in 1:50
             i = rand(1:10)
             j = rand(11:20)
             if rand() < 0.5

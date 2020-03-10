@@ -8,7 +8,6 @@
 
 using Base.Threads
 
-
 """
     spfa_shortest_paths(g, s, distmx=weights(g))
 
@@ -46,13 +45,11 @@ function spfa_shortest_paths(
     graph::AbstractGraph{U},
     source::Integer,
     distmx::AbstractMatrix{T} = weights(graph),
-) where {T<:Real} where {U<:Integer}
-
+) where {T <: Real} where {U <: Integer}
 
     nvg = nv(graph)
 
-    (source in 1:nvg) ||
-    throw(DomainError(source, "source should be in between 1 and $nvg"))
+    (source in 1:nvg) || throw(DomainError(source, "source should be in between 1 and $nvg"))
     dists = fill(typemax(T), nvg)
     dists[source] = 0
 
@@ -116,7 +113,7 @@ false
 function has_negative_edge_cycle_spfa(
     g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
 
     try
         spfa_shortest_paths(g, 1, distmx)

@@ -13,7 +13,7 @@ function kruskal_mst end
     g::AG::(!IsDirected),
     distmx::AbstractMatrix{T} = weights(g);
     minimize = true,
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T <: Real, U, AG <: AbstractGraph{U}}
 
     connected_vs = IntDisjointSets(nv(g))
 

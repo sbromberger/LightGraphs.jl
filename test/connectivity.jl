@@ -44,7 +44,7 @@
         g10 = SimpleDiGraph(20)
         @testset "$g" for g in testdigraphs(g10)
             gc = copy(g)
-            for m = 1:50
+            for m in 1:50
                 i = rand(1:10)
                 j = rand(11:20)
                 if rand() < 0.5
@@ -251,29 +251,7 @@
 
         # figure 3 example
         fig3 = spzeros(8, 8)
-        fig3[[
-            1,
-            7,
-            9,
-            13,
-            14,
-            15,
-            18,
-            20,
-            23,
-            27,
-            28,
-            31,
-            33,
-            34,
-            37,
-            45,
-            46,
-            49,
-            57,
-            63,
-            64,
-        ]] .= 1
+        fig3[[1, 7, 9, 13, 14, 15, 18, 20, 23, 27, 28, 31, 33, 34, 37, 45, 46, 49, 57, 63, 64]] .= 1
         fig3 = SimpleDiGraph(fig3)
         scc_fig3 = Vector[[3, 4], [2, 5, 6], [8], [1, 7]]
         fig3_cond = SimpleDiGraph(4)
@@ -282,13 +260,11 @@
         add_edge!(fig3_cond, 4, 1)
         add_edge!(fig3_cond, 4, 2)
 
-
         # construct a n-number edge ring graph (period = n)
         n = 10
         n_ring = cycle_digraph(n)
         n_ring_shortcut = copy(n_ring)
         add_edge!(n_ring_shortcut, 1, 4)
-
 
         # figure 8 example
         fig8 = spzeros(6, 6)

@@ -28,22 +28,14 @@
             @test length(@inferred(Parallel.pagerank(g))) == nv(g)
             @test_throws ErrorException Parallel.pagerank(g, 2)
             @test_throws ErrorException Parallel.pagerank(g, α, 2)
-            @test isapprox(
-                Parallel.pagerank(g, α),
-                dense_pagerank_solver(g, α),
-                atol = 0.001,
-            )
+            @test isapprox(Parallel.pagerank(g, α), dense_pagerank_solver(g, α), atol = 0.001)
         end
 
         for g in testgraphs(g6)
             @test length(@inferred(Parallel.pagerank(g))) == nv(g)
             @test_throws ErrorException Parallel.pagerank(g, 2)
             @test_throws ErrorException Parallel.pagerank(g, α, 2)
-            @test isapprox(
-                Parallel.pagerank(g, α),
-                dense_pagerank_solver(g, α),
-                atol = 0.001,
-            )
+            @test isapprox(Parallel.pagerank(g, α), dense_pagerank_solver(g, α), atol = 0.001)
         end
     end
 end

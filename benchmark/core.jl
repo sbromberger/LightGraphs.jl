@@ -20,7 +20,6 @@ function bench_has_edge(g::AbstractGraph)
     return i
 end
 
-
 EDGEFNS = [bench_iteredges, bench_has_edge]
 
 @benchgroup "edges" begin

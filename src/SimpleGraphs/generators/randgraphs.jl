@@ -20,7 +20,7 @@ julia> SimpleGraph(5, 7)
 {5, 7} undirected simple Int64 graph
 ```
 """
-function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T<:Integer}
+function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T <: Integer}
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
@@ -37,7 +37,7 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T<:Inte
     return g
 end
 
-SimpleGraph(nv::T, ne::Integer; seed::Int = -1) where {T<:Integer} =
+SimpleGraph(nv::T, ne::Integer; seed::Int = -1) where {T <: Integer} =
     SimpleGraph{T}(nv, ne, seed = seed)
 
 """
@@ -57,7 +57,7 @@ julia> SimpleDiGraph(5, 7)
 {5, 7} directed simple Int64 graph
 ```
 """
-function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T<:Integer}
+function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T <: Integer}
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
@@ -73,7 +73,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int = -1) where {T<:In
     return g
 end
 
-SimpleDiGraph(nv::T, ne::Integer; seed::Int = -1) where {T<:Integer} =
+SimpleDiGraph(nv::T, ne::Integer; seed::Int = -1) where {T <: Integer} =
     SimpleDiGraph{Int}(nv, ne, seed = seed)
 
 """
@@ -182,16 +182,12 @@ julia> print(degree(g))
 [1, 0, 1]
 ```
 """
-function expected_degree_graph(ω::Vector{T}; seed::Int = -1) where {T<:Real}
+function expected_degree_graph(ω::Vector{T}; seed::Int = -1) where {T <: Real}
     g = SimpleGraph(length(ω))
     expected_degree_graph!(g, ω, seed = seed)
 end
 
-function expected_degree_graph!(
-    g::SimpleGraph,
-    ω::Vector{T};
-    seed::Int = -1,
-) where {T<:Real}
+function expected_degree_graph!(g::SimpleGraph, ω::Vector{T}; seed::Int = -1) where {T <: Real}
     n = length(ω)
     @assert all(zero(T) .<= ω .<= n - one(T)) "Elements of ω needs to be at least 0 and at most n-1"
 
@@ -200,7 +196,7 @@ function expected_degree_graph!(
 
     S = sum(ω)
 
-    for u = 1:(n-1)
+    for u in 1:(n-1)
         v = u + 1
         p = min(ω[π[u]] * ω[π[v]] / S, one(T))
         while v <= n && p > zero(p)
@@ -219,7 +215,6 @@ function expected_degree_graph!(
     end
     return g
 end
-
 
 """
     watts_strogatz(n, k, β)
@@ -241,13 +236,7 @@ julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 {10, 20} directed simple Int8 graph
 ```
 """
-function watts_strogatz(
-    n::Integer,
-    k::Integer,
-    β::Real;
-    is_directed = false,
-    seed::Int = -1,
-)
+function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed = false, seed::Int = -1)
     @assert k < n
     if is_directed
         g = SimpleDiGraph(n)
@@ -255,8 +244,8 @@ function watts_strogatz(
         g = SimpleGraph(n)
     end
     rng = getRNG(seed)
-    for s = 1:n
-        for i = 1:(floor(Integer, k / 2))
+    for s in 1:n
+        for i in 1:(floor(Integer, k / 2))
             target = ((s + i - 1) % n) + 1
             if rand(rng) > β && !has_edge(g, s, target) # TODO: optimize this based on return of add_edge!
                 add_edge!(g, s, target)
@@ -279,7 +268,7 @@ function watts_strogatz(
     return g
 end
 
-function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
+function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T, T}) where {T <: Integer}
     isempty(potential_edges) && return true
     list = keys(potential_edges)
     for s1 in list, s2 in list
@@ -291,12 +280,12 @@ end
 
 _try_creation(n::Integer, k::Integer, rng::AbstractRNG) = _try_creation(n, fill(k, n), rng)
 
-function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where {T<:Integer}
+function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where {T <: Integer}
     edges = Set{SimpleEdge{T}}()
     m = 0
     stubs = zeros(T, sum(k))
-    for i = one(T):n
-        for j = one(T):k[i]
+    for i in one(T):n
+        for j in one(T):k[i]
             m += 1
             stubs[m] = i
         end
@@ -304,9 +293,9 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where {T<:Integer}
     # stubs = vcat([fill(i, k[i]) for i = 1:n]...) # slower
 
     while !isempty(stubs)
-        potential_edges = Dict{T,T}()
+        potential_edges = Dict{T, T}()
         shuffle!(rng, stubs)
-        for i = 1:2:length(stubs)
+        for i in 1:2:length(stubs)
             s1, s2 = stubs[i:(i+1)]
             if (s1 > s2)
                 s1, s2 = s2, s1
@@ -420,8 +409,7 @@ julia> g
 """
 function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = -1)
     n0 = nv(g)
-    1 <= k <= n0 <= n ||
-    throw(ArgumentError("Barabási-Albert model requires 1 <= k <= nv(g) <= n"))
+    1 <= k <= n0 <= n || throw(ArgumentError("Barabási-Albert model requires 1 <= k <= nv(g) <= n"))
     n0 == n && return g
 
     # seed random number generator
@@ -459,7 +447,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = 
     # vector of targets
     targets = Vector{Int}(undef, k)
 
-    for source = (n0+1):n
+    for source in (n0+1):n
         # choose k targets from the existing vertices
         # pick uniformly from weightedVs (preferential attachement)
         i = 0
@@ -482,7 +470,6 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int = 
     end
     return g
 end
-
 
 """
     static_fitness_model(m, fitness)
@@ -514,11 +501,7 @@ julia> edges(g) |> collect
  Edge 2 => 4
 ```
 """
-function static_fitness_model(
-    m::Integer,
-    fitness::Vector{T};
-    seed::Int = -1,
-) where {T<:Real}
+function static_fitness_model(m::Integer, fitness::Vector{T}; seed::Int = -1) where {T <: Real}
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness)
     m == 0 && return SimpleGraph(n)
@@ -530,8 +513,7 @@ function static_fitness_model(
     end
     # avoid getting into an infinite loop when too many edges are requested
     max_no_of_edges = div(nvs * (nvs - 1), 2)
-    m > max_no_of_edges &&
-    throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
+    m > max_no_of_edges && throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
     # calculate the cumulative fitness scores
     cum_fitness = cumsum(fitness)
     g = SimpleGraph(n)
@@ -575,7 +557,7 @@ function static_fitness_model(
     fitness_out::Vector{T},
     fitness_in::Vector{S};
     seed::Int = -1,
-) where {T<:Real} where {S<:Real}
+) where {T <: Real} where {S <: Real}
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness_out)
     length(fitness_in) != n &&
@@ -583,7 +565,7 @@ function static_fitness_model(
     m == 0 && return SimpleDiGraph(n)
     # avoid getting into an infinite loop when too many edges are requested
     noutvs = ninvs = nvs = 0
-    @inbounds for i = 1:n
+    @inbounds for i in 1:n
         # sanity check for the fitness
         (fitness_out[i] < zero(T) || fitness_in[i] < zero(S)) &&
         error("fitness scores must be non-negative") # TODO 0.7: change to DomainError?
@@ -592,8 +574,7 @@ function static_fitness_model(
         (fitness_out[i] > zero(T) && fitness_in[i] > zero(S)) && (nvs += 1)
     end
     max_no_of_edges = noutvs * ninvs - nvs
-    m > max_no_of_edges &&
-    throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
+    m > max_no_of_edges && throw(ArgumentError("too many edges requested ($m > $max_no_of_edges)"))
     # calculate the cumulative fitness scores
     cum_fitness_out = cumsum(fitness_out)
     cum_fitness_in = cumsum(fitness_in)
@@ -608,7 +589,7 @@ function _create_static_fitness_graph!(
     cum_fitness_out::Vector{T},
     cum_fitness_in::Vector{S},
     seed::Int,
-) where {T<:Real} where {S<:Real}
+) where {T <: Real} where {S <: Real}
     rng = getRNG(seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
@@ -703,7 +684,7 @@ function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
         j += n^(1 + 1 / 2 * α) * (10 * sqrt(2) * (1 + α))^(-1 / α) - 1
     end
     j = max(j, n)
-    @inbounds for i = 1:n
+    @inbounds for i in 1:n
         fitness[i] = j^α
         j -= 1
     end
@@ -774,12 +755,11 @@ function random_configuration_model(
     k::Array{T};
     seed::Int = -1,
     check_graphical::Bool = false,
-) where {T<:Integer}
+) where {T <: Integer}
     n != length(k) && throw(ArgumentError("a degree sequence of length n must be provided"))
     m = sum(k)
     !iseven(m) && throw(ArgumentError("sum(k) must be even"))
-    !all(0 .<= k .< n) &&
-    throw(ArgumentError("the 0 <= k[i] < n inequality must be satisfied"))
+    !all(0 .<= k .< n) && throw(ArgumentError("the 0 <= k[i] < n inequality must be satisfied"))
     if check_graphical
         isgraphical(k) || throw(ArgumentError("degree sequence must be graphical"))
     end
@@ -828,7 +808,7 @@ function random_regular_digraph(n::Integer, k::Integer; dir::Symbol = :out, seed
     I = Vector{Int}(undef, n * k)
     J = Vector{Int}(undef, n * k)
     V = fill(true, n * k)
-    for r = 1:n
+    for r in 1:n
         l = ((r-1)*k+1):(r*k)
         I[l] .= r
         J[l] = sample!(rng, cs, k, exclude = r)
@@ -865,7 +845,7 @@ function random_tournament_digraph(n::Integer; seed::Int = -1)
     rng = getRNG(seed)
     g = SimpleDiGraph(n)
 
-    for i = 1:n, j = i+1:n
+    for i in 1:n, j in (i+1):n
         rand(rng, Bool) ? add_edge!(g, SimpleEdge(i, j)) : add_edge!(g, SimpleEdge(j, i))
     end
 
@@ -892,9 +872,8 @@ function stochastic_block_model(
     c::Matrix{T},
     n::Vector{U};
     seed::Int = -1,
-) where {T<:Real} where {U<:Integer}
-    size(c, 1) == size(c, 2) == length(n) ||
-    throw(ArgumentError("matrix-vector size mismatch"))
+) where {T <: Real} where {U <: Integer}
+    size(c, 1) == size(c, 2) == length(n) || throw(ArgumentError("matrix-vector size mismatch"))
 
     # init dsfmt generator without altering GLOBAL_RNG
     rng = getRNG(seed)
@@ -902,10 +881,10 @@ function stochastic_block_model(
     K = length(n)
     nedg = zeros(Int, K, K)
     g = SimpleGraph(N)
-    cum = [sum(n[1:a]) for a = 0:K]
-    for a = 1:K
+    cum = [sum(n[1:a]) for a in 0:K]
+    for a in 1:K
         ra = (cum[a]+1):cum[a+1]
-        for b = a:K
+        for b in a:K
             ((a == b) && !(c[a, b] <= n[b] - 1)) || ((a != b) && !(c[a, b] <= n[b])) &&
             error("Mean degree cannot be greater than available neighbors in the block.") # TODO 0.7: turn into some other error?
 
@@ -939,9 +918,9 @@ function stochastic_block_model(
     cext::T,
     n::Vector{U};
     seed::Int = -1,
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
     K = length(n)
-    c = [ifelse(a == b, cint, cext) for a = 1:K, b = 1:K]
+    c = [ifelse(a == b, cint, cext) for a in 1:K, b in 1:K]
     stochastic_block_model(c, n, seed = seed)
 end
 
@@ -962,16 +941,14 @@ block `k` and any vertex in block `l`.
 Graphs are generated by taking random ``i,j ∈ V`` and
 flipping a coin with probability `affinities[nodemap[i],nodemap[j]]`.
 """
-mutable struct StochasticBlockModel{T<:Integer,P<:Real}
+mutable struct StochasticBlockModel{T <: Integer, P <: Real}
     n::T
     nodemap::Array{T}
     affinities::Matrix{P}
 end
 
 ==(sbm::StochasticBlockModel, other::StochasticBlockModel) =
-    (sbm.n == other.n) &&
-    (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
-
+    (sbm.n == other.n) && (sbm.nodemap == other.nodemap) && (sbm.affinities == other.affinities)
 
 # A constructor for StochasticBlockModel that uses the sizes of the blocks
 # and the affinity matrix. This construction implies that consecutive
@@ -980,7 +957,7 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix)
     csum = cumsum(sizes)
     j = 1
     nodemap = zeros(Int, csum[end])
-    for i = 1:csum[end]
+    for i in 1:csum[end]
         if i > csum[j]
             j += 1
         end
@@ -988,7 +965,6 @@ function StochasticBlockModel(sizes::AbstractVector, affinities::AbstractMatrix)
     end
     return StochasticBlockModel(csum[end], nodemap, affinities)
 end
-
 
 ### TODO: This documentation needs work. sbromberger 20170326
 """
@@ -1001,7 +977,7 @@ function sbmaffinity(
     internalp::Vector{T},
     externalp::Real,
     sizes::Vector{U},
-) where {T<:Real} where {U<:Integer}
+) where {T <: Real} where {U <: Integer}
     numblocks = length(sizes)
     numblocks == length(internalp) ||
     throw(ArgumentError("Inconsistent input dimensions: internalp, sizes"))
@@ -1009,12 +985,7 @@ function sbmaffinity(
     return B
 end
 
-function StochasticBlockModel(
-    internalp::Real,
-    externalp::Real,
-    size::Integer,
-    numblocks::Integer,
-)
+function StochasticBlockModel(internalp::Real, externalp::Real, size::Integer, numblocks::Integer)
     sizes = fill(size, numblocks)
     B = sbmaffinity(fill(internalp, numblocks), externalp, sizes)
     StochasticBlockModel(sizes, B)
@@ -1024,11 +995,10 @@ function StochasticBlockModel(
     internalp::Vector{T},
     externalp::Real,
     sizes::Vector{U},
-) where {T<:Real,U<:Integer}
+) where {T <: Real, U <: Integer}
     B = sbmaffinity(internalp, externalp, sizes)
     return StochasticBlockModel(sizes, B)
 end
-
 
 const biclique = ones(2, 2) - Matrix{Float64}(I, 2, 2)
 
@@ -1048,7 +1018,7 @@ function nearbipartiteaffinity(
     sizes::AbstractVector{T},
     between::Real,
     intra::Real,
-) where {T<:Integer}
+) where {T <: Integer}
     numblocks = div(length(sizes), 2)
     return kron(between * Matrix{Float64}(I, numblocks, numblocks), biclique) +
            Matrix{Float64}(I, 2 * numblocks, 2 * numblocks) * intra
@@ -1060,7 +1030,7 @@ nearbipartiteaffinity(
     between::Real,
     inter::Real,
     noise::Real,
-) where {T<:Integer} = nearbipartiteaffinity(sizes, between, inter) .+ noise
+) where {T <: Integer} = nearbipartiteaffinity(sizes, between, inter) .+ noise
 
 nearbipartiteSBM(sizes, between, inter, noise) =
     StochasticBlockModel(sizes, nearbipartiteaffinity(sizes, between, inter, noise))
@@ -1078,7 +1048,6 @@ function random_pair(rng::AbstractRNG, n::Integer)
     end
     return f
 end
-
 
 """
     make_edgestream(sbm)
@@ -1136,19 +1105,18 @@ SimpleGraph(nvg::Integer, neg::Integer, sbm::StochasticBlockModel) =
 Count the number of edges that go between each block.
 """
 function blockcounts(sbm::StochasticBlockModel, A::AbstractMatrix)
-    I = collect(1:sbm.n)
-    J = [sbm.nodemap[i] for i = 1:sbm.n]
+    I = collect(1:(sbm.n))
+    J = [sbm.nodemap[i] for i in 1:(sbm.n)]
     V = ones(sbm.n)
     Q = sparse(I, J, V)
     return (Q'A) * Q
 end
 
-
 function blockcounts(sbm::StochasticBlockModel, g::AbstractGraph)
     return blockcounts(sbm, adjacency_matrix(g))
 end
 
-function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,AbstractMatrix})
+function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph, AbstractMatrix})
     bc = blockcounts(sbm, g)
     bp = bc ./ sum(bc)
     return bp
@@ -1173,7 +1141,7 @@ function kronecker(SCALE, edgefactor, A = 0.57, B = 0.19, C = 0.19; seed::Int = 
     a_norm = A / (A + B)
     rng = getRNG(seed)
 
-    for ib = 1:SCALE
+    for ib in 1:SCALE
         ii_bit = rand(rng, M) .> (ab)  # bitarray
         jj_bit = rand(rng, M) .> (c_norm .* (ii_bit) + a_norm .* .!(ii_bit))
         ij .+= 2^(ib - 1) .* (hcat(ii_bit, jj_bit))
@@ -1222,10 +1190,10 @@ function dorogovtsev_mendes(n::Integer; seed::Int = -1)
     rng = getRNG(seed)
     g = cycle_graph(3)
 
-    for iteration = 1:(n-3)
+    for iteration in 1:(n-3)
         chosenedge = rand(rng, 1:(2*ne(g))) # undirected so each edge is listed twice in adjlist
         u, v = -1, -1
-        for i = 1:nv(g)
+        for i in 1:nv(g)
             edgelist = outneighbors(g, i)
             if chosenedge > length(edgelist)
                 chosenedge -= length(edgelist)
@@ -1262,7 +1230,7 @@ julia> random_orientation_dag(star_graph(Int8(10)), 123)
 {10, 9} directed simple Int8 graph
 ```
 """
-function random_orientation_dag(g::SimpleGraph{T}, seed::Int = -1) where {T<:Integer}
+function random_orientation_dag(g::SimpleGraph{T}, seed::Int = -1) where {T <: Integer}
     nvg = length(g.fadjlist)
     rng = getRNG(seed)
     order = randperm(rng, nvg)

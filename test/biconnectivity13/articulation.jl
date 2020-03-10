@@ -23,7 +23,7 @@
         ans = [1, 7, 8, 12]
         @test art == ans
     end
-    for level = 1:6
+    for level in 1:6
         btree = LightGraphs.binary_tree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
             artpts = @inferred(articulation(tree))

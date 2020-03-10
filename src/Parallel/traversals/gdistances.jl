@@ -4,7 +4,7 @@ function gdistances!(
     sources,
     vert_level::Vector{T};
     queue_segment_size::Integer = 20,
-) where {T<:Integer}
+) where {T <: Integer}
 
     Base.depwarn(
         "`Parallel.gdistances!` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.distances`.",
@@ -13,9 +13,7 @@ function gdistances!(
     d = LightGraphs.Traversals.distances(
         g,
         sources,
-        LightGraphs.Traversals.ThreadedBreadthFirst(
-            queue_segment_size = queue_segment_size,
-        ),
+        LightGraphs.Traversals.ThreadedBreadthFirst(queue_segment_size = queue_segment_size),
     )
     vert_level .= T.(d)
     return vert_level
@@ -29,8 +27,6 @@ function gdistances(g::AbstractGraph, ss; queue_segment_size = 20)
     LightGraphs.Traversals.distances(
         g,
         ss,
-        LightGraphs.Traversals.ThreadedBreadthFirst(
-            queue_segment_size = queue_segment_size,
-        ),
+        LightGraphs.Traversals.ThreadedBreadthFirst(queue_segment_size = queue_segment_size),
     )
 end

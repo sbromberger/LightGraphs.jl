@@ -45,12 +45,12 @@ function core_number(g::AbstractGraph{T}) where {T}
     pos = zeros(T, n) # contains positions of vertices in array vert
 
     # count number of vertices will be in each bin
-    for v = 1:n
+    for v in 1:n
         bin[deg[v]+1] += one(T)
     end
     # from bin sizes determine starting positions of bins in array vert
     start = one(T)
-    for d = zero(T):maxdeg
+    for d in zero(T):maxdeg
         num = bin[d+1]
         bin[d+1] = start
         start += num
@@ -63,13 +63,13 @@ function core_number(g::AbstractGraph{T}) where {T}
     end
 
     # recover starting positions of the bins
-    for d = maxdeg:-1:one(T)
+    for d in maxdeg:-1:one(T)
         bin[d+1] = bin[d]
     end
     bin[1] = one(T)
 
     # cores decomposition
-    for i = 1:n
+    for i in 1:n
         v = vert[i]
         # for each neighbor u of vertex v with higher degree we have to decrease its degree and move it for one bin to the left
         for u in all_neighbors(g, v)

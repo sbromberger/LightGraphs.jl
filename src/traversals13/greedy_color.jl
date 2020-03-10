@@ -32,7 +32,6 @@ function greedy_color(g::AbstractGraph; sort_degree::Bool = false, reps::Integer
         "`greedy_color` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.greedy_color`.",
         :greedy_color,
     )
-    coloralg =
-        sort_degree ? Traversals.DegreeColoring() : Traversals.RandomColoring(niter = reps)
+    coloralg = sort_degree ? Traversals.DegreeColoring() : Traversals.RandomColoring(niter = reps)
     Traversals.greedy_color(g, coloralg)
 end

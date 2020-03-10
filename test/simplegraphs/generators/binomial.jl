@@ -23,7 +23,7 @@ function -(s::SummaryStats, t::SummaryStats)
 end
 function binomial_test(n, p, s)
     drand = rand(Binomial(n, p), s)
-    lrand = Int64[randbn(n, p) for i = 1:s]
+    lrand = Int64[randbn(n, p) for i in 1:s]
 
     ds = summarystats(drand)
     ls = summarystats(lrand)
@@ -43,7 +43,6 @@ n = 10000
 p = 0.3
 s = 100000
 
-@testset "($n, $p, $s)" for (n, p, s) in
-                            [(100, 0.3, 1000), (1000, 0.8, 1000), (10000, 0.25, 1000)]
+@testset "($n, $p, $s)" for (n, p, s) in [(100, 0.3, 1000), (1000, 0.8, 1000), (10000, 0.25, 1000)]
     binomial_test(n, p, s)
 end

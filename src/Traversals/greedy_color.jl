@@ -3,7 +3,7 @@
 
 Store the number of colors used and mapping from vertex to color
 """
-struct Coloring{T<:Integer}
+struct Coloring{T <: Integer}
     num_colors::T
     colors::Vector{T}
 end
@@ -49,7 +49,7 @@ such random colorings.
 - `niter::Int`: the number of times the random coloring should be repeated (default `1`).
 - `rng::AbstractRNG`: a random number generator (default `Random.GLOBAL_RNG`)
 """
-struct RandomColoring{T<:Integer,R<:AbstractRNG} <: ColoringAlgorithm
+struct RandomColoring{T <: Integer, R <: AbstractRNG} <: ColoringAlgorithm
     niter::T
     rng::R
 end
@@ -63,10 +63,7 @@ best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 `seq[i] = v` implies that vertex v is the ``i^{th}`` vertex to be colored.
 """
-function fixed_greedy_color(
-    g::AbstractGraph{T},
-    seqfn::Function,
-)::Coloring{T} where {T<:Integer}
+function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} where {T <: Integer}
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)
     seen = zeros(Bool, nvg + 1)
@@ -82,7 +79,7 @@ function fixed_greedy_color(
             end
         end
 
-        for i = one(T):nvg
+        for i in one(T):nvg
             if colors_used[i] == false
                 cols[v] = i
                 break
@@ -106,11 +103,11 @@ function random_greedy_color(
     g::AbstractGraph{T},
     niter::Integer,
     rng::AbstractRNG,
-) where {T<:Integer}
+) where {T <: Integer}
     seq = shuffle(rng, vertices(g))
     best = fixed_greedy_color(g, seq)
 
-    for i = 2:niter
+    for i in 2:niter
         shuffle!(rng, seq)
         best = best_color(best, fixed_greedy_color(g, seq))
     end
@@ -127,7 +124,6 @@ The heuristics can be described as choosing a permutation of the vertices and as
 lowest color index available iteratively in that order.
 """
 greedy_color(g::AbstractGraph, alg::FixedColoring) = fixed_greedy_color(g, alg.ordering)
-greedy_color(g::AbstractGraph, alg::RandomColoring) =
-    random_greedy_color(g, alg.niter, alg.rng)
+greedy_color(g::AbstractGraph, alg::RandomColoring) = random_greedy_color(g, alg.niter, alg.rng)
 
 greedy_color(g::AbstractGraph) = greedy_color(g, RandomColoring())

@@ -63,8 +63,8 @@ function edit_distance(
     h(λ) = heuristic(λ, G₁, G₂)
 
     # initialize open set
-    OPEN = PriorityQueue{Vector{Tuple},Float64}()
-    for v = 1:nv(G₂)
+    OPEN = PriorityQueue{Vector{Tuple}, Float64}()
+    for v in 1:nv(G₂)
         enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
     end
     enqueue!(OPEN, [(1, 0)], delete_cost(1) + h([(1, 0)]))
@@ -117,7 +117,6 @@ function DefaultEditHeuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
     return nv(G₂) - length(vs)
 end
 
-
 #-------------------------
 # Edit path cost functions
 #-------------------------
@@ -145,11 +144,6 @@ Return value similar to [`MinkowskiCost`](@ref), but ensure costs smaller than 2
 `p=1`: the p value for p-norm calculation.
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
-function BoundedMinkowskiCost(
-    μ₁::AbstractVector,
-    μ₂::AbstractVector;
-    p::Real = 1,
-    τ::Real = 1,
-)
+function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real = 1, τ::Real = 1)
     (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end

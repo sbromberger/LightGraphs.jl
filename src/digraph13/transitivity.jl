@@ -19,8 +19,8 @@ function transitiveclosure! end
 
     x = selflooped ? 0 : 1
     for comp in scc
-        for j = 1:(length(comp)-x)
-            for k = (j+x):length(comp)
+        for j in 1:(length(comp)-x)
+            for k in (j+x):length(comp)
                 add_edge!(g, comp[j], comp[k])
                 add_edge!(g, comp[k], comp[j])
             end
@@ -207,7 +207,7 @@ function transitivereducion end
             end
             continue
         end
-        for i = 1:(nvc-1)
+        for i in 1:(nvc-1)
             add_edge!(resultg, component[i], component[i+1])
         end
         add_edge!(resultg, component[nvc], component[1])

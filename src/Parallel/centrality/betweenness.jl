@@ -6,20 +6,8 @@ betweenness_centrality(
     endpoints = false,
     parallel = :distributed,
 ) = parallel == :distributed ?
-    distr_betweenness_centrality(
-    g,
-    vs,
-    distmx;
-    normalize = normalize,
-    endpoints = endpoints,
-) :
-    threaded_betweenness_centrality(
-    g,
-    vs,
-    distmx;
-    normalize = normalize,
-    endpoints = endpoints,
-)
+    distr_betweenness_centrality(g, vs, distmx; normalize = normalize, endpoints = endpoints) :
+    threaded_betweenness_centrality(g, vs, distmx; normalize = normalize, endpoints = endpoints)
 
 betweenness_centrality(
     g::AbstractGraph,
@@ -108,17 +96,12 @@ function threaded_betweenness_centrality(
     k = length(vs)
     isdir = is_directed(g)
 
-    local_betweenness = [zeros(n_v) for i = 1:nthreads()]
+    local_betweenness = [zeros(n_v) for i in 1:nthreads()]
     vs_active = findall((x) -> degree(g, x) > 0, vs) # 0 might be 1?
 
     Base.Threads.@threads for s in vs_active
-        state = LightGraphs.dijkstra_shortest_paths(
-            g,
-            s,
-            distmx;
-            allpaths = true,
-            trackvertices = true,
-        )
+        state =
+            LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths = true, trackvertices = true)
         if endpoints
             LightGraphs._accumulate_endpoints!(
                 local_betweenness[Base.Threads.threadid()],
@@ -127,12 +110,7 @@ function threaded_betweenness_centrality(
                 s,
             )
         else
-            LightGraphs._accumulate_basic!(
-                local_betweenness[Base.Threads.threadid()],
-                state,
-                g,
-                s,
-            )
+            LightGraphs._accumulate_basic!(local_betweenness[Base.Threads.threadid()], state, g, s)
         end
     end
     betweenness = reduce(+, local_betweenness)

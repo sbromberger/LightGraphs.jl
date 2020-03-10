@@ -56,7 +56,7 @@
         @test e2 ∈ edges(ga)
         @test (3, 9) ∉ edges(ga)
 
-        for u = 1:12, v = 1:12
+        for u in 1:12, v in 1:12
             b = has_edge(ga, u, v)
             @test b == @inferred (u, v) ∈ edges(ga)
             @test b == @inferred (u => v) ∈ edges(ga)

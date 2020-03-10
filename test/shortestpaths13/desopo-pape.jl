@@ -70,7 +70,7 @@
     end
 
     @testset "random simple graphs" begin
-        for i = 1:5
+        for i in 1:5
             nvg = Int(ceil(250 * rand()))
             neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
             seed = Int(floor(100 * rand()))
@@ -82,7 +82,7 @@
     end
 
     @testset "random simple digraphs" begin
-        for i = 1:5
+        for i in 1:5
             nvg = Int(ceil(250 * rand()))
             neg = Int(floor((nvg * (nvg - 1) / 2) * rand()))
             seed = Int(floor(100 * rand()))

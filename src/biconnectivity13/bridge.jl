@@ -24,8 +24,8 @@ julia> bridges(path_graph(5))
 ```
 """
 function bridges end
-@traitfn function bridges(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
-    s = Vector{Tuple{T,T,T}}()
+@traitfn function bridges(g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+    s = Vector{Tuple{T, T, T}}()
     low = zeros(T, nv(g)) #keeps track of the earliest accesible time of a vertex in DFS-stack, effect of having back-edges is considered here
     pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
     bridges = Edge{T}[]   #keeps record of the bridge-edges

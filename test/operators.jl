@@ -208,10 +208,10 @@
     function crosspath_slow(len, h)
         g = h
         m = nv(h)
-        for i = 1:(len-1)
+        for i in 1:(len-1)
             k = nv(g)
             g = blockdiag(g, h)
-            for v = 1:m
+            for v in 1:m
                 add_edge!(g, v + (k - m), v + k)
             end
         end
@@ -232,7 +232,7 @@
     @testset "Crosspath: $g" for g in testgraphs(g2)
         @test crosspath_slow(2, g) == crosspath(2, g)
     end
-    for i = 3:4
+    for i in 3:4
         gx = path_graph(i)
         @testset "Tensor Product: $g" for g in testgraphs(gx)
             @test length(connected_components(tensor_product(g, g))) == 2
