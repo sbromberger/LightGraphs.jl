@@ -224,8 +224,10 @@ end
 Compute the [biconnected components](https://en.wikipedia.org/wiki/Biconnected_component)
 of an undirected graph `g` and return a vector of vectors containing each
 biconnected component.
+
 ### Performance
 Time complexity is ``\\mathcal{O}(|V|)``.
+
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -240,12 +242,11 @@ julia> biconnected_components(cycle_graph(5))
  [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]
 ```
 """
-
  function biconnected_components(g::SimpleGraph)
     state = BiconnectionState(g)
     for u in vertices(g)
         if state.depth[u] == 0
-            push!(state.parent,-1)
+            push!(state.parent, -1)
             state.up = false
             traverse_graph!(g, u, DepthFirst(), state)
         end
