@@ -18,7 +18,7 @@
     add_edge!(gint, 7, 10)
     add_edge!(gint, 7, 12)
 
-    for g in testgraphs(gint)
+    @testset "$g" for g in testgraphs(gint)
         art = @inferred(articulation(g))
         ans = [1, 7, 8, 12]
         @test art == ans
@@ -33,7 +33,7 @@
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
-    for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
+    @testset "$h" for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(articulation(h)) == [5, 6]
     end
 end

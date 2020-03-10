@@ -18,7 +18,7 @@
     add_edge!(gint, 7, 10)
     add_edge!(gint, 7, 12)
 
-    for g in testgraphs(gint)
+    @testset "$g" for g in testgraphs(gint)
         brd = @inferred(bridges(g))
         ans = [
             Edge(1, 2),
@@ -39,7 +39,7 @@
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
-    for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
+    @testset "$h" for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(bridges(h)) == [
             Edge(5, 6),
         ]
