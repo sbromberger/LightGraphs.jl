@@ -31,7 +31,7 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
 @traitfn @inline function iterate(
     eit::SimpleEdgeIter{G},
     state = (one(eltype(eit.g)), 1),
-) where {G <: AbstractSimpleGraph!IsDirected{G}}
+) where {G <: AbstractSimpleGraph; IsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)
@@ -60,7 +60,7 @@ end
 @traitfn @inline function iterate(
     eit::SimpleEdgeIter{G},
     state = (one(eltype(eit.g)), 1),
-) where {G <: AbstractSimpleGraphIsDirected{G}}
+) where {G <: AbstractSimpleGraph; IsDirected{G}}
     g = eit.g
     fadjlist = fadj(g)
     T = eltype(g)

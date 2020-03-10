@@ -72,7 +72,7 @@ end
 bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     v::Integer,
-    distmx::AbstractMatrix{T} = weights(graph);,
+    distmx::AbstractMatrix{T} = weights(graph),
 ) where {T<:Real} where {U<:Integer} = bellman_ford_shortest_paths(graph, [v], distmx)
 
 has_negative_edge_cycle(g::AbstractGraph) = false
