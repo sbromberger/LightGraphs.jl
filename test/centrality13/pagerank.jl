@@ -34,3 +34,10 @@
         end
     end
 end
+
+struct FakeGraph <: LightGraphs.AbstractGraph{Int} end
+LightGraphs.has_contiguous_vertices(::Type{FakeGraph}) = false
+
+@testset "Contiguous pagerank errors out" begin
+    @test_throws MethodError pagerank(FakeGraph(), 0.5, 2)
+end

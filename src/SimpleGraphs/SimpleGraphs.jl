@@ -11,9 +11,9 @@ import Base:
 import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
-    deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
-    num_self_loops, insorted
+    has_contiguous_vertices, has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
+  	deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
+	num_self_loops, insorted
 
 using Random: GLOBAL_RNG, AbstractRNG
 
@@ -56,7 +56,6 @@ function show(io::IO, g::AbstractSimpleGraph{T}) where T
 end
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
-vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
 
 """
     throw_if_invalid_eltype(T)
@@ -209,6 +208,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 end
 
 zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
+has_contiguous_vertices(::Type{G}) where {G<:AbstractSimpleGraph} = true
 
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
