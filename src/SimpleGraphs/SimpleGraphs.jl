@@ -12,7 +12,7 @@ import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_contiguous_vertices, has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
-	deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
+  	deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
 	num_self_loops, insorted
 
 using Random: GLOBAL_RNG, AbstractRNG
