@@ -53,3 +53,13 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     @test String(take!(io)) == "method $edges not implemented."
 
 end # testset
+
+
+struct FakeGraph <: AbstractGraph{Int} end
+
+LightGraphs.nv(::FakeGraph) = 33
+
+@testset "Test vertices default" begin
+    @test vertices(FakeGraph()) == Base.OneTo(33)
+    @test has_vertex(FakeGraph(), 22)
+end
