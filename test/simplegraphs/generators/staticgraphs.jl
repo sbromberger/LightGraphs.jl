@@ -537,7 +537,7 @@
         @test_throws DomainError lollipop_graph(-1, -1)
     end
 
-    @testset "Friendship Graphs" begin
+  #=  @testset "Friendship Graphs" begin
        # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
        for n in [10, 15, 20]
            g=friendship_graph(n)
@@ -555,4 +555,4 @@
            g=friendship_graph(n)
            @test nv(g)==1
       end
-  end
+    end =#
