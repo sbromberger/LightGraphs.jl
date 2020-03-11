@@ -768,10 +768,12 @@ end
 """
     friendship_graph(n)
 
-Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph).
-A friendship consisting of n copies of the cycle graph C3 with a common vertex`,
-the center vertex will always be 1, if n was <= 0 the function will return
-single node graph
+Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph) consisting
+of `n` copies of the cycle graph `C3` with a common vertex. If `n ≤ 0`, return
+a single node.
+
+### Implementation Notes
+In this implementation, the common vertex is index 1.
 
 """
 function friendship_graph(n::T) where {T <: Integer}
@@ -780,7 +782,7 @@ function friendship_graph(n::T) where {T <: Integer}
 
      for indx in 1:n
         u = indx * 2
-        v = indx * 2 + 1
+        v = u + 1
         add_edge!(g, u, v)
         add_edge!(g, 1, v)
         add_edge!(g, u, 1)
