@@ -1,8 +1,5 @@
-# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
-# licensing details.
-
+# Parts of this file were taken from / inspired by OpenStreetMapX.jl. See LICENSE.md for details.
 # A* shortest-path algorithm
-
 """
     struct AStar <: ShortestPathAlgorithm
 
@@ -20,106 +17,62 @@ struct AStar{F<:Function} <: ShortestPathAlgorithm
     heuristic::F
 end
 
-AStar(T::Type=Float64) = AStar(n -> zero(T))
+AStar(T::Type=Float64) = AStar((u, v) -> zero(T))
 
 struct AStarResult{T, U<:Integer} <: ShortestPathResult
     path::Vector{U}
     dist::T
 end
 
-function reconstruct_path!(total_path, # a vector to be filled with the shortest path
-    came_from, # a vector holding the parent of each node in the A* exploration
-    end_idx, # the end vertex
-    g) # the graph
-
-    curr_idx = end_idx
-    while came_from[curr_idx] != curr_idx
-        pushfirst!(total_path, came_from[curr_idx])
-        curr_idx = came_from[curr_idx]
+function reconstruct_path(parents::Vector{T},s::Integer, u::Integer) where {T<:Integer}
+    route = Vector{T}()
+    index = u
+    push!(route, index)
+    while index != s
+        index = parents[index]
+        push!(route, index)
     end
-    push!(total_path, end_idx)
+    return reverse(route)
 end
 
-function a_star_impl!(g, # the graph
-    goal, # the end vertex
-    open_set, # an initialized heap containing the active vertices
-    closed_set, # an (initialized) color-map to indicate status of vertices
-    g_score, # a vector holding g scores for each node
-    f_score, # a vector holding f scores for each node
-    came_from, # a vector holding the parent of each node in the A* exploration
-    distmx,
-    heuristic)
-
-    T = eltype(g)
-    total_path = Vector{T}()
-
-    @inbounds while !isempty(open_set)
-        current = dequeue!(open_set)
-
-        if current == goal
-            reconstruct_path!(total_path, came_from, current, g)
-            return total_path
-        end
-
-        closed_set[current] = true
-
-        for neighbor in outneighbors(g, current)
-            closed_set[neighbor] && continue
-
-            tentative_g_score = g_score[current] + distmx[current, neighbor]
-
-            if tentative_g_score < g_score[neighbor]
-                g_score[neighbor] = tentative_g_score
-                priority = tentative_g_score + heuristic(neighbor)
-                open_set[neighbor] = priority
-                came_from[neighbor] = current
+function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::AbstractMatrix{T}, alg::AStar) where {U<:Integer, T<:Real}
+    checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
+    frontier = PriorityQueue{Tuple{T, U}, T}()
+    frontier[(zero(T), U(s))] = zero(T)
+    nvg = nv(g)
+    visited = falses(nvg)
+    dists = fill(typemax(T), nvg)
+    parents = zeros(U, nvg)
+    colormap = zeros(UInt8, nvg)
+    colormap[s] = 1
+    @inbounds while !isempty(frontier)
+        (cost_so_far, u) = dequeue!(frontier)
+        u == t && return AStarResult(reconstruct_path(parents, s, u), cost_so_far)
+        for v in LightGraphs.outneighbors(g, u)
+            if colormap[v] < 2
+                dist = distmx[u, v]
+                colormap[v] = 1
+                path_cost = cost_so_far + dist
+                if !visited[v]
+                    visited[v] = true
+                    parents[v] = u
+                    dists[v] = path_cost
+                    enqueue!(frontier, (path_cost, v), path_cost + alg.heuristic(v, t))
+                elseif path_cost < dists[v]
+                    parents[v] = u
+                    dists[v] = path_cost
+                    frontier[path_cost, v] = path_cost + alg.heuristic(v, t)
+                end
             end
         end
+        colormap[u] = 2
     end
-    return total_path
+    return AStarResult(Vector{U}(), typemax(T))
 end
 
-function calc_dist(path, distmx)
-    T = eltype(distmx)
-    isempty(path) && return typemax(T)
-    rest_of_path = copy(path)
-    dist = zero(T)
-    u = pop!(rest_of_path)
-    while !isempty(rest_of_path)
-        v = pop!(rest_of_path)
-        dist += distmx[u, v]
-        u = v
-    end
-    return dist
-end
-
-function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar)
-    T = eltype(distmx)
-
-    # if we do checkbounds here, we can use @inbounds in a_star_impl!
-    checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
-
-    open_set = PriorityQueue{Integer, T}()
-    enqueue!(open_set, s, 0)
-
-    closed_set = zeros(Bool, nv(g))
-
-    g_score = fill(Inf, nv(g))
-    g_score[s] = 0
-
-    f_score = fill(Inf, nv(g))
-    f_score[s] = alg.heuristic(s)
-
-    came_from = -ones(Integer, nv(g))
-    came_from[s] = s
-
-    path = a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, alg.heuristic)
-    return AStarResult(path, calc_dist(path, distmx))
-end
 
 shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) = shortest_paths(g, s, t, weights(g), alg)
 paths(s::AStarResult) = [s.path]
 paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
 dists(s::AStarResult) = [[s.dist]]
 dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
-

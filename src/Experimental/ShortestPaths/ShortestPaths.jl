@@ -1,12 +1,12 @@
 module ShortestPaths
 using SparseArrays: sparse
 using LightGraphs
-using LightGraphs.Experimental.Traversals
+using LightGraphs.Traversals
 using LightGraphs: AbstractGraph, AbstractEdge
 using LightGraphs.SimpleGraphs: AbstractSimpleGraph
 using DataStructures:PriorityQueue, enqueue!, dequeue!
 
-import LightGraphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
+import LightGraphs.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
 
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment
@@ -14,7 +14,7 @@ import LightGraphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, v
 #     parallel::Bool
 #     LGEnvironment() = new(false, false)
 # end
-     
+
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
@@ -74,7 +74,7 @@ between sets of vertices in graph `g`. Depending on the algorithm specified,
 other information may be required: (e.g., a distance matrix `distmx`, and/or
 a target vertex `t`). Some algorithms will accept multiple source vertices
 `s`; algorithms that do not accept any source vertex `s` produce all-pairs
-shortest paths. 
+shortest paths.
 
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 

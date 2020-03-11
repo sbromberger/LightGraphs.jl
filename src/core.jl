@@ -213,8 +213,8 @@ For directed graphs, the default is equivalent to [`outneighbors`](@ref);
 use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
@@ -249,9 +249,9 @@ For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
 and [`inneighbors`](@ref).
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
-the array behind this reference may be modified too, but this is not guaranteed. 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
@@ -290,9 +290,9 @@ function all_neighbors end
 Return the neighbors common to vertices `u` and `v` in `g`.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy. 
-Do not modify result. If the graph is modified, the behavior is undefined: 
-the array behind this reference may be modified too, but this is not guaranteed. 
+Returns a reference to the current graph's internal structures, not a copy.
+Do not modify result. If the graph is modified, the behavior is undefined:
+the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest

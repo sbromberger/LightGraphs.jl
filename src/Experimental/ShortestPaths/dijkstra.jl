@@ -12,9 +12,11 @@ end
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 to compute shortest paths. Optional fields for this structure include
-- all_paths::Bool - set to `true` to calculate all (redundant, equivalent) paths to a given destination
-- track_vertices::Bool - set to `true` to keep a running list of visited vertices (used for specific
+- `all_paths::Bool` - set to `true` to calculate all (redundant, equivalent) paths to a given destination
+- `track_vertices::Bool` - set to `true` to keep a running list of visited vertices (used for specific
   centrality calculations; generally not needed).
+- `maxdist::Float64` (default: `Inf`) specifies the maximum path distance beyond which all path distances
+   are assumed to be infinite (that is, they do not exist).
 
 `Dijkstra` is the default algorithm used when a distance matrix is specified.
 
@@ -38,10 +40,11 @@ should only be used when multiple calls to [`shortest_paths`](@ref) with the dis
 struct Dijkstra <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool
+    maxdist::Float64
 end
 
-Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
-
+Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64)) =
+    Dijkstra(all_paths, track_vertices, maxdist)
 
 function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
     nvg = nv(g)
@@ -74,6 +77,8 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         d = dists[u] # Cannot be typemax if `u` is in the queue
         for v in outneighbors(g, u)
             alt = d + distmx[u, v]
+
+            alt > alg.maxdist && continue
 
             if !visited[v]
                 visited[v] = true
@@ -124,4 +129,3 @@ end
 shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
 # If we don't specify an algorithm, use dijkstra.
 shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix) = shortest_paths(g, s, distmx, Dijkstra())
-
