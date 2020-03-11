@@ -29,28 +29,25 @@
         eweights[d, s] = w
     end
     for g in testgraphs(gx)
-      @test nv(g) == 8
-      @test ne(g) == m
-
-      parity, bestcut = @inferred(mincut(g, eweights))
+      parity, bestcut = @inferred(LT.mincut(g, eweights))
 
       @test length(parity) == 8
       @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
       @test bestcut == 4.0
 
-      parity, bestcut = @inferred(mincut(g))
+      parity, bestcut = @inferred(LT.mincut(g))
 
       @test length(parity) == 8
       @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
       @test bestcut == 2.0
 
-      v = @inferred(maximum_adjacency_visit(g))
+      v = @inferred(LT.maximum_adjacency_visit(g))
       @test v == Vector{Int64}([1, 2, 5, 6, 3, 7, 4, 8])
     end
 
     g1 = SimpleGraph(1)
     for g in testgraphs(g1)
-        @test @inferred(maximum_adjacency_visit(g)) == collect(vertices(g))
-        @test @inferred(mincut(g)) == ([1], zero(eltype(g)))
+        @test @inferred(LT.maximum_adjacency_visit(g)) == collect(vertices(g))
+        @test @inferred(LT.mincut(g)) == ([1], zero(eltype(g)))
     end
 end
