@@ -188,7 +188,6 @@
         g = @inferred star_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 127 - 1
         @test eltype(g) == Int8
-
     end
 
     @testset "Path DiGraphs" begin
@@ -203,7 +202,6 @@
         g = @inferred path_digraph(Int8(127))
         @test nv(g) == 127 && ne(g) == 126
         @test eltype(g) == Int8
-
     end
 
     @testset "Path Graphs" begin
@@ -538,22 +536,22 @@
     end
 
     @testset "Friendship Graphs" begin
-       # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
-       for n in [10, 15, 20]
-           g=friendship_graph(n)
+        # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
+        for n in [10, 15, 20]
+            g=friendship_graph(n)
 
-           @test !has_self_loops(g)
-           @test !is_directed(g) 
-           @test degree(g, 1) == 2 * n
-           @test nv(g) == 2 * n + 1
-           for v in 2:nv(g)
-               @test degree(g, v) == 2
-           end
-       end
+            @test !has_self_loops(g)
+            @test !is_directed(g) 
+            @test degree(g, 1) == 2 * n
+            @test nv(g) == 2 * n + 1
+            for v in 2:nv(g)
+                @test degree(g, v) == 2
+            end
+        end
 
-       for n in [-5,0]
-           g=friendship_graph(n)
-           @test nv(g) == 1
-      end
+        for n in [-5,0]
+            g=friendship_graph(n)
+            @test nv(g) == 1
+        end
     end 
 end
