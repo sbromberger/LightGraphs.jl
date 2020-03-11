@@ -544,7 +544,7 @@
 
            @test !has_self_loops(g)
            @test !is_directed(g) 
-           @test indegree(g,1) == 2 * n
+           @test degree(g,1) == 2 * n
            @test nv(g) == 2 * n + 1
            for v in 2:nv(g)
                @test degree(g,v) == 2
