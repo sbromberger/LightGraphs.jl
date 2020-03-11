@@ -278,7 +278,7 @@ function has_vertex end
 end
 
 @traitfn function has_vertex(g::G::(HasContiguousVertices), v) where {G}
-    return 0 < v <= nv(g)
+    return (v in vertices(g))
 end
 
 """

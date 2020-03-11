@@ -28,7 +28,7 @@ dense matrix, but it must be a subtype of `AbstractMatrix{<:Real}` and indexable
 #### Contiguous vertices
 
 Some LightGraphs functions work under the assumption that the vertices are
-contiguous integer from `one(eltype(g))` to `nv(g)`.
+contiguous integers from `one(eltype(g))` to `nv(g)`.
 For graph types which do *not* respect this assumption, the method [`has_contiguous_vertices`](@ref)
 should be implemented and set to false.
 The following methods, which use this assumption when possible, should also be redefined:

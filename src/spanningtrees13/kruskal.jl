@@ -24,12 +24,11 @@ function kruskal_mst end
     end
 
     for e in edge_list[sortperm(weights; rev=!minimize)]
-      if !in_same_set(connected_vs, src(e), dst(e))
-          union!(connected_vs, src(e), dst(e))
-          push!(mst, e)
-          (length(mst) >= nv(g) - 1) && break
-      end
+        if !in_same_set(connected_vs, src(e), dst(e))
+            union!(connected_vs, src(e), dst(e))
+            push!(mst, e)
+            (length(mst) >= nv(g) - 1) && break
+        end
     end
-    
     return mst
 end

@@ -14,9 +14,7 @@ LightGraphs.has_contiguous_vertices(::Type{<:VSafeGraph}) = false
 # deleted vertices are stored in a cache
 # not deleted from the underlying graph to maintain count
 function LightGraphs.rem_vertex!(g::VSafeGraph, v1)
-    if !has_vertex(g, v1) || v1 in g.deleted_vertices
-        return false
-    end
+    (!has_vertex(g, v1) || v1 in g.deleted_vertices) && return false
     for v2 in outneighbors(g, v1)
         rem_edge!(g, v1, v2)
     end
@@ -59,17 +57,12 @@ function LightGraphs.outneighbors(g::VSafeGraph, v)
 end
 
 function LightGraphs.inneighbors(g::VSafeGraph, v)
-    if has_vertex(g, v)
-        inneighbors(g.g, v)
-    else
-        throw(ArgumentError("$v is not a valid vertex in the graph."))
-    end
+    has_vertex(g, v) && return inneighbors(g.g, v)
+    throw(ArgumentError("$v is not a valid vertex in the graph."))
 end
 
 function LightGraphs.add_edge!(g::VSafeGraph, v1, v2)
-    if !has_vertex(g, v1) || !has_vertex(g, v2)
-        return false
-    end
+    (has_vertex(g, v1) && !has_vertex(g, v2)) || return false
     return add_edge!(g.g, v1, v2)
 end
 
@@ -80,12 +73,12 @@ LightGraphs.add_edge!(g::VSafeGraph, edge::AbstractEdge) = add_edge!(g, src(edge
         nv = 45
         inner = complete_graph(nv)
         g = VSafeGraph(inner)
-        removed_ok = rem_vertex!(g, 42)
+        removed_ok = @inferred rem_vertex!(g, 42)
         @test removed_ok
-        @test !has_vertex(g, 42)
-        @test has_vertex(g.g, 42)
-        @test !in(42, vertices(g))
-        @test in(42, vertices(g.g))
+        @test @inferred !has_vertex(g, 42)
+        @test @inferred has_vertex(g.g, 42)
+        @test @inferred !in(42, vertices(g))
+        @test @inferred in(42, vertices(g.g))
     end
     @testset "Vertices contiguity required for some algorithms" begin
         nv = 45
