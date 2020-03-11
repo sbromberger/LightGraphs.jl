@@ -1,5 +1,6 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
 
 [compat]
 Documenter = "~0.23.4"
