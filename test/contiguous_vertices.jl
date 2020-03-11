@@ -57,8 +57,7 @@ function LightGraphs.outneighbors(g::VSafeGraph, v)
 end
 
 function LightGraphs.inneighbors(g::VSafeGraph, v)
-    has_vertex(g, v) && return inneighbors(g.g, v)
-    throw(ArgumentError("$v is not a valid vertex in the graph."))
+    return inneighbors(g.g, v)
 end
 
 function LightGraphs.add_edge!(g::VSafeGraph, v1, v2)
