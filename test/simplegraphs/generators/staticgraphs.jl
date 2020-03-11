@@ -537,17 +537,17 @@
         @test_throws DomainError lollipop_graph(-1, -1)
     end
 
-  #=  @testset "Friendship Graphs" begin
+    @testset "Friendship Graphs" begin
        # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
        for n in [10, 15, 20]
            g=friendship_graph(n)
 
-           @test has_self_loops(g) == false
-           @test is_directed(g) == false
+           @test !has_self_loops(g)
+           @test !is_directed(g) 
            @test indegree(g,1) == 2 * n
            @test nv(g) == 2 * n + 1
            for v in 2:nv(g)
-               @test indegree(g,v) == 2
+               @test degree(g,v) == 2
            end
        end
 
@@ -555,4 +555,5 @@
            g=friendship_graph(n)
            @test nv(g)==1
       end
-    end =#
+    end 
+end
