@@ -7,7 +7,7 @@ Return a vector of edges.
 """
 function prim_mst end
 @traitfn function prim_mst(g::AG,
-                           distmx::AbstractMatrix{T}=weights(g)) where {U, AG <: AbstractGraph{U}, T <: Real; HasContiguousVertices{AG}, !IsDirected{AG}}
+                           distmx::AbstractMatrix{T}=weights(g)) where {U, AG<:AbstractGraph{U}, T<:Real; HasContiguousVertices{AG}, !IsDirected{AG}}
 
     nvg = nv(g)
     pq = PriorityQueue{U, T}()
