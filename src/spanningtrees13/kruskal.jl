@@ -20,7 +20,7 @@ function kruskal_mst end
     sizehint!(weights, ne(g))
     edge_list = collect(edges(g))
     for e in edge_list
-      push!(weights, distmx[src(e), dst(e)])
+        push!(weights, distmx[src(e), dst(e)])
     end
 
     for e in edge_list[sortperm(weights; rev=!minimize)]
