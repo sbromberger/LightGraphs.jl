@@ -25,6 +25,7 @@ AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, IsDirected,
+has_contiguous_vertices, HasContiguousVertices,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
