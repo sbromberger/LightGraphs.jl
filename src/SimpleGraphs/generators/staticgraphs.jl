@@ -763,3 +763,61 @@ function lollipop_graph(n1::T, n2::T) where {T <: Integer}
     add_edge!(g, n1, n1+1)
     return g
 end
+
+"""
+    circulant_graph(n, connection_set)
+
+Create a [circulant graph](https://en.wikipedia.org/wiki/Circulant_graph) with `n` vertices with connection set as `connection_set`.
+
+### Implementation Notes
+`n` must be at least 1 so that the graph has at least one vertex.
+The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
+
+# Examples
+```jldoctest
+julia> circulant_graph(2, [1])
+{2, 1} undirected simple Int64 graph
+
+julia> circulant_graph(Int8(3), [Int8(1)])
+{3, 3} undirected simple Int8 graph
+```
+"""
+function circulant_graph(n::T, connection_set::Vector{T}) where {T <: Integer}
+    (n < 1) && throw(DomainError("n=$n must be at least 1"))
+    g = SimpleGraph(n)
+
+    @inbounds for u = 0:n-1, j in connection_set
+        add_edge!(g, u+1, (u+j)%n+1)
+    end
+
+    return g
+end
+
+"""
+    circulant_digraph(n, connection_set)
+
+Create a directed [circulant graph](https://en.wikipedia.org/wiki/Circulant_graph) with `n` vertices with connection set as `connection_set`.
+
+### Implementation Notes
+`n` must be at least 1 so that the graph has at least one vertex.
+The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
+
+# Examples
+```jldoctest
+julia> g = circulant_digraph(3, [1])
+{3, 2} directed simple Int64 graph
+
+julia> circulant_digraph(Int8(3), [Int8(1)])
+{3, 3} directed simple Int8 graph
+```
+"""
+function circulant_digraph(n::T, connection_set::Vector{T}) where {T <: Integer}
+    (n < 1) && throw(DomainError("n=$n must be at least 1"))
+    g = SimpleDiGraph(n)
+
+    @inbounds for u = 0:n-1, j in connection_set
+        add_edge!(g, u + 1, (u + j)%n + 1)
+    end
+
+    return g
+end

@@ -536,4 +536,54 @@
         @test_throws DomainError lollipop_graph(0, 1)
         @test_throws DomainError lollipop_graph(-1, -1)
     end
+
+    # checking if edgeset of g is equal to edges
+    function isEdgeSet(g, edges)
+        ne(g) != length(edges) && return false
+
+        for (i, j) in edges
+            !has_edge(g, i, j) && return false
+        end
+
+        return true
+    end
+
+    @testset "Circulant Graphs" begin
+        # point graph
+        g = @inferred(circulant_graph(1, Vector{Int64}()))
+        @test nv(g) == 1 && ne(g) == 0
+        # path graph
+        g = circulant_graph(2, [1])
+        @test nv(g) == 2 && ne(g) == 1
+        # triangle graph
+        g = circulant_graph(3, [1])
+        @test nv(g) == 3 && ne(g) == 3
+        @test isEdgeSet(g, [(1, 2), (1, 3), (2, 3)])
+        # tetrahedral graph
+        @test circulant_graph(4, [1, 2]) == complete_graph(4)
+        # utility graph
+        g = circulant_graph(6, [1, 3])
+        @test nv(g) == 6 && ne(g) == 9
+        @test isEdgeSet(g, [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (1, 6), (1, 4), (2, 5), (3, 6)])
+        @test_throws DomainError circulant_graph(0, [1, 2])
+    end
+
+    @testset "Circulant DiGraphs" begin
+        # point graph
+        g = @inferred(circulant_digraph(1, Vector{Int64}()))
+        @test nv(g) == 1 && ne(g) == 0
+        # path graph
+        g = circulant_digraph(2, [1])
+        @test nv(g) == 2 && ne(g) == 2
+        @test isEdgeSet(g, [(1, 2), (2, 1)])
+        # triangle graph
+        g = circulant_digraph(3, [1])
+        @test nv(g) == 3 && ne(g) == 3
+        @test isEdgeSet(g, [(1, 2), (2, 3), (3, 1)])
+        # utility graph
+        g = circulant_digraph(6, [1, 3])
+        @test nv(g) == 6 && ne(g) == 12
+        @test isEdgeSet(g, [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 1), (1, 4), (4, 1), (2, 5), (3, 6), (5, 2), (6, 3)])
+        @test_throws DomainError circulant_digraph(0, [1, 2])
+    end
 end
