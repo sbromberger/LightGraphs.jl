@@ -152,8 +152,8 @@ end
 
 @traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0
 
-mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
 
+mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}
@@ -161,60 +161,59 @@ mutable struct BiconnectionState{E <: AbstractEdge} <: TraversalState
     id::Int
     up::Bool
     lastnode::Int
-    lastlow::Int
     parent::Vector{Int}
 end
 
 
 @inline function previsitfn!(s::BiconnectionState{E}, u) where E
-    if !s.up 
+    if !s.up
+        s.id += 1
+        push!(s.parent, s.lastnode)
         s.up = true
-        s.id+=1
-        s.depth[u] = s.id
-        push!(s.low,s.id)
-    elseif s.depth[u] <= s.lastlow
-        w = s.lastnode
-        e = E(0, 0)  #Invalid Edge, used for comparison only
-        st = Vector{E}()
-        while e != E(min(u, w), max(u, w)) && !isempty(s.stack)
-            e = pop!(s.stack)
-            push!(st, e)
+        s.low[u] = s.depth[u] = s.id
+    else
+        lastlow = s.low[s.lastnode]
+        pop!(s.parent)
+        if s.depth[u] <= lastlow
+            w = s.lastnode
+            e = E(0, 0)  #Invalid Edge, used for comparison only
+            st = Vector{E}()
+            while e != E(min(u, w), max(u, w)) && !isempty(s.stack)
+                e = pop!(s.stack)
+                push!(st, e)
+            end
+            push!(s.components , st)        
+        elseif s.low[u] > lastlow
+            s.low[u] = lastlow
         end
-        push!(s.components , st)
-    elseif s.low[end] > s.lastlow
-        s.low[end] = s.lastlow
     end
+    s.lastnode = u
     return true
 end
 
 @inline function visitfn!(s::BiconnectionState{E}, u, v) where E
-    (v == s.parent[end] || s.depth[u] < s.depth[v]) && return true
+    v == s.parent[end] && return true
 
-    push!(s.stack, E(min(v, u), max(v, u)))
     if s.depth[v] != 0
-        s.low[end] = min(s.low[end], s.depth[v])
+        if s.low[u] > s.depth[v]
+            push!(s.stack, E(min(v, u), max(v, u)))
+            s.low[u] = s.depth[v] 
+        end
     else
-        push!(s.parent,u)
+        push!(s.stack, E(min(v, u), max(v, u)))
+        #println("size of parent = $(length(s.parent))")
+        
         s.up = false
     end
     return true
 end
 
-@inline function postvisitfn!(s::BiconnectionState{E}, u) where E
-    
-    if s.up
-        s.lastnode = u
-        s.lastlow = pop!(s.low)
-        pop!(s.parent)
-    end
 
-    return true
-end
 
 function BiconnectionState(g)
     n = nv(g)
     E = Edge{eltype(g)}
-    return BiconnectionState(Vector{Int}(), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, -1, Vector{Int}())
+    return BiconnectionState(zeros(Int, n),zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0, false, -1, Vector{Int}())
 end
 
 
@@ -242,11 +241,11 @@ julia> biconnected_components(cycle_graph(5))
  [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]
 ```
 """
- function biconnected_components(g::SimpleGraph)
+function biconnected_components(g::SimpleGraph)
     state = BiconnectionState(g)
     for u in vertices(g)
         if state.depth[u] == 0
-            push!(state.parent, -1)
+            state.lastnode = -1
             state.up = false
             traverse_graph!(g, u, DepthFirst(), state)
         end
