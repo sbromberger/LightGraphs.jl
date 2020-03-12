@@ -788,5 +788,4 @@ function friendship_graph(n::T) where {T <: Integer}
         add_edge!(g, u, 1)
     end
     return g
-
 end
