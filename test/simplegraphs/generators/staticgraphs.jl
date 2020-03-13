@@ -536,11 +536,12 @@
     end
 
     @testset "Friendship Graphs" begin
-        # the Friendship Graphs is connected graph consist of n cycle of lenght 3 share only one node
-        for n in [10, 15, 20]            
+        # the friendship graph is a connected graph consisting of n cycles of length 3 sharing a common vertex
+        for n in [10, 15, 20, 0x0a, 0x0f, 0x14]
             g = friendship_graph(n)
+            @test eltype(g) == eltype(n)
             @test !has_self_loops(g)
-            @test !is_directed(g) 
+            @test !is_directed(g)
             @test degree(g, 1) == 2 * n
             @test nv(g) == 2 * n + 1
             for v in 2:nv(g)
