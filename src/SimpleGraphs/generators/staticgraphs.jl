@@ -783,11 +783,13 @@ julia> circulant_graph(Int8(3), [Int8(1)])
 ```
 """
 function circulant_graph(n::T, connection_set::Vector{T}) where {T <: Integer}
-    (n < 1) && throw(DomainError("n=$n must be at least 1"))
+    (n < 1) && throw(DomainError(n, "n must be at least 1"))
     g = SimpleGraph(n)
 
-    @inbounds for u = 0:n-1, j in connection_set
-        add_edge!(g, u+1, (u+j)%n+1)
+    @inbounds for u = 1:n-1, v = u+1:n
+        if mod(v - u, n) in connection_set || mod(u - v, n) in connection_set
+            add_edge!(g, u, v)
+        end
     end
 
     return g
@@ -812,11 +814,16 @@ julia> circulant_digraph(Int8(3), [Int8(1)])
 ```
 """
 function circulant_digraph(n::T, connection_set::Vector{T}) where {T <: Integer}
-    (n < 1) && throw(DomainError("n=$n must be at least 1"))
+    (n < 1) && throw(DomainError(n, "n must be at least 1"))
     g = SimpleDiGraph(n)
 
-    @inbounds for u = 0:n-1, j in connection_set
-        add_edge!(g, u + 1, (u + j)%n + 1)
+    @inbounds for u = 1:n-1, v = u+1:n
+        if mod(v - u, n) in connection_set
+            add_edge!(g, u, v)
+        end
+        if mod(u - v, n) in connection_set
+            add_edge!(g, v, u)
+        end
     end
     return g
 end
@@ -833,7 +840,7 @@ In this implementation, the common vertex is index 1.
 """
 function friendship_graph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph(1)
-    
+
     g = SimpleGraph(2 * n + 1)
     for indx in 1:n
         u = indx * 2
