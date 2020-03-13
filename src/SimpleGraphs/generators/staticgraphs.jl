@@ -778,9 +778,9 @@ In this implementation, the common vertex is index 1.
 """
 function friendship_graph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph(1)
+    
     g = SimpleGraph(2 * n + 1)
-
-     for indx in 1:n
+    for indx in 1:n
         u = indx * 2
         v = u + 1
         add_edge!(g, u, v)
