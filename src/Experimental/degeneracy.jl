@@ -1,5 +1,5 @@
 """
-    PKC(g[, frac = 0.95])
+    threaded_core_number(g[, frac = 0.95])
 
 Return the core number for each vertex in graph `g`.
 
@@ -10,7 +10,7 @@ https://doi.org/10.1109/IPDPSW.2017.151
 ### Performance
 Time complexity is ``\\mathcal{O}(K_{max}*|V| + |E|)``.
 """
-function PKC(g::AbstractSimpleGraph{T}, frac = 0.95) where T
+function threaded_core_number(g::AbstractSimpleGraph{T}, frac = 0.95) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     deg = Atomic{T}.(degree(g))
     buff = [Vector{T}() for _ in 1:nthreads()]
@@ -77,7 +77,7 @@ function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int6
     while nvg_small > typemax(U)
         U = widen(U)
     end
-    g_small = SmallGraph{U}(nvg_small)
+    g_small = SimpleGraph{U}(nvg_small)
     in_gsmall = falses(nv(g))
     @threads for v in 1:nv(g)
         if deg[v][] >= level
@@ -92,22 +92,9 @@ function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int6
     @threads for s in vmap
         for d in all_neighbors(g, s)
             if in_gsmall[d]
-                add_edge!(g_small, newvid[s], newvid[d])
+                push!(g_small.adjlist[newvid[s]], newvid[d])
             end
         end
     end
     return g_small, vmap
 end
-
-#parallel graph
-struct SmallGraph{T <: Integer} <: AbstractGraph{T}
-    adjlist::Vector{Vector{T}}
-    nvg::T
-    SmallGraph{T}(nvertices) where T = new{T}([T[] for _ in 1:nvertices], nvertices)
-end
-is_directed(::Type{<:SmallGraph}) = false
-eltype(g::SmallGraph{T}) where T = T
-nv(g::SmallGraph) = g.nvg
-degree(g::SmallGraph) = length.(g.adjlist)
-add_edge!(g::SmallGraph, u, v) = push!(g.adjlist[u], v)
-outneighbors(g::SmallGraph, u) = g.adjlist[u]

@@ -3,10 +3,9 @@ module Experimental
 using LightGraphs
 using LightGraphs.SimpleGraphs
 using Base.Threads
-import LightGraphs: nv, degree, add_edge!, outneighbors, is_directed
 
 export description,
-    PKC,
+    threaded_core_number,
     #isomorphism
     VF2, vf2, IsomorphismProblem, SubgraphIsomorphismProblem, InducedSubgraphIsomorphismProblem,
     could_have_isomorph, has_isomorph, all_isomorph, count_isomorph,
