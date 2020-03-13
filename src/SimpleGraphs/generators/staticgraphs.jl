@@ -763,3 +763,28 @@ function lollipop_graph(n1::T, n2::T) where {T <: Integer}
     add_edge!(g, n1, n1+1)
     return g
 end
+
+
+"""
+    friendship_graph(n)
+
+Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph) consisting
+of `n` copies of the cycle graph `C3` with a common vertex. If `n ≤ 0`, return
+a single node.
+
+### Implementation Notes
+In this implementation, the common vertex is index 1.
+"""
+function friendship_graph(n::T) where {T <: Integer}
+    n <= 0 && return SimpleGraph(1)
+    
+    g = SimpleGraph(2 * n + 1)
+    for indx in 1:n
+        u = indx * 2
+        v = u + 1
+        add_edge!(g, u, v)
+        add_edge!(g, 1, v)
+        add_edge!(g, u, 1)
+    end
+    return g
+end
