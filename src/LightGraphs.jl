@@ -7,7 +7,7 @@ using ArnoldiMethod
 using Statistics: mean
 
 using Inflate: InflateGzipStream
-using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
+using DataStructures: IntDisjointSets, PriorityQueue, Queue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
@@ -25,6 +25,7 @@ AbstractGraph, AbstractEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
 is_directed, IsDirected,
+has_contiguous_vertices, HasContiguousVertices,
 has_vertex, has_edge, inneighbors, outneighbors,
 
 # core
@@ -121,7 +122,7 @@ complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
 complete_bipartite_graph, complete_multipartite_graph, turan_graph,
 complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
 binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
-circular_ladder_graph, barbell_graph, lollipop_graph,
+circular_ladder_graph, barbell_graph, lollipop_graph, friendship_graph,
 
 #generator deprecations
 BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
@@ -213,63 +214,64 @@ a `Graph` or `DiGraph`.
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
-include("digraph/transitivity.jl")
-include("cycles/johnson.jl")
-include("cycles/hawick-james.jl")
-include("cycles/karp.jl")
-include("cycles/basis.jl")
-include("cycles/limited_length.jl")
-include("traversals/bfs.jl")
-include("traversals/bipartition.jl")
-include("traversals/greedy_color.jl")
-include("traversals/dfs.jl")
-include("traversals/maxadjvisit.jl")
-include("traversals/randomwalks.jl")
-include("traversals/diffusion.jl")
+include("digraph13/transitivity.jl")
+include("cycles13/johnson.jl")
+include("cycles13/hawick-james.jl")
+include("cycles13/karp.jl")
+include("cycles13/basis.jl")
+include("cycles13/limited_length.jl")
+include("Traversals/Traversals.jl")
+include("traversals13/bfs.jl")
+include("traversals13/bipartition.jl")
+include("traversals13/greedy_color.jl")
+include("traversals13/dfs.jl")
+include("traversals13/maxadjvisit.jl")
+include("traversals13/randomwalks.jl")
+include("traversals13/diffusion.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("edit_distance.jl")
-include("shortestpaths/astar.jl")
-include("shortestpaths/bellman-ford.jl")
-include("shortestpaths/dijkstra.jl")
-include("shortestpaths/johnson.jl")
-include("shortestpaths/desopo-pape.jl")
-include("shortestpaths/floyd-warshall.jl")
-include("shortestpaths/yen.jl")
-include("shortestpaths/spfa.jl")
-include("linalg/LinAlg.jl")
+include("shortestpaths13/astar.jl")
+include("shortestpaths13/bellman-ford.jl")
+include("shortestpaths13/dijkstra.jl")
+include("shortestpaths13/johnson.jl")
+include("shortestpaths13/desopo-pape.jl")
+include("shortestpaths13/floyd-warshall.jl")
+include("shortestpaths13/yen.jl")
+include("shortestpaths13/spfa.jl")
+include("linalg13/LinAlg.jl")
 include("operators.jl")
-include("persistence/common.jl")
-include("persistence/lg.jl")
-include("centrality/betweenness.jl")
-include("centrality/closeness.jl")
-include("centrality/stress.jl")
-include("centrality/degree.jl")
-include("centrality/katz.jl")
-include("centrality/pagerank.jl")
-include("centrality/eigenvector.jl")
-include("centrality/radiality.jl")
-include("community/modularity.jl")
-include("community/label_propagation.jl")
-include("community/core-periphery.jl")
-include("community/clustering.jl")
-include("community/cliques.jl")
-include("community/clique_percolation.jl")
-include("spanningtrees/boruvka.jl")
-include("spanningtrees/kruskal.jl")
-include("spanningtrees/prim.jl")
-include("steinertree/steiner_tree.jl")
-include("biconnectivity/articulation.jl")
-include("biconnectivity/biconnect.jl")
-include("biconnectivity/bridge.jl")
-include("graphcut/normalized_cut.jl")
-include("graphcut/karger_min_cut.jl")
-include("dominatingset/degree_dom_set.jl")
-include("dominatingset/minimal_dom_set.jl")
-include("independentset/degree_ind_set.jl")
-include("independentset/maximal_ind_set.jl")
-include("vertexcover/degree_vertex_cover.jl")
-include("vertexcover/random_vertex_cover.jl")
+include("persistence13/common.jl")
+include("persistence13/lg.jl")
+include("centrality13/betweenness.jl")
+include("centrality13/closeness.jl")
+include("centrality13/stress.jl")
+include("centrality13/degree.jl")
+include("centrality13/katz.jl")
+include("centrality13/pagerank.jl")
+include("centrality13/eigenvector.jl")
+include("centrality13/radiality.jl")
+include("community13/modularity.jl")
+include("community13/label_propagation.jl")
+include("community13/core-periphery.jl")
+include("community13/clustering.jl")
+include("community13/cliques.jl")
+include("community13/clique_percolation.jl")
+include("spanningtrees13/boruvka.jl")
+include("spanningtrees13/kruskal.jl")
+include("spanningtrees13/prim.jl")
+include("steinertree13/steiner_tree.jl")
+include("biconnectivity13/articulation.jl")
+include("biconnectivity13/biconnect.jl")
+include("biconnectivity13/bridge.jl")
+include("graphcut13/normalized_cut.jl")
+include("graphcut13/karger_min_cut.jl")
+include("dominatingset13/degree_dom_set.jl")
+include("dominatingset13/minimal_dom_set.jl")
+include("independentset13/degree_ind_set.jl")
+include("independentset13/maximal_ind_set.jl")
+include("vertexcover13/degree_vertex_cover.jl")
+include("vertexcover13/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 

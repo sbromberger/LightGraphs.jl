@@ -52,7 +52,7 @@
         @inferred(Parallel.bfs_tree!(next, g, T(1), parents))
         @test istree(parents, n, n)
         p = [i[] for i in parents]
-        t = LightGraphs.tree(p)
+        t = LightGraphs.Traversals.tree(p)
         @test is_directed(t)
         @test typeof(t) <: AbstractGraph
         @test ne(t) < nv(t)

@@ -1,6 +1,3 @@
-using LightGraphs.Experimental.Traversals
-
-
 """
     struct BFS <: ShortestPathAlgorithm
 
@@ -15,6 +12,10 @@ penalty.
 `BFS` is the default algorithm used when a source is specified
 but no distance matrix is specified.
 
+### Optional Fields
+`maxdist::Int64` (default: `typemax(Int64)`) specifies the maximum path distance, in terms of number of edges,
+beyond which all path distances are assumed to be infinite (that is, they do not exist).
+
 ### Implementation Notes
 `BFS` supports the following shortest-path functionality:
 - (optional) multiple sources
@@ -22,29 +23,30 @@ but no distance matrix is specified.
 """
 struct BFS{T} <: ShortestPathAlgorithm
     traversal::T
+    maxdist::Int64
 end
 
-BFS() = BFS(Traversals.BFS())
-BFS(a::Base.Sort.Algorithm) = BFS(Traversals.BFS(a))
+BFS(; sort_alg=Traversals.NOOPSort, neighborfn=outneighbors, maxdist=typemax(Int64)) = BFS(Traversals.BreadthFirst(sort_alg=sort_alg, neighborfn=neighborfn), maxdist)
 
-mutable struct BFSSPState{U} <: Traversals.AbstractTraversalState
+mutable struct BFSSPState{U} <: Traversals.TraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
+    maxdist::U
 end
 
 @inline function initfn!(s::BFSSPState, u)
     s.dists[u] = 0
     return true
 end
-@inline function newvisitfn!(s::BFSSPState, u, v) 
+@inline function newvisitfn!(s::BFSSPState, u, v)
     s.dists[v] = s.n_level
     s.parents[v] = u
     return true
 end
 @inline function postlevelfn!(s::BFSSPState{U}) where U
     s.n_level += one(U)
-    return true
+    return s.n_level <= s.maxdist
 end
 
 struct BFSResult{U<:Integer} <: ShortestPathResult
@@ -61,13 +63,11 @@ function shortest_paths(
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
-    state = BFSSPState(parents, dists, one(U))
+    md = alg.maxdist > typemax(U) ? typemax(U) : U(alg.maxdist)
+    state = BFSSPState(parents, dists, one(U), md)
     Traversals.traverse_graph!(g, ss, alg.traversal, state)
     return BFSResult(state.parents, state.dists)
 end
-
-
-
 
 shortest_paths(g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS) where {U<:Integer} = shortest_paths(g, U.(ss), alg)
 shortest_paths(g::AbstractGraph{U}, s::Integer, alg::BFS) where {U<:Integer} = shortest_paths(g, Vector{U}([s]), alg)

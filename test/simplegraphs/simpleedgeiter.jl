@@ -33,7 +33,7 @@
         gd = SimpleDiGraph{UInt8}(10, 20)
         @test @inferred(eltype(edges(gd))) == eltype(typeof(edges(gd))) == edgetype(gd) == SimpleDiGraphEdge{UInt8}
     end
-    
+
     ga = SimpleGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
