@@ -774,7 +774,6 @@ a single node.
 
 ### Implementation Notes
 In this implementation, the common vertex is index 1.
-
 """
 function friendship_graph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph(1)
