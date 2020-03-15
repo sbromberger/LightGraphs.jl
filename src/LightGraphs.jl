@@ -278,7 +278,6 @@ include("independentset13/maximal_ind_set.jl")
 include("vertexcover13/degree_vertex_cover.jl")
 include("vertexcover13/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
-include("Experimental/dominator_tree.jl")
 include("Parallel/Parallel.jl")
 
 using .LinAlg
