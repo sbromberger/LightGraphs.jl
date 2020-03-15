@@ -25,6 +25,7 @@ tests = [
     "linalg13/runtests",
     "parallel/runtests",
     "interface",
+    "contiguous_vertices",
     "core",
     "operators",
     "degeneracy",

@@ -7,8 +7,11 @@ If you notice code that crashes, is incorrect, or is too slow, please file a bug
 
 Please include version numbers of all relevant libraries and Julia itself.
 
-## Development guidelines
 
+## A note on licensing
+LightGraphs.jl is [licensed](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/LICENSE.md) under the BSD Simplified 2-clause open source license. This means that we cannot accept any contributions that have been derived from GPL or other code with "viral" licenses incompatible with the BSD license. All code contributors must be able to attest that they have not made use of GPL code in any of their submissions, and contributors agree that their submissions are compatible with the BSD license.
+
+## Development guidelines
 - Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a PR so we can help improve performance.
 - PRs should contain one logical enhancement to the codebase.
 - Squash commits in a PR.

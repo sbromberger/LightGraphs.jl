@@ -13,6 +13,12 @@
     end
   end
 
+  @testset "dfs_parents" begin
+      for g in testdigraphs(g5)
+          @test @inferred(dfs_parents(g, 2)) == [0, 0, 2, 3]
+      end
+  end
+
   @testset "topological_sort_by_dfs" begin
     for g in testdigraphs(g5)
       @test @inferred(topological_sort_by_dfs(g)) == [1, 2, 3, 4]
@@ -29,6 +35,7 @@
       @test @inferred(is_cyclic(g))
       @test @inferred(!is_cyclic(zero(g)))
     end
+
   end
 
 end

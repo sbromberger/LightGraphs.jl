@@ -8,3 +8,5 @@ benchmark/.results/*
 benchmark/.tune.jld
 *.cov
 Manifest.toml
+*.lg
+*.lgz
