@@ -56,20 +56,20 @@ end
     add_edge!(gint, 2, 3)
     for g in testdigraphs(gint)
         T = eltype(g)
-        @test dominator_Tree(g, T(1)) == [1, 1, 2]
+        @test dominator_tree(g, T(1)) == [1, 1, 2]
     end
     gint = SimpleDiGraph(10, 30)
     for g in testdigraphs(gint)
         T = eltype(g)
-        @test dominator_Tree(g, T(1)) == naivedom(g, T(1))
-        @test dominator_Tree(g, T(10)) == naivedom(g, T(10))
+        @test dominator_tree(g, T(1)) == naivedom(g, T(1))
+        @test dominator_tree(g, T(10)) == naivedom(g, T(10))
     end
 
     gint = SimpleDiGraph(20, 40)
-    for g in testgraphs(gint)
+    for g in testdigraphs(gint)
         T = eltype(g)
-        @test dominator_Tree(g, T(1)) == naivedom(g, T(1))
-        @test dominator_Tree(g, T(10)) == naivedom(g, T(10))
+        @test dominator_tree(g, T(1)) == naivedom(g, T(1))
+        @test dominator_tree(g, T(10)) == naivedom(g, T(10))
     end
 
 
