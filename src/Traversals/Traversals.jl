@@ -203,7 +203,7 @@ end
 
 # note: since `newvisitfn!(s, u, v, t)` defaults to calling `newvisitfn!(s, u, v)`, this function
 # by default creates the necessary visitor functions for parallel traversals.
-function newvisitfn!(s::ParentState, u, v) 
+function newvisitfn!(s::ParentState, u, v)
     s.parents[v] = u
     return true
 end
@@ -212,7 +212,7 @@ end
     parents(g, ss, alg)
 
 Return a vector of parent vertices indexed by vertex using [`TraversalAlgorithm`](@ref) `alg` starting with
-vertex/vertices `ss`. 
+vertex/vertices `ss`.
 
 ### Performance
 This implementation is designed to perform well on large graphs. There are
@@ -267,11 +267,11 @@ mutable struct DistanceState{T<:Integer} <: TraversalState
     n_level::T
 end
 
-function initfn!(s::DistanceState{T}, u) where T 
+function initfn!(s::DistanceState{T}, u) where T
     s.distances[u] = zero(T)
     return true
 end
-function newvisitfn!(s::DistanceState, u, v) 
+function newvisitfn!(s::DistanceState, u, v)
     s.distances[v] = s.n_level
     return true
 end
@@ -306,19 +306,19 @@ function preinitfn!(s::PathState, visited)
     s.vertices_in_exclude = visited[s.u] | visited[s.v]
     return !s.vertices_in_exclude
 end
-newvisitfn!(s::PathState, u, v) = s.v != v 
+newvisitfn!(s::PathState, u, v) = s.v != v
 
 """
     has_path(g::AbstractGraph, u, v, alg; exclude_vertices=Vector())
 
 Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices in
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
-is in `exclude_vertices`. 
+is in `exclude_vertices`.
 
 
 ### Performance Notes
 sorting `exclude_vertices` prior to calling the function may result in improved performance.
-""" 
+"""
 function has_path(g::AbstractGraph{T}, u::Integer, v::Integer, alg::TraversalAlgorithm=BreadthFirst(); exclude_vertices=Vector{T}()) where {T}
     u == v && return true
     state = PathState(T(u), T(v), T.(exclude_vertices), false)
@@ -339,13 +339,15 @@ include("threaded_greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
+export parent_order
+
 # TODO 2.0.0: uncomment this
 # export TraversalError
 # export tree, parents, visited_vertices, dists, distances, has_path
 # export BreadthFirst
 # export ThreadedBreadthFirst
 # export is_bipartite, bipartite_map
-# export DepthFirst, is_cyclic, topological_sort, CycleError 
+# export DepthFirst, is_cyclic, topological_sort, CycleError
 # export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 # export diffusion, diffusion_rate
 # export FixedColoring, RandomColoring, DegreeColoring, greedy_color

@@ -86,6 +86,7 @@ tests = [
     "independentset13/maximal_ind_set",
     "vertexcover13/degree_vertex_cover",
     "vertexcover13/random_vertex_cover",
+    "experimental/dominator_tree",
     "experimental/experimental"
 ]
 

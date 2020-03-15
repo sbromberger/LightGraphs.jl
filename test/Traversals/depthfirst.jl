@@ -28,7 +28,7 @@
         add_edge!(gt, 1, 2); add_edge!(gt, 2, 3); add_edge!(gt, 3, 2)
         for g in testdigraphs(gt)
             @test @inferred(LT.is_cyclic(g))
-            @test_throws LT.CycleError LT.topological_sort(g)      
+            @test_throws LT.CycleError LT.topological_sort(g)
         end
 
         #for #1337
@@ -42,7 +42,7 @@
         gts = SimpleDiGraph(5)
         add_edge!(gts, 1, 2); add_edge!(gts, 2, 3); add_edge!(gts, 2, 4); add_edge!(gts, 3, 4); add_edge!(gts, 5, 3)
         for g in testdigraphs(gts)
-            @test @inferred(LT.topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ] 
+            @test @inferred(LT.topological_sort(g))  in [ [1, 2, 5, 3, 4] , [5, 1, 2, 3, 4] ]
         end
     end
 
@@ -65,6 +65,23 @@
         gt = binary_tree(3)
         for g in testgraphs(gt)
             @test LT.visited_vertices(g, 1, LT.DepthFirst()) == [1, 2, 4, 5, 3, 6, 7]
+        end
+    end
+
+    @testset "ParentOrder" begin
+        g1 = star_digraph(4)
+        g2 = path_digraph(4)
+
+        for g in testdigraphs(g1)
+            T = eltype(g)
+            parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
+            @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 1, 1], [1, 2, 3, 4], [1, 2, 3, 4], 4)
+        end
+
+        for g in testdigraphs(g2)
+            T = eltype(g)
+            parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
+            @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 2, 3], [1, 2, 3, 4], [1, 2, 3, 4], 4)
         end
     end
 end

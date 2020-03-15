@@ -104,11 +104,11 @@ function topological_sort end
 @traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))    
+    state = TopoSortState(vcolor, verts, zero(T))
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
- 
+
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
-      
+
     length(state.verts) < nv(g) && throw(CycleError())
     length(state.verts) > nv(g) && throw(TraversalError())
     return reverse!(state.verts)
@@ -151,3 +151,47 @@ end
 end
 
 @traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0
+
+
+"""
+    struct ParentOrderState{T}
+Store the counter, the parent of each state and its order
+"""
+mutable struct ParentOrderState{T <: Integer} <: TraversalState
+    ord_verts::Vector{T}
+    verts_ord::Vector{T}
+    parent::Vector{T}
+    cnt::T
+end
+
+function newvisitfn!(s::ParentOrderState, u, v) where T
+    s.cnt += 1
+    s.ord_verts[s.cnt] = v
+    s.verts_ord[v] = s.cnt
+    s.parent[v] = u
+    return true
+end
+
+"""
+     parent_order(g, source, alg::DepthFirst())
+
+Return a map from every node to its parent in the dfs tree,
+       a map from every node to its order in the dfs tree,
+       and a map from order numper to the node that has it
+       the numper of nodes reachable from the source.
+"""
+function parent_order end
+
+@traitfn function parent_order(g::AG::IsDirected, source::T, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
+    parents   = zeros(T, nv(g))
+    verts_ord = zeros(T, nv(g))
+    ord_verts = zeros(T, nv(g))
+    state = ParentOrderState(ord_verts, verts_ord, parents, T(1))
+
+    ord_verts[1] = source
+    verts_ord[source] = 1
+    parents[source] = 0
+
+    traverse_graph!(g, source, DepthFirst(), state)
+    return state.parent, state.verts_ord, state.ord_verts, state.cnt
+end
