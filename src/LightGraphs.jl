@@ -220,6 +220,7 @@ const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph13/transitivity.jl")
+include("digraph13/dominator_tree.jl")
 include("cycles13/johnson.jl")
 include("cycles13/hawick-james.jl")
 include("cycles13/karp.jl")
