@@ -19,7 +19,7 @@ dominator[source] = source, the dominator of the nodes that aren’t reachable f
 - Lengauer-Tarjan, "A Fast Algorithm for Finding Dominators in a Flowgraph".
 """
 
-function dominator_Tree(g::AG, source::T) where {T, AG<:DiGraph{T}}
+function dominator_tree(g::AG, source::T) where {T, AG<:DiGraph{T}}
 
     parent, semi, ord_verts, cnt = parent_order(g, source)
     eval, link = produce_eval_link(nv(g), semi)
