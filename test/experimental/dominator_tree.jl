@@ -51,17 +51,26 @@ function testnode(g::SimpleDiGraph{T}, v::T, r::T, ord_verts::Vector{T}, cnt::T,
 end
 
 @testset "Dominator tree" begin
+    gint = SimpleDiGraph(3)
+    add_edge!(gint, 1, 2)
+    add_edge!(gint, 2, 3)
+    for g in testdigraphs(gint)
+        T = eltype(g)
+        @test dominator_Tree(g, T(1)) == [1, 1, 2]
+    end
     gint = SimpleDiGraph(10, 30)
     for g in testdigraphs(gint)
         T = eltype(g)
-        @test dominator_tree(g, T(1)) == naivedom(g, T(1))
-        @test dominator_tree(g, T(10)) == naivedom(g, T(10))
+        @test dominator_Tree(g, T(1)) == naivedom(g, T(1))
+        @test dominator_Tree(g, T(10)) == naivedom(g, T(10))
     end
 
     gint = SimpleDiGraph(20, 40)
     for g in testgraphs(gint)
         T = eltype(g)
-        @test dominator_tree(g, T(1)) == naivedom(g, T(1))
-        @test dominator_tree(g, T(10)) == naivedom(g, T(10))
+        @test dominator_Tree(g, T(1)) == naivedom(g, T(1))
+        @test dominator_Tree(g, T(10)) == naivedom(g, T(10))
     end
+
+
 end
