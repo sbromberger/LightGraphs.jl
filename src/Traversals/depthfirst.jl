@@ -6,7 +6,7 @@ struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
 
-DepthFirst(;neighborfn = outneighbors) = DepthFirst(neighborfn)
+DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
@@ -138,7 +138,7 @@ function postvisitfn!(s::CycleState{T}, u) where T
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm = DepthFirst()) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)
