@@ -1,3 +1,21 @@
+@testset "ParentOrder" begin
+    g1 = star_digraph(4)
+    g2 = path_digraph(4)
+
+    for g in testdigraphs(g1)
+        T = eltype(g)
+        parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
+        @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 1, 1], [1, 2, 3, 4], [1, 2, 3, 4], 4)
+    end
+
+    for g in testdigraphs(g2)
+        T = eltype(g)
+        parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
+        @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 2, 3], [1, 2, 3, 4], [1, 2, 3, 4], 4)
+    end
+end
+
+
 #=
 a nive algorithm for fininding the dominator,
  first if we know that u and v are dominators of some node w, then it must be that one node is a dominator of the other,
@@ -73,21 +91,4 @@ end
     end
 
 
-end
-
-@testset "ParentOrder" begin
-    g1 = star_digraph(4)
-    g2 = path_digraph(4)
-
-    for g in testdigraphs(g1)
-        T = eltype(g)
-        parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
-        @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 1, 1], [1, 2, 3, 4], [1, 2, 3, 4], 4)
-    end
-
-    for g in testdigraphs(g2)
-        T = eltype(g)
-        parent, verts_ord, ord_verts, cnt = parent_order(g, T(1))
-        @test (parent, verts_ord, ord_verts, cnt) == ([0, 1, 2, 3], [1, 2, 3, 4], [1, 2, 3, 4], 4)
-    end
 end
