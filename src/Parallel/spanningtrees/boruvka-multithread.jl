@@ -26,7 +26,7 @@ function boruvka_mst_multithread(g::SimpleWeightedGraph, max_iter = round(Int64,
     cheapest_source_node = Vector{Int}(1:nvg+1)
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nvg - 1)
-    weight = zero(1)
+    weight = zero(Float64)
     current_iteration = 1
     println("Max iteration: ", max_iter)
     while(current_iteration< max_iter && length(mst) < nvg - 1)
@@ -94,7 +94,7 @@ function contractvertex(
         mst::Vector,
         MAX_WEIGHT::Float64
     )::Float64
-    res = zero(1)
+    res = zero(Float64)
     for i in vertices(g)
         if(cheapest[i]!= MAX_WEIGHT && !in_same_set(connected_vs, cheapest_source_node[i], cheapest_target_node[i]))
             # Connect the vertices, add mst to answer
