@@ -47,21 +47,21 @@ function biconnected_components end
         while stack_ptr > 0
             v, _ = S[stack_ptr]
             if ptr == 1  # if ptr == 1 then we all in this node for the first time
-                idx+=1
+                idx += 1
                 low[v] = pre[v] = idx
             end
             neighs = outneighbors(g, v)
             while ptr <= length(neighs)
                 i = neighs[ptr]            
                 if pre[i] ==  0
-                    e = p < v ? E(p, v) : E(v, p)
+                    e = i < v ? E(i, v) : E(v, i)
                     push!(edge_st, e)
                     stack_ptr += 1
                     S[stack_ptr] = (i, ptr+1)
                     break
                 elseif (!(stack_ptr > 1 && i == S[stack_ptr-1][1])) && pre[i] < low[v]
                     low[v] = pre[i]
-                    e = p < v ? E(p, v) : E(v, p)
+                    e = p < v ? E(i, v) : E(v, i)
                     push!(edge_st, e)
                 end
         
