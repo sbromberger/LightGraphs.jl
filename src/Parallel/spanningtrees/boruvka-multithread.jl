@@ -94,7 +94,7 @@ function contractvertex(
         mst::Vector,
         MAX_WEIGHT::Float64
     )::Float64
-    res = 0
+    res = zero(1)
     for i in vertices(g)
         if(cheapest[i]!= MAX_WEIGHT && !in_same_set(connected_vs, cheapest_source_node[i], cheapest_target_node[i]))
             # Connect the vertices, add mst to answer
