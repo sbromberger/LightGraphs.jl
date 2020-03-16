@@ -37,7 +37,6 @@ function biconnected_components end
     pre = zeros(T, nvg)
     #stack pointer to emulate what happens in function call,
     #that will make us avoid the reallocation of push and pop vector
-    stack_ptr = zero(T) #stack pointer to emulate what happens in function  call, that will make us avoid the reallocation of push and pop vector
     @inbounds for us in vertices(g)
         pre[us] == 0 || continue # don’t go to visited nodes again
         #stack_ptr += 1
@@ -56,8 +55,6 @@ function biconnected_components end
                 if pre[i] ==  0
                     e = i < v ? E(i, v) : E(v, i)
                     push!(edge_st, e)
-                    #stack_ptr += 1
-                    #S[stack_ptr] = (i, ptr+1)
                     push!(S, (i, ptr + 1))
                     break
                 elseif (!(length(S) > 1 && i == S[end-1][1])) && pre[i] < low[v]
@@ -72,7 +69,6 @@ function biconnected_components end
             # and will return to my parent, else i will go to new node
             if ptr > length(neighs)
                 _, ptr = S[end]
-                #stack_ptr -= 1
                 pop!(S)
                 if length(S) >= 1
                     p, _ = S[end]   #  my parent
