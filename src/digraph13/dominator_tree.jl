@@ -17,10 +17,35 @@ dominator[source] = source, the dominator of the nodes that aren’t reachable f
 
 ### References
 - Lengauer-Tarjan, "A Fast Algorithm for Finding Dominators in a Flowgraph".
+
+## Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> g = cycle_digraph(4);
+
+julia> g
+{4, 4} directed simple Int32 graph
+
+julia> dominator_tree(g, 1)
+4-element Array{Int32,1}:
+ 1
+ 1
+ 2
+ 3
+
+julia> add_edge!(g, 2, 4);
+
+julia> dominator_tree(g, 1)
+4-element Array{Int32,1}:
+ 1
+ 1
+ 2
+ 2
+```
 """
-
-function dominator_tree(g::AG, source::T) where {T, AG<:DiGraph{T}}
-
+function dominator_tree end
+@traitfn function dominator_tree(g::AG::IsDirected, source::T) where {T, AG<:DiGraph{T}}
     parent, semi, ord_verts, cnt = Traversals.parent_order(g, source)
     eval, link = produce_eval_link(nv(g), semi)
     bucktes = [Vector{T}() for i in 1:nv(g)]
