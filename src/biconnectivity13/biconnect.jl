@@ -61,7 +61,7 @@ function biconnected_components end
                     break
                 elseif (!(stack_ptr > 1 && i == S[stack_ptr-1][1])) && pre[i] < low[v]
                     low[v] = pre[i]
-                    e = p < v ? E(i, v) : E(v, i)
+                    e = i < v ? E(i, v) : E(v, i)
                     push!(edge_st, e)
                 end
         
