@@ -14,7 +14,7 @@ optimum (minimum, by default) spanning tree of a connected, undirected graph
 [Boruvka's algorithm](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm).
 The algorithm requires that all edges have different weights to correctly generate a minimun/maximum spanning tree
 ### Optional parameter(s):
-`maxItr`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
+`max_iter`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
 """
 function boruvka_mst_multithread(g::SimpleWeightedGraph, max_iter = round(Int64, log2(nv(g)) + 1))
     nvg = nv(g)
@@ -101,17 +101,17 @@ function contractvertex(
             set1 = find_root(connected_vs, cheapest_source_node[i])
             set2 = find_root(connected_vs, cheapest_target_node[i])
             union!(connected_vs, cheapest_source_node[i], cheapest_target_node[i])
-            res+=cheapest[i]
+            res += cheapest[i]
             push!(mst, SimpleWeightedEdge(cheapest_source_node[i], cheapest_target_node[i], cheapest[i]))
             # Merge Vertices that has been connected together
             merge_target = find_root(connected_vs, cheapest_source_node[i])
-            if merge_target!=set1
+            if merge_target != set1
                 for j in joined_nodes[set1]
                     push!(joined_nodes[merge_target],j)
                 end
                 delete!(joined_nodes,set1)
             end
-            if merge_target!=set2
+            if merge_target != set2
                 for j in joined_nodes[set2]
                     push!(joined_nodes[merge_target],j)
                 end

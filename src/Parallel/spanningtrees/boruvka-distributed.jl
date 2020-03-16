@@ -20,7 +20,7 @@ optimum (minimum, by default) spanning tree of a connected, undirected graph
 [Boruvka's algorithm](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm).
 The algorithm requires that all edges have different weights to correctly generate a minimun/maximum spanning tree
 ### Optional parameter(s):
-`maxItr`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
+`max_iter`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
 """
 function boruvka_mst_distributed(g::SimpleWeightedGraph, max_iter = round(Int64, log2(nv(g)) + 1))
     nvg = nv(g)
