@@ -21,7 +21,7 @@ dominator[source] = source, the dominator of the nodes that aren’t reachable f
 
 function dominator_tree(g::AG, source::T) where {T, AG<:DiGraph{T}}
 
-    parent, semi, ord_verts, cnt = parent_order(g, source)
+    parent, semi, ord_verts, cnt = Traversals.parent_order(g, source)
     eval, link = produce_eval_link(nv(g), semi)
     bucktes = [Vector{T}() for i in 1:nv(g)]
     dom = zeros(T, nv(g))
