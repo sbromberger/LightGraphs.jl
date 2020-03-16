@@ -339,7 +339,6 @@ include("threaded_greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
-export parent_order
 
 # TODO 2.0.0: uncomment this
 # export TraversalError
