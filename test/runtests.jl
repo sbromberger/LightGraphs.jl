@@ -31,7 +31,6 @@ tests = [
     "degeneracy",
     "distance",
     "digraph13/transitivity",
-    "digraph13/dominator_tree",
     "cycles13/hawick-james",
     "cycles13/johnson",
     "cycles13/karp",
@@ -87,7 +86,8 @@ tests = [
     "independentset13/maximal_ind_set",
     "vertexcover13/degree_vertex_cover",
     "vertexcover13/random_vertex_cover",
-    "experimental/experimental"
+    "experimental/experimental",
+    "digraph13/dominator_tree"
 ]
 
 @testset "LightGraphs" begin
