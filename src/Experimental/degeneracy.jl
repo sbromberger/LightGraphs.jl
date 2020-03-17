@@ -71,6 +71,10 @@ function process_level(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64
     return sum(buff_end)
 end
 
+# Create a new graph with the the remaining vertices = (1-frac)*nv(g)
+# Add edge u => v if u => v is an edge in the original graph and both u and v have coreness values larger than level
+# This imporves the process phase because number of adjacencies are lower in this graph
+# Also increases locality in memory access pattern because of the smaller size
 function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int64,
                   nvg_small::Int64) where T
     U = UInt8
