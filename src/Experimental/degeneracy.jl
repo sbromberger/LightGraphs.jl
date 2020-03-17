@@ -73,7 +73,7 @@ end
 
 # Create a new graph with the the remaining vertices = (1-frac)*nv(g)
 # Add edge u => v if u => v is an edge in the original graph and both u and v have coreness values larger than level
-# This imporves the process phase because number of adjacencies are lower in this graph
+# This improves the process phase because number of adjacencies are lower in this graph
 # Also increases locality in memory access pattern because of the smaller size
 function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int64,
                   nvg_small::Int64) where T
@@ -96,7 +96,7 @@ function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int6
     @threads for s in vmap
         for d in all_neighbors(g, s)
             if in_gsmall[d]
-                push!(g_small.adjlist[newvid[s]], newvid[d])
+                push!(g_small.fadjlist[newvid[s]], newvid[d])
             end
         end
     end
