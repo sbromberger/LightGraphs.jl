@@ -10,7 +10,7 @@ https://doi.org/10.1109/IPDPSW.2017.151
 ### Performance
 Time complexity is ``\\mathcal{O}(K_{max}*|V| + |E|)``.
 """
-function threaded_core_number(g::AbstractSimpleGraph{T}, frac = 0.95) where T
+function threaded_core_number(g::AbstractGraph{T}, frac = 0.95) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     deg = Atomic{T}.(degree(g))
     buff = [Vector{T}() for _ in 1:nthreads()]
@@ -75,13 +75,8 @@ end
 # Add edge u => v if u => v is an edge in the original graph and both u and v have coreness values larger than level
 # This improves the process phase because number of adjacencies are lower in this graph
 # Also increases locality in memory access pattern because of the smaller size
-function subgraph(g::AbstractSimpleGraph{T}, deg::Vector{Atomic{T}}, level::Int64,
-                  nvg_small::Int64) where T
-    U = UInt8
-    while nvg_small > typemax(U)
-        U = widen(U)
-    end
-    g_small = SimpleGraph{U}(nvg_small)
+function subgraph(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64, nvg_small::Int64) where T
+    g_small = SimpleGraph{T}(nvg_small)
     in_gsmall = falses(nv(g))
     @threads for v in 1:nv(g)
         if deg[v][] >= level
