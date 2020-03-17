@@ -23,9 +23,8 @@ function threaded_core_number(g::AbstractGraph{T}, frac = 0.95) where T
     end
     if visited < nv(g)
         g_small, vmap = subgraph(g, deg, level, nv(g)-visited)
-        U = eltype(g_small)
-        newdeg = Atomic{U}.(degree(g_small))
-        newbuff = [Vector{U}() for _ in 1:nthreads()]
+        newdeg = Atomic{T}.(degree(g_small))
+        newbuff = [Vector{T}() for _ in 1:nthreads()]
         while visited < nv(g)
             visited += process_level(g_small, newdeg, level, newbuff, buff_end)
             level += 1
