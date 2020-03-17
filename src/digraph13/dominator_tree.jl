@@ -57,6 +57,7 @@ function dominator_tree end
     while x >= 2
         w = ord_verts[x]
         for u in inneighbors(g, w)
+            semi[u] == 0 && continue # if swmi[u] == 0, then the node isn’t reachable from the source
             z = eval(u)
             if semi[z] < semi[w]
               semi[w] = semi[z]

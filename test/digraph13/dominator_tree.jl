@@ -1,16 +1,11 @@
-#=
-a nive algorithm for fininding the dominator,
- first if we know that u and v are dominators of some node w, then it must be that one node is a dominator of the other,
- the immidiate_dominator of some node u is the node that dominats u but is dominated by all other dominators of u,
- if y is dominated by x then it must be the case that preorder of y is smaller than x’s ,
- then the immediate dominator of u is the node that has the bigest preorder among the dominators of u,
- then  if ignor some node u, perform a dfs,and couldnot  reach some node v,then v is dominated by u,
- the biggest such a node is the immediate dominator
-=#
+
+# A nive algorithm for fininding the dominator, for testing purpose.
 function naivedom(g::AG, r::T)  where {T, AG<:AbstractGraph{T}}
     domin=zeros(T, nv(g))
-    # this array will mark the nodes that are reachable
     _, verts_ord, ord_verts, cnt = Traversals.parent_order(g, r)
+    # the immediate dominator of v is the domiantor whith the latest dfs numper
+    # so if we ordered the nodes the last of them to declare him self as
+    # dominator of v is the immediate dominator of v .
     for i in 1:cnt
       v = ord_verts[i]
       testnode(g, v, r, ord_verts, cnt, domin)
@@ -20,7 +15,7 @@ function naivedom(g::AG, r::T)  where {T, AG<:AbstractGraph{T}}
 end
 
 
-#this function make a dfs with exclding some node the nodes that cannot ne reached are dominated by this node
+# This function make a dfs with exclding some node v the nodes that cannot ne reached are dominated by v.
 function testnode(g::SimpleDiGraph{T}, v::T, r::T, ord_verts::Vector{T}, cnt::T, domin::Vector{T}) where T
     #visit array
     vi2 = falses(nv(g))
@@ -41,9 +36,6 @@ function testnode(g::SimpleDiGraph{T}, v::T, r::T, ord_verts::Vector{T}, cnt::T,
     and declar u as its dominator , the last node to do that is the immediate domintor=#
     for i in 2:cnt
         x = ord_verts[i]
-        if x == 0
-            println()
-        end
         if !vi2[x]
             domin[x] = v
         end
