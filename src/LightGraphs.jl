@@ -123,6 +123,8 @@ complete_bipartite_graph, complete_multipartite_graph, turan_graph,
 complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
 binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
 circular_ladder_graph, barbell_graph, lollipop_graph, friendship_graph,
+circulant_graph, circulant_digraph,
+
 
 #generator deprecations
 BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
