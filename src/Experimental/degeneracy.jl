@@ -22,8 +22,7 @@ function threaded_core_number(g::AbstractGraph{T}, frac = 0.95) where T
         level += 1
     end
     if visited < nv(g)
-        g_small, vmap = subgraph(g, deg, level, nv(g)-visited)
-        newdeg = Atomic{T}.(degree(g_small))
+        g_small, vmap, newdeg = subgraph(g, deg, level, nv(g)-visited)
         while visited < nv(g)
             visited += process_level(g_small, newdeg, level, buff, buff_end)
             level += 1
@@ -83,8 +82,10 @@ function subgraph(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64, nvg
     end
     vmap = findall(in_gsmall)
     newvid = Vector{Int64}(undef, nv(g))
-    @threads for i in 1:length(vmap)
+    newdeg = Vector{Atomic{T}}(undef, nvg_small)
+    @threads for i in 1:nvg_small
         newvid[vmap[i]] = i
+        newdeg[i] = Atomic{T}(deg[vmap[i]][])
     end
     @threads for s in vmap
         for d in all_neighbors(g, s)
@@ -93,5 +94,5 @@ function subgraph(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64, nvg
             end
         end
     end
-    return g_small, vmap
+    return g_small, vmap, newdeg
 end
