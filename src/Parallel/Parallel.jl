@@ -5,14 +5,12 @@ using LightGraphs: sample, AbstractPathState
 using LightGraphs.ShortestPaths
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
-using LightGraphs.ShortestPaths: NegativeCycleError
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
 import Random
 using Random:shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
-import LightGraphs.ShortestPaths: shortest_paths
 
 include("shortestpaths/deprecated.jl")
 include("centrality/betweenness.jl")

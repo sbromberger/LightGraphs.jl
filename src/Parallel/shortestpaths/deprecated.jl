@@ -25,7 +25,7 @@ function floyd_warshall_shortest_paths(
 ) where T<:Real where U<:Integer
 
     Base.depwarn("`Parallel.floyd_warshall_shortest_paths` is deprecated. Equivalent functionality has been moved to `LightGraphs.ShortestPaths.shortest_paths`.", :floyd_warshall_shortest_paths)
-    LightGraphs.Parallel.shortest_paths(g, distmx, LightGraphs.ShortestPaths.ThreadedFloydWarshall())
+    LightGraphs.ShortestPaths.shortest_paths(g, distmx, LightGraphs.ShortestPaths.ThreadedFloydWarshall())
 end
 
 
