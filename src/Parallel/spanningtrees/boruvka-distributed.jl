@@ -78,7 +78,7 @@ function findcheapestvertex(
         # println("Accessing set ",i, " with sources ", joined_nodes[i])
         for src in joined_nodes[i]
             for dst in neighbors(g, src)
-                weight = get_weight(g,src,dst)
+                weight = distmx[src, dst]
                 # println(src," -> ", dst, "=", weight, " ",  !in_same_set(connected_vs, src, dst) )
                 root_src = find_root(connected_vs, src)
                 root_dst = find_root(connected_vs, dst)
