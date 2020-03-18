@@ -16,7 +16,11 @@ The algorithm requires that all edges have different weights to correctly genera
 ### Optional parameter(s):
 `max_iter`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
 """
-function boruvka_mst_multithread(g::SimpleWeightedGraph, max_iter = round(Int64, log2(nv(g)) + 1))
+function boruvka_mst_multithread(
+    g::AG, 
+    max_iter = round(Int64, log2(nv(g)) + 1), 
+    distmx::AbstractMatrix{T} = weights(g)
+    )  where {T<:Real, U, AG<:AbstractGraph{U}}
     nvg = nv(g)
     connected_vs = IntDisjointSets(nvg)
     joined_nodes = Dict{Int, Vector{Int}}(i=>[i] for i in 1:nvg)
@@ -41,12 +45,12 @@ function boruvka_mst_multithread(g::SimpleWeightedGraph, max_iter = round(Int64,
 end
 
 function initcheapestarray(
-        g::SimpleWeightedGraph,
+        g::AG,
         cheapest_source_node::Vector{Int},
         cheapest_target_node::Vector{Int},
         cheapest::Vector{Float64},
         MAX_WEIGHT::Float64
-    )
+    ) where {U, AG<:AbstractGraph{U}}
     for i in vertices(g)
         cheapest[i] = MAX_WEIGHT
         cheapest_target_node[i] = i
@@ -55,19 +59,20 @@ function initcheapestarray(
 end
 
 function findcheapestvertex(
-        g::SimpleWeightedGraph,
+        g::AG,
         cheapest_source_node::Vector{Int},
         cheapest_target_node::Vector{Int},
         cheapest::Vector{Float64},
         joined_nodes::Dict{Int, Vector{Int}},
         connected_vs::IntDisjointSets,
-    )
+        distmx::AbstractMatrix{T}
+    )  where {T<:Real, U, AG<:AbstractGraph{U}}
     source_vertices = Vector{Int}(first.(keys(joined_nodes)))
     @threads for i in source_vertices
         # println("Accessing set ",i, " with sources ", joined_nodes[i])
         for src in joined_nodes[i]
             for dst in neighbors(g, src)
-                weight = get_weight(g,src,dst)
+                weight = distmx[src, dst]
                 # println(src," -> ", dst, "=", weight, " ",  !in_same_set(connected_vs, src, dst) )
                 root_src = find_root(connected_vs, src)
                 root_dst = find_root(connected_vs, dst)
@@ -85,7 +90,7 @@ function findcheapestvertex(
 end
 
 function contractvertex(
-        g::SimpleWeightedGraph,
+        g::AG,
         cheapest_source_node::Vector{Int},
         cheapest_target_node::Vector{Int},
         cheapest::Vector{Float64},
@@ -93,7 +98,7 @@ function contractvertex(
         connected_vs::IntDisjointSets,
         mst::Vector,
         MAX_WEIGHT::Float64
-    )::Float64
+    )::Float64  where {U, AG<:AbstractGraph{U}}
     res = zero(Float64)
     for i in vertices(g)
         if(cheapest[i]!= MAX_WEIGHT && !in_same_set(connected_vs, cheapest_source_node[i], cheapest_target_node[i]))
