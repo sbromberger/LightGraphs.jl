@@ -20,15 +20,22 @@ optimum (minimum, by default) spanning tree of a connected, undirected graph
 [Boruvka's algorithm](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm).
 The algorithm requires that all edges have different weights to correctly generate a minimun/maximum spanning tree
 ### Optional parameter(s):
-`max_iter`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
+- `max_iter`: Used to limit maximum number of iterations the algorithm will be performed. The default is log2(numVertex).
+- `minimize=true`: if set to `false`, calculate the maximum spanning tree.
 """
-function boruvka_mst_multithread(
+function boruvka_mst_distributed(
     g::AG, 
     max_iter = round(Int64, log2(nv(g)) + 1), 
-    distmx::AbstractMatrix{T} = weights(g)
+    distmx::AbstractMatrix{T} = weights(g);
+    minimize = true
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
     nvg = nv(g)
     connected_vs = IntDisjointSets(nvg)
+        
+    # maximizing Z is the same as minimizing -Z
+    # mode will indicate the need for the -1 multiplication
+    mode = minimize ? 1 : -1
+
     joined_nodes = Dict{Int, Vector{Int}}(i=>[i] for i in 1:nvg)
     MAX_WEIGHT = Inf
     cheapest = SharedVector{Float64}(nvg+1)
@@ -42,9 +49,10 @@ function boruvka_mst_multithread(
     while(current_iteration< max_iter && length(mst) < nvg - 1)
         current_iteration += 1
         initcheapestarray(g, cheapest_source_node, cheapest_target_node, cheapest, MAX_WEIGHT)
-        findcheapestvertex(g, cheapest_source_node, cheapest_target_node, cheapest, joined_nodes, connected_vs)
-        weight += contractvertex(g, cheapest_source_node, cheapest_target_node, cheapest, joined_nodes, connected_vs,
-                mst, MAX_WEIGHT)
+        findcheapestvertex(g, cheapest_source_node, cheapest_target_node, cheapest, joined_nodes, 
+                connected_vs, distmx, mode)
+        weight += contractvertex(g, cheapest_source_node, cheapest_target_node, cheapest, joined_nodes,
+                connected_vs, mst, MAX_WEIGHT, mode)
     end
 
     return (mst=mst, weight=weight)
@@ -71,7 +79,8 @@ function findcheapestvertex(
         cheapest::SharedVector{Float64},
         joined_nodes::Dict{Int, Vector{Int}},
         connected_vs::IntDisjointSets,
-        distmx::AbstractMatrix{T}
+        distmx::AbstractMatrix{T}, 
+        mode::Int
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
     source_vertices = Vector{Int}(first.(keys(joined_nodes)))
     @sync @distributed for i in source_vertices
@@ -83,8 +92,8 @@ function findcheapestvertex(
                 root_src = find_root(connected_vs, src)
                 root_dst = find_root(connected_vs, dst)
                 if root_src != root_dst
-                    if(cheapest[root_src] > weight )
-                        cheapest[root_src] = weight
+                    if(cheapest[root_src] > weight * mode)
+                        cheapest[root_src] = weight * mode
                         cheapest_target_node[root_src] = dst
                         cheapest_source_node[root_src] = src
                     end
@@ -103,7 +112,8 @@ function contractvertex(
         joined_nodes::Dict{Int, Vector{Int}},
         connected_vs::IntDisjointSets,
         mst::Vector,
-        MAX_WEIGHT::Float64
+        MAX_WEIGHT::Float64,
+        mode::Int
     )::Float64  where {U, AG<:AbstractGraph{U}}
     res = zero(Float64)
     for i in vertices(g)
@@ -112,8 +122,8 @@ function contractvertex(
             set1 = find_root(connected_vs, cheapest_source_node[i])
             set2 = find_root(connected_vs, cheapest_target_node[i])
             union!(connected_vs, cheapest_source_node[i], cheapest_target_node[i])
-            res += cheapest[i]
-            push!(mst, SimpleWeightedEdge(cheapest_source_node[i], cheapest_target_node[i], cheapest[i]))
+            res += cheapest[i] * mode
+            push!(mst, SimpleWeightedEdge(cheapest_source_node[i], cheapest_target_node[i], cheapest[i] * mode))
             # Merge Vertices that has been connected together
             merge_target = find_root(connected_vs, cheapest_source_node[i])
             if merge_target != set1
