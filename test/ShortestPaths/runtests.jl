@@ -3,11 +3,6 @@ using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
 using LightGraphs.Traversals: NOOPSort
 
-import Base.==
-function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
-   return a.path == b.path && a.dist == b.dist
-end
-
 const sptestdir = dirname(@__FILE__)
 
 sptests = [
