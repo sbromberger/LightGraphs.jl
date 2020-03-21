@@ -47,12 +47,26 @@ julia> dominator_tree(g, 1)
 """
 function dominator_tree end
 @traitfn function dominator_tree(g::AG::IsDirected, source::T) where {T, AG<:DiGraph{T}}
+    #= the semi dominator is the first node on the path between the root and the node of interest,
+       such that  there is at least two disjoint paths between it and the node of interest , if there
+       is not such a node, we will consider the parent of the node of interst to be the semi dominator
+       of it, there is a duality between the semi dominator and the  immediate dominator
+       min(preorderof(semi_dominator(v)))>=max(preorder(dominator(v))
+       for more details see the paper,
+       the key theorm is
+       Let w != the source, and let u be a vertex for which semi_dominator(u) is minimum among vertices 
+       between w and its semi dominator.
+       Then the immediate dominator is
+       semi_dominator(w) if semi_dominator(w) = semi_dominator(u),
+       immidiate_dominator(u) otherwise.
+    =#
     parent, semi, ord_verts, cnt = Traversals.parent_order(g, source)
     eval, link = produce_eval_link(nv(g), semi)
     bucktes = [Vector{T}() for i in 1:nv(g)]
     dom = zeros(T, nv(g))
 
-    # the goal of this step  is to decide for every node the semi dominator of it
+    # the goal of this step  is to decide for every node the semi dominator of it, and some node will 
+    # have their immdeiate dominator declared
     x = cnt
     while x >= 2
         w = ord_verts[x]
@@ -64,8 +78,8 @@ function dominator_tree end
             end
         end
 
-        # we store w in the bucket of its smei dominator,
-        # until we know all the semi domintor of all the nodes between w  and its semi dominator
+        # we store w in the bucket of its smei dominator, until we know all the semi domintor of all the  
+        # nodes between w and its semi dominator
 
         push!(bucktes[ord_verts[semi[w]]], w)
         p = parent[w]
