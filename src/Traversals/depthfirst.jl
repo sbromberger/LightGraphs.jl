@@ -12,7 +12,7 @@ DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::DepthFirst,
     state::TraversalState,
     ) where U<:Integer
