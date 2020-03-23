@@ -285,15 +285,17 @@ mutable struct ConComps{T <: Integer} <: TraversalState
 end
 
 function newvisitfn!(s::ConComps, u, v)
-    s.labels[v]
+    s.labels[v] = s.head
     return true
 end
 function initfn!(s::ConComps, u)
-    s.labels[u] = s.head
+    s.head = u
+    s.labels[u] = u
+    return true
 end
 
 function tconnected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    state = ConComps(0, label)
+    state = ConComps(T(0), label)
     traverse_graph!(g, vertices(g), DepthFirst(all_neighbors), state)
     return state.labels
 end
