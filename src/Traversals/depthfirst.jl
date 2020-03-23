@@ -293,7 +293,7 @@ function initfn!(s::ConComps, u)
 end
 
 function tconnected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    state = Concomps(0, label)
+    state = ConComps(0, label)
     traverse_graph!(g, vertices(g), DepthFirst(all_neighbors), state)
     return state.labels
 end
