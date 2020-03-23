@@ -205,12 +205,12 @@ end
 
 function postlevelfn!(s::SccState{T}) where T
     v = s.lastnode
-    s.onstack[v] = false
     if s.low[v] == s.order[v]
         new_compnent = Vector{T}()
         a = T(0)
         while a != v
             a = pop!(s.stack)
+            s.onstack[a] = false
             push!(new_compnent, a)
         end
         push!(s.comps, new_compnent)
