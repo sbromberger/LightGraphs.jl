@@ -11,22 +11,7 @@ to each vertex. The component value is the smallest vertex ID in the component.
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    nvg = nv(g)
-    Q = Queue{T}()
-    @inbounds for u in vertices(g)
-        label[u] != zero(T) && continue
-        label[u] = u
-        enqueue!(Q, u)
-        while !isempty(Q)
-            src = dequeue!(Q)
-            for vertex in all_neighbors(g, src)
-                if label[vertex] == zero(T)
-                    enqueue!(Q, vertex)
-                    label[vertex] = u
-                end
-            end
-        end
-    end
+    Traversals.tconnected_components!(label, g)
     return label
 end
 
@@ -219,95 +204,7 @@ julia> strongly_connected_components(g)
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-    zero_t = zero(T)
-    one_t = one(T)
-    nvg = nv(g)
-    count = one_t
-
-
-    index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
-    onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
-    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
-    parents = zeros(T, nvg)       # parent of every vertex in dfs
-    components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-
-
-    dfs_stack = Vector{T}()
-
-    @inbounds for s in vertices(g)
-        if index[s] == zero_t
-            index[s] = count
-            lowlink[s] = count
-            onstack[s] = true
-            parents[s] = s
-            push!(stack, s)
-            count = count + one_t
-
-            # start dfs from 's'
-            push!(dfs_stack, s)
-
-            while !isempty(dfs_stack)
-                v = dfs_stack[end] #end is the most recently added item
-                u = zero_t
-                @inbounds for v_neighbor in outneighbors(g, v)
-                    if index[v_neighbor] == zero_t
-                        # unvisited neighbor found
-                        u = v_neighbor
-                        break
-                        #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[v_neighbor]
-                        # we have already seen n, but can update the lowlink of v
-                        # which has the effect of possibly keeping v on the stack until n is ready to pop.
-                        # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[v_neighbor])
-                    end
-                end
-                if u == zero_t
-                    # All out neighbors already visited or no out neighbors
-                    # we have fully explored the DFS tree from v.
-                    # time to start popping.
-                    popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
-
-                    if index[v] == lowlink[v]
-                        # found a cycle in a completed dfs tree.
-                        component = Vector{T}()
-
-                        while !isempty(stack) #break when popped == v
-                            # drain stack until we see v.
-                            # everything on the stack until we see v is in the SCC rooted at v.
-                            popped = pop!(stack)
-                            push!(component, popped)
-                            onstack[popped] = false
-                            # popped has been assigned a component, so we will never see it again.
-                            if popped == v
-                                # we have drained the stack of an entire component.
-                                break
-                            end
-                        end
-
-                        reverse!(component)
-                        push!(components, component)
-                    end
-
-                else #LABEL A
-                    # add unvisited neighbor to dfs
-                    index[u] = count
-                    lowlink[u] = count
-                    onstack[u] = true
-                    parents[u] = v
-                    count = count + one_t
-
-                    push!(stack, u)
-                    push!(dfs_stack, u)
-                    # next iteration of while loop will expand the DFS tree from u.
-                end
-            end
-        end
-    end
-
-    return components
+    return Traversals.tstrongly_connected_components(g)
 end
 
 
@@ -376,90 +273,7 @@ julia> strongly_connected_components_kosaraju(g)
 
 function strongly_connected_components_kosaraju end
 @traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-
-   nvg = nv(g)
-
-   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
-
-   order = Vector{T}()         # Vector which will store the order in which vertices are visited
-   sizehint!(order, nvg)
-
-   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
-
-   dfs_stack = Vector{T}()   # Stack used for dfs
-
-   # dfs1
-   @inbounds for v in vertices(g)
-
-       color[v] != 0  && continue
-       color[v] = 1
-
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-
-           for u_neighbor in outneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
-               color[u] = 2
-               pop!(dfs_stack)
-           end
-       end
-   end
-
-   @inbounds for i in vertices(g)
-        color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
-   end
-
-   # dfs2
-   @inbounds for i in 1:nvg
-
-       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
-       color[v] != 0  && continue
-       color[v] = 1
-
-       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
-
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-
-           for u_neighbor in inneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               color[u] = 2
-               push!(component, u)   # Push u to the vector component
-               pop!(dfs_stack)
-           end
-       end
-
-       push!(components, component)
-   end
-
-   return components
+   return Traversals.tstrongly_connected_components_kosaraju(g)
 end
 
 
