@@ -42,13 +42,14 @@
      add_edge!(g1, 11, 7)
      add_edge!(g1, 12, 9)
 
+     epsilon = 0.001
      @testset "simple digraphs" for g in testgraphs(g1)
         c, λ = karp_minimum_cycle_mean(g, w)
         @test c == [9, 11, 7]
-        @test λ == 0.9
+        @test (λ - 0.9) ^ 2 < epsilon
 
         c2, λ2 = karp_minimum_cycle_mean(g, w2)
-        @test λ2 == -0.04
+        @test (λ2 - -0.04) ^ 2 < epsilon
         @test c2 == [2, 7]
      end
 
