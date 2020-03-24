@@ -19,46 +19,41 @@
         Used only for testing and debugging.
     """
     function test_nbw(g, start, len)
-        w = @inferred(non_backtracking_randomwalk(g, start, len))
-        if is_nonbacktracking(w)
-            return true
-        else
-            print("walk was:\n  $w")
-        end
-        return false
+        w = @inferred(LT.walk(g, start, LT.RandomWalk(nonbacktracking=true, niter=len)))
+        return is_nonbacktracking(w)
     end
     gx = path_digraph(10)
     for g in testdigraphs(gx)
-      @test @inferred(randomwalk(g, 1, 5)) == [1:5;]
-      @test @inferred(randomwalk(g, 2, 100)) == [2:10;]
-      @test_throws BoundsError randomwalk(g, 20, 20)
-      @test @inferred(non_backtracking_randomwalk(g, 10, 20)) == [10]
-      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
+        @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=false, niter=5))) == [1:5;]
+        @test @inferred(LT.walk(g, 2, LT.RandomWalk(nonbacktracking=false, niter=100))) == [2:10;]
+        @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=false, niter=20))
+        @test @inferred(LT.walk(g, 10, LT.RandomWalk(nonbacktracking=true, niter=20))) == [10]
+        @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
     end
 
     gx = path_graph(10)
     for g in testgraphs(gx)
-      @test @inferred(self_avoiding_walk(g, 1, 20)) == [1:10;]
-      @test_throws BoundsError self_avoiding_walk(g, 20, 20)
-      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
-      @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
+        @test @inferred(LT.walk(g, 1, LT.SelfAvoidingWalk(niter=20))) == [1:10;]
+        @test_throws BoundsError LT.walk(g, 20, LT.SelfAvoidingWalk(niter=20))
+        @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
+        @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=true, niter=20))
     end
 
     gx = SimpleDiGraph(path_graph(10))
     for g in testdigraphs(gx)
-      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
-      @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
+        @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
+        @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=true, niter=20))
     end
 
     gx = cycle_graph(10)
     for g in testgraphs(gx)
-      visited = @inferred(non_backtracking_randomwalk(g, 1, 20))
-      @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
+        visited = @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20)))
+        @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
     end
 
     gx = cycle_digraph(10)
     for g in testdigraphs(gx)
-      @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10; 1:10;]
+        @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10; 1:10;]
     end
 
     n = 10

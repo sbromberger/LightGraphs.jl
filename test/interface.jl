@@ -10,6 +10,14 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     @test_throws LightGraphs.NotImplementedError is_directed(DummyGraph)
     @test_throws LightGraphs.NotImplementedError zero(DummyGraph)
 
+    @test LightGraphs.has_contiguous_vertices(DummyGraph)
+    @test LightGraphs.has_contiguous_vertices(DummyDiGraph)
+    @test LightGraphs.has_contiguous_vertices(dummygraph)
+
+    LightGraphs.has_contiguous_vertices(::Type{<:DummyGraph}) = false
+    @test !LightGraphs.has_contiguous_vertices(DummyGraph)
+    @test !LightGraphs.has_contiguous_vertices(dummygraph)
+
     for edgefun in [src, dst, Pair, Tuple, reverse]
         @test_throws LightGraphs.NotImplementedError edgefun(dummyedge)
     end
@@ -45,3 +53,13 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     @test String(take!(io)) == "method $edges not implemented."
 
 end # testset
+
+
+struct FakeGraph <: AbstractGraph{Int} end
+
+LightGraphs.nv(::FakeGraph) = 33
+
+@testset "Test vertices default" begin
+    @test vertices(FakeGraph()) == Base.OneTo(33)
+    @test has_vertex(FakeGraph(), 22)
+end
