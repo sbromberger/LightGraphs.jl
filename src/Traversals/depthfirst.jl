@@ -213,6 +213,7 @@ function postlevelfn!(s::SccState{T}) where T
             s.onstack[a] = false
             push!(new_compnent, a)
         end
+        reverse!(new_compnent)
         push!(s.comps, new_compnent)
     end
     return true
