@@ -6,8 +6,6 @@
     add_edge!(gx, 6, 7)
     add_edge!(gx, 8, 9)
     add_edge!(gx, 10, 9)
-    
-    
 
     @testset "basic connectivity" begin
         @testset "$g" for g in testgraphs(gx)
@@ -236,8 +234,7 @@
         @test @inferred(condensation(fig3)) == fig3_cond
 
         @test @inferred(attracting_components(fig1)) == Vector[[2, 5]]
-        @test @inferred(attracting_components(fig3)) == Vector[[3, 4], [8]]
-        
+        @test @inferred(attracting_components(fig3)) == Vector[[3, 4], [8]]        
 
         g10dists = ones(10, 10)
         g10dists[1,2] = 10.0
