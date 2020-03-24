@@ -7,7 +7,7 @@
     add_edge!(gx, 8, 9)
     add_edge!(gx, 10, 9)
     
-    function sort_lists(lists) where 
+    function sort_lists(lists)  
     return map(l -> sort!(l), lists)
     end
 
