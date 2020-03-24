@@ -6,6 +6,10 @@
     add_edge!(gx, 6, 7)
     add_edge!(gx, 8, 9)
     add_edge!(gx, 10, 9)
+    
+    function sort_lists(lists::Array{Array{T, 1}, 1}) where T
+    return map(l -> sort!(l), lists)
+    end
 
     @testset "basic connectivity" begin
         @testset "$g" for g in testgraphs(gx)
@@ -225,8 +229,8 @@
         fig8[[2, 10, 13, 21, 24, 27, 35]] .= 1
         fig8 = SimpleDiGraph(fig8)
 
-        @test Set(@inferred(strongly_connected_components(fig1))) == Set(scc_fig1)
-        @test Set(@inferred(strongly_connected_components(fig3))) == Set(scc_fig3)
+        @test Set(@inferred(sort_lists(strongly_connected_components2(fig1)))) == Set(sort_lists(scc_fig1))
+        @test Set(@inferred(sort_lists(strongly_connected_components2(fig3)))) == Set(sort_lists(scc_fig3))
 
         @test @inferred(period(n_ring)) == n
         @test @inferred(period(n_ring_shortcut)) == 2
