@@ -229,8 +229,8 @@
         fig8[[2, 10, 13, 21, 24, 27, 35]] .= 1
         fig8 = SimpleDiGraph(fig8)
 
-        @test Set(@inferred(sort_lists(strongly_connected_components2(fig1)))) == Set(sort_lists(scc_fig1))
-        @test Set(@inferred(sort_lists(strongly_connected_components2(fig3)))) == Set(sort_lists(scc_fig3))
+        @test Set(@inferred(sort_lists(strongly_connected_components(fig1)))) == Set(sort_lists(scc_fig1))
+        @test Set(@inferred(sort_lists(strongly_connected_components(fig3)))) == Set(sort_lists(scc_fig3))
 
         @test @inferred(period(n_ring)) == n
         @test @inferred(period(n_ring_shortcut)) == 2
