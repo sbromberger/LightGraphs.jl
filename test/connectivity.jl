@@ -237,8 +237,8 @@
 
         @test @inferred(condensation(fig3)) == fig3_cond
 
-        @test @inferred(sort_lists(attracting_components2(fig1))) == sort_lists(Vector[[2, 5]])
-        @test @inferred(sort_lists(attracting_components2(fig3))) == sort_lists(Vector[[3, 4], [8]])
+        @test @inferred(sort_lists(attracting_components(fig1))) == sort_lists(Vector[[2, 5]])
+        @test @inferred(sort_lists(attracting_components(fig3))) == sort_lists(Vector[[3, 4], [8]])
         
 
         g10dists = ones(10, 10)
