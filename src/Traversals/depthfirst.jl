@@ -12,7 +12,7 @@ DepthFirst(;neighborfn=outneighbors) = DepthFirst(neighborfn)
 
 function traverse_graph!(
     g::AbstractGraph{U},
-    ss::AbstractVector,
+    ss,
     alg::DepthFirst,
     state::TraversalState,
     ) where U<:Integer
@@ -205,12 +205,12 @@ end
 
 function postlevelfn!(s::SccState{T}) where T
     v = s.lastnode
-    s.onstack[v] = false
     if s.low[v] == s.order[v]
         new_compnent = Vector{T}()
         a = T(0)
         while a != v
             a = pop!(s.stack)
+            s.onstack[a] = false
             push!(new_compnent, a)
         end
         push!(s.comps, new_compnent)
@@ -285,15 +285,17 @@ mutable struct ConComps{T <: Integer} <: TraversalState
 end
 
 function newvisitfn!(s::ConComps, u, v)
-    s.labels[v]
+    s.labels[v] = s.head
     return true
 end
 function initfn!(s::ConComps, u)
-    s.labels[u] = s.head
+    s.head = u
+    s.labels[u] = u
+    return true
 end
 
 function tconnected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    state = Concomps(0, label)
+    state = ConComps(T(0), label)
     traverse_graph!(g, vertices(g), DepthFirst(all_neighbors), state)
     return state.labels
 end
