@@ -106,7 +106,7 @@
             @testset "$g" for g in testgraphs(barbellgraph)
                 greduced = @inferred(transitivereduction(g))
                 scc = strongly_connected_components(greduced)
-                @test Set(scc) == Set([[1:4;], [5:9;]])
+                @test Set(map(l -> sort!(l), scc)) == Set([[1:4;], [5:9;]])
                 @test ne(greduced) == 10
                 @test length(weakly_connected_components(greduced)) == 1
             end
