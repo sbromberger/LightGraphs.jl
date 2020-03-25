@@ -38,6 +38,7 @@ tests = [
     "cycles13/limited_length",
     "edit_distance",
     "connectivity",
+    "Connectivity/runtests",
     "persistence13/persistence",
     "shortestpaths13/astar",
     "shortestpaths13/bellman-ford",
