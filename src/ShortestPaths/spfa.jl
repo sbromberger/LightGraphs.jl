@@ -22,8 +22,8 @@ should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Sh
 - non-negative distance matrices / weights
 - all destinations
 """
-struct SPFA <: ShortestPathAlgorithm
-    maxdist::Float64
+struct SPFA{T} <: ShortestPathAlgorithm
+    maxdist::T
 end
 
 SPFA(; maxdist=typemax(Float64)) = SPFA(maxdist)

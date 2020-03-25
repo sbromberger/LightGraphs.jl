@@ -8,11 +8,11 @@ should use [Yen's algorithm](https://en.wikipedia.org/wiki/Yen%27s_algorithm)
 to compute shortest paths. Optional fields for this structure include
 
 - `k::Int`: Specify that the algorithm should find the `k` shortest paths (default: `1`).
-- `maxdist::Float64`: Specifies the maximum distance to traverse before exiting (default: `Inf`)
+- `maxdist<:Real`: Specifies the maximum distance to traverse before exiting (default: `Inf`)
 """
-struct Yen <: ShortestPathAlgorithm
+struct Yen{T<:Real} <: ShortestPathAlgorithm
     k::Int
-    maxdist::Float64
+    maxdist::T
 end
 
 Yen(;k=1, maxdist=Inf) = Yen(k, maxdist)

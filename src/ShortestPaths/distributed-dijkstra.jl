@@ -1,9 +1,17 @@
 """
     struct DistributedDijkstra <: ShortestPathAlgorithm end
 
-A struct representing a parallel implementation of the Dijkstra shortest-paths algorithm.
+A struct representing a parallel implementation of the Dijkstra shortest-paths algorithm. Optional
+fields for this structure incldue
+
+- `neighborfn::Function` (default: [`outneighbors`](@ref) - specify the neighbor function to use during the
+   graph traversal.
 """
-struct DistributedDijkstra <: ShortestPathAlgorithm end
+struct DistributedDijkstra{F<:Function} <: ShortestPathAlgorithm
+    neighborfn::F
+end
+
+DistributedDijkstra(;neighborfn=outneighbors) = DistributedDijkstra(neighborfn)
 
 """
     struct DistributedDijkstraResult{T, U}
@@ -25,7 +33,7 @@ end
 # traversal information.
 # """
 function shortest_paths(g::AbstractGraph{U},
-    sources::AbstractVector, distmx::AbstractMatrix{T}, ::DistributedDijkstra) where {T<:Real, U}
+    sources::AbstractVector, distmx::AbstractMatrix{T}, alg::DistributedDijkstra) where {T<:Real, U}
 
     n_v = nv(g)
     r_v = length(sources)
@@ -36,7 +44,7 @@ function shortest_paths(g::AbstractGraph{U},
     pathcounts = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
-        state = shortest_paths(g, sources[i], distmx, ShortestPaths.Dijkstra())
+        state = shortest_paths(g, sources[i], distmx, ShortestPaths.Dijkstra(neighborfn=alg.neighborfn))
         dists[i, :] = state.dists
         parents[i, :] = state.parents
         pathcounts[i, :] = state.pathcounts

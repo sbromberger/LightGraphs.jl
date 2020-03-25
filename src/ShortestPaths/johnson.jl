@@ -5,7 +5,7 @@ The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
 
 ### Optional Fields
-`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
+`maxdist<:Real` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `Johnson` supports the following shortest-path functionality:
@@ -15,8 +15,8 @@ should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_alg
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson <: ShortestPathAlgorithm
-    maxdist::Float64
+struct Johnson{T<:Real} <: ShortestPathAlgorithm
+    maxdist::T
 end
 
 Johnson(; maxdist=typemax(Float64)) = Johnson(maxdist)

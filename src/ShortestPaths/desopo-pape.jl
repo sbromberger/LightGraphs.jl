@@ -5,15 +5,15 @@ The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
 
 ### Optional Fields
-`maxdist::Float64` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
+`maxdist<:Real` (default: `Inf`) option is the same as in [`Dijkstra`](@ref).
 
 ### Implementation Notes
 `DEsopoPape` supports the following shortest-path functionality:
 - non-negative distance matrices / weights
 - all destinations
 """
-struct DEsopoPape <: ShortestPathAlgorithm
-    maxdist::Float64
+struct DEsopoPape{T<:Real} <: ShortestPathAlgorithm
+    maxdist::T
 end
 
 DEsopoPape(; maxdist=typemax(Float64)) = DEsopoPape(maxdist)

@@ -15,8 +15,10 @@ to compute shortest paths. Optional fields for this structure include
 - `all_paths::Bool` - set to `true` to calculate all (redundant, equivalent) paths to a given destination
 - `track_vertices::Bool` - set to `true` to keep a running list of visited vertices (used for specific
   centrality calculations; generally not needed).
-- `maxdist::Float64` (default: `Inf`) specifies the maximum path distance beyond which all path distances
+- `maxdist<:Real` (default: `Inf`) specifies the maximum path distance beyond which all path distances
    are assumed to be infinite (that is, they do not exist).
+- `neighborfn::Function` (default: [`outneighbors`](@ref) - specify the neighbor function to use during the
+   graph traversal.
 
 `Dijkstra` is the default algorithm used when a distance matrix is specified.
 
@@ -37,14 +39,15 @@ D = transpose(sparse(transpose(D)))
 Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
 should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
 """
-struct Dijkstra <: ShortestPathAlgorithm
+struct Dijkstra{F<:Function, T<:Real} <: ShortestPathAlgorithm
     all_paths::Bool
     track_vertices::Bool
-    maxdist::Float64
+    maxdist::T
+    neighborfn::F
 end
 
-Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64)) =
-    Dijkstra(all_paths, track_vertices, maxdist)
+Dijkstra(;all_paths=false, track_vertices=false, maxdist=typemax(Float64), neighborfn=outneighbors) =
+    Dijkstra(all_paths, track_vertices, maxdist, neighborfn)
 
 function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
     nvg = nv(g)
@@ -75,7 +78,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         end
 
         d = dists[u] # Cannot be typemax if `u` is in the queue
-        for v in outneighbors(g, u)
+        for v in alg.neighborfn(g, u)
             alt = d + distmx[u, v]
 
             alt > alg.maxdist && continue
