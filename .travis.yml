@@ -10,6 +10,10 @@ julia:
 notifications:
   email: false
 
+# Remove in 2.0 - we need this because we're checking warning logs in ShortestPaths
+# and depwarn is interfering
+script: julia --depwarn=no -e 'using Pkg; Pkg.build(); Pkg.test(coverage=true)'  
+
 jobs:
   allow_failures:
     - julia: nightly
