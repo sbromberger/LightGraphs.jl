@@ -809,7 +809,7 @@ julia> collect(edges(g))
 ```
 """
 function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
-    vs = sort!(unique(vs))
+    sort!(unique(vs))
     merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
@@ -858,7 +858,7 @@ end
 
 # special case for digraphs
 @traitfn function merge_vertices!(g::::IsDirected, vs::Vector{U})  where U <: Integer
-    vs = sort!(vs, rev=true)
+    sort!(vs, rev=true)
     v0 = vs[end]
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(g, v)
