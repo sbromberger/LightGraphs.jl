@@ -746,21 +746,21 @@ julia> collect(edges(h))
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
-    sort!(vs)
-    nvnew = nv(g) - length(unique(vs)) + 1
+    svs = sort!(vs)
+    nvnew = nv(g) - length(unique(svs)) + 1
     nvnew <= nv(g) || return g
-    (v0, vm) = extrema(vs)
+    (v0, vm) = (first(svs), last(svs))
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[vs] .= v0
-    shifts = compute_shifts(nv(g), vs[2:end])
+    labels[svs] .= v0
+    shifts = compute_shifts(nv(g), svs[2:end])
     for v in vertices(g)
         if labels[v] != v0
             labels[v] -= shifts[v]
         end
     end
 
-    #if v in vs then labels[v] == v0 else labels[v] == v
+    #if v in svs then labels[v] == v0 else labels[v] == v
     newg = SimpleGraph(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
@@ -808,8 +808,9 @@ julia> collect(edges(g))
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
-    vs = sort!(unique(vs))
+function merge_vertices!(g::LightGraphs.SimpleGraphs.Graph{T}, vs::Vector{U}) where {U<:Integer, T}
+    unique!(vs)
+    sort!(vs)
     merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
@@ -857,7 +858,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 end
 
 # special case for digraphs
-@traitfn function merge_vertices!(g::::IsDirected, vs::Vector{U})  where U <: Integer
+function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph, vs::Vector{U})  where {U<:Integer}
     vs = sort!(vs, rev=true)
     v0 = vs[end]
     @inbounds for v in vs[1:end-1]
