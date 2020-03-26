@@ -23,7 +23,7 @@ testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 tests = [
     "simplegraphs/runtests",
     "linalg13/runtests",
-    "parallel/runtests",
+    "parallel13/runtests",
     "interface",
     "contiguous_vertices",
     "core",
@@ -47,6 +47,7 @@ tests = [
     "shortestpaths13/floyd-warshall",
     "shortestpaths13/yen",
     "shortestpaths13/spfa",
+    "ShortestPaths/runtests",
     "traversals13/bfs",
     "traversals13/bipartition",
     "traversals13/greedy_color",

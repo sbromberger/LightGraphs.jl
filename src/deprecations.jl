@@ -10,3 +10,4 @@
 
 # 2.0.0 deprecations
 # Traversals / SP
+@deprecate dists ShortestPaths.distances
