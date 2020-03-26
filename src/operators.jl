@@ -743,32 +743,11 @@ julia> collect(edges(h))
  Edge 3 => 4
 ```
 """
-function merge_vertices(g::AbstractGraph, vs)
-    labels = collect(1:nv(g))
-    # Use lowest value as new vertex id.
-    svs = sort!(vs)
-    nvnew = nv(g) - length(unique(svs)) + 1
-    nvnew <= nv(g) || return g
-    (v0, vm) = (first(svs), last(svs))
-    v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
-    vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[svs] .= v0
-    shifts = compute_shifts(nv(g), svs[2:end])
-    for v in vertices(g)
-        if labels[v] != v0
-            labels[v] -= shifts[v]
-        end
-    end
-
-    #if v in svs then labels[v] == v0 else labels[v] == v
-    newg = SimpleGraph(nvnew)
-    for e in edges(g)
-        u, w = src(e), dst(e)
-        if labels[u] != labels[w] #not a new self loop
-            add_edge!(newg, labels[u], labels[w])
-        end
-    end
-    return newg
+function merge_vertices(graph::AbstractGraph, vs)
+    g = copy(graph)
+    v = copy(vs)
+    merge_vertices!(g, v)
+    return g
 end
 
 """
@@ -778,7 +757,7 @@ Combine vertices specified in `vs` into single vertex whose
 index will be the lowest value in `vs`. All edges connected to vertices in `vs`
 connect to the new merged vertex.
 
-Return a vector with new vertex values are indexed by the original vertex indices.
+Return the vertex label that vertices in `vs` have been merged to.
 
 # Examples
 ```jldoctest
@@ -810,51 +789,17 @@ julia> collect(edges(g))
 """
 function merge_vertices!(g::LightGraphs.SimpleGraphs.Graph{T}, vs::Vector{U}) where {U<:Integer, T}
     unique!(vs)
-    sort!(vs)
-    merged_vertex = popfirst!(vs)
-
-    x = zeros(Int, nv(g))
-    x[vs] .= 1
-    new_vertex_ids = collect(1:nv(g)) .- cumsum(x)
-    new_vertex_ids[vs] .= merged_vertex
-
-    for i in vertices(g)
-        # Adjust connections to merged vertices
-        if (i != merged_vertex) && !insorted(i, vs)
-            nbrs_to_rewire = Set{T}()
-            for j in outneighbors(g, i)
-                if insorted(j, vs)
-                    push!(nbrs_to_rewire, merged_vertex)
-                else
-                    push!(nbrs_to_rewire, new_vertex_ids[j])
-                end
+    vs = sort!(vs, rev=true)
+    v0 = vs[end]
+    @inbounds for v in vs[1:end-1]
+        @inbounds for u in neighbors(g, v)
+            if isempty(searchsorted(vs, u, rev=true))
+                add_edge!(g, u, v0)
             end
-            g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
-
-
-        # Collect connections to new merged vertex
-        else
-            nbrs_to_merge = Set{T}()
-            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
-                push!(nbrs_to_merge, new_vertex_ids[element])
-            end
-
-            for j in vs, e in outneighbors(g, j)
-                if new_vertex_ids[e] != merged_vertex
-                    push!(nbrs_to_merge, new_vertex_ids[e])
-                end
-            end
-            g.fadjlist[i] = sort(collect(nbrs_to_merge))
         end
+        rem_vertex!(g, v)
     end
-
-    # Drop excess vertices
-    g.fadjlist = g.fadjlist[1:(end - length(vs))]
-
-    # Correct edge counts
-    g.ne = sum(degree(g, i) for i in vertices(g)) / 2
-
-    return new_vertex_ids
+    v0
 end
 
 # special case for digraphs
