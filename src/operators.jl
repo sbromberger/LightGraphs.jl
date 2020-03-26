@@ -808,7 +808,8 @@ julia> collect(edges(g))
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
+function merge_vertices! end
+@traitfn function merge_vertices!(g::AG::(!IsDirected), vs::Vector{U} where U <: Integer) where {T, AG<:AbstractGraph{T}}
     sort!(unique(vs))
     merged_vertex = popfirst!(vs)
 
@@ -857,9 +858,9 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 end
 
 # special case for digraphs
-@traitfn function merge_vertices!(g::::IsDirected, vs::Vector{U})  where U <: Integer
+@traitfn function merge_vertices!(g::AG::IsDirected, vs::Vector{U})  where {T, AG<:AbstractGraph{T}, U <: Integer}
     sort!(vs, rev=true)
-    v0 = vs[end]
+    v0 = T(vs[end])
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(g, v)
             if isempty(searchsorted(vs, u, rev=true))
