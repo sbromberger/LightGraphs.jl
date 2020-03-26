@@ -859,7 +859,8 @@ end
 
 # special case for digraphs
 function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph, vs::Vector{U})  where {U<:Integer}
-    vs = sort!(vs, rev=true)
+    unique!(vs)
+    sort!(vs, rev=true)
     v0 = vs[end]
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(g, v)
