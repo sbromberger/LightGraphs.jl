@@ -250,4 +250,13 @@
               @test (4, 2) ∉ z
         end
     end # JarvisShier scc testset
+    @testset "test #1363" begin
+        g = complete_graph(3)
+        d = zeros(3, 3)
+        d[1, 2] = 10
+        d[1, 3] = 1
+        d[3, 2] = 1
+        @test sort(neighborhood(g, 1, 4, d)) == [1, 2, 3]
+    end
+
 end
