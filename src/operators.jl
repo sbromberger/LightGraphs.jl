@@ -809,7 +809,7 @@ julia> collect(edges(g))
 ```
 """
 function merge_vertices! end
-@traitfn function merge_vertices!(g::AG::(!IsDirected), vs::Vector{U} where U <: Integer) where {T, AG<:AbstractGraph{T}}
+@traitfn function merge_vertices!(g::AG::(!IsDirected), vs::Vector{U} where {T, AG<:AbstractGraph{T}, U <: Integer}
     sort!(unique(vs))
     merged_vertex = popfirst!(vs)
 
