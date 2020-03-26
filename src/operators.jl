@@ -857,21 +857,21 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 end
 
 # special case for digraphs
-@traitfn function merge_vertices!(g::::IsDirected, v::Vector{U})  where U <: Integer
-    v0 = minimum(v)
-    vs = Set(v)
-    for t in vs
-        for u in outneighbors(g, t)
-            if !(u in vs)
-                add_edge!(g, v0, u)
-            end
-        end
-        for u in inneighbors(g, t)
+@traitfn function merge_vertices!(g::::IsDirected, vs::Vector{U})  where U <: Integer
+    vs = sort(vs, rev=true)
+    v0 = vs[end]
+    for v in vs[1:end-1]
+        for u in inneighbors(g, v)
             if !(u in vs)
                 add_edge!(g, u, v0)
             end
         end
+        for u in outneighbors(g, v)
+            if !(u in vs)
+                add_edge!(g, v0, u)
+            end
+        end
+        rem_vertex!(g, v)
     end
-    delete!(vs, v0)
-    return rem_vertices!(g, collect(vs))
+    v0
 end
