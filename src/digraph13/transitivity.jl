@@ -161,7 +161,7 @@ function transitivereducion end
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
     verts_rep = map(s -> s[1], scc)
     state = Traversals.DiSpanTree(verts_rep, zeros(eltype(g), nv(cg)), eltype(g)(0), resultg)
-    Traversals.traverse_graph!(cg, vertices(cg), DepthFirst(), state)
+    Traversals.traverse_graph!(cg, vertices(cg), Traversals.DepthFirst(), state)
     
 # Replace each strongly connected component with a directed cycle.
     @inbounds(
