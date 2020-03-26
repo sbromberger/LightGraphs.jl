@@ -6,9 +6,9 @@ savegraph(&quot;mygraph.lgz&quot;, g)
 reloaded_g = loadgraph(&quot;mygraph.lgz&quot;)</code></pre><p>In addition, graphs can also be saved in an uncompressed format using the <code>compress=false</code> option.</p><pre><code class="language-julia">
 savegraph(&quot;mygraph.lg&quot;, g, compress=false)
 
-reloaded_g = loadgraph(&quot;mygraph.lg&quot;)</code></pre><p>Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.</p><pre><code class="language-julia">graph_dict = {&quot;g1&quot; =&gt; erdos_renyi(5, 0.1),
-              &quot;g2&quot; =&gt; erdos_renyi(10, 0.2),
-              &quot;g3&quot; =&gt; erdos_renyi(2, 0.9)}
+reloaded_g = loadgraph(&quot;mygraph.lg&quot;)</code></pre><p>Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.</p><pre><code class="language-julia">graph_dict = Dict(&quot;g1&quot; =&gt; erdos_renyi(5, 0.1),
+                  &quot;g2&quot; =&gt; erdos_renyi(10, 0.2),
+                  &quot;g3&quot; =&gt; erdos_renyi(2, 0.9))
 
 savegraph(&quot;mygraph_dict.lg&quot;, graph_dict)
 
