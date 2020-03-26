@@ -17,46 +17,47 @@ function traverse_graph!(
     state::TraversalState,
     ) where U<:Integer
 
+
     n = nv(g)
     visited = falses(n)
     S = Vector{Tuple{U,U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
     @inbounds for s in ss
+        visited[s] && return
         us = U(s)
         visited[us] = true
         push!(S, (us, 1))
         initfn!(state, us) || return false
-    end
+        ptr = one(U)
 
-    ptr = one(U)
+        while !isempty(S)
+            v, _ = S[end]
+            previsitfn!(state, v) || return false
 
-    while !isempty(S)
-        v, _ = S[end]
-        previsitfn!(state, v) || return false
-
-        neighs=alg.neighborfn(g, v)
-        @inbounds while ptr <= length(neighs)
-            i = neighs[ptr]
-            visitfn!(state, v, i) || return false
-            if !visited[i]  # find the first unvisited neighbor
-                newvisitfn!(state, v, i) || return false
-                visited[i] = true
-                push!(S, (i, ptr+1))
-                break
+            neighs=alg.neighborfn(g, v)
+            @inbounds while ptr <= length(neighs)
+                i = neighs[ptr]
+                visitfn!(state, v, i) || return false
+                if !visited[i]  # find the first unvisited neighbor
+                    newvisitfn!(state, v, i) || return false
+                    visited[i] = true
+                    push!(S, (i, ptr+1))
+                    break
+                end
+                ptr += 1
             end
-            ptr += 1
-        end
-        postvisitfn!(state, v) || return false
-        # if ptr > length(neighs) then we have finished all children of the node,
-        # and the next time we pop from the stack we will be in the parent of the current
-        # node. We would like to continue from where we stoped, otherwise we have found
-        # a new unvisited child, so we will make ptr = 1
-        if ptr > length(neighs)
-            postlevelfn!(state) || return false
-            _, ptr =pop!(S)
-        else
-            ptr = 1 # we will enter new node
+            postvisitfn!(state, v) || return false
+            # if ptr > length(neighs) then we have finished all children of the node,
+            # and the next time we pop from the stack we will be in the parent of the current
+            # node. We would like to continue from where we stoped, otherwise we have found
+            # a new unvisited child, so we will make ptr = 1
+            if ptr > length(neighs)
+                postlevelfn!(state) || return false
+                _, ptr =pop!(S)
+            else
+                ptr = 1 # we will enter new node
+            end
         end
     end
     return true
@@ -104,11 +105,11 @@ function topological_sort end
 @traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))    
+    state = TopoSortState(vcolor, verts, zero(T))
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
- 
+
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
-      
+
     length(state.verts) < nv(g) && throw(CycleError())
     length(state.verts) > nv(g) && throw(TraversalError())
     return reverse!(state.verts)
@@ -151,3 +152,23 @@ end
 end
 
 @traitfn is_cyclic(g::::(!IsDirected), alg::TraversalAlgorithm=DepthFirst()) = ne(g) > 0
+
+mutable struct DiSpanTree{T<:Integer} <: TraversalState
+    verts::Vector{T}
+    label::Vector{T}
+    head::T
+    resultg::SimpleDiGraph{T}
+end
+
+function visitfn!(s::DiSpanTree, u, v)
+    if s.label[v] != s.head
+        s.label[v] = s.head
+        add_edge!(s.resultg, s.verts[u], s.verts[v])
+    end
+    return true
+end
+
+function initfn!(s::DiSpanTree, u)
+    s.head = u
+    return true
+end

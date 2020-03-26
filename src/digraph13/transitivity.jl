@@ -157,48 +157,12 @@ julia> collect(edges(transitivereduction(barbell)))
 function transitivereducion end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
     scc = strongly_connected_components(g)
-    cg = condensation(g, scc)
-
-    reachable = Vector{Bool}(undef, nv(cg))
-    visited = Vector{Bool}(undef, nv(cg))
-    stack = Vector{eltype(cg)}(undef, nv(cg))
+    cg = condensation(g, reverse!(scc))
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
-
-# Calculate the transitive reduction of the acyclic condensation graph.
-    @inbounds(
-    for u in vertices(cg)
-        fill!(reachable, false) # vertices reachable from u on a path of length >= 2
-        fill!(visited, false)
-        stacksize = 0
-        for v in outneighbors(cg,u)
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
-                end
-            end
-        end
-        while stacksize > 0
-            v = stack[stacksize]
-            stacksize -= 1
-            reachable[v] = true
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
-                end
-            end
-        end
-# Add the edges from the condensation graph to the resulting graph.
-  @simd for v in outneighbors(cg,u)
-            if !reachable[v]
-                add_edge!(resultg, scc[u][1], scc[v][1])
-            end
-        end
-    end)
-
+    verts_rep = map(s -> s[1], scc)
+    state = Traversals.DiSpanTree(verts_rep, zeros(eltype(g), nv(cg)), eltype(g)(0), resultg)
+    Traversals.traverse_graph!(cg, vertices(cg), DepthFirst(), state)
+    
 # Replace each strongly connected component with a directed cycle.
     @inbounds(
     for component in scc
