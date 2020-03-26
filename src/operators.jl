@@ -859,15 +859,16 @@ end
 # special case for digraphs
 @traitfn function merge_vertices!(g::::IsDirected, vs::Vector{U})  where U <: Integer
     vs = sort(vs, rev=true)
+    vsc = Set(vs)
     v0 = vs[end]
     for v in vs[1:end-1]
         for u in inneighbors(g, v)
-            if !(u in vs)
+            if !(u in vsc)
                 add_edge!(g, u, v0)
             end
         end
         for u in outneighbors(g, v)
-            if !(u in vs)
+            if !(u in vsc)
                 add_edge!(g, v0, u)
             end
         end
