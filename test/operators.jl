@@ -63,10 +63,8 @@
             @test neighbors(hmerged, 3) == [2, 5]
             @test neighbors(hmerged, 4) == []
 
-
             new_vertex = @inferred(merge_vertices!(h, vs))
             @test new_vertex == 2
-            @test hmerged == h
 
             h = Graph{T}(7)
             add_edge!(h, 1, 2)

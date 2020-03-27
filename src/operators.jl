@@ -743,11 +743,28 @@ julia> collect(edges(h))
  Edge 3 => 4
 ```
 """
-function merge_vertices(graph::AbstractGraph, vs)
-    g = copy(graph)
-    v = copy(vs)
-    merge_vertices!(g, v)
-    return g
+function merge_vertices(graph::AbstractGraph, v)
+    vs = copy(v)
+    unique!(vs)
+    sort!(vs, rev=true)
+    v0 = vs[end]
+    newg = SimpleGraph(nv(graph))
+    for e in edges(graph)
+        u, w = src(e), dst(e)
+        u_in_v = !isempty(searchsorted(vs, u, rev=true))
+        w_in_v = !isempty(searchsorted(vs, w, rev=true))
+        if u_in_v
+            if !w_in_v
+                add_edge!(newg, v0, w)
+            end
+        elseif w_in_v
+            add_edge!(newg, u, v0)
+        else
+            add_edge!(newg, u, w)
+        end
+    end
+    rem_vertices!(newg, vs[1:end-1])
+    newg
 end
 
 """
