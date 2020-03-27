@@ -220,7 +220,6 @@ julia> strongly_connected_components(g)
  [5, 6, 7]
  [1, 2, 3, 4]
  [10, 11]
-
 ```
 """
 function strongly_connected_components end
