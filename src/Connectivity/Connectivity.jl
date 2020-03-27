@@ -1,5 +1,4 @@
 module Connectivity
-
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 using LightGraphs
