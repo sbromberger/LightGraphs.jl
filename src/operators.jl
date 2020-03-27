@@ -864,12 +864,12 @@ function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph{T}, vs::Vecto
     v0 = T(vs[end])
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(g, v)
-            if !insorted(vs, u, rev=true)
+            if !insorted(u, vs, rev=true)
                 add_edge!(g, u, v0)
             end
         end
         @inbounds for u in outneighbors(g, v)
-            if !insorted(vs, u, rev=true)
+            if !insorted(u, vs, rev=true)
                 add_edge!(g, v0, u)
             end
         end
