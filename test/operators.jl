@@ -63,6 +63,13 @@
             @test neighbors(hmerged, 3) == []
             @test neighbors(hmerged, 4) == [2, 5]
 
+            g2 = path_graph(5)
+            h2 = merge_vertices(g, [2, 3])
+            @test neighbors(h2, 1) == [2]
+            @test neighbors(h2, 2) == [1, 3]
+            @test neighbors(h2, 3) == [2, 4]
+            @test neighbors(h2, 4) == [3]
+
             new_map = @inferred(merge_vertices!(h, vs))
             @test new_map == [1, 2, 2, 3, 4, 5, 2]
             @test neighbors(h, 1) == [2]

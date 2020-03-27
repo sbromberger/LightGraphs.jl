@@ -712,7 +712,7 @@ Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] .= 1
+    tmp[x] .= 1
     return cumsum!(tmp, tmp)
 end
 
@@ -746,8 +746,8 @@ julia> collect(edges(h))
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
-    svs = sort!(vs)
-    nvnew = nv(g) - length(unique(svs)) + 1
+    svs = sort(unique(vs))
+    nvnew = nv(g) - length(svs) + 1
     nvnew <= nv(g) || return g
     (v0, vm) = (first(svs), last(svs))
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
@@ -858,18 +858,18 @@ function merge_vertices!(g::LightGraphs.SimpleGraphs.Graph{T}, vs::Vector{U}) wh
 end
 
 # special case for digraphs
-function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph, vs::Vector{U})  where {U<:Integer}
+function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph{T}, vs::Vector{U})  where {T, U<:Integer}
     unique!(vs)
     sort!(vs, rev=true)
-    v0 = vs[end]
+    v0 = T(vs[end])
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(g, v)
-            if isempty(searchsorted(vs, u, rev=true))
+            if !insorted(u, vs, rev=true)
                 add_edge!(g, u, v0)
             end
         end
         @inbounds for u in outneighbors(g, v)
-            if isempty(searchsorted(vs, u, rev=true))
+            if !insorted(u, vs, rev=true)
                 add_edge!(g, v0, u)
             end
         end
