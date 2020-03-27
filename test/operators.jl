@@ -107,10 +107,13 @@
 
         @testset "merge vertices digraph" begin
             d0 = path_digraph(10)
+            merge_vertices!(d0, [6,4,5,5,4,5,6,5,4,6])
+            @test length(edges(d0)) == 7
             d1 = path_digraph(10)
-            merge_vertices!(d1,[4,5,6])
-            @test length(edges(d0)) == 9
+            merge_vertices!(d1, [4,5,6])
             @test length(edges(d1)) == 7
+
+            @test d0 == d1
         end
     end
 
