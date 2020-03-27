@@ -30,9 +30,9 @@ reloaded_g = loadgraph("mygraph.lg")
 Finally, dictionaries of graphs can also be saved and subsequently re-loaded one by one.
 
 ```julia
-graph_dict = {"g1" => erdos_renyi(5, 0.1),
-              "g2" => erdos_renyi(10, 0.2),
-              "g3" => erdos_renyi(2, 0.9)}
+graph_dict = Dict("g1" => erdos_renyi(5, 0.1),
+                  "g2" => erdos_renyi(10, 0.2),
+                  "g3" => erdos_renyi(2, 0.9))
 
 savegraph("mygraph_dict.lg", graph_dict)
 
