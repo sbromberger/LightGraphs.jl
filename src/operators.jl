@@ -746,6 +746,7 @@ julia> collect(edges(h))
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
+    unique!(vs)
     sort!(vs)
     nvnew = nv(g) - length(unique(vs)) + 1
     nvnew <= nv(g) || return g
