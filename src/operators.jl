@@ -712,7 +712,7 @@ Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] .= 1
+    tmp[x] .= 1
     return cumsum!(tmp, tmp)
 end
 
