@@ -1,4 +1,4 @@
-#### REMOVE-2.0
+# TODO 2.0.0: Remove this file
 
 function bfs_parents(g::AbstractGraph, s::Integer; dir = :out)
     Base.depwarn("`bfs_parents` is deprecated. Equivalent functionality has been moved to `LightGraphs.Traversals.parents`.", :bfs_parents)
