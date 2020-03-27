@@ -230,7 +230,6 @@ function strongly_connected_components end
     nvg = nv(g)
     count = one_t
 
-
     index = zeros(T, nvg)         # first time in which vertex is discovered
     stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
     onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
