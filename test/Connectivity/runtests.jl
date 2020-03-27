@@ -5,7 +5,7 @@ const LC = LightGraphs.Connectivity
 
 const conntestdir = dirname(@__FILE__)
 
-conntests = [
+const conntests = [
     "connectivity.jl",
 ]
 
@@ -15,4 +15,3 @@ conntests = [
         include(tp)
     end
 end
-
