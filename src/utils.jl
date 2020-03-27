@@ -45,16 +45,16 @@ sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a)
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
-    insorted(item, collection)
+    insorted(item, collection; rev=false)
 
 Return true if `item` is in sorted collection `collection`.
 
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-function insorted(item, collection)
-    index = searchsortedfirst(collection, item)
-    @inbounds return (index <= length(collection) && collection[index] == item)
+function insorted(item, collection; rev=false)
+    index = searchsorted(collection, item, rev=rev)
+    return !isempty(index)
 end
 
 """
