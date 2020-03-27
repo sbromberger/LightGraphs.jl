@@ -62,7 +62,7 @@ end
 Given a vector of component labels, return a vector of vectors representing the vertices associated
 with a given component id.
 """
-function components(labels::Vector{T}) where T <: Integer
+function components(labels::AbstractVector{T}) where {T <: Integer}
     d = Dict{T,T}()
     c = Vector{Vector{T}}()
     i = one(T)
