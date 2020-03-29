@@ -35,7 +35,7 @@ mutable struct TrackingBFSSPState{U} <: Traversals.TraversalState
     dists::Vector{U}
     n_level::U
     pathcounts::Vector{U}
-    preds::Vector{Vector{U}}
+    predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
     maxdist::U
 end
@@ -52,14 +52,14 @@ end
     s.parents[v] = u
     push!(s.closest_vertices, v)
     s.pathcounts[v] = s.pathcounts[u]
-    s.preds[v] = [u;]
+    s.predecessors[v] = [u;]
     return true
 end
 
 function revisitfn!(s::TrackingBFSSPState, u, v)
     if s.dists[v] == s.n_level   # this is another shortest path.
         s.pathcounts[v] += s.pathcounts[u] 
-        push!(s.preds[v], u)
+        push!(s.predecessors[v], u)
     end
     return true
 end
@@ -75,7 +75,7 @@ struct TrackingBFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{U}
     pathcounts::Vector{U}
-    preds::Vector{Vector{U}}
+    predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
 end
 
@@ -88,7 +88,7 @@ function shortest_paths(
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
-    preds = fill(Vector{U}(), n)
+    predecessors = fill(Vector{U}(), n)
     pathcounts = zeros(U, n)
     closest_vertices = Vector{U}()
     sizehint!(closest_vertices, n)
@@ -98,12 +98,12 @@ function shortest_paths(
     # dists::Vector{U}
     # n_level::U
     # pathcounts::Vector{U}
-    # preds::Vector{Vector{U}}
+    # predecessors::Vector{Vector{U}}
     # closest_vertices::Vector{U}
     # maxdist::U
-    state = TrackingBFSSPState(parents, dists, one(U), pathcounts, preds, closest_vertices, md)
+    state = TrackingBFSSPState(parents, dists, one(U), pathcounts, predecessors, closest_vertices, md)
     Traversals.traverse_graph!(g, ss, alg.traversal, state)
-    return TrackingBFSResult(state.parents, state.dists, state.pathcounts, state.preds, state.closest_vertices)
+    return TrackingBFSResult(state.parents, state.dists, state.pathcounts, state.predecessors, state.closest_vertices)
 end
 
 

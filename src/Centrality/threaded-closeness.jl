@@ -37,7 +37,7 @@ struct ThreadedCloseness <: CentralityMeasure
 end
 
 # internal function so we don't have to duplicate a lot of code.
-func _threaded_closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedCloseness, use_distmx::Bool)::Vector{Float64}
+function _threaded_closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedCloseness, use_distmx::Bool)::Vector{Float64}
     n_v = Int(nv(g))
     closeness = Vector{Float64}(undef, n_v)
 
@@ -45,8 +45,8 @@ func _threaded_closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedClose
         if degree(g, u) == 0     # no need to do SP here
             closeness[u] = 0.0
         else
-            d = use_distmx ?  ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra())) :
-                              ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, ShortestPaths.BFS())
+            d = use_distmx ? ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra())) :
+                             ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, ShortestPaths.BFS()))
             δ = filter(x -> x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1

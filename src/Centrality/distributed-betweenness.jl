@@ -1,16 +1,49 @@
-betweenness_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g), distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false, parallel=:distributed) = 
-parallel == :distributed ? distr_betweenness_centrality(g, vs, distmx; normalize=normalize, endpoints=endpoints) :
-threaded_betweenness_centrality(g, vs, distmx; normalize=normalize, endpoints=endpoints)
+"""
+    struct DistributedBetweenness{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+        normalize::Bool
+        endpoints::Bool
+        k::Int
+        vs::T
+    end
+        
+A struct representing a distributed algorithm to calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
+of a graph `g` across all vertices, a specified subset of vertices `vs`, and/or a random subset of `k` vertices. 
 
-betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false, parallel=:distributed) =
-parallel == :distributed ? distr_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints) :
-threaded_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
+See [`Betweenness`](@ref) for usage examples.
 
-function distr_betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    endpoints=false)::Vector{Float64}
+### Optional Arguments
+- `normalize=true`: If true, normalize the betweenness values by the
+total number of possible distinct paths between all pairs in the graphs.
+For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
+and for a directed graph, ``{(|V|-1)(|V|-2)}``.
+- `endpoints=false`: If true, include endpoints in the shortest path count.
+- `k=0`: If `k>0`, randomly sample `k` vertices from `vs` if provided, or from `vertices(g)` if empty.
+- `vs=[]`: if `vs` is nonempty, run betweenness centrality only from these vertices.
+"""
+struct DistributedBetweenness{T<:AbstractVector{<:Integer}} <: CentralityMeasure
+    normalize::Bool
+    endpoints::Bool
+    k::Int
+    vs::T
+end
+
+DistributedBetweenness(;normalize=true, endpoints=false, k=0, vs=Vector{Int}()) = DistributedBetweenness(normalize, endpoints, k, vs)
+
+centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::DistributedBetweenness) =
+    _distributed_betweenness_centrality(g, distmx, alg, true)
+centrality(g::AbstractGraph, alg::DistributedBetweenness) =
+    _distributed_betweenness_centrality(g, zeros(0,0), alg, false)
+
+function _distributed_betweenness_centrality(
+        g::AbstractGraph,
+        distmx::AbstractMatrix,
+        alg::DistributedBetweenness,
+        use_dists::Bool)::Vector{Float64}
+
+    vs = isempty(alg.vs) ? vertices(g) : alg.vs
+    if alg.k > 0
+        sample!(vs, alg.k)
+    end
 
     n_v = nv(g)
     k = length(vs)
@@ -21,55 +54,18 @@ function distr_betweenness_centrality(g::AbstractGraph,
     betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
-            if endpoints
-                LightGraphs._accumulate_endpoints!(temp_betweenness, state, g, s)
+            state = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, ShortestPaths.Dijkstra(all_paths=true, closest_vertices=true)) :
+                ShortestPaths.shortest_paths(g, s, ShortestPaths.TrackingBFS())
+            if alg.endpoints
+                _accumulate_endpoints!(temp_betweenness, state, g, s)
             else
-                LightGraphs._accumulate_basic!(temp_betweenness, state, g, s)
+                _accumulate_basic!(temp_betweenness, state, g, s)
             end
         end
         temp_betweenness
     end
 
-    LightGraphs._rescale!(betweenness, n_v, normalize, isdir, k)
+    _rescale!(betweenness, n_v, alg.normalize, isdir, k)
 
     return betweenness
 end
-
-distr_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    distr_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
-
-function threaded_betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    endpoints=false)::Vector{Float64}
-
-    n_v = nv(g)
-    k = length(vs)
-    isdir = is_directed(g)
-
-    local_betweenness = [zeros(n_v) for i in 1:nthreads()]
-    vs_active = findall((x)->degree(g, x) > 0, vs) # 0 might be 1?
-
-    Base.Threads.@threads for s in vs_active
-        state = LightGraphs.dijkstra_shortest_paths(g, s, distmx; allpaths=true, trackvertices=true)
-        if endpoints
-            LightGraphs._accumulate_endpoints!(local_betweenness[Base.Threads.threadid()], state, g, s)
-        else
-            LightGraphs._accumulate_basic!(local_betweenness[Base.Threads.threadid()], state, g, s)
-        end
-    end
-    betweenness = reduce(+, local_betweenness)
-
-    LightGraphs._rescale!(betweenness,
-    n_v,
-    normalize,
-    isdir,
-    k)
-
-    return betweenness
-end
-
-threaded_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    threaded_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)

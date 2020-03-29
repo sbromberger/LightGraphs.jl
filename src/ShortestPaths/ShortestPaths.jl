@@ -168,8 +168,8 @@ For [`ShortestPathAlgorithm`](@ref)s that compute all-pairs shortest
 paths, `parents(state)` will return a matrix (indexed by source and destination
 vertices) of parents.
 """
-parents(result::ShortestPathResult, v::Integer) = state.parents[v]
-parents(result::ShortestPathResult) = state.parents
+parents(result::ShortestPathResult, v::Integer) = result.parents[v]
+parents(result::ShortestPathResult) = result.parents
 
 tree(r::ShortestPathResult) = tree(parents(r))
 

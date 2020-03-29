@@ -35,12 +35,6 @@ struct DistributedCloseness <: CentralityMeasure
     normalize::Bool
 end
 
-# internal function so we don't have to duplicate a lot of code.
-func _closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedCloseness, use_distmx=false)::Vector{Float64}
-closeness_centrality(g::AbstractGraph, distmx::AbstractMatrix=weights(g); normalize=true, parallel=:distributed) = 
-parallel == :distributed ? distr_closeness_centrality(g, distmx; normalize=normalize) :
-threaded_closeness_centrality(g, distmx; normalize=normalize)
-
 function _distributed_closeness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::DistributedCloseness, use_dists::Bool)::Vector{Float64}
     n_v = Int(nv(g))
     closeness = SharedVector{Float64}(n_v)

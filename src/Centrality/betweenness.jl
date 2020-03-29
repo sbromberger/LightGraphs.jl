@@ -1,12 +1,12 @@
 # Betweenness centrality measures
-# TODO - weighted, separate unweighted, edge betweenness
+# TODO - edge betweenness
 
 """
     struct Betweenness{T<:AbstractVector{<:Integer}} <: CentralityMeasure
         normalize::Bool
         endpoints::Bool
         k::Int
-        vs::U
+        vs::T
     end
         
 A struct representing an algorithm to calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
@@ -57,11 +57,11 @@ end
 
 Betweenness(; normalize=true, endpoints=false, k=0, vs=Vector{Int}()) = Betweenness(normalize, endpoints, k, vs)
 
-centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Betweenness) = _betweenness_centrality(g, vs, distmx, alg, true)
+centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Betweenness) = _betweenness_centrality(g, distmx, alg, true)
 
-centrality(g::AbstractGraph, alg::Betweenness) = _betweenness_centrality(g, vs, zeros(0,0), alg, false)
+centrality(g::AbstractGraph, alg::Betweenness) = _betweenness_centrality(g, zeros(0,0), alg, false)
 
-function _betweenness_centrality(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg::Betweenness, use_dists::Bool)
+function _betweenness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Betweenness, use_dists::Bool)
     vs = isempty(alg.vs) ? vertices(g) : alg.vs
     if alg.k > 0
         sample!(vs, alg.k)
@@ -72,7 +72,7 @@ function _betweenness_centrality(g::AbstractGraph, vs::AbstractVector, distmx::A
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
-    state = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackedBFS()
+    state = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackingBFS()
     for s in vs
         if degree(g, s) > 0  # this might be 1?
             result = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, state) : ShortestPaths.shortest_paths(g, s, state)
@@ -94,19 +94,19 @@ function _betweenness_centrality(g::AbstractGraph, vs::AbstractVector, distmx::A
 end
 
 function _accumulate_basic!(betweenness::Vector{Float64},
-    result::ShortestPaths.ShortestPathResult,  # we only really accept DijkstraResult and TrackedBFSResult.
+    result::ShortestPaths.ShortestPathResult,  # we only really accept DijkstraResult and TrackingBFSResult.
     g::AbstractGraph,
     si::Integer)
 
     n_v = length(ShortestPaths.parents(result)) # this is the ttl number of vertices
     δ = zeros(n_v)
-    σ = result.pathcounts   # these are unique to Dijkstra and TrackedBFS.
+    σ = result.pathcounts   # these are unique to Dijkstra and TrackingBFS.
     P = result.predecessors
 
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(result.closest_vertices) # Also unique to Dijkstra and TrackedBFS.
+    S = reverse(result.closest_vertices) # Also unique to Dijkstra and TrackingBFS.
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
         for v in P[w]
@@ -122,7 +122,7 @@ function _accumulate_basic!(betweenness::Vector{Float64},
 end
 
 function _accumulate_endpoints!(betweenness::Vector{Float64},
-    result::ShortestPaths.ShortestPathResult,  # we only really accept DijkstraResult and TrackedBFSResult.
+    result::ShortestPaths.ShortestPathResult,  # we only really accept DijkstraResult and TrackingBFSResult.
     g::AbstractGraph,
     si::Integer)
 
