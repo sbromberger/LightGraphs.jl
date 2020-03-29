@@ -2,12 +2,14 @@ module Centrality
 
 # using LightGraphs
 using LightGraphs
+using LightGraphs: sample
 using LightGraphs.ShortestPaths
 using ArnoldiMethod: LM
 using LightGraphs.LinAlg: eigs
 using LinearAlgebra: I, norm
 using SparseArrays: sparse
 using Distributed: @distributed
+using SharedArrays: SharedVector, sdata
 using Base.Threads: @threads, nthreads
 
 import Base: show
@@ -44,8 +46,7 @@ include("radiality.jl")
 include("threaded-radiality.jl")
 include("distributed-radiality.jl")
 include("stress.jl")
-
-export centrality
-export Betweenness, Closeness, Degree, Eigenvector, Katz, PageRank, Radiality, Stress
+include("distributed-stress.jl")
+include("threaded-stress.jl")
 
 end #module

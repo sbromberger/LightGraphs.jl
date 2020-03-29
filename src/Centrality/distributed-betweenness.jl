@@ -42,7 +42,7 @@ function _distributed_betweenness_centrality(
 
     vs = isempty(alg.vs) ? vertices(g) : alg.vs
     if alg.k > 0
-        sample!(vs, alg.k)
+        vs = sample(vs, alg.k)
     end
 
     n_v = nv(g)
@@ -51,15 +51,16 @@ function _distributed_betweenness_centrality(
 
     # Parallel reduction
 
+    spalg = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackingBFS()
     betweenness = @distributed (+) for s in vs
         temp_betweenness = zeros(n_v)
         if degree(g, s) > 0  # this might be 1?
-            state = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, ShortestPaths.Dijkstra(all_paths=true, closest_vertices=true)) :
-                ShortestPaths.shortest_paths(g, s, ShortestPaths.TrackingBFS())
+            result = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, spalg) :
+                ShortestPaths.shortest_paths(g, s, spalg) 
             if alg.endpoints
-                _accumulate_endpoints!(temp_betweenness, state, g, s)
+                _accumulate_endpoints!(temp_betweenness, result, g, s)
             else
-                _accumulate_basic!(temp_betweenness, state, g, s)
+                _accumulate_basic!(temp_betweenness, result, g, s)
             end
         end
         temp_betweenness

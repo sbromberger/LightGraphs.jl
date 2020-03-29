@@ -1,4 +1,4 @@
-@testset "Pagerank" begin
+@testset "PageRank" begin
     function dense_pagerank_solver(g::AbstractGraph, α=0.85::Real)
         p = fill(1 / nv(g), nv(g))
         danglingnodes = outdegree(g) .== 0
@@ -19,18 +19,18 @@
     for α in [0.75, 0.85]
 
         for g in testdigraphs(g5)
-            @test centrality(g, PageRank())[3] ≈ 0.318 atol = 0.001
-            @test length(@inferred(centrality(g, PageRank()))) == nv(g)
-            @test_throws Centrality.ConvergenceError centrality(g, PageRank(α=2))
-            @test_throws Centrality.ConvergenceError centrality(g, PageRank(α=α, n=2))
-            @test isapprox(centrality(g, PageRank(α=α)), dense_pagerank_solver(g, α), atol=0.001)
+            @test LCENT.centrality(g, LCENT.PageRank())[3] ≈ 0.318 atol = 0.001
+            @test length(@inferred(LCENT.centrality(g, LCENT.PageRank()))) == nv(g)
+            @test_throws Centrality.ConvergenceError LCENT.centrality(g, LCENT.PageRank(α=2))
+            @test_throws Centrality.ConvergenceError LCENT.centrality(g, LCENT.PageRank(α=α, n=2))
+            @test isapprox(LCENT.centrality(g, LCENT.PageRank(α=α)), dense_pagerank_solver(g, α), atol=0.001)
         end
 
         for g in testgraphs(g6)
-            @test length(@inferred(centrality(g, PageRank()))) == nv(g)
-            @test_throws Centrality.ConvergenceError centrality(g, PageRank(α=2))
-            @test_throws Centrality.ConvergenceError centrality(g, PageRank(α=α, n=2))
-            @test isapprox(centrality(g, PageRank(α=α)), dense_pagerank_solver(g, α), atol=0.001)
+            @test length(@inferred(LCENT.centrality(g, LCENT.PageRank()))) == nv(g)
+            @test_throws Centrality.ConvergenceError LCENT.centrality(g, LCENT.PageRank(α=2))
+            @test_throws Centrality.ConvergenceError LCENT.centrality(g, LCENT.PageRank(α=α, n=2))
+            @test isapprox(LCENT.centrality(g, LCENT.PageRank(α=α)), dense_pagerank_solver(g, α), atol=0.001)
         end
     end
 end

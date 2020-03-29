@@ -64,7 +64,7 @@ centrality(g::AbstractGraph, alg::Betweenness) = _betweenness_centrality(g, zero
 function _betweenness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Betweenness, use_dists::Bool)
     vs = isempty(alg.vs) ? vertices(g) : alg.vs
     if alg.k > 0
-        sample!(vs, alg.k)
+        vs = sample(vs, alg.k)
     end
 
     n_v = nv(g)
@@ -72,10 +72,10 @@ function _betweenness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::
     isdir = is_directed(g)
 
     betweenness = zeros(n_v)
-    state = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackingBFS()
+    spalg = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackingBFS()
     for s in vs
         if degree(g, s) > 0  # this might be 1?
-            result = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, state) : ShortestPaths.shortest_paths(g, s, state)
+            result = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, spalg) : ShortestPaths.shortest_paths(g, s, spalg)
             if alg.endpoints
                 _accumulate_endpoints!(betweenness, result, g, s)
             else

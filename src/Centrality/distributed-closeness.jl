@@ -35,16 +35,19 @@ struct DistributedCloseness <: CentralityMeasure
     normalize::Bool
 end
 
+DistributedCloseness(;normalize=true) = DistributedCloseness(normalize)
+
 function _distributed_closeness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::DistributedCloseness, use_dists::Bool)::Vector{Float64}
     n_v = Int(nv(g))
     closeness = SharedVector{Float64}(n_v)
 
+    spalg = use_dists ? ShortestPaths.Dijkstra() : ShortestPaths.BFS()
     @sync @distributed for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = use_dists ? ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra())) :
-                            ShortestPaths.dists(ShortestPaths.shortest_paths(g, u, ShortestPaths.BFS()))
+            d = use_dists ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, spalg)) :
+                ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, spalg))
             δ = filter(x -> x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1

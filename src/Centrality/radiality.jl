@@ -41,10 +41,11 @@ function centrality(g::AbstractGraph, ::Radiality)::Vector{Float64}
 
     meandists = zeros(Float64, n_v)
     dmtr = 0
+    spalg = ShortestPaths.BFS()
     for v in vs
-        d = ShortestPaths.shortest_paths(g, v, ShortestPaths.BFS())
-        dmtr = max(dmtr, maximum(ShortestPaths.distances(d)))
-        meandists[v] = sum(ShortestPaths.distances(d)) / (n_v - 1) # ignore the source vx
+        d = ShortestPaths.distances(ShortestPaths.shortest_paths(g, v, spalg))
+        dmtr = max(dmtr, maximum(d))
+        meandists[v] = sum(d) / (n_v - 1) # ignore the source vx
     end
     meandists = (dmtr + 1) .- (meandists)
     return meandists ./ Float64(dmtr)

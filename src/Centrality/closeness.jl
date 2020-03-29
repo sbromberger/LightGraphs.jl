@@ -37,15 +37,17 @@ end
 
 Closeness(;normalize=true) = Closeness(normalize)
 
-function centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness)
+function _closeness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness, use_dists::Bool)::Vector{Float64}
     n_v = nv(g)
-    closeness = zeros(n_v)
+    closeness = zeros(Float64, n_v)
 
+    spalg = use_dists ? ShortestPaths.Dijkstra() : ShortestPaths.BFS()
     for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
             closeness[u] = 0.0
         else
-            d = dists(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra()))
+            d = use_dists ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, spalg)) :
+                            ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, spalg))
             δ = filter(x -> x != typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
@@ -60,3 +62,6 @@ function centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness)
     end
     return closeness
 end
+
+centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness) = _closeness_centrality(g, distmx, alg, true)
+centrality(g::AbstractGraph, alg::Closeness) = _closeness_centrality(g, zeros(0,0), alg, false)

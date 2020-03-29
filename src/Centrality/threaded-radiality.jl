@@ -15,10 +15,11 @@ function centrality(g::AbstractGraph{T}, ::ThreadedRadiality)::Vector{Float64} w
     meandists = Vector{Float64}(undef, n_v)
     maxdists = Vector{T}(undef, n_v)
 
+    spalg = ShortestPaths.BFS()
     @threads for i in vertices(g)
-        d = ShortestPaths.shortest_paths(g, vs[i], ShortestPaths.BFS())
-        maxdists[i] = maximum(ShortestPaths.distances(d))
-        meandists[i] = Float64(sum(ShortestPaths.distances(d))) / Float64(n_v - 1)
+        d = ShortestPaths.distances(ShortestPaths.shortest_paths(g, vs[i], spalg))
+        maxdists[i] = maximum(d)
+        meandists[i] = Float64(sum(d)) / Float64(n_v - 1)
     end
     dmtr = Float64(maximum(maxdists))
     radialities = collect(meandists)

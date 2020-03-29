@@ -8,5 +8,13 @@ function pagerank(
     Base.depwarn("`pagerank` is deprecated. Equivalent functionality has been moved to `LightGraphs.Centrality.centrality`.", :pagerank)
 
     alg = LightGraphs.Centrality.ThreadedPageRank(α, n, ϵ)
-    LightGraphs.Centrality.centrality(g, alg)
+    try
+        LightGraphs.Centrality.centrality(g, alg)
+    catch e
+        if isa(e, LightGraphs.Centrality.ConvergenceError)
+            error("Pagerank did not converge after $n iterations.")
+        else
+            throw(e)
+        end
+    end
 end

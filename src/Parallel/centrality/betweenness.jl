@@ -2,7 +2,7 @@ function betweenness_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g)
     Base.depwarn("betweenness_centrality is deprecated. Equivalent functionality has been moved to `LightGraphs.Centrality.centrality`.", :betweenness_centrality)
     alg = parallel == :distributed ?
         LightGraphs.Centrality.DistributedBetweenness(normalize, endpoints, 0, vs) :
-        LightGraphs.Centrality.ThreadededBetweenness(normalize, endpoints, 0, vs) 
+        LightGraphs.Centrality.ThreadedBetweenness(normalize, endpoints, 0, vs) 
 
     LightGraphs.Centrality.centrality(g, distmx, alg)
 end

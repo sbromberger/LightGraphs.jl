@@ -3,11 +3,11 @@
 
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
     for g in testdigraphs(gint)
-        z  = @inferred(centrality(g, Stress()))
+        z  = @inferred(LCENT.centrality(g, LCENT.Stress()))
         @test z == c
 
-        x  = @inferred(centrality(g, Stress(vs=[3])))
-        x2  = @inferred(centrality(g, Stress(vs=1:20)))
+        x  = @inferred(LCENT.centrality(g, LCENT.Stress(vs=[3])))
+        x2  = @inferred(LCENT.centrality(g, LCENT.Stress(vs=1:20)))
         @test length(x) == 50
         @test length(x2) == 50
     end
@@ -16,7 +16,7 @@
     add_vertex!(g1)
     add_edge!(g1, 4, 5)
     for g in testgraphs(g1)
-        z  = @inferred(centrality(g, Stress()))
+        z  = @inferred(LCENT.centrality(g, LCENT.Stress()))
         @test z == [4, 2, 4, 10, 0]
     end
 end

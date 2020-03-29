@@ -39,7 +39,7 @@ function _threaded_betweenness_centrality(g::AbstractGraph,
 
     vs = isempty(alg.vs) ? vertices(g) : alg.vs
     if alg.k > 0
-        sample!(vs, alg.k)
+        vs = sample(vs, alg.k)
     end
 
     n_v = nv(g)
@@ -49,13 +49,14 @@ function _threaded_betweenness_centrality(g::AbstractGraph,
     local_betweenness = [zeros(n_v) for i in 1:nthreads()]
     vs_active = findall((x)->degree(g, x) > 0, vs) # 0 might be 1?
 
+    spalg = use_dists ? ShortestPaths.Dijkstra(all_paths=true, track_vertices=true) : ShortestPaths.TrackingBFS()
     Base.Threads.@threads for s in vs_active
-        state = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, ShortestPaths.Dijkstra(all_paths=true, closest_vertices=true)) :
-            ShortestPaths.shortest_paths(g, s, ShortestPaths.TrackingBFS())
+        result = use_dists ? ShortestPaths.shortest_paths(g, s, distmx, spalg) :
+            ShortestPaths.shortest_paths(g, s, spalg)
         if alg.endpoints
-            _accumulate_endpoints!(local_betweenness[Base.Threads.threadid()], state, g, s)
+            _accumulate_endpoints!(local_betweenness[Base.Threads.threadid()], result, g, s)
         else
-            _accumulate_basic!(local_betweenness[Base.Threads.threadid()], state, g, s)
+            _accumulate_basic!(local_betweenness[Base.Threads.threadid()], result, g, s)
         end
     end
     betweenness = reduce(+, local_betweenness)

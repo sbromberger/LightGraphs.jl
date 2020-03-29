@@ -44,19 +44,8 @@ function _degree_centrality(g::AbstractGraph, degreefn::Function, normalize=true
     c = zeros(n_v)
     for v in vertices(g)
         deg = degreefn(g, v)
-        # if gtype == 0    # count both in and out degree if appropriate
-        #     deg = is_directed(g) ? outdegree(g, v) + indegree(g, v) : outdegree(g, v)
-        # elseif gtype == 1    # count only in degree
-        #     deg = indegree(g, v)
-        # else                 # count only out degree
-        #     deg = outdegree(g, v)
-        # end
         s = normalize ? (1.0 / (n_v - 1.0)) : 1.0
         c[v] = deg * s
     end
     return c
 end
-
-# degree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 0; all...)
-# indegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 1; all...)
-# outdegree_centrality(g::AbstractGraph; all...) = _degree_centrality(g, 2; all...)

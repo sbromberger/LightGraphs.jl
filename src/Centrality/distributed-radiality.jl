@@ -16,10 +16,11 @@ function centrality(g::AbstractGraph{T}, ::DistributedRadiality)::Vector{Float64
     meandists = SharedVector{Float64}(Int(n_v))
     maxdists = SharedVector{T}(Int(n_v))
 
+    spalg = ShortestPaths.BFS()
     @sync @distributed for i = 1:n_v
-        d = ShortestPaths.shortest_paths(g, vs[i], ShortestPaths.BFS())
-        maxdists[i] = maximum(ShortestPaths.distances(d))
-        meandists[i] = Float64(sum(ShortestPaths.distances(d))) / Float64(n_v - 1)
+        d = ShortestPaths.distances(ShortestPaths.shortest_paths(g, vs[i], spalg))
+        maxdists[i] = maximum(d)
+        meandists[i] = Float64(sum(d)) / Float64(n_v - 1)
         nothing
     end
     dmtr = Float64(maximum(maxdists))

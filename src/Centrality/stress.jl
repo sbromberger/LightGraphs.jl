@@ -42,40 +42,40 @@ end
 
 Stress(;k=0, vs=Vector{Int}()) = Stress(k, vs)
 
-function centrality(g::AbstractGraph, alg::Stress)
+function centrality(g::AbstractGraph, alg::Stress)::Vector{Int64}
     n_v = nv(g)
     vs = isempty(alg.vs) ? vertices(g) : alg.vs
     if alg.k > 0
-        select!(vs, alg.k)
+        vs = sample(vs, alg.k)
     end
 
     isdir = is_directed(g)
 
-    stress = zeros(Int, n_v)
-    dstate = ShortestPaths.Dijkstra(all_paths=true, track_vertices=true)
+    stress = zeros(Int64, n_v)
+    spalg = ShortestPaths.TrackingBFS()
     for s in vs
         if degree(g, s) > 0
-            state = ShortestPaths.shortest_paths(g, s, dstate)
-            _stress_accumulate_basic!(stress, state, g, s)
+            result = ShortestPaths.shortest_paths(g, s, spalg)
+            _stress_accumulate_basic!(stress, result, g, s)
         end
     end
     return stress
 end
 
 function _stress_accumulate_basic!(stress::Vector{<:Integer},
-    state::ShortestPaths.DijkstraResult,
+    result::ShortestPaths.TrackingBFSResult,
     g::AbstractGraph,
     si::Integer)
 
-    n_v = length(ShortestPaths.parents(state)) # this is the ttl number of vertices
+    n_v = length(ShortestPaths.parents(result)) # this is the ttl number of vertices
     δ = zeros(Int, n_v)
-    P = state.predecessors
+    P = result.predecessors
 
     laststress = copy(stress)
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(state.closest_vertices) #Replaced sortperm with this
+    S = reverse(result.closest_vertices) #Replaced sortperm with this
     for w in S  # w is the farthest vertex from si
         for v in P[w]  # get the predecessors of w
             if v > 0
