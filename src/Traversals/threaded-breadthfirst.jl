@@ -119,6 +119,11 @@ function traverse_graph!(
                                 #Concurrent visited[i] = true always succeeds
                                 visited[i] = true
                                 push!(next_level, i)
+                            else
+                                if !revisitfn!(state, v, i, t)
+                                    atomic_and!(retval, false)
+                                    break
+                                end
                             end
                         end
                         if !postvisitfn!(state, v, t)
