@@ -300,12 +300,12 @@ mutable struct ReverPotState{T <: Integer} <: LightGraphs.Traversals.TraversalSt
     result::Vector{T}
 end
 
-function previsitfn!(s::ReverPotState{T}, u) where T
+@inline function previsitfn!(s::ReverPotState{T}, u) where T
     s.lastnode = u
     return true
 end
 
-function postlevelfn!(s::ReverPotState{T}) where T
+@inline function postlevelfn!(s::ReverPotState{T}) where T
     s.result[s.cnt] = s.lastnode
     s.cnt -= 1
     return true
@@ -317,7 +317,7 @@ mutable struct KosarajState{T <: Integer} <: LightGraphs.Traversals.TraversalSta
     comps::Vector{Vector{T}}
 end
 
-function initfn!(s::KosarajState{T}, u) where T
+@inline function initfn!(s::KosarajState{T}, u) where T
     if !isempty(s.curr_comp)
         push!(s.comps, s.curr_comp)
     end
@@ -325,7 +325,7 @@ function initfn!(s::KosarajState{T}, u) where T
     return true
 end
 
-function newvisitfn!(s::KosarajState, u, v)
+@inline function newvisitfn!(s::KosarajState, u, v)
     push!(s.curr_comp, v)
     return true
 end
