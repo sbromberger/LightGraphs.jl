@@ -186,6 +186,67 @@ true
 is_weakly_connected(g) = is_connected(g)
 
 
+mutable struct SccState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+    lastnode::T
+    up::Bool
+    stack::Vector{T}
+    low::Vector{T}
+    order::Vector{T}
+    onstack::BitVector
+    cnt::T
+    comps::Vector{Vector{T}}
+end
+
+@inline function initfn!(s::SccState, u)
+    s.up = false
+    push!(s.stack, u)
+    return true
+end
+
+
+@inline function previsitfn!(s::SccState{T}, u) where T
+    if  s.up
+        s.low[u] = min(s.low[u], s.low[s.lastnode])
+    else
+        push!(s.stack, u)
+        s.up = true
+        s.onstack[u] = true
+        s.cnt += one(T)
+        s.low[u] = s.order[u] = s.cnt
+    end
+    s.lastnode = u
+    return true
+end
+
+@inline function newvisitfn!(s::SccState, u, v)
+    s.up = false
+    return true
+end
+
+@inline function visitfn!(s::SccState, u, v)
+    if s.onstack[v]
+        s.low[u] = min(s.order[v], s.low[u])
+    end
+    return true
+end
+
+@inline function postlevelfn!(s::SccState{T}) where T
+    v = s.lastnode
+    if s.low[v] == s.order[v]
+        new_compnent = Vector{T}()
+        a = T(0)
+        while a != v
+            a = pop!(s.stack)
+            s.onstack[a] = false
+            push!(new_compnent, a)
+        end
+        reverse!(new_compnent)
+        push!(s.comps, new_compnent)
+    end
+    return true
+end
+
+
 """
     strongly_connected_components(g)
 
@@ -222,97 +283,14 @@ julia> strongly_connected_components(g)
  [10, 11]
 ```
 """
+
+
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-    zero_t = zero(T)
-    one_t = one(T)
-    nvg = nv(g)
-    count = one_t
-
-    index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
-    onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
-    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
-    parents = zeros(T, nvg)       # parent of every vertex in dfs
-    components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
-
-
-    dfs_stack = Vector{T}()
-
-    @inbounds for s in vertices(g)
-        if index[s] == zero_t
-            index[s] = count
-            lowlink[s] = count
-            onstack[s] = true
-            parents[s] = s
-            push!(stack, s)
-            count = count + one_t
-
-            # start dfs from 's'
-            push!(dfs_stack, s)
-
-            while !isempty(dfs_stack)
-                v = dfs_stack[end] #end is the most recently added item
-                u = zero_t
-                @inbounds for v_neighbor in outneighbors(g, v)
-                    if index[v_neighbor] == zero_t
-                        # unvisited neighbor found
-                        u = v_neighbor
-                        break
-                        #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[v_neighbor]
-                        # we have already seen n, but can update the lowlink of v
-                        # which has the effect of possibly keeping v on the stack until n is ready to pop.
-                        # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[v_neighbor])
-                    end
-                end
-                if u == zero_t
-                    # All out neighbors already visited or no out neighbors
-                    # we have fully explored the DFS tree from v.
-                    # time to start popping.
-                    popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
-
-                    if index[v] == lowlink[v]
-                        # found a cycle in a completed dfs tree.
-                        component = Vector{T}()
-
-                        while !isempty(stack) #break when popped == v
-                            # drain stack until we see v.
-                            # everything on the stack until we see v is in the SCC rooted at v.
-                            popped = pop!(stack)
-                            push!(component, popped)
-                            onstack[popped] = false
-                            # popped has been assigned a component, so we will never see it again.
-                            if popped == v
-                                # we have drained the stack of an entire component.
-                                break
-                            end
-                        end
-
-                        reverse!(component)
-                        push!(components, component)
-                    end
-
-                else #LABEL A
-                    # add unvisited neighbor to dfs
-                    index[u] = count
-                    lowlink[u] = count
-                    onstack[u] = true
-                    parents[u] = v
-                    count = count + one_t
-
-                    push!(stack, u)
-                    push!(dfs_stack, u)
-                    # next iteration of while loop will expand the DFS tree from u.
-                end
-            end
-        end
-    end
-
-    return components
+    state = SccState(T(0), false, Vector{T}(), zeros(T, nv(g)), zeros(T, nv(g)), falses(nv(g)), T(0), Vector{Vector{T}}())
+    LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
+    return state.comps
 end
 
 
