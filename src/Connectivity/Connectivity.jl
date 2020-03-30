@@ -294,18 +294,18 @@ function strongly_connected_components end
 end
 
 
-mutable struct ReversePostOrderSortState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+mutable struct RevPostOrderState{T <: Integer} <: LightGraphs.Traversals.TraversalState
     cnt::T
     lastnode::T
     result::Vector{T}
 end
 
-@inline function previsitfn!(s::ReversePostOrderSortState{T}, u) where T
+@inline function previsitfn!(s::RevPostOrderState{T}, u) where T
     s.lastnode = u
     return true
 end
 
-@inline function postlevelfn!(s::ReversePostOrderSortState{T}) where T
+@inline function postlevelfn!(s::RevPostOrderState{T}) where T
     s.result[s.cnt] = s.lastnode
     s.cnt -= 1
     return true
@@ -402,7 +402,7 @@ julia> strongly_connected_components_kosaraju(g)
 
 function strongly_connected_components_kosaraju end
 @traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-    state = ReversePostOrderSortState(nv(g), T(0), zeros(T, nv(g)))
+    state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
     LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(neighborfn=inneighbors), state2)
