@@ -6,7 +6,7 @@ using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
 using DataStructures: Queue, dequeue!, enqueue!
 using SimpleTraits
-import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!
+import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, newvisitfn!, visitfn!, previsitfn!
 
 """
     connected_components!(label, g)
