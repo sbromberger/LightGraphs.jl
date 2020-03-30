@@ -294,6 +294,49 @@ function strongly_connected_components end
 end
 
 
+mutable struct ReverPotState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+    cnt::T
+    lastnode::T
+    result::Vector{T}
+end
+
+function previsitfn!(s::ReverPotState{T}, u) where T
+    s.lastnode = u
+    return true
+end
+
+function postlevelfn!(s::ReverPotState{T}) where T
+    s.result[s.cnt] = s.lastnode
+    s.cnt -= 1
+    return true
+end
+
+
+mutable struct KosarajState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+    curr_comp::Vector{T}
+    comps::Vector{Vector{T}}
+end
+
+function initfn!(s::KosarajState{T}, u) where T
+    if !isempty(s.curr_comp)
+        push!(s.comps, s.curr_comp)
+    end
+    s.curr_comp = Vector{T}([u])
+    return true
+end
+
+function newvisitfn!(s::KosarajState, u, v)
+    push!(s.curr_comp, v)
+    return true
+end
+
+
+
+
+
+
+
+
 """
     strongly_connected_components_kosaraju(g)
 
@@ -359,90 +402,14 @@ julia> strongly_connected_components_kosaraju(g)
 
 function strongly_connected_components_kosaraju end
 @traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-
-   nvg = nv(g)
-
-   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
-
-   order = Vector{T}()         # Vector which will store the order in which vertices are visited
-   sizehint!(order, nvg)
-
-   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
-
-   dfs_stack = Vector{T}()   # Stack used for dfs
-
-   # dfs1
-   @inbounds for v in vertices(g)
-
-       color[v] != 0  && continue
-       color[v] = 1
-
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-
-           for u_neighbor in outneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
-               color[u] = 2
-               pop!(dfs_stack)
-           end
-       end
-   end
-
-   @inbounds for i in vertices(g)
-        color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
-   end
-
-   # dfs2
-   @inbounds for i in 1:nvg
-
-       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
-       color[v] != 0  && continue
-       color[v] = 1
-
-       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
-
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-
-           for u_neighbor in inneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               color[u] = 2
-               push!(component, u)   # Push u to the vector component
-               pop!(dfs_stack)
-           end
-       end
-
-       push!(components, component)
-   end
-
-   return components
+    state = ReverPotState(nv(g), T(0), zeros(T, nv(g)))
+    traverse_graph!(g, vertices(g), DepthFirst(), state)
+    state2 = KosarajState(Vector{T}(), Vector{Vector{T}}())
+    traverse_graph!(g, state.result, DepthFirst(inneighbors), state2)
+    if !isempty(state2.curr_comp)
+        push!(state2.comps, state2.curr_comp)
+    end
+    return state2.comps
 end
 
 
