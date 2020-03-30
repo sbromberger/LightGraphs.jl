@@ -186,7 +186,7 @@ true
 is_weakly_connected(g) = is_connected(g)
 
 
-mutable struct SccState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+mutable struct SccState{T<:Integer} <: LightGraphs.Traversals.TraversalState
     lastnode::T
     up::Bool
     stack::Vector{T}
@@ -294,30 +294,30 @@ function strongly_connected_components end
 end
 
 
-mutable struct ReverPotState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+mutable struct ReversePostOrderSortState{T <: Integer} <: LightGraphs.Traversals.TraversalState
     cnt::T
     lastnode::T
     result::Vector{T}
 end
 
-@inline function previsitfn!(s::ReverPotState{T}, u) where T
+@inline function previsitfn!(s::ReversePostOrderSortState{T}, u) where T
     s.lastnode = u
     return true
 end
 
-@inline function postlevelfn!(s::ReverPotState{T}) where T
+@inline function postlevelfn!(s::ReversePostOrderSortState{T}) where T
     s.result[s.cnt] = s.lastnode
     s.cnt -= 1
     return true
 end
 
 
-mutable struct KosarajState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+mutable struct KosarajuState{T <: Integer} <: LightGraphs.Traversals.TraversalState
     curr_comp::Vector{T}
     comps::Vector{Vector{T}}
 end
 
-@inline function initfn!(s::KosarajState{T}, u) where T
+@inline function initfn!(s::KosarajuState{T}, u) where T
     if !isempty(s.curr_comp)
         push!(s.comps, s.curr_comp)
     end
@@ -325,7 +325,7 @@ end
     return true
 end
 
-@inline function newvisitfn!(s::KosarajState, u, v)
+@inline function newvisitfn!(s::KosarajuState, u, v)
     push!(s.curr_comp, v)
     return true
 end
@@ -402,10 +402,10 @@ julia> strongly_connected_components_kosaraju(g)
 
 function strongly_connected_components_kosaraju end
 @traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-    state = ReverPotState(nv(g), T(0), zeros(T, nv(g)))
+    state = ReversePostOrderSortState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
-    state2 = KosarajState(Vector{T}(), Vector{Vector{T}}())
-    LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(inneighbors), state2)
+    state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
+    LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(DepthFirst(neighborfn=inneighbors)), state2)
     if !isempty(state2.curr_comp)
         push!(state2.comps, state2.curr_comp)
     end
