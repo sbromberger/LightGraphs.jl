@@ -405,7 +405,7 @@ function strongly_connected_components_kosaraju end
     state = ReversePostOrderSortState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
-    LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(DepthFirst(neighborfn=inneighbors)), state2)
+    LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(neighborfn=inneighbors), state2)
     if !isempty(state2.curr_comp)
         push!(state2.comps, state2.curr_comp)
     end
