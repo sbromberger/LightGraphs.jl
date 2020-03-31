@@ -331,12 +331,12 @@ end
 end
 
 
-mutable struct KosarajuState{T <: Integer} <: LightGraphs.Traversals.TraversalState
+mutable struct KosorajuState{T <: Integer} <: LightGraphs.Traversals.TraversalState
     curr_comp::Vector{T}
     comps::Vector{Vector{T}}
 end
 
-@inline function initfn!(s::KosarajuState{T}, u) where T
+@inline function initfn!(s::KosorajuState{T}, u) where T
     if !isempty(s.curr_comp)
         push!(s.comps, s.curr_comp)
     end
@@ -344,7 +344,7 @@ end
     return true
 end
 
-@inline function newvisitfn!(s::KosarajuState, u, v)
+@inline function newvisitfn!(s::KosorajuState, u, v)
     push!(s.curr_comp, v)
     return true
 end
@@ -357,10 +357,10 @@ end
 
 
 """
-    strongly_connected_components_kosaraju(g)
+    strongly_connected_components_kosoraju(g)
 
-Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm.
-(https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
+Compute the strongly connected components of a directed graph `g` using Kosoraju's Algorithm.
+(https://en.wikipedia.org/wiki/Kosoraju%27s_algorithm).
 
 Return an array of arrays, each of which is the entire connected component.
 
@@ -380,7 +380,7 @@ julia> g=SimpleDiGraph(3)
 julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
-julia> strongly_connected_components_kosaraju(g)
+julia> strongly_connected_components_kosoraju(g)
 3-element Array{Array{Int64,1},1}:
  [1]
  [2]
@@ -409,7 +409,7 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> strongly_connected_components_kosaraju(g)
+julia> strongly_connected_components_kosoraju(g)
 4-element Array{Array{Int64,1},1}:
  [11, 10]
  [2, 3, 4, 1]
@@ -419,11 +419,11 @@ julia> strongly_connected_components_kosaraju(g)
 ```
 """
 
-function strongly_connected_components_kosaraju end
-@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+function strongly_connected_components_kosoraju end
+@traitfn function strongly_connected_components_kosoraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
     state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
-    state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
+    state2 = KosorajuState(Vector{T}(), Vector{Vector{T}}())
     LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(neighborfn=inneighbors), state2)
     if !isempty(state2.curr_comp)
         push!(state2.comps, state2.curr_comp)
@@ -431,9 +431,9 @@ function strongly_connected_components_kosaraju end
     return state2.comps
 end
 
-struct Kosaraju <: StrongConnectivityAlgorithm end
+struct Kosoraju <: StrongConnectivityAlgorithm end
 
-@traitfn connected_components(g::::IsDirected, ::kosaraju) = strongly_connected_components_kosaraju(g)
+@traitfn connected_components(g::::IsDirected, ::Kosoraju) = strongly_connected_components_kosoraju(g)
 
 
 """
