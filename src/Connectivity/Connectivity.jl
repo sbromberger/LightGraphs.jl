@@ -301,7 +301,7 @@ julia> connected_components(g, Tarjan())
 
 struct Tarjan <: StrongConnectivityAlgorithm end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components(g::::IsDirected, ::Tarjan) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function connected_components(g::AG::IsDirected, ::Tarjan) where {T<:Integer, AG <: AbstractGraph{T}}
     state = SccState(T(0), false, Vector{T}(), zeros(T, nv(g)), zeros(T, nv(g)), falses(nv(g)), T(0), Vector{Vector{T}}())
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     return state.comps
@@ -421,7 +421,7 @@ julia> connected_components(g, Kosaraju())
 struct Kosaraju <: StrongConnectivityAlgorithm end
 
 
-@traitfn function connected_components(g::::IsDirected, ::Kosaraju) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function connected_components(g::AG::IsDirected, ::Kosaraju) where {T<:Integer, AG <: AbstractGraph{T}}
     state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
