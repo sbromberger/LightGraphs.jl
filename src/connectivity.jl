@@ -38,13 +38,13 @@ end
 
 function strongly_connected_components(g)
     Base.depwarn("`strongly_connected_components` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.strongly_connected_components`.", :strongly_connected_components)
-    LightGraphs.Connectivity.strongly_connected_components(g)
+    LightGraphs.Connectivity.connected_components(g, LightGraphs.Connectivity.Tarjan())
 end
 
 
 function strongly_connected_components_kosaraju(g)
     Base.depwarn("`strongly_connected_components_kosaraju` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.strongly_connected_components_kosaraju`.", :strongly_connected_components_kosaraju)
-    LightGraphs.Connectivity.strongly_connected_components_kosaraju(g)
+    LightGraphs.Connectivity.connected_components(g, LightGraphs.Connectivity.Kosaraju())
 end
 
 
@@ -72,7 +72,7 @@ function attracting_components(g)
     LightGraphs.Connectivity.attracting_components(g)
 end
 
-function neighborhood(g::AbstractGraph, v::Integer, d; dir=:out) 
+function neighborhood(g::AbstractGraph, v::Integer, d; dir=:out)
     Base.depwarn("`neighborhood` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.neighborhood`.", :neighborhood)
     dir == :out ? LightGraphs.Connectivity.neighborhood(g, v, d) : LightGraphs.Connectivity.neighborhood(g, v, d; neighborfn=inneighbors)
 end
