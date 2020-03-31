@@ -6,7 +6,14 @@ using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
 using DataStructures: Queue, dequeue!, enqueue!
 using SimpleTraits
-import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, newvisitfn!, visitfn!, previsitfn!
+import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
+
+"""
+    abstract type ConnectivityAlgorithm
+
+`ConnectivityAlgorithm` is the abstract type used to specify the connected components algorhim.
+"""
+abstract type ConnectivityAlgorithm end
 
 """
     connected_components!(label, g)
@@ -248,6 +255,13 @@ end
 
 
 """
+    abstract type StrongConnectivityAlgorithm
+
+`StrongConnectivityAlgorithm` is the abstract type used to specify the strongly connected components algorhim.
+"""
+abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
+
+"""
     strongly_connected_components(g)
 
 Compute the strongly connected components of a directed graph `g`.
@@ -292,6 +306,10 @@ function strongly_connected_components end
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     return state.comps
 end
+
+struct Tarjan <: StrongConnectivityAlgorithm end
+
+@traitfn connected_components(g::::IsDirected, ::Tarjan) = strongly_connected_components(g)
 
 
 mutable struct RevPostOrderState{T <: Integer} <: LightGraphs.Traversals.TraversalState
@@ -411,6 +429,9 @@ function strongly_connected_components_kosaraju end
     end
     return state2.comps
 end
+
+
+
 
 
 """
