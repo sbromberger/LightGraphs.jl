@@ -43,11 +43,11 @@
             g2 = path_digraph(4)
 
             y = symmetric_difference2(g1, g2)
-            y == symmetric_difference2(g2, g1)
-            ne(y) == 2
-            nv(y) == 4
+            @test y == symmetric_difference2(g2, g1)
+            @test ne(y) == 2
+            @test nv(y) == 4
         end
-    
+
         @testset "union" begin
             h = Graph{T}(6)
             add_edge!(h, 5, 6)
