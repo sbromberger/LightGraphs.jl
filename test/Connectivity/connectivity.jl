@@ -38,7 +38,7 @@
         @testset "$g" for g in testdigraphs(h)
             @test @inferred(LC.is_weakly_connected(g))
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             wcc = @inferred(LC.weakly_connected_components(g))
 
             @test length(scc) == 3 && sort(scc[3]) == [1, 2, 5]
@@ -55,7 +55,7 @@
 
         function scc_k_ok(graph)
             #Check that all SCC really are strongly connected
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(graph))
+            scc_k = @inferred(LC.connected_components(graph, LC.kosaraju()))
             scc_k_as_subgraphs = map(i -> graph[i], scc_k)
             return all(LC.is_strongly_connected, scc_k_as_subgraphs)
         end
@@ -79,7 +79,7 @@
         h = SimpleDiGraph(0)
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 0
             @test length(scc_k) == 0
         end
@@ -89,7 +89,7 @@
         h = SimpleDiGraph(1)
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 1 && scc[1] == [1]
             @test length(scc_k) == 1 && scc[1] == [1]
         end
@@ -102,7 +102,7 @@
 
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 2
             @test sort(scc[1]) == [3]
             @test sort(scc[2]) == [1,2]
@@ -119,7 +119,7 @@
         add_edge!(h, 3, 5); add_edge!(h, 5, 6); add_edge!(h, 6, 4)
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 1 && sort(scc[1]) == [1:6;]
             @test length(scc_k) == 1 && sort(scc_k[1]) == [1:6;]
         end
@@ -132,7 +132,7 @@
 
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 4
             @test sort(scc[1]) == [7, 8, 9, 10, 11, 12]
             @test sort(scc[2]) == [3, 6]
@@ -152,7 +152,7 @@
         add_edge!(h, 1, 2); add_edge!(h, 2, 3); add_edge!(h, 3, 1); add_edge!(h, 4, 1)
         @testset "$g" for g in testdigraphs(h)
             scc = @inferred(LC.connected_components(g, LC.Tarjan()))
-            scc_k = @inferred(LC.strongly_connected_components_kosaraju(g))
+            scc_k = @inferred(LC.connected_components(g, LC.kosaraju()))
             @test length(scc) == 2 && sort(scc[1]) == [1:3;] && sort(scc[2]) == [4]
             @test length(scc_k) == 2 && sort(scc_k[2]) == [1:3;] && sort(scc_k[1]) == [4]
         end

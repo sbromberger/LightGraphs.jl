@@ -240,15 +240,15 @@ end
 @inline function postlevelfn!(s::SccState{T}) where T
     v = s.lastnode
     if s.low[v] == s.order[v]
-        new_compnent = Vector{T}()
+        new_component = Vector{T}()
         a = T(0)
         while a != v
             a = pop!(s.stack)
             s.onstack[a] = false
-            push!(new_compnent, a)
+            push!(new_component, a)
         end
-        reverse!(new_compnent)
-        push!(s.comps, new_compnent)
+        reverse!(new_component)
+        push!(s.comps, new_component)
     end
     return true
 end
@@ -310,6 +310,7 @@ end
 struct Tarjan <: StrongConnectivityAlgorithm end
 
 @traitfn connected_components(g::::IsDirected, ::Tarjan) = strongly_connected_components(g)
+
 
 
 mutable struct RevPostOrderState{T <: Integer} <: LightGraphs.Traversals.TraversalState
@@ -430,8 +431,9 @@ function strongly_connected_components_kosaraju end
     return state2.comps
 end
 
+struct Kosaraju <: StrongConnectivityAlgorithm end
 
-
+@traitfn connected_components(g::::IsDirected, ::Kosaraju) = strongly_connected_components_kosaraju(g)
 
 
 """
