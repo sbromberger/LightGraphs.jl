@@ -236,19 +236,119 @@ julia> collect(edges(f))
  Edge 2 => 3
 ```
 """
-function symmetric_difference(g::T, h::T) where T <: AbstractGraph
-    gnv = nv(g)
-    hnv = nv(h)
-
-    r = T(max(gnv, hnv))
-    for e in edges(g)
-        !has_edge(h, e) && add_edge!(r, e)
+function symmetric_difference(g::T, h::T) where T <: SimpleDiGraph
+    limit = min(nv(g), nv(h))
+    r = SimpleGraph(max(nv(g), nv(h)))
+    for u in 1:limit
+        ptr1 = one(eltype(h))
+        ptr2 = one(eltype(h))
+        gnv = length(neighbors(g, u))
+        hnv = length(neighbors(h, u))
+        l1 = outneighbors(g, u)
+        l2 = outneighbors(h, u)
+        while ptr1 <= gnv && ptr2 <= hnv
+            if l1[ptr1] < l2[ptr2]
+                while ptr1 <= gnv && l1[ptr1] < l2[ptr2]
+                    add_edge!(r, u, l1[ptr1])
+                    ptr1 += 1
+                end
+            else
+                while ptr2 <= hnv && l1[ptr1] > l2[ptr2]
+                    add_edge!(r, u, l2[ptr2])
+                    ptr2 += 1
+                end
+            end
+            if ptr1 <= gnv && ptr2 <= hnv && l1[ptr1] == l2[ptr2]
+                ptr1 += 1
+                ptr2 += 1
+            end
+        end
+        while ptr2 <= hnv
+            add_edge!(r, u, l2[ptr2])
+            ptr2 += 1
+        end
+        while ptr1 <= gnv
+            add_edge!(r, u, l1[ptr1])
+            ptr1 += 1
+        end
     end
-    for e in edges(h)
-        !has_edge(g, e) && add_edge!(r, e)
+    if limit < nv(g)
+        for u in limit+1:nv(g)
+            for v in neighbors(g, u)
+                add_edge!(r, u, v)
+            end
+        end
+    end
+    if limit < nv(h)
+        for u in limit+1:nv(h)
+            for v in neighbors(h, u)
+                add_edge!(r, u, v)
+            end
+        end
     end
     return r
 end
+
+function symmetric_difference(g::T, h::T) where T <: SimpleGraph
+    limit = min(nv(g), nv(h))
+    r = SimpleDiGraph(max(nv(g), nv(h)))
+    for u in 1:limit
+        gnv = length(neighbors(g, u))
+        hnv = length(neighbors(h, u))
+        l1 = outneighbors(g, u)
+        l2 = outneighbors(h, u)
+        ptr1 = searchsortedfirst(l1, u)
+        ptr2 = searchsortedfirst(l2, u)
+        while ptr1 <= gnv && ptr2 <= hnv
+            if l1[ptr1] < l2[ptr2]
+                while ptr1 <= gnv && l1[ptr1] < l2[ptr2]
+                    add_edge!(r, u, l1[ptr1])
+                    ptr1 += 1
+                end
+            else
+                while ptr2 <= hnv && l1[ptr1] > l2[ptr2]
+                    add_edge!(r, u, l2[ptr2])
+                    ptr2 += 1
+                end
+            end
+            if ptr1 <= gnv && ptr2 <= hnv && l1[ptr1] == l2[ptr2]
+                ptr1 += 1
+                ptr2 += 1
+            end
+        end
+        while ptr2 <= hnv
+            add_edge!(r, u, l2[ptr2])
+            ptr2 += 1
+        end
+        while ptr1 <= gnv
+            add_edge!(r, u, l1[ptr1])
+            ptr1 += 1
+        end
+    end
+    if limit < nv(g)
+
+        for u in limit+1:nv(g)
+            l1 = neighbors(g, u)
+            i = searchsortedfirst(l1, u)
+            while i <= length(l1)
+                add_edge!(r, u, l1[i])
+                i += 1
+            end
+        end
+    end
+    if limit < nv(h)
+        for u in limit+1:nv(h)
+            l1 = neighbors(h, u)
+            i = searchsortedfirst(l1, u)
+            while i <= length(l1)
+                add_edge!(r, u, l1[i])
+                i += 1
+            end
+        end
+    end
+    return r
+end
+
 
 """
     union(g, h)
