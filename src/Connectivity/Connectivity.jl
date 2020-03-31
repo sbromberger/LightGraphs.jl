@@ -356,7 +356,7 @@ end
 
 
 """
-    connected_components(g, Kosaraju())
+    connected_components(g, LC.Kosaraju())
 
 Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm.
 (https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
@@ -379,7 +379,7 @@ julia> g=SimpleDiGraph(3)
 julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
-julia> connected_components(g, Kosaraju())
+julia> connected_components(g, LC.Kosaraju())
 3-element Array{Array{Int64,1},1}:
  [1]
  [2]
@@ -408,7 +408,7 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> connected_components(g, Kosaraju())
+julia> connected_components(g, LC.Kosaraju())
 4-element Array{Array{Int64,1},1}:
  [11, 10]
  [2, 3, 4, 1]
