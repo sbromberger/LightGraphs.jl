@@ -650,7 +650,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGra
     for s in vlist
         for d in outneighbors(g, s)
             # println("s = $s, d = $d")
-            if d in vset && has_edge(g, s, d)
+            if d in vset
                 newe = Edge(newvid[s], newvid[d])
                 add_edge!(h, newe)
             end
