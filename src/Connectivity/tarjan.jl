@@ -1,3 +1,11 @@
+"""
+    struct Tarjan <: StrongConnectivityAlgorithm
+
+A struct representing a [`StrongConnectivityAlgorithm`](@ref)
+based on Tarjan's strong connectivity algorithm.
+"""
+struct Tarjan <: StrongConnectivityAlgorithm end
+
 mutable struct TarjanState{T<:Integer} <: LightGraphs.Traversals.TraversalState
     lastnode::T
     up::Bool
@@ -57,15 +65,7 @@ end
     return true
 end
 
-"""
-    struct Tarjan <: StrongConnectivityAlgorithm
-
-A struct representing a [`StrongConnectivityAlgorithm`](@ref)
-based on Tarjan's strong connectivity algorithm.
-"""
-struct Tarjan <: StrongConnectivityAlgorithm end
-
-@traitfn function connected_components(g::AG::IsDirected, ::Tarjan) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function connected_components(g::AG::IsDirected, ::Tarjan) where {T<:Integer, AG<:AbstractGraph{T}}
     state = TarjanState(T(0), false, Vector{T}(), zeros(T, nv(g)), zeros(T, nv(g)), falses(nv(g)), T(0), Vector{Vector{T}}())
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     return state.comps

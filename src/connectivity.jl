@@ -2,7 +2,7 @@
 # licensing details.
 
 function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    Base.depwarn("`connected_components!` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.connected_components!`.", :connected_components!)
+    Base.depwarn("`connected_components!` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.connected_components`.", :connected_components!)
     LightGraphs.Connectivity.connected_components!(label, g)
 end
 
@@ -28,12 +28,12 @@ end
 
 function weakly_connected_components(g)
     Base.depwarn("`weakly_connected_components` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.connected_components`.", :weakly_connected_components)
-    LightGraphs.Connectivity.connected_components(g)
+    LightGraphs.Connectivity.connected_components(g, LightGraphs.Connectivity.UnionMerge())
 end
 
 function is_weakly_connected(g::AbstractGraph)
     Base.depwarn("`is_weakly_connected` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.is_weakly_connected`.", :is_weakly_connected)
-    LightGraphs.Connectivity.is_weakly_connected(g)
+    LightGraphs.Connectivity.is_connected(g, LightGraphs.Connectivity.UnionMerge())
 end
 
 function strongly_connected_components(g)
@@ -50,7 +50,7 @@ end
 
 function is_strongly_connected(g)
     Base.depwarn("`is_strongly_connected` is deprecated. Equivalent functionality has been moved to `LightGraphs.Connectivity.is_strongly_connected`.", :is_strongly_connected)
-    LightGraphs.Connectivity.is_strongly_connected(g, LightGraphs.Connectivity.Tarjan())
+    LightGraphs.Connectivity.is_connected(g, LightGraphs.Connectivity.Tarjan())
 end
 
 function period(g)

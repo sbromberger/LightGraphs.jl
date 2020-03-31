@@ -1,10 +1,9 @@
 module Connectivity
-# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
-# licensing details.
+
 using LightGraphs
 using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
-using DataStructures: Queue, dequeue!, enqueue!
+using DataStructures: Queue, dequeue!, enqueue!, IntDisjointSets, find_root!, union!
 using SimpleTraits
 import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
 
@@ -29,37 +28,6 @@ abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
 directed graphs and all algorithms for undirected graphs.
 """
 abstract type WeakConnectivityAlgorithm <: ConnectivityAlgorithm end
-
-"""
-    connected_components!(label, g)
-
-Fill `label` with the `id` of the connected component in the undirected graph
-`g` to which it belongs. Return a vector representing the component assigned
-to each vertex. The component value is the smallest vertex ID in the component.
-
-### Performance
-This algorithm is linear in the number of edges of the graph.
-"""
-function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    nvg = nv(g)
-    Q = Queue{T}()
-    @inbounds for u in vertices(g)
-        label[u] != zero(T) && continue
-        label[u] = u
-        enqueue!(Q, u)
-        while !isempty(Q)
-            src = dequeue!(Q)
-            for vertex in all_neighbors(g, src)
-                if label[vertex] == zero(T)
-                    enqueue!(Q, vertex)
-                    label[vertex] = u
-                end
-            end
-        end
-    end
-    return label
-end
-
 
 """
     components_dict(labels)
@@ -101,39 +69,6 @@ function components(labels::AbstractVector{T}) where {T <: Integer}
 end
 
 """
-    connected_components(g)
-
-Return the [connected components](https://en.wikipedia.org/wiki/Connectivity_(graph_theory))
-of an undirected graph `g` as a vector of components, with each element a vector of vertices
-belonging to the component.
-
-For directed graphs, see [`strongly_connected_components`](@ref) and
-[`weakly_connected_components`](@ref).
-
-# Examples
-```jldoctest
-julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
-
-julia> connected_components(g)
-1-element Array{Array{Int64,1},1}:
- [1, 2, 3]
-
-julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
-
-julia> connected_components(g)
-2-element Array{Array{Int64,1},1}:
- [1, 2, 3]
- [4, 5]
-```
-"""
-function connected_components(g::AbstractGraph{T}) where T
-    label = zeros(T, nv(g))
-    connected_components!(label, g)
-    c, d = components(label)
-    return c
-end
-
-"""
     is_connected(g, alg)
 
 Return `true` if graph `g` is connected, using [`ConnectivityAlgorithm`](@ref) `alg`.
@@ -162,61 +97,14 @@ true
 ```
 """
 function is_connected end
-@traitfn function is_connected(g::::(!IsDirected), alg::ConnectivityAlgorithm)
-    
-
-
-function is_connected(g::AbstractGraph, alg::ConnectivityAlgorithm)
+function is_connected(g::AbstractGraph, alg::WeakConnectivityAlgorithm=UnionMerge())
     mult = is_directed(g) ? 2 : 1
-    return mult * ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+    return mult*ne(g) +1 >= nv(g) && length(connected_components(g, alg)) == 1
 end
 
-"""
-    weakly_connected_components(g)
-
-Return the weakly connected components of the graph `g`. This
-is equivalent to the connected components of the undirected equivalent of `g`.
-For undirected graphs this is equivalent to the [`connected_components`](@ref) of `g`.
-
-# Examples
-```jldoctest
-julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
-
-julia> weakly_connected_components(g)
-1-element Array{Array{Int64,1},1}:
- [1, 2, 3]
-```
-"""
-weakly_connected_components(g) = connected_components(g)
-
-"""
-    is_weakly_connected(g)
-
-Return `true` if the graph `g` is weakly connected. If `g` is undirected,
-this function is equivalent to [`is_connected(g)`](@ref).
-
-# Examples
-```jldoctest
-julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
-
-julia> is_weakly_connected(g)
-true
-
-julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
-
-julia> is_connected(g)
-true
-
-julia> is_strongly_connected(g)
-false
-
-julia> is_weakly_connected(g)
-true
-```
-"""
-is_weakly_connected(g) = is_connected(g)
-
-
+@traitfn is_connected(g::::IsDirected, alg::StrongConnectivityAlgorithm=Tarjan()) =
+    length(connected_components(g, alg)) == 1
+    
 """
     connected_components(g, alg::ConnectivityAlgorithm)
 
@@ -285,27 +173,8 @@ julia> connected_components(g, Kosaraju())
 ```
 """
 function connected_components end
-
-
-"""
-    is_strongly_connected(g, alg=Tarjan())
-
-Return `true` if directed graph `g` is strongly connected.
-
-### Optional Parameters
-`alg::StrongConnectivityAlgorithm`: Specify a [`StrongConnectivityAlgorithm`](@ref) to use (default: [`Tarjan`](@ref).
-
-# Examples
-```jldoctest
-julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
-
-julia> is_strongly_connected(g)
-true
-```
-"""
-function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected,alg::StrongConnectivityAlgorithm=Tarjan()) =
-    length(connected_components(g, Tarjan())) == 1
+@traitfn connected_components(g::::(!IsDirected)) = connected_components(g, UnionMerge())
+@traitfn connected_components(g::::IsDirected) = connected_components(g, Tarjan())
 
 """
     period(g)
@@ -322,14 +191,13 @@ julia> period(g)
 ```
 """
 function period end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     !is_connected(g, Tarjan()) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = LightGraphs.Traversals.tree(g, 1, LightGraphs.Traversals.BFS())
+    g_bfs_tree  = LightGraphs.Traversals.tree(g, 1, LightGraphs.Traversals.BreadthFirst())
     levels      = gdistances(g_bfs_tree, 1)
     tree_diff   = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
@@ -345,11 +213,12 @@ function period end
 end
 
 """
-    condensation(g[, scc])
+    condensation(g, scc)
+    condensation(g, alg=Tarjan())
 
 Return the condensation graph of the strongly connected components `scc`
 in the directed graph `g`. If `scc` is missing, generate the strongly
-connected components first.
+connected components first using [`StrongConnectivityAlgorithm`](@ref) `alg`.
 
 # Examples
 ```jldoctest
@@ -361,8 +230,9 @@ julia> connected_components(g, Tarjan())
  [4, 5]
  [1, 2, 3]
 
-julia> foreach(println, edges(condensation(g)))
-Edge 2 => 1
+julia> collect(edges(condensation(g)))
+1-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 2 => 1
 ```
 """
 function condensation end
@@ -386,10 +256,11 @@ end
 @traitfn condensation(g::::IsDirected) = condensation(g, connected_components(g, Tarjan()))
 
 """
-    attracting_components(g)
+    attracting_components(g, alg=Tarjan())
 
 Return a vector of vectors of integers representing lists of attracting
-components in the directed graph `g`.
+components in the directed graph `g`. Use [`StrongConnectivityAlgorithm`](ref)
+`alg` when specified (default [`Tarjan`](@ref)).
 
 The attracting components are a subset of the strongly
 connected components in which the components do not have any leaving edges.
@@ -411,8 +282,8 @@ julia> attracting_components(g)
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    scc  = connected_components(g, Tarjan())
+@traitfn function attracting_components(g::AG::IsDirected, alg::StrongConnectivityAlgorithm=Tarjan()) where {T, AG <: AbstractGraph{T}}
+    scc  = connected_components(g, alg)
     cond = condensation(g, scc)
 
     attracting = Vector{T}()
@@ -461,8 +332,11 @@ function is_graphical(degs::Vector{<:Integer})
     return true
 end
 
+include("dfs.jl")
+include("dfsq.jl")
+include("kosaraju.jl")
 include("neighborhood_dists.jl")
 include("tarjan.jl")
-include("kosaraju.jl")
+include("unionmerge.jl")
 
 end # module

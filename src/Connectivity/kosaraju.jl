@@ -1,3 +1,11 @@
+"""
+    struct Kosaraju <: StrongConnectivityAlgorithm
+
+A struct representing a [`StrongConnectivityAlgorithm`](@ref)
+based on Kosaraju's linear-time strong connectivity algorithm.
+"""
+struct Kosaraju <: StrongConnectivityAlgorithm end
+
 mutable struct RevPostOrderState{T <: Integer} <: LightGraphs.Traversals.TraversalState
     cnt::T
     lastnode::T
@@ -33,15 +41,7 @@ end
     return true
 end
 
-"""
-    struct Kosaraju <: StrongConnectivityAlgorithm
-
-A struct representing a [`StrongConnectivityAlgorithm`](@ref)
-based on Kosaraju's linear-time strong connectivity algorithm.
-"""
-struct Kosaraju <: StrongConnectivityAlgorithm end
-
-@traitfn function connected_components(g::AG::IsDirected, ::Kosaraju) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function connected_components(g::AG::IsDirected, ::Kosaraju) where {T<:Integer, AG<:AbstractGraph{T}}
     state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
