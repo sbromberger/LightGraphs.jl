@@ -257,7 +257,7 @@ end
 """
     abstract type StrongConnectivityAlgorithm
 
-`StrongConnectivityAlgorithm` is the abstract type used to specify the strongly connected components algorhim.
+`StrongConnectivityAlgorithm` is the abstract type used to specify the strongly connected components algorithm.
 """
 abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
 
