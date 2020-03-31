@@ -262,7 +262,7 @@ end
 abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
 
 """
-    strongly_connected_components(g)
+    connected_components(g, Tarjan())
 
 Compute the strongly connected components of a directed graph `g`.
 
@@ -275,7 +275,7 @@ The order of the components is not part of the API contract.
 ```jldoctest
 julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
 
-julia> strongly_connected_components(g)
+julia> connected_components(g, Tarjan())
 2-element Array{Array{Int64,1},1}:
  [3]
  [1, 2]
@@ -289,7 +289,7 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> strongly_connected_components(g)
+julia> connected_components(g, Tarjan())
 4-element Array{Array{Int64,1},1}:
  [8, 9]
  [5, 6, 7]
@@ -299,17 +299,16 @@ julia> strongly_connected_components(g)
 """
 
 
-function strongly_connected_components end
+struct Tarjan <: StrongConnectivityAlgorithm end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+@traitfn function connected_components(g::::IsDirected, ::Tarjan) where {T<:Integer, AG <: AbstractGraph{T}}
     state = SccState(T(0), false, Vector{T}(), zeros(T, nv(g)), zeros(T, nv(g)), falses(nv(g)), T(0), Vector{Vector{T}}())
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     return state.comps
 end
 
-struct Tarjan <: StrongConnectivityAlgorithm end
 
-@traitfn connected_components(g::::IsDirected, ::Tarjan) = strongly_connected_components(g)
+
 
 
 
@@ -357,7 +356,7 @@ end
 
 
 """
-    strongly_connected_components_kosaraju(g)
+    connected_components(g, Kosaraju())
 
 Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm.
 (https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
@@ -380,7 +379,7 @@ julia> g=SimpleDiGraph(3)
 julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
-julia> strongly_connected_components_kosaraju(g)
+julia> connected_components(g, Kosaraju())
 3-element Array{Array{Int64,1},1}:
  [1]
  [2]
@@ -409,7 +408,7 @@ julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> strongly_connected_components_kosaraju(g)
+julia> connected_components(g, Kosaraju())
 4-element Array{Array{Int64,1},1}:
  [11, 10]
  [2, 3, 4, 1]
@@ -419,8 +418,10 @@ julia> strongly_connected_components_kosaraju(g)
 ```
 """
 
-function strongly_connected_components_kosaraju end
-@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+struct Kosaraju <: StrongConnectivityAlgorithm end
+
+
+@traitfn function connected_components(g::::IsDirected, ::Kosaraju) where {T<:Integer, AG <: AbstractGraph{T}}
     state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
     LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
     state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
@@ -430,10 +431,6 @@ function strongly_connected_components_kosaraju end
     end
     return state2.comps
 end
-
-struct Kosaraju <: StrongConnectivityAlgorithm end
-
-@traitfn connected_components(g::::IsDirected, ::Kosaraju) = strongly_connected_components_kosaraju(g)
 
 
 """
@@ -450,7 +447,7 @@ true
 ```
 """
 function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
+@traitfn is_strongly_connected(g::::IsDirected) = length(connected_components(g, Tarjan())) == 1
 
 """
     period(g)
@@ -501,7 +498,7 @@ connected components first.
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
-julia> strongly_connected_components(g)
+julia> connected_components(g, Tarjan())
 2-element Array{Array{Int64,1},1}:
  [4, 5]
  [1, 2, 3]
@@ -528,7 +525,7 @@ function condensation end
     end
     return h
 end
-@traitfn condensation(g::::IsDirected) = condensation(g, strongly_connected_components(g))
+@traitfn condensation(g::::IsDirected) = condensation(g, connected_components(g, Tarjan()))
 
 """
     attracting_components(g)
@@ -544,7 +541,7 @@ connected components in which the components do not have any leaving edges.
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
-julia> strongly_connected_components(g)
+julia> connected_components(g, Tarjan())
 2-element Array{Array{Int64,1},1}:
  [4, 5]
  [1, 2, 3]
@@ -557,7 +554,7 @@ julia> attracting_components(g)
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    scc  = strongly_connected_components(g)
+    scc  = connected_components(g, Tarjan())
     cond = condensation(g, scc)
 
     attracting = Vector{T}()
