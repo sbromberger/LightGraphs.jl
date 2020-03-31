@@ -16,6 +16,21 @@ import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, pre
 abstract type ConnectivityAlgorithm end
 
 """
+    abstract type StrongConnectivityAlgorithm
+
+`StrongConnectivityAlgorithm` is the abstract type used to specify the strongly connected components algorithm.
+"""
+abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
+
+"""
+    abstract type WeakConnectivityAlgorithm
+
+`WeakConnectivityAlgorithm` is the abstract type used to specify a weakly connected components algorithm for
+directed graphs and all algorithms for undirected graphs.
+"""
+abstract type WeakConnectivityAlgorithm <: ConnectivityAlgorithm end
+
+"""
     connected_components!(label, g)
 
 Fill `label` with the `id` of the connected component in the undirected graph
@@ -119,10 +134,14 @@ function connected_components(g::AbstractGraph{T}) where T
 end
 
 """
-    is_connected(g)
+    is_connected(g, alg)
 
-Return `true` if graph `g` is connected. For directed graphs, return `true`
-if graph `g` is weakly connected.
+Return `true` if graph `g` is connected, using [`ConnectivityAlgorithm`](@ref) `alg`.
+
+For undirected graphs, `alg` defaults to [`UnionMerge`](@ref). For directed graphs,
+strong connectivity using [`Tarjan`](@ref) is the default. (Use a non-strong
+[`ConnectivityAlgorithm`](@ref) such as [`UnionMerge`](@ref) or [`DFS`](@ref) to test
+for weak connectivity.
 
 # Examples
 ```jldoctest
@@ -133,16 +152,21 @@ true
 
 julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
 
-julia> is_connected(g)
+julia> is_connected(g, DFS())
 false
 
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
-julia> is_connected(g)
+julia> is_connected(g, UnionMerge())  # weak connectivity
 true
 ```
 """
-function is_connected(g::AbstractGraph)
+function is_connected end
+@traitfn function is_connected(g::::(!IsDirected), alg::ConnectivityAlgorithm)
+    
+
+
+function is_connected(g::AbstractGraph, alg::ConnectivityAlgorithm)
     mult = is_directed(g) ? 2 : 1
     return mult * ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
 end
@@ -193,78 +217,14 @@ true
 is_weakly_connected(g) = is_connected(g)
 
 
-mutable struct SccState{T<:Integer} <: LightGraphs.Traversals.TraversalState
-    lastnode::T
-    up::Bool
-    stack::Vector{T}
-    low::Vector{T}
-    order::Vector{T}
-    onstack::BitVector
-    cnt::T
-    comps::Vector{Vector{T}}
-end
-
-@inline function initfn!(s::SccState, u)
-    s.up = false
-    push!(s.stack, u)
-    return true
-end
-
-
-@inline function previsitfn!(s::SccState{T}, u) where T
-    if  s.up
-        s.low[u] = min(s.low[u], s.low[s.lastnode])
-    else
-        push!(s.stack, u)
-        s.up = true
-        s.onstack[u] = true
-        s.cnt += one(T)
-        s.low[u] = s.order[u] = s.cnt
-    end
-    s.lastnode = u
-    return true
-end
-
-@inline function newvisitfn!(s::SccState, u, v)
-    s.up = false
-    return true
-end
-
-@inline function visitfn!(s::SccState, u, v)
-    if s.onstack[v]
-        s.low[u] = min(s.order[v], s.low[u])
-    end
-    return true
-end
-
-@inline function postlevelfn!(s::SccState{T}) where T
-    v = s.lastnode
-    if s.low[v] == s.order[v]
-        new_component = Vector{T}()
-        a = T(0)
-        while a != v
-            a = pop!(s.stack)
-            s.onstack[a] = false
-            push!(new_component, a)
-        end
-        reverse!(new_component)
-        push!(s.comps, new_component)
-    end
-    return true
-end
-
-
 """
-    abstract type StrongConnectivityAlgorithm
+    connected_components(g, alg::ConnectivityAlgorithm)
 
-`StrongConnectivityAlgorithm` is the abstract type used to specify the strongly connected components algorithm.
-"""
-abstract type StrongConnectivityAlgorithm <: ConnectivityAlgorithm end
-
-"""
-    connected_components(g, Tarjan())
-
-Compute the strongly connected components of a directed graph `g`.
+Compute the connected components of a graph `g` using algorithm `alg`.
+For undirected graphs, `alg` must be a [`WeakConnectivityAlgorithm`](@ref).
+For directed graphs, use a [`WeakConnectivityAlgorithm`](@ref) for
+weakly-connected components, or a [`StrongConnectivityAlgorithm`](@ref)
+for strongly-connected components.
 
 Return an array of arrays, each of which is the entire connected component.
 
@@ -284,7 +244,7 @@ julia> connected_components(g, Tarjan())
 julia> g=SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
-julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+julia> edge_list = [(1, 2), (2, 3), (3, 4), (4, 1), (3, 5), (5, 6), (6, 7), (7, 5), (5, 8), (8, 9), (9, 8), (10, 11), (11, 10)];
 
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
@@ -295,83 +255,6 @@ julia> connected_components(g, Tarjan())
  [5, 6, 7]
  [1, 2, 3, 4]
  [10, 11]
-```
-"""
-
-
-struct Tarjan <: StrongConnectivityAlgorithm end
-# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function connected_components(g::AG::IsDirected, ::Tarjan) where {T<:Integer, AG <: AbstractGraph{T}}
-    state = SccState(T(0), false, Vector{T}(), zeros(T, nv(g)), zeros(T, nv(g)), falses(nv(g)), T(0), Vector{Vector{T}}())
-    LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
-    return state.comps
-end
-
-
-
-
-
-
-mutable struct RevPostOrderState{T <: Integer} <: LightGraphs.Traversals.TraversalState
-    cnt::T
-    lastnode::T
-    result::Vector{T}
-end
-
-@inline function previsitfn!(s::RevPostOrderState{T}, u) where T
-    s.lastnode = u
-    return true
-end
-
-@inline function postlevelfn!(s::RevPostOrderState{T}) where T
-    s.result[s.cnt] = s.lastnode
-    s.cnt -= 1
-    return true
-end
-
-
-mutable struct KosarajuState{T <: Integer} <: LightGraphs.Traversals.TraversalState
-    curr_comp::Vector{T}
-    comps::Vector{Vector{T}}
-end
-
-@inline function initfn!(s::KosarajuState{T}, u) where T
-    if !isempty(s.curr_comp)
-        push!(s.comps, s.curr_comp)
-    end
-    s.curr_comp = Vector{T}([u])
-    return true
-end
-
-@inline function newvisitfn!(s::KosarajuState, u, v)
-    push!(s.curr_comp, v)
-    return true
-end
-
-
-
-
-
-
-
-
-"""
-    connected_components(g, LC.Kosaraju())
-
-Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm.
-(https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
-
-Return an array of arrays, each of which is the entire connected component.
-
-### Performance
-Time Complexity : O(|E|+|V|)
-Space Complexity : O(|V|) {Excluding the memory required for storing graph}
-
-|V| = Number of vertices
-|E| = Number of edges
-
-### Examples
-```jldoctest
 
 julia> g=SimpleDiGraph(3)
 {3, 0} directed simple Int64 graph
@@ -379,64 +262,38 @@ julia> g=SimpleDiGraph(3)
 julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
-julia> connected_components(g, LC.Kosaraju())
+julia> connected_components(g, Kosaraju())
 3-element Array{Array{Int64,1},1}:
  [1]
  [2]
  [3]
 
-
 julia> g=SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
-julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
-13-element Array{Tuple{Int64,Int64},1}:
- (1, 2)
- (2, 3)
- (3, 4)
- (4, 1)
- (3, 5)
- (5, 6)
- (6, 7)
- (7, 5)
- (5, 8)
- (8, 9)
- (9, 8)
- (10, 11)
- (11, 10)
+julia> edge_list=[(1, 2), (2, 3), (3, 4), (4, 1), (3, 5), (5, 6), (6, 7), (7, 5), (5, 8), (8, 9), (9, 8), (10, 11), (11, 10)];
 
 julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
-julia> connected_components(g, LC.Kosaraju())
+julia> connected_components(g, Kosaraju())
 4-element Array{Array{Int64,1},1}:
  [11, 10]
  [2, 3, 4, 1]
  [6, 7, 5]
  [9, 8]
-
 ```
 """
-
-struct Kosaraju <: StrongConnectivityAlgorithm end
-
-
-@traitfn function connected_components(g::AG::IsDirected, ::Kosaraju) where {T<:Integer, AG <: AbstractGraph{T}}
-    state = RevPostOrderState(nv(g), T(0), zeros(T, nv(g)))
-    LightGraphs.Traversals.traverse_graph!(g, vertices(g), LightGraphs.Traversals.DepthFirst(), state)
-    state2 = KosarajuState(Vector{T}(), Vector{Vector{T}}())
-    LightGraphs.Traversals.traverse_graph!(g, state.result, LightGraphs.Traversals.DepthFirst(neighborfn=inneighbors), state2)
-    if !isempty(state2.curr_comp)
-        push!(state2.comps, state2.curr_comp)
-    end
-    return state2.comps
-end
+function connected_components end
 
 
 """
-    is_strongly_connected(g)
+    is_strongly_connected(g, alg=Tarjan())
 
 Return `true` if directed graph `g` is strongly connected.
+
+### Optional Parameters
+`alg::StrongConnectivityAlgorithm`: Specify a [`StrongConnectivityAlgorithm`](@ref) to use (default: [`Tarjan`](@ref).
 
 # Examples
 ```jldoctest
@@ -447,7 +304,8 @@ true
 ```
 """
 function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected) = length(connected_components(g, Tarjan())) == 1
+@traitfn is_strongly_connected(g::::IsDirected,alg::StrongConnectivityAlgorithm=Tarjan()) =
+    length(connected_components(g, Tarjan())) == 1
 
 """
     period(g)
@@ -466,12 +324,12 @@ julia> period(g)
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
+    !is_connected(g, Tarjan()) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = bfs_tree(g, 1)
+    g_bfs_tree  = LightGraphs.Traversals.tree(g, 1, LightGraphs.Traversals.BFS())
     levels      = gdistances(g_bfs_tree, 1)
     tree_diff   = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
@@ -604,5 +462,7 @@ function is_graphical(degs::Vector{<:Integer})
 end
 
 include("neighborhood_dists.jl")
+include("tarjan.jl")
+include("kosaraju.jl")
 
 end # module
