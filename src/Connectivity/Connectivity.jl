@@ -433,7 +433,7 @@ end
 
 struct Kosaraju <: StrongConnectivityAlgorithm end
 
-@traitfn connected_components(g::::IsDirected, ::Kosaraju) = strongly_connected_components_kosaraju(g)
+@traitfn connected_components(g::::IsDirected, ::kosaraju) = strongly_connected_components_kosaraju(g)
 
 
 """
