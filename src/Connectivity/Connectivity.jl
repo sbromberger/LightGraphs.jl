@@ -177,9 +177,10 @@ function connected_components end
 @traitfn connected_components(g::::IsDirected) = connected_components(g, Tarjan())
 
 """
-    period(g)
+    period(g, alg=Tarjan())
 
 Return the (common) period for all vertices in a strongly connected directed graph.
+Use [`StrongConnectivityAlgorithm`](@ref) `alg` (defaults to [`Tarjan`](@ref).
 Will throw an error if the graph is not strongly connected.
 
 # Examples
@@ -191,8 +192,8 @@ julia> period(g)
 ```
 """
 function period end
-@traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    !is_connected(g, Tarjan()) && throw(ArgumentError("Graph must be strongly connected"))
+@traitfn function period(g::AG::IsDirected, alg::StrongConnectivityAlgorithm=Tarjan()) where {T, AG <: AbstractGraph{T}}
+    !is_connected(g, alg) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
@@ -253,7 +254,8 @@ function condensation end
     end
     return h
 end
-@traitfn condensation(g::::IsDirected) = condensation(g, connected_components(g, Tarjan()))
+@traitfn condensation(g::::IsDirected, alg::StrongConnectivityAlgorithm=Tarjan()) =
+    condensation(g, connected_components(g, alg))
 
 """
     attracting_components(g, alg=Tarjan())
