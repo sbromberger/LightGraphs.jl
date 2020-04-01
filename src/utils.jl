@@ -40,7 +40,7 @@ Sample `k` element from unit range `r` without repetition and eventually excludi
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+sample(a::AbstractRange, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
 
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
