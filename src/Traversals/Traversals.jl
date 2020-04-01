@@ -64,6 +64,7 @@ are listed in order of occurrence in the traversal:
 - [`previsitfn!(<:TraversalState, u::Integer)`](@ref): runs prior to neighborhood discovery for vertex `u`.
 - [`visitfn!(<:TraversalState, u::Integer, v::Integer)`](@ref): runs for each neighbor `v` (newly-discovered or not) of vertex `u`.
 - [`newvisitfn!(<:TraversalState, u::Integer, v::Integer)`](@ref): runs when a new neighbor `v` of vertex `u` is discovered.
+- [`revisitfn!(<:TraversalState, u::Integer, v::Integer)`](@ref): runs when a neighbor `v` of vertex `u` is revisited.
 - [`postvisitfn!(<:TraversalState, u::Integer)`](@ref): runs after neighborhood discovery for vertex `u`.
 - [`postlevelfn!(<:TraversalState)`](@ref): runs after each traversal level.
 
@@ -117,6 +118,19 @@ or the CPU ID will be passed in `t`.
 """
 newvisitfn!(::TraversalState, u, v) = true
 newvisitfn!(s::TraversalState, u, v, t::Integer) = newvisitfn!(s, u, v)
+
+"""
+    revisitfn!(state, u, v)
+    revisitfn!(state, u, v, t)
+
+Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is re-encountered,
+and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
+or the CPU ID will be passed in `t`.
+
+Exactly one of [`newvisitfn!`](@ref) or `revisitfn!` will be executed for each edge traversal.
+"""
+revisitfn!(::TraversalState, u, v) = true
+revisitfn!(s::TraversalState, u, v, t::Integer) = revisitfn!(s, u, v)
 
 """
     visitfn!(state, u, v)
@@ -330,12 +344,12 @@ end
 
 
 include("breadthfirst.jl")
-include("threadedbreadthfirst.jl")
+include("threaded-breadthfirst.jl")
 include("bipartition.jl")
 include("depthfirst.jl")
 include("diffusion.jl")
 include("greedy_color.jl")
-include("threaded_greedy_color.jl")
+include("threaded-greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 

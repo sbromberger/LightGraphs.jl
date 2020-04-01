@@ -650,7 +650,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGra
     for s in vlist
         for d in outneighbors(g, s)
             # println("s = $s, d = $d")
-            if d in vset && has_edge(g, s, d)
+            if d in vset
                 newe = Edge(newvid[s], newvid[d])
                 add_edge!(h, newe)
             end
@@ -690,7 +690,8 @@ getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 
 """
-    egonet(g, v, d, distmx=weights(g))
+    egonet(g, v, d)
+    egonet(g, v, d, distmx)
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
 `d`, using weights (optionally) provided by `distmx`.
@@ -700,9 +701,10 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 - `dir=:out`: if `g` is directed, this argument specifies the edge direction
 with respect to `v` (i.e. `:in` or `:out`).
 """
-egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
+egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}; dir=:out) where T <: Integer where U <: Real =
     g[neighborhood(g, v, d, distmx, dir=dir)]
-
+egonet(g::AbstractGraph{T}, v::Integer, d::Integer; dir=:out) where T <: Integer where U <: Real =
+    g[neighborhood(g, v, d, dir=dir)]
 
 
 """
@@ -712,7 +714,7 @@ Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
     tmp = zeros(eltype(x), n)
-    tmp[x[2:end]] .= 1
+    tmp[x] .= 1
     return cumsum!(tmp, tmp)
 end
 
@@ -746,21 +748,21 @@ julia> collect(edges(h))
 function merge_vertices(g::AbstractGraph, vs)
     labels = collect(1:nv(g))
     # Use lowest value as new vertex id.
-    sort!(vs)
-    nvnew = nv(g) - length(unique(vs)) + 1
+    svs = sort(unique(vs))
+    nvnew = nv(g) - length(svs) + 1
     nvnew <= nv(g) || return g
-    (v0, vm) = extrema(vs)
+    (v0, vm) = (first(svs), last(svs))
     v0 > 0 || throw(ArgumentError("invalid vertex ID: $v0 in list of vertices to be merged"))
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
-    labels[vs] .= v0
-    shifts = compute_shifts(nv(g), vs[2:end])
+    labels[svs] .= v0
+    shifts = compute_shifts(nv(g), svs[2:end])
     for v in vertices(g)
         if labels[v] != v0
             labels[v] -= shifts[v]
         end
     end
 
-    #if v in vs then labels[v] == v0 else labels[v] == v
+    #if v in svs then labels[v] == v0 else labels[v] == v
     newg = SimpleGraph(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
@@ -779,9 +781,6 @@ index will be the lowest value in `vs`. All edges connected to vertices in `vs`
 connect to the new merged vertex.
 
 Return a vector with new vertex values are indexed by the original vertex indices.
-
-### Implementation Notes
-Supports [`SimpleGraph`](@ref) only.
 
 # Examples
 ```jldoctest
@@ -811,8 +810,9 @@ julia> collect(edges(g))
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
-    vs = sort!(unique(vs))
+function merge_vertices!(g::LightGraphs.SimpleGraphs.Graph{T}, vs::Vector{U}) where {U<:Integer, T}
+    unique!(vs)
+    sort!(vs)
     merged_vertex = popfirst!(vs)
 
     x = zeros(Int, nv(g))
@@ -857,4 +857,25 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
     g.ne = sum(degree(g, i) for i in vertices(g)) / 2
 
     return new_vertex_ids
+end
+
+# special case for digraphs
+function merge_vertices!(g::LightGraphs.SimpleGraphs.SimpleDiGraph{T}, vs::Vector{U})  where {T, U<:Integer}
+    unique!(vs)
+    sort!(vs, rev=true)
+    v0 = T(vs[end])
+    @inbounds for v in vs[1:end-1]
+        @inbounds for u in inneighbors(g, v)
+            if !insorted(u, vs, rev=true)
+                add_edge!(g, u, v0)
+            end
+        end
+        @inbounds for u in outneighbors(g, v)
+            if !insorted(u, vs, rev=true)
+                add_edge!(g, v0, u)
+            end
+        end
+        rem_vertex!(g, v)
+    end
+    v0
 end
