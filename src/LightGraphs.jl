@@ -215,6 +215,7 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+include("Degeneracy/Degeneracy.jl")
 include("degeneracy.jl")
 include("digraph13/transitivity.jl")
 include("cycles13/johnson.jl")

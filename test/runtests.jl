@@ -29,6 +29,7 @@ tests = [
     "core",
     "operators",
     "degeneracy",
+    "Degeneracy/runtests",
     "distance",
     "digraph13/transitivity",
     "cycles13/hawick-james",
