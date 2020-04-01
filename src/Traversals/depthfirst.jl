@@ -43,6 +43,8 @@ function traverse_graph!(
                     visited[i] = true
                     push!(S, (i, ptr+1))
                     break
+                else
+                    revisitfn!(state, v, i) || return false
                 end
                 ptr += 1
             end

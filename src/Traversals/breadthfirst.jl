@@ -49,6 +49,8 @@ function traverse_graph!(
                     newvisitfn!(state, v, i) || return false
                     push!(next_level, i)
                     visited[i] = true
+                else
+                    revisitfn!(state, v, i) || return false
                 end
             end
             postvisitfn!(state, v) || return false
