@@ -2,8 +2,6 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
-
-
 struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
@@ -22,6 +20,7 @@ function traverse_graph!(
     S = Vector{Tuple{U,U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
+
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
@@ -35,7 +34,7 @@ function traverse_graph!(
         v, _ = S[end]
         previsitfn!(state, v) || return false
 
-        neighs=alg.neighborfn(g, v)
+        neighs = alg.neighborfn(g, v)
         @inbounds while ptr <= length(neighs)
             i = neighs[ptr]
             visitfn!(state, v, i) || return false
@@ -56,7 +55,7 @@ function traverse_graph!(
         # a new unvisited child, so we will make ptr = 1
         if ptr > length(neighs)
             postlevelfn!(state) || return false
-            _, ptr =pop!(S)
+            _, ptr = pop!(S)
         else
             ptr = 1 # we will enter new node
         end
@@ -106,11 +105,11 @@ function topological_sort end
 @traitfn function topological_sort(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    state = TopoSortState(vcolor, verts, zero(T))    
+    state = TopoSortState(vcolor, verts, zero(T))
     sources = filter(x -> indegree(g, x) == 0, vertices(g))
- 
+
     traverse_graph!(g, sources, DepthFirst(), state) || throw(CycleError())
-      
+
     length(state.verts) < nv(g) && throw(CycleError())
     length(state.verts) > nv(g) && throw(TraversalError())
     return reverse!(state.verts)

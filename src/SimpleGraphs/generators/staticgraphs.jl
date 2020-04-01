@@ -837,6 +837,15 @@ a single node.
 
 ### Implementation Notes
 In this implementation, the common vertex is index 1.
+
+# Examples
+```jldoctest
+julia> friendship_graph(4)
+{9, 12} undirected simple Int64 graph
+
+julia> friendship_graph(Int8(10))
+{21, 30} undirected simple Int64 graph
+```
 """
 function friendship_graph(n::T) where {T <: Integer}
     n <= 0 && return SimpleGraph(1)
