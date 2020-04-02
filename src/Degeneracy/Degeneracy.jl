@@ -1,6 +1,7 @@
 module Degeneracy
 
 using LightGraphs
+using Base.Threads: @threads, Atomic, nthreads, threadid, atomic_sub!
 
 """
     abstract type CoreAlgorithm
@@ -8,30 +9,6 @@ using LightGraphs
 An abstract type representing a specific core decomposition algorithm.
 """
 abstract type CoreAlgorithm end
-
-"""
-    struct Batagelj <: CoreAlgorithm
-
-A [`CoreAlgorithm`] specifying the single-threaded Batagelj decomposition algorithm.
-
-### References
-* An O(m) Algorithm for Cores Decomposition of Networks,
-    Vladimir Batagelj and Matjaz Zaversnik, 2003.
-    http://arxiv.org/abs/cs.DS/0310049
-"""
-struct Batagelj <: CoreAlgorithm end
-
-"""
-    struct ThreadedBatagelj <: CoreAlgorithm
-
-A [`CoreAlgorithm`] specifying the multithreaded Batagelj decomposition algorithm.
-
-### References
-* An O(m) Algorithm for Cores Decomposition of Networks,
-    Vladimir Batagelj and Matjaz Zaversnik, 2003.
-    http://arxiv.org/abs/cs.DS/0310049
-"""
-struct ThreadedBatagelj <: CoreAlgorithm end
 
 """
     abstract type Decomposition
@@ -229,5 +206,6 @@ function decompose(g::AbstractGraph{T}, d::KCorona, cn::AbstractVector) where {T
 end
 
 include("batagelj.jl")
+include("threaded-batagelj.jl")
 
 end # module

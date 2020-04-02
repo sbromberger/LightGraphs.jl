@@ -1,3 +1,15 @@
+"""
+    struct Batagelj <: CoreAlgorithm
+
+A [`CoreAlgorithm`] specifying the single-threaded Batagelj decomposition algorithm.
+
+### References
+* An O(m) Algorithm for Cores Decomposition of Networks,
+    Vladimir Batagelj and Matjaz Zaversnik, 2003.
+    http://arxiv.org/abs/cs.DS/0310049
+"""
+struct Batagelj <: CoreAlgorithm end
+
 function core_number(g::AbstractGraph{T}, ::Batagelj) where {T}
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     n = nv(g)
