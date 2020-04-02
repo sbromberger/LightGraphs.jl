@@ -4,10 +4,11 @@
 A [`CoreAlgorithm`] specifying the multithreaded Batagelj decomposition algorithm.
 
 ### Optional Arguments
-- `frac::Float64`:  
+- `frac::Float64`:  the fraction of vertices past which a subgraph with high-coreness values
+is created using the current core estimates (default: `0.95`)
 
 ### References
-* Parallel k-Core Decomposition on Multicore Platforms, Humayun Kabir and Kamesh Madduri, 2017.
+- Parallel k-Core Decomposition on Multicore Platforms, Humayun Kabir and Kamesh Madduri, 2017.
 https://doi.org/10.1109/IPDPSW.2017.151
 """
 struct ThreadedBatagelj <: CoreAlgorithm
