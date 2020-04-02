@@ -206,6 +206,6 @@ function decompose(g::AbstractGraph{T}, d::KCorona, cn::AbstractVector) where {T
 end
 
 include("batagelj.jl")
-include("threaded-batagelj.jl")
+include("kabirmadduri.jl")
 
 end # module

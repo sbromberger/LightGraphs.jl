@@ -1,7 +1,7 @@
 """
-    struct ThreadedBatagelj <: CoreAlgorithm
+    struct KabirMadduri <: CoreAlgorithm
 
-A [`CoreAlgorithm`] specifying the multithreaded Batagelj decomposition algorithm.
+A [`CoreAlgorithm`] specifying the multithreaded Kabir-Maduri decomposition algorithm.
 
 ### Optional Arguments
 - `frac::Float64`:  the fraction of vertices past which a subgraph with high-coreness values
@@ -11,13 +11,13 @@ is created using the current core estimates (default: `0.95`)
 - Parallel k-Core Decomposition on Multicore Platforms, Humayun Kabir and Kamesh Madduri, 2017.
 https://doi.org/10.1109/IPDPSW.2017.151
 """
-struct ThreadedBatagelj <: CoreAlgorithm
+struct KabirMadduri <: CoreAlgorithm
     frac::Float64
 end
 
-ThreadedBatagelj(;frac=0.95) = ThreadedBatagelj(frac)
+KabirMadduri(;frac=0.95) = KabirMadduri(frac)
 
-function core_number(g::AbstractGraph{T}, alg::ThreadedBatagelj) where {T}
+function core_number(g::AbstractGraph{T}, alg::KabirMadduri) where {T}
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     deg = Atomic{T}.(degree(g))
     buf = [Vector{T}() for _ in 1:nthreads()]
