@@ -40,27 +40,27 @@ Sample `k` element from unit range `r` without repetition and eventually excludi
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+sample(a::AbstractRange, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
 
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
-    insorted(item, collection)
+    insorted(item, collection; rev=false)
 
 Return true if `item` is in sorted collection `collection`.
 
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-function insorted(item, collection)
-    index = searchsortedfirst(collection, item)
-    @inbounds return (index <= length(collection) && collection[index] == item)
+function insorted(item, collection; rev=false)
+    index = searchsorted(collection, item, rev=rev)
+    return !isempty(index)
 end
 
 """
     findall!(A, B)
 
-Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true. 
+Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
@@ -102,7 +102,7 @@ end
 """
     greedy_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
-Partition `1:num_items` into atmost `required_partitions` number of contiguous partitions with 
+Partition `1:num_items` into atmost `required_partitions` number of contiguous partitions with
 the objective of minimising the largest partition.
 The size of a partition is equal to the num of the weight of its elements.
 `weight[i] > 0`.
@@ -112,7 +112,7 @@ Time: O(num_items+required_partitions)
 Requires only one iteration over `weight` but may not output the optimal partition.
 
 ### Implementation Notes
-`Balance(wt, left, right, n_items, n_part) = 
+`Balance(wt, left, right, n_items, n_part) =
 max(sum(wt[left:right])*(n_part-1), sum(wt[right+1:n_items]))`.
 Find `right` that minimises `Balance(weight, 1, right, num_items, required_partitions)`.
 Set the first partition as `1:right`.
@@ -125,7 +125,7 @@ function greedy_contiguous_partition(
     ) where U <: Integer
 
     suffix_sum = cumsum(reverse(weight))
-    reverse!(suffix_sum) 
+    reverse!(suffix_sum)
     push!(suffix_sum, 0) #Eg. [2, 3, 1] => [6, 4, 1, 0]
 
     partitions = Vector{UnitRange{U}}()
@@ -134,13 +134,13 @@ function greedy_contiguous_partition(
     left = one(U)
     for partitions_remain in reverse(1:(required_partitions-1))
 
-        left >= num_items && break 
+        left >= num_items && break
 
         partition_size = weight[left]*partitions_remain #At least one item in each partition
         right = left
 
         #Find right: sum(wt[left:right])*partitions_remain and sum(wt[(right+1):num_items]) is balanced
-        while right+one(U) < num_items && partition_size < suffix_sum[right+one(U)] 
+        while right+one(U) < num_items && partition_size < suffix_sum[right+one(U)]
             right += one(U)
             partition_size += weight[right]*partitions_remain
         end
@@ -149,7 +149,7 @@ function greedy_contiguous_partition(
         if left != right && partition_size > suffix_sum[right]
             right -= one(U)
         end
-        
+
         push!(partitions, left:right)
         left = right + one(U)
     end
@@ -170,7 +170,7 @@ The size of a partition is equal to the sum of the weight of its elements.
 Time: O(num_items*log(sum(weight)))
 
 ### Implementation Notes
-Binary Search for the partitioning over `[fld(sum(weight)-1, required_partitions), sum(weight)]`. 
+Binary Search for the partitioning over `[fld(sum(weight)-1, required_partitions), sum(weight)]`.
 """
 function optimal_contiguous_partition(
     weight::Vector{<:Integer},
@@ -185,7 +185,7 @@ function optimal_contiguous_partition(
 
     # Find optimal balance
     while up_bound > low_bound+1
-        search_for = fld(up_bound+low_bound, 2) 
+        search_for = fld(up_bound+low_bound, 2)
 
         sum_part = 0
         remain_part = required_partitions

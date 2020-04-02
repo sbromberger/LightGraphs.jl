@@ -1,19 +1,18 @@
 module Parallel
 
 using LightGraphs
-using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
+using LightGraphs: sample, AbstractPathState
+using LightGraphs.ShortestPaths
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
+import Random
 using Random:shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
 
-include("shortestpaths/bellman-ford.jl")
-include("shortestpaths/dijkstra.jl")
-include("shortestpaths/floyd-warshall.jl")
-include("shortestpaths/johnson.jl")
+include("shortestpaths/deprecated.jl")
 include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/pagerank.jl")

@@ -4,13 +4,13 @@
     @testset "$g" for g in testgraphs(d)
         corenum = @inferred(core_number(g))
         @test corenum == [3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 0]
-        
+
         @testset "k-core" begin
             @test @inferred(k_core(g)) == k_core(g, corenum=corenum) == [1:8;]
             @test @inferred(k_core(g, 2)) == k_core(g, 2, corenum=corenum) == [1:16;]
             @test length(k_core(g, 4)) == 0
         end
-        
+
         @testset "k-shell" begin
             @test @inferred(k_shell(g)) == k_shell(g, corenum=corenum) == [1:8;]
             @test @inferred(k_shell(g, 2)) == k_shell(g, 2, corenum=corenum) == [9:16;]

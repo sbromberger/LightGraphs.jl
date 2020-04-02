@@ -763,3 +763,100 @@ function lollipop_graph(n1::T, n2::T) where {T <: Integer}
     add_edge!(g, n1, n1+1)
     return g
 end
+
+"""
+    circulant_graph(n, connection_set)
+
+Create a [circulant graph](https://en.wikipedia.org/wiki/Circulant_graph) with `n` vertices with connection set as `connection_set`.
+
+### Implementation Notes
+`n` must be at least 1 so that the graph has at least one vertex.
+The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
+
+# Examples
+```jldoctest
+julia> circulant_graph(2, [1])
+{2, 1} undirected simple Int64 graph
+
+julia> circulant_graph(Int8(3), [Int8(1)])
+{3, 3} undirected simple Int8 graph
+```
+"""
+function circulant_graph(n::T, connection_set::Vector{T}) where {T <: Integer}
+    (n < 1) && throw(DomainError(n, "n must be at least 1"))
+    g = SimpleGraph(n)
+
+    @inbounds for u = 1:n-1, v = u+1:n
+        if mod(v - u, n) in connection_set || mod(u - v, n) in connection_set
+            add_edge!(g, u, v)
+        end
+    end
+
+    return g
+end
+
+"""
+    circulant_digraph(n, connection_set)
+
+Create a directed [circulant graph](https://en.wikipedia.org/wiki/Circulant_graph) with `n` vertices with connection set as `connection_set`.
+
+### Implementation Notes
+`n` must be at least 1 so that the graph has at least one vertex.
+The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
+
+# Examples
+```jldoctest
+julia> g = circulant_digraph(3, [1])
+{3, 2} directed simple Int64 graph
+
+julia> circulant_digraph(Int8(3), [Int8(1)])
+{3, 3} directed simple Int8 graph
+```
+"""
+function circulant_digraph(n::T, connection_set::Vector{T}) where {T <: Integer}
+    (n < 1) && throw(DomainError(n, "n must be at least 1"))
+    g = SimpleDiGraph(n)
+
+    @inbounds for u = 1:n-1, v = u+1:n
+        if mod(v - u, n) in connection_set
+            add_edge!(g, u, v)
+        end
+        if mod(u - v, n) in connection_set
+            add_edge!(g, v, u)
+        end
+    end
+    return g
+end
+
+"""
+    friendship_graph(n)
+
+Create a [friendship graph](https://en.wikipedia.org/wiki/Friendship_graph) consisting
+of `n` copies of the cycle graph `C3` with a common vertex. If `n ≤ 0`, return
+a single node.
+
+### Implementation Notes
+In this implementation, the common vertex is index 1.
+
+# Examples
+```jldoctest
+julia> friendship_graph(4)
+{9, 12} undirected simple Int64 graph
+
+julia> friendship_graph(Int8(10))
+{21, 30} undirected simple Int64 graph
+```
+"""
+function friendship_graph(n::T) where {T <: Integer}
+    n <= 0 && return SimpleGraph(1)
+
+    g = SimpleGraph(2 * n + 1)
+    for indx in 1:n
+        u = indx * 2
+        v = u + 1
+        add_edge!(g, u, v)
+        add_edge!(g, 1, v)
+        add_edge!(g, u, 1)
+    end
+    return g
+end

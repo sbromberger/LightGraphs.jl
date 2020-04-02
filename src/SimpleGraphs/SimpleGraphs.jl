@@ -11,8 +11,9 @@ import Base:
 import LightGraphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
-    indegree, outdegree, degree, has_self_loops, num_self_loops, insorted
+    has_contiguous_vertices, has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
+  	deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
+	num_self_loops, insorted
 
 using Random: GLOBAL_RNG, AbstractRNG
 
@@ -31,7 +32,7 @@ export AbstractSimpleGraph, AbstractSimpleEdge,
     complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph,
     star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree,
     double_binary_tree, roach_graph, clique_graph, barbell_graph, lollipop_graph,
-    ladder_graph, circular_ladder_graph,
+    ladder_graph, circular_ladder_graph, friendship_graph, circulant_graph, circulant_digraph,
     #smallgraphs
     smallgraph,
     # Euclidean graphs
@@ -55,7 +56,6 @@ function show(io::IO, g::AbstractSimpleGraph{T}) where T
 end
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
-vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
 
 """
     throw_if_invalid_eltype(T)
@@ -208,6 +208,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 end
 
 zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
+has_contiguous_vertices(::Type{G}) where {G<:AbstractSimpleGraph} = true
 
 include("./simpleedge.jl")
 include("./simpledigraph.jl")
