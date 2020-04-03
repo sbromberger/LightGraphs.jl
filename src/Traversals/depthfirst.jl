@@ -20,6 +20,7 @@ function traverse_graph!(
     S = Vector{Tuple{U, U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
+
     @inbounds for s in ss
         us = U(s)
         visited[us] && continue
@@ -27,7 +28,6 @@ function traverse_graph!(
         visited[us] = true
         push!(S, (us, 1))
         initfn!(state, us) || return false
-
         ptr = one(U)
 
         while !isempty(S)
