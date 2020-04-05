@@ -1,7 +1,7 @@
 module Cycles
 
 using LightGraphs
-using LightGraphs.Degeneracy
+using LightGraphs.Connectivity
 using SimpleTraits
 
 abstract type SimpleCycleAlgorithm end
