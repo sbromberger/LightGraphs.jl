@@ -17,47 +17,48 @@ function traverse_graph!(
 
     n = nv(g)
     visited = falses(n)
-    S = Vector{Tuple{U,U}}()
+    S = Vector{Tuple{U, U}}()
     sizehint!(S, length(ss))
     preinitfn!(state, visited) || return false
 
     @inbounds for s in ss
         us = U(s)
+        visited[us] && continue
+
         visited[us] = true
         push!(S, (us, 1))
         initfn!(state, us) || return false
-    end
+        ptr = one(U)
 
-    ptr = one(U)
+        while !isempty(S)
+            v, _ = S[end]
+            previsitfn!(state, v) || return false
 
-    while !isempty(S)
-        v, _ = S[end]
-        previsitfn!(state, v) || return false
-
-        neighs = alg.neighborfn(g, v)
-        @inbounds while ptr <= length(neighs)
-            i = neighs[ptr]
-            visitfn!(state, v, i) || return false
-            if !visited[i]  # find the first unvisited neighbor
-                newvisitfn!(state, v, i) || return false
-                visited[i] = true
-                push!(S, (i, ptr+1))
-                break
-            else
-                revisitfn!(state, v, i) || return false
+            neighs=alg.neighborfn(g, v)
+            @inbounds while ptr <= length(neighs)
+                i = neighs[ptr]
+                visitfn!(state, v, i) || return false
+                if !visited[i]  # find the first unvisited neighbor
+                    newvisitfn!(state, v, i) || return false
+                    visited[i] = true
+                    push!(S, (i, ptr+1))
+                    break
+                else
+                    revisitfn!(state, v, i) || return false
+                end
+                ptr += 1
             end
-            ptr += 1
-        end
-        postvisitfn!(state, v) || return false
-        # if ptr > length(neighs) then we have finished all children of the node,
-        # and the next time we pop from the stack we will be in the parent of the current
-        # node. We would like to continue from where we stoped, otherwise we have found
-        # a new unvisited child, so we will make ptr = 1
-        if ptr > length(neighs)
-            postlevelfn!(state) || return false
-            _, ptr = pop!(S)
-        else
-            ptr = 1 # we will enter new node
+            postvisitfn!(state, v) || return false
+            # if ptr > length(neighs) then we have finished all children of the node,
+            # and the next time we pop from the stack we will be in the parent of the current
+            # node. We would like to continue from where we stoped, otherwise we have found
+            # a new unvisited child, so we will make ptr = 1
+            if ptr > length(neighs)
+                postlevelfn!(state) || return false
+                _, ptr =pop!(S)
+            else
+                ptr = 1 # we will enter new node
+            end
         end
     end
     return true

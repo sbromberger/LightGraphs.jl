@@ -7,6 +7,8 @@ const conntestdir = dirname(@__FILE__)
 
 const conntests = [
     "connectivity.jl",
+    "strong.jl",
+    "weak.jl"
 ]
 
 @testset "LightGraphs.Connectivity" begin
