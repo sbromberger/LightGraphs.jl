@@ -1,7 +1,7 @@
 module Cycles
 
 using LightGraphs
-using LightGraphs.Connectivity
+using LightGraphs.Connectivity: StrongConnectivityAlgorithm, Tarjan, connected_components
 using SimpleTraits
 
 abstract type SimpleCycleAlgorithm end

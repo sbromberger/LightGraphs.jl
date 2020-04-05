@@ -9,16 +9,16 @@ A structure used to calculate the [minimum cycle mean](@ref minumum_cycle_mean
 using Karp's algorithm.
 
 ### Optional Parameters
-`scc_alg::LightGraphs.Degeneracy::StrongConnectivity`: specifies the [strong
-connectivity algorithm](@ref LightGraphs.Degeneracy.StrongConnectivity) to be
-used (default [`LightGraphs.Degeneracy.Tarjan`](@ref)).
+`scc_alg::LightGraphs.Connectivity.StrongConnectivityAlgorithm`: specifies the [strong
+connectivity algorithm](@ref LightGraphs.Connectivity.StrongConnectivityAlgorithm) to be
+used (default [`LightGraphs.Connectivity.Tarjan`](@ref)).
 """
 
-struct Karp{T<:LightGraphs.Degeneracy.StrongConnectivity} <: SimpleCycleAlgorithm
+struct Karp{T<:StrongConnectivityAlgorithm} <: SimpleCycleAlgorithm
     scc_alg::T
 end
 
-Karp(; scc_alg=LightGraphs.Degeneracy.Tarjan()) = Karp(scc_alg)
+Karp(; scc_alg=Tarjan()) = Karp(scc_alg)
 
 function _karp_minimum_cycle_mean(
     g::AbstractGraph,

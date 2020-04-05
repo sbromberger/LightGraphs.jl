@@ -43,7 +43,7 @@ Compute the theoretical maximum number of cycles in the directed graph `dg`.
 
 The computation can be performed assuming the graph is complete or taking into account the
 decomposition in strongly connected components (`byscc` parameter). If `byscc` is `true`,
-use the strong connectivity algorithm specified by `scc_alg` (default [`LightGraphs.Degeneracy.Tarjan()`](@ref).
+use the strong connectivity algorithm specified by `scc_alg` (default [`LightGraphs.Connectivity.Tarjan()`](@ref).
 
 
 ### Performance
@@ -53,13 +53,13 @@ A more efficient version is possible.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function max_simple_cycles end
-@traitfn function max_simple_cycles(dg::::IsDirected, byscc::Bool=true, scc_alg::LightGraphs.Connectivity.StrongConnectivity=Tarjan())
+@traitfn function max_simple_cycles(dg::::IsDirected, byscc::Bool=true, scc_alg::StrongConnectivityAlgorithm=Tarjan())
     c::BigInt = zero(BigInt)
     n = nv(dg)
     if !byscc
         c = max_simple_cycles(n)
     else
-        for scc in LightGraphs.Degeneracy.connected_components(dg, scc_alg)
+        for scc in connected_components(dg, scc_alg)
             if length(scc) > 1
                 c += max_simple_cycles(length(scc))
             end

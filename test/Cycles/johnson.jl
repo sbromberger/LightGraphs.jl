@@ -9,22 +9,22 @@
         @test LCY.max_simple_cycles(g) == 0
         @test LCY.max_simple_cycles(g, false) == 84
         @test LCY.count_simple_cycles(g) == 0
-        @test LCY.length(simple_cycles(g)) == 0
-        @test LCY.isempty(simple_cycles(g)) == true
-        @test LCY.isempty(simple_cycles(g, LCY.Johnson(iterative=true))) == true
+        @test length(LCY.simple_cycles(g)) == 0
+        @test isempty(LCY.simple_cycles(g)) == true
+        @test isempty(LCY.simple_cycles(g, LCY.Johnson(iterative=true))) == true
         @test LCY.simple_cycles_length(g, LCY.Johnson()) == (zeros(5), 0)
         @test LCY.count_simple_cycles(g, LCY.Johnson(ceiling=10)) == 0
-        @test LCY.isempty(simple_cycles(g, LCY.Johnson(iterative=true, ceiling=10))) == true
+        @test isempty(LCY.simple_cycles(g, LCY.Johnson(iterative=true, ceiling=10))) == true
         @test LCY.simple_cycles_length(g, LCY.Johnson(ceiling=10)) == (zeros(5), 0)
     end
 
     @testset "max_simple_cycles(4)" begin
-        @test max_simple_cycles(4) == 20
+        @test LCY.max_simple_cycles(4) == 20
     end
 
     @testset "complete digraph" for g in testgraphs(completedg)
         @test LCY.max_simple_cycles(g) == 20
-        @test LCY.length(simple_cycles(g)) == 20
+        @test length(LCY.simple_cycles(g)) == 20
         @test LCY.simple_cycles(g) == @inferred(LCY.simple_cycles(g, LCY.Johnson(iterative=true)))
         @test LCY.count_simple_cycles(g) == 20
         @test LCY.simple_cycles_length(g) == ([0, 6, 8, 6], 20)
@@ -56,7 +56,7 @@
     ])
 
     @testset "self loops" for g in testgraphs(selfloopg)
-        cycles = simple_cycles(g)
+        cycles = LCY.simple_cycles(g)
         @test [3] in cycles
         @test [4] in cycles
         @test [1, 2, 3] in cycles || [2, 3, 1] in cycles || [3, 1, 2] in cycles
