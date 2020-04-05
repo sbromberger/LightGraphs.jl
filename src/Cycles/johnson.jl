@@ -53,7 +53,7 @@ A more efficient version is possible.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function max_simple_cycles end
-@traitfn function max_simple_cycles(dg::::IsDirected, byscc::Bool=true, scc_alg::LightGraphs.Degeneracy.StrongConnectivityAlgorithm=Tarjan())
+@traitfn function max_simple_cycles(dg::::IsDirected, byscc::Bool=true, scc_alg::LightGraphs.Degeneracy.StrongConnectivity=Tarjan())
     c::BigInt = zero(BigInt)
     n = nv(dg)
     if !byscc
