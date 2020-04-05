@@ -95,4 +95,11 @@
         @test λ == -1.
         @test c == [2]
     end
+
+    @testset "unweighted" for g in testgraphs(multi)
+        c, λ = LCY.minimum_cycle_mean(g)
+        c2, λ2 = LCY.minimum_cycle_mean(g, LCY.Karp())
+        @test c == c2
+        @test λ == λ2
+    end
 end

@@ -52,6 +52,9 @@ If the algorithm supports it, the `ceiling` parameter of the `SimpleCycleAlgorit
 used to avoid memory overload if there are a lot of cycles in the graph. You can use the function
 [`max_simple_cycles()`](@ref) to get an idea of the theoretical maximum number or cycles.
 
+The `iterative` parameter of the [`SimpleCycleAlgorithm`](@ref) structure, if it is defined, is assumed to
+be `true`.
+
 # Examples
 ```jldoctest
 julia> simple_cycles_count(complete_digraph(6))
@@ -80,11 +83,13 @@ Search all cycles of the given directed graph, using an appropriate `SimpleCycle
 (default: `Johnson`). Return a tuple representing the cycle length and the number of cycles.
 
 ### Implementation Notes
-If the algorithm supports it, the `ceiling` parameter of the `SimpleCycleAlgorithm` structure may be
+If the algorithm supports it, the `ceiling` parameter of the [`SimpleCycleAlgorithm`](@ref) structure may be
 used to avoid memory overload if there are a lot of cycles in the graph. You can use the function
 [`max_simple_cycles()`](@ref) to get an idea of the theoretical maximum number or cycles.
 If the `ceiling` is reached (`ncycles = ceiling`), the output is only a subset of the cycles lengths.
 
+The `iterative` parameter of the [`SimpleCycleAlgorithm`](@ref) structure, if it is defined, is assumed to
+be `true`.
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 

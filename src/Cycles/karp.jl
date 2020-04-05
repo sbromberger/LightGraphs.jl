@@ -117,3 +117,4 @@ end
     end
     return cycle, λmin
 end
+@traitfn minimum_cycle_mean(g::::IsDirected, alg::Karp) = minimum_cycle_mean(g, weights(g), alg)

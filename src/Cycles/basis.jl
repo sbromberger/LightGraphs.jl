@@ -1,7 +1,8 @@
 # Code in this file inspired by NetworkX.
 
 """
-    cycle_basis(g, root=nothing)
+    cycle_basis(g)
+    cycle_basis(g, root)
 
 Return a list of cycles which form a basis for cycles of graph `g`,
 optionally starting at node `root`.

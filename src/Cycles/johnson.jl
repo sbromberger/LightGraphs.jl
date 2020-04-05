@@ -175,7 +175,7 @@ end
 
 
 @traitfn simple_cycles(dg::::IsDirected, j::Johnson) =
-    j.iterative ? _johnson_simple_cycles_iter(dg, j.ceiling) : _johnson_simple_cycles_recursive(dg)
+    j.iterative ? _johnson_simple_cycles_iterative(dg, j.ceiling) : _johnson_simple_cycles_recursive(dg)
 
 @traitfn function _johnson_simple_cycles_recursive(dg::::IsDirected)
     T = eltype(dg)
@@ -249,7 +249,7 @@ function circuit_iter end
 end
 
 
-@traitfn function _johnson_simple_cycles_iterative(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
+@traitfn function _iterate_johnson_simple_cycles(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
     sccs = strongly_connected_components(dg)
     for scc in sccs
         while length(scc) >= 1
@@ -264,19 +264,19 @@ end
 @traitfn function count_simple_cycles(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}}
     len = 0
     ceiling = j.ceiling
-    for cycle in Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(Channel(c -> _iterate_johnson_simple_cycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
         len += 1
     end
     return len
 end
 
-@traitfn _johnson_simple_cycles_iter(dg::AG::IsDirected, ceiling::Int) where {T, AG <: AbstractGraph{T}} =
-    return collect(Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
+@traitfn _johnson_simple_cycles_iterative(dg::AG::IsDirected, ceiling::Int) where {T, AG <: AbstractGraph{T}} =
+    return collect(Iterators.take(Channel(c -> _iterate_johnson_simple_cycles(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
 
 @traitfn function simple_cycles_length(dg::AG::IsDirected, j::Johnson) where {T, AG <: AbstractGraph{T}}
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in Iterators.take(Channel(c -> _johnson_simple_cycles_iterative(dg, c), ctype=Vector{T})::Channel{Vector{T}}, j.ceiling)
+    for cycle in Iterators.take(Channel(c -> _iterate_johnson_simple_cycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, j.ceiling)
         cyclelength[length(cycle)] += 1
         ncycles += 1
     end

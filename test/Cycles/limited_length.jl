@@ -9,7 +9,7 @@
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(2))) == 6
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(3))) == 14
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(4))) == 20
-        @test length(LCY.simple_cycles(g, LCY.LimitedLength(4, 10))) == 10
+        @test length(LCY.simple_cycles(g, LCY.LimitedLength(4, ceiling=10))) == 10
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(4, typemax(Int)))) == 20
     end
 
