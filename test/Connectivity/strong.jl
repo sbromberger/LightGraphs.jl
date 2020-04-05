@@ -20,6 +20,10 @@ for alg in [LC.Tarjan, LC.Kosaraju]
                 scc = @inferred(LC.connected_components(g, alg()))
                 @test length(scc) == 3
                 @test any(sort(x) == [1, 2, 5] for x in scc)
+                if alg == LC.Tarjan
+                    scc2 = @inferred(LC.connected_components(g))
+                    @test scc == scc2
+                end
             end
 
             function scc_ok(graph)
@@ -148,17 +152,20 @@ for alg in [LC.Tarjan, LC.Kosaraju]
             @test Set(@inferred(LC.connected_components(fig1, alg()))) == Set(scc_fig1)
             @test Set(@inferred(LC.connected_components(fig3, alg()))) == Set(scc_fig3)
 
-            @test @inferred(LC.period(n_ring, alg())) == n
+            @test @inferred(LC.period(n_ring, alg())) == @inferred(LC.period(n_ring)) == n
             @test @inferred(LC.period(n_ring_shortcut, alg())) == 2
 
             c = @inferred(LC.condensation(fig3, alg()))
-            @test sort(degree(c)) == sort(degree(fig3_cond))
+            c2 = @inferred(LC.condensation(fig3))
+            @test sort(degree(c)) == sort(degree(c2)) == sort(degree(fig3_cond))
 
             @test @inferred(LC.attracting_components(fig1, alg())) == Vector[[2, 5]]
             ac = @inferred(LC.attracting_components(fig3, alg())) 
+            ac2 = @inferred(LC.attracting_components(fig3))
             sort!(ac, by=length)
-            @test ac[1] == [8]
-            @test sort(ac[2]) == [3, 4]
+            sort!(ac2, by=length)
+            @test ac[1] == ac2[1] == [8]
+            @test sort(ac[2]) == sort(ac2[2]) == [3, 4]
         end # JarvisShier scc testset
     end
 end # for loop
