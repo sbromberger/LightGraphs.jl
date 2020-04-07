@@ -47,7 +47,6 @@ function bipartite_map(g::AbstractGraph{T}) where T
         Q = Vector{T}()
         s = cc[1]
         push!(Q, s)
-        bipartitemap = zeros(UInt8, nvg)
         while !isempty(Q)
             u = popfirst!(Q)
             for v in outneighbors(g, u)
