@@ -6,7 +6,7 @@
     pentagon = random_regular_graph(5, 2)
 
     @testset "path digraph" for g in testgraphs(pathdg)
-        @test LCY.max_simple_cycles(g) == 0
+        @test LCY.max_simple_cycles(g) == LCY.max_simple_cycles(g, true) == LCY.max_simple_cycles(g, true, Tarjan()) == 0
         @test LCY.max_simple_cycles(g, false) == 84
         @test LCY.count_simple_cycles(g) == 0
         @test length(LCY.simple_cycles(g)) == 0
@@ -23,7 +23,7 @@
     end
 
     @testset "complete digraph" for g in testgraphs(completedg)
-        @test LCY.max_simple_cycles(g) == 20
+        @test LCY.max_simple_cycles(g) == LCY.max_simple_cycles(g, true) == LCY.max_simple_cycles(g, true, Tarjan()) == 20
         @test length(LCY.simple_cycles(g)) == 20
         @test LCY.simple_cycles(g) == @inferred(LCY.simple_cycles(g, LCY.Johnson(iterative=true)))
         @test LCY.count_simple_cycles(g) == 20

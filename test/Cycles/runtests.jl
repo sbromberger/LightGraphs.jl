@@ -1,4 +1,5 @@
 using LightGraphs.Cycles
+using LightGraphs.Connectivity: Tarjan
 
 const LCY = LightGraphs.Cycles
 
