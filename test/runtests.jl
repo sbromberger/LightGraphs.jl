@@ -37,6 +37,7 @@ tests = [
     "cycles13/karp",
     "cycles13/basis",
     "cycles13/limited_length",
+    "Cycles/runtests",
     "edit_distance",
     "connectivity",
     "Connectivity/runtests",
