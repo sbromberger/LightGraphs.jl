@@ -47,7 +47,6 @@ function bipartite_map(g::AbstractGraph{T}) where T
     @inbounds for cc in ccs
         s = cc[1]
         enqueue!(Q, s)
-        bipartitemap = zeros(UInt8, nvg)
         while !isempty(Q)
             u = dequeue!(Q)
             for v in outneighbors(g, u)
