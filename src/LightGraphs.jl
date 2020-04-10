@@ -7,7 +7,7 @@ using ArnoldiMethod
 using Statistics: mean
 
 using Inflate: InflateGzipStream
-using DataStructures: IntDisjointSets, PriorityQueue, Queue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
+using DataStructures: IntDisjointSets, PriorityQueue, Queue, Deque, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
@@ -215,13 +215,9 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+include("Degeneracy/Degeneracy.jl")
 include("degeneracy.jl")
 include("digraph13/transitivity.jl")
-include("cycles13/johnson.jl")
-include("cycles13/hawick-james.jl")
-include("cycles13/karp.jl")
-include("cycles13/basis.jl")
-include("cycles13/limited_length.jl")
 include("Traversals/Traversals.jl")
 include("traversals13/bfs.jl")
 include("traversals13/bipartition.jl")
@@ -243,10 +239,17 @@ include("shortestpaths13/yen.jl")
 include("shortestpaths13/spfa.jl")
 include("Connectivity/Connectivity.jl")
 include("connectivity.jl")
+include("Cycles/Cycles.jl")
+include("cycles13/johnson.jl")
+include("cycles13/hawick-james.jl")
+include("cycles13/karp.jl")
+include("cycles13/basis.jl")
+include("cycles13/limited_length.jl")
 include("linalg13/LinAlg.jl")
 include("operators.jl")
 include("persistence13/common.jl")
 include("persistence13/lg.jl")
+include("Centrality/Centrality.jl")
 include("centrality13/betweenness.jl")
 include("centrality13/closeness.jl")
 include("centrality13/stress.jl")
