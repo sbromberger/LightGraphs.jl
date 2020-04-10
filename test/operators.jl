@@ -33,7 +33,7 @@
             @test nv(z) == 4
             @test ne(z) == 0
 
-            add_edge!(h, 1, 3)
+            add_edge!(h, 1, 1)
             z = @inferred(symmetric_difference(h, g))
             @test z == symmetric_difference(g, h)
             @test nv(z) == 5
@@ -144,14 +144,13 @@
             @test z == path_digraph(6)
         end
 
-        @testset "symmetric difference2 for Digraph" begin
+        @testset "symmetric difference for Digraph" begin
             hp = path_digraph(3)
             h = DiGraph{T}(hp)
-            add_edge!(h, 1, 3)
+            add_edge!(h, 3, 1)
 
-
-            y1 = symmetric_difference2(g, h)
-            @test y1 == symmetric_difference2(h, g)
+            y1 = symmetric_difference(g, h)
+            @test y1 == symmetric_difference(h, g)
             @test ne(y1) == 3
             @test nv(y1) == 5
         end
