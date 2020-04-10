@@ -2,14 +2,14 @@ module ShortestPaths
 using LightGraphs
 using LightGraphs.Traversals
 import LightGraphs.Traversals: tree, parents, distances
-using DataStructures: PriorityQueue, dequeue!, enqueue!, peek
+using DataStructures: PriorityQueue, Queue, Deque, dequeue!, enqueue!, peek
 using SparseArrays: sparse
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads
 using SharedArrays: SharedMatrix, sdata
 
 import Base: ==
-import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
+import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, revisitfn!, postvisitfn!, postlevelfn!
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
@@ -158,7 +158,7 @@ distances(state::ShortestPathResult, v::Integer) = state.dists[v]
 distances(state::ShortestPathResult) = state.dists
 
 """
-    parents(state[, v])
+    parents(result[, v])
 
 Given the output of a [`shortest_paths`](@ref) calculation of type
 [`ShortestPathResult`](@ref), return a vector (indexed by vertex)
@@ -168,8 +168,8 @@ For [`ShortestPathAlgorithm`](@ref)s that compute all-pairs shortest
 paths, `parents(state)` will return a matrix (indexed by source and destination
 vertices) of parents.
 """
-parents(state::ShortestPathResult, v::Integer) = state.parents[v]
-parents(state::ShortestPathResult) = state.parents
+parents(result::ShortestPathResult, v::Integer) = result.parents[v]
+parents(result::ShortestPathResult) = result.parents
 
 tree(r::ShortestPathResult) = tree(parents(r))
 
@@ -204,6 +204,7 @@ has_negative_weight_cycle(g::LightGraphs.SimpleGraphs.AbstractSimpleGraph) = fal
 include("astar.jl")
 include("bellman-ford.jl")
 include("bfs.jl")
+include("trackingbfs.jl")
 include("desopo-pape.jl")
 include("dijkstra.jl")
 include("distributed-dijkstra.jl")
