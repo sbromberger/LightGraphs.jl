@@ -42,8 +42,8 @@
             g1 = path_digraph(2)
             g2 = path_digraph(4)
 
-            y = symmetric_difference2(g1, g2)
-            @test y == symmetric_difference2(g2, g1)
+            y = symmetric_difference(g1, g2)
+            @test y == symmetric_difference(g2, g1)
             @test ne(y) == 2
             @test nv(y) == 4
         end
