@@ -32,22 +32,12 @@
             z = @inferred(difference(h, g))
             @test nv(z) == 4
             @test ne(z) == 0
+
+            add_edge!(h, 1, 3)
             z = @inferred(symmetric_difference(h, g))
             @test z == symmetric_difference(g, h)
             @test nv(z) == 5
-            @test ne(z) == 1
-        end
-
-        @testset "symmetric difference for Digraph" begin
-            g1 = path_digraph(2)
-            g2 = path_digraph(4)
-
-            y1 = symmetric_difference(g1, g2)
-            y2 = symmetric_difference(g2, g1)
-            @test y1 == y2
-            @test y1 == symmetric_difference(g2, g1)
-            @test ne(y1) == 2
-            @test nv(y1) == 4
+            @test ne(z) == 2
         end
 
         @testset "union" begin
@@ -152,6 +142,18 @@
             z = @inferred(union(g, h))
             @test has_edge(z, e)
             @test z == path_digraph(6)
+        end
+
+        @testset "symmetric difference2 for Digraph" begin
+            hp = path_digraph(3)
+            h = DiGraph{T}(hp)
+            add_edge!(h, 1, 3)
+
+
+            y1 = symmetric_difference2(g, h)
+            @test y1 == symmetric_difference2(h, g)
+            @test ne(y1) == 3
+            @test nv(y1) == 5
         end
     end
 
