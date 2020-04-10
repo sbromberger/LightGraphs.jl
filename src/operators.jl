@@ -326,7 +326,6 @@ function symmetric_difference(g::T, h::T) where T <: SimpleGraph
         end
     end
     if limit < nv(g)
-
         for u in limit+1:nv(g)
             l1 = neighbors(g, u)
             i = searchsortedfirst(l1, u)
