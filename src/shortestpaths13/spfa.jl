@@ -7,7 +7,7 @@ function spfa_shortest_paths(
 
     Base.depwarn("`spfa_shortest_paths` is deprecated. Equivalent functionality has been moved to `LightGraphs.ShortestPaths.shortest_paths`.", :spfa_shortest_paths)
 
-    LightGraphs.ShortestPaths.dists(LightGraphs.ShortestPaths.shortest_paths(graph, source, distmx, LightGraphs.ShortestPaths.SPFA())) 
+    LightGraphs.ShortestPaths.dists(LightGraphs.ShortestPaths.shortest_paths(graph, source, distmx, LightGraphs.ShortestPaths.SPFA()))
 end
 
 function has_negative_edge_cycle_spfa(x...)
