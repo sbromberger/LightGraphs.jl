@@ -42,10 +42,12 @@
             g1 = path_digraph(2)
             g2 = path_digraph(4)
 
-            y = symmetric_difference(g1, g2)
-            @test y == symmetric_difference(g2, g1)
-            @test ne(y) == 2
-            @test nv(y) == 4
+            y1 = symmetric_difference(g1, g2)
+            y2 = symmetric_difference(g2, g1)
+            @test y1 == y2
+            @test y1 == symmetric_difference(g2, g1)
+            @test ne(y1) == 2
+            @test nv(y1) == 4
         end
 
         @testset "union" begin
