@@ -34,10 +34,11 @@
             @test ne(z) == 0
 
             add_edge!(h, 1, 1)
+            rem_vertex!(h, 4)
             z = @inferred(symmetric_difference(h, g))
             @test z == symmetric_difference(g, h)
             @test nv(z) == 5
-            @test ne(z) == 2
+            @test ne(z) == 3
         end
 
         @testset "union" begin
