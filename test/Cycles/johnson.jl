@@ -5,7 +5,7 @@
     quadrangle = random_regular_graph(4, 2)
     pentagon = random_regular_graph(5, 2)
 
-    @testset "path digraph" for g in testgraphs(pathdg)
+    @testset "path digraph $g" for g in testgraphs(pathdg)
         @test LCY.max_simple_cycles(g) == LCY.max_simple_cycles(g, true) == LCY.max_simple_cycles(g, true, Tarjan()) == 0
         @test LCY.max_simple_cycles(g, false) == 84
         @test LCY.count_simple_cycles(g) == 0
@@ -22,7 +22,7 @@
         @test LCY.max_simple_cycles(4) == 20
     end
 
-    @testset "complete digraph" for g in testgraphs(completedg)
+    @testset "complete digraph $g" for g in testgraphs(completedg)
         @test LCY.max_simple_cycles(g) == LCY.max_simple_cycles(g, true) == LCY.max_simple_cycles(g, true, Tarjan()) == 20
         @test length(LCY.simple_cycles(g)) == 20
         @test LCY.simple_cycles(g) == @inferred(LCY.simple_cycles(g, LCY.Johnson(iterative=true)))
@@ -32,18 +32,18 @@
         @test LCY.simple_cycles_length(g, LCY.Johnson(ceiling=10))[2] == 10
     end
 
-    @testset "triangle" for g in testgraphs(triangle)
+    @testset "triangle $g" for g in testgraphs(triangle)
         trianglelengths, triangletotal = LCY.simple_cycles_length(DiGraph(g))
         @test sum(trianglelengths) == triangletotal
     end
 
-    @testset "quadrangle" for g in testgraphs(quadrangle)
+    @testset "quadrangle $g" for g in testgraphs(quadrangle)
         quadranglelengths, quadrangletotal = LCY.simple_cycles_length(DiGraph(g))
         @test sum(quadranglelengths) == quadrangletotal
         @test LCY.simple_cycles(DiGraph(g)) == @inferred(LCY.simple_cycles(DiGraph(g), LCY.Johnson(iterative=true)))
     end
 
-    @testset "pentagon" for g in testgraphs(pentagon)
+    @testset "pentagon $g" for g in testgraphs(pentagon)
         pentagonlengths, pentagontotal = LCY.simple_cycles_length(DiGraph(g))
         @test sum(pentagonlengths) == pentagontotal
     end
@@ -55,7 +55,7 @@
         0 0 0 1;
     ])
 
-    @testset "self loops" for g in testgraphs(selfloopg)
+    @testset "self loops $g" for g in testgraphs(selfloopg)
         cycles = LCY.simple_cycles(g)
         @test [3] in cycles
         @test [4] in cycles
