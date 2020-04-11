@@ -42,7 +42,7 @@
      add_edge!(g1, 11, 7)
      add_edge!(g1, 12, 9)
 
-     @testset "simple digraphs" for g in testgraphs(g1)
+     @testset "simple digraphs $g" for g in testgraphs(g1)
          c, λ = LCY.minimum_cycle_mean(g, w, LCY.Karp())
          ca, λa = LCY.minimum_cycle_mean(g, w)
         @test c == ca == [9, 11, 7]

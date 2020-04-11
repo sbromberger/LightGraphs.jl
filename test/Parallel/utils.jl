@@ -11,7 +11,7 @@
     g1 = star_graph(5)
 
     for parallel in [:distributed, :threads]
-        for g in testgraphs(g1)
+        @testset "$g $parallel" for g in testgraphs(g1)
 
             s = @inferred(LightGraphs.Parallel.generate_reduce(g, make_vec, comp_vec, 5; parallel=parallel))
             @test length(s) == 5

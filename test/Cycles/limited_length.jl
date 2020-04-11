@@ -3,7 +3,7 @@
     pathdg = path_digraph(5)
     cycledg = cycle_digraph(5)
 
-    @testset "complete digraph" for g in testgraphs(completedg)
+    @testset "complete digraph $g" for g in testgraphs(completedg)
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(0))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(1))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(2))) == 6
@@ -13,7 +13,7 @@
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(4, typemax(Int)))) == 20
     end
 
-    @testset "path digraph" for g in testgraphs(pathdg)
+    @testset "path digraph $g" for g in testgraphs(pathdg)
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(1))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(2))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(3))) == 0
@@ -21,7 +21,7 @@
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(5))) == 0
     end
 
-    @testset "cycle digraph" for g in testgraphs(cycledg)
+    @testset "cycle digraph $g" for g in testgraphs(cycledg)
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(1))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(2))) == 0
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(3))) == 0

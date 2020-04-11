@@ -1,6 +1,6 @@
 @testset "Diffusion Simulation" begin
     gx = complete_graph(5)
-    for g in testgraphs(gx)  # this makes graphs of different eltypes
+    @testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
         # Most basic
         @test @inferred(LT.diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
     end
@@ -9,7 +9,7 @@
       add_vertex!(gx)
     end
 
-    for g in testgraphs(gx)  # this makes graphs of different eltypes
+    @testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
         ######
         # Check on fully connected, prob = 1
         ######
@@ -34,13 +34,13 @@
 
     gx = path_graph(5)
 
-    for g in testgraphs(gx)  # this makes graphs of different eltypes
+    @testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
         @test @inferred(LT.diffusion_rate(g, 1.0, 4, watch=collect(1:5), initial_infections=[1])) == [1, 2, 3, 4]
         @test @inferred(LT.diffusion_rate(g, 1.0, 4, watch=collect(1:5), initial_infections=[3])) == [1, 3, 5, 5]
     end
 
     gx = path_graph(30)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         # Check normalize
         @test @inferred(LT.diffusion_rate(g, 1.0, 6, initial_infections=[15], normalize=false)) == [1, 3, 5, 7, 9, 11]
         @test @inferred(LT.diffusion_rate(g, 2.0, 6, initial_infections=[15], normalize=true)) == [1, 3, 5, 7, 9, 11]
@@ -79,7 +79,7 @@
 
     gx = path_digraph(10)
 
-    for g in testdigraphs(gx)
+    @testset "$g" for g in testdigraphs(gx)
 
         ######
         # Check on digraphs

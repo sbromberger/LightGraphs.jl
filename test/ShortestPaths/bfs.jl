@@ -9,7 +9,7 @@
         @test ShortestPaths.distances(s2)[2] == ShortestPaths.distances(s2, 2) == 1
         add_edge!(g1, 2, 5)
         add_edge!(g2, 2, 5)
-        for g in testgraphs(g1, g2)
+        @testset "$g" for g in testgraphs(g1, g2)
             d = ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra())
             b = ShortestPaths.shortest_paths(g, 1, ShortestPaths.BFS())
             q = ShortestPaths.shortest_paths(g, 1, ShortestPaths.BFS(Base.Sort.QuickSort))
@@ -39,8 +39,8 @@
         @testset "maximum distance setting limits ShortestPaths.paths found" begin
             G = cycle_graph(8)
             add_edge!(G, 1, 3)
-            
-            for g in testgraphs(G)
+
+            @testset "$g" for g in testgraphs(G)
                 b = ShortestPaths.shortest_paths(g, 1, ShortestPaths.BFS(maxdist=2))
                 @test b.dists == [0, 1, 1, 2, typemax(eltype(b.dists)), typemax(eltype(b.dists)), 2, 1]
             end
