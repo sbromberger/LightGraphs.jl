@@ -8,7 +8,7 @@
             @test y.parents == z.parents == [0, 0, 2, 3, 4]
             @test ShortestPaths.distances(y) == ShortestPaths.distances(z) == [Inf, 0, 6, 17, 33]
         end
-            
+
         gx = path_graph(5)
         add_edge!(gx, 2, 4)
         d = ones(Int, 5, 5)
@@ -101,10 +101,10 @@
         end
 
         @testset "smallgraphs: $s" for s in [
-            :bull, :chvatal, :cubical, :desargues, 
-            :diamond, :dodecahedral, :frucht, :heawood, 
+            :bull, :chvatal, :cubical, :desargues,
+            :diamond, :dodecahedral, :frucht, :heawood,
             :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-            :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte, 
+            :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
             :tetrahedral, :truncatedcube, :truncatedtetrahedron,
             :truncatedtetrahedron_dir
          ]
@@ -119,12 +119,12 @@
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
-            for g in testgraphs(G)
+            @testset "$g" for g in testgraphs(G)
                 ds = @inferred(ShortestPaths.shortest_paths(G, 3, m, ShortestPaths.DEsopoPape(maxdist=3)))
                 @test ShortestPaths.distances(ds) == [2, 1, 0, Inf, Inf, 3]
             end
-        end 
-        
+        end
+
         @testset "errors" begin
             g = Graph()
             @test_throws DomainError ShortestPaths.shortest_paths(g, 1, ShortestPaths.DEsopoPape())
