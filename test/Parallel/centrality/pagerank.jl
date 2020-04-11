@@ -18,7 +18,7 @@
     add_edge!(g6, 1, 2); add_edge!(g6, 2, 3); add_edge!(g6, 1, 3); add_edge!(g6, 3, 4)
     for α in [0.75, 0.85]
 
-        for g in testdigraphs(g5)
+        @testset "$g" for g in testdigraphs(g5)
             @test Parallel.pagerank(g)[3] ≈ 0.318 atol = 0.001
             @test length(@inferred(Parallel.pagerank(g))) == nv(g)
             @test_throws ErrorException Parallel.pagerank(g, 2)
@@ -26,7 +26,7 @@
             @test isapprox(Parallel.pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
 
-        for g in testgraphs(g6)
+        @testset "$g" for g in testgraphs(g6)
             @test length(@inferred(Parallel.pagerank(g))) == nv(g)
             @test_throws ErrorException Parallel.pagerank(g, 2)
             @test_throws ErrorException Parallel.pagerank(g, α, 2)

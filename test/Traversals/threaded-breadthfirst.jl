@@ -5,7 +5,7 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 
-    for g in testdigraphs(g5)
+    @testset "$g" for g in testdigraphs(g5)
       T = eltype(g)
       z = @inferred(LT.tree(g, 1, LT.ThreadedBreadthFirst()))
       p = @inferred(LT.parents(g, 1, LT.ThreadedBreadthFirst()))
@@ -30,7 +30,7 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
         return flag
     end
 
-    for g in testgraphs(g6)
+    @testset "$g" for g in testgraphs(g6)
         n = nv(g)
         T = eltype(g)
         p = @inferred(LT.parents(g, 1, LT.ThreadedBreadthFirst()))
@@ -73,4 +73,3 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
     LT.postlevelfn!(::DummyState) = false
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 end
-
