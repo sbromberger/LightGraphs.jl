@@ -106,6 +106,9 @@ contract,
 # persistence
 loadgraph, loadgraphs, savegraph, LGFormat,
 
+# planarity
+is_plane_description,
+
 # randgraphs
 erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph, random_regular_digraph,
 random_configuration_model, random_tournament_digraph, StochasticBlockModel, make_edgestream,

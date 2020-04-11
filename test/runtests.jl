@@ -40,6 +40,7 @@ tests = [
     "connectivity",
     "Connectivity/runtests",
     "persistence13/persistence",
+    "planarity/is-plane-description"
     "shortestpaths13/astar",
     "shortestpaths13/bellman-ford",
     "shortestpaths13/desopo-pape",
