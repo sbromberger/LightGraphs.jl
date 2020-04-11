@@ -25,17 +25,19 @@
         @testset "difference / symmetric difference" begin
             hp = path_graph(4)
             h = Graph{T}(hp)
-
             z = @inferred(difference(g, h))
             @test nv(z) == 5
             @test ne(z) == 1
             z = @inferred(difference(h, g))
             @test nv(z) == 4
             @test ne(z) == 0
+
+            add_edge!(h, 1, 1)
+            rem_vertex!(h, 4)
             z = @inferred(symmetric_difference(h, g))
             @test z == symmetric_difference(g, h)
             @test nv(z) == 5
-            @test ne(z) == 1
+            @test ne(z) == 3
         end
 
         @testset "union" begin
@@ -140,6 +142,17 @@
             z = @inferred(union(g, h))
             @test has_edge(z, e)
             @test z == path_digraph(6)
+        end
+
+        @testset "symmetric difference for Digraph" begin
+            hp = path_digraph(3)
+            h = DiGraph{T}(hp)
+            add_edge!(h, 3, 1)
+
+            y1 = symmetric_difference(g, h)
+            @test y1 == symmetric_difference(h, g)
+            @test ne(y1) == 3
+            @test nv(y1) == 5
         end
     end
 
