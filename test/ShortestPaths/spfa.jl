@@ -99,7 +99,7 @@
         end
 
         @testset "Different types of graph" begin
-            @testset "$g" for G in [complete_graph(9), complete_digraph(9), cycle_graph(9), cycle_digraph(9),
+            @testset "$G" for G in [complete_graph(9), complete_digraph(9), cycle_graph(9), cycle_digraph(9),
                                     star_graph(9), wheel_graph(9), roach_graph(9), clique_graph(5, 19) ]
                 z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
                 y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
