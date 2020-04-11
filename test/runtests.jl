@@ -31,6 +31,7 @@ tests = [
     "degeneracy",
     "Degeneracy/runtests",
     "distance",
+    "Transitivity/runtests",
     "digraph13/transitivity",
     "cycles13/hawick-james",
     "cycles13/johnson",
