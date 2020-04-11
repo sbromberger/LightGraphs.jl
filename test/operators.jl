@@ -25,7 +25,6 @@
         @testset "difference / symmetric difference" begin
             hp = path_graph(4)
             h = Graph{T}(hp)
-
             z = @inferred(difference(g, h))
             @test nv(z) == 5
             @test ne(z) == 1
