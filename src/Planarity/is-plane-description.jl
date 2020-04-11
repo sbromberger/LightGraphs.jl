@@ -26,7 +26,7 @@ function is_plane_description end
                     description::Vector{Vector{T}} 
                     = g.fadjlist) where {T <: Integer, U, AG <: AbstractGraph{U}}
 
-    if nv(g) >= 3 && ne(g) > 3*nv(g) - 6 return false 
+    if nv(g) >= 3 && ne(g) > 3*nv(g) - 6 return false end
         
     # in cycle_succ(e) we find the successor of src(e) in the list of dst(e)
     function cycle_succ(e)
