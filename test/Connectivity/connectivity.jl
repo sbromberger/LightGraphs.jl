@@ -82,5 +82,5 @@
         @test @inferred(!LC.is_graphical([1, 1, 1]))
         @test @inferred(LC.is_graphical([2, 2, 2]))
         @test @inferred(LC.is_graphical(fill(3, 10)))
-    end 
+    end
 end

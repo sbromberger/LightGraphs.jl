@@ -16,7 +16,7 @@
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
     g6 = smallgraph(:house)
 
-    for g in testdigraphs(g5)
+    @testset "$g" for g in testdigraphs(g5)
       T = eltype(g)
       z = @inferred(Parallel.bfs_tree(g, T(1)))
       next = Parallel.ThreadQueue(T, nv(g)) # Initialize threadqueue
@@ -43,7 +43,7 @@
         return flag
     end
 
-    for g in testgraphs(g6)
+    @testset "$g" for g in testgraphs(g6)
         n = nv(g)
         T = eltype(g)
         next = Parallel.ThreadQueue(eltype(g), nv(g)) # Initialize threadqueue
