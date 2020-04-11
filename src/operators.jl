@@ -236,7 +236,7 @@ julia> collect(edges(f))
  Edge 2 => 3
 ```
 """
-@traitfn function symmetric_difference(g::::IsDirected, h::::IsDirected)
+@traitfn function symmetric_difference(g::AG, h::AG) where {AG; IsDirected{AG}}
     limit = min(nv(g), nv(h))
     r = SimpleGraph(max(nv(g), nv(h)))
     for u in 1:limit
@@ -289,7 +289,7 @@ julia> collect(edges(f))
     return r
 end
 
-@traitfn function symmetric_difference(g::::(!IsDirected), h::::(!IsDirected))
+@traitfn function symmetric_difference(g::AG, h::AG) where {AG; !IsDirected{AG}}
     limit = min(nv(g), nv(h))
     r = SimpleDiGraph(max(nv(g), nv(h)))
     for u in 1:limit
