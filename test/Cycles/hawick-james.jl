@@ -9,7 +9,7 @@
     add_edge!(ex1, 4, 5)
     add_edge!(ex1, 5, 2)
 
-    @testset "subset" for g in testgraphs(ex1)
+    @testset "subset $g" for g in testgraphs(ex1)
         expected_circuits = Vector{Int}[
             [2, 3, 4, 5],
             [2, 3, 5]
@@ -31,27 +31,26 @@
 
     # Path DiGraph
     ex2_size = 10
-    ex2 = testgraphs(path_digraph(ex2_size))
-    @testset "empty" for g in ex2
+    @testset "empty $g" for g in testgraphs(path_digraph(ex2_size))
         @test isempty(LCY.simple_cycles(g, LCY.HawickJames()))
     end
 
     # Complete DiGraph
     ex3_size = 5
     ex3 = testgraphs(complete_digraph(ex3_size))
-    @testset "length" for g in ex3
+    @testset "length $g" for g in ex3
         ex3_circuits = LCY.simple_cycles(g, LCY.HawickJames())
         @test length(ex3_circuits) == length(unique(ex3_circuits))
     end
 
     # Almost fully connected DiGraph
     ex4 = SimpleDiGraph(9)
-    for (src, dest) in [(1, 2), (1, 5), (1, 7), (1, 8), (2, 9), (3, 4), (3, 6), 
-                        (4, 5), (4, 7), (5, 6), (6, 7), (6, 8), (7, 9), (8, 9)] 
+    for (src, dest) in [(1, 2), (1, 5), (1, 7), (1, 8), (2, 9), (3, 4), (3, 6),
+                        (4, 5), (4, 7), (5, 6), (6, 7), (6, 8), (7, 9), (8, 9)]
         add_edge!(ex4, src, dest)
         add_edge!(ex4, dest, src)
     end
-    @testset "membership" for g in testgraphs(ex4)
+    @testset "membership $g" for g in testgraphs(ex4)
         ex4_output = LCY.simple_cycles(g, LCY.HawickJames())
         @test [1, 2] ∈ ex4_output && [8, 9] ∈ ex4_output
     end

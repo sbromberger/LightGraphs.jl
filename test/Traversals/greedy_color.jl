@@ -1,8 +1,8 @@
 @testset "Greedy Coloring" begin
-  
+
     g3 = star_graph(10)
 
-    for g in testgraphs(g3)
+    @testset "$g" for g in testgraphs(g3)
         for alg in [
                     LT.DegreeColoring(),
                     LT.RandomColoring(niter=5),
@@ -13,12 +13,12 @@
             @test C.num_colors == C2.num_colors == 2
         end
     end
-    
+
     g4 = path_graph(20)
     g5 = complete_graph(20)
 
     for graph in [g4, g5]
-        for g in testgraphs(graph)
+        @testset "$g" for g in testgraphs(graph)
             for alg in [LT.DegreeColoring(), LT.RandomColoring(niter=5)]
                 C = @inferred(LT.greedy_color(g, alg))
                 @test C.num_colors <= maximum(degree(g))+1
@@ -27,4 +27,3 @@
         end
     end
 end
-

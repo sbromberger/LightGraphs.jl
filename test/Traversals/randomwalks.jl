@@ -23,7 +23,7 @@
         return is_nonbacktracking(w)
     end
     gx = path_digraph(10)
-    for g in testdigraphs(gx)
+    @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=false, niter=5))) == [1:5;]
         @test @inferred(LT.walk(g, 2, LT.RandomWalk(nonbacktracking=false, niter=100))) == [2:10;]
         @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=false, niter=20))
@@ -32,7 +32,7 @@
     end
 
     gx = path_graph(10)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.SelfAvoidingWalk(niter=20))) == [1:10;]
         @test_throws BoundsError LT.walk(g, 20, LT.SelfAvoidingWalk(niter=20))
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
@@ -40,19 +40,19 @@
     end
 
     gx = SimpleDiGraph(path_graph(10))
-    for g in testdigraphs(gx)
+    @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
         @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=true, niter=20))
     end
 
     gx = cycle_graph(10)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         visited = @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20)))
         @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
     end
 
     gx = cycle_digraph(10)
-    for g in testdigraphs(gx)
+    @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10; 1:10;]
     end
 
@@ -62,7 +62,7 @@
         add_edge!(gx, 1, k)
     end
 
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       for len = 1:(3 * n)
         @test test_nbw(g, 1, len)
         @test test_nbw(g, 2, len)
@@ -70,7 +70,7 @@
     end
     #test to make sure it works with self loops.
     add_edge!(gx, 1, 1)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
       for len = 1:(3 * n)
           @test test_nbw(g, 1, len)
           @test test_nbw(g, 2, len)
