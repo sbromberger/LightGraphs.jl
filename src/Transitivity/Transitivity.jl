@@ -4,7 +4,8 @@ using LightGraphs
 using SimpleTraits
 using LightGraphs.Connectivity: connected_components, condensation, StrongConnectivityAlgorithm, Tarjan
 using LightGraphs.SimpleGraphs
-using LightGraphs.Traversals: topological_sort, DepthFirst
+using LightGraphs.Traversals: topological_sort, DepthFirst, TraversalState, traverse_graph!
+import LightGraphs.Traversals: initfn!, visitfn!
 
 """
 transitive_closure!(g, selflooped=false, alg=Tarjan())
@@ -166,57 +167,41 @@ julia> collect(edges(transitive_reduction(barbell)))
 ```
 """
 function transitive_reduction end
+
+mutable struct DiSpanTree{T<:Integer} <: TraversalState
+    verts::Vector{T}
+    label::Vector{T}
+    head::T
+    resultg::SimpleDiGraph{T}
+end
+
+function visitfn!(s::DiSpanTree, u, v)
+    if s.label[v] != s.head
+        s.label[v] = s.head
+        add_edge!(s.resultg, s.verts[u], s.verts[v])
+    end
+    return true
+end
+
+function initfn!(s::DiSpanTree, u)
+    s.head = u
+    return true
+end
+
 @traitfn function transitive_reduction(
-    g::::IsDirected,
+    g::AG::IsDirected,
     selflooped::Bool=false,
     alg::StrongConnectivityAlgorithm=Tarjan()
-)
+) where {T<:Integer, AG<: AbstractGraph{T}}
     scc = connected_components(g, alg)
+    reverse!(scc)
     cg = condensation(g, scc)
-
-    reachable = Vector{Bool}(undef, nv(cg))
-    visited = Vector{Bool}(undef, nv(cg))
-    stack = Vector{eltype(cg)}(undef, nv(cg))
-    resultg = SimpleDiGraph{eltype(g)}(nv(g))
-
-# Calculate the transitive reduction of the acyclic condensation graph.
-    @inbounds(
-    for u in vertices(cg)
-        fill!(reachable, false) # vertices reachable from u on a path of length >= 2
-        fill!(visited, false)
-        stacksize = 0
-        for v in outneighbors(cg,u)
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
-                end
-            end
-        end
-        while stacksize > 0
-            v = stack[stacksize]
-            stacksize -= 1
-            reachable[v] = true
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
-                end
-            end
-        end
-# Add the edges from the condensation graph to the resulting graph.
-  @simd for v in outneighbors(cg,u)
-            if !reachable[v]
-                add_edge!(resultg, scc[u][1], scc[v][1])
-            end
-        end
-    end)
-
+    resultg = SimpleDiGraph{T}(nv(g))
+    verts_rep = first.(scc)
+    state = DiSpanTree(verts_rep, zeros(T, nv(cg)), zero(T), resultg)
+    traverse_graph!(cg, vertices(cg), DepthFirst(), state)
 # Replace each strongly connected component with a directed cycle.
-    @inbounds(
-    for component in scc
+    @inbounds for component in scc
         nvc = length(component)
         if nvc == 1
             if selflooped && has_edge(g, component[1], component[1])
@@ -228,7 +213,7 @@ function transitive_reduction end
             add_edge!(resultg, component[i], component[i+1])
         end
         add_edge!(resultg, component[nvc], component[1])
-    end)
+    end
 
     return resultg
 end
