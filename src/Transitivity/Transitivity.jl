@@ -199,7 +199,6 @@ function transitive_reduction end
     verts_rep = map(s -> first(s), scc)
     state = DiSpanTree(verts_rep, zeros(eltype(g), nv(cg)), eltype(g)(0), resultg)
     traverse_graph!(cg, vertices(cg), DepthFirst(), state)
-
 # Replace each strongly connected component with a directed cycle.
     @inbounds(
     for component in scc
