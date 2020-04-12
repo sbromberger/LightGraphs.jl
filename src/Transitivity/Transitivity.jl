@@ -166,6 +166,8 @@ julia> collect(edges(transitive_reduction(barbell)))
  Edge 6 => 4
 ```
 """
+function transitive_reduction end
+
 mutable struct DiSpanTree{T<:Integer} <: TraversalState
     verts::Vector{T}
     label::Vector{T}
@@ -186,22 +188,20 @@ function initfn!(s::DiSpanTree, u)
     return true
 end
 
-function transitive_reduction end
 @traitfn function transitive_reduction(
-    g::::IsDirected,
+    g::AG::IsDirected,
     selflooped::Bool=false,
     alg::StrongConnectivityAlgorithm=Tarjan()
-)
+) where {T<:Integer, AG<: AbstractGraph{T}}
     scc = connected_components(g, alg)
     reverse!(scc)
     cg = condensation(g, scc)
-    resultg = SimpleDiGraph{eltype(g)}(nv(g))
+    resultg = SimpleDiGraph{T}(nv(g))
     verts_rep = map(s -> first(s), scc)
-    state = DiSpanTree(verts_rep, zeros(eltype(g), nv(cg)), eltype(g)(0), resultg)
+    state = DiSpanTree(verts_rep, zeros(T, nv(cg)), zero(T), resultg)
     traverse_graph!(cg, vertices(cg), DepthFirst(), state)
 # Replace each strongly connected component with a directed cycle.
-    @inbounds(
-    for component in scc
+    @inbounds for component in scc
         nvc = length(component)
         if nvc == 1
             if selflooped && has_edge(g, component[1], component[1])
@@ -213,7 +213,7 @@ function transitive_reduction end
             add_edge!(resultg, component[i], component[i+1])
         end
         add_edge!(resultg, component[nvc], component[1])
-    end)
+    end
 
     return resultg
 end
