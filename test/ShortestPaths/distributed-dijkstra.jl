@@ -6,7 +6,7 @@
     g3 = path_graph(5)
     d = [0 1 2 3 4; 1 0 1 0 1; 2 1 0 11 12; 3 0 11 0 5; 4 1 19 5 0]
 
-    for g in testgraphs(g3)
+    @testset "$g" for g in testgraphs(g3)
         z  = ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, collect(1:5), d, ShortestPaths.DistributedDijkstra()))
         zp2 = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.DistributedDijkstra()))
@@ -62,7 +62,7 @@
     g3 = path_digraph(5)
     d = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
-    for g in testdigraphs(g3)
+    @testset "$g" for g in testdigraphs(g3)
         z  = ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall())
         zp = @inferred(ShortestPaths.shortest_paths(g, collect(1:5), d, ShortestPaths.DistributedDijkstra()))
         @test all(isapprox(ShortestPaths.distances(z), ShortestPaths.distances(zp)))

@@ -11,7 +11,7 @@
     g1 = cycle_graph(4)
     add_vertex!(g1)
     add_edge!(g1, 4, 5)
-    for g in testgraphs(g1)
+    @testset "$g" for g in testgraphs(g1)
         zd = @inferred(Parallel.radiality_centrality(g; parallel=:distributed))
         @test zd ≈ [5 // 6, 3 // 4, 5 // 6, 11 // 12, 2 // 3]
         zt = @inferred(Parallel.radiality_centrality(g; parallel=:threads))

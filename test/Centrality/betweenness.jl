@@ -8,7 +8,7 @@
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-bc.txt"), ','))
-    for g in testdigraphs(gint)
+    @testset "$g" for g in testdigraphs(gint)
         z  = @inferred(LCENT.centrality(g, LCENT.Betweenness()))
         @test map(Float32, z)  == map(Float32, c)
 
@@ -26,7 +26,7 @@
 
     @test @inferred(LCENT.centrality(s1, LCENT.Betweenness())) == [0, 1, 0]
     @test @inferred(LCENT.centrality(s2, LCENT.Betweenness())) == [0, 0.5, 0]
-    
+
     g = SimpleGraph(2)
     add_edge!(g, 1, 2)
     z  = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=true)))
@@ -62,7 +62,7 @@
 
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a2 = SimpleDiGraph(adjmx2)
-    for g in testdigraphs(a2)
+    @testset "$g" for g in testdigraphs(a2)
         distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
         c2 = [0.24390243902439027,0.27027027027027023,0.1724137931034483]
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=false)), [0.0,1.0,0.0])
