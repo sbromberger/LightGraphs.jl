@@ -186,9 +186,13 @@ function initfn!(s::DiSpanTree, u)
     return true
 end
 
-function transitivereduction end
-@traitfn function transitive_reduction(g::::IsDirected; selflooped::Bool=false)
-    scc = strongly_connected_components(g)
+function transitive_reduction end
+@traitfn function transitive_reduction(
+    g::::IsDirected,
+    selflooped::Bool=false,
+    alg::StrongConnectivityAlgorithm=Tarjan()
+)
+    scc = connected_components(g, alg)
     reverse!(scc)
     cg = condensation(g, scc)
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
