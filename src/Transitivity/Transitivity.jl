@@ -197,7 +197,7 @@ end
     reverse!(scc)
     cg = condensation(g, scc)
     resultg = SimpleDiGraph{T}(nv(g))
-    verts_rep = map(s -> first(s), scc)
+    verts_rep = first.(scc)
     state = DiSpanTree(verts_rep, zeros(T, nv(cg)), zero(T), resultg)
     traverse_graph!(cg, vertices(cg), DepthFirst(), state)
 # Replace each strongly connected component with a directed cycle.
