@@ -187,7 +187,7 @@ function initfn!(s::DiSpanTree, u)
 end
 
 function transitivereduction end
-@traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
+@traitfn function transitive_reduction(g::::IsDirected; selflooped::Bool=false)
     scc = strongly_connected_components(g)
     reverse!(scc)
     cg = condensation(g, scc)
