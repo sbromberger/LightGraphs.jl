@@ -166,7 +166,7 @@ julia> collect(edges(transitive_reduction(barbell)))
  Edge 6 => 4
 ```
 """
-mutable struct DiSpanTree{T<:Integer} <: Traversals.TraversalState
+mutable struct DiSpanTree{T<:Integer} <: LightGraphs.Traversals.TraversalState
     verts::Vector{T}
     label::Vector{T}
     head::T
@@ -194,7 +194,7 @@ function transitivereduction end
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
     verts_rep = map(s -> first(s), scc)
     state = DiSpanTree(verts_rep, zeros(eltype(g), nv(cg)), eltype(g)(0), resultg)
-    Traversals.traverse_graph!(cg, vertices(cg), DepthFirst(), state)
+    LightGraphs.Traversals.traverse_graph!(cg, vertices(cg), DepthFirst(), state)
 
 # Replace each strongly connected component with a directed cycle.
     @inbounds(
