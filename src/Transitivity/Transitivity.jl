@@ -4,7 +4,7 @@ using LightGraphs
 using SimpleTraits
 using LightGraphs.Connectivity: connected_components, condensation, StrongConnectivityAlgorithm, Tarjan
 using LightGraphs.SimpleGraphs
-using LightGraphs.Traversals: topological_sort, DepthFirst
+using LightGraphs.Traversals: topological_sort, DepthFirst, TraversalState, traverse_graph!
 import LightGraphs.Traversals: initfn!, visitfn!
 
 """
