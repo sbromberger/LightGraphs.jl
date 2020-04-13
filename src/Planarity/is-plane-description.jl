@@ -34,7 +34,7 @@ function is_plane_description end
     # duplicating edges because each edge `e` participates of at most two facial cycles
     # the direction is important due to the clockwise description, so the second copy is reversed
     # used[e] indicates if edge e has been used in a facial cycle
-    used = Dict()
+    used = Dict{Edge,Bool}()
     for e in edges(g)
         used[e] = false
         used[reverse(e)] = false
