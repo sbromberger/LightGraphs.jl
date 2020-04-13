@@ -1,5 +1,5 @@
 """
-    struct BFS <: ShortestPathAlgorithm
+    struct BFS <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
@@ -21,7 +21,7 @@ beyond which all path distances are assumed to be infinite (that is, they do not
 - (optional) multiple sources
 - all destinations
 """
-struct BFS{T} <: ShortestPathAlgorithm
+struct BFS{T} <: SSSPAlgorithm
     traversal::T
     maxdist::Int64
 end

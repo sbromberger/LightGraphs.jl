@@ -1,9 +1,9 @@
 """
-    struct ThreadedFloydWarshall <: ShortestPathAlgorithm end
+    struct ThreadedFloydWarshall <: APSPAlgorithm end
 
 A struct representing a threaded implementation of the Floyd-Warshall shortest-paths algorithm.
 """
-struct ThreadedFloydWarshall <: ShortestPathAlgorithm end
+struct ThreadedFloydWarshall <: APSPAlgorithm end
 
 #Helper function used due to performance bug in @threads. 
 function _loopbody!(

@@ -7,7 +7,7 @@ struct DijkstraResult{T, U<:Integer}  <: ShortestPathResult
 end
 
 """
-    struct Dijkstra <: ShortestPathAlgorithm
+    struct Dijkstra <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
@@ -39,7 +39,7 @@ D = transpose(sparse(transpose(D)))
 Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
 should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
 """
-struct Dijkstra{F<:Function, T<:Real} <: ShortestPathAlgorithm
+struct Dijkstra{F<:Function, T<:Real} <: SSSPAlgorithm
     all_paths::Bool
     track_vertices::Bool
     maxdist::T
