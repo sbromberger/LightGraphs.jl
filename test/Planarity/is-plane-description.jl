@@ -5,7 +5,7 @@
     g1_desc = [[2,3,4,5], [1,3,4,5], [1,2,4,5], [1,2,3,5], [1,2,3,4]]
     for g in testgraphs(g1)
         # Testing if g1_desc is a plane description of g1   
-        res1 = is_plane_description(g1, g1_desc)
+        res1 = is_plane_description(g, g1_desc)
         @test res1 == false # there is no plane description to the graph K_{5}
     end
 
@@ -14,7 +14,7 @@
     g2_desc = [[4,5,6], [4,5,6], [4,5,6], [1,2,3], [1,2,3], [1,2,3]]
     for g in testgraphs(g2)
         # Testing if g2_desc ia a plane description of g2
-        res2 = is_plane_description(g2, g2_desc) 
+        res2 = is_plane_description(g, g2_desc) 
         @test res2 == false # there is no plane description to the graph K_{3,3}
     end
 
@@ -29,7 +29,7 @@
 
     for g in testgraphs(g3)
         # Testing if the description g3_desc is a plane description of g3
-        res3 = is_plane_description(g3, g3_desc)
+        res3 = is_plane_description(g, g3_desc)
         @test res3 == true
     end
 
@@ -39,7 +39,7 @@
 
     for g in testgraphs(g4)
         # Testing if the description g4_desc is a plane description of g4
-        res4 = is_plane_description(g4, g4_desc)
+        res4 = is_plane_description(g, g4_desc)
         @test res4 == true
     end
 
@@ -49,7 +49,7 @@
 
     for g in testgraphs(g5)
         # Testing if the description g5_desc is a plane description of g5
-        res5 = is_plane_description(g5, g5_desc)
+        res5 = is_plane_description(g, g5_desc)
         @test res5 == false
     end
 end
