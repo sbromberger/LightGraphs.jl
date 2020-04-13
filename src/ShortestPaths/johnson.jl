@@ -1,5 +1,5 @@
 """
-    struct Johnson <: ShortestPathAlgorithm
+    struct Johnson <: APSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm).
@@ -15,7 +15,7 @@ should use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_alg
 ### Performance
 Complexity: O(|V|*|E|)
 """
-struct Johnson{T<:Real} <: ShortestPathAlgorithm
+struct Johnson{T<:Real} <: APSPAlgorithm
     maxdist::T
 end
 

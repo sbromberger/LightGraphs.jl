@@ -39,12 +39,31 @@ the type of shortest path calculation used by [`shortest_paths`](@ref).
 Some concrete subtypes (most notably [`Dijkstra`](@ref) have fields
 that specify algorithm parameters.
 
+Concrete subtypes are further classified into [`SSSPAlgorithm`](@ref) for
+single-source shortest-paths algorithms, or [`APSPAlgorithm`](@) for
+all-pairs shortest-paths algorithms, as appropriate.
+
 See [`AStar`](@ref), [`BellmanFord`](@ref), [`BFS`](@ref),
 [`DEspopoPape`](@ref), [`Dijkstra`](@ref), [`FloydWarshall`](@ref),
 [`Johnson`](@ref), and [`SPFA`](@ref) for specific requirements and
 usage details.
 """
 abstract type ShortestPathAlgorithm <: AbstractGraphAlgorithm end
+
+"""
+    abstract type SSSPAlgorithm <: ShortestPathAlgorithm
+
+An abstract type representing a single-source shortest-paths algorithm.
+"""
+abstract type SSSPAlgorithm <: ShortestPathAlgorithm end
+
+"""
+    abstract type APSPAlgorithm <: ShortestPathAlgorithm
+
+An abstract type representing an all-pairs shortest-paths algorithm.
+"""
+abstract type APSPAlgorithm <: ShortestPathAlgorithm end
+
 
 
 ################################
