@@ -2,7 +2,7 @@
 # licensing details.
 
 """
-    struct FloydWarshall <: ShortestPathAlgorithm
+    struct FloydWarshall <: APSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm).
@@ -18,7 +18,8 @@ No additional configuration parameters are specified or required.
 ### Performance
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
-struct FloydWarshall <: ShortestPathAlgorithm end
+struct FloydWarshall <: APSPAlgorithm end
+
 struct FloydWarshallResult{T, U<:Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}

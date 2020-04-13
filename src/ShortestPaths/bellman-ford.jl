@@ -5,7 +5,7 @@
 
 
 """
-    struct BellmanFord <: ShortestPathAlgorithm
+    struct BellmanFord <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
@@ -17,7 +17,7 @@ No fields are specified or required.
 - (optional) multiple sources
 - all destinations
 """
-struct BellmanFord <: ShortestPathAlgorithm end
+struct BellmanFord <: SSSPAlgorithm end
 struct BellmanFordResult{T, U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}

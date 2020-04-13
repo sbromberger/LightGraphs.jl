@@ -1,5 +1,5 @@
 """
-    struct TrackingBFS <: ShortestPathAlgorithm
+    struct TrackingBFS <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
@@ -22,7 +22,7 @@ beyond which all path distances are assumed to be infinite (that is, they do not
 - redundant equivalent path tracking
 - vertex tracking
 """
-struct TrackingBFS{T} <: ShortestPathAlgorithm
+struct TrackingBFS{T} <: SSSPAlgorithm
     traversal::T
     maxdist::Int64
 end
