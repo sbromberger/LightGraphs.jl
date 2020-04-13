@@ -4,8 +4,6 @@
 Returns `true` if the given combinatorial description of graph `g` is plane.
 
 The algorithm requires the graph `g` to be simple and undirected.
-### Optional Arguments
-- `description = g.fadjlist`: if the description is specified, it uses the new description instead of using `g.fadjlist`.
 
 A drawing of a planar graph induces a cyclic clockwise order in the neighbors of each vertex.
 A list of these cyclic orders is called a combinatorial description of the drawing.
