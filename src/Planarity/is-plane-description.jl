@@ -22,47 +22,56 @@ This algorithm is presented in the dissertation available at https://www.ime.usp
 
 function is_plane_description end
 
-@traitfn function is_plane_description(g::AG::(!IsDirected),
-                    description::Vector{Vector{T}} 
-                    = g.fadjlist) where {T <: Integer, U, AG <: AbstractGraph{U}}
+@traitfn function is_plane_description(g::SG,
+                    description::Vector{Vector{T}}) where 
+                    {T <: Integer, U, SG <: SimpleGraph{U}}
 
-    if nv(g) >= 3 && ne(g) > 3*nv(g) - 6 return false end
+    nvg = nv(g)
+    neg = ne(g)
+    
+    nvg >= 3 && neg > 3*nvg && return false
         
-    # in cycle_succ(e) we find the successor of src(e) in the list of dst(e)
-    function cycle_succ(e)
-        u, v = src(e), dst(e)
-        v_list = description[v]
-        u_index = findfirst(x -> x == u, v_list)
-        
-        if u_index == length(v_list) return Edge(v, first(v_list)) end
-        
-        return Edge(v, v_list[u_index + 1])
-    end
-
     # duplicating edges because each edge `e` participates of at most two facial cycles
     # the direction is important due to the clockwise description, so the second copy is reversed
-    reversed_edges = [reverse(e) for e in edges(g)]
-    duplicated_edges = vcat(collect(edges(g)), reversed_edges)
-
     # used[e] indicates if edge e has been used in a facial cycle
-    used = Dict(e => false for e in duplicated_edges)
+    used = Dict()
+    for e in edges(g)
+        used[e] = false
+        used[reverse(e)] = false
+    end
 
     faces = zero(T)
     # counting facial cycles
-    for e in duplicated_edges
+    for e in edges(g)
+        e1 = nothing
+        start = nothing
+
         if !used[e]
             e1 = e
+            start = e
+        elseif !used[reverse(e)]
+            e1 = reverse(e)
+            start = reverse(e)
+        end
+
+        if e1 !== nothing
             while true
                 used[e1] = true
-                e1 = cycle_succ(e1)
-                e1 == e && break
+                # we find the successor of src(e1) in the list of dst(e1)
+                u, v = src(e1), dst(e1)
+                v_list = description[v]
+                u_index = findfirst(x -> x == u, v_list)
+
+                if u_index == length(v_list) 
+                    e1 = Edge(v, first(v_list)) 
+                else 
+                    e1 = Edge(v, v_list[u_index + 1])
+                end             
+                e1 == start && break
             end
             faces += 1
         end
     end
-
     # using Euler's formula
-    if faces != ne(g) - nv(g) + 2 return false end
-
-    return true
+    return faces == neg - nvg + 2
 end
