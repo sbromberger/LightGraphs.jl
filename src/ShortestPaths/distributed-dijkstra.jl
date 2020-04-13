@@ -1,5 +1,5 @@
 """
-    struct DistributedDijkstra <: ShortestPathAlgorithm end
+    struct DistributedDijkstra <: SSSPAlgorithm end
 
 A struct representing a parallel implementation of the Dijkstra shortest-paths algorithm. Optional
 fields for this structure incldue
@@ -7,7 +7,7 @@ fields for this structure incldue
 - `neighborfn::Function` (default: [`outneighbors`](@ref) - specify the neighbor function to use during the
    graph traversal.
 """
-struct DistributedDijkstra{F<:Function} <: ShortestPathAlgorithm
+struct DistributedDijkstra{F<:Function} <: SSSPAlgorithm
     neighborfn::F
 end
 

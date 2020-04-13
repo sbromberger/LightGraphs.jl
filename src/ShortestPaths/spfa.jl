@@ -9,7 +9,7 @@
 using LightGraphs: nv, weights, outneighbors
 
 """
-    struct SPFA <: ShortestPathAlgorithm
+    struct SPFA <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
@@ -22,7 +22,7 @@ should use the [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Sh
 - non-negative distance matrices / weights
 - all destinations
 """
-struct SPFA{T} <: ShortestPathAlgorithm
+struct SPFA{T} <: SSSPAlgorithm
     maxdist::T
 end
 

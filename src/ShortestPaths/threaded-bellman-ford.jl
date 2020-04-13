@@ -1,4 +1,17 @@
-struct ThreadedBellmanFord <: ShortestPathAlgorithm end
+"""
+    struct ThreadedBellmanFord <: SSSPAlgorithm
+
+The structure used to configure and specify that [`shortest_paths`](@ref)
+should use a threaded version of the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
+No fields are specified or required.
+
+### Implementation Notes
+`BellmanFord` supports the following shortest-path functionality:
+- negative distance matrices / weights
+- (optional) multiple sources
+- all destinations
+"""
+struct ThreadedBellmanFord <: SSSPAlgorithm end
 
 function shortest_paths(g::AbstractGraph{U}, sources::AbstractVector{<:Integer}, distmx::AbstractMatrix{T}, ::ThreadedBellmanFord) where {T<:Real, U<:Integer}
     nvg = nv(g)

@@ -1,9 +1,9 @@
 """
-    struct DistributedJohnson <: ShortestPathAlgorithm end
+    struct DistributedJohnson <: APSPAlgorithm end
 
 A struct representing a parallel implementation of the Johnson shortest-paths algorithm.
 """
-struct DistributedJohnson <: ShortestPathAlgorithm end
+struct DistributedJohnson <: APSPAlgorithm end
 
 function shortest_paths(g::AbstractGraph{U},
     distmx::AbstractMatrix{T}, ::DistributedJohnson) where {T<:Real, U<:Integer}
