@@ -45,13 +45,13 @@ function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMa
 
     count = zeros(U, nvg)           # Vector to store the count of number of times a vertex goes in the queue.
 
-    queue = Vector{U}()             # Vector used to implement queue
+    queue = Queue{U}()
     inqueue = falses(nvg,1)         # BitArray to mark which vertices are in queue
-    push!(queue, source)
+    enqueue!(queue, source)
     inqueue[source] = true
 
     @inbounds while !isempty(queue)
-        v = popfirst!(queue)
+        v = dequeue!(queue)
         inqueue[v] = false
 
         @inbounds for v_neighbor in outneighbors(g, v)
@@ -65,7 +65,7 @@ function shortest_paths(g::AbstractGraph{U}, source::Integer, distmx::AbstractMa
                 parents[v_neighbor] = v
 
                 if !inqueue[v_neighbor]
-                    push!(queue,v_neighbor)
+                    enqueue!(queue,v_neighbor)
                     inqueue[v_neighbor] = true                   # Mark the vertex as inside queue.
                     count[v_neighbor] = count[v_neighbor]+1      # Increment the number of times a vertex enters a queue.
 

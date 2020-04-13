@@ -103,7 +103,6 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         end
     end
 
-
     for g in testdigraphs(g4)
         # testing incidence_matrix, first directed graph
         @test size(incidence_matrix(g)) == (5, 4)
@@ -129,6 +128,31 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test incidence_matrix(g; oriented=true)[2, 1] == 1
         @test incidence_matrix(g; oriented=true)[3, 1] == 0
     end
+
+    @testset "From Matrix Test re #1388" begin
+        A_pap = [0 1 1 0 0;0 0 0 1 1; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 1 0];
+        Ap = DiGraph(A_pap);
+        @testset "$g" for g in testdigraphs(Ap)
+            @test size(incidence_matrix(g)) == (5, 8)
+            @test incidence_matrix(g)[1, 1] == -1
+            @test incidence_matrix(g)[2, 1] == 1
+            @test incidence_matrix(g)[1, 2] == -1
+            @test incidence_matrix(g)[3, 2] == 1
+            @test incidence_matrix(g)[2, 3] == -1
+            @test incidence_matrix(g)[4, 3] == 1
+            @test incidence_matrix(g)[2, 4] == -1
+            @test incidence_matrix(g)[5, 4] == 1
+            @test incidence_matrix(g)[3, 5] == -1
+            @test incidence_matrix(g)[5, 5] == 1
+            @test incidence_matrix(g)[1, 6] == 1
+            @test incidence_matrix(g)[4, 6] == -1
+            @test incidence_matrix(g)[1, 7] == 1
+            @test incidence_matrix(g)[5, 7] == -1
+            @test incidence_matrix(g)[4, 8] == 1
+            @test incidence_matrix(g)[5, 8] == -1
+        end
+    end
+
     # TESTS FOR Nonbacktracking operator.
 
     n = 10; k = 5

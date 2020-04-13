@@ -30,9 +30,9 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
     (src in 1:nvg) || throw(DomainError(src, "src should be in between 1 and $nvg"))
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    state = Vector{Int8}()
     state = fill(Int8(2), nvg)
-    q = U[src]
+    q = Deque{U}()
+    push!(q, src)
     @inbounds dists[src] = 0
 
     @inbounds while !isempty(q)

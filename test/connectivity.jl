@@ -17,9 +17,10 @@
             @test label[1:10] == [1, 1, 1, 1, 5, 5, 5, 8, 8, 8]
             import LightGraphs: components, components_dict
             cclab = @inferred(components_dict(label))
-            @test cclab[1] == [1, 2, 3, 4]
-            @test cclab[5] == [5, 6, 7]
-            @test cclab[8] == [8, 9, 10]
+            cclab2 = @inferred(components(label))
+            @test cclab[1] == cclab2[1][1] == [1, 2, 3, 4]
+            @test cclab[5] == cclab2[1][2] == [5, 6, 7]
+            @test cclab[8] == cclab2[1][3] ==  [8, 9, 10]
             @test length(cc) >= 3 && sort(cc[3]) == [8, 9, 10]
         end
         @testset "$g" for g in testgraphs(g6)
@@ -71,6 +72,9 @@
             scc = @inferred(strongly_connected_components(g))
             scc_k = @inferred(strongly_connected_components_kosaraju(g))
             wcc = @inferred(weakly_connected_components(g))
+
+            @test @inferred(is_strongly_connected(g[scc[1]]))
+            @test @inferred(is_strongly_connected(g[scc_k[1]]))
 
             @test length(scc) == 3 && sort(scc[3]) == [1, 2, 5]
             @test length(scc_k) == 3 && sort(scc_k[1]) == [1, 2, 5]
@@ -250,7 +254,7 @@
         end
         g10 = star_digraph(10)
         @testset "$g" for g in testgraphs(g10)
-            @test @inferred(neighborhood_dists(g10, 1, 0, dir=:out)) == [(1, 0)]
+            @test @inferred(neighborhood_dists(g, 1, 0, g10dists, dir=:out)) == [(1, 0)]
             @test length(@inferred(neighborhood(g, 1, 1, dir=:out))) == 10
             @test length(@inferred(neighborhood(g, 1, 1, g10dists, dir=:out))) == 9
             @test length(@inferred(neighborhood(g, 2, 1, dir=:out))) == 1

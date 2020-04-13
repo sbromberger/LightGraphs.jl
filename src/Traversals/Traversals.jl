@@ -5,7 +5,7 @@ using Distributed
 using LightGraphs
 using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
-using DataStructures: PriorityQueue, enqueue!, dequeue!
+using DataStructures: PriorityQueue, Queue, enqueue!, dequeue!
 using Random: shuffle, shuffle!, randsubseq!, AbstractRNG, GLOBAL_RNG
 import Base:show
 

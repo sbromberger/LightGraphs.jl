@@ -5,7 +5,7 @@
     s1 = SimpleGraph(s2)
     g3 = path_graph(5)
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
-    for g in testdigraphs(gint)
+    @testset "$g" for g in testdigraphs(gint)
         z  = @inferred(LightGraphs.betweenness_centrality(g))
         zt = @inferred(Parallel.betweenness_centrality(g; parallel=:threads))
         @test all(isapprox.(z, zt))

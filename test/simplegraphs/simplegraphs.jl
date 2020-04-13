@@ -28,14 +28,14 @@ import Random
 
     gdx = path_digraph(4)
     gx = SimpleGraph()
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "{0, 0} undirected simple $T graph"
         @test @inferred(add_vertices!(g, 5) == 5)
         @test sprint(show, g) == "{5, 0} undirected simple $T graph"
     end
     gx = SimpleDiGraph()
-    for g in testdigraphs(gx)
+    @testset "$g" for g in testdigraphs(gx)
         T = eltype(g)
         @test sprint(show, g) == "{0, 0} directed simple $T graph"
         @test @inferred(add_vertices!(g, 5) == 5)
@@ -43,7 +43,7 @@ import Random
     end
 
     gx = path_graph(4)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
         @test @inferred(nv(g)) == 4
@@ -104,7 +104,7 @@ import Random
     end
 
     gdx = path_digraph(4)
-    for g in testdigraphs(gdx)
+    @testset "$g" for g in testdigraphs(gdx)
         @test @inferred(vertices(g)) == 1:4
         @test Edge(2, 3) in edges(g)
         @test !(Edge(3, 2) in edges(g))
@@ -156,7 +156,7 @@ import Random
         ga = SimpleDiGraph(10)
         @test @inferred(eltype(SimpleDiGraph{T}(ga))) == T
 
-        for gu in testgraphs(gx)
+        @testset "$g" for gu in testgraphs(gx)
             U = @inferred(eltype(gu))
             @test @inferred(eltype(SimpleDiGraph(gu))) == U
         end
@@ -170,7 +170,7 @@ import Random
     end
 
     gx = complete_graph(4)
-    for g in testgraphs(gx)
+    @testset "$g" for g in testgraphs(gx)
         h = Graph(g)
         @test g == h
         @test rem_vertex!(g, 2)
@@ -180,7 +180,7 @@ import Random
 
 
     gdx = complete_digraph(4)
-    for g in testdigraphs(gdx)
+    @testset "$g" for g in testdigraphs(gdx)
         h = DiGraph(g)
         @test g == h
         @test rem_vertex!(g, 2)
@@ -402,7 +402,7 @@ import Random
     let
         g_undir = complete_graph(5)
         g_dir = complete_digraph(5)
-        for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
+        @testset "$g" for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
             T = eltype(g)
 
             g5 = copy(g)
@@ -454,7 +454,7 @@ import Random
             add_edge!(g_dir, u, u)
         end
         a = Random.randsubseq(1:10, 0.5)
-        for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
+        @testset "$g" for g in (testgraphs(g_undir) ∪ testdigraphs(g_dir))
             T = eltype(g)
 
             gt = copy(g)

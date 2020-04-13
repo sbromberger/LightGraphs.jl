@@ -5,7 +5,7 @@
     s1 = SimpleGraph(s2)
     g3 = path_graph(5)
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
-    for g in testdigraphs(gint)
+    @testset "$g" for g in testdigraphs(gint)
         z  = @inferred(LCENT.centrality(g, LCENT.Betweenness()))
         zd = @inferred(LCENT.centrality(g, LCENT.DistributedBetweenness()))
         @test all(isapprox.(z, zd))
