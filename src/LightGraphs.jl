@@ -215,6 +215,8 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+
+include("defaultdistance.jl")
 include("Degeneracy/Degeneracy.jl")
 include("degeneracy.jl")
 include("Traversals/Traversals.jl")

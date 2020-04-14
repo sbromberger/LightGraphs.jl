@@ -30,6 +30,8 @@ tests = [
     "operators",
     "degeneracy",
     "Degeneracy/runtests",
+    "defaultdistance",
+    "Measurements/runtests",
     "distance",
     "Transitivity/runtests",
     "digraph13/transitivity",
