@@ -3,7 +3,7 @@
 """
     DefaultDistance
 
-An array-like structure that provides distance values of `1` for any `src, dst` combination.
+A matrix-like structure that provides distance values of `1` for any `src, dst` combination.
 """
 struct DefaultDistance <: AbstractMatrix{Int}
     nv::Int
@@ -20,4 +20,3 @@ getindex(::DefaultDistance, s::UnitRange, d::UnitRange) = DefaultDistance(length
 size(d::DefaultDistance) = (d.nv, d.nv)
 transpose(d::DefaultDistance) = d
 adjoint(d::DefaultDistance) = d
-

@@ -34,7 +34,7 @@ function _eccentricities(g::AbstractGraph,
     mn = typemax(ET)
     mx = typemin(ET)
     if use_dists
-        @inbounds for v in verts
+        for v in verts
             sp = maximum(distances(shortest_paths(g, v, distmx, alg)))
             push!(eccs, sp)
             if sp < mn
@@ -46,7 +46,7 @@ function _eccentricities(g::AbstractGraph,
             sp == typemax(ET) && @warn("Infinite path length detected for vertex $v: graph may not be connected")
         end
     else
-        @inbounds for v in verts
+        for v in verts
             sp = maximum(distances(shortest_paths(g, v, alg)))
             push!(eccs, sp)
             if sp < mn
