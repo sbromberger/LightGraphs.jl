@@ -69,7 +69,7 @@ eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg
 
 eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm=BFS()) = _eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
 eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm=Dijkstra()) =
-    _eccentricities(g, [v], zeros(0,0), BFS(), true, true, eltype(distmx))
+    _eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
 
 eccentricities(a::AbstractVector{T}) where {T<:Real} = Eccentricities(a)
 
@@ -115,6 +115,7 @@ julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
 ```
 """
 eccentricity(g::AbstractGraph, x...) = eccentricities(g, x...).vals
+eccentricity(g::AbstractGraph, v::Integer, x...) = first(eccentricities(g, v, x...).vals)
 
 """
     diameter(::Eccentricities)

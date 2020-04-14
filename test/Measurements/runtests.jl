@@ -10,8 +10,19 @@ const LMS = LightGraphs.Measurements
 
     @testset "$g" for g in testgraphs(a1)
         z = @inferred(LMS.eccentricity(g, distmx1))
+        z2 = @inferred(LMS.eccentricity(g))
+
         @testset "eccentricity" begin
-            @test z == [6.2, 4.2, 6.2]
+            y = @inferred(LMS.eccentricity(g, vertices(g), distmx1))
+            x = @inferred(LMS.eccentricity(g, 1, distmx1))
+            @test z == y == [6.2, 4.2, 6.2]
+            @test y[1] == x
+            y2 = @inferred(LMS.eccentricity(g, vertices(g)))
+            x2 = @inferred(LMS.eccentricity(g, 1))
+            @test z2 == y2 == [2, 1, 2]
+            @test y2[1] == x2
+
+
         end
         @testset "LMS.diameter" begin
             @test @inferred(LMS.diameter(z)) == LMS.diameter(g, distmx1) == 6.2
@@ -29,8 +40,17 @@ const LMS = LightGraphs.Measurements
 
     @testset "$g" for g in testgraphs(a2)
         z = @inferred(LMS.eccentricity(g, distmx2))
+        z2 = @inferred(LMS.eccentricity(g))
+
         @testset "LMS.eccentricity" begin
-            @test z == [6.2, 4.2, 6.1]
+            y = @inferred(LMS.eccentricity(g, vertices(g), distmx2))
+            x = @inferred(LMS.eccentricity(g, 1, distmx2))
+            @test z == y == [6.2, 4.2, 6.1]
+            @test y[1] == x
+            y2 = @inferred(LMS.eccentricity(g, vertices(g)))
+            x2 = @inferred(LMS.eccentricity(g, 1))
+            @test z2 == y2 == [2, 1, 1]
+            @test y2[1] == x2
         end
         @testset "diameter" begin
             @test @inferred(LMS.diameter(z)) == LMS.diameter(g, distmx2) == 6.2
