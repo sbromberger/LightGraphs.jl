@@ -1,7 +1,8 @@
 module Measurements
 
+using Base.Threads
 using LightGraphs
-using LightGraphs.ShortestPaths:SSSPAlgorithm, Dijkstra, BFS, shortest_paths, distances
+using LightGraphs.ShortestPaths:SSSPAlgorithm, Dijkstra, BFS, shortest_paths, distances, AbstractGraphAlgorithm
 
 """
     abstract type GraphMeasurement

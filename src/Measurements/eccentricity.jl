@@ -1,4 +1,11 @@
 """
+    struct Threaded <: AbstractGraphAlgorithm
+
+A struct representing a threaded version of a measurement algorithm.
+"""
+struct Threaded end
+
+"""
     struct Eccentricities <: GraphMeasurement
 
 A structure representing the eccentricities calculated from a given graph.
@@ -20,20 +27,73 @@ function _eccentricities(g::AbstractGraph,
 
     verts = use_vs ? vs : vertices(g)
 
-    # BFS and Dijkstra across vertices are faster than APSP right now.
+    # BFS and Dijkstra across vertices are faster than APSP for sparse graphs.
 
-    eccs = use_dists ?  ET[maximum(distances(shortest_paths(g, v, distmx, alg))) for v in verts] :
-                        ET[maximum(distances(shortest_paths(g, v, alg))) for v in verts]
-
-    mn, mx = extrema(eccs)
+    eccs = Vector{ET}()
+    sizehint!(eccs, length(verts))
+    mn = typemax(ET)
+    mx = typemin(ET)
+    if use_dists
+        @inbounds for v in verts
+            sp = maximum(distances(shortest_paths(g, v, distmx, alg)))
+            push!(eccs, sp)
+            if sp < mn
+                min = sp
+            end
+            if sp > mx
+                mx = sp
+            end
+            sp == typemax(ET) && @warn("Infinite path length detected for vertex $v: graph may not be connected")
+        end
+    else
+        @inbounds for v in verts
+            sp = maximum(distances(shortest_paths(g, v, alg)))
+            push!(eccs, sp)
+            if sp < mn
+                min = sp
+            end
+            if sp > mx
+                mx = sp
+            end
+            sp == typemax(ET) && @warn("Infinite path length detected for vertex $v: graph may not be connected")
+        end
+    end
     
-    mx == typemax(ET) && @warn("Infinite path length detected: graph may not be connected")
     return Eccentricities{ET}(eccs, mn, mx)
 end
 
+function _threaded_eccentricities(g::AbstractGraph,
+                         vs::AbstractVector{<:Integer},
+                         distmx::AbstractMatrix{T},
+                         alg::SSSPAlgorithm,
+                         use_vs::Bool,
+                         use_dists::Bool,
+                         ET) where {T<:Real}
+
+    verts = use_vs ? vs : vertices(g)
+
+    eccs = Vector{ET}(undef, length(verts))
+    if use_dists
+        @threads for i in 1:length(verts)
+            v = verts[i]
+            sp = maximum(distances(shortest_paths(g, v, distmx, alg)))
+            eccs[i] = sp
+            sp == typemax(ET) && @warn("Infinite path length detected for vertex $v: graph may not be connected")
+        end
+    else
+        @threads for i in 1:length(verts)
+            v = verts[i]
+            sp = maximum(distances(shortest_paths(g, v, alg)))
+            eccs[i] = sp
+            sp == typemax(ET) && @warn("Infinite path length detected for vertex $v: graph may not be connected")
+        end
+    end
+    mn, mx = extrema(eccs) 
+    return Eccentricities{ET}(eccs, mn, mx)
+end
 
 """
-    eccentricities(g[, vs[, distmx]][, alg])
+    eccentricities(g[, vs[, distmx]][, alg][, ::Threaded])
 
 Return an [`Eccentricities`](@ref) object representing the eccentricity[ies] of a vertex / 
 vertex list `vs` defaulting to the entire graph. An optional matrix of edge distances may
@@ -60,18 +120,41 @@ calculate, store, and pass the eccentricities if multiple distance measures are 
 An infinite path length is represented by the `typemax` of the distance matrix.
 
 """
-eccentricities(g::AbstractGraph, alg::SSSPAlgorithm=BFS()) = _eccentricities(g, [0], zeros(0,0), alg, false, false, eltype(g))
-eccentricities(g::AbstractGraph, distmx::AbstractMatrix, alg::SSSPAlgorithm=Dijkstra()) =
-    _eccentricities(g, [0], distmx, alg, false, true, eltype(distmx))
-eccentricities(g::AbstractGraph, vs::AbstractVector, alg::SSSPAlgorithm=BFS()) = _eccentricities(g, vs, zeros(0,0), alg, true, false, eltype(g))
-eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg::SSSPAlgorithm=Dijkstra()) =
-    _eccentricities(g, vs, distmx, alg, true, true, eltype(distmx))
+eccentricities(g::AbstractGraph) = _eccentricities(g, [0], zeros(0,0), BFS(), false, false, eltype(g))
+eccentricities(g::AbstractGraph, ::Threaded) = _threaded_eccentricities(g, [0], zeros(0,0), BFS(), false, false, eltype(g))
 
-eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm=BFS()) = _eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
-eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm=Dijkstra()) =
-    _eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
+eccentricities(g::AbstractGraph, alg::SSSPAlgorithm) = _eccentricities(g, [0], zeros(0,0), alg, false, false, eltype(g))
+eccentricities(g::AbstractGraph, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [0], zeros(0,0), alg, false, false, eltype(g))
 
-eccentricities(a::AbstractVector{T}) where {T<:Real} = Eccentricities(a)
+eccentricities(g::AbstractGraph, vs::AbstractVector) = _eccentricities(g, vs, zeros(0,0), BFS(), true, false, eltype(g))
+eccentricities(g::AbstractGraph, vs::AbstractVector, ::Threaded) = _threaded_eccentricities(g, vs, zeros(0,0), BFS(), true, false, eltype(g))
+
+eccentricities(g::AbstractGraph, vs::AbstractVector, alg::SSSPAlgorithm) = _eccentricities(g, vs, zeros(0,0), alg, true, false, eltype(g))
+eccentricities(g::AbstractGraph, vs::AbstractVector, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, vs, zeros(0,0), alg, true, false, eltype(g))
+
+eccentricities(g::AbstractGraph, v::Integer) = _eccentricities(g, [v], zeros(0,0), BFS(), true, false, eltype(g))
+eccentricities(g::AbstractGraph, v::Integer, ::Threaded) = _threaded_eccentricities(g, [v], zeros(0,0), BFS(), true, false, eltype(g))
+
+eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm) = _eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
+eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
+
+eccentricities(g::AbstractGraph, distmx::AbstractMatrix) = _eccentricities(g, [0], distmx, Dijkstra(), false, true, eltype(distmx))
+eccentricities(g::AbstractGraph, distmx::AbstractMatrix, ::Threaded) = _threaded_eccentricities(g, [0], distmx, Dijkstra(), false, true, eltype(distmx))
+
+eccentricities(g::AbstractGraph, distmx::AbstractMatrix, alg::SSSPAlgorithm) = _eccentricities(g, [0], distmx, alg, false, true, eltype(distmx))
+eccentricities(g::AbstractGraph, distmx::AbstractMatrix, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [0], distmx, alg, false, true, eltype(distmx))
+
+eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix) = _eccentricities(g, vs, distmx, Dijkstra(), true, true, eltype(distmx))
+eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, ::Threaded) = _threaded_eccentricities(g, vs, distmx, Dijkstra(), true, true, eltype(distmx))
+
+eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg::SSSPAlgorithm) = _eccentricities(g, vs, distmx, alg, true, true, eltype(distmx))
+eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, vs, distmx, alg, true, true, eltype(distmx))
+
+eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix) = _eccentricities(g, [v], distmx, Dijkstra(), true, true, eltype(distmx))
+eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, ::Threaded) = _threaded_eccentricities(g, [v], distmx, Dijkstra(), true, true, eltype(distmx))
+
+eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm) = _eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
+eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
 
 """
     eccentricity(g[, vs[, distmx]][, alg])
