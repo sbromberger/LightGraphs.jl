@@ -15,7 +15,9 @@ const LMS = LightGraphs.Measurements
         @testset "eccentricity" begin
             y = @inferred(LMS.eccentricity(g, vertices(g), distmx1))
             x = @inferred(LMS.eccentricity(g, 1, distmx1))
-            @test z == y == [6.2, 4.2, 6.2]
+            tz = @inferred(LMS.eccentricity(g, distmx1, LMS.Threaded()))
+            ty = @inferred(LMS.eccentricity(g, vertices(g), distmx1, LMS.Threaded()))
+            @test z == y == tz == ty == [6.2, 4.2, 6.2]
             @test y[1] == x
             y2 = @inferred(LMS.eccentricity(g, vertices(g)))
             x2 = @inferred(LMS.eccentricity(g, 1))
@@ -45,11 +47,14 @@ const LMS = LightGraphs.Measurements
         @testset "LMS.eccentricity" begin
             y = @inferred(LMS.eccentricity(g, vertices(g), distmx2))
             x = @inferred(LMS.eccentricity(g, 1, distmx2))
-            @test z == y == [6.2, 4.2, 6.1]
+            tz = @inferred(LMS.eccentricity(g, distmx2, LMS.Threaded()))
+            ty = @inferred(LMS.eccentricity(g, vertices(g), distmx2, LMS.Threaded()))
+            @test z == y == tz == ty == [6.2, 4.2, 6.1]
             @test y[1] == x
             y2 = @inferred(LMS.eccentricity(g, vertices(g)))
             x2 = @inferred(LMS.eccentricity(g, 1))
-            @test z2 == y2 == [2, 1, 1]
+            ty2 = @inferred(LMS.eccentricity(g, vertices(g), LMS.Threaded()))
+            @test z2 == y2 == ty2 == [2, 1, 1]
             @test y2[1] == x2
         end
         @testset "diameter" begin
@@ -69,8 +74,12 @@ const LMS = LightGraphs.Measurements
     @testset "warnings and errors" begin
     # ensures that LMS.eccentricity only throws an error if there is more than one component
         g1 = SimpleGraph(2)
-        @test_logs (:warn, "Infinite path length detected: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
+        @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
+        @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
+        @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
+        @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
         g2 = path_graph(2)
         @test_logs LMS.eccentricity(g2)
+        @test_logs LMS.eccentricity(g2, LMS.Threaded())
     end
 end

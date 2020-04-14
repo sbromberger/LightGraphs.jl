@@ -38,7 +38,7 @@ function _eccentricities(g::AbstractGraph,
             sp = maximum(distances(shortest_paths(g, v, distmx, alg)))
             push!(eccs, sp)
             if sp < mn
-                min = sp
+                mn = sp
             end
             if sp > mx
                 mx = sp
@@ -50,7 +50,7 @@ function _eccentricities(g::AbstractGraph,
             sp = maximum(distances(shortest_paths(g, v, alg)))
             push!(eccs, sp)
             if sp < mn
-                min = sp
+                mn = sp
             end
             if sp > mx
                 mx = sp
@@ -99,7 +99,9 @@ Return an [`Eccentricities`](@ref) object representing the eccentricity[ies] of 
 vertex list `vs` defaulting to the entire graph. An optional matrix of edge distances may
 be supplied. An optional [`ShortestPathAlgorithm`](@ref) may also be supplied (defaults to
 [`ShortestPath.Dijkstra`](@ref) if distances are provided, [`ShortestPaths.BFS`](@ref)
-otherwise.
+otherwise. A threaded calculation may be achieved using an instance of [`Threaded`](@ref)
+as an argument.
+
 
 The eccentricity of a vertex is the maximum shortest-path distance between it
 and all other vertices in the graph.
@@ -133,10 +135,8 @@ eccentricities(g::AbstractGraph, vs::AbstractVector, alg::SSSPAlgorithm) = _ecce
 eccentricities(g::AbstractGraph, vs::AbstractVector, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, vs, zeros(0,0), alg, true, false, eltype(g))
 
 eccentricities(g::AbstractGraph, v::Integer) = _eccentricities(g, [v], zeros(0,0), BFS(), true, false, eltype(g))
-eccentricities(g::AbstractGraph, v::Integer, ::Threaded) = _threaded_eccentricities(g, [v], zeros(0,0), BFS(), true, false, eltype(g))
 
 eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm) = _eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
-eccentricities(g::AbstractGraph, v::Integer, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [v], zeros(0,0), alg, true, false, eltype(g))
 
 eccentricities(g::AbstractGraph, distmx::AbstractMatrix) = _eccentricities(g, [0], distmx, Dijkstra(), false, true, eltype(distmx))
 eccentricities(g::AbstractGraph, distmx::AbstractMatrix, ::Threaded) = _threaded_eccentricities(g, [0], distmx, Dijkstra(), false, true, eltype(distmx))
@@ -151,20 +151,22 @@ eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg
 eccentricities(g::AbstractGraph, vs::AbstractVector, distmx::AbstractMatrix, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, vs, distmx, alg, true, true, eltype(distmx))
 
 eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix) = _eccentricities(g, [v], distmx, Dijkstra(), true, true, eltype(distmx))
-eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, ::Threaded) = _threaded_eccentricities(g, [v], distmx, Dijkstra(), true, true, eltype(distmx))
 
 eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm) = _eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
-eccentricities(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::SSSPAlgorithm, ::Threaded) = _threaded_eccentricities(g, [v], distmx, alg, true, true, eltype(distmx))
+
+eccentricities(a::AbstractVector) = Eccentricities(a, extrema(a)...)
 
 """
-    eccentricity(g[, vs[, distmx]][, alg])
+    eccentricity(g[, vs[, distmx]][, alg][, ::Threaded])
     eccentricity(::Eccentricities)
 
 Return the eccentricity[ies] of a vertex / vertex list `vs` defaulting to the
 entire graph. An optional matrix of edge distances may also be supplied.
 An optional [`ShortestPaths.SSSPAlgorithm`](@ref) may also be supplied (defaults to
 [`ShortestPath.Dijkstra`](@ref) if distances are provided, [`ShortestPaths.BFS`](@ref)
-otherwise.
+otherwise. A threaded calculation may be achieved using an instance of [`Threaded`](@ref)
+as an argument.
+
 
 If an [`Eccentricities`](@ref) object is given instead, return the previously-calculated
 eccentricities from that object.
@@ -202,14 +204,16 @@ eccentricity(g::AbstractGraph, v::Integer, x...) = first(eccentricities(g, v, x.
 
 """
     diameter(::Eccentricities)
-    diameter(g[, vs[, distmx]][, alg])
+    diameter(g[, vs[, distmx]][, alg][, ::Threaded])
 
 Given a precomputed [`Eccentricities`](@ref) struct, return the maximum
 eccentricity of the graph.
 
 In lieu of an `Eccentricities` struct, one may be (temporarily) created
 for use by this function by passing in the corresponding parameters to
-[`eccentricities`](@ref) instead.
+[`eccentricities`](@ref) instead. A threaded calculation may be achieved
+using an instance of [`Threaded`](@ref) as an argument.
+
 
 # Examples
 ```jldoctest
@@ -225,14 +229,16 @@ diameter(x...) = diameter(eccentricities(x...))
 
 """
     radius(::Eccentricities)
-    radius(g[, vs[, distmx]][, alg])
+    radius(g[, vs[, distmx]][, alg][, ::Threaded])
 
 Given a precomputed [`Eccentricities`](@ref) struct, return the minimum
 eccentricity of the graph.
 
 In lieu of an `Eccentricities` struct, one may be (temporarily) created
 for use by this function by passing in the corresponding parameters to
-[`eccentricities`](@ref) instead.
+[`eccentricities`](@ref) instead. A threaded calculation may be achieved
+using an instance of [`Threaded`](@ref) as an argument.
+
 
 # Examples
 ```jldoctest
@@ -247,8 +253,8 @@ radius(e::Eccentricities) = e.min
 radius(x...) = radius(eccentricities(x...))
 
 """
-    periphery(g[, vs[, distmx]][, alg])
     periphery(::Eccentricities)
+    periphery(g[, vs[, distmx]][, alg][, ::Threaded])
 
 Given a precomputed [`Eccentricities`](@ref) struct, return the set of
 all vertices whose eccentricity is equal to the graph's diameter (that
@@ -256,7 +262,9 @@ is, the set of vertices with the largest eccentricity).
 
 In lieu of an `Eccentricities` struct, one may be (temporarily) created
 for use by this function by passing in the corresponding parameters to
-[`eccentricities`](@ref) instead.
+[`eccentricities`](@ref) instead. A threaded calculation may be achieved
+using an instance of [`Threaded`](@ref) as an argument.
+
 
 
 # Examples
@@ -278,8 +286,8 @@ periphery(e::Eccentricities) = findall(e.vals .== e.max)
 periphery(x...) = periphery(eccentricities(x...))
 
 """
-    center(g[, vs[, distmx]][, alg])
     center(::Eccentricities)
+    center(g[, vs[, distmx]][, alg][, ::Threaded])
 
 Given a precomputed [`Eccentricities`](@ref) struct, return the set of
 all vertices whose eccentricity is equal to the graph's radius (that
@@ -287,7 +295,8 @@ is, the set of vertices with the smallest eccentricity).
 
 In lieu of an `Eccentricities` struct, one may be (temporarily) created
 for use by this function by passing in the corresponding parameters to
-[`eccentricities`](@ref) instead.
+[`eccentricities`](@ref) instead. A threaded calculation may be achieved
+using an instance of [`Threaded`](@ref) as an argument.
 
 # Examples
 ```jldoctest
