@@ -11,7 +11,7 @@ struct BreadthFirst{F<:Function, T<:Base.Sort.Algorithm} <: TraversalAlgorithm
     sort_alg::T
 end
 
-BreadthFirst(; neighborfn=outneighbors, sort_alg=NOOPSort) = BreadthFirst(neighborfn, sort_alg)
+BreadthFirst(; neighborfn=outneighbors, sort_alg=QuickSort) = BreadthFirst(neighborfn, sort_alg)
 
 """
     traverse_graph!(g, ss, alg, state)
