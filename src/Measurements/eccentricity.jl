@@ -34,7 +34,7 @@ function _eccentricities(g::AbstractGraph,
     mn = typemax(ET)
     mx = typemin(ET)
     if use_dists
-        @inbounds for v in verts
+        for v in verts
             sp = maximum(distances(shortest_paths(g, v, distmx, alg)))
             push!(eccs, sp)
             if sp < mn
