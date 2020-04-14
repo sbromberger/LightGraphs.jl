@@ -1,7 +1,7 @@
 module Degeneracy
 
 using LightGraphs
-using Base.Threads: @threads, Atomic, nthreads, threadid, atomic_sub!
+using Base.Threads: @threads, Atomic, nthreads, threadid, atomic_sub!, atomic_add!
 
 """
     abstract type CoreAlgorithm
