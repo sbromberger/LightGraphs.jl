@@ -215,6 +215,8 @@ a `Graph` or `DiGraph`.
 """
 const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
+
+include("defaultdistance.jl")
 include("Degeneracy/Degeneracy.jl")
 include("degeneracy.jl")
 include("Traversals/Traversals.jl")
@@ -225,7 +227,6 @@ include("traversals13/dfs.jl")
 include("traversals13/maxadjvisit.jl")
 include("traversals13/randomwalks.jl")
 include("traversals13/diffusion.jl")
-include("distance.jl")
 include("edit_distance.jl")
 include("ShortestPaths/ShortestPaths.jl")
 include("shortestpaths13/astar.jl")
@@ -236,6 +237,8 @@ include("shortestpaths13/desopo-pape.jl")
 include("shortestpaths13/floyd-warshall.jl")
 include("shortestpaths13/yen.jl")
 include("shortestpaths13/spfa.jl")
+include("Measurements/Measurements.jl")
+include("distance.jl")
 include("Connectivity/Connectivity.jl")
 include("connectivity.jl")
 include("Transitivity/Transitivity.jl")
