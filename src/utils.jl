@@ -270,3 +270,21 @@ function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
 
     return result
 end
+
+"""
+    range_shuffle!(r, a; seed=-1)
+
+Fast shuffle Array `a` in UnitRange `r`.
+Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
+"""
+function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
+    rng = getRNG(seed)
+    (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
+    @inbounds for i = length(r):-1:2
+        j = rand(rng, 1:i)
+        ii = i + r.start - 1
+        jj = j + r.start - 1
+        a[ii], a[jj] = a[jj], a[ii]
+    end
+end
+
