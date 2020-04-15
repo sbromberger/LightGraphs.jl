@@ -60,6 +60,7 @@ tests = [
     "traversals13/randomwalks",
     "traversals13/diffusion",
     "Traversals/runtests",
+    "Community/runtests",
     "community13/cliques",
     "community13/core-periphery",
     "community13/label_propagation",
