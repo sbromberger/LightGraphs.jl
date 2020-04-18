@@ -1,5 +1,6 @@
 # Code in this file inspired by NetworkX.
 
+using LightGraphs.SimpleGraphsCore: AbstractSimpleGraph, SimpleGraph, SimpleEdge
 """
     cycle_basis(g, root=nothing)
 

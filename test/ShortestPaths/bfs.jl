@@ -1,6 +1,7 @@
     @testset "ShortestPaths.BFS" begin
-        g1 = path_graph(5)
-        g2 = path_digraph(5)
+        p5 = SGGEN.Path(5)
+        g1 = SimpleGraph(p5)
+        g2 = SimpleDiGraph(p5)
         s1 = ShortestPaths.shortest_paths(g1, 1) # bfs
         s2 = ShortestPaths.shortest_paths(g2, 1) # bfs
         @test ShortestPaths.paths(s1)[2] == ShortestPaths.paths(s1, 2) == [1, 2]
@@ -37,7 +38,7 @@
         @test m2.dists == [0, 0, 1, 2, 1]
 
         @testset "maximum distance setting limits ShortestPaths.paths found" begin
-            G = cycle_graph(8)
+            G = SimpleGraph(SGGEN.Cycle(8))
             add_edge!(G, 1, 3)
 
             @testset "$g" for g in testgraphs(G)

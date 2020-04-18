@@ -5,25 +5,19 @@ const SimpleGraphEdge = SimpleEdge
 
 A type representing an undirected graph.
 """
-mutable struct SimpleGraph{T <: Integer} <: AbstractSimpleGraph{T}
+mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 
-    function SimpleGraph{T}(ne::Int, fadjlist::Vector{Vector{T}}) where T
+    function SimpleGraph{T}(ne::Int, fadjlist::Vector{Vector{T}}) where {T}
         throw_if_invalid_eltype(T)
         return new{T}(ne, fadjlist)
     end
 end
 
-function SimpleGraph(
-        ne,
-        fadjlist::Vector{Vector{T}}
-) where T
+SimpleGraph(ne, fadjlist::Vector{Vector{T}}) where {T} = SimpleGraph{T}(ne, fadjlist)
 
-    return SimpleGraph{T}(ne, fadjlist)
-end
-
-eltype(x::SimpleGraph{T}) where T = T
+eltype(x::SimpleGraph{T}) where {T} = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
@@ -44,7 +38,7 @@ function SimpleGraph{T}(n::Integer=0) where T <: Integer
 end
 
 # SimpleGraph(6), SimpleGraph(0x5)
-SimpleGraph(n::T) where T <: Integer = SimpleGraph{T}(n)
+SimpleGraph(n::T) where {T<:Integer} = SimpleGraph{T}(n)
 
 # SimpleGraph()
 SimpleGraph() = SimpleGraph{Int}()
@@ -61,7 +55,7 @@ julia> SimpleGraph(UInt8)
 {0, 0} undirected simple UInt8 graph
 ```
 """
-SimpleGraph(::Type{T}) where T <: Integer = SimpleGraph{T}(zero(T))
+SimpleGraph(::Type{T}) where {T<:Integer} = SimpleGraph{T}(zero(T))
 
 # SimpleGraph(adjmx)
 """
@@ -85,7 +79,7 @@ julia> SimpleGraph{Int16}(A2)
 SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
 
 # Graph{UInt8}(adjmx)
-function SimpleGraph{T}(adjmx::AbstractMatrix) where T <: Integer
+function SimpleGraph{T}(adjmx::AbstractMatrix) where {T<:Integer}
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
     issymmetric(adjmx) || throw(ArgumentError("Adjacency / distance matrices must be symmetric"))
@@ -115,12 +109,10 @@ julia> SimpleGraph{UInt8}(g)
 SimpleGraph(g::SimpleGraph) = copy(g)
 
 # converts Graph{Int} to Graph{Int32}
-function SimpleGraph{T}(g::SimpleGraph) where T <: Integer
+function SimpleGraph{T}(g::SimpleGraph) where {T<:Integer}
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     return SimpleGraph(ne(g), h_fadj)
 end
-
-
 
 # SimpleGraph(digraph)
 """
@@ -160,7 +152,7 @@ function SimpleGraph(g::SimpleDiGraph)
 end
 
 
-@inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where T <: Integer
+@inbounds function cleanupedges!(fadjlist::Vector{Vector{T}}) where {T<:Integer}
     neg = 0
     for v in 1:length(fadjlist)
         if !issorted(fadjlist[v])
@@ -201,7 +193,7 @@ julia> SimpleGraph(el)
 {5, 2} undirected simple Int64 graph
 ```
 """
-function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
+function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where {T<:Integer}
     nvg = zero(T)
     @inbounds(
     for e in edge_list
@@ -246,8 +238,7 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     return g
 end
 
-
-@inbounds function add_to_fadjlist!(fadjlist::Vector{Vector{T}}, s::T, d::T) where T <: Integer
+@inbounds function add_to_fadjlist!(fadjlist::Vector{Vector{T}}, s::T, d::T) where {T<:Integer}
     nvg = length(fadjlist)
     nvg_new = max(nvg, s, d)
     for v = (nvg + 1):nvg_new
@@ -301,7 +292,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
 end
 
 
-function _SimpleGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
+function _SimpleGraphFromIterator(iter, ::Type{T}) where {T<:Integer}
 
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
@@ -360,7 +351,7 @@ function SimpleGraphFromIterator(iter)::SimpleGraph
 end
 
 
-edgetype(::SimpleGraph{T}) where T <: Integer = SimpleGraphEdge{T}
+edgetype(::SimpleGraph{T}) where {T<:Integer} = SimpleGraphEdge{T}
 
 """
     badj(g::SimpleGraph[, v::Integer])
@@ -394,9 +385,9 @@ adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 copy(g::SimpleGraph) =  SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
-vertices(g) == vertices(h) &&
-ne(g) == ne(h) &&
-fadj(g) == fadj(h)
+    vertices(g) == vertices(h) &&
+    ne(g) == ne(h) &&
+    fadj(g) == fadj(h)
 
 
 """
@@ -406,7 +397,7 @@ Return `true` if `g` is a directed graph.
 """
 is_directed(::Type{<:SimpleGraph}) = false
 
-function has_edge(g::SimpleGraph{T}, s, d) where T
+function has_edge(g::SimpleGraph{T}, s, d) where {T}
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list_s = g.fadjlist[s]
@@ -418,7 +409,7 @@ function has_edge(g::SimpleGraph{T}, s, d) where T
     return insorted(d, list_s)
 end
 
-function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+function has_edge(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     return has_edge(g, s, d)
 end
@@ -442,7 +433,7 @@ julia> add_edge!(g, 2, 3)
 false
 ```
 """
-function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
@@ -485,7 +476,7 @@ julia> rem_edge!(g, 1, 2)
 false
 ```
 """
-function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
+function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
@@ -523,7 +514,7 @@ julia> add_vertex!(g)
 false
 ```
 """
-function add_vertex!(g::SimpleGraph{T}) where T
+function add_vertex!(g::SimpleGraph{T}) where {T}
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.fadjlist, Vector{T}())
     return true
@@ -563,7 +554,7 @@ julia> g
 function rem_vertices!(g::SimpleGraph{T},
                        vs::AbstractVector{<:Integer};
                        keep_order::Bool=false
-                      ) where {T <: Integer}
+                      ) where {T<:Integer}
     # TODO There might be some room for performance improvements.
     # At the moment, we check for all edges if they stay in the graph.
     # If some vertices keep their position, this might be unnecessary.
@@ -670,4 +661,12 @@ function rem_vertices!(g::SimpleGraph{T},
     end
 
     return reverse_vmap
+end
+
+function squash(g::SimpleGraph)
+    validtypes = [UInt8, UInt16, UInt32, UInt64]
+    nvg = nv(g)
+    for T in validtypes
+        nvg < typemax(T) && return SimpleGraph{T}(g)
+    end
 end

@@ -65,7 +65,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
         zprime = contract(n10, v)
         @test z == zprime
-        @test z == 9 * ones(Float64, nv(g))
+        @test z == 9 .* ones(Float64, nv(g))
     end
 
     for g in testdigraphs(g5)
@@ -131,7 +131,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
     @testset "From Matrix Test re #1388" begin
         A_pap = [0 1 1 0 0;0 0 0 1 1; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 1 0];
-        Ap = DiGraph(A_pap);
+        Ap = SimpleDiGraph(A_pap);
         @testset "$g" for g in testdigraphs(Ap)
             @test size(incidence_matrix(g)) == (5, 8)
             @test incidence_matrix(g)[1, 1] == -1

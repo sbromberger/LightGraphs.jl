@@ -5,7 +5,7 @@ const SimpleDiGraphEdge = SimpleEdge
 
 A type representing a directed graph.
 """
-mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
+mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
@@ -14,7 +14,7 @@ mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
             ne::Int,
             fadjlist::Vector{Vector{T}},
             badjlist::Vector{Vector{T}}
-    ) where T
+     ) where {T}
 
         throw_if_invalid_eltype(T)
         return new(ne, fadjlist, badjlist)
@@ -25,13 +25,13 @@ function SimpleDiGraph(
         ne::Int,
         fadjlist::Vector{Vector{T}},
         badjlist::Vector{Vector{T}}
-) where T
+) where {T}
 
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
 
 
-eltype(x::SimpleDiGraph{T}) where T = T
+eltype(x::SimpleDiGraph{T}) where {T} = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """
@@ -46,14 +46,14 @@ julia> SimpleDiGraph(UInt8(10))
 {10, 0} directed simple UInt8 graph
 ```
 """
-function SimpleDiGraph{T}(n::Integer=0) where T <: Integer
+function SimpleDiGraph{T}(n::Integer=0) where {T<:Integer}
     fadjlist = [Vector{T}() for _ = one(T):n]
     badjlist = [Vector{T}() for _ = one(T):n]
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
 # SimpleDiGraph(6), SimpleDiGraph(0x5)
-SimpleDiGraph(n::T) where T <: Integer = SimpleDiGraph{T}(n)
+SimpleDiGraph(n::T) where {T<:Integer} = SimpleDiGraph{T}(n)
 
 # SimpleDiGraph()
 SimpleDiGraph() = SimpleDiGraph{Int}()
@@ -70,7 +70,7 @@ julia> SimpleDiGraph(UInt8)
 {0, 0} directed simple UInt8 graph
 ```
 """
-SimpleDiGraph(::Type{T}) where T <: Integer = SimpleDiGraph{T}(zero(T))
+SimpleDiGraph(::Type{T}) where {T<:Integer} = SimpleDiGraph{T}(zero(T))
 
 
 # SimpleDiGraph(adjmx)
@@ -95,7 +95,7 @@ julia> SimpleDiGraph{Int16}(A2)
 SimpleDiGraph(adjmx::AbstractMatrix) = SimpleDiGraph{Int}(adjmx)
 
 # sparse adjacency matrix constructor: SimpleDiGraph(adjmx)
-function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T <: Integer where U <: Real
+function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where {T<:Integer, U<:Real}
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
@@ -114,7 +114,7 @@ function SimpleDiGraph{T}(adjmx::SparseMatrixCSC{U}) where T <: Integer where U 
 end
 
 # dense adjacency matrix constructor: DiGraph{UInt8}(adjmx)
-function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where T <: Integer where U <: Real
+function SimpleDiGraph{T}(adjmx::AbstractMatrix{U}) where {T<:Integer, U<:Real}
     dima, dimb = size(adjmx)
     isequal(dima, dimb) || throw(ArgumentError("Adjacency / distance matrices must be square"))
 
@@ -140,7 +140,7 @@ julia> SimpleDiGraph{UInt8}(g)
 {5, 20} directed simple UInt8 graph
 ```
 """
-function SimpleDiGraph{T}(g::SimpleDiGraph) where T <: Integer
+function SimpleDiGraph{T}(g::SimpleDiGraph) where {T<:Integer}
     h_fadj = [Vector{T}(x) for x in fadj(g)]
     h_badj = [Vector{T}(x) for x in badj(g)]
     return SimpleDiGraph(ne(g), h_fadj, h_badj)
@@ -172,7 +172,7 @@ end
 
 
 @inbounds function cleanupedges!(fadjlist::Vector{Vector{T}},
-                                 badjlist::Vector{Vector{T}}) where T <: Integer
+                                 badjlist::Vector{Vector{T}}) where {T<:Integer}
     neg = 0
     for v in 1:length(fadjlist)
         if !issorted(fadjlist[v])
@@ -210,7 +210,7 @@ julia> SimpleDiGraph(el)
 {5, 3} directed simple Int64 graph
 ```
 """
-function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integer
+function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T<:Integer}
     nvg = zero(T)
     @inbounds(
     for e in edge_list
@@ -258,7 +258,7 @@ end
 
 
 @inbounds function add_to_lists!(fadjlist::Vector{Vector{T}},
-                                 badjlist::Vector{Vector{T}}, s::T, d::T) where T <: Integer
+                                 badjlist::Vector{Vector{T}}, s::T, d::T) where {T<:Integer}
     nvg = length(fadjlist)
     nvg_new = max(nvg, s, d)
     for v = (nvg + 1):nvg_new
@@ -272,7 +272,6 @@ end
 
 # Try to get the eltype from the first element
 function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
-
     next = iterate(iter)
     if (next === nothing)
         return SimpleDiGraph(0)
@@ -311,8 +310,7 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     return g
 end
 
-function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
-
+function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T<:Integer}
     g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}()
     badjlist = Vector{Vector{T}}()
@@ -359,7 +357,6 @@ julia> collect(edges(h))
 ```
 """
 function SimpleDiGraphFromIterator(iter)::SimpleDiGraph
-
     if Base.IteratorEltype(iter) == Base.HasEltype()
         E = eltype(iter)
         if (E <: SimpleGraphEdge{<: Integer} && isconcretetype(E))
@@ -375,15 +372,15 @@ end
 
 
 
-edgetype(::SimpleDiGraph{T}) where T <: Integer = SimpleGraphEdge{T}
+edgetype(::SimpleDiGraph{T}) where {T<:Integer} = SimpleGraphEdge{T}
 
 
 badj(g::SimpleDiGraph) = g.badjlist
 badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
-copy(g::SimpleDiGraph{T}) where T <: Integer =
-SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
+copy(g::SimpleDiGraph{T}) where {T<:Integer} =
+    SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -394,7 +391,7 @@ badj(g) == badj(h)
 
 is_directed(::Type{<:SimpleDiGraph}) = true
 
-function has_edge(g::SimpleDiGraph{T}, s, d) where T
+function has_edge(g::SimpleDiGraph{T}, s, d) where {T}
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
     @inbounds list = g.fadjlist[s]
@@ -406,12 +403,12 @@ function has_edge(g::SimpleDiGraph{T}, s, d) where T
     return insorted(d, list)
 end
 
-function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+function has_edge(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     return has_edge(g, s, d)
 end
 
-function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
@@ -429,7 +426,7 @@ function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
 end
 
 
-function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
+function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where {T}
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
@@ -446,7 +443,7 @@ function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     return true # edge successfully removed
 end
 
-function add_vertex!(g::SimpleDiGraph{T}) where T
+function add_vertex!(g::SimpleDiGraph{T}) where {T}
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
     push!(g.badjlist, Vector{T}())
     push!(g.fadjlist, Vector{T}())
@@ -457,7 +454,7 @@ end
 function rem_vertices!(g::SimpleDiGraph{T},
                        vs::AbstractVector{<: Integer};
                        keep_order::Bool=false
-                      ) where {T <: Integer}
+                      ) where {T<:Integer}
     # check the implementation in simplegraph.jl for more comments
 
     n = nv(g)
@@ -567,7 +564,7 @@ function rem_vertices!(g::SimpleDiGraph{T},
     return reverse_vmap
 end
 
-function all_neighbors(g::SimpleDiGraph{T}, u::Integer) where T
+function all_neighbors(g::SimpleDiGraph{T}, u::Integer) where {T}
    union_nbrs = Vector{T}()
    i, j = 1, 1
    in_nbrs, out_nbrs = inneighbors(g, u), outneighbors(g, u)
@@ -594,4 +591,12 @@ function all_neighbors(g::SimpleDiGraph{T}, u::Integer) where T
        j += 1
    end
    return union_nbrs
+end
+
+function squash(g::SimpleDiGraph)
+    validtypes = [UInt8, UInt16, UInt32, UInt64]
+    nvg = nv(g)
+    for T in validtypes
+        nvg < typemax(T) && return SimpleDiGraph{T}(g)
+    end
 end

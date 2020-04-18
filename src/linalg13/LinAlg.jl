@@ -9,6 +9,7 @@ using LinearAlgebra: I, Symmetric, diagm, dot, eigen, eigvals, norm, rmul!, tril
 import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
 using ..LightGraphs
+using LightGraphs.SimpleGraphsCore: SimpleEdge
 
 
 import Base: convert, size, eltype, ndims, ==, *, length

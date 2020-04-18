@@ -20,7 +20,7 @@ struct VF2State{G, T}
     out_1::Vector{T}
     out_2::Vector{T}
 
-    function VF2State(g1::G, g2::G) where {G <: AbstractSimpleGraph{T}} where {T <: Integer}
+    function VF2State(g1::G, g2::G) where {G <: AbstractGraph{T}} where {T <: Integer}
         n1 = nv(g1)
         n2 = nv(g2)
         core_1 = zeros(T, n1)
@@ -59,7 +59,7 @@ Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
 """
 function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem;
              vertex_relation::Union{Nothing, Function}=nothing,
-             edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractSimpleGraph}
+             edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractGraph}
     if nv(g1) < nv(g2) || (problemtype == IsomorphismProblem() && nv(g1) != nv(g2))
         return
     end

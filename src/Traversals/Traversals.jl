@@ -3,6 +3,8 @@ module Traversals
 using Base.Threads
 using Distributed
 using LightGraphs
+using LightGraphs.SimpleGraphsCore: SimpleDiGraph
+using LightGraphs.Connectivity: connected_components
 using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
 using DataStructures: PriorityQueue, Queue, enqueue!, dequeue!
@@ -249,7 +251,7 @@ Return a directed acyclic graph based on a [`parents`](@ref) vector `p`.
 """
 function tree(p::AbstractVector{T}) where T <: Integer
     n = T(length(p))
-    t = DiGraph{T}(n)
+    t = SimpleDiGraph{T}(n)
     for (v, u) in enumerate(p)
         if u > zero(T) && u != v
             add_edge!(t, u, v)

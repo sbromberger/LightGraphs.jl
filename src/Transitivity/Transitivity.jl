@@ -3,7 +3,6 @@ module Transitivity
 using LightGraphs
 using SimpleTraits
 using LightGraphs.Connectivity: connected_components, condensation, StrongConnectivityAlgorithm, Tarjan
-using LightGraphs.SimpleGraphs
 using LightGraphs.Traversals: topological_sort, DepthFirst, TraversalState, traverse_graph!
 import LightGraphs.Traversals: initfn!, visitfn!
 
@@ -23,7 +22,7 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 This version of the function modifies the original graph.
 """
 function transitive_closure! end
-@traitfn function transitive_closure!(g::::IsDirected, selflooped=false, alg::StrongConnectivityAlgorithm=Tarjan())
+@traitfn function transitive_closure!(g::AG::IsDirected, selflooped=false, alg::StrongConnectivityAlgorithm=Tarjan()) where {AG<:AbstractGraph}
     scc = connected_components(g, alg)
     cg = condensation(g, scc)
     tp = reverse(topological_sort(cg, DepthFirst()))
@@ -116,7 +115,8 @@ julia> collect(edges(transitive_closure(barbell)))
  Edge 6 => 5
 ```
 """
-transitive_closure(g::DiGraph, selflooped=false, alg=Tarjan()) = transitive_closure!(copy(g), selflooped, alg)
+function transitive_closure end
+@traitfn transitive_closure(g::::IsDirected, selflooped=false, alg=Tarjan()) = transitive_closure!(copy(g), selflooped, alg)
 
 """
     transitive_reduction(g, selflooped=false, alg=Tarjan())
@@ -168,11 +168,11 @@ julia> collect(edges(transitive_reduction(barbell)))
 """
 function transitive_reduction end
 
-mutable struct DiSpanTree{T<:Integer} <: TraversalState
+mutable struct DiSpanTree{T<:Integer, AG<:AbstractGraph{T}} <: TraversalState
     verts::Vector{T}
     label::Vector{T}
     head::T
-    resultg::SimpleDiGraph{T}
+    resultg::AG
 end
 
 function visitfn!(s::DiSpanTree, u, v)
@@ -196,7 +196,7 @@ end
     scc = connected_components(g, alg)
     reverse!(scc)
     cg = condensation(g, scc)
-    resultg = SimpleDiGraph{T}(nv(g))
+    resultg = AG(nv(g))
     verts_rep = first.(scc)
     state = DiSpanTree(verts_rep, zeros(T, nv(cg)), zero(T), resultg)
     traverse_graph!(cg, vertices(cg), DepthFirst(), state)

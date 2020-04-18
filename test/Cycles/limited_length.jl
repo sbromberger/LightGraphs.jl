@@ -1,7 +1,7 @@
 @testset "Limited Length Cycles" begin
-    completedg = complete_digraph(4)
-    pathdg = path_digraph(5)
-    cycledg = cycle_digraph(5)
+    completedg = SimpleDiGraph(SGGEN.Complete(4))
+    pathdg = SimpleDiGraph(SGGEN.Path(5))
+    cycledg = SimpleDiGraph(SGGEN.Cycle(5))
 
     @testset "complete digraph $g" for g in testgraphs(completedg)
         @test length(LCY.simple_cycles(g, LCY.LimitedLength(0))) == 0
@@ -30,7 +30,7 @@
     end
 
     @testset "self loops" begin
-        selfloopg = DiGraph([
+        selfloopg = SimpleDiGraph([
             0 1 0 0;
             0 0 1 0;
             1 0 1 0;
@@ -44,8 +44,8 @@
     end
 
     @testset "octahedral graph" begin
-        octag = smallgraph(:octahedral)
-        octadg = DiGraph(octag)
+        octag = SimpleGraph(SGGEN.Octahedral())
+        octadg = SimpleDiGraph(octag)
         octalengths, _ = LCY.simple_cycles_length(octadg)
         for k = 1:6
             @test sum(octalengths[1:k]) == length(LCY.simple_cycles(octag, LCY.LimitedLength(k)))

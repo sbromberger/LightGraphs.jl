@@ -245,33 +245,6 @@ isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """
-    deepcopy_adjlist(adjlist::Vector{Vector{T}})
-
-Internal utility function for copying adjacency lists.
-On adjacency lists this function is more efficient than `deepcopy` for two reasons:
--  As of Julia v1.0.2, `deepcopy` is not typestable.
-- `deepcopy` needs to track all references when traversing a recursive data structure
-    in order to ensure that references to the same location do need get assigned to
-    different locations in the copy. Because we can assume that all lists in our
-    adjacency list are different, we don't need to keep track of them.
-If `T` is not a bitstype (e.g. `BigInt`), we use the standard `deepcopy`.
-"""
-function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
-    isbitstype(T) || return deepcopy(adjlist)
-
-    result = Vector{Vector{T}}(undef, length(adjlist))
-    @inbounds for (i, list) in enumerate(adjlist)
-        result_list = Vector{T}(undef, length(list))
-        for (j, item) in enumerate(list)
-            result_list[j] = item
-        end
-        result[i] = result_list
-    end
-
-    return result
-end
-
-"""
     range_shuffle!(r, a; seed=-1)
 
 Fast shuffle Array `a` in UnitRange `r`.
@@ -288,3 +261,58 @@ function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
     end
 end
 
+"""
+    randbn(n, p, seed=-1)
+
+Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
+
+### References
+- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
+- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
+function randbn(n::Integer, p::Real, rng::AbstractRNG)
+    log_q = log(1.0 - p)
+    x = 0
+    sum = 0.0
+    while true
+        sum += log(rand(rng)) / (n - x)
+        sum < log_q && break
+        x += 1
+    end
+    return x
+end
+
+"""
+    is_graphical(degs)
+
+Return `true` if the degree sequence `degs` is graphical.
+A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.
+
+### Performance
+Time complexity: ``\\mathcal{O}(|degs|*\\log(|degs|))``.
+
+### Implementation Notes
+According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (sorted in descending order) is graphical iff the sum of vertex degrees is even and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
+```
+for each integer r <= n-1
+"""
+function is_graphical(degs::Vector{<:Integer})
+    iseven(sum(degs)) || return false
+    sorted_degs = sort(degs, rev = true)
+    n = length(sorted_degs)
+    cur_sum = zero(UInt64)
+    mindeg = Vector{UInt64}(undef, n)
+    @inbounds for i = 1:n
+        mindeg[i] = min(i, sorted_degs[i])
+    end
+    cum_min = sum(mindeg)
+    @inbounds for r = 1:(n - 1)
+        cur_sum += sorted_degs[r]
+        cum_min -= mindeg[r]
+        cond = cur_sum <= (r * (r - 1) + cum_min)
+        cond || return false
+    end
+    return true
+end

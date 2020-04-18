@@ -6,7 +6,7 @@ Communities are potentionally overlapping.
 
 
 ### Optional Parameters
-`k::Int`: defines the size of the clique to use in percolation (default `3`).
+- `k::Int`: defines the size of the clique to use in percolation (default `3`).
 
 ### Implementation Notes
 Community detection using CliquePercolation is only defined for undirected graphs.
@@ -42,13 +42,15 @@ CliquePercolation(;k=3) = CliquePercolation(k)
   kcliques = filter(x->length(x)>=alg.k, maximal_cliques(g))
   nc = length(kcliques)
   # graph with nodes represent k-cliques
-  h = Graph(nc)
+  h = SimpleGraph(nc)
   # vector for counting common nodes between two cliques efficiently
   x = falses(nv(g))
   for i = 1:nc
     x[kcliques[i]] .= true
     for j = i+1:nc
-        sum(x[kcliques[j]]) >= alg.k-1 && add_edge!(h, i, j)
+        if sum(x[kcliques[j]]) >= alg.k-1 
+            add_edge!(h, i, j)
+        end
     end
     # reset status
     x[kcliques[i]] .= false

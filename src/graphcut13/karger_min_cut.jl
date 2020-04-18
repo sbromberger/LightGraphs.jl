@@ -47,7 +47,7 @@ Find the number of crossing edges in a cut of graph `g` where the cut is represe
 by the integer array, `cut`.
 """
 karger_cut_cost(g::AbstractGraph{T}, cut::Vector{<:Integer}) where T <: Integer =
-count((e::Edge{T})->cut[src(e)] != cut[dst(e)], edges(g))
+    count(e -> cut[src(e)] != cut[dst(e)], edges(g))
 
 """
     karger_cut_edges(g, cut)

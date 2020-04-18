@@ -3,7 +3,7 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    g6 = smallgraph(:house)
+    g6 = SimpleGraph(SGGEN.House())
     struct DummyState <: LT.TraversalState end
 
     @testset "default traverse_graph!" begin
@@ -89,7 +89,7 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         end
     end
     @testset "visited_vertices" begin
-        gt = binary_tree(3)
+        gt = SimpleGraph(SGGEN.BinaryTree(3))
         for g in testgraphs(gt)
             @test LT.visited_vertices(g, 1, LT.BreadthFirst()) == 1:7
         end

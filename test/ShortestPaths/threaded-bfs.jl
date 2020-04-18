@@ -8,7 +8,7 @@
         @test @inferred(ShortestPaths.shortest_paths(g, [1, 3], ShortestPaths.ThreadedBFS()))  == ShortestPaths.shortest_paths(g, [1, 3], ShortestPaths.BFS())
     end
 
-    g6 = smallgraph(:house)
+    g6 = SimpleGraph(SGGEN.House())
 
     @testset "$g" for g in testgraphs(g6)
         @test @inferred(ShortestPaths.shortest_paths(g, 2, ShortestPaths.ThreadedBFS()))  == ShortestPaths.shortest_paths(g, 2, ShortestPaths.BFS())

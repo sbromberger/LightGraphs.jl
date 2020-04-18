@@ -3,7 +3,7 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
 @testset "LT.ThreadedBreadthFirst" begin
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    g6 = smallgraph(:house)
+    g6 = SimpleGraph(SGGEN.House())
 
     @testset "$g" for g in testdigraphs(g5)
       T = eltype(g)
@@ -43,7 +43,7 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
         @test t == t2
     end
 
-    g7 = binary_tree(4)
+    g7 = SimpleGraph(SGGEN.BinaryTree(4))
     struct DummyState <: LT.TraversalState end
     LT.preinitfn!(::DummyState, u) = false
 

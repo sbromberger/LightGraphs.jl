@@ -1,9 +1,9 @@
 @testset "Cycles" begin
-    completedg = complete_digraph(4)
-    pathdg = path_digraph(5)
-    triangle = random_regular_graph(3, 2)
-    quadrangle = random_regular_graph(4, 2)
-    pentagon = random_regular_graph(5, 2)
+    completedg = SimpleDiGraph(SGGEN.Complete(4))
+    pathdg = SimpleDiGraph(SGGEN.Path(5))
+    triangle = SimpleGraph(SGGEN.RandomRegular(3, 2))
+    quadrangle = SimpleGraph(SGGEN.RandomRegular(4, 2))
+    pentagon = SimpleGraph(SGGEN.RandomRegular(5, 2))
 
     @testset "path digraph $g" for g in testgraphs(pathdg)
         @test LCY.max_simple_cycles(g) == LCY.max_simple_cycles(g, true) == LCY.max_simple_cycles(g, true, Tarjan()) == 0
@@ -33,22 +33,22 @@
     end
 
     @testset "triangle $g" for g in testgraphs(triangle)
-        trianglelengths, triangletotal = LCY.simple_cycles_length(DiGraph(g))
+        trianglelengths, triangletotal = LCY.simple_cycles_length(SimpleDiGraph(g))
         @test sum(trianglelengths) == triangletotal
     end
 
     @testset "quadrangle $g" for g in testgraphs(quadrangle)
-        quadranglelengths, quadrangletotal = LCY.simple_cycles_length(DiGraph(g))
+        quadranglelengths, quadrangletotal = LCY.simple_cycles_length(SimpleDiGraph(g))
         @test sum(quadranglelengths) == quadrangletotal
-        @test LCY.simple_cycles(DiGraph(g)) == @inferred(LCY.simple_cycles(DiGraph(g), LCY.Johnson(iterative=true)))
+        @test LCY.simple_cycles(SimpleDiGraph(g)) == @inferred(LCY.simple_cycles(SimpleDiGraph(g), LCY.Johnson(iterative=true)))
     end
 
     @testset "pentagon $g" for g in testgraphs(pentagon)
-        pentagonlengths, pentagontotal = LCY.simple_cycles_length(DiGraph(g))
+        pentagonlengths, pentagontotal = LCY.simple_cycles_length(SimpleDiGraph(g))
         @test sum(pentagonlengths) == pentagontotal
     end
 
-    selfloopg = DiGraph([
+    selfloopg = SimpleDiGraph([
         0 1 0 0;
         0 0 1 0;
         1 0 1 0;

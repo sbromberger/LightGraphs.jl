@@ -4,7 +4,7 @@
         n = 10
         m = n * (n - 1) / 2
         c = ones(Int, n)
-        gint = complete_graph(n)
+        gint = SimpleGraph(SGGEN.Complete(n))
         @testset "$g" for g in testgraphs(gint)
             @test @inferred(LCOM.modularity(g, c)) == 0
         end
@@ -14,7 +14,7 @@
             @test @inferred(LCOM.modularity(g, c)) == 0
         end
 
-        barbell = blockdiag(complete_graph(3), complete_graph(3))
+        barbell = blockdiag(SimpleGraph(SGGEN.Complete(3)), SimpleGraph(SGGEN.Complete(3)))
         add_edge!(barbell, 1, 4)
         c = [1, 1, 1, 2, 2, 2]
 

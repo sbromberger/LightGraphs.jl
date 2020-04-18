@@ -1,3 +1,4 @@
+# 2.0 - we're no longer testing this.
 @testset "Generator deprecations" begin
     types_0 = [BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph,
         DiamondGraph, DodecahedralGraph, FruchtGraph, HeawoodGraph,

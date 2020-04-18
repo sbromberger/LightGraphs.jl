@@ -3,7 +3,7 @@
     s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
     s1 = SimpleGraph(s2)
-    g3 = path_graph(5)
+    g3 = SimpleGraph(SGGEN.Path(5))
 
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
@@ -40,7 +40,7 @@
     @test z[1] == z[5] == 0.0
 
     # Weighted Graph tests
-    g = Graph(6)
+    g = SimpleGraph(6)
     add_edge!(g, 1, 2)
     add_edge!(g, 2, 3)
     add_edge!(g, 3, 4)

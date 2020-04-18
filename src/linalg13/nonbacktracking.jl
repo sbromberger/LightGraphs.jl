@@ -11,8 +11,8 @@ non-backtracking matrix ``B`` is defined as
 ``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
-    # idedgemap = Dict{Int,Edge}()
-    edgeidmap = Dict{Edge,Int}()
+    # idedgemap = Dict{Int,SimpleEdge}()
+    edgeidmap = Dict{SimpleEdge,Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -32,7 +32,7 @@ function non_backtracking_matrix(g::AbstractGraph)
         i, j = src(e), dst(e)
         for k in inneighbors(g, i)
             k == j && continue
-            v = edgeidmap[Edge(k, i)]
+            v = edgeidmap[SimpleEdge(k, i)]
             B[v, u] = 1
         end
     end
@@ -63,12 +63,12 @@ adjacency matrix of `g`.
 """
 struct Nonbacktracking{G <: AbstractGraph}
     g::G
-    edgeidmap::Dict{Edge,Int}
+    edgeidmap::Dict{SimpleEdge,Int}
     m::Int
 end
 
 function Nonbacktracking(g::AbstractGraph)
-    edgeidmap = Dict{Edge,Int}()
+    edgeidmap = Dict{SimpleEdge,Int}()
     m = 0
     for e in edges(g)
         m += 1
@@ -95,7 +95,7 @@ function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
         i, j = src(e), dst(e)
         for k in inneighbors(nbt.g, i)
             k == j && continue
-            v = nbt.edgeidmap[Edge(k, i)]
+            v = nbt.edgeidmap[SimpleEdge(k, i)]
             y[v] += x[u]
         end
     end
@@ -117,7 +117,7 @@ function coo_sparse(nbt::Nonbacktracking)
         i, j = src(e), dst(e)
         for k in inneighbors(nbt.g, i)
             k == j && continue
-            v = nbt.edgeidmap[Edge(k, i)]
+            v = nbt.edgeidmap[SimpleEdge(k, i)]
             #= J[u] = v =#
             #= I[u] = u =#
             push!(I, v)
@@ -145,7 +145,7 @@ The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     T = eltype(nbt.g)
     for i = one(T):nv(nbt.g), j in neighbors(nbt.g, i)
-        u = nbt.edgeidmap[i > j ? Edge(j, i) : Edge(i, j)]
+        u = nbt.edgeidmap[i > j ? SimpleEdge(j, i) : SimpleEdge(i, j)]
         vertexspace[i] += edgespace[u]
     end
 end

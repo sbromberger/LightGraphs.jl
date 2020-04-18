@@ -35,9 +35,9 @@ LGHeader(nv::Int, ne::Int, is_directed::Bool, name::AbstractString) =
 function _lg_read_one_graph(f::IO, header::LGHeader)
     T = header.dtype
     if header.is_directed
-        g = DiGraph{T}(header.nv)
+        g = SimpleDiGraph{T}(header.nv)
     else
-        g = Graph{T}(header.nv)
+        g = SimpleGraph{T}(header.nv)
     end
     for i = 1:header.ne
         line = chomp(readline(f))

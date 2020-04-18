@@ -4,7 +4,7 @@
 A struct representing the label propagation algorithm for community detection.
 
 ### Optional Parameters
-`maxiter::Int`: defines the maximum number of iterations until algorithm returns (default `1000`).
+- `maxiter::Int`: defines the maximum number of iterations until algorithm returns (default `1000`).
 
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)

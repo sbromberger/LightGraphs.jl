@@ -1,6 +1,6 @@
 @testset "Greedy Coloring" begin
 
-    g3 = star_graph(10)
+    g3 = SimpleGraph(SGGEN.Star(10))
 
     @testset "$g" for g in testgraphs(g3)
         for alg in [
@@ -14,8 +14,8 @@
         end
     end
 
-    g4 = path_graph(20)
-    g5 = complete_graph(20)
+    g4 = SimpleGraph(SGGEN.Path(20))
+    g5 = SimpleGraph(SGGEN.Complete(20))
 
     for graph in [g4, g5]
         @testset "$g" for g in testgraphs(graph)

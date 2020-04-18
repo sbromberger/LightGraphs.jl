@@ -2,7 +2,8 @@
     struct Local <: ClusteringScope
 
 A structure representing a local [clustering scope](@ref ClusteringScope).
-Required fields:
+
+###Required fields:
 - `vs`: a vertex, or vector of vertices, representing the local scope. if `vs` is empty,
   include all vertices in the graph.
 """

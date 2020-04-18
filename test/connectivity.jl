@@ -1,3 +1,4 @@
+# Remove 2.0
 @testset "Connectivity" begin
     g6 = smallgraph(:house)
     gx = path_graph(4)

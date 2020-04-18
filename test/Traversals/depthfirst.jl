@@ -2,7 +2,7 @@
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    gx = cycle_digraph(3)
+    gx = SimpleDiGraph(SGGEN.Path(3))
 
     @testset "dfs tree" begin
         @testset "$g" for g in testdigraphs(g5)
@@ -47,16 +47,16 @@
     end
 
     @testset "is_cyclic" begin
-        @testset "$g" for g in testgraphs(path_graph(2))
+        @testset "$g" for g in testgraphs(SimpleGraph(SGGEN.Path(2)))
             @test @inferred(LT.is_cyclic(g))
             @test @inferred(!LT.is_cyclic(zero(g)))
         end
 
-        @testset "$g" for g in testgraphs(wheel_digraph(10))
+        @testset "$g" for g in testgraphs(SimpleDiGraph(SGGEN.Wheel(10)))
             @test LT.is_cyclic(g)
         end
 
-        @testset "$g" for g in testgraphs(star_digraph(10))
+        @testset "$g" for g in testgraphs(SimpleDiGraph(SGGEN.Star(10)))
             @test !LT.is_cyclic(g)
         end
     end
