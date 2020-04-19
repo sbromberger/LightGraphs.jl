@@ -11,7 +11,6 @@ non-backtracking matrix ``B`` is defined as
 ``B_{A_{i j}, A_{k l}} = δ_{j k} * (1 - δ_{i l})``
 """
 function non_backtracking_matrix(g::AbstractGraph)
-    # idedgemap = Dict{Int,SimpleEdge}()
     edgeidmap = Dict{SimpleEdge,Int}()
     m = 0
     for e in edges(g)
