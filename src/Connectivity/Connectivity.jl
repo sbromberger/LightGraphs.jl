@@ -199,7 +199,7 @@ function period end
     has_self_loops(g) && return 1
 
     g_bfs_tree  = LightGraphs.Traversals.tree(g, 1, LightGraphs.Traversals.BreadthFirst())
-    levels      = gdistances(g_bfs_tree, 1)
+    levels      = LightGraphs.Traversals.distances(g_bfs_tree, 1)
     tree_diff   = difference(g, g_bfs_tree)
     edge_values = Vector{T}()
 

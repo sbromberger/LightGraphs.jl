@@ -1,7 +1,7 @@
 @testset "Bipartiteness" begin
     g6 = smallgraph(:house)
     @testset "$g" for g in testgraphs(g6)
-        @test @inferred(!LT.is_bipartite(g))
+        @test @inferred(!LCOL.is_bipartite(g))
     end
 
     gx = SimpleGraph(5)
@@ -10,18 +10,18 @@
     add_edge!(gx, 3, 4)
 
     @testset "$g" for g in testgraphs(gx)
-        @test @inferred(LT.is_bipartite(g))
+        @test @inferred(LCOL.is_bipartite(g))
     end
     g10 = SimpleDiGraph(4)
     add_edge!(g10, 1, 3)
     add_edge!(g10, 2, 4)
     @testset "$g" for g in testdigraphs(g10)
-        @test @inferred(LT.is_bipartite(g))
+        @test @inferred(LCOL.is_bipartite(g))
     end
 
     add_edge!(g10, 1, 4)
     @testset "$g" for g in testdigraphs(g10)
-        @test @inferred(LT.is_bipartite(g))
+        @test @inferred(LCOL.is_bipartite(g))
     end
 
     g10 = SimpleDiGraph(20)
@@ -35,42 +35,52 @@
             end
             if !has_edge(gc, i, j)
                 add_edge!(gc, i, j)
-                @test @inferred(LT.is_bipartite(gc))
+                @test @inferred(LCOL.is_bipartite(gc))
             end
         end
     end
 
     g10 = complete_graph(10)
     @testset "$g" for g in testgraphs(g10)
-        @test @inferred(LT.bipartite_map(g)) == Vector{eltype(g)}()
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{eltype(g)}()
     end
 
     g10 = complete_bipartite_graph(10, 10)
     @testset "$g" for g in testgraphs(g10)
         T = eltype(g)
-        @test @inferred(LT.bipartite_map(g)) == Vector{T}([ones(T, 10); 2 * ones(T, 10)])
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{T}([ones(T, 10); 2 * ones(T, 10)])
 
         h = blockdiag(g, g)
-        @test @inferred(LT.bipartite_map(h)) == Vector{T}([ones(T, 10); 2 * ones(T, 10); ones(T, 10); 2 * ones(T, 10)])
+        @test @inferred(LCOL.bipartite_map(h)) == Vector{T}([ones(T, 10); 2 * ones(T, 10); ones(T, 10); 2 * ones(T, 10)])
     end
 
     g2 = complete_graph(2)
     @testset "$g" for g in testgraphs(g2)
-        @test @inferred(LT.bipartite_map(g)) == Vector{eltype(g)}([1, 2])
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{eltype(g)}([1, 2])
     end
 
     g2 = Graph(2)
     @testset "$g" for g in testgraphs(g2)
-        @test @inferred(LT.bipartite_map(g)) == Vector{eltype(g)}([1, 1])
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{eltype(g)}([1, 1])
     end
 
     g2 = DiGraph(2)
     @testset "$g" for g in testdigraphs(g2)
-        @test @inferred(LT.bipartite_map(g)) == Vector{eltype(g)}([1, 1])
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{eltype(g)}([1, 1])
     end
 
     g2 = path_digraph(2)
     @testset "$g" for g in testdigraphs(g2)
-        @test @inferred(LT.bipartite_map(g)) == Vector{eltype(g)}([1, 2])
+        @test @inferred(LCOL.bipartite_map(g)) == Vector{eltype(g)}([1, 2])
+    end
+    @testset "more is_bipartite" begin
+        gx = SimpleGraph(5)
+        add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
+        add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
+        add_edge!(gx, 3, 4)
+
+        @testset "$g" for g in testgraphs(gx)
+            @test @inferred(LCOL.is_bipartite(g))
+        end
     end
 end

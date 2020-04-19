@@ -69,6 +69,7 @@ tests = [
     "community13/modularity",
     "community13/clustering",
     "community13/clique_percolation",
+    "Coloring/runtests",
     "Centrality/runtests",
     "centrality13/betweenness",
     "centrality13/closeness",
