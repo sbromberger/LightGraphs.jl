@@ -68,7 +68,7 @@
             d[1, 2] = 10
             d[1, 3] = 1
             d[3, 2] = 1
-            @test sort(neighborhood(g, 1, 4, d)) == [1, 2, 3]
+            @test sort(LC.neighborhood(g, 1, 4, d)) == [1, 2, 3]
         end
         @testset "test #1116" begin
         gc = cycle_graph(4)
