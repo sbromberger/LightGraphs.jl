@@ -150,7 +150,10 @@ dominating_set,
 independent_set,
 
 #vertexcover
-vertex_cover
+vertex_cover,
+
+# useful utilities
+is_graphical
 
 """
     LightGraphs

@@ -59,7 +59,7 @@ struct Turan{T<:Integer, U<:Integer} <: StaticGenerator
     n::T
     r::U
     function Turan(n::T, r::U) where {T<:Integer, U<:Integer}
-        r in Base.OneTo(n) || throw(DomainError((n, r), "The number of partitions ($r) in the graph must not exceed the number of vertices ($n).")
+        r in Base.OneTo(n) || throw(DomainError((n, r), "The number of partitions ($r) in the graph must not exceed the number of vertices ($n)."))
         new{T, U}(n, r)
     end
 end

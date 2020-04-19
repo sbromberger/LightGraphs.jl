@@ -75,3 +75,11 @@ end
     p = @inferred(LightGraphs.optimal_contiguous_partition([1, 1, 1, 1], 4))
     @test p == [1:1, 2:2, 3:3, 4:4]
 end
+
+@testset "is_graphical" begin
+    @test is_graphical([3, 3, 2, 1, 1, 0])
+    @test !is_graphical([3, 3, 3, 1, 1]) # odd sum
+    @test !is_graphical([4, 3, 2, 1])
+    @test is_graphical([2, 2, 2, 2])
+end
+                       
