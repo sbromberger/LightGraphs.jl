@@ -51,16 +51,6 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         end
     end
 
-    @testset "is_bipartite" begin
-        gx = SimpleGraph(5)
-        add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
-        add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
-        add_edge!(gx, 3, 4)
-
-        @testset "$g" for g in testgraphs(gx)
-            @test @inferred(LT.is_bipartite(g))
-        end
-    end
 
     @testset "LT.has_path" begin
         gx = SimpleGraph(6)

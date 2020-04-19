@@ -1,7 +1,7 @@
 @testset "Threaded Greedy Coloring" begin
     g3 = SimpleGraph(SGGEN.Star(10))
     for g in testgraphs(g3)
-        C = @inferred(LT.greedy_color(g, LT.ThreadedRandomColoring(niter=5)))
+        C = @inferred(LCOL.greedy_color(g, LCOL.ThreadedRandomColoring(niter=5)))
         @test C.num_colors == 2
     end
 
@@ -10,7 +10,7 @@
 
     for graph in [g4, g5]
         @testset "$g" for g in testgraphs(graph)
-            C = @inferred(LT.greedy_color(g, LT.ThreadedRandomColoring(niter=5)))
+            C = @inferred(LCOL.greedy_color(g, LCOL.ThreadedRandomColoring(niter=5)))
 
             @test C.num_colors <= maximum(degree(g))+1
             correct = true

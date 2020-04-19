@@ -102,6 +102,7 @@ tests = [
     # "vertexcover13/degree_vertex_cover",
     # "vertexcover13/random_vertex_cover",
     # "experimental/experimental"
+    # "Coloring/runtests",
 ]
 
 @testset "LightGraphs" begin

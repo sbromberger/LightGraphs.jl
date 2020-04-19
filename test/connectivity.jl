@@ -1,4 +1,7 @@
 # Remove 2.0
+import LightGraphs: components, components_dict
+import LightGraphs.Coloring: is_bipartite
+
 @testset "Connectivity" begin
     g6 = smallgraph(:house)
     gx = path_graph(4)
@@ -16,7 +19,6 @@
             label = zeros(eltype(gc), nv(gc))
             @inferred(LightGraphs.connected_components!(label, gc))
             @test label[1:10] == [1, 1, 1, 1, 5, 5, 5, 8, 8, 8]
-            import LightGraphs: components, components_dict
             cclab = @inferred(components_dict(label))
             cclab2 = @inferred(components(label))
             @test cclab[1] == cclab2[1][1] == [1, 2, 3, 4]

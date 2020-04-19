@@ -347,11 +347,8 @@ end
 
 include("breadthfirst.jl")
 include("threaded-breadthfirst.jl")
-include("bipartition.jl")
 include("depthfirst.jl")
 include("diffusion.jl")
-include("greedy_color.jl")
-include("threaded-greedy_color.jl")
 include("maxadjvisit.jl")
 include("randomwalks.jl")
 
