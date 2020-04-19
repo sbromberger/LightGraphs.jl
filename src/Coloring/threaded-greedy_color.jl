@@ -23,5 +23,5 @@ function greedy_color(g::AbstractGraph{T}, alg::ThreadedRandomColoring) where {T
         seq = shuffle(alg.rng, vertices(g))
         greedy_color(g, FixedColoring(seq))
     end
-    return convert(Coloring{T}, best)
+    return convert(GraphColoring{T}, best)
 end

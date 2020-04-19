@@ -9,11 +9,8 @@ const travtestdir = dirname(@__FILE__)
 travtests = [
     "breadthfirst.jl"
     "threaded-breadthfirst.jl"
-    "bipartition.jl"
     "depthfirst.jl"
     "diffusion.jl"
-    "greedy_color.jl"
-    "threaded-greedy_color.jl"
     "maxadjvisit.jl"
     "randomwalks.jl"
 ]

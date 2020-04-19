@@ -1,9 +1,9 @@
 """
-    struct Coloring{T}
+    struct GraphColoring{T}
 
 Store the number of colors used and mapping from vertex to color
 """
-struct Coloring{T <: Integer}
+struct GraphColoring{T <: Integer}
     num_colors::T
     colors::Vector{T}
 end
@@ -55,7 +55,7 @@ struct RandomColoring{T<:Integer, R<:AbstractRNG} <: ColoringAlgorithm
 end
 RandomColoring(; niter=1, rng=GLOBAL_RNG) = RandomColoring(niter, rng)
     
-best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
+best_color(c1::GraphColoring, c2::GraphColoring) = c1.num_colors < c2.num_colors ? c1 : c2
 
 """
     fixed_greedy_color(g, seq)
@@ -63,7 +63,7 @@ best_color(c1::Coloring, c2::Coloring) = c1.num_colors < c2.num_colors ? c1 : c2
 Color graph `g` according to an order specified by `seq` using a greedy heuristic.
 `seq[i] = v` implies that vertex v is the ``i^{th}`` vertex to be colored.
 """
-function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} where {T <: Integer}
+function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::GraphColoring{T} where {T <: Integer}
     nvg::T = nv(g)
     cols = Vector{T}(undef, nvg)  
     seen = zeros(Bool, nvg + 1)
@@ -86,7 +86,7 @@ function fixed_greedy_color(g::AbstractGraph{T}, seqfn::Function)::Coloring{T} w
             end
         end
     end
-    return Coloring{T}(maximum(cols), cols)
+    return GraphColoring{T}(maximum(cols), cols)
 end
 
 # if we pass in a sequence.
