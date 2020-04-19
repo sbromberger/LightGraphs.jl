@@ -42,13 +42,10 @@ const smallgraph = LightGraphs.SimpleGraphs.Generators.smallgraph
 
 
 const erdos_renyi = LightGraphs.SimpleGraphs.Generators.erdos_renyi
-const erdos_renyi = LightGraphs.SimpleGraphs.Generators.erdos_renyi
 const expected_degree_graph = LightGraphs.SimpleGraphs.Generators.expected_degree_graph
 const watts_strogatz = LightGraphs.SimpleGraphs.Generators.watts_strogatz
 const barabasi_albert = LightGraphs.SimpleGraphs.Generators.barabasi_albert
 const static_fitness_model = LightGraphs.SimpleGraphs.Generators.static_fitness_model
-const static_fitness_model = LightGraphs.SimpleGraphs.Generators.static_fitness_model
-const static_scale_free = LightGraphs.SimpleGraphs.Generators.static_scale_free
 const static_scale_free = LightGraphs.SimpleGraphs.Generators.static_scale_free
 const random_regular_graph = LightGraphs.SimpleGraphs.Generators.random_regular_graph
 const random_configuration_model = LightGraphs.SimpleGraphs.Generators.random_configuration_model

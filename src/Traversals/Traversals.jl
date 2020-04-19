@@ -4,7 +4,6 @@ using Base.Threads
 using Distributed
 using LightGraphs
 using LightGraphs.SimpleGraphsCore: SimpleDiGraph
-using LightGraphs.Connectivity: connected_components
 using LightGraphs: getRNG # TODO 2.0.0: remove this
 using SimpleTraits
 using DataStructures: PriorityQueue, Queue, enqueue!, dequeue!

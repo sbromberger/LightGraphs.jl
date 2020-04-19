@@ -1,7 +1,7 @@
 # Parts of this code were taken / derived from NetworkX. See LICENSE for
 # licensing details.
 
-function _complete_graph(n::T) where {T <: Integer}
+function _complete_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
     ne = Int(n * (n - 1) ÷ 2)
     fadjlist = Vector{Vector{T}}(undef, n)
@@ -14,7 +14,7 @@ function _complete_graph(n::T) where {T <: Integer}
     return SimpleGraph(ne, fadjlist)
 end
 
-function _complete_bipartite_graph(n1::T, n2::T) where {T <: Integer}
+function _complete_bipartite_graph(n1::T, n2::T) where {T<:Integer}
     (n1 < 0 || n2 < 0) && return SimpleGraph{T}(0)
     Tw = widen(T)
     nw = Tw(n1) + Tw(n2)
@@ -34,7 +34,7 @@ function _complete_bipartite_graph(n1::T, n2::T) where {T <: Integer}
     return SimpleGraph(ne, fadjlist)
 end
 
-function _complete_multipartite_graph(partitions::AbstractVector{T}) where {T <: Integer}
+function _complete_multipartite_graph(partitions::AbstractVector{T}) where {T<:Integer}
     any(x -> x < 0, partitions) && return SimpleGraph{T}(0)
     length(partitions) == 1 && return SimpleGraph{T}(partitions[1])
     length(partitions) == 2 && return SimpleGraph(CompleteBipartite(partitions[1], partitions[2]))
@@ -78,7 +78,7 @@ function _turan_graph(n::Integer, r::Integer)
     return _complete_multipartite_graph(partitions)
 end
 
-function _complete_digraph(n::T) where {T <: Integer}
+function _complete_digraph(n::T) where {T<:Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
 
     ne = Int(n * (n - 1))
@@ -94,7 +94,7 @@ function _complete_digraph(n::T) where {T <: Integer}
     return SimpleDiGraph(ne, fadjlist, badjlist)
 end
 
-function _star_graph(n::T) where {T <: Integer}
+function _star_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
 
     ne = Int(n - 1)
@@ -106,7 +106,7 @@ function _star_graph(n::T) where {T <: Integer}
     return SimpleGraph(ne, fadjlist)
 end
 
-function _star_digraph(n::T) where {T <: Integer}
+function _star_digraph(n::T) where {T<:Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
 
     ne = Int(n - 1)
@@ -121,7 +121,7 @@ function _star_digraph(n::T) where {T <: Integer}
     return SimpleDiGraph(ne, fadjlist, badjlist)
 end
 
-function _path_graph(n::T) where {T <: Integer}
+function _path_graph(n::T) where {T<:Integer}
     n <= 1 && return SimpleGraph(n)
 
     ne = Int(n - 1)
@@ -135,7 +135,7 @@ function _path_graph(n::T) where {T <: Integer}
     return SimpleGraph(ne, fadjlist)
 end
 
-function _path_digraph(n::T) where {T <: Integer}
+function _path_digraph(n::T) where {T<:Integer}
     n <= 1 && return SimpleDiGraph(n)
 
     ne = Int(n - 1)
@@ -169,7 +169,7 @@ function _cycle_graph(n::T) where {T<:Integer}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
-function _cycle_digraph(n::T) where {T <: Integer}
+function _cycle_digraph(n::T) where {T<:Integer}
     n <= 1 && return SimpleDiGraph{T}(n)
     n == 2 && return SimpleDiGraph(SimpleEdge{T}.([(1, 2), (2, 1)]))
 
@@ -204,7 +204,7 @@ function _wheel_graph(n::T) where {T<:Integer}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
-function _wheel_digraph(n::T) where {T <: Integer}
+function _wheel_digraph(n::T) where {T<:Integer}
     n <= 2 && return SimpleDiGraph(Path(n))
     n == 3 && return SimpleDiGraph(SimpleEdge{T}.([(1,2),(1,3),(2,3),(3,2)]))
 
@@ -225,7 +225,7 @@ function _wheel_digraph(n::T) where {T <: Integer}
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
 
-function _grid(dims::AbstractVector{T}, periodic::Bool) where {T <: Integer}
+function _grid(dims::AbstractVector{T}, periodic::Bool) where {T<:Integer}
     # checks if T is large enough for product(dims)
     Tw = widen(T)
     n = one(T)
@@ -250,7 +250,7 @@ function _grid(dims::AbstractVector{T}, periodic::Bool) where {T <: Integer}
 end
 _grid(dims::Tuple, periodic::Bool) = _grid(collect(dims), periodic)
 
-function _binary_tree(k::T) where {T <: Integer}
+function _binary_tree(k::T) where {T<:Integer}
     k <= 0 && return SimpleGraph{T}(0)
     k == 1 && return SimpleGraph{T}(1)
     n = T(2^k - 1)
@@ -291,7 +291,7 @@ function _roach_graph(k::T) where {T<:Integer}
 end
 
 
-function _clique_graph(k::T, n::T) where {T <: Integer}
+function _clique_graph(k::T, n::T) where {T<:Integer}
     Tw = widen(T)
     knw = Tw(k) * Tw(n)
     kn = T(knw)  # checks if T is large enough for k * n
@@ -309,7 +309,7 @@ function _clique_graph(k::T, n::T) where {T <: Integer}
     return g
 end
 
-function _ladder_graph(n::T) where {T <: Integer}
+function _ladder_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
     n == 1 && return SimpleGraph(Path(T(2)))
 
@@ -333,7 +333,7 @@ function _circular_ladder_graph(n::Integer)
     return g
 end
 
-function _barbell_graph(n1::T, n2::T) where {T <: Integer}
+function _barbell_graph(n1::T, n2::T) where {T<:Integer}
     n = Base.Checked.checked_add(n1, n2) # check for overflow
     fadjlist = Vector{Vector{T}}(undef, n)
 
@@ -358,7 +358,7 @@ function _barbell_graph(n1::T, n2::T) where {T <: Integer}
     return g
 end
 
-function _lollipop_graph(n1::T, n2::T) where {T <: Integer}
+function _lollipop_graph(n1::T, n2::T) where {T<:Integer}
     if n1 == 1
         return SimpleGraph(Path(T(n2+1)))
     elseif n1 > 1 && n2 == 1
@@ -392,7 +392,7 @@ function _lollipop_graph(n1::T, n2::T) where {T <: Integer}
     return g
 end
 
-function _circulant_graph(n::T, connection_set::Vector{T}) where {T <: Integer}
+function _circulant_graph(n::T, connection_set::Vector{T}) where {T<:Integer}
     g = SimpleGraph(n)
 
     @inbounds for u = 1:n-1, v = u+1:n
@@ -404,7 +404,7 @@ function _circulant_graph(n::T, connection_set::Vector{T}) where {T <: Integer}
     return g
 end
 
-function _circulant_digraph(n::T, connection_set::Vector{T}) where {T <: Integer}
+function _circulant_digraph(n::T, connection_set::Vector{T}) where {T<:Integer}
     g = SimpleDiGraph(n)
 
     @inbounds for u = 1:n-1, v = u+1:n
@@ -418,7 +418,7 @@ function _circulant_digraph(n::T, connection_set::Vector{T}) where {T <: Integer
     return g
 end
 
-function _friendship_graph(n::T) where {T <: Integer}
+function _friendship_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph(1)
 
     g = SimpleGraph(2 * n + 1)

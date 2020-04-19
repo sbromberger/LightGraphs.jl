@@ -2,7 +2,7 @@
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    gx = SimpleDiGraph(SGGEN.Path(3))
+    gx = SimpleDiGraph(SGGEN.Cycle(3))
 
     @testset "dfs tree" begin
         @testset "$g" for g in testdigraphs(g5)
@@ -62,7 +62,7 @@
     end
 
     @testset "visited_vertices" begin
-        gt = binary_tree(3)
+        gt = SimpleGraph(SGGEN.BinaryTree(3))
         @testset "$g" for g in testgraphs(gt)
             @test LT.visited_vertices(g, 1, LT.DepthFirst()) == [1, 2, 4, 5, 3, 6, 7]
         end

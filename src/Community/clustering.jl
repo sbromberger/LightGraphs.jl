@@ -3,7 +3,7 @@
 
 A structure representing a local [clustering scope](@ref ClusteringScope).
 
-###Required fields:
+### Required fields:
 - `vs`: a vertex, or vector of vertices, representing the local scope. if `vs` is empty,
   include all vertices in the graph.
 """
@@ -29,7 +29,7 @@ nodes specified in the scope. For [`Global`](@ref) scopes (the default), return 
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using LightGraphs, LightGraphs.Generators
 
 julia> g = SimpleGraph(4);
 
@@ -45,10 +45,10 @@ julia> clustering_coefficient(g, Local([1, 2, 3]))
  1.0
  0.0
 
- julia> clustering_coefficient(star_graph(4))
+ julia> clustering_coefficient(SimpleGraph(Generators.Star(4)))
 0.0
 
-julia> clustering_coefficient(smallgraph(:housex), Global())
+julia> clustering_coefficient(SimpleGraph(Generators.HouseX()), Global())
 0.7894736842105263
 ```
 """

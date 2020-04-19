@@ -489,6 +489,12 @@ import Random
             @test eltype(squash(g)) == UInt8
         end
     end
+    @testset "contiguous vertices" begin
+        @test has_contiguous_vertices(SimpleGraph)
+        @test has_contiguous_vertices(SimpleDiGraph)
+        @test has_contiguous_vertices(SimpleGraph(1))
+        @test has_contiguous_vertices(SimpleDiGraph(1))
+    end
     # codecov for has_edge(::AbstractGraph, x, y)
     @test @inferred has_edge(DummySimpleGraph(), 1, 2)
 end

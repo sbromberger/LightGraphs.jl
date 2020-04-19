@@ -241,6 +241,9 @@ function squash end
 # const Edge = LightGraphs.SimpleGraphs.SimpleEdge
 
 """
+NOTE: THIS MODULE IS NOT TO BE USED OUTSIDE OF THE LIGHTGRAPHS
+LIBRARY CODE.
+
 A module containing the core SimpleGraphs structures and methods.
 Separation of this code into its own module is necessary to avoid
 circular dependencies, as some LightGraphs library code requires the

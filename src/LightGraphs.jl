@@ -22,7 +22,7 @@ import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, in
 export
 # Interface
 AbstractGraph, AbstractEdge, AbstractEdgeIter,
-Graph, DiGraph, Edge,
+# Graph, DiGraph, Edge,
 
 # Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator, SimpleDiGraph,
 vertices, edges, edgetype, nv, ne, src, dst,
@@ -184,10 +184,10 @@ include("operators.jl")
 include("SimpleGraphsCore/SimpleGraphsCore.jl")
 include("Generators/Generators.jl")
 include("Degeneracy/Degeneracy.jl")
-include("Connectivity/Connectivity.jl")
-include("Traversals/Traversals.jl")  # requires Connectivity
+include("Traversals/Traversals.jl")
 include("ShortestPaths/ShortestPaths.jl")  # requires Traversals
 include("Measurements/Measurements.jl") # requires ShortestPaths
+include("Connectivity/Connectivity.jl")  # requires ShortestPaths
 include("Transitivity/Transitivity.jl")
 include("Cycles/Cycles.jl")
 
@@ -210,7 +210,7 @@ include("shortestpaths13/yen.jl")
 include("shortestpaths13/spfa.jl")
 include("distance.jl")
 include("connectivity.jl")
-include("Coloring/Coloring.jl")
+include("Coloring/Coloring.jl")  # requires Connectivity
 include("digraph13/transitivity.jl")
 include("cycles13/johnson.jl")
 include("cycles13/hawick-james.jl")

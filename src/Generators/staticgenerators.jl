@@ -7,7 +7,7 @@ A struct representing a generator for a [complete graph](https://en.wikipedia.or
 with `n` vertices.
 
 ### Required Fields
-`n::Integer`: the number of vertices in the graph.
+- `n::Integer`: the number of vertices in the graph.
 """
 struct Complete{T<:Integer} <: StaticGenerator
     n::T
@@ -20,8 +20,8 @@ A struct representing a generator for a complete bipartite graph with
 `n1` + `n2` vertices.
 
 ### Required Fields
-`n1::Integer`: the number of vertices in partition 1.
-`n2::Integer`: the number of vertices in partition 2.
+- `n1::Integer`: the number of vertices in partition 1.
+- `n2::Integer`: the number of vertices in partition 2.
 """
 struct CompleteBipartite{T<:Integer} <: StaticGenerator
     n1::T
@@ -35,7 +35,7 @@ A struct representing a generator for a complete bipartite graph with
 `sum(pvec)` vertices.
 
 ### Required Fields
-`pvec::AbstractVector{<:Integer}`: a vector with values representing the numbers of vertices in each partition represented by index.
+- `pvec::AbstractVector{<:Integer}`: a vector with values representing the numbers of vertices in each partition represented by index.
 """
 struct CompleteMultipartite{T<:Integer, U<:AbstractVector{T}} <: StaticGenerator
     pvec::U
@@ -71,7 +71,7 @@ A struct representing a generator for a [star graph](https://en.wikipedia.org/wi
 with `n` vertices.
 
 ### Required Fields
-`n::Integer`: The number of vertices in the graph
+- `n::Integer`: The number of vertices in the graph
 """
 struct Star{T<:Integer} <: StaticGenerator
     n::T
@@ -84,7 +84,7 @@ A struct representing a generator for a [path graph](https://en.wikipedia.org/wi
 with `n` vertices.
 
 ### Required Fields
-`n::Integer`: The number of vertices in the graph
+- `n::Integer`: The number of vertices in the graph
 """
 struct Path{T<:Integer} <: StaticGenerator
     n::T
@@ -97,7 +97,7 @@ A struct representing a generator for a [cycle graph](https://en.wikipedia.org/w
 with `n` vertices.
 
 ### Required Fields
-`n::Integer`: The number of vertices in the graph
+- `n::Integer`: The number of vertices in the graph
 """
 struct Cycle{T<:Integer} <: StaticGenerator
     n::T
@@ -110,7 +110,7 @@ A struct representing a generator for a [wheel graph](https://en.wikipedia.org/w
 with `n` vertices.
 
 ### Required Fields
-`n::Integer`: The number of vertices in the graph
+- `n::Integer`: The number of vertices in the graph
 """
 struct Wheel{T<:Integer} <: StaticGenerator
     n::T
@@ -123,7 +123,7 @@ A struct representing a generator for a ``|dims|``-dimensional cubic lattice,
 with length `dims[i]` in dimension `i`.
 
 ### Required Fields
-`dims::AbstractVector{<:Integer}`: The lengths of the dimensions in the lattice. Note: this can also be a `Tuple`.
+- `dims::AbstractVector{<:Integer}`: The lengths of the dimensions in the lattice. Note: this can also be a `Tuple`.
 
 ### Optional Arguments
 - `periodic=false`: If true, the resulting lattice will have periodic boundary
@@ -143,7 +143,7 @@ A struct representing a generator for a complete [binary tree](https://en.wikipe
 of depth `k`.
 
 ### Required Fields
-`k::Integer`: The depth of the binary tree
+- `k::Integer`: The depth of the binary tree
 """
 struct BinaryTree{T<:Integer} <: StaticGenerator
     k::T
@@ -161,7 +161,7 @@ end
 A struct representing a generator for a complete double binary tree of depth `k`.
 
 ### Required Fields
-`k::Integer`: The depth of the double binary tree
+- `k::Integer`: The depth of the double binary tree
 """
 struct DoubleBinaryTree{T<:Integer} <: StaticGenerator
     k::T
@@ -179,7 +179,7 @@ end
 A struct representing a roach graph of size `k`.
 
 ### Required Fields
-`k::Integer`: The size of the roach graph
+- `k::Integer`: The size of the roach graph
 #
 ### References
 - Guattery and Miller 1998
@@ -200,9 +200,8 @@ A struct representing a generator for a graph consisting of `n` connected `k`-cl
 
 
 ### Required Fields
-`k::Integer`: The size of each clique
-`n::Integer`: The number of cliques
-#
+- `k::Integer`: The size of each clique
+- `n::Integer`: The number of cliques
 """
 struct Clique{T<:Integer} <: StaticGenerator
     k::T
@@ -216,7 +215,7 @@ A struct representing a generator for a [ladder graph](https://en.wikipedia.org/
 `2n` nodes and `3n-2` edges.
 
 ### Required Fields
-`n::Integer`: The number of rungs on the ladder
+- `n::Integer`: The number of rungs on the ladder
 
 ### Implementation Notes
 Preserves the eltype of `n`. Will error if the required number of vertices
@@ -237,12 +236,12 @@ A struct representing a generator for a [circular ladder graph](https://en.wikip
 of `2n` nodes and `3n` edges. This is also known as the [prism graph](https://en.wikipedia.org/wiki/Prism_graph).
 
 ### Required Fields
-`n::Integer`: The number of rungs on the ladder
+- `n::Integer`: The number of rungs on the ladder
 
 ### Implementation Notes
-Preserves the eltype of the partitions vector. Will error if the required number of vertices
+- Preserves the eltype of the partitions vector. Will error if the required number of vertices
 exceeds the eltype.
-`n` must be at least 3 to avoid self-loops and multi-edges.
+- `n` must be at least 3 to avoid self-loops and multi-edges.
 """
 struct CircularLadder{T<:Integer} <: StaticGenerator
     n::T
@@ -260,14 +259,14 @@ A struct representing a generator for a [barbell graph](https://en.wikipedia.org
 a clique of size `n1` connected by an edge to a clique of size `n2`.
 
 ### Required Fields
-`n1::Integer`: The number of vertices in the first clique
-`n2::Integer`: The number of vertices in the second clique
+- `n1::Integer`: The number of vertices in the first clique
+- `n2::Integer`: The number of vertices in the second clique
 
 ### Implementation Notes
-Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
+- Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
 exceeds the eltype.
-`n1` and `n2` must be at least 1 so that both cliques are non-empty.
-The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n2` being the right clique. The cliques are connected by and edge `(n1, n1+1)`.
+- `n1` and `n2` must be at least 1 so that both cliques are non-empty.
+- The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n2` being the right clique. The cliques are connected by and edge `(n1, n1+1)`.
 """
 struct Barbell{T<:Integer} <: StaticGenerator
     n1::T
@@ -286,14 +285,14 @@ A struct representing a generator for a [lollipop graph](https://en.wikipedia.or
 a clique of size `n1` connected by an edge to a path of size `n2`.
 
 ### Required Fields
-`n1::Integer`: The number of vertices in the clique
-`n2::Integer`: The number of vertices in the path (stem)
+- `n1::Integer`: The number of vertices in the clique
+- `n2::Integer`: The number of vertices in the path (stem)
 
 ### Implementation Notes
-Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
+- Preserves the eltype of `n1` and `n2`. Will error if the required number of vertices
 exceeds the eltype.
-`n1` and `n2` must be at least 1 so that both the clique and the path have at least one vertex.
-The graph is organized with nodes `1:n1` being the clique and `n1+1:n1+n2` being the path. The clique is connected to the path by an edge `(n1, n1+1)`.
+- `n1` and `n2` must be at least 1 so that both the clique and the path have at least one vertex.
+- The graph is organized with nodes `1:n1` being the clique and `n1+1:n1+n2` being the path. The clique is connected to the path by an edge `(n1, n1+1)`.
 """
 struct Lollipop{T<:Integer} <: StaticGenerator
     n1::T
@@ -312,12 +311,12 @@ A generator for a [circulant graph](https://en.wikipedia.org/wiki/Circulant_grap
 set represented by `cset`.
 
 ### Required Fields
-`n::Integer`: The number of vertices in the clique
-`cset::AbstractVector{<:Integer}`: The connection set for the graph
+- `n::Integer`: The number of vertices in the clique
+- `cset::AbstractVector{<:Integer}`: The connection set for the graph
 
 ### Implementation Notes
-`n` must be at least 1 so that the graph has at least one vertex.
-The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
+- `n` must be at least 1 so that the graph has at least one vertex.
+- The modulo and addition operations are carried assuming vertex lables from 0:n-1 and 1 is added to them.
 """
 struct Circulant{T<:Integer, U<:AbstractVector{T}} <: StaticGenerator
     n::T
@@ -335,7 +334,7 @@ A struct representing a generator for a [friendship graph](https://en.wikipedia.
 of `n` copies of the cycle graph `C3` with a common vertex. If `n ≤ 0`, return a single node.
 
 ### Required Fields
-`n::Integer`: The number of copies of the cycle graph `C3`
+- `n::Integer`: The number of copies of the cycle graph `C3`
 
 ### Implementation Notes
 In this implementation, the common vertex is index 1.
