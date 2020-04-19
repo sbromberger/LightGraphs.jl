@@ -20,6 +20,10 @@
 
     @testset "max_simple_cycles(4)" begin
         @test LCY.max_simple_cycles(4) == 20
+        @test LCY.max_simple_cycles(4, true) == 24
+        @test LCY.ncycles_n_i(2, 1, true) == 2
+        @test LCY.ncycles_n_i(2, 1) == 0
+        @test LCY.ncycles_n_i(4, 2) == 6
     end
 
     @testset "complete digraph $g" for g in testgraphs(completedg)
