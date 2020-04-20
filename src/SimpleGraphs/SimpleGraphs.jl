@@ -5,7 +5,7 @@ using LightGraphs: insorted
 using LightGraphs.SimpleGraphsCore
 using LightGraphs.SimpleGraphsCore: deepcopy_adjlist
 
-import LightGraphs.SimpleGraphsCore: AbstractSimpleGraph, SimpleGraph, SimpleDiGraph, AbstractSimpleEdge, SimpleGraphEdge, SimpleDiGraphEdge, SimpleEdge, SimpleGraphFromIterator, SimpleDiGraphFromIterator, fadj, badj, adj, squash, add_vertex!, add_edge!, add_vertices!, rem_vertex!, rem_edge!, rem_vertices!, merge_vertices, merge_vertices!, _SimpleGraphFromIterator, _SimpleDiGraphFromIterator
+import LightGraphs.SimpleGraphsCore: AbstractSimpleGraph, SimpleGraph, SimpleDiGraph, AbstractSimpleEdge, SimpleGraphEdge, SimpleDiGraphEdge, SimpleEdge, SimpleGraphFromIterator, SimpleDiGraphFromIterator, fadj, badj, adj, add_vertex!, add_edge!, add_vertices!, rem_vertex!, rem_edge!, rem_vertices!, merge_vertices, merge_vertices!, _SimpleGraphFromIterator, _SimpleDiGraphFromIterator, squash
 using SparseArrays
 using LinearAlgebra
 using SimpleTraits
@@ -17,7 +17,6 @@ import LightGraphs: reverse, symmetric_difference
 import LightGraphs.ShortestPaths: has_negative_weight_cycle
 
 export AbstractSimpleGraph, SimpleGraph, SimpleDiGraph, AbstractSimpleEdge, SimpleEdge, SimpleGraphFromIterator, SimpleDiGraphFromIterator, reverse!
-export squash
 using Random: GLOBAL_RNG, AbstractRNG
 
 """

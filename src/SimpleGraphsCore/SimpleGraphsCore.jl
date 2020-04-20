@@ -13,9 +13,9 @@ import LightGraphs:
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_contiguous_vertices, has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
   	indegree, outdegree, degree, has_self_loops,
-	num_self_loops, insorted 
+	num_self_loops, insorted
 
-import LightGraphs: reverse, merge_vertices, merge_vertices!, add_edge!, add_vertex!, rem_edge!, rem_vertex!, add_vertices!, rem_vertices!
+import LightGraphs: reverse, merge_vertices, merge_vertices!, add_edge!, add_vertex!, rem_edge!, rem_vertex!, add_vertices!, rem_vertices!, squash
 
 # export AbstractSimpleGraph, AbstractSimpleEdge, SimpleGraph, SimpleDiGraph, SimpleEdge,
 # add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!, add_vertices!, squash
