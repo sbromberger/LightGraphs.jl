@@ -34,7 +34,7 @@ mutable struct TrackingBFSSPState{U} <: Traversals.TraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
-    pathcounts::Vector{U}
+    pathcounts::Vector{Float64}
     predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
     maxdist::U
@@ -42,7 +42,7 @@ end
 
 @inline function initfn!(s::TrackingBFSSPState, u)
     s.dists[u] = 0
-    s.pathcounts[u] = 1
+    s.pathcounts[u] = one(Float64)
     push!(s.closest_vertices, u)
     return true
 end
@@ -74,7 +74,7 @@ end
 struct TrackingBFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{U}
-    pathcounts::Vector{U}
+    pathcounts::Vector{Float64}
     predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
 end
@@ -89,7 +89,7 @@ function shortest_paths(
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
     predecessors = fill(Vector{U}(), n)
-    pathcounts = zeros(U, n)
+    pathcounts = zeros(n)
     closest_vertices = Vector{U}()
     sizehint!(closest_vertices, n)
 

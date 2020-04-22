@@ -70,4 +70,8 @@
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true)), [0.0,0.5,0.0])
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true, endpoints=true)), [2.0,2.5,2.0])
     end
+    # test 1405
+    g = SimpleGraph(LightGraphs.Generators.Grid([30, 30]))
+    z = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=false)))
+    @test maximum(z) < nv(g) * (nv(g)-1)
 end
