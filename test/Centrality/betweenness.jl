@@ -71,7 +71,7 @@
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true, endpoints=true)), [2.0,2.5,2.0])
     end
     # test 1405
-    g = SimpleGraph(LightGraphs.Generators.Grid([30, 30]))
+    g = grid([50, 50])
     z = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=false)))
     zd = @inferred(LCENT.centrality(g, weights(g), LCENT.Betweenness(normalize=false)))
     @test isapprox(z, zd)
