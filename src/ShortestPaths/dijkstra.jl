@@ -2,7 +2,7 @@ struct DijkstraResult{T, U<:Integer}  <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
-    pathcounts::Vector{UInt64}
+    pathcounts::Vector{Float64}
     closest_vertices::Vector{U}
 end
 
@@ -55,7 +55,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
 
-    pathcounts = zeros(UInt64, nvg)
+    pathcounts = zeros(nvg)
     preds = fill(Vector{U}(), nvg)
     H = PriorityQueue{U,T}()
     # fill creates only one array.
@@ -63,7 +63,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     for src in srcs
         dists[src] = zero(T)
         visited[src] = true
-        pathcounts[src] = 1
+        pathcounts[src] = one(Float64)
         H[src] = zero(T)
     end
 
@@ -121,7 +121,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     end
 
     for src in srcs
-        pathcounts[src] = 1
+        pathcounts[src] = one(Float64)
         parents[src] = 0
         empty!(preds[src])
     end
