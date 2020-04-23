@@ -70,4 +70,11 @@
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true)), [0.0,0.5,0.0])
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true, endpoints=true)), [2.0,2.5,2.0])
     end
+    # test 1405
+    g = grid([50, 50])
+    z = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=false)))
+    zd = @inferred(LCENT.centrality(g, weights(g), LCENT.Betweenness(normalize=false)))
+    @test isapprox(z, zd)
+    @test maximum(z) < nv(g) * (nv(g)-1)
+    @test maximum(zd) < nv(g) * (nv(g)-1)
 end
