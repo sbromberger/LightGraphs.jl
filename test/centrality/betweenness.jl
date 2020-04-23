@@ -71,4 +71,8 @@
         @test isapprox(betweenness_centrality(g, vertices(g), distmx2; normalize=true), [0.0,0.5,0.0])
         @test isapprox(betweenness_centrality(g, vertices(g), distmx2; normalize=true, endpoints=true), [2.0,2.5,2.0])
     end
+    # test #1405 / #1406
+    g = grid([50, 50])
+    z = betweenness_centrality(g, normalize=false)
+    @test maximum(z) < nv(g) * (nv(g)-1)
 end
