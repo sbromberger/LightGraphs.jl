@@ -75,6 +75,6 @@
     z = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=false)))
     zd = @inferred(LCENT.centrality(g, weights(g), LCENT.Betweenness(normalize=false)))
     @test isapprox(z, zd)
-    @test maximum(z) < nv(g) * (nv(g)-1)
-    @test maximum(zd) < nv(g) * (nv(g)-1)
+    @test maximum(z) < nv(g) * (nv(g)-1) ÷ 2
+    @test maximum(zd) < nv(g) * (nv(g)-1) ÷ 2
 end
