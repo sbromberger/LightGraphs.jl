@@ -58,7 +58,7 @@
     # These test cases cover a bug that occurred in a previous version
     @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
         rng = MersenneTwister(seed)
-        g = SimpleDiGraph(SGGEN.ApproxErdosRenyi(n, k, rng=rng))
+        g = SimpleDiGraph(SGGEN.ErdosRenyi(n, k, rng=rng))
         cycles1 = LCY.simple_cycles(g)
         cycles2 = LCY.simple_cycles(g, LCY.HawickJames())
         foreach(sort!, cycles1)

@@ -13,7 +13,7 @@
 
         @test SG.SimpleGraph(10, 20, rng=rng1) == SG.SimpleGraph(10, 20, rng=rng2)
         @test SG.SimpleDiGraph(10, 20, rng=rng1) == SG.SimpleDiGraph(10, 20, rng=rng2)
-        @test SG.SimpleGraph(10, 20, rng=rng1) == SG.SimpleGraph(SGGEN.ApproxErdosRenyi(10, 20, rng=rng2))
+        @test SG.SimpleGraph(10, 20, rng=rng1) == SG.SimpleGraph(SGGEN.ErdosRenyi(10, 20, rng=rng2))
         @test ne(SG.SimpleGraph(10, 40, rng=rng1)) == 40
         @test ne(SG.SimpleDiGraph(10, 80, rng=rng1)) == 80
     end
@@ -31,7 +31,7 @@
 
 
     @testset "Erdös-Renyí" begin
-        ergen = @inferred(SGGEN.ErdosRenyi(10, 0.5))
+        ergen = @inferred(SGGEN.Binomial(10, 0.5))
         er = @inferred(SG.SimpleGraph(ergen))
         @test nv(er) == 10
         @test is_directed(er) == false
@@ -39,16 +39,16 @@
         @test nv(er) == 10
         @test is_directed(er) == true
 
-        ergen2 = @inferred(SGGEN.ErdosRenyi(10, 0.5, rng=rng1))
+        ergen2 = @inferred(SGGEN.Binomial(10, 0.5, rng=rng1))
         er = @inferred(SG.SimpleGraph(ergen2))
         @test nv(er) == 10
         @test is_directed(er) == false
 
-        ergen3 = @inferred(SGGEN.ErdosRenyi(5, 1.0))
+        ergen3 = @inferred(SGGEN.Binomial(5, 1.0))
         cpgen = @inferred(SGGEN.Complete(5))
         @test SG.SimpleGraph(ergen3) == SG.SimpleGraph(cpgen)
         @test SG.SimpleDiGraph(ergen3) == SG.SimpleDiGraph(cpgen)
-        ergen4 = SGGEN.ErdosRenyi(5, 2.1)
+        ergen4 = SGGEN.Binomial(5, 2.1)
         @test SG.SimpleGraph(ergen4) == SG.SimpleGraph(cpgen)
         @test SG.SimpleDiGraph(ergen4) == SG.SimpleDiGraph(cpgen)
     end

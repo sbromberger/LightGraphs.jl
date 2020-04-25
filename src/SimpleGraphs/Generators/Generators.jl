@@ -14,8 +14,8 @@ import LightGraphs.SimpleGraphs: SimpleGraph, SimpleDiGraph, SimpleGraphFromIter
 using LightGraphs.Generators
 using LightGraphs.Generators:
     Euclidean,
+    Binomial,
     ErdosRenyi,
-    ApproxErdosRenyi,
     ExpectedDegree,
     WattsStrogatz,
     BarabasiAlbert,

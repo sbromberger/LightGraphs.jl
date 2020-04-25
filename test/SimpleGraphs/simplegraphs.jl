@@ -210,7 +210,7 @@ import Random
      # Tests for constructors from iterators of edges
     @testset "Constructors from edge lists" begin
         rng = MersenneTwister(0)
-        g_undir = SG.SimpleGraph(SGGEN.ErdosRenyi(200, 100, rng=rng))
+        g_undir = SG.SimpleGraph(SGGEN.Binomial(200, 100, rng=rng))
         SG.add_edge!(g_undir, 200, 1) # ensure that the result uses all vertices
         SG.add_edge!(g_undir, 2, 2) # add a self-loop
 
@@ -249,7 +249,7 @@ import Random
             @test edgetype(g) == edgetype(g5)
         end
 
-        g_dir = SG.SimpleDiGraph(SGGEN.ErdosRenyi(200, 100, rng))
+        g_dir = SG.SimpleDiGraph(SGGEN.Binomial(200, 100, rng))
         SG.add_edge!(g_dir, 200, 1)
         SG.add_edge!(g_dir, 2, 2)
 
@@ -452,7 +452,7 @@ import Random
             @test_throws ArgumentError SG.rem_vertices!(g5, T[3, 0], keep_order=false)
         end
 
-        er10 = SGGEN.ErdosRenyi(10, 0.5)
+        er10 = SGGEN.Binomial(10, 0.5)
         g_undir = SG.SimpleGraph(er10)
         g_dir = SG.SimpleDiGraph(er10)
         for u = 1:2:10

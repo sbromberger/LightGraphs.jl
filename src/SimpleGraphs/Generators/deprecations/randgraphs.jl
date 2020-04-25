@@ -7,14 +7,14 @@ using LightGraphs:
 
 
 function erdos_renyi(n::Integer, p::Real; is_directed=false, seed::Integer=-1)
-    Base.depwarn("`erdos_renyi(::Integer, ::Real)` is deprecated. Equivalent functionality has been moved to `LightGraphs.Generators.ErdosRenyi`.", :erdos_renyi)
+    Base.depwarn("`erdos_renyi(::Integer, ::Real)` is deprecated. Equivalent functionality has been moved to `LightGraphs.Generators.Binomial`.", :erdos_renyi)
     rng = seed == -1 ? GLOBAL_RNG : MersenneTwister(seed)
-    gen = ErdosRenyi(n, p, rng=rng)
+    gen = Binomial(n, p, rng=rng)
     return is_directed ? SimpleDiGraph(gen) : SimpleGraph(gen)
 end
 
 function erdos_renyi(n::Integer, ne::Integer; is_directed=false, seed::Integer=-1)
-    Base.depwarn("`erdos_renyi(::Integer, ::Integer)` is deprecated. Equivalent functionality has been moved to `LightGraphs.Generators.ApproxErdosRenyi`.", :erdos_renyi)
+    Base.depwarn("`erdos_renyi(::Integer, ::Integer)` is deprecated. Equivalent functionality has been moved to `LightGraphs.Generators.ErdosRenyi`.", :erdos_renyi)
     rng = seed == -1 ? GLOBAL_RNG : MersenneTwister(seed)
     return is_directed ? SimpleDiGraph(n, ne, rng=rng) : SimpleGraph(n, ne, rng=rng)
 end

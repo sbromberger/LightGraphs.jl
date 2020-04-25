@@ -6,7 +6,7 @@ The graph is sampled uniformly from all such graphs.
 If not specified, the element type `T` is the type of `nv`.
 
 ### See also
-[`erdos_renyi`](@ref)
+[`LightGraphs.Generators.ErdosRenyi`](@ref)
 
 ## Examples
 ```jldoctest
@@ -41,7 +41,7 @@ The graph is sampled uniformly from all such graphs.
 If not specified, the element type `T` is the type of `nv`.
 
 ### See also
-[`erdos_renyi`](@ref)
+[`LightGraphs.Generators.ErdosRenyi`](@ref)
 
 ## Examples
 ```jldoctest
@@ -68,31 +68,31 @@ SimpleDiGraph(nv::T, ne::Integer; rng::AbstractRNG=GLOBAL_RNG) where {T<:Integer
     SimpleDiGraph{T}(nv, ne, rng=rng)
     # SimpleDiGraph{Int}(nv, ne, rng=rng)
 
-SimpleGraph(gen::ErdosRenyi) = erdos_renyi_undir(gen.n, gen.p, gen.rng)
-SimpleDiGraph(gen::ErdosRenyi) = erdos_renyi_dir(gen.n, gen.p, gen.rng)
+SimpleGraph(gen::Binomial) = binomial_undir(gen.n, gen.p, gen.rng)
+SimpleDiGraph(gen::Binomial) = binomial_dir(gen.n, gen.p, gen.rng)
 
-function erdos_renyi_undir(n::Integer, p::Real, rng::AbstractRNG)
+function binomial_undir(n::Integer, p::Real, rng::AbstractRNG)
     p >= 1 && return SimpleGraph(Complete(n))
     m = div(n * (n - 1), 2)
     ne = randbn(m, p, rng)
     return SimpleGraph(n, ne, rng=rng)
 end
 
-function erdos_renyi_dir(n::Integer, p::Real, rng::AbstractRNG)
+function binomial_dir(n::Integer, p::Real, rng::AbstractRNG)
     p >= 1 && return SimpleDiGraph(Complete(n))
     m =  n * (n - 1)
     ne = randbn(m, p, rng)
     return SimpleDiGraph(n, ne, rng=rng)
 end
 
-approx_erdos_renyi_undir(n::Integer, ne::Integer, rng::AbstractRNG) =
+erdos_renyi_undir(n::Integer, ne::Integer, rng::AbstractRNG) =
     SimpleGraph(n, ne, rng=rng)
 
-approx_erdos_renyi_dir(n::Integer, ne::Integer, rng::AbstractRNG) =
+erdos_renyi_dir(n::Integer, ne::Integer, rng::AbstractRNG) =
     SimpleDiGraph(n, ne, rng=rng)
 
-SimpleGraph(alg::ApproxErdosRenyi) = approx_erdos_renyi_undir(alg.n, alg.ne, alg.rng)
-SimpleDiGraph(alg::ApproxErdosRenyi) = approx_erdos_renyi_dir(alg.n, alg.ne, alg.rng)
+SimpleGraph(alg::ErdosRenyi) = erdos_renyi_undir(alg.n, alg.ne, alg.rng)
+SimpleDiGraph(alg::ErdosRenyi) = erdos_renyi_dir(alg.n, alg.ne, alg.rng)
 
 function expected_degree_graph_undir(ω::Vector{T}, rng::AbstractRNG) where {T<:Real}
     g = SimpleGraph(length(ω))

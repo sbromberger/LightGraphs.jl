@@ -1,7 +1,7 @@
 abstract type RandomGenerator <: GraphGenerator end
 
 """
-    struct ErdosRenyi <: RandomGenerator
+    struct Binomial <: RandomGenerator
 
 A struct representing a generator for an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
@@ -14,15 +14,15 @@ probability `p`.
 ### Optional Arguments
 - `rng::AbstractRNG`: set the random number generator (default: `Random.GLOBAL_RNG`)
 """
-struct ErdosRenyi{T<:Integer, U<:Real, R<:AbstractRNG} <: RandomGenerator
+struct Binomial{T<:Integer, U<:Real, R<:AbstractRNG} <: RandomGenerator
     n::T
     p::U
     rng::R
 end
-ErdosRenyi(n, p; rng=GLOBAL_RNG) = ErdosRenyi(n, p, rng)
+Binomial(n, p; rng=GLOBAL_RNG) = Binomial(n, p, rng)
 
 """
-    struct ApproxErdosRenyi <: RandomGenerator
+    struct ErdosRenyi <: RandomGenerator
 
 Create a generator approximating an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
 graph with `n` vertices and `ne` edges.
@@ -34,12 +34,12 @@ graph with `n` vertices and `ne` edges.
 ### Optional Arguments
 - `rng::AbstractRNG`: set the random number generator (default: `Random.GLOBAL_RNG`)
 """
-struct ApproxErdosRenyi{T<:Integer, U<:Integer, R<:AbstractRNG} <: RandomGenerator
+struct ErdosRenyi{T<:Integer, U<:Integer, R<:AbstractRNG} <: RandomGenerator
     n::T
     ne::U
     rng::R
 end
-ApproxErdosRenyi(n, ne; rng=GLOBAL_RNG) = ApproxErdosRenyi(n, ne, rng)
+ErdosRenyi(n, ne; rng=GLOBAL_RNG) = ErdosRenyi(n, ne, rng)
 
 """
     struct ExpectedDegree <: RandomGenerator 
