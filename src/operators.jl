@@ -75,8 +75,8 @@ Edge 4 => 5
 Edge 5 => 4
 ```
 """
-function reverse(g::T) where {T<:AbstractGraph}
-    r = T(nv(g))
+function reverse(g::AG) where {AG<:AbstractGraph}
+    r = AG(nv(g))
     for e in edges(g)
         add_edge!(r, reverse(e))
     end
@@ -116,9 +116,9 @@ Edge 7 => 8
 Edge 8 => 6
 ```
 """
-function blockdiag(g::T, h::T) where T <: AbstractGraph
+function blockdiag(g::AG, h::AG) where {AG<:AbstractGraph}
     gnv = nv(g)
-    r = T(gnv + nv(h))
+    r = AG(gnv + nv(h))
     for e in edges(g)
         add_edge!(r, e)
     end
@@ -151,13 +151,13 @@ Edge 2 => 3
 Edge 3 => 1
 ```
 """
-function intersect(g::T, h::T) where T <: AbstractGraph
+function intersect(g::AG, h::AG) where {AG<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
     smaller, larger = ne(g) < ne(h) ? (g, h) : (h, g)
 
-    r = T(min(gnv, hnv))
+    r = AG(min(gnv, hnv))
     for e in edges(smaller)
         if has_edge(larger, e)
             add_edge!(r, e)
@@ -187,11 +187,11 @@ Edge 4 => 5
 Edge 5 => 4
 ```
 """
-function difference(g::T, h::T) where T <: AbstractGraph
+function difference(g::AG, h::AG) where {AG<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
-    r = T(gnv)
+    r = AG(gnv)
     for e in edges(g)
         if !has_edge(h, e)
             add_edge!(r, e)
@@ -279,7 +279,7 @@ julia> collect(edges(g))
  Edge 4 => 5
 ```
 """
-function join(g::T, h::T) where T <: AbstractGraph
+function join(g::AG, h::AG) where {AG<:AbstractGraph}
     r = blockdiag(g, h)
     for i in vertices(g)
         for j = (nv(g) + 1):(nv(g) + nv(h))
@@ -374,7 +374,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where {T<:AbstractGraph}
+function union(g::AG, h::AG) where {AG<:AbstractGraph}
     smaller, larger = nv(g) < nv(h) ? (g, h) : (h, g)
     r = copy(larger)
     for e in edges(smaller)
@@ -638,9 +638,9 @@ julia> sg, vmap = induced_subgraph(g, elist)
 julia> @assert sg == g[elist]
 ```
 """
-function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGraph where U <: Integer
+function induced_subgraph(g::AG, vlist::AbstractVector{U}) where {AG<:AbstractGraph, U<:Integer}
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
-    h = T(length(vlist))
+    h = AG(length(vlist))
     newvid = Dict{U,U}()
     vmap = Vector{U}(undef, length(vlist))
     for (i, v) in enumerate(vlist)
@@ -661,7 +661,7 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGra
 end
 
 
-function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractGraph{T} where T where U <: AbstractEdge
+function induced_subgraph(g::AG, elist::AbstractVector{U}) where {T, U<:AbstractEdge, AG<:AbstractGraph{T}}
     h = zero(g)
     newvid = Dict{T,T}()
     vmap = Vector{T}()
@@ -710,9 +710,9 @@ with respect to `v` (i.e. `:in` or `:out`).
 Unless overridden, this function does not preserve any metadata
 (if the graph supports it).
 """
-egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}; dir=:out) where T <: Integer where U <: Real =
+egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}; dir=:out) where {T<:Integer, U<:Real} =
     g[neighborhood(g, v, d, distmx, dir=dir)]
-egonet(g::AbstractGraph{T}, v::Integer, d::Integer; dir=:out) where T <: Integer where U <: Real =
+    egonet(g::AbstractGraph{T}, v::Integer, d::Integer; dir=:out) where {T<:Integer, U<:Real} =
     g[neighborhood(g, v, d, dir=dir)]
 
 
@@ -790,7 +790,7 @@ end
 @traitfn function merge_vertices(g::AG::IsDirected, vs::Vector{U})  where {T, U<:Integer, AG<:AbstractGraph{T}}
     newg = copy(g)
     uvs = sort(unique(vs), rev=true)
-    v0 = T(vs[end])
+    v0 = AG(vs[end])
     @inbounds for v in vs[1:end-1]
         @inbounds for u in inneighbors(newg, v)
             if !insorted(u, vs, rev=true)
