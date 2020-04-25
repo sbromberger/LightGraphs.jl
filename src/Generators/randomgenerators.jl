@@ -53,10 +53,6 @@ with a probability (given by a vector of expected degrees `ω` indexed by vertex
 ### Optional Arguments
 - `rng::AbstractRNG`: set the random number generator (default: `Random.GLOBAL_RNG`)
 
-### Implementation Notes
-The algorithm should work well for `maximum(ω) ≪ sum(ω)`. As `maximum(ω)` approaches `sum(ω)`, some deviations
-from the expected values are likely.
-
 ### References
 - Connected Components in Random Graphs with Given Expected Degree Sequences, Linyuan Lu and Fan Chung. [https://link.springer.com/article/10.1007%2FPL00012580](https://link.springer.com/article/10.1007%2FPL00012580)
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)

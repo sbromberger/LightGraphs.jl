@@ -94,6 +94,9 @@ erdos_renyi_dir(n::Integer, ne::Integer, rng::AbstractRNG) =
 SimpleGraph(alg::ErdosRenyi) = erdos_renyi_undir(alg.n, alg.ne, alg.rng)
 SimpleDiGraph(alg::ErdosRenyi) = erdos_renyi_dir(alg.n, alg.ne, alg.rng)
 
+# For expected_degree, the algorithm should work well with maximum(ω) << sum(ω).
+# As maximum(ω) approaches sum(ω), some deviations from the expected values are
+# likely.
 function expected_degree_graph_undir(ω::Vector{T}, rng::AbstractRNG) where {T<:Real}
     g = SimpleGraph(length(ω))
     expected_degree_graph!(g, ω, rng)
