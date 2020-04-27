@@ -1,6 +1,6 @@
     @testset "ShortestPaths.SPFA" begin
         @testset "Generic tests for graphs" begin
-            g4 = path_digraph(5)
+            g4 = SimpleDiGraph(SGGEN.Path(5))
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
             @testset "$g" for g in testdigraphs(g4)
@@ -9,7 +9,7 @@
             end
 
             @testset "Graph with cycle" begin
-                gx = path_graph(5)
+                gx = SimpleGraph(SGGEN.Path(5))
                 add_edge!(gx, 2, 4)
                 d = ones(Int, 5, 5)
                 d[2, 3] = 100
@@ -78,7 +78,7 @@
                     nvg = Int(ceil(250*rand()))
                     neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                     seed = Int(floor(100*rand()))
-                    g = SimpleGraph(nvg, neg; seed = seed)
+                    g = SimpleGraph(nvg, neg, rng=MersenneTwister(seed))
                     z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
                     y = ShortestPaths.shortest_paths(g, 1,ShortestPaths.Dijkstra())
                     @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
@@ -90,7 +90,7 @@
                     nvg = Int(ceil(250*rand()))
                     neg = Int(floor((nvg*(nvg-1)/2)*rand()))
                     seed = Int(floor(100*rand()))
-                    g = SimpleDiGraph(nvg, neg; seed = seed)
+                    g = SimpleDiGraph(nvg, neg, rng=MersenneTwister(seed))
                     z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
                     y = ShortestPaths.shortest_paths(g, 1,ShortestPaths.Dijkstra())
                     @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
@@ -99,29 +99,38 @@
         end
 
         @testset "Different types of graph" begin
-            @testset "$G" for G in [complete_graph(9), complete_digraph(9), cycle_graph(9), cycle_digraph(9),
-                                    star_graph(9), wheel_graph(9), roach_graph(9), clique_graph(5, 19) ]
-                z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
-                y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
+            @testset "$g" for g in SimpleGraph.([ SGGEN.Complete(9), SGGEN.Cycle(9), SGGEN.Star(9), SGGEN.Wheel(9), SGGEN.Roach(9), SGGEN.Clique(5, 19)])
+                z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
+                y = ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra())
+                @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
+            end
+            @testset "$g" for g in SimpleDiGraph.([SGGEN.Complete(9), SGGEN.Cycle(9)])
+                z = ShortestPaths.shortest_paths(g, 1, ShortestPaths.SPFA())
+                y = ShortestPaths.shortest_paths(g, 1, ShortestPaths.Dijkstra())
                 @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
             end
 
-            @testset "Small Graphs" begin
-                @testset "$s" for s in [:bull, :chvatal, :cubical, :desargues,
-                          :diamond, :dodecahedral, :frucht, :heawood,
-                          :house, :housex, :icosahedral, :krackhardtkite, :moebiuskantor,
-                          :octahedral, :pappus, :petersen, :sedgewickmaze, :tutte,
-                          :tetrahedral, :truncatedcube, :truncatedtetrahedron, :truncatedtetrahedron_dir]
-                    G = smallgraph(s)
-                    z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
-                    y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
-                    @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
-                end
-            end
+        @testset "smallgraphs: $gen" for gen in [
+            SGGEN.Bull, SGGEN.Chvatal, SGGEN.Cubical, SGGEN.Desargues,
+            SGGEN.Diamond, SGGEN.Dodecahedral, SGGEN.Frucht, SGGEN.Heawood,
+            SGGEN.House, SGGEN.HouseX, SGGEN.Icosahedral, SGGEN.KrackhardtKite, SGGEN.MoebiusKantor,
+            SGGEN.Octahedral, SGGEN.Pappus, SGGEN.Petersen, SGGEN.SedgewickMaze, SGGEN.Tutte,
+            SGGEN.Tetrahedral, SGGEN.TruncatedCube, SGGEN.TruncatedTetrahedron
+         ]
+            G = SimpleGraph(gen())
+            z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
+            y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
+            @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
+        end
+        @testset "smallgraphs: $gen"  for gen in [SGGEN.TruncatedTetrahedron]
+            G = SimpleDiGraph(gen())
+            z = ShortestPaths.shortest_paths(G, 1, ShortestPaths.SPFA())
+            y = ShortestPaths.shortest_paths(G, 1, ShortestPaths.Dijkstra())
+            @test isapprox(ShortestPaths.distances(z), ShortestPaths.distances(y))
         end
 
         @testset "Normal graph" begin
-            g4 = path_digraph(5)
+            g4 = SimpleDiGraph(SGGEN.Path(5))
 
             d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
             d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
@@ -145,7 +154,7 @@
 
         @testset "Negative Cycle" begin
             # Negative Cycle 1
-            gx = complete_graph(3)
+            gx = SimpleGraph(SGGEN.Complete(3))
             @testset "$g" for g in testgraphs(gx)
                 d = [1 -3 1; -3 1 1; 1 1 1]
                 @test_throws ShortestPaths.NegativeCycleError ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA())
@@ -157,7 +166,7 @@
             end
 
             # Negative cycle of length 3 in graph of diameter 4
-            gx = complete_graph(4)
+            gx = SimpleGraph(SGGEN.Complete(4))
             d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
             @testset "$g" for g in testgraphs(gx)
                 @test_throws ShortestPaths.NegativeCycleError ShortestPaths.shortest_paths(g, 1, d, ShortestPaths.SPFA())
@@ -166,7 +175,7 @@
         end
 
         @testset "maximum distance setting limits paths found" begin
-            G = cycle_graph(6)
+            G = SimpleGraph(SGGEN.Cycle(6))
             add_edge!(G, 1, 3)
             m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
@@ -176,3 +185,4 @@
             end
         end
     end
+end

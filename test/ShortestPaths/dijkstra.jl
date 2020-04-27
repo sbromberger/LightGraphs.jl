@@ -1,5 +1,5 @@
 @testset "ShortestPaths.Dijkstra" begin
-    g4 = path_digraph(5)
+    g4 = SimpleDiGraph(SGGEN.Path(5))
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
 
@@ -20,7 +20,7 @@
         @test ShortestPaths.shortest_paths(g, 1, d1) isa ShortestPaths.DijkstraResult
     end
 
-    gx = path_graph(5)
+    gx = SimpleGraph(SGGEN.Path(5))
     add_edge!(gx, 2, 4)
     d = ones(Int, 5, 5)
     d[2, 3] = 100
@@ -36,7 +36,7 @@
     spath(target, dijkstraStruct, source) = target == source ? target : [spath(dijkstraStruct.parents[target], dijkstraStruct, source) target]
     ShortestPaths.paths(ds, targets, source) = [spath(i, ds, source) for i in targets]
 
-    G = Graph(4)
+    G = SimpleGraph(4)
     add_edge!(G, 2, 1)
     add_edge!(G, 2, 3)
     add_edge!(G, 1, 4)
@@ -94,7 +94,7 @@
     end
 
     @testset "maximum distance setting limits ShortestPaths.paths found" begin
-        G = cycle_graph(6)
+        G = SimpleGraph(SGGEN.Cycle(6))
         add_edge!(G, 1, 3)
         m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 

@@ -74,7 +74,7 @@
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
             seed = Int(floor(100*rand()))
-            g = SimpleGraph(nvg, neg; seed = seed)
+            g = SimpleGraph(nvg, neg; rng=MersenneTwister(seed))  # this represents a breaking change in 2.0
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -86,7 +86,7 @@
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
             seed = Int(floor(100*rand()))
-            g = SimpleDiGraph(nvg, neg; seed = seed)
+            g = SimpleDiGraph(nvg, neg; rng=MersenneTwister(seed)) # this represents a breaking change in 2.0
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)

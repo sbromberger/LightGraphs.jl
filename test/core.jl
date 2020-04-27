@@ -1,6 +1,6 @@
 @testset "Core" begin
-    e2 = Edge(1, 3)
-    e3 = Edge(1, 4)
+    e2 = SimpleEdge(1, 3)
+    e3 = SimpleEdge(1, 4)
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
 
@@ -13,7 +13,8 @@
         end
     end
 
-    g5w = wheel_graph(5); g5wd = wheel_digraph(5)
+    wgen = SGGEN.Wheel(5)
+    g5w = SimpleGraph(wgen); g5wd = SimpleDiGraph(wgen)
     @testset "degree functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == 4
@@ -90,10 +91,5 @@
             @test @inferred(density(g)) == 0.4
         end
 
-    end
-    @testset "squash" begin
-        @testset "$g" for g in testgraphs(g5w, g5wd)
-            @test eltype(squash(g)) == UInt8
-        end
     end
 end

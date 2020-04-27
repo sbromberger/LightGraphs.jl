@@ -8,7 +8,7 @@ Degree-based core-periphery is only defined for undirected graphs.
 
 ### References
 - [Lip](http://arxiv.org/abs/1102.5511))
-#
+
 # Examples
 ```jldoctest
 julia> using LightGraphs

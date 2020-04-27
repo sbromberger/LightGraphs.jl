@@ -1,6 +1,7 @@
 module Community
 
 using LightGraphs
+using LightGraphs.SimpleGraphsCore: SimpleGraph
 using LightGraphs.Connectivity
 using SimpleTraits
 using LightGraphs: getRNG, range_shuffle!

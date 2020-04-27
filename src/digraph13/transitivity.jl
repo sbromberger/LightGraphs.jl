@@ -1,10 +1,11 @@
+import LightGraphs.SimpleGraphsCore: SimpleDiGraph
 function transitiveclosure! end
 @traitfn function transitiveclosure!(g::::IsDirected, selflooped=false)
     Base.depwarn("`transitiveclosure!` is deprecated. Equivalent functionality has been moved to `LightGraphs.Transitivity.transitive_closure!`.", :transitiveclosure!)
     LightGraphs.Transitivity.transitive_closure!(g, selflooped)
 end
 
-function transitiveclosure(g::DiGraph, selflooped=false)
+function transitiveclosure(g::SimpleDiGraph, selflooped=false)
     Base.depwarn("`transitiveclosure` is deprecated. Equivalent functionality has been moved to `LightGraphs.Transitivity.transitive_closure`.", :transitiveclosure)
     LightGraphs.Transitivity.transitive_closure(g, selflooped)
 end

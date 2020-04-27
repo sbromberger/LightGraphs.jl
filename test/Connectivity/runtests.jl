@@ -1,5 +1,6 @@
 using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
+using LightGraphs.Connectivity
 
 const LC = LightGraphs.Connectivity
 

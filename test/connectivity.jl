@@ -1,3 +1,4 @@
+# Remove 2.0
 import LightGraphs: components, components_dict
 import LightGraphs.Coloring: is_bipartite
 

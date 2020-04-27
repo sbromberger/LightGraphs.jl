@@ -1,5 +1,7 @@
 using LightGraphs
 using LightGraphs.SimpleGraphs
+using LightGraphs.SimpleGraphs: SimpleDiGraph, SimpleGraph, AbstractSimpleGraph, AbstractSimpleEdge
+using LightGraphs.SimpleGraphs.Generators
 using LightGraphs.Experimental
 using Test
 using SparseArrays
@@ -9,19 +11,23 @@ using Base64
 using Random
 using Statistics: mean
 
+const SG = LightGraphs.SimpleGraphs
+const SGGEN = LightGraphs.SimpleGraphs.Generators
+
 const testdir = dirname(@__FILE__)
 
-testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)]
+testgraphs(g) = is_directed(g) ? [g, SimpleDiGraph{UInt8}(g), SimpleDiGraph{Int16}(g)] : [g, SimpleGraph{UInt8}(g), SimpleGraph{Int16}(g)]
 testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
 testdigraphs = testgraphs
 
 # some operations will create a large graph from two smaller graphs. We
 # might error out on very small eltypes.
-testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)] : [g, Graph{UInt16}(g), Graph{Int32}(g)]
+testlargegraphs(g) = is_directed(g) ? [g, SimpleDiGraph{UInt16}(g), SimpleDiGraph{Int32}(g)] : [g, SimpleGraph{UInt16}(g), SimpleGraph{Int32}(g)]
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
 tests = [
-    "simplegraphs/runtests",
+    "SimpleGraphsCore/runtests",
+    "SimpleGraphs/runtests",
     "linalg13/runtests",
     "parallel13/runtests",
     "interface",
@@ -41,7 +47,7 @@ tests = [
     "cycles13/basis",
     "cycles13/limited_length",
     "Cycles/runtests",
-    "edit_distance",
+    "edit_distance",  # deprecations
     "connectivity",
     "Connectivity/runtests",
     "persistence13/persistence",
@@ -62,6 +68,7 @@ tests = [
     "traversals13/randomwalks",
     "traversals13/diffusion",
     "Traversals/runtests",
+    "Coloring/runtests",
     "Community/runtests",
     "community13/cliques",
     "community13/core-periphery",
@@ -69,7 +76,6 @@ tests = [
     "community13/modularity",
     "community13/clustering",
     "community13/clique_percolation",
-    "Coloring/runtests",
     "Centrality/runtests",
     "centrality13/betweenness",
     "centrality13/closeness",
@@ -80,7 +86,6 @@ tests = [
     "centrality13/stress",
     "centrality13/radiality",
     "utils",
-    "deprecations",
     "spanningtrees13/boruvka",
     "spanningtrees13/kruskal",
     "spanningtrees13/prim",
@@ -101,6 +106,7 @@ tests = [
 
 @testset "LightGraphs" begin
     for t in tests
+        @info "Testing $t"
         tp = joinpath(testdir, "$(t).jl")
         include(tp)
     end

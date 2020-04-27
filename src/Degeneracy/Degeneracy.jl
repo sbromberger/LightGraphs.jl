@@ -1,6 +1,7 @@
 module Degeneracy
 
 using LightGraphs
+using LightGraphs.SimpleGraphsCore: SimpleGraph
 using Base.Threads: @threads, Atomic, nthreads, threadid, atomic_sub!, atomic_add!
 
 """

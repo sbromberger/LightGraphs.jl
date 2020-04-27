@@ -13,3 +13,5 @@ comment:
   branches: null
   flags: null
   paths: null
+ignore:
+  - "**/deprecations/*.jl"

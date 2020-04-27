@@ -217,7 +217,6 @@ false
 ```
 """
 has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix) = has_negative_weight_cycle(g, distmx, BellmanFord())
-has_negative_weight_cycle(g::LightGraphs.SimpleGraphs.AbstractSimpleGraph) = false
 
 
 include("astar.jl")

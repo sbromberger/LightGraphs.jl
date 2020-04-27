@@ -2,7 +2,7 @@ using LightGraphs.ShortestPaths
 
 const LMS = LightGraphs.Measurements
 @testset "Measurements" begin
-    g4 = path_digraph(5)
+    g4 = SimpleDiGraph(SGGEN.Path(5))
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a1 = SimpleGraph(adjmx1)
@@ -91,7 +91,7 @@ const LMS = LightGraphs.Measurements
         @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
         @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
         @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
-        g2 = path_graph(2)
+        g2 = SimpleGraph(SGGEN.Path(2))
         @test_logs LMS.eccentricity(g2)
         @test_logs LMS.eccentricity(g2, LMS.Threaded())
     end

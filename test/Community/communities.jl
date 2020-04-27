@@ -9,7 +9,7 @@
             Set(LCOM.communities(graph, LCOM.CliquePercolation())) == setofsets(expected)
         end
 
-        g = Graph(5)
+        g = SimpleGraph(5)
         add_edge!(g, 1, 2)
         add_edge!(g, 2, 3)
         add_edge!(g, 3, 1)
@@ -21,7 +21,7 @@
 
     @testset "Label propagation" begin
         n = 10
-        g10 = complete_graph(n)
+        g10 = SimpleGraph(SGGEN.Complete(n))
         @testset "$g" for g in testgraphs(g10)
             z = copy(g)
             for k = 2:5

@@ -22,7 +22,7 @@
         w = @inferred(LT.walk(g, start, LT.RandomWalk(nonbacktracking=true, niter=len)))
         return is_nonbacktracking(w)
     end
-    gx = path_digraph(10)
+    gx = SimpleDiGraph(SGGEN.Path(10))
     @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=false, niter=5))) == [1:5;]
         @test @inferred(LT.walk(g, 2, LT.RandomWalk(nonbacktracking=false, niter=100))) == [2:10;]
@@ -31,7 +31,7 @@
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
     end
 
-    gx = path_graph(10)
+    gx = SimpleGraph(SGGEN.Path(10))
     @testset "$g" for g in testgraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.SelfAvoidingWalk(niter=20))) == [1:10;]
         @test_throws BoundsError LT.walk(g, 20, LT.SelfAvoidingWalk(niter=20))
@@ -39,25 +39,25 @@
         @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=true, niter=20))
     end
 
-    gx = SimpleDiGraph(path_graph(10))
+    gx = SimpleDiGraph(SimpleGraph(SGGEN.Path(10)))
     @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10;]
         @test_throws BoundsError LT.walk(g, 20, LT.RandomWalk(nonbacktracking=true, niter=20))
     end
 
-    gx = cycle_graph(10)
+    gx = SimpleGraph(SGGEN.Cycle(10))
     @testset "$g" for g in testgraphs(gx)
         visited = @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20)))
         @test visited == [1:10; 1:10;] || visited == [1; 10:-1:1; 10:-1:2;]
     end
 
-    gx = cycle_digraph(10)
+    gx = SimpleDiGraph(SGGEN.Cycle(10))
     @testset "$g" for g in testdigraphs(gx)
         @test @inferred(LT.walk(g, 1, LT.RandomWalk(nonbacktracking=true, niter=20))) == [1:10; 1:10;]
     end
 
     n = 10
-    gx = cycle_graph(n)
+    gx = SimpleGraph(SGGEN.Cycle(n))
     for k = 3:(n - 1)
         add_edge!(gx, 1, k)
     end

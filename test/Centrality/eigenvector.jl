@@ -1,6 +1,6 @@
 @testset "Eigenvector" begin
-    g1 = smallgraph(:house)
-    g2 = cycle_digraph(4)
+    g1 = SimpleGraph(SGGEN.House())
+    g2 = SimpleDiGraph(SGGEN.Cycle(4))
 
     @testset "$g" for g in testgraphs(g1)
         y = @inferred(LCENT.centrality(g, LCENT.Eigenvector()))

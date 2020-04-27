@@ -3,7 +3,7 @@
     s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
     s1 = SimpleGraph(s2)
-    g3 = path_graph(5)
+    g3 = SimpleGraph(SGGEN.Path(5))
 
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
@@ -71,10 +71,10 @@
         @test isapprox(LCENT.centrality(g, distmx2, LCENT.Betweenness(vs=vertices(g), normalize=true, endpoints=true)), [2.0,2.5,2.0])
     end
     # test 1405
-    g = grid([50, 50])
+    g = SimpleGraph(SGGEN.Grid([50, 50]))
     z = @inferred(LCENT.centrality(g, LCENT.Betweenness(normalize=false)))
     zd = @inferred(LCENT.centrality(g, weights(g), LCENT.Betweenness(normalize=false)))
     @test isapprox(z, zd)
-    @test maximum(z) < nv(g) * (nv(g)-1)
-    @test maximum(zd) < nv(g) * (nv(g)-1)
+    @test maximum(z) < nv(g) * (nv(g)-1) ÷ 2
+    @test maximum(zd) < nv(g) * (nv(g)-1) ÷ 2
 end

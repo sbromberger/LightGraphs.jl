@@ -179,7 +179,7 @@ end
 
 @traitfn function _johnson_simple_cycles_recursive(dg::::IsDirected)
     T = eltype(dg)
-    sccs = strongly_connected_components(dg)
+    sccs = connected_components(dg, Tarjan())
     cycles = Vector{Vector{T}}()
     for scc in sccs
         for i in 1:length(scc)
@@ -250,7 +250,7 @@ end
 
 
 @traitfn function _iterate_johnson_simple_cycles(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
-    sccs = strongly_connected_components(dg)
+    sccs = connected_components(dg, Tarjan())
     for scc in sccs
         while length(scc) >= 1
             wdg, vmap = induced_subgraph(dg, scc)

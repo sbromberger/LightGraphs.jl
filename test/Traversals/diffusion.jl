@@ -1,5 +1,5 @@
 @testset "Diffusion Simulation" begin
-    gx = complete_graph(5)
+    gx = SimpleGraph(SGGEN.Complete(5))
     @testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
         # Most basic
         @test @inferred(LT.diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
@@ -32,14 +32,14 @@
     # Check along path graph
     ######
 
-    gx = path_graph(5)
+    gx = SimpleGraph(SGGEN.Path(5))
 
     @testset "$g" for g in testgraphs(gx)  # this makes graphs of different eltypes
         @test @inferred(LT.diffusion_rate(g, 1.0, 4, watch=collect(1:5), initial_infections=[1])) == [1, 2, 3, 4]
         @test @inferred(LT.diffusion_rate(g, 1.0, 4, watch=collect(1:5), initial_infections=[3])) == [1, 3, 5, 5]
     end
 
-    gx = path_graph(30)
+    gx = SimpleGraph(SGGEN.Path(30))
     @testset "$g" for g in testgraphs(gx)
         # Check normalize
         @test @inferred(LT.diffusion_rate(g, 1.0, 6, initial_infections=[15], normalize=false)) == [1, 3, 5, 7, 9, 11]
@@ -77,7 +77,7 @@
     end
 
 
-    gx = path_digraph(10)
+    gx = SimpleDiGraph(SGGEN.Path(10))
 
     @testset "$g" for g in testdigraphs(gx)
 
