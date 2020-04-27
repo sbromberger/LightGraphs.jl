@@ -143,7 +143,7 @@ articulation, biconnected_components, bridges,
 #graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
 
-#dominatingset
+#deprecated dominatingset
 dominating_set,
 
 #independentset
@@ -193,6 +193,7 @@ include("Measurements/Measurements.jl") # requires ShortestPaths
 include("Connectivity/Connectivity.jl")  # requires ShortestPaths
 include("Transitivity/Transitivity.jl")
 include("Cycles/Cycles.jl")
+include("Domination/Domination.jl")
 
 include("degeneracy13.jl")
 include("traversals13/bfs.jl")

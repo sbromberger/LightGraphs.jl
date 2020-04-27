@@ -95,6 +95,7 @@ tests = [
     "biconnectivity13/bridge",
     "graphcut13/normalized_cut",
     "graphcut13/karger_min_cut",
+    "Domination/runtests",
     "dominatingset13/degree_dom_set",
     "dominatingset13/minimal_dom_set",
     "independentset13/degree_ind_set",
