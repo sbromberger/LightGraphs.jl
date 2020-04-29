@@ -64,7 +64,7 @@ Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
-function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where T<:Integer
+function findall!(A::Union{BitVector, Vector{Bool}}, B::Vector{T}) where {T<:Integer}
     len = 0
     @inbounds for (i, a) in enumerate(A)
         if a
@@ -122,7 +122,7 @@ function greedy_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U=length(weight)
-    ) where U <: Integer
+   ) where {U<:Integer}
 
     suffix_sum = cumsum(reverse(weight))
     reverse!(suffix_sum)
@@ -176,7 +176,7 @@ function optimal_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U=length(weight)
-    ) where U <: Integer
+   ) where {U<:Integer}
 
     item_it = Iterators.take(weight, num_items)
 
@@ -241,7 +241,7 @@ isbounded(n::BigInt) = false
 
 Returns true if `typemax(T)` of a type `T <: Integer` exists.
 """
-isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
+isbounded(::Type{T}) where {T<:Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """
