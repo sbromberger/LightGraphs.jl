@@ -100,6 +100,7 @@ tests = [
     "dominatingset13/minimal_dom_set",
     "independentset13/degree_ind_set",
     "independentset13/maximal_ind_set",
+    "VertexCover/runtests",
     "vertexcover13/degree_vertex_cover",
     "vertexcover13/random_vertex_cover",
     "experimental/experimental"

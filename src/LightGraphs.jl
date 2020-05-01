@@ -149,7 +149,7 @@ dominating_set,
 #independentset
 independent_set,
 
-#vertexcover
+#deprecated vertexcover
 vertex_cover,
 
 # useful utilities
@@ -194,6 +194,7 @@ include("Connectivity/Connectivity.jl")  # requires ShortestPaths
 include("Transitivity/Transitivity.jl")
 include("Cycles/Cycles.jl")
 include("Domination/Domination.jl")
+include("VertexCover/VertexCover.jl")
 
 include("degeneracy13.jl")
 include("traversals13/bfs.jl")
