@@ -1,6 +1,6 @@
 struct PointerJumping <: WeakConnectivityAlgorithm end
 
-function parallel_cc(V::Vector{Vector{T}}, V_size::Vector{Int64},E::Vector{Vector{SimpleEdge{T}}},
+function parallel_cc(V::Int64, E::Vector{Vector{SimpleEdge{T}}},
                         E_size::Vector{Int64}, L::Vector{T}) where T <: Integer
     sum(E_size) == 0 && return
     nthrds = nthreads()
@@ -32,45 +32,22 @@ function parallel_cc(V::Vector{Vector{T}}, V_size::Vector{Int64},E::Vector{Vecto
             end
         end
     end
-    V_new_size = reduce_vertex_set!(V, V_size, L)
     E_new_size = reduce_edge_set!(E, E_size, L)
-    parallel_cc(V, V_new_size, E, E_new_size, L)
-    find_roots!(V, V_size, L)
+    parallel_cc(V, E, E_new_size, L)
+    find_roots!(V, L)
 end
 
-function find_roots!(V::Vector{Vector{T}}, V_size::Vector{Int64}, L::Vector{T}) where T <: Integer
+function find_roots!(V::Int64, L::Vector{T}) where T <: Integer
     flag = true
     while flag
         flag = false
-        @threads for _ in 1:nthreads()
-            tid = threadid()
-            for i in 1:V_size[tid]
-                u = V[tid][i]
-                if L[u] != L[L[u]]
-                    L[u] = L[L[u]]
-                    flag = true
-                end
+        @threads for u in 1:V
+            if L[u] != L[L[u]]
+                L[u] = L[L[u]]
+                flag = true
             end
         end
     end
-end
-
-function reduce_vertex_set!(V::Vector{Vector{T}}, V_size::Vector{Int64}, L::Vector{T}) where T <: Integer
-    nthrds = nthreads()
-    V_new_size = zeros(Int64, nthrds)
-    @threads for _ in 1:nthrds
-        tid = threadid()
-        cnt = 0
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            if L[u] == u
-                cnt += 1
-                V[tid][cnt], V[tid][i] = V[tid][i], V[tid][cnt]
-            end
-        end
-        V_new_size[tid] = cnt
-    end
-    return V_new_size
 end
 
 function reduce_edge_set!(E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64}, L::Vector{T}) where T <: Integer
@@ -92,17 +69,14 @@ function reduce_edge_set!(E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64
     return E_new_size
 end
 
-function build_vertex_edge_set(g::SimpleGraph{T}) where T <: Integer
+function build_edge_set(g::SimpleGraph{T}) where T <: Integer
     nthrds = nthreads()
     fadjlist = g.fadjlist
     nvg = nv(g)
-    V = [T[] for _ in 1:nthrds]
     E = [SimpleEdge{T}[] for _ in 1:nthrds]
     nbrs_start = Vector{T}(undef, nvg)
     number_nbrs = zeros(T, nvg)
     @threads for u in vertices(g)
-        tid = threadid()
-        push!(V[tid], u)
         list_u = fadjlist[u]
         nbrs_start[u] = searchsortedfirst(list_u, u)
         number_nbrs[u] = length(list_u)-nbrs_start[u]+1
@@ -118,13 +92,14 @@ function build_vertex_edge_set(g::SimpleGraph{T}) where T <: Integer
             end
         end
     end
-    return V, E
+    return E
 end
 
 function connected_components(g::SimpleGraph{T}, ::PointerJumping) where T <: Integer
-    V, E = build_vertex_edge_set(g)
-    V_size, E_size = length.(V), length.(E)
+    V = nv(g)
+    E = build_edge_set(g)
+    E_size = length.(E)
     L = collect(vertices(g))
-    parallel_cc(V, V_size, E, E_size, L)
+    parallel_cc(V, E, E_size, L)
     return components(L)[1]
 end
