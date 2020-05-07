@@ -1,28 +1,40 @@
-struct RandomHook <: WeakConnectivityAlgorithm end
+struct PointerJumping <: WeakConnectivityAlgorithm end
 
-function parallel_cc(V::Vector{Vector{T}}, V_size::Vector{Int64},
-                        E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64},
-                            L::Vector{T}, C::BitVector, H::BitVector, N::Vector{T}) where T <: Integer
+function parallel_cc(V::Vector{Vector{T}}, V_size::Vector{Int64},E::Vector{Vector{SimpleEdge{T}}},
+                        E_size::Vector{Int64}, L::Vector{T}) where T <: Integer
     sum(E_size) == 0 && return
     nthrds = nthreads()
-    @threads for _ in 1:nthrds
-        tid = threadid()        
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            N[u] = zero(T)
-        end
-    end
+    l2h = zeros(Int64, nthrds)
+    h2l = zeros(Int64, nthrds)
     @threads for _ in 1:nthrds
         tid = threadid()
         for i in 1:E_size[tid]
             e = E[tid][i]
-            u = src(e); v = dst(e)
-            N[u] = v
-            N[v] = u
+            u, v = src(e), dst(e)
+            if u < v
+                l2h[tid] += 1
+            else
+                h2l[tid] += 1
+            end
         end
     end
-    random_hook!(V, V_size, L, C, H, N)
-    parallel_cc(V, reduce_vertex_set!(V, V_size, L), E, reduce_edge_set!(E, E_size, L), L, C, H, N)
+    n1 = sum(l2h)
+    n2 = sum(h2l)
+    @threads for _ in 1:nthrds
+        tid = threadid()
+        for i in 1:E_size[tid]
+            e = E[tid][i]
+            u, v = src(e), dst(e)
+            if (n1 >= n2 && u < v)
+                L[u] = v
+            elseif (n1 < n2 && u > v)
+                L[v] = u
+            end
+        end
+    end
+    V_new_size = reduce_vertex_set!(V, V_size, L)
+    E_new_size = reduce_edge_set!(E, E_size, L)
+    parallel_cc(V, V_new_size, E, E_new_size, L)
     find_roots!(V, V_size, L)
 end
 
@@ -37,58 +49,6 @@ function find_roots!(V::Vector{Vector{T}}, V_size::Vector{Int64}, L::Vector{T}) 
                 if L[u] != L[L[u]]
                     L[u] = L[L[u]]
                     flag = true
-                end
-            end
-        end
-    end
-end
-
-function random_hook!(V::Vector{Vector{T}}, V_size::Vector{Int64},
-                        L::Vector{T}, C::BitVector, H::BitVector, N::Vector{T}) where T <: Integer
-    nthrds = nthreads()
-    @threads for _ in 1:nthrds
-        tid = threadid()
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            C[u] = rand() > 0.5
-            H[u] = false
-        end
-    end
-    @threads for _ in 1:nthrds
-        tid = threadid()        
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            if N[u] != zero(T)
-                v = N[u]
-                if C[u] == false && C[v] == true
-                    L[u] = v
-                    H[u] = true
-                    H[v] = true                
-                end
-            end
-        end
-    end
-    @threads for _ in 1:nthrds
-        tid = threadid()        
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            if N[u] != zero(T)
-                if H[u] == true
-                    C[u] = true
-                else
-                    C[u] = !C[u]
-                end
-            end
-        end
-    end
-    @threads for _ in 1:nthrds
-        tid = threadid()        
-        for i in 1:V_size[tid]
-            u = V[tid][i]
-            if N[u] != zero(T)
-                v = N[u]
-                if C[u] == false && C[v] == true
-                    L[u] = L[v]
                 end
             end
         end
@@ -121,7 +81,7 @@ function reduce_edge_set!(E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64
         cnt = 0
         for i in 1:E_size[tid]
             e = E[tid][i]
-            u = src(e); v = dst(e)
+            u, v = src(e), dst(e)
             if L[u] != L[v]
                 cnt += 1
                 E[tid][cnt] = SimpleEdge{T}(L[u], L[v])
@@ -129,7 +89,7 @@ function reduce_edge_set!(E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64
         end
         E_new_size[tid] = cnt
     end
-    return E_new_size    
+    return E_new_size
 end
 
 function build_vertex_edge_set(g::SimpleGraph{T}) where T <: Integer
@@ -138,8 +98,8 @@ function build_vertex_edge_set(g::SimpleGraph{T}) where T <: Integer
     nvg = nv(g)
     V = [T[] for _ in 1:nthrds]
     E = [SimpleEdge{T}[] for _ in 1:nthrds]
-    nbrs_start = Vector{Int64}(undef, nvg)
-    number_nbrs = zeros(Int64, nvg)
+    nbrs_start = Vector{T}(undef, nvg)
+    number_nbrs = zeros(T, nvg)
     @threads for u in vertices(g)
         tid = threadid()
         push!(V[tid], u)
@@ -161,13 +121,10 @@ function build_vertex_edge_set(g::SimpleGraph{T}) where T <: Integer
     return V, E
 end
 
-function connected_components(g::SimpleGraph{T}, ::RandomHook; seed = 1) where T <: Integer
-    Random.seed!(seed)
+function connected_components(g::SimpleGraph{T}, ::PointerJumping) where T <: Integer
     V, E = build_vertex_edge_set(g)
+    V_size, E_size = length.(V), length.(E)
     L = collect(vertices(g))
-    N = Vector{T}(undef, nv(g))
-    C = falses(nv(g))
-    H = falses(nv(g))
-    parallel_cc(V, length.(V), E, length.(E), L, C, H, N)
+    parallel_cc(V, V_size, E, E_size, L)
     return components(L)[1]
 end

@@ -312,6 +312,6 @@ include("kosaraju.jl")
 include("neighborhood_dists.jl")
 include("tarjan.jl")
 include("unionmerge.jl")
-include("random_hook.jl")
+include("pointer_jumping.jl")
 
 end # module
