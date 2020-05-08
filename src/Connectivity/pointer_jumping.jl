@@ -9,8 +9,7 @@ based on parallel opportunistic pointer jumping
 should be used by the algorithm
 
 ### Performance
-Edge contraction can give better performance on very dense graphs but
-may also cause load imbalance
+Edge contraction can give better performance but may cause load imbalance
 
 ### References
 Connected-Components algorithms for Mesh-Connected Parallel Computers
