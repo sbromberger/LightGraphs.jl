@@ -11,7 +11,6 @@ using SimpleTraits
 import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
 using Base.Threads
 import LightGraphs.greedy_contiguous_partition
-using Random
 
 """
     abstract type ConnectivityAlgorithm
