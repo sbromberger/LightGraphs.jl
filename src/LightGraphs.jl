@@ -190,8 +190,7 @@ include("Degeneracy/Degeneracy.jl")
 include("Traversals/Traversals.jl")
 include("ShortestPaths/ShortestPaths.jl")  # requires Traversals
 include("Measurements/Measurements.jl") # requires ShortestPaths
-include("SimpleGraphs/SimpleGraphs.jl")
-include("Connectivity/Connectivity.jl")  # requires ShortestPaths, SimpleGraphs
+include("Connectivity/Connectivity.jl")  # requires ShortestPaths
 include("Transitivity/Transitivity.jl")
 include("Cycles/Cycles.jl")
 include("Domination/Domination.jl")
@@ -260,6 +259,7 @@ include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 
 include("Centrality/Centrality.jl")
+include("SimpleGraphs/SimpleGraphs.jl")
 include("deprecations.jl")
 using .LinAlg
 end # module

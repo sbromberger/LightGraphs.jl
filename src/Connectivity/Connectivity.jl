@@ -2,6 +2,7 @@ module Connectivity
 
 using LightGraphs
 using LightGraphs: is_graphical
+using LightGraphs.SimpleGraphsCore: SimpleDiGraph, SimpleGraph, SimpleEdge
 
 using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
@@ -9,8 +10,7 @@ using DataStructures: Queue, dequeue!, enqueue!, IntDisjointSets, find_root!, un
 using SimpleTraits
 import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
 using Base.Threads
-import LightGraphs.optimal_contiguous_partition
-import LightGraphs.SimpleGraphs: SimpleGraph, SimpleDiGraph, SimpleEdge
+import LightGraphs.greedy_contiguous_partition
 using Random
 
 """
