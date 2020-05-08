@@ -1,5 +1,5 @@
 """
-    struct PointerJumping <: WeakConnectivityAlgorithm 
+    struct PointerJumping <: WeakConnectivityAlgorithm
 
 A struct representing a [`WeakConnectivityAlgorithm`](@ref)
 based on parallel opportunistic pointer jumping
@@ -16,13 +16,13 @@ may also cause load imbalance
 Connected-Components algorithms for Mesh-Connected Parallel Computers
 Goddard, Kumar and Prins
 """
-struct PointerJumping <: WeakConnectivityAlgorithm 
+struct PointerJumping <: WeakConnectivityAlgorithm
     contract_edges::Bool
 end
 
 PointerJumping(; contract_edges = false) = PointerJumping(contract_edges)
 
-# pointer jumping without edge contraction 
+# pointer jumping without edge contraction
 function pj_without_ec(g::SimpleGraph{T}) where T <: Integer
     nthrds = nthreads()
     nvg = nv(g)
@@ -67,14 +67,14 @@ function pj_without_ec(g::SimpleGraph{T}) where T <: Integer
     return components(P)[1]
 end
 
-# pointer jumping with edge contraction 
+# pointer jumping with edge contraction
 function pj_ec(V::Int64, E::Vector{Vector{SimpleEdge{T}}}) where T <: Integer
     nthrds = nthreads()
     E_size = length.(E)
     P = collect(T, 1:V) # parent array
     P1 = Vector{T}(undef, V)
     oldP = Vector{T}(undef, V)
-	@threads for _ in 1:nthrds
+    @threads for _ in 1:nthrds
         tid = threadid()
         for i in 1:E_size[tid]
             e = E[tid][i]
@@ -83,38 +83,48 @@ function pj_ec(V::Int64, E::Vector{Vector{SimpleEdge{T}}}) where T <: Integer
         end
     end
     while sum(E_size) > 0
-    	@threads for u in 1:V
-		    oldP[u] = P[u]
+        @threads for u in 1:V
+            oldP[u] = P[u]
             P1[u] = P[u]
-    	end
+        end
         # opportunistic pointer jumping
-	    @threads for _ in 1:nthrds
-	        tid = threadid()
-	        for i in 1:E_size[tid]
-	            e = E[tid][i]
-	            u, v = src(e), dst(e)
-	            P1[u] = min(P1[u], P[v])
-	        end
-	    end
-	    @threads for u in 1:V
+        @threads for _ in 1:nthrds
+            tid = threadid()
+            for i in 1:E_size[tid]
+                e = E[tid][i]
+                u, v = src(e), dst(e)
+                P1[u] = min(P1[u], P[v])
+            end
+        end
+        @threads for u in 1:V
             P[u] = P1[u]
-    	end
+        end
         # tree hanging
-	    @threads for _ in 1:nthrds
-	        tid = threadid()
-	        for i in 1:E_size[tid]
-	            e = E[tid][i]
-	            u, v = src(e), dst(e)
-	            if oldP[v] == u
+        @threads for _ in 1:nthrds
+            tid = threadid()
+            for i in 1:E_size[tid]
+                e = E[tid][i]
+                u, v = src(e), dst(e)
+                if oldP[v] == u
                     P[u] = min(P1[u], P1[v])
                 end
-	        end
-	    end
+            end
+        end
         # normal pointer jumping
-	    @threads for u in 1:V
+        @threads for u in 1:V
             P[u] = P[P[u]]
-    	end
-    	E_size .= reduce_edge_set!(E, E_size, P)
+        end
+        E_size .= reduce_edge_set!(E, E_size, P)
+    end
+    flag = true
+    while flag
+        flag = false
+        @threads for u in 1:V
+            if P[u] != P[P[u]]
+                P[u] = P[P[u]]
+                flag = true
+            end
+        end
     end
     return components(P)[1]
 end
