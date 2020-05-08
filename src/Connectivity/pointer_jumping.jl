@@ -35,7 +35,9 @@ function pj_without_ec(g::SimpleGraph{T}) where T <: Integer
     end
     partitions = greedy_contiguous_partition(degree(g), nthrds)
     oldP = Vector{T}(undef, nvg)
-    while P != oldP
+    flag = true
+    while flag
+        flag = false
        # opportunistic pointer jumping
        @threads for u_set in partitions
             tid = threadid()
@@ -63,6 +65,12 @@ function pj_without_ec(g::SimpleGraph{T}) where T <: Integer
         @threads for u in vertices(g)
             P[u] = P[P[u]]
         end
+        @threads for u in vertices(g)
+            if oldP[u] != P[u]
+                flag = true
+                break
+            end
+        end
     end
     return components(P)[1]
 end
@@ -82,7 +90,9 @@ function pj_ec(V::Int64, E::Vector{Vector{SimpleEdge{T}}}) where T <: Integer
             P[u] = min(P[u], v)
         end
     end
-    while sum(E_size) > 0
+    flag = true
+    while flag
+        flag = false
         @threads for u in 1:V
             oldP[u] = P[u]
             P1[u] = P[u]
@@ -115,14 +125,10 @@ function pj_ec(V::Int64, E::Vector{Vector{SimpleEdge{T}}}) where T <: Integer
             P[u] = P[P[u]]
         end
         E_size .= reduce_edge_set!(E, E_size, P)
-    end
-    flag = true
-    while flag
-        flag = false
         @threads for u in 1:V
-            if P[u] != P[P[u]]
-                P[u] = P[P[u]]
+            if oldP[u] != P[u]
                 flag = true
+                break
             end
         end
     end
@@ -151,7 +157,7 @@ function reduce_edge_set!(E::Vector{Vector{SimpleEdge{T}}}, E_size::Vector{Int64
     return E_new_size
 end
 
-# attempt to partition edges into equal sets to assign to each thread 
+# attempt to partition edges into equal sets to assign to each thread
 function build_edge_set(g::SimpleGraph{T}) where T <: Integer
     nthrds = nthreads()
     nvg = nv(g)
