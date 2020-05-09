@@ -37,7 +37,7 @@ julia> core_number(g)
 """
 function core_number(g::AbstractGraph{T}) where T
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
-    n = nv(g)    
+    n = nv(g)
     deg = T.(degree(g)) # this will contain core number for each vertex of graph
     maxdeg = maximum(deg) # maximum degree of a vertex in graph
     bin = zeros(T, maxdeg+1) # used for bin-sort and storing starting positions of bins
@@ -48,7 +48,7 @@ function core_number(g::AbstractGraph{T}) where T
     for v = 1:n
         bin[deg[v]+1] += one(T)
     end
-    # from bin sizes determine starting positions of bins in array vert 
+    # from bin sizes determine starting positions of bins in array vert
     start = one(T)
     for d = zero(T):maxdeg
         num = bin[d+1]
@@ -72,7 +72,7 @@ function core_number(g::AbstractGraph{T}) where T
     for i = 1:n
         v = vert[i]
         # for each neighbor u of vertex v with higher degree we have to decrease its degree and move it for one bin to the left
-        for u in all_neighbors(g, v)
+        for u in outneighbors(g, v)
             if deg[u] > deg[v]
                 du = deg[u]
                 pu = pos[u]
@@ -88,6 +88,24 @@ function core_number(g::AbstractGraph{T}) where T
                 deg[u] -= one(T)
             end
         end
+        if is_directed(g)
+	        for u in inneighbors(g, v)
+	            if deg[u] > deg[v]
+	                du = deg[u]
+	                pu = pos[u]
+	                pw = bin[du+1]
+	                w = vert[pw]
+	                if u != w
+	                    pos[u] = pw
+	                    vert[pu] = w
+	                    pos[w] = pu
+	                    vert[pw] = u
+	                end
+	                bin[du+1] += one(T)
+	                deg[u] -= one(T)
+	            end
+	        end
+	    end
     end
 
     return deg
