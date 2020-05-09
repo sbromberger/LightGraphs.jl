@@ -58,7 +58,7 @@ function _process_level!(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int
     @threads for tid in 1:nthreads()
         while !isempty(buf[tid])
             v = popfirst!(buf[tid])
-            for u in all_neighbors(g, v)
+            for u in outneighbors(g, v)
                 if deg[u][] > level
                     a = atomic_sub!(deg[u], one(T))
                     if a == level+1
@@ -67,6 +67,20 @@ function _process_level!(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int
                     end
                     if a <= level
                         atomic_add!(deg[u], one(T))
+                    end
+                end
+            end
+            if is_directed(g)
+                for u in inneighbors(g, v)
+                    if deg[u][] > level
+                        a = atomic_sub!(deg[u], one(T))
+                        if a == level+1
+                            push!(buf[tid], u)
+                            buf_end[tid] += 1
+                        end
+                        if a <= level
+                            atomic_add!(deg[u], one(T))
+                        end
                     end
                 end
             end
@@ -95,9 +109,16 @@ function subgraph(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64, nvg
         newdeg[i] = Atomic{T}(deg[vmap[i]][])
     end
     @threads for s in vmap
-        for d in all_neighbors(g, s)
+        for d in outneighbors(g, s)
             if in_gsmall[d]
                 push!(g_small.fadjlist[newvid[s]], newvid[d])
+            end
+        end
+        if is_directed(g)
+            for d in inneighbors(g, s)
+                if in_gsmall[d]
+                    push!(g_small.fadjlist[newvid[s]], newvid[d])
+                end
             end
         end
     end
