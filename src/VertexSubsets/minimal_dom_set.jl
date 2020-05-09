@@ -1,23 +1,4 @@
-"""
-    struct MinimalDominatingSet <: DominatingSet
-
-A struct representing an algorithm to calculate the minimum [dominating set](https://en.wikipedia.org/wiki/Dominating_set)
-of a graph.
-
-### Optional Arguments
-- `rng<:AbstractRNG`: override default random number generator (`GLOBAL_RNG`).
-
-### Performance
-Runtime: ``\\mathcal{O}(|V|+|E|)``
-Memory: ``\\mathcal{O}(|V|)``
-"""
-struct MinimalDominatingSet{R<:AbstractRNG} <: DominatingSet
-    rng::R
-end
-MinimalDominatingSet(;rng=GLOBAL_RNG) = MinimalDominatingSet(rng)
-
-
-function dominating_set(g::AbstractGraph{T}, alg::MinimalDominatingSet) where {T<:Integer}
+function dominating_set(g::AbstractGraph{T}, alg::MinimalSubset) where {T<:Integer}
     nvg = nv(g)
     in_dom_set = trues(nvg)
     length_ds = Int(nvg)
