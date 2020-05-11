@@ -12,6 +12,7 @@ using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, tri
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random: AbstractRNG, GLOBAL_RNG, MersenneTwister, randperm, randsubseq!, seed!, shuffle, shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+using Distributed: @distributed
 import SparseArrays: blockdiag, sparse
 
 import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, intersect,

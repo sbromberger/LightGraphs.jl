@@ -1,3 +1,5 @@
+using LightGraphs.Generators
+const LGGEN=LightGraphs.Generators
 @testset "Utils" begin
     s = @inferred(LightGraphs.sample!([1:10;], 3))
     @test length(s) == 3
@@ -83,3 +85,40 @@ end
     @test is_graphical([2, 2, 2, 2])
 end
                        
+@testset "distributed_generate_reduce" begin
+
+    function make_vec(g::AbstractGraph{T}) where T<:Integer
+        return Vector{T}(undef, nv(g))
+    end
+
+    function comp_vec(x::Vector, y::Vector)
+        return length(x) < length(y)
+    end
+
+    g1 = SimpleGraph(LGGEN.Star(5))
+
+    for g in testgraphs(g1)
+
+        s = @inferred(LightGraphs.distributed_generate_reduce(g, make_vec, comp_vec, 5))
+        @test length(s) == 5
+    end
+end
+
+@testset "threaded_generate_reduce" begin
+
+    function make_vec(g::AbstractGraph{T}) where T<:Integer
+        return Vector{T}(undef, nv(g))
+    end
+
+    function comp_vec(x::Vector, y::Vector)
+        return length(x) < length(y)
+    end
+
+    g1 = SimpleGraph(LGGEN.Star(5))
+
+    for g in testgraphs(g1)
+
+        s = @inferred(LightGraphs.threaded_generate_reduce(g, make_vec, comp_vec, 5))
+        @test length(s) == 5
+    end
+end

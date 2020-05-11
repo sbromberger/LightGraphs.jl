@@ -1,3 +1,10 @@
+"""
+    struct MinimalSubset <: VertexSubset
+
+An alias for [`RandomSubset`](@ref).
+"""
+const MinimalSubset = RandomSubset
+
 function dominating_set(g::AbstractGraph{T}, alg::MinimalSubset) where {T<:Integer}
     nvg = nv(g)
     in_dom_set = trues(nvg)
