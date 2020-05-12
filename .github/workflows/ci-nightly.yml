@@ -20,4 +20,8 @@ jobs:
           version: nightly
           arch: x64
       - uses: julia-actions/julia-buildpkg@latest
-      - uses: julia-actions/julia-runtest@latest
+      # remove this after 2.0
+      - name: test package
+        run: julia --color=yes --check-bounds=yes --depwarn=no --project -e "using Pkg; Pkg.test(coverage=true)"
+      # uncomment after 2.0
+      # - uses: julia-actions/julia-runtest@latest

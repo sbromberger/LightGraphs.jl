@@ -20,6 +20,10 @@ jobs:
           version: ${{ matrix.julia-version }}
           arch: x64
       - uses: julia-actions/julia-buildpkg@latest
-      - uses: julia-actions/julia-runtest@latest
+      # remove this after 2.0
+      - name: test package
+        run: julia --color=yes --check-bounds=yes --depwarn=no --project -e "using Pkg; Pkg.test(coverage=true)"
+      # uncomment after 2.0
+      # - uses: julia-actions/julia-runtest@latest
       - uses: julia-actions/julia-uploadcodecov@latest
         if: ${{ matrix.julia-version == '1.4' && matrix.os =='ubuntu-latest' }}
