@@ -26,4 +26,4 @@ jobs:
       # uncomment after 2.0
       # - uses: julia-actions/julia-runtest@latest
       - uses: julia-actions/julia-uploadcodecov@latest
-        if: ${{ matrix.julia-version == '1.4' && matrix.os =='ubuntu-latest' }}
+        if: ${{ matrix.julia-version == '1' && matrix.os =='ubuntu-latest' }}
