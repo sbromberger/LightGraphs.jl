@@ -22,7 +22,7 @@ jobs:
       - uses: julia-actions/julia-buildpkg@latest
       # remove this after 2.0
       - name: test package
-        run: julia --color=yes --check-bounds=yes --depwarn=no --project -e "using Pkg; Pkg.test(coverage=true)"
+        run: julia -e 'using Pkg; Pkg.test(coverage=true, julia_args=["color=yes", "check-bounds=yes", "depwarn=no", "project"])'
       # uncomment after 2.0
       # - uses: julia-actions/julia-runtest@latest
       - uses: julia-actions/julia-uploadcodecov@latest
