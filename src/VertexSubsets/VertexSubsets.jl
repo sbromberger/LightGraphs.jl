@@ -12,41 +12,6 @@ An abstract type used to denote a subset of vertices computed from various algor
 abstract type VertexSubset end
 
 """
-    struct DegreeSubset <: VertexSubset
-
-A struct representing a degree-based greedy algorithm to calculate the vertex subset.
-"""
-struct DegreeSubset <: VertexSubset end
-
-"""
-    struct RandomSubset <: VertexSubset
-
-A struct representing an algorithm to calculate the minimum [dominating set](https://en.wikipedia.org/wiki/Dominating_set)
-of a graph.
-
-### Optional Arguments
-- `rng<:AbstractRNG`: override default random number generator (`GLOBAL_RNG`).
-"""
-struct RandomSubset{R<:AbstractRNG} <: VertexSubset
-    rng::R
-end
-RandomSubset(;rng=GLOBAL_RNG) = RandomSubset(rng)
-
-"""
-    struct MinimalSubset <: VertexSubset
-
-An alias for [`RandomSubset`](@ref).
-"""
-const MinimalSubset = RandomSubset
-
-"""
-    struct MaximalSubset <: VertexSubset
-
-An alias for [`RandomSubset`](@ref).
-"""
-const MaximalSubset = RandomSubset
-
-"""
     vertex_cover(g, alg::VertexSubset)
 
 Return the vertex cover of graph `g` using [`VertexCover`](@ref) algorithm `alg` as a vector
@@ -83,9 +48,18 @@ function indepndent_set end
 
 include("degree_vertex_cover.jl")
 include("random_vertex_cover.jl")
+include("parallel-random_vertex_cover.jl")
+include("threaded-random_vertex_cover.jl")
+
 include("degree_dom_set.jl")
 include("minimal_dom_set.jl")
+include("parallel-minimal_dom_set.jl")
+include("threaded-minimal_dom_set.jl")
+
 include("degree_ind_set.jl")
 include("maximal_ind_set.jl")
+include("parallel-maximal_ind_set.jl")
+include("threaded-maximal_ind_set.jl")
+
 
 end # module

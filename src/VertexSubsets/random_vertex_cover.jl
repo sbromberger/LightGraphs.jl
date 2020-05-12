@@ -1,3 +1,17 @@
+"""
+    struct RandomSubset <: VertexSubset
+
+A struct representing an algorithm to calculate the minimum [dominating set](https://en.wikipedia.org/wiki/Dominating_set)
+of a graph.
+
+### Optional Arguments
+- `rng<:AbstractRNG`: override default random number generator (`GLOBAL_RNG`).
+"""
+struct RandomSubset{R<:AbstractRNG} <: VertexSubset
+    rng::R
+end
+RandomSubset(;rng=GLOBAL_RNG) = RandomSubset(rng)
+
 function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomSubset
