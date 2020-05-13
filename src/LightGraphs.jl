@@ -195,6 +195,7 @@ include("Connectivity/Connectivity.jl")  # requires ShortestPaths
 include("Transitivity/Transitivity.jl")
 include("Cycles/Cycles.jl")
 include("VertexSubsets/VertexSubsets.jl")
+include("Structure/Structure.jl")
 
 include("deprecations13/degeneracy13.jl")
 include("deprecations13/traversals13/bfs.jl")

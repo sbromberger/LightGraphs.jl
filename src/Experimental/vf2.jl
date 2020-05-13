@@ -1,15 +1,5 @@
-"""
-    VF2
+Base.@deprecate_binding VF2 LightGraphs.Structure.VF2
 
-An empty concrete type used to dispatch to [`vf2`](@ref) isomorphism functions.
-"""
-struct VF2 <: IsomorphismAlgorithm end
-
-"""
-    VF2State{G, T}
-
-Structure that is internally used by vf2
-"""
 struct VF2State{G, T}
     g1::G
     g2::G
@@ -34,32 +24,11 @@ struct VF2State{G, T}
     end
 end
 
-"""
-    vf2(callback, g1, g2, problemtype; vertex_relation=nothing, edge_relation=nothing)
-
-Iterate over all isomorphism between the graphs `g1` (or subgraphs thereof) and `g2`.
-The problem that is solved depends on the value of `problemtype`:
-- IsomorphismProblem(): Only isomorphisms between the whole graph `g1` and `g2` are considered.
-- SubGraphIsomorphismProblem(): All isomorphism between subgraphs of `g1` and `g2` are considered.
-- InducedSubGraphIsomorphismProblem(): All isomorphism between vertex induced subgraphs of `g1` and `g2` are considered.
-
-Upon finding an isomorphism, the function `callback` is called with a vector `vmap` as an argument.
-`vmap` is a vector where `vmap[v] == u` means that vertex `v` in `g2` is mapped to vertex `u` in `g1`.
-If the algorithm should look for another isomorphism, then this function should return `true`.
-
-### Optional Arguments
-- `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
-    isomorphism only exists if this function returns `true` for all matched vertices.
-- `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
-    isomorphism only exists if this function returns `true` for all matched edges.
-
-### References
-Luigi P. Cordella, Pasquale Foggia, Carlo Sansone, Mario Vento
-“A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs”
-"""
 function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem;
              vertex_relation::Union{Nothing, Function}=nothing,
              edge_relation::Union{Nothing, Function}=nothing) where {G <: AbstractGraph}
+    Base.depwarn("`vf2` has been deprecated and will be removed in a future version of LightGraphs. Please refer to
+                  `LightGraphs.Structure` for equivalent functionality.", :vf2)
     if nv(g1) < nv(g2) || (problemtype == IsomorphismProblem() && nv(g1) != nv(g2))
         return
     end
@@ -70,11 +39,6 @@ function vf2(callback::Function, g1::G, g2::G, problemtype::GraphMorphismProblem
     return
 end
 
-"""
-    vf2check_feasibility(u, v, state, problemtype, vertex_relation, edge_relation)
-
-Check whether two vertices of G₁ and G₂ can be matched. Used by [`vf2match!`](@ref).
-"""
 function vf2check_feasibility(u, v, state::VF2State, problemtype,
                               vertex_relation::Union{Nothing, Function},
                               edge_relation::Union{Nothing, Function})
@@ -287,11 +251,6 @@ function vf2check_feasibility(u, v, state::VF2State, problemtype,
     return true
 end
 
-"""
-    vf2update_state!(state, u, v, depth)
-
-Update state before recursing. Helper function for [`vf2match!`](@ref).
-"""
 function vf2update_state!(state::VF2State, u, v, depth)
 @inbounds begin
      state.core_1[u] = v
@@ -319,11 +278,6 @@ function vf2update_state!(state::VF2State, u, v, depth)
 end
 end
 
-"""
-    vf2reset_state!(state, u, v, depth)
-
-Reset state after returning from recursion. Helper function for [`vf2match!`](@ref).
-"""
 function vf2reset_state!(state::VF2State, u, v, depth)
 @inbounds begin
     state.core_1[u] = 0
@@ -351,11 +305,6 @@ function vf2reset_state!(state::VF2State, u, v, depth)
 end
 end
 
-"""
-    vf2match!(state, depth, callback, problemtype, vertex_relation, edge_relation)
-
-Perform isomorphic subgraph matching. Called by [`vf2`](@ref).
-"""
 function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismProblem,
                    vertex_relation, edge_relation)
     n1 = Int(nv(state.g1))
@@ -440,107 +389,3 @@ function vf2match!(state, depth, callback::Function, problemtype::GraphMorphismP
     return true
 end
 
-
-function has_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Bool
-        result = false
-        callback(vmap) = (result = true; return false)
-        vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem();
-                       vertex_relation=vertex_relation, edge_relation=edge_relation)
-        return result
-end
-
-function has_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing,)::Bool
-    result = false
-    callback(vmap) = (result = true; return false)
-    vf2(callback, g1, g2, SubGraphIsomorphismProblem();
-        vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
-end
-
-function has_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                         vertex_relation::Union{Nothing, Function}=nothing,
-                         edge_relation::Union{Nothing, Function}=nothing)::Bool
-
-    !could_have_isomorph(g1, g2) && return false
-
-    result = false
-    callback(vmap) = (result = true; return false)
-    vf2(callback, g1, g2, IsomorphismProblem(),
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
-    return result
-end
-
-function count_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                   vertex_relation::Union{Nothing, Function}=nothing,
-                                   edge_relation::Union{Nothing, Function}=nothing)::Int
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, InducedSubGraphIsomorphismProblem(),
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation)
-    return result
-end
-
-function count_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                vertex_relation::Union{Nothing, Function}=nothing,
-                                edge_relation::Union{Nothing, Function}=nothing)::Int
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, SubGraphIsomorphismProblem(), vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
-end
-
-function count_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                        vertex_relation::Union{Nothing, Function}=nothing,
-                        edge_relation::Union{Nothing, Function}=nothing)::Int
-    !could_have_isomorph(g1, g2) && return 0
-    result = 0
-    callback(vmap) = (result += 1; return true)
-    vf2(callback, g1, g2, IsomorphismProblem(), vertex_relation=vertex_relation, edge_relation=edge_relation)
-    return result
-end
-
-function all_induced_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                                 vertex_relation::Union{Nothing, Function}=nothing,
-                                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-        make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, InducedSubGraphIsomorphismProblem(),
-                       vertex_relation=vertex_relation,
-                       edge_relation=edge_relation)
-    end
-end
-
-function all_subgraphisomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                              vertex_relation::Union{Nothing, Function}=nothing,
-                              edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1), eltype(g2)}}}
-
-    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, SubGraphIsomorphismProblem(),
-            vertex_relation=vertex_relation,
-            edge_relation=edge_relation)
-    end
-    return ch
-end
-
-function all_isomorph(g1::AbstractGraph, g2::AbstractGraph, alg::VF2;
-                 vertex_relation::Union{Nothing, Function}=nothing,
-                 edge_relation::Union{Nothing, Function}=nothing)::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    T = Vector{Tuple{eltype(g1), eltype(g2)}}
-    !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype=T)
-    make_callback(c) = vmap -> (put!(c, collect(zip(vmap,1:length(vmap)))), return true)
-    ch::Channel{T} = Channel(ctype=T) do c
-        vf2(make_callback(c), g1, g2, IsomorphismProblem(),
-            vertex_relation=vertex_relation,
-            edge_relation=edge_relation)
-    end
-    return ch
-end

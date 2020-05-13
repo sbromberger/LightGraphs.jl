@@ -39,7 +39,6 @@ tests = [
     "Measurements/runtests",
     "Transitivity/runtests",
     "Cycles/runtests",
-    "edit_distance",  # deprecations
     "Connectivity/runtests",
     "persistence13/persistence",
     "ShortestPaths/runtests",
@@ -47,6 +46,7 @@ tests = [
     "Coloring/runtests",
     "Community/runtests",
     "Centrality/runtests",
+    "Structure/runtests",
     "utils",
     "steinertree13/steiner_tree",
     "biconnectivity13/articulation",
@@ -55,7 +55,7 @@ tests = [
     "graphcut13/normalized_cut",
     "graphcut13/karger_min_cut",
     "VertexSubsets/runtests",
-    "experimental/experimental",
+    "deprecations13/experimental/experimental",
     "deprecations13/digraph13/transitivity",
     "deprecations13/cycles13/hawick-james",
     "deprecations13/cycles13/johnson",
@@ -102,7 +102,8 @@ tests = [
     "deprecations13/independentset13/degree_ind_set",
     "deprecations13/independentset13/maximal_ind_set",
     "deprecations13/vertexcover13/degree_vertex_cover",
-    "deprecations13/vertexcover13/random_vertex_cover"
+    "deprecations13/vertexcover13/random_vertex_cover",
+    "edit_distance",  # deprecations
 ]
 
 @testset "LightGraphs" begin
