@@ -3,6 +3,7 @@ module Structure
 using LightGraphs
 using LightGraphs.SimpleGraphsCore
 using DataStructures: PriorityQueue, enqueue!, dequeue!, peek
+using LinearAlgebra: norm
 
 # export description,
 #     #isomorphism
