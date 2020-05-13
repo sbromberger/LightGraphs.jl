@@ -104,8 +104,7 @@ perron(m::PunchedAdjacency) = m.perron
 A type that represents no action.
 
 ### Implementation Notes
-- The purpose of `Noop` is to help write more general code for the
-different scaled GraphMatrix types.
+- The purpose of `Noop` is to help write more general code for the different scaled GraphMatrix types.
 """
 struct Noop end
 
