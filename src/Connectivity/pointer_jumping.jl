@@ -33,7 +33,7 @@ function connected_components(g::SimpleGraph{T}, alg::PointerJumping) where T <:
             end
         end
         # tree hanging
-        for u in vertices(g)
+        @threads for u in vertices(g)
             v = oldP[u]
             if P[u] < P[v]
                 P[v] = P[u]
