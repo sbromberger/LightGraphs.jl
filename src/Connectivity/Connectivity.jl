@@ -2,7 +2,7 @@ module Connectivity
 
 using LightGraphs
 using LightGraphs: is_graphical
-using LightGraphs.SimpleGraphsCore: SimpleDiGraph, SimpleGraph, SimpleEdge
+using LightGraphs.SimpleGraphsCore: SimpleDiGraph, SimpleGraph
 
 using LightGraphs.ShortestPaths
 using LightGraphs.Traversals
