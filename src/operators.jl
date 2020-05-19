@@ -712,8 +712,8 @@ Unless overridden, this function does not preserve any metadata
 """
 egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}; dir=:out) where {T<:Integer, U<:Real} =
     g[neighborhood(g, v, d, distmx, dir=dir)]
-    egonet(g::AbstractGraph{T}, v::Integer, d::Integer; dir=:out) where {T<:Integer, U<:Real} =
-    g[neighborhood(g, v, d, dir=dir)]
+
+egonet(g::AbstractGraph{T}, v::Integer, d::Integer; dir=:out) where {T<:Integer} = g[neighborhood(g, v, d, dir=dir)]
 
 
 """
