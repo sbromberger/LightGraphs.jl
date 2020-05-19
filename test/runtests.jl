@@ -25,6 +25,10 @@ testdigraphs = testgraphs
 testlargegraphs(g) = is_directed(g) ? [g, SimpleDiGraph{UInt16}(g), SimpleDiGraph{Int32}(g)] : [g, SimpleGraph{UInt16}(g), SimpleGraph{Int32}(g)]
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
+# make sure we don't have any unbound type parameters
+# see https://discourse.julialang.org/t/unused-where-t-causes-a-function-to-become-very-slow/39727
+@test isempty(detect_unbound_args(LightGraphs))
+
 tests = [
     "SimpleGraphsCore/runtests",
     "SimpleGraphs/runtests",
