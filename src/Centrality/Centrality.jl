@@ -4,6 +4,7 @@ module Centrality
 using LightGraphs
 using LightGraphs: sample
 using LightGraphs.ShortestPaths
+using LightGraphs.Traversals
 using ArnoldiMethod: LM
 using LightGraphs.LinAlg: eigs
 using LinearAlgebra: I, norm

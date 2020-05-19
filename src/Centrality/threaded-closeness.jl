@@ -38,24 +38,22 @@ end
 ThreadedCloseness(;normalize=true) = ThreadedCloseness(normalize)
 
 # internal function so we don't have to duplicate a lot of code.
-function _threaded_closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedCloseness, use_distmx::Bool)::Vector{Float64}
+function _threaded_closeness_centrality(g::AbstractGraph, distmx, alg::ThreadedCloseness, use_dists::Bool)::Vector{Float64}
     n_v = Int(nv(g))
-    closeness = Vector{Float64}(undef, n_v)
+    closeness = zeros(Float64, n_v)  # we assume zeros throughout this loop; don't change this to undef
 
-    spalg = use_distmx ? ShortestPaths.Dijkstra() : ShortestPaths.BFS()
     Base.Threads.@threads for u in vertices(g)
-        if degree(g, u) == 0     # no need to do SP here
-            closeness[u] = 0.0
-        else
-            d = use_distmx ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, spalg)) :
-                             ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, spalg))
-            δ = filter(x -> x != typemax(x), d)
+        if degree(g, u) > 0  # no need to do SP on 0-degree vertices)
+            d = use_dists ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra())) :
+                            Traversals.distances(g, u, Traversals.BreadthFirst())
+
+            δ = filter(x -> x < typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
-            if σ > 0
+            @inbounds if σ > 0
                 closeness[u] = l / σ
                 if alg.normalize
-                    n = l * 1.0 / (n_v - 1)
+                    n = l / (n_v - 1)
                     closeness[u] *= n
                 end
             end
