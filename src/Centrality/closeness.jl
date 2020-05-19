@@ -39,16 +39,13 @@ Closeness(;normalize=true) = Closeness(normalize)
 
 function _closeness_centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Closeness, use_dists::Bool)::Vector{Float64}
     n_v = nv(g)
-    closeness = zeros(Float64, n_v)
+    closeness = zeros(Float64, n_v)  # we assume zeros throughout this loop; don't change this to undef
 
-    spalg = use_dists ? ShortestPaths.Dijkstra() : ShortestPaths.BFS()
-    for u in vertices(g)
-        if degree(g, u) == 0     # no need to do Dijkstra here
-            closeness[u] = 0.0
-        else
-            d = use_dists ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, spalg)) :
-                            ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, spalg))
-            δ = filter(x -> x != typemax(x), d)
+    @inbounds for u in vertices(g)
+        if degree(g, u) > 0  # no need to do SP on 0-degree vertices)
+            d = use_dists ? ShortestPaths.distances(ShortestPaths.shortest_paths(g, u, distmx, ShortestPaths.Dijkstra())) :
+                            Traversals.distances(g, u, Traversals.BreadthFirst())
+            δ = filter(x -> x < typemax(x), d)
             σ = sum(δ)
             l = length(δ) - 1
             if σ > 0
