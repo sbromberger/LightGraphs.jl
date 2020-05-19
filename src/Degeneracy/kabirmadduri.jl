@@ -95,7 +95,7 @@ end
 # Also increases locality in memory access pattern because of the smaller size
 function subgraph(g::AbstractGraph{T}, deg::Vector{Atomic{T}}, level::Int64, nvg_small::Int64) where T
     g_small = SimpleGraph{T}(nvg_small)
-    in_gsmall = falses(nv(g))
+    in_gsmall = zeros(Bool, nv(g))
     @threads for v in 1:nv(g)
         if deg[v][] >= level
             in_gsmall[v] = true
