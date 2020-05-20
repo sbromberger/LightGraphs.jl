@@ -5,13 +5,13 @@ A struct representing a [`WeakConnectivityAlgorithm`](@ref)
 based on parallel opportunistic pointer jumping
 
 ### References
-Connected-Components algorithms for Mesh-Connected Parallel Computers
-Goddard, Kumar and Prins
+- Connected-Components algorithms for Mesh-Connected Parallel Computers
+Goddard, Kumar and Prins.
+http://cse.unl.edu/~goddard/Papers/Journals/dimacs.pdf
 """
 struct PointerJumping <: WeakConnectivityAlgorithm end
 
 function connected_components(g::SimpleGraph{T}, alg::PointerJumping) where T <: Integer
-    nthrds = nthreads()
     nvg = nv(g)
     P = collect(vertices(g))    # parent array
     @threads for u in vertices(g)
@@ -19,12 +19,11 @@ function connected_components(g::SimpleGraph{T}, alg::PointerJumping) where T <:
             P[u] = min(u, first(outneighbors(g, u)))
         end
     end
-    partitions = greedy_contiguous_partition(degree(g), nthrds)
+    partitions = greedy_contiguous_partition(degree(g), nthreads())
     oldP = Vector{T}(undef, nvg)
     while oldP != P
         # opportunistic pointer jumping
         @threads for u_set in partitions
-            tid = threadid()
             for u in u_set
                 oldP[u] = P[u]
                 for v in outneighbors(g, u)

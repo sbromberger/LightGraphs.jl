@@ -30,6 +30,7 @@
     @testset "multi-threaded connected components" begin
         @testset "$g" for g in testgraphs(gx)
             cc = @inferred(LC.connected_components(g, LC.PointerJumping()))
+            @test cc == LC.connected_components(g)
             @test cc[1] == [1, 2, 3, 4]
             @test cc[2] == [5, 6, 7]
             @test cc[3] == [8, 9, 10]
