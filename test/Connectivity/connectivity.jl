@@ -37,6 +37,11 @@
             @test cc[4] == [11]
             @test cc[5] == [12]
         end
+        g3 = SimpleGraph(7, 3)
+        @testset "$g" for g in testgraphs(g3)
+            cc = @inferred(LC.connected_components(g, LC.PointerJumping()))
+            @test cc == LC.connected_components(g)
+        end
     end
 
     @testset "neighborhood / neighborhood_dists" begin
