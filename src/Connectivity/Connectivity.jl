@@ -9,6 +9,8 @@ using LightGraphs.Traversals
 using DataStructures: Queue, dequeue!, enqueue!, IntDisjointSets, find_root!, union!
 using SimpleTraits
 import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
+using Base.Threads
+using LightGraphs: greedy_contiguous_partition
 
 """
     abstract type ConnectivityAlgorithm
@@ -309,5 +311,6 @@ include("kosaraju.jl")
 include("neighborhood_dists.jl")
 include("tarjan.jl")
 include("unionmerge.jl")
+include("threaded_pointer_jumping.jl")
 
 end # module
