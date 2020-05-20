@@ -1,5 +1,5 @@
 """
-    struct PointerJumping <: WeakConnectivityAlgorithm
+    struct ThreadedPointerJumping <: WeakConnectivityAlgorithm
 
 A struct representing a [`WeakConnectivityAlgorithm`](@ref)
 based on parallel opportunistic pointer jumping
@@ -9,9 +9,9 @@ based on parallel opportunistic pointer jumping
 Goddard, Kumar and Prins.
 http://cse.unl.edu/~goddard/Papers/Journals/dimacs.pdf
 """
-struct PointerJumping <: WeakConnectivityAlgorithm end
+struct ThreadedPointerJumping <: WeakConnectivityAlgorithm end
 
-function connected_components(g::SimpleGraph{T}, alg::PointerJumping) where T <: Integer
+function connected_components(g::AbstractGraph{T}, alg::ThreadedPointerJumping) where T <: Integer
     nvg = nv(g)
     P = collect(vertices(g))    # parent array
     @threads for u in vertices(g)

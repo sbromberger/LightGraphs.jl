@@ -29,7 +29,7 @@
 
     @testset "multi-threaded connected components" begin
         @testset "$g" for g in testgraphs(gx)
-            cc = @inferred(LC.connected_components(g, LC.PointerJumping()))
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
             @test cc == LC.connected_components(g)
             @test cc[1] == [1, 2, 3, 4]
             @test cc[2] == [5, 6, 7]
@@ -39,7 +39,7 @@
         end
         g3 = SimpleGraph(7, 3)
         @testset "$g" for g in testgraphs(g3)
-            cc = @inferred(LC.connected_components(g, LC.PointerJumping()))
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
             @test cc == LC.connected_components(g)
         end
     end
