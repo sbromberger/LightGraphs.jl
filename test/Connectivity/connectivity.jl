@@ -27,6 +27,23 @@
         end
     end # basic connectivity testset
 
+    @testset "multi-threaded connected components" begin
+        @testset "$g" for g in testgraphs(gx)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc == LC.connected_components(g)
+            @test cc[1] == [1, 2, 3, 4]
+            @test cc[2] == [5, 6, 7]
+            @test cc[3] == [8, 9, 10]
+            @test cc[4] == [11]
+            @test cc[5] == [12]
+        end
+        g3 = SimpleGraph(7, 3)
+        @testset "$g" for g in testgraphs(g3)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc == LC.connected_components(g)
+        end
+    end
+
     @testset "neighborhood / neighborhood_dists" begin
         g10dists = ones(10, 10)
         g10dists[1,2] = 10.0
