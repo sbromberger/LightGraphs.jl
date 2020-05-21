@@ -33,7 +33,7 @@ It is also possible to pass in a matrix of weights for weighted Katz centrality.
 
 ### Optional Parameters
 - `α::Real=0.3`: the Katz centrality attenuation factor.
-- `normalize=true`: If true, normalize the betweenness values by scaling the values by `norm`.
+- `normalize=true`: If true, normalize the centrality values by scaling the values by `norm`.
 
 """
 struct Katz{T<:Real} <: CentralityMeasure
