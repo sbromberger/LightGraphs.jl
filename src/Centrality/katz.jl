@@ -29,22 +29,31 @@ A struct describing an algorithm to calculate the [Katz centrality](https://en.w
 of the graph `g` optionally parameterized by `α`. Return a vector representing
 the centrality calculated for each node in `g`.
 
+It is also possible to pass in a matrix of weights for weighted Katz centrality.
+
 ### Optional Parameters
 - `α::Real=0.3`: the Katz centrality attenuation factor.
+- `normalize=true`: If true, normalize the centrality values by scaling the values by `norm`.
 
 """
 struct Katz{T<:Real} <: CentralityMeasure
     α::T
+    normalize::Bool
 end
 
-Katz(; α::Real=0.3) = Katz(α)
+Katz(; α::Real=0.3, normalize::Bool=true) = Katz(α, normalize)
 
-function centrality(g::AbstractGraph, alg::Katz)
+function _katz_centrality(g::AbstractGraph, A::AbstractMatrix, α::Real, normalize::Bool)
     nvg = nv(g)
     v = ones(Float64, nvg)
     spI = sparse(one(Float64) * I, nvg, nvg)
-    A = adjacency_matrix(g, Bool; dir=:in)
-    v = (spI - alg.α * A) \ v
-    v /=  norm(v)
+    v = (spI - α * A) \ v
+    if normalize
+        v ./=  norm(v)
+    end
     return v
 end
+
+centrality(g::AbstractGraph, alg::Katz) = _katz_centrality(g, adjacency_matrix(g, Bool; dir=:in), alg.α, alg.normalize)
+centrality(g::AbstractGraph, distmx::AbstractMatrix, alg::Katz) = _katz_centrality(g, transpose(adjacency_matrix(g) .* distmx), alg.α, alg.normalize)
+
