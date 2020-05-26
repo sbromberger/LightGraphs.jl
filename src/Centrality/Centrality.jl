@@ -20,7 +20,7 @@ abstract type CentralityMeasure end
 struct ConvergenceError <: Exception
     m::String
 end
-Base.show(io::IO, e::ConvergenceError) = println(io, "ConvergenceError: $m")
+Base.show(io::IO, e::ConvergenceError) = println(io, "ConvergenceError: $(e.m)")
 
 """
     centrality(g[, distmx], alg)
@@ -41,6 +41,7 @@ include("distributed-closeness.jl")
 include("degree.jl")
 include("eigenvector.jl")
 include("katz.jl")
+include("linear-system-pagerank.jl")
 include("pagerank.jl")
 include("threaded-pagerank.jl")
 include("radiality.jl")
