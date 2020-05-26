@@ -14,6 +14,7 @@ centralitytests = [
 	"distributed-stress.jl",
 	"eigenvector.jl",
 	"katz.jl",
+	"linear-system-pagerank.jl",
 	"pagerank.jl",
 	"radiality.jl",
 	"stress.jl",
@@ -30,4 +31,3 @@ centralitytests = [
         include(tp)
     end
 end
-
