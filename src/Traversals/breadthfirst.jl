@@ -33,29 +33,42 @@ function traverse_graph!(
     sizehint!(cur_level, n)
     next_level = Vector{U}()
     sizehint!(next_level, n)
-    preinitfn!(state, visited) || return false
+    is_successful(preinitfn!(state, visited)) || return false
     @inbounds for s in ss
         us = U(s)
         visited[us] = true
         push!(cur_level, us)
-        initfn!(state, us) || return false
+        is_successful(initfn!(state, us)) || return false
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            previsitfn!(state, v) || return false
-            @inbounds @simd for i in alg.neighborfn(g, v)
-                visitfn!(state, v, i) || return false
+            is_successful(previsitfn!(state, v)) || return false
+            @inbounds for i in alg.neighborfn(g, v)
+                x = visitfn!(state, v, i)
+                x ==  VTERMINATE && return false # terminate bfs
+                x == VSKIP && continue  # skip to next neighbor
+                x == VFAIL && break # stop exploring curr vertex's neighbors
                 if !visited[i]
-                    newvisitfn!(state, v, i) || return false
+                    # newvisitfn! return values have same effect as visitfn! but only for
+                    # newly discovered vertices
+                    x = newvisitfn!(state, v, i)
+                    x ==  VTERMINATE && return false
+                    x == VSKIP && continue
+                    x == VFAIL && break
                     push!(next_level, i)
                     visited[i] = true
                 else
-                    revisitfn!(state, v, i) || return false
+                    # revisitfn! return values have same effect as visitfn! but only for
+                    # rediscovered vertices
+                    x = revisitfn!(state, v, i)
+                    x ==  VTERMINATE && return false
+                    x == VSKIP && continue
+                    x == VFAIL && break
                 end
             end
-            postvisitfn!(state, v) || return false
+            is_successful(postvisitfn!(state, v)) || return false
         end
-        postlevelfn!(state) || return false
+        is_successful(postlevelfn!(state)) || return false
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
         sort!(cur_level, alg=alg.sort_alg)

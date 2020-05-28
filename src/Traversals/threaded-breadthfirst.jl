@@ -59,12 +59,12 @@ function traverse_graph!(
     retval = Atomic{Bool}(true) # this is a shared atomic boolean for visit function checks.
     queue_explored_t = zeros(Bool, n_t)
 
-    preinitfn!(state, visited) || return false
+    is_successful(preinitfn!(state, visited)) || return false
     @inbounds for s in ss
         us = U(s)
         visited[s] = true
         # vert_level[s] = zero(U)
-        initfn!(state, us) || return false
+        is_successful(initfn!(state, us)) || return false
     end
     partition_sources!(cur_level_t, ss, queue_explored_t)
     is_cur_level_t_empty = isempty(ss)
@@ -96,7 +96,7 @@ function traverse_graph!(
                         cur_level[local_front] = zero(U)
                         local_front += one(U)
 
-                        if !previsitfn!(state, v, t) 
+                        if !is_successful(previsitfn!(state, v, thread_id))
                             atomic_and!(retval, false)
                             break
                         end
@@ -105,28 +105,41 @@ function traverse_graph!(
                         visited[v] || continue
                         # (visited[v] && vert_level[v] == n_level-one(U)) || continue
                         for i in alg.neighborfn(g, v)
-                            if !visitfn!(state, v, i, t)
+                            x = visitfn!(state, v, i, thread_id)
+                            if x ==  VTERMINATE # terminate bfs
                                 atomic_and!(retval, false)
                                 break
                             end
+                            x == VSKIP && continue  # skip to next neighbor
+                            x == VFAIL && break # stop exploring curr vertex's neighbors
                             # Data race, but first read on visited[i] always succeeds
                             if !visited[i]
-                                if !newvisitfn!(state, v, i, t)
+                                # newvisitfn! return values have same effect as visitfn! but only for
+                                # newly discovered vertices
+                                x = newvisitfn!(state, v, i, thread_id)
+                                if x ==  VTERMINATE
                                     atomic_and!(retval, false)
                                     break
                                 end
+                                x == VSKIP && continue
+                                x == VFAIL && break
                                 # vert_level[i] = n_level
                                 #Concurrent visited[i] = true always succeeds
                                 visited[i] = true
                                 push!(next_level, i)
                             else
-                                if !revisitfn!(state, v, i, t)
+                                # newvisitfn! return values have same effect as visitfn! but only for
+                                # rediscovered vertices
+                                x = revisitfn!(state, v, i, thread_id)
+                                if x ==  VTERMINATE
                                     atomic_and!(retval, false)
                                     break
                                 end
+                                x == VSKIP && continue
+                                x == VFAIL && break
                             end
                         end
-                        if !postvisitfn!(state, v, t)
+                        if !is_successful(postvisitfn!(state, v, thread_id))
                             atomic_and!(retval, false)
                             break
                         end
@@ -136,7 +149,7 @@ function traverse_graph!(
             end      
         end # @threads
         end #let
-        postlevelfn!(state) || return false
+        is_successful(postlevelfn!(state)) || return false
 
         is_cur_level_t_empty = true
         @inbounds for t in Base.OneTo(n_t)

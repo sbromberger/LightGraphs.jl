@@ -80,6 +80,25 @@ For better performance, use the `@inline` directive and make your functions bran
 abstract type TraversalState end
 
 """
+    VisitorReturnValue
+
+An enum representing the possible return values for visitor functions
+
+`VSUCCESS` corresponds to `true`
+`VSKIP` corresponds to `continue`
+`VFAIL` corresponds to `break`
+`VTERMINATE` corresponds to `return false`
+"""
+@enum VisitorReturnValue begin
+    VSUCCESS
+    VSKIP
+    VFAIL
+    VTERMINATE
+end
+
+is_successful(a::VisitorReturnValue) = a == VSUCCESS
+
+"""
     preinitfn!(state, visited)
 
 Modify [`TraversalState`](@ref) `state` after intiialization of the visited
@@ -87,7 +106,7 @@ bitvector; and return `true` if successful; `false` otherwise. `preinitfn!` will
 be called once. It is typically used to modify the `visited` bitvector before
 traversals begin.
 """
-preinitfn!(::TraversalState, visited) = true
+preinitfn!(::TraversalState, visited) = VSUCCESS
 """
     initfn!(state, u)
 
@@ -95,7 +114,7 @@ Modify [`TraversalState`](@ref) `state` on initialization of traversal
 with source vertices, and return `true` if successful; `false` otherwise.
 `initfn!` will be called once for each vertex passed to [`traverse_graph!`](@ref).
 """
-initfn!(::TraversalState, u) = true
+initfn!(::TraversalState, u) = VSUCCESS
 
 """
     previsitfn!(state, u)
@@ -105,7 +124,7 @@ Modify [`TraversalState`](@ref) `state` before examining neighbors of vertex `u`
 and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
 or the CPU ID will be passed in `t`.
 """
-previsitfn!(::TraversalState, u) = true
+previsitfn!(::TraversalState, u) = VSUCCESS
 previsitfn!(s::TraversalState, u, ::Integer) = previsitfn!(s, u)
 
 """
@@ -117,7 +136,7 @@ and return `true` if successful; `false` otherwise. For parallel algorithms, the
 or the CPU ID will be passed in `t`.
 
 """
-newvisitfn!(::TraversalState, u, v) = true
+newvisitfn!(::TraversalState, u, v) = VSUCCESS
 newvisitfn!(s::TraversalState, u, v, t::Integer) = newvisitfn!(s, u, v)
 
 """
@@ -130,7 +149,7 @@ or the CPU ID will be passed in `t`.
 
 Exactly one of [`newvisitfn!`](@ref) or `revisitfn!` will be executed for each edge traversal.
 """
-revisitfn!(::TraversalState, u, v) = true
+revisitfn!(::TraversalState, u, v) = VSUCCESS
 revisitfn!(s::TraversalState, u, v, t::Integer) = revisitfn!(s, u, v)
 
 """
@@ -143,7 +162,7 @@ per edge, depending on the traversal algorithm, for a function that operates on 
 only, use [`newvisitfn!`](@ref). For parallel algorithms, the thread ID or the CPU ID will be passed
 in `t`.
 """
-visitfn!(::TraversalState, u, v) = true
+visitfn!(::TraversalState, u, v) = VSUCCESS
 visitfn!(s::TraversalState, u, v, t::Integer) = visitfn!(s, u, v)
 
 """
@@ -154,7 +173,7 @@ Modify [`TraversalState`](@ref) `state` after having examined all neighbors of v
 and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID or the
 CPU ID will be passed in `t`.
 """
-postvisitfn!(::TraversalState, u) = true
+postvisitfn!(::TraversalState, u) = VSUCCESS
 postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
 
 """
@@ -163,7 +182,7 @@ postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
 Modify [`TraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm,
 and return `true` if successful; `false` otherwise.
 """
-postlevelfn!(::TraversalState) = true
+postlevelfn!(::TraversalState) = VSUCCESS
 
 ##############
 # functions common to both BreadthFirst and DepthFirst
@@ -182,14 +201,14 @@ end
 
 function initfn!(s::VisitState, u)
     push!(s.visited, u)
-    return true
+    return VSUCCESS
 end
 
 # note: since `newvisitfn!(s, u, v, t)` defaults to calling `newvisitfn!(s, u, v)`, this function
 # by default creates the necessary visitor functions for parallel traversals.
 function newvisitfn!(s::VisitState, u, v)
     push!(s.visited, v)
-    return true
+    return VSUCCESS
 end
 
 """
@@ -220,7 +239,7 @@ end
 # by default creates the necessary visitor functions for parallel traversals.
 function newvisitfn!(s::ParentState, u, v) 
     s.parents[v] = u
-    return true
+    return VSUCCESS
 end
 
 """
@@ -284,15 +303,15 @@ end
 
 function initfn!(s::DistanceState{T}, u) where T 
     s.distances[u] = zero(T)
-    return true
+    return VSUCCESS
 end
 function newvisitfn!(s::DistanceState, u, v) 
     s.distances[v] = s.n_level
-    return true
+    return VSUCCESS
 end
 function postlevelfn!(s::DistanceState{T}) where T
     s.n_level += one(T)
-    return true
+    return VSUCCESS
 end
 
 """
@@ -319,9 +338,13 @@ end
 function preinitfn!(s::PathState, visited)
     visited[s.exclude_vertices] .= true
     s.vertices_in_exclude = visited[s.u] | visited[s.v]
-    return !s.vertices_in_exclude
+    !s.vertices_in_exclude && return VSUCCESS
+    return VTERMINATE
 end
-newvisitfn!(s::PathState, u, v) = s.v != v 
+function newvisitfn!(s::PathState, u, v)
+    s.v != v && return VSUCCESS
+    return VTERMINATE
+end
 
 """
     has_path(g::AbstractGraph, u, v, alg; exclude_vertices=Vector())

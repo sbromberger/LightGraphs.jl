@@ -19,7 +19,7 @@ function traverse_graph!(
     visited = falses(n)
     S = Vector{Tuple{U, U}}()
     sizehint!(S, length(ss))
-    preinitfn!(state, visited) || return false
+    is_successful(preinitfn!(state, visited)) || return false
 
     @inbounds for s in ss
         us = U(s)
@@ -27,34 +27,64 @@ function traverse_graph!(
 
         visited[us] = true
         push!(S, (us, 1))
-        initfn!(state, us) || return false
+        is_successful(initfn!(state, us)) || return false
         ptr = one(U)
 
         while !isempty(S)
             v, _ = S[end]
-            previsitfn!(state, v) || return false
-
+            is_successful(previsitfn!(state, v)) || return false
             neighs=alg.neighborfn(g, v)
             @inbounds while ptr <= length(neighs)
                 i = neighs[ptr]
-                visitfn!(state, v, i) || return false
+                x = visitfn!(state, v, i)
+                x ==  VTERMINATE && return false # terminate dfs
+                if x == VSKIP # skip this neighbor
+                    ptr += 1
+                    continue
+                end
+                if x == VFAIL # stop exploring all neighbors
+                    ptr = length(neighs)+1
+                    break
+                end
                 if !visited[i]  # find the first unvisited neighbor
-                    newvisitfn!(state, v, i) || return false
+                    # newvisitfn! return values have same effect as visitfn! but only for
+                    # newly discovered vertices
+                    x = newvisitfn!(state, v, i)
+                    x ==  VTERMINATE && return false
+                    if x == VSKIP
+                        ptr += 1
+                        continue
+                    end
+                    if x == VFAIL
+                        ptr = length(neighs)+1
+                        break
+                    end
                     visited[i] = true
                     push!(S, (i, ptr+1))
                     break
                 else
-                    revisitfn!(state, v, i) || return false
+                    # revisitfn! return values have same effect as visitfn! but only for
+                    # rediscovered vertices
+                    x = revisitfn!(state, v, i)
+                    x ==  VTERMINATE && return false
+                    if x == VSKIP
+                        ptr += 1
+                        continue
+                    end
+                    if x == VFAIL
+                        ptr = length(neighs)+1
+                        break
+                    end
                 end
                 ptr += 1
             end
-            postvisitfn!(state, v) || return false
+            is_successful(postvisitfn!(state, v)) || return false
             # if ptr > length(neighs) then we have finished all children of the node,
             # and the next time we pop from the stack we will be in the parent of the current
             # node. We would like to continue from where we stoped, otherwise we have found
             # a new unvisited child, so we will make ptr = 1
             if ptr > length(neighs)
-                postlevelfn!(state) || return false
+                is_successful(postlevelfn!(state)) || return false
                 _, ptr =pop!(S)
             else
                 ptr = 1 # we will enter new node
@@ -75,14 +105,15 @@ end
 # @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
 function previsitfn!(s::TopoSortState{T}, u) where T
     s.w = 0
-    return true
+    return VSUCCESS
 end
 function visitfn!(s::TopoSortState{T}, u, v) where T
-    return s.vcolor[v] != one(T)
+    s.vcolor[v] != one(T) && return VSUCCESS
+    return VTERMINATE
 end
 function newvisitfn!(s::TopoSortState{T}, u, v) where T
     s.w = v
-    return true
+    return VSUCCESS
 end
 function postvisitfn!(s::TopoSortState{T}, u) where T
     if s.w != 0
@@ -91,7 +122,7 @@ function postvisitfn!(s::TopoSortState{T}, u) where T
         s.vcolor[u] = T(2)
         push!(s.verts, u)
     end
-    return true
+    return VSUCCESS
 end
 
 
@@ -123,14 +154,15 @@ end
 
 function previsitfn!(s::CycleState{T}, u) where T
     s.w = 0
-    return true
+    return VSUCCESS
 end
 function visitfn!(s::CycleState{T}, u, v) where T
-    return s.vcolor[v] != one(T)
+    s.vcolor[v] != one(T) && return VSUCCESS
+    return VTERMINATE
 end
 function newvisitfn!(s::CycleState{T}, u, v) where T
     s.w = v
-    return true
+    return VSUCCESS
 end
 function postvisitfn!(s::CycleState{T}, u) where T
     if s.w != 0
@@ -138,7 +170,7 @@ function postvisitfn!(s::CycleState{T}, u) where T
     else
         s.vcolor[u] = T(2)
     end
-    return true
+    return VSUCCESS
 end
 
 @traitfn function is_cyclic(g::AG::IsDirected, alg::TraversalAlgorithm=DepthFirst()) where {T, AG<:AbstractGraph{T}}

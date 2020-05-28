@@ -5,6 +5,7 @@ using SimpleTraits
 using LightGraphs.Connectivity: connected_components, condensation, StrongConnectivityAlgorithm, Tarjan
 using LightGraphs.Traversals: topological_sort, DepthFirst, TraversalState, traverse_graph!
 import LightGraphs.Traversals: initfn!, visitfn!
+using LightGraphs.Traversals: VSUCCESS, VTERMINATE
 
 """
 transitive_closure!(g, selflooped=false, alg=Tarjan())
@@ -180,12 +181,12 @@ function visitfn!(s::DiSpanTree, u, v)
         s.label[v] = s.head
         add_edge!(s.resultg, s.verts[u], s.verts[v])
     end
-    return true
+    return VSUCCESS
 end
 
 function initfn!(s::DiSpanTree, u)
     s.head = u
-    return true
+    return VSUCCESS
 end
 
 @traitfn function transitive_reduction(

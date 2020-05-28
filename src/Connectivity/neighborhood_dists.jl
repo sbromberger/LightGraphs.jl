@@ -5,19 +5,21 @@ mutable struct NeighborState{T, U} <: LightGraphs.Traversals.TraversalState
 end
 
 @inline function initfn!(state::NeighborState{T, U}, u) where {T, U}
-    state.maxdist < zero(U) && return false
+    state.maxdist < zero(U) && return VTERMINATE
     push!(state.vdists, (u, zero(T)))
-    return state.maxdist > zero(U)
+    state.maxdist > zero(U) && return VSUCCESS
+    return VTERMINATE
 end
 
 @inline function newvisitfn!(state::NeighborState, u, v)
     push!(state.vdists, (v, state.nlevel))
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(state::NeighborState{T, U}) where {T, U}
     state.nlevel += one(T)
-    return state.nlevel <= state.maxdist
+    state.nlevel <= state.maxdist && return VSUCCESS
+    return VTERMINATE
 end
 
 

@@ -51,6 +51,6 @@
         @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any eccentricity(g1)
         @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any eccentricity(g1)
         g2 = path_graph(2)
-        @test_logs eccentricity(g2)
+        @test_logs LightGraphs.Measurements.eccentricity(g2)
     end
 end

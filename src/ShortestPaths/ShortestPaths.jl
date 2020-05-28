@@ -7,6 +7,7 @@ using SparseArrays: sparse
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads
 using SharedArrays: SharedMatrix, sdata
+using LightGraphs.Traversals: VSUCCESS, VTERMINATE
 
 import Base: ==
 import LightGraphs.Traversals: initfn!, previsitfn!, visitfn!, newvisitfn!, revisitfn!, postvisitfn!, postlevelfn!
