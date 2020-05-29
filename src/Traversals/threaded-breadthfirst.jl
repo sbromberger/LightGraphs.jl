@@ -9,6 +9,21 @@ at a time (default `20`). For graphs with uniform degree, a larger value of
 `queue_segment_size` may improve performance.
 - `neighborfn::Function`: the function to use to compute the neighbors of a vertex (default [`outneighbors`](@ref)).
 
+### Visitor Function Usage
+- `preinitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `initfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
+              visited or not) of the vertex being explored
+              if `VTERMINATE`: terminate complete traversal
+              if `VSKIP`: skip neighbor and continue to the next one
+              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
+              if `VSUCCESS`: continue with normal execution
+- `newvisitfn!`: same as `visitfn!` but this function is only called for newly discovered neighbors
+- `revisitfn!`: same as `visitfn!` but this function is only called for re-discovered neighbors
+- `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `postlevelfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+
 ### References
 - [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
 Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).

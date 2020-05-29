@@ -6,6 +6,30 @@ const NOOPSort = NOOPSortAlg()
 
 sort!(x, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
 
+"""
+    BreadthFirst{F <: Function, T <: Base.Sort.Algorithm} <: TraversalAlgorithm
+
+Struct representing the BFS traversal algorithm.
+
+### Optional Arguments
+- `neighborfn::Function`: the function to use to compute the neighbors of a vertex (default [`outneighbors`](@ref)).
+- `sort_alg::Base.Sort.Algorithm`: the function to use to sort every level of BFS (default `QuickSort`).
+
+### Visitor Function Usage
+- `preinitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `initfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
+              visited or not) of the vertex being explored
+              if `VTERMINATE`: terminate complete traversal
+              if `VSKIP`: skip neighbor and continue to the next one
+              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
+              if `VSUCCESS`: continue with normal execution
+- `newvisitfn!`: same as `visitfn!` but for newly discovered neighbors
+- `revisitfn!`: same as `visitfn!` but for re-discovered neighbors
+- `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `postlevelfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+"""
 struct BreadthFirst{F<:Function, T<:Base.Sort.Algorithm} <: TraversalAlgorithm
     neighborfn::F
     sort_alg::T

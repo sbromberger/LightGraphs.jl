@@ -2,6 +2,29 @@ import Base.showerror
 struct CycleError <: Exception end
 Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
 
+"""
+    DepthFirst{F <: Function} <: TraversalAlgorithm
+
+Struct representing the DFS traversal algorithm.
+
+### Optional Arguments
+- `neighborfn::Function`: the function to use to compute the neighbors of a vertex (default [`outneighbors`](@ref)).
+
+### Visitor Function Usage
+- `preinitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `initfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
+              visited or not) of the vertex being explored
+              if `VTERMINATE`: terminate
+              if `VSKIP`: skip neighbor
+              if `VFAIL`: stop exploring neighbors 
+              if `VSUCCESS`: continue with normal execution
+- `newvisitfn!`: same as `visitfn!` but for newly discovered neighbors
+- `revisitfn!`: same as `visitfn!` but for re-discovered neighbors
+- `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+- `postlevelfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
+"""
 struct DepthFirst{F<:Function} <: TraversalAlgorithm
     neighborfn::F
 end
