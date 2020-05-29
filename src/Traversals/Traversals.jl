@@ -89,14 +89,14 @@ An enum representing the possible return values for visitor functions
 `VFAIL` corresponds to `break`
 `VTERMINATE` corresponds to `return false`
 """
-@enum VisitorReturnValue begin
+@enum VisitorReturnValue::UInt8 begin
     VSUCCESS
     VSKIP
     VFAIL
     VTERMINATE
 end
 
-is_successful(a::VisitorReturnValue) = a == VSUCCESS
+@inline is_successful(a::VisitorReturnValue) = a == VSUCCESS
 
 """
     preinitfn!(state, visited)
