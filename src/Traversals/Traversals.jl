@@ -53,6 +53,24 @@ traversal for the various traversal functions.
 abstract type DistributedTraversalAlgorithm <: ParallelTraversalAlgorithm end
 
 """
+    VisitorReturnValue
+
+An enum representing the possible return values for visitor functions
+
+`VSUCCESS` corresponds to `true`
+`VSKIP` corresponds to `continue`
+`VFAIL` corresponds to `break`
+`VTERMINATE` corresponds to `return`
+"""
+@enum VisitorReturnValue::UInt8 begin
+    VSUCCESS
+    VSKIP
+    VFAIL
+    VTERMINATE
+end
+@inline is_successful(a::VisitorReturnValue) = a == VSUCCESS
+
+"""
     abstract type TraversalState
 
 `TraversalState` is the abstract type used to hold mutable states
@@ -69,8 +87,7 @@ are listed in order of occurrence in the traversal:
 - [`postvisitfn!(<:TraversalState, u::Integer)`](@ref): runs after neighborhood discovery for vertex `u`.
 - [`postlevelfn!(<:TraversalState)`](@ref): runs after each traversal level.
 
-Each of these functions should return a boolean. If the return value of the function is `false`, the traversal will return the state
-immediately. Otherwise, the traversal will continue.
+Each of these functions should return a value of type [`VisitorReturnValue`](@ref).
 
 For [`ParallelTraversalState`], each `visit` function may receive an additional `t::Integer` argument that specifies either the
 thread ID (for [`ThreadedTraversalState`](@ref)) or the cpu ID (for [`DistributedTraversalState`](@ref)).
@@ -80,39 +97,20 @@ For better performance, use the `@inline` directive and make your functions bran
 abstract type TraversalState end
 
 """
-    VisitorReturnValue
-
-An enum representing the possible return values for visitor functions
-
-`VSUCCESS` corresponds to `true`
-`VSKIP` corresponds to `continue`
-`VFAIL` corresponds to `break`
-`VTERMINATE` corresponds to `return false`
-"""
-@enum VisitorReturnValue::UInt8 begin
-    VSUCCESS
-    VSKIP
-    VFAIL
-    VTERMINATE
-end
-
-@inline is_successful(a::VisitorReturnValue) = a == VSUCCESS
-
-"""
     preinitfn!(state, visited)
 
-Modify [`TraversalState`](@ref) `state` after intiialization of the visited
-bitvector; and return `true` if successful; `false` otherwise. `preinitfn!` will
-be called once. It is typically used to modify the `visited` bitvector before
-traversals begin.
+Modify [`TraversalState`](@ref) `state` after intiialization of the visited bitvector.
+Return a value of type [`VisitorReturnValue`](@ref). `preinitfn!` will be called only once.
+It is typically used to modify the `visited` bitvector before traversals begin.
 """
 preinitfn!(::TraversalState, visited) = VSUCCESS
+
 """
     initfn!(state, u)
 
-Modify [`TraversalState`](@ref) `state` on initialization of traversal
-with source vertices, and return `true` if successful; `false` otherwise.
-`initfn!` will be called once for each vertex passed to [`traverse_graph!`](@ref).
+Modify [`TraversalState`](@ref) `state` on initialization of traversal with source vertices.
+Return a value of type [`VisitorReturnValue`](@ref). `initfn!` will be called once for each
+vertex passed to [`traverse_graph!`](@ref).
 """
 initfn!(::TraversalState, u) = VSUCCESS
 
@@ -120,8 +118,8 @@ initfn!(::TraversalState, u) = VSUCCESS
     previsitfn!(state, u)
     previsitfn!(state, u, t)
 
-Modify [`TraversalState`](@ref) `state` before examining neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
+Modify [`TraversalState`](@ref) `state` before examining neighbors of vertex `u`.
+Return a value of type [`VisitorReturnValue`](@ref). For parallel algorithms, the thread ID
 or the CPU ID will be passed in `t`.
 """
 previsitfn!(::TraversalState, u) = VSUCCESS
@@ -131,10 +129,9 @@ previsitfn!(s::TraversalState, u, ::Integer) = previsitfn!(s, u)
     newvisitfn!(state, u, v)
     newvisitfn!(state, u, v, t)
 
-Modify [`TraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
+Modify [`TraversalState`](@ref) `state` when the first edge between `u` and `v` is encountered.
+Return a value of type [`VisitorReturnValue`](@ref). For parallel algorithms, the thread ID
 or the CPU ID will be passed in `t`.
-
 """
 newvisitfn!(::TraversalState, u, v) = VSUCCESS
 newvisitfn!(s::TraversalState, u, v, t::Integer) = newvisitfn!(s, u, v)
@@ -143,11 +140,10 @@ newvisitfn!(s::TraversalState, u, v, t::Integer) = newvisitfn!(s, u, v)
     revisitfn!(state, u, v)
     revisitfn!(state, u, v, t)
 
-Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is re-encountered,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID
-or the CPU ID will be passed in `t`.
-
-Exactly one of [`newvisitfn!`](@ref) or `revisitfn!` will be executed for each edge traversal.
+Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is re-encountered.
+Return a value of type [`VisitorReturnValue`](@ref). For parallel algorithms, the thread ID
+or the CPU ID will be passed in `t`. Exactly one of [`newvisitfn!`](@ref) or `revisitfn!`
+will be executed for each edge traversal.
 """
 revisitfn!(::TraversalState, u, v) = VSUCCESS
 revisitfn!(s::TraversalState, u, v, t::Integer) = revisitfn!(s, u, v)
@@ -156,11 +152,11 @@ revisitfn!(s::TraversalState, u, v, t::Integer) = revisitfn!(s, u, v)
     visitfn!(state, u, v)
     visitfn!(state, u, v, t)
 
-Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is encountered,
-and return `true` if successful; `false` otherwise. Note: `visitfn!` may be called multiple times
-per edge, depending on the traversal algorithm, for a function that operates on the first occurrence
-only, use [`newvisitfn!`](@ref). For parallel algorithms, the thread ID or the CPU ID will be passed
-in `t`.
+Modify [`TraversalState`](@ref) `state` when the edge between `u` and `v` is encountered.
+Return a value of type [`VisitorReturnValue`](@ref)
+Note: `visitfn!` may be called multiple times per edge, depending on the traversal algorithm,
+for a function that operates on the first occurrence only, use [`newvisitfn!`](@ref).
+For parallel algorithms, the thread ID or the CPU ID will be passed in `t`.
 """
 visitfn!(::TraversalState, u, v) = VSUCCESS
 visitfn!(s::TraversalState, u, v, t::Integer) = visitfn!(s, u, v)
@@ -169,9 +165,9 @@ visitfn!(s::TraversalState, u, v, t::Integer) = visitfn!(s, u, v)
     postvisitfn!(state, u)
     postvisitfn!(state, u, t)
 
-Modify [`TraversalState`](@ref) `state` after having examined all neighbors of vertex `u`,
-and return `true` if successful; `false` otherwise. For parallel algorithms, the thread ID or the
-CPU ID will be passed in `t`.
+Modify [`TraversalState`](@ref) `state` after having examined all neighbors of vertex `u`.
+Return a value of type [`VisitorReturnValue`](@ref). For parallel algorithms, the thread ID
+or the CPU ID will be passed in `t`.
 """
 postvisitfn!(::TraversalState, u) = VSUCCESS
 postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
@@ -179,8 +175,8 @@ postvisitfn!(s::TraversalState, u, t::Integer) = postvisitfn!(s, u)
 """
     postlevelfn!(state)
 
-Modify [`TraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm,
-and return `true` if successful; `false` otherwise.
+Modify [`TraversalState`](@ref) `state` before moving to the next vertex in the traversal algorithm.
+Return a value of type [`VisitorReturnValue`](@ref).
 """
 postlevelfn!(::TraversalState) = VSUCCESS
 
