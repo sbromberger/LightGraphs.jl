@@ -16,9 +16,10 @@ Struct representing the DFS traversal algorithm.
 - `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
 - `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
               visited or not) of the vertex being explored
-              if `VTERMINATE`: terminate
-              if `VSKIP`: skip neighbor
-              if `VFAIL`: stop exploring neighbors 
+              if `VTERMINATE`: terminate complete traversal
+              if `VSKIP`: skip neighbor and continue to the next one
+              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`,
+                          this will also result in execution of `postlevelfn!`.
               if `VSUCCESS`: continue with normal execution
 - `newvisitfn!`: same as `visitfn!` but for newly discovered neighbors
 - `revisitfn!`: same as `visitfn!` but for re-discovered neighbors
@@ -101,12 +102,17 @@ function traverse_graph!(
                 end
                 ptr += 1
             end
+            # In DFS postvisitfn! is performed after the first unvisited neighbor is discovered
+            # and pushed to the stack (for exploration in next iteration) or if all neighbors
+            # are already visited
             is_successful(postvisitfn!(state, v)) || return false
             # if ptr > length(neighs) then we have finished all children of the node,
             # and the next time we pop from the stack we will be in the parent of the current
             # node. We would like to continue from where we stoped, otherwise we have found
             # a new unvisited child, so we will make ptr = 1
             if ptr > length(neighs)
+                # In DFS postlevelfn! is performed when all neighbors of current vertex have
+                # been visited
                 is_successful(postlevelfn!(state)) || return false
                 _, ptr =pop!(S)
             else
