@@ -50,7 +50,6 @@
         add_edge!(gd, 5, 6)
         @testset "$g" for g in testgraphs(gd)
             cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
-            @test cc == LC.connected_components(g)
             @test cc[1] == [1, 2, 3, 4]
             @test cc[2] == [5, 6]
             @test cc == LC.connected_components(g, LC.UnionMerge())
