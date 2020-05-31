@@ -49,9 +49,11 @@ function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Intege
                 push!(state.biconnected_comps, st)
             end
 
-        elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, E(min(v, w), max(v, w)))
-            state.low[v] = state.depth[w]
+        elseif w != u
+            state.low[v] = min(state.low[v], state.depth[w])
+            if state.depth[v] > state.depth[w]
+                push!(state.stack, E(min(v, w), max(v, w)))
+            end
         end
     end
 end
