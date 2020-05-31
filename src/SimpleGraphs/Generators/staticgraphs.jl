@@ -270,6 +270,27 @@ function _binary_tree(k::T) where {T<:Integer}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
+function _binary_tree_digraph(k::T) where {T<:Integer}
+    k <= 0 && return SimpleDiGraph{T}(0)
+    k == 1 && return SimpleDiGraph{T}(1)
+    n = T(2^k - 1)
+
+    ne = Int(n - 1)
+    fadjlist = [Vector{T}() for _ = one(T):n]
+    badjlist = [Vector{T}() for _ = one(T):n]
+    @inbounds fadjlist[1] = T[2, 3]
+    @inbounds for i in 1:(k - 2)
+        @simd for j in (2^i):(2^(i + 1) - 1)
+            fadjlist[j] = T[2j, 2j + 1]
+            badjlist[j] = T[j ÷ 2]
+        end
+    end
+    @inbounds for j in 2^(k-1):n
+        badjlist[j] = T[j ÷ 2]
+    end
+    return SimpleDiGraph{T}(ne, fadjlist, badjlist)
+end
+
 function _double_binary_tree(k::Integer)
     gl = SimpleGraph(BinaryTree(k))
     gr = SimpleGraph(BinaryTree(k))
@@ -278,6 +299,13 @@ function _double_binary_tree(k::Integer)
     return g
 end
 
+function _double_binary_tree_digraph(k::Integer)
+    gl = SimpleDiGraph(BinaryTree(k))
+    gr = SimpleDiGraph(BinaryTree(k))
+    g = blockdiag(gl, gr)
+    add_edge!(g, 1, nv(gl) + 1)
+    return g
+end
 
 function _roach_graph(k::T) where {T<:Integer}
     dipole = SimpleGraph(Complete(T(2)))
@@ -457,4 +485,6 @@ SimpleDiGraph(gen::Star) = _star_digraph(gen.n)
 SimpleDiGraph(gen::Path) = _path_digraph(gen.n)
 SimpleDiGraph(gen::Cycle) = _cycle_digraph(gen.n)
 SimpleDiGraph(gen::Wheel) = _wheel_digraph(gen.n)
+SimpleDiGraph(gen::BinaryTree) = _binary_tree_digraph(gen.k)
+SimpleDiGraph(gen::DoubleBinaryTree) = _double_binary_tree_digraph(gen.k)
 SimpleDiGraph(gen::Circulant) = _circulant_digraph(gen.n, gen.cset)
