@@ -42,6 +42,18 @@
             cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
             @test cc == LC.connected_components(g)
         end
+        gd = SimpleDiGraph(6)
+        add_edge!(gd, 1, 2)
+        add_edge!(gd, 1, 3)
+        add_edge!(gd, 2, 3)
+        add_edge!(gd, 2, 4)
+        add_edge!(gd, 5, 6)
+        @testset "$g" for g in testgraphs(gd)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc[1] == [1, 2, 3, 4]
+            @test cc[2] == [5, 6]
+            @test cc == LC.connected_components(g, LC.UnionMerge())
+        end
     end
 
     @testset "neighborhood / neighborhood_dists" begin
