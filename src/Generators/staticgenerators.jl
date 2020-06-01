@@ -142,6 +142,9 @@ Grid(dims::Tuple; periodic=false) = Grid(collect(dims), periodic)
 A struct representing a generator for a complete [binary tree](https://en.wikipedia.org/wiki/Binary_tree)
 of depth `k`.
 
+For directed graphs, edges will point "downward", away from the root vertex. This yields the property
+that the source index of each edge will be less than the destination index of the edge.
+
 ### Required Fields
 - `k::Integer`: The depth of the binary tree
 """
@@ -159,6 +162,10 @@ end
     struct DoubleBinaryTree <: StaticGenerator
 
 A struct representing a generator for a complete double binary tree of depth `k`.
+
+For directed graphs, edges will point "downward", away from the root vertex, and a single
+edge will connect the first binary tree to the second binary tree. This yields the property
+that the source index of each edge will be less than the destination index of the edge.
 
 ### Required Fields
 - `k::Integer`: The depth of the double binary tree
