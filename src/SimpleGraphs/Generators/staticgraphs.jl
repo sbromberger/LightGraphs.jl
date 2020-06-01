@@ -258,9 +258,9 @@ function _binary_tree(k::T) where {T<:Integer}
     ne = Int(n - 1)
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = T[2, 3]
-    @inbounds for i in 1:(k - 2)
-        @simd for j in (2^i):(2^(i + 1) - 1)
-            fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]
+    @inbounds for i in 1:(k - 2)                    # for each level except the last one
+        @simd for j in (2^i):(2^(i + 1) - 1)        # for each node in that level
+            fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]      # create adjacencies to children and parent
         end
     end
     i = k - 1
@@ -279,14 +279,14 @@ function _binary_tree_digraph(k::T) where {T<:Integer}
     fadjlist = [Vector{T}() for _ = one(T):n]
     badjlist = [Vector{T}() for _ = one(T):n]
     @inbounds fadjlist[1] = T[2, 3]
-    @inbounds for i in 1:(k - 2)
-        @simd for j in (2^i):(2^(i + 1) - 1)
-            fadjlist[j] = T[2j, 2j + 1]
-            badjlist[j] = T[j ÷ 2]
+    @inbounds for i in 1:(k - 2)                    # for each level except the last one
+        @simd for j in (2^i):(2^(i + 1) - 1)        # for each node in that level
+            fadjlist[j] = T[2j, 2j + 1]             # create a forward adjacency to its two children
+            badjlist[j] = T[j ÷ 2]                  # create a backward adjacency to its parent
         end
     end
-    @inbounds for j in 2^(k-1):n
-        badjlist[j] = T[j ÷ 2]
+    @inbounds for j in 2^(k-1):n                    # for the last level
+        badjlist[j] = T[j ÷ 2]                      # create the backward adjacencies to the parents
     end
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
