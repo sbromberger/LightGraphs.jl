@@ -49,4 +49,17 @@
         @test bcc == a
         @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
     end
+
+    gx = Graph(4)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 2, 3)
+    add_edge!(gx, 3, 4)
+    add_edge!(gx, 1, 4)
+    add_edge!(gx, 2, 4)
+    a = [[Edge(2, 4), Edge(1, 4), Edge(3, 4), Edge(2, 3), Edge(1, 2)]]
+    for g in testgraphs(gx)
+        bcc = @inferred(biconnected_components(g))
+        @test bcc == a
+        @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
+    end
 end
