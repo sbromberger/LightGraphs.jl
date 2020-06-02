@@ -245,9 +245,7 @@ include("spanningtrees13/boruvka.jl")
 include("spanningtrees13/kruskal.jl")
 include("spanningtrees13/prim.jl")
 include("steinertree13/steiner_tree.jl")
-include("biconnectivity13/articulation.jl")
-include("biconnectivity13/biconnect.jl")
-include("biconnectivity13/bridge.jl")
+include("deprecations13/biconnectivity13.jl")
 include("graphcut13/normalized_cut.jl")
 include("graphcut13/karger_min_cut.jl")
 include("deprecations13/dominatingset13/degree_dom_set.jl")
@@ -261,6 +259,7 @@ include("Parallel/Parallel.jl")
 
 include("Centrality/Centrality.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
+include("Biconnectivity/Biconnectivity.jl")
 include("deprecations.jl")
 using .LinAlg
 end # module
