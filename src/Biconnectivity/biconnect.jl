@@ -8,7 +8,6 @@ mutable struct BiconnectState{T<:Integer} <: TraversalState
     nbr::Vector{T}
     stk::Vector{SimpleEdge{T}}
     comps::Vector{Vector{SimpleEdge{T}}}
-    i::Int64
 end
 
 function BiconnectState(n::T) where T <: Integer
@@ -18,7 +17,7 @@ function BiconnectState(n::T) where T <: Integer
     nbr = Vector{T}(undef, n)
     stk = Vector{SimpleEdge{T}}()
     comps = Vector{Vector{SimpleEdge{T}}}()
-    return BiconnectState(0, 1, 0, disc, low, prnt, nbr, stk, comps, 1)
+    return BiconnectState(0, 1, 0, disc, low, prnt, nbr, stk, comps)
 end
 
 function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
@@ -27,15 +26,17 @@ function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
         state.disc[u] = state.timer
         state.timer += 1
     else
-        state.low[u] = min(state.low[u], state.low[state.nbr[u]])
+        v = state.nbr[u]
+        state.low[u] = min(state.low[u], state.low[v])
         if (u == state.s && state.nchildren > 1) ||
-                    (state.prnt[u] != 0 && state.low[state.nbr[u]] >= state.disc[u])
-            push!(state.comps, Vector{SimpleEdge{T}}())
-            while src(state.stk[end]) != u || dst(state.stk[end]) != state.nbr[u]
-                push!(state.comps[state.i], pop!(state.stk))
+                    (state.prnt[u] != 0 && state.low[v] >= state.disc[u])
+            x = Vector{SimpleEdge{T}}()
+            e = SimpleEdge{T}(u, v)
+            while state.stk[end] != e
+                push!(x, pop!(state.stk))
             end
-            push!(state.comps[state.i], pop!(state.stk))
-            state.i += 1
+            push!(x, pop!(state.stk))
+            push!(state.comps, x)
         end
     end
     return true
@@ -99,11 +100,8 @@ function biconnected_components end
             state.timer = 1
             traverse_graph!(g, u, DepthFirst(), state)
             if !isempty(state.stk)
-                push!(state.comps, Vector{SimpleEdge{T}}())
-                while !isempty(state.stk)
-                    push!(state.comps[state.i], pop!(state.stk))
-                end
-                state.i += 1
+                push!(state.comps, copy(state.stk))
+                empty!(state.stk)
             end
         end
     end
