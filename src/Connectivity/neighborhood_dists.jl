@@ -7,9 +7,8 @@ end
 @inline function initfn!(state::NeighborState{T, U}, u) where {T, U}
     state.maxdist < zero(U) && return VTERMINATE
     push!(state.vdists, (u, zero(T)))
-    state.maxdist > zero(U) && return VSUCCESS
-    return VTERMINATE
-end
+    return state.maxdist > zero(U) ? VSUCCESS : VTERMINATE
+    end
 
 @inline function newvisitfn!(state::NeighborState, u, v)
     push!(state.vdists, (v, state.nlevel))
@@ -18,8 +17,7 @@ end
 
 @inline function postlevelfn!(state::NeighborState{T, U}) where {T, U}
     state.nlevel += one(T)
-    state.nlevel <= state.maxdist && return VSUCCESS
-    return VTERMINATE
+    return state.nlevel <= state.maxdist ? VSUCCESS : VTERMINATE
 end
 
 
