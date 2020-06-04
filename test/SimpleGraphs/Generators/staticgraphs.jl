@@ -197,12 +197,24 @@
         teststatic(SG.SimpleGraph, SGGEN.BinaryTree, 4, 15, 14)
         teststatic(SG.SimpleGraph, SGGEN.BinaryTree, 5, 31, 30)
         teststatic(SG.SimpleGraph, SGGEN.BinaryTree, Int16(5), 31, 30, elt=Int16)
+
+        teststatic(SG.SimpleDiGraph, SGGEN.BinaryTree, 2, 3, 2)
+        teststatic(SG.SimpleDiGraph, SGGEN.BinaryTree, 4, 15, 14)
+        teststatic(SG.SimpleDiGraph, SGGEN.BinaryTree, 5, 31, 30)
+        teststatic(SG.SimpleDiGraph, SGGEN.BinaryTree, Int16(5), 31, 30, elt=Int16)
+
         @test_throws OverflowError SGGEN.BinaryTree(Int8(8))
 
         teststatic(SG.SimpleGraph, SGGEN.DoubleBinaryTree, 2, 6, 5)
         teststatic(SG.SimpleGraph, SGGEN.DoubleBinaryTree, 4, 30, 29)
         teststatic(SG.SimpleGraph, SGGEN.DoubleBinaryTree, 5, 62, 61)
         teststatic(SG.SimpleGraph, SGGEN.DoubleBinaryTree, Int16(5), 62, 61, elt=Int16)
+
+        teststatic(SG.SimpleDiGraph, SGGEN.DoubleBinaryTree, 2, 6, 5)
+        teststatic(SG.SimpleDiGraph, SGGEN.DoubleBinaryTree, 4, 30, 29)
+        teststatic(SG.SimpleDiGraph, SGGEN.DoubleBinaryTree, 5, 62, 61)
+        teststatic(SG.SimpleDiGraph, SGGEN.DoubleBinaryTree, Int16(5), 62, 61, elt=Int16)
+
         @test_throws OverflowError SGGEN.DoubleBinaryTree(Int8(8))
     end
 

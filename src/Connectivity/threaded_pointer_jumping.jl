@@ -14,12 +14,18 @@ struct ThreadedPointerJumping <: WeakConnectivityAlgorithm end
 function connected_components(g::AbstractGraph{T}, alg::ThreadedPointerJumping) where T <: Integer
     nvg = nv(g)
     P = collect(vertices(g))    # parent array
+    is_dir = is_directed(g)
     @threads for u in vertices(g)
-        if degree(g, u) != 0
-            P[u] = min(u, first(outneighbors(g, u)))
+        if outdegree(g, u) != 0
+            P[u] = min(P[u], first(outneighbors(g, u)))
+        end
+        if is_dir
+            if indegree(g, u) != 0
+                P[u] = min(P[u], first(inneighbors(g, u)))
+            end
         end
     end
-    partitions = greedy_contiguous_partition(degree(g), nthreads())
+    partitions = greedy_contiguous_partition(outdegree(g), nthreads())
     oldP = Vector{T}(undef, nvg)
     while oldP != P
         # opportunistic pointer jumping
@@ -28,6 +34,9 @@ function connected_components(g::AbstractGraph{T}, alg::ThreadedPointerJumping) 
                 oldP[u] = P[u]
                 for v in outneighbors(g, u)
                     P[u] = P[min(P[u], P[v])]
+                    if is_dir
+                        P[v] = P[min(P[v], P[u])]
+                    end
                 end
             end
         end
