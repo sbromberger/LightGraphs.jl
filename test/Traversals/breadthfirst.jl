@@ -1,4 +1,4 @@
-import LightGraphs.Traversals: preinitfn!, TraversalState
+import LightGraphs.Traversals: preinitfn!, TraversalState, VTERMINATE
 @testset "BreadthFirst" begin
 
     g5 = SimpleDiGraph(4)
@@ -39,7 +39,7 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
     end
 
     @testset "distances" begin
-        LT.preinitfn!(::DummyState, u) = false
+        LT.preinitfn!(::DummyState, u) = VTERMINATE
 
         @testset "$g" for g in testgraphs(g6)
             @test @inferred(LT.distances(g, 2)) == @inferred(LT.distances(g, 2, LT.BreadthFirst(sort_alg=MergeSort))) == [1, 0, 2, 1, 2]

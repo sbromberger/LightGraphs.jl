@@ -89,8 +89,6 @@ const LMS = LightGraphs.Measurements
         g1 = SimpleGraph(2)
         @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
         @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1)
-        @test_logs (:warn, "Infinite path length detected for vertex 1: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
-        @test_logs (:warn, "Infinite path length detected for vertex 2: graph may not be connected") match_mode=:any LMS.eccentricity(g1, LMS.Threaded())
         g2 = SimpleGraph(SGGEN.Path(2))
         @test_logs LMS.eccentricity(g2)
         @test_logs LMS.eccentricity(g2, LMS.Threaded())

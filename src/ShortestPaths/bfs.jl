@@ -38,16 +38,16 @@ end
 
 @inline function initfn!(s::BFSSPState, u)
     s.dists[u] = 0
-    return true
+    return VSUCCESS
 end
 @inline function newvisitfn!(s::BFSSPState, u, v)
     s.dists[v] = s.n_level
     s.parents[v] = u
-    return true
+    return VSUCCESS
 end
 @inline function postlevelfn!(s::BFSSPState{U}) where U
     s.n_level += one(U)
-    return s.n_level <= s.maxdist
+    return s.n_level <= s.maxdist ? VSUCCESS : VTERMINATE
 end
 
 struct BFSResult{U<:Integer} <: ShortestPathResult
