@@ -21,10 +21,10 @@ Struct representing the BFS traversal algorithm.
 - `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
 - `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
               visited or not) of the vertex being explored
-              if `VTERMINATE`: terminate complete traversal
-              if `VSKIP`: skip neighbor and continue to the next one
-              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
-              if `VSUCCESS`: continue with normal execution
+              - if `VTERMINATE`: terminate complete traversal
+              - if `VSKIP`: skip neighbor and continue to the next one
+              - if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
+              - if `VSUCCESS`: continue with normal execution
 - `newvisitfn!`: same as `visitfn!` but for newly discovered neighbors
 - `revisitfn!`: same as `visitfn!` but for re-discovered neighbors
 - `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
@@ -69,14 +69,14 @@ function traverse_graph!(
             is_successful(previsitfn!(state, v)) || return false
             @inbounds for i in alg.neighborfn(g, v)
                 x = visitfn!(state, v, i)
-                x ==  VTERMINATE && return false # terminate bfs
+                x == VTERMINATE && return false # terminate bfs
                 x == VSKIP && continue  # skip to next neighbor
                 x == VFAIL && break # stop exploring curr vertex's neighbors
                 if !visited[i]
                     # newvisitfn! return values have same effect as visitfn! but only for
                     # newly discovered vertices
                     x = newvisitfn!(state, v, i)
-                    x ==  VTERMINATE && return false
+                    x == VTERMINATE && return false
                     x == VSKIP && continue
                     x == VFAIL && break
                     push!(next_level, i)
@@ -85,7 +85,7 @@ function traverse_graph!(
                     # revisitfn! return values have same effect as visitfn! but only for
                     # rediscovered vertices
                     x = revisitfn!(state, v, i)
-                    x ==  VTERMINATE && return false
+                    x == VTERMINATE && return false
                     x == VSKIP && continue
                     x == VFAIL && break
                 end

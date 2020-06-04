@@ -334,12 +334,10 @@ end
 function preinitfn!(s::PathState, visited)
     visited[s.exclude_vertices] .= true
     s.vertices_in_exclude = visited[s.u] | visited[s.v]
-    !s.vertices_in_exclude && return VSUCCESS
-    return VTERMINATE
+    return !s.vertices_in_exclude ? VSUCCESS : VTERMINATE
 end
 function newvisitfn!(s::PathState, u, v)
-    s.v != v && return VSUCCESS
-    return VTERMINATE
+    return s.v != v ? VSUCCESS : VTERMINATE
 end
 
 """

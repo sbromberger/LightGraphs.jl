@@ -16,11 +16,11 @@ Struct representing the DFS traversal algorithm.
 - `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
 - `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
               visited or not) of the vertex being explored
-              if `VTERMINATE`: terminate complete traversal
-              if `VSKIP`: skip neighbor and continue to the next one
-              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`,
+              - if `VTERMINATE`: terminate complete traversal
+              - if `VSKIP`: skip neighbor and continue to the next one
+              - if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`,
                           this will also result in execution of `postlevelfn!`.
-              if `VSUCCESS`: continue with normal execution
+              - if `VSUCCESS`: continue with normal execution
 - `newvisitfn!`: same as `visitfn!` but for newly discovered neighbors
 - `revisitfn!`: same as `visitfn!` but for re-discovered neighbors
 - `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
@@ -61,7 +61,7 @@ function traverse_graph!(
             @inbounds while ptr <= length(neighs)
                 i = neighs[ptr]
                 x = visitfn!(state, v, i)
-                x ==  VTERMINATE && return false # terminate dfs
+                x == VTERMINATE && return false # terminate dfs
                 if x == VSKIP # skip this neighbor
                     ptr += 1
                     continue
@@ -74,7 +74,7 @@ function traverse_graph!(
                     # newvisitfn! return values have same effect as visitfn! but only for
                     # newly discovered vertices
                     x = newvisitfn!(state, v, i)
-                    x ==  VTERMINATE && return false
+                    x == VTERMINATE && return false
                     if x == VSKIP
                         ptr += 1
                         continue
@@ -90,7 +90,7 @@ function traverse_graph!(
                     # revisitfn! return values have same effect as visitfn! but only for
                     # rediscovered vertices
                     x = revisitfn!(state, v, i)
-                    x ==  VTERMINATE && return false
+                    x == VTERMINATE && return false
                     if x == VSKIP
                         ptr += 1
                         continue

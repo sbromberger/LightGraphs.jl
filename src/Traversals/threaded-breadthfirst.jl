@@ -15,10 +15,10 @@ at a time (default `20`). For graphs with uniform degree, a larger value of
 - `previsitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
 - `visitfn!`: this function is called for every neighbor (irrespective of whether it is already
               visited or not) of the vertex being explored
-              if `VTERMINATE`: terminate complete traversal
-              if `VSKIP`: skip neighbor and continue to the next one
-              if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
-              if `VSUCCESS`: continue with normal execution
+              - if `VTERMINATE`: terminate complete traversal
+              - if `VSKIP`: skip neighbor and continue to the next one
+              - if `VFAIL`: stop exploring neighbors and go to `postvisitfn!`
+              - if `VSUCCESS`: continue with normal execution
 - `newvisitfn!`: same as `visitfn!` but this function is only called for newly discovered neighbors
 - `revisitfn!`: same as `visitfn!` but this function is only called for re-discovered neighbors
 - `postvisitfn!`: continue with normal execution if `VSUCCESS`, otherwise terminate
@@ -121,7 +121,7 @@ function traverse_graph!(
                         # (visited[v] && vert_level[v] == n_level-one(U)) || continue
                         for i in alg.neighborfn(g, v)
                             x = visitfn!(state, v, i, thread_id)
-                            if x ==  VTERMINATE # terminate bfs
+                            if x == VTERMINATE # terminate bfs
                                 atomic_and!(retval, false)
                                 break
                             end
@@ -132,7 +132,7 @@ function traverse_graph!(
                                 # newvisitfn! return values have same effect as visitfn! but only for
                                 # newly discovered vertices
                                 x = newvisitfn!(state, v, i, thread_id)
-                                if x ==  VTERMINATE
+                                if x == VTERMINATE
                                     atomic_and!(retval, false)
                                     break
                                 end
@@ -146,7 +146,7 @@ function traverse_graph!(
                                 # newvisitfn! return values have same effect as visitfn! but only for
                                 # rediscovered vertices
                                 x = revisitfn!(state, v, i, thread_id)
-                                if x ==  VTERMINATE
+                                if x == VTERMINATE
                                     atomic_and!(retval, false)
                                     break
                                 end
