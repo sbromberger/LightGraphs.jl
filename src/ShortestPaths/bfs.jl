@@ -47,8 +47,7 @@ end
 end
 @inline function postlevelfn!(s::BFSSPState{U}) where U
     s.n_level += one(U)
-    s.n_level <= s.maxdist && return VSUCCESS
-    return VTERMINATE
+    return s.n_level <= s.maxdist ? VSUCCESS : VTERMINATE
 end
 
 struct BFSResult{U<:Integer} <: ShortestPathResult
