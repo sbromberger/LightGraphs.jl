@@ -13,18 +13,18 @@ end
 
 @inline function initfn!(state::VisitedState, u)
     state.component_map[u] = state.current_component
-    return true
+    return VSUCCESS
 end
 
 @inline function newvisitfn!(state::VisitedState, u, v)
-    state.component_map[v] > 0 && return false
+    state.component_map[v] > 0 && return VTERMINATE
     state.component_map[v] = state.component_map[u]
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(state::VisitedState)
     state.current_component += 1
-    return true
+    return VSUCCESS
 end
 
 function connected_components(g::AbstractGraph{T}, ::DFS) where {T}
