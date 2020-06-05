@@ -20,7 +20,7 @@ end
 @inline function initfn!(s::TarjanState, u)
     s.up = false
     push!(s.stack, u)
-    return true
+    return VSUCCESS
 end
 
 @inline function previsitfn!(s::TarjanState{T}, u) where T
@@ -34,19 +34,19 @@ end
         s.low[u] = s.order[u] = s.cnt
     end
     s.lastnode = u
-    return true
+    return VSUCCESS
 end
 
 @inline function newvisitfn!(s::TarjanState, u, v)
     s.up = false
-    return true
+    return VSUCCESS
 end
 
 @inline function visitfn!(s::TarjanState, u, v)
     if s.onstack[v]
         s.low[u] = min(s.order[v], s.low[u])
     end
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(s::TarjanState{T}) where T
@@ -62,7 +62,7 @@ end
         reverse!(new_component)
         push!(s.comps, new_component)
     end
-    return true
+    return VSUCCESS
 end
 
 @traitfn function connected_components(g::AG::IsDirected, ::Tarjan) where {T<:Integer, AG<:AbstractGraph{T}}
