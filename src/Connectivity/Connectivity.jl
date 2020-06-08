@@ -9,6 +9,7 @@ using LightGraphs.Traversals
 using DataStructures: Queue, dequeue!, enqueue!, IntDisjointSets, find_root!, union!
 using SimpleTraits
 import LightGraphs.Traversals: initfn!, newvisitfn!, postlevelfn!, visitfn!, previsitfn!
+using LightGraphs.Traversals: VSUCCESS, VTERMINATE
 using Base.Threads
 using LightGraphs: greedy_contiguous_partition
 

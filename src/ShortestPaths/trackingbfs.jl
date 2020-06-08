@@ -44,7 +44,7 @@ end
     s.dists[u] = 0
     s.pathcounts[u] = one(Float64)
     push!(s.closest_vertices, u)
-    return true
+    return VSUCCESS
 end
 
 @inline function newvisitfn!(s::TrackingBFSSPState, u, v) 
@@ -53,7 +53,7 @@ end
     push!(s.closest_vertices, v)
     s.pathcounts[v] = s.pathcounts[u]
     s.predecessors[v] = [u;]
-    return true
+    return VSUCCESS
 end
 
 function revisitfn!(s::TrackingBFSSPState, u, v)
@@ -61,12 +61,12 @@ function revisitfn!(s::TrackingBFSSPState, u, v)
         s.pathcounts[v] += s.pathcounts[u] 
         push!(s.predecessors[v], u)
     end
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(s::TrackingBFSSPState{U}) where {U}
     s.n_level += one(U)
-    return true
+    return VSUCCESS
 end
 
 
