@@ -71,7 +71,7 @@ julia> articulation(path_graph(5))
 function articulation end
 @traitfn function articulation(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     state = ArticulationState(T(nv(g)))
-    for u in vertices(g)
+    @inbounds for u in vertices(g)
         if state.disc[u] == 0
             state.s = u
             state.timer = 1
@@ -84,7 +84,7 @@ function articulation end
         end
     end
     articulation_points = Vector{T}()
-    for u in vertices(g)
+    @inbounds for u in vertices(g)
         if state.is_ap[u]
             push!(articulation_points, u)
         end

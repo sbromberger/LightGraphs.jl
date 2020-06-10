@@ -96,7 +96,7 @@ julia> biconnected_components(cycle_graph(5))
 function biconnected_components end
 @traitfn function biconnected_components(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     state = BiconnectState(T(nv(g)))
-    for u in vertices(g)
+    @inbounds for u in vertices(g)
         if state.disc[u] == 0
             state.s = u
             state.nchildren = 0

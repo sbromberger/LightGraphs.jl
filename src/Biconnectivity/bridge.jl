@@ -72,7 +72,7 @@ julia> bridges(path_graph(5))
 function bridges end
 @traitfn function bridges(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     state = BridgeState(T(nv(g)))
-    for u in vertices(g)
+    @inbounds for u in vertices(g)
         if state.disc[u] == 0
             state.timer = 1
             state.prnt[u] = 0
