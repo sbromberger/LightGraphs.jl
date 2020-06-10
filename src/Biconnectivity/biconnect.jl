@@ -31,14 +31,11 @@ function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
         if (u == state.s && state.nchildren > 1) ||
                     (state.prnt[u] != 0 && state.low[v] >= state.disc[u])
             x = Vector{SimpleEdge{T}}()
-            e = SimpleEdge(u, v)
+            e = SimpleEdge(min(u, v), max(u, v))
             while state.stk[end] != e
-                a = pop!(state.stk)
-                w, z = src(a), dst(a)
-                push!(x, SimpleEdge(min(w, z), max(w, z)))
+                push!(x, pop!(state.stk))
             end
-            pop!(state.stk)
-            push!(x, SimpleEdge(min(u, v), max(u, v)))
+            push!(x, pop!(state.stk))
             push!(state.comps, x)
         end
     end
@@ -48,7 +45,7 @@ end
 function newvisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
     state.prnt[v] = u
     state.nbr[u] = v
-    push!(state.stk, SimpleEdge{T}(u, v))
+    push!(state.stk, SimpleEdge(min(u, v), max(u, v)))
     if u == state.s
         state.nchildren += 1
     end
@@ -59,7 +56,7 @@ function revisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
     if v != state.prnt[u]
         state.low[u] = min(state.low[u], state.disc[v])
         if state.disc[v] < state.disc[u]
-            push!(state.stk, SimpleEdge{T}(u, v))
+            push!(state.stk, SimpleEdge(min(u, v), max(u, v)))
         end
     end
     return VSUCCESS
@@ -103,12 +100,7 @@ function biconnected_components end
             state.timer = 1
             traverse_graph!(g, u, DepthFirst(), state)
             if !isempty(state.stk)
-                x = Vector{SimpleEdge{T}}()
-                for i in length(state.stk):-1:1
-                    w, z = src(state.stk[i]), dst(state.stk[i])
-                    push!(x, SimpleEdge(min(w, z), max(w, z)))
-                end
-                push!(state.comps, x)
+                push!(state.comps, reverse(state.stk))
                 empty!(state.stk)
             end
         end
