@@ -28,7 +28,7 @@ function previsitfn!(state::ArticulationState{T}, u::T) where T <: Integer
             state.is_ap[u] = true
         end
     end
-    return true
+    return VSUCCESS
 end
 
 function newvisitfn!(state::ArticulationState{T}, u::T, v::T) where T <: Integer
@@ -37,14 +37,14 @@ function newvisitfn!(state::ArticulationState{T}, u::T, v::T) where T <: Integer
     if u == state.s
         state.nchildren += 1
     end
-    return true
+    return VSUCCESS
 end
 
 function revisitfn!(state::ArticulationState{T}, u::T, v::T) where T <: Integer
     if v != state.prnt[u]
         state.low[u] = min(state.low[u], state.disc[v])
     end
-    return true
+    return VSUCCESS
 end
 
 """

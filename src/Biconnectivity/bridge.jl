@@ -21,25 +21,26 @@ function previsitfn!(state::BridgeState{T}, u::T) where T <: Integer
         state.disc[u] = state.timer
         state.timer += 1
     else
-        state.low[u] = min(state.low[u], state.low[state.nbr[u]])
-        if state.low[state.nbr[u]] > state.disc[u]
-            push!(state.bridges, SimpleEdge{T}(u, state.nbr[u]))
+        v = state.nbr[u]
+        state.low[u] = min(state.low[u], state.low[v])
+        if state.low[v] > state.disc[u]
+            push!(state.bridges, Edge(min(u, v), max(u, v)))
         end
     end
-    return true
+    return VSUCCESS
 end
 
 function newvisitfn!(state::BridgeState{T}, u::T, v::T) where T <: Integer
     state.prnt[v] = u
     state.nbr[u] = v
-    return true
+    return VSUCCESS
 end
 
 function revisitfn!(state::BridgeState{T}, u::T, v::T) where T <: Integer
     if v != state.prnt[u]
         state.low[u] = min(state.low[u], state.disc[v])
     end
-    return true
+    return VSUCCESS
 end
 
 """

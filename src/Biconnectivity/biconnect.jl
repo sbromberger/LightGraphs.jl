@@ -17,7 +17,7 @@ function BiconnectState(n::T) where T <: Integer
     nbr = Vector{T}(undef, n)
     stk = Vector{SimpleEdge{T}}()
     comps = Vector{Vector{SimpleEdge{T}}}()
-    return BiconnectState(0, 1, 0, disc, low, prnt, nbr, stk, comps)
+    return BiconnectState(zero(T), one(T), zero(T), disc, low, prnt, nbr, stk, comps)
 end
 
 function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
@@ -31,15 +31,19 @@ function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
         if (u == state.s && state.nchildren > 1) ||
                     (state.prnt[u] != 0 && state.low[v] >= state.disc[u])
             x = Vector{SimpleEdge{T}}()
-            e = SimpleEdge{T}(u, v)
-            while state.stk[end] != e
-                push!(x, pop!(state.stk))
+            a = state.stk[end]
+            w, z = src(a), dst(a)
+            while w != u || z != v
+                push!(x, Edge(min(w, z), max(w, z)))
+                a = pop!(state.stk)
+                w, z = src(a), dst(a)
             end
-            push!(x, pop!(state.stk))
+            push!(x, Edge(min(w, z), max(w, z)))
+            pop!(state.stk)
             push!(state.comps, x)
         end
     end
-    return true
+    return VSUCCESS
 end
 
 function newvisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
@@ -49,7 +53,7 @@ function newvisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
     if u == state.s
         state.nchildren += 1
     end
-    return true
+    return VSUCCESS
 end
 
 function revisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
@@ -59,7 +63,7 @@ function revisitfn!(state::BiconnectState{T}, u::T, v::T) where T <: Integer
             push!(state.stk, SimpleEdge{T}(u, v))
         end
     end
-    return true
+    return VSUCCESS
 end
 
 
@@ -100,7 +104,7 @@ function biconnected_components end
             state.timer = 1
             traverse_graph!(g, u, DepthFirst(), state)
             if !isempty(state.stk)
-                push!(state.comps, copy(state.stk))
+                push!(state.comps, reverse(state.stk))
                 empty!(state.stk)
             end
         end
