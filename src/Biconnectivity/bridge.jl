@@ -24,7 +24,7 @@ function previsitfn!(state::BridgeState{T}, u::T) where T <: Integer
         v = state.nbr[u]
         state.low[u] = min(state.low[u], state.low[v])
         if state.low[v] > state.disc[u]
-            push!(state.bridges, Edge(min(u, v), max(u, v)))
+            push!(state.bridges, SimpleEdge(min(u, v), max(u, v)))
         end
     end
     return VSUCCESS

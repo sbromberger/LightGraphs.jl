@@ -31,15 +31,14 @@ function previsitfn!(state::BiconnectState{T}, u::T) where T <: Integer
         if (u == state.s && state.nchildren > 1) ||
                     (state.prnt[u] != 0 && state.low[v] >= state.disc[u])
             x = Vector{SimpleEdge{T}}()
-            a = state.stk[end]
-            w, z = src(a), dst(a)
-            while w != u || z != v
-                push!(x, Edge(min(w, z), max(w, z)))
+            e = SimpleEdge(u, v)
+            while state.stk[end] != e
                 a = pop!(state.stk)
                 w, z = src(a), dst(a)
+                push!(x, SimpleEdge(min(w, z), max(w, z)))
             end
-            push!(x, Edge(min(w, z), max(w, z)))
             pop!(state.stk)
+            push!(x, SimpleEdge(min(u, v), max(u, v)))
             push!(state.comps, x)
         end
     end
