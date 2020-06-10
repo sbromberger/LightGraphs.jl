@@ -103,7 +103,12 @@ function biconnected_components end
             state.timer = 1
             traverse_graph!(g, u, DepthFirst(), state)
             if !isempty(state.stk)
-                push!(state.comps, reverse(state.stk))
+                x = Vector{SimpleEdge{T}}()
+                for i in length(state.stk):-1:1
+                    w, z = src(state.stk[i]), dst(state.stk[i])
+                    push!(x, SimpleEdge(min(w, z), max(w, z)))
+                end
+                push!(state.comps, x)
                 empty!(state.stk)
             end
         end
