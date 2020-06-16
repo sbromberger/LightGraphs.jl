@@ -1,13 +1,6 @@
-"""
-    struct MaximalSubset <: VertexSubset
-
-An alias for [`RandomSubset`](@ref).
-"""
-const MaximalSubset = RandomSubset
-
 function independent_set(
     g::AbstractGraph{T},
-    alg::MaximalSubset
+    alg::RandomSubset
     ) where T <: Integer
 
     nvg = nv(g)

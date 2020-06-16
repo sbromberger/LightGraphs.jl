@@ -1,6 +1,4 @@
-using LightGraphs.VertexSubsets
-export RandomVertexCover
-struct RandomVertexCover end
+Base.@deprecate_binding RandomVertexCover LightGraphs.VertexSubsets.RandomSubset
 
 function vertex_cover(
     g::AbstractGraph{T},

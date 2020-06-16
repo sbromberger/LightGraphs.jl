@@ -7,15 +7,14 @@ const vstestdir = dirname(@__FILE__)
 vstests = [
   "degree_dom_set.jl",
   "degree_vertex_cover.jl",
-  "minimal_dom_set.jl",
-  "parallel-maximal_ind_set.jl",
-  "parallel-minimal_dom_set.jl",
-  "parallel-random_vertex_cover.jl",
+  "random_dom_set.jl",
   "random_vertex_cover.jl",
-  "threaded-maximal_ind_set.jl",
-  "threaded-minimal_dom_set.jl",
-  "threaded-random_vertex_cover.jl",
-
+  "distributed-random_ind_set.jl",
+  "distributed-random_dom_set.jl",
+  "distributed-random_vertex_cover.jl",
+  "threaded-random_ind_set.jl",
+  "threaded-random_dom_set.jl",
+  "threaded-random_vertex_cover.jl"
 ]
 
 @testset "LightGraphs.VertexSubsets" begin
