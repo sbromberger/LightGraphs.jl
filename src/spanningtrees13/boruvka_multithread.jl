@@ -29,14 +29,14 @@ function boruvka_mst_multithread(
     # mode will indicate the need for the -1 multiplication
     mode = minimize ? 1 : -1
 
-    joined_nodes = Dict{Int, Vector{Int}}(i=>[i] for i in 1:nvg)
-    MAX_WEIGHT = Inf
+    joined_nodes = Dict{U, Vector{U}}(i=>[i] for i in 1:nvg)
+    MAX_WEIGHT = typemax(T)
     cheapest = fill(MAX_WEIGHT, nvg+1)
-    cheapest_target_node = Vector{Int}(1:nvg+1)
-    cheapest_source_node = Vector{Int}(1:nvg+1)
+    cheapest_target_node = Vector{U}(1:nvg+1)
+    cheapest_source_node = Vector{U}(1:nvg+1)
     mst = Vector{edgetype(g)}()
     sizehint!(mst, nvg - 1)
-    weight = zero(Float64)
+    weight = zero(T)
     current_iteration = 1
     @debug "Max iteration:  $max_iter"
     while(current_iteration< max_iter && length(mst) < nvg - 1)
@@ -53,11 +53,11 @@ end
 
 function initcheapestarray(
         g::AG,
-        cheapest_source_node::Vector{Int},
-        cheapest_target_node::Vector{Int},
-        cheapest::Vector{Float64},
-        MAX_WEIGHT::Float64
-    ) where {U, AG<:AbstractGraph{U}}
+        cheapest_source_node::Vector{U},
+        cheapest_target_node::Vector{U},
+        cheapest::Vector{T},
+        MAX_WEIGHT::T
+    ) where {T<:Real, U, AG<:AbstractGraph{U}}
     for i in vertices(g)
         cheapest[i] = MAX_WEIGHT
         cheapest_target_node[i] = i
@@ -67,15 +67,15 @@ end
 
 function findcheapestvertex(
         g::AG,
-        cheapest_source_node::Vector{Int},
-        cheapest_target_node::Vector{Int},
-        cheapest::Vector{Float64},
-        joined_nodes::Dict{Int, Vector{Int}},
+        cheapest_source_node::Vector{U},
+        cheapest_target_node::Vector{U},
+        cheapest::Vector{T},
+        joined_nodes::Dict{U, Vector{U}},
         connected_vs::IntDisjointSets,
         distmx::AbstractMatrix{T}, 
         mode::Int
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
-    source_vertices = Vector{Int}(first.(keys(joined_nodes)))
+    source_vertices = Vector{U}(first.(keys(joined_nodes)))
     @threads for i in source_vertices
         # @debug "Accessing set $i with sources $joined_nodes[i]"
         for src in joined_nodes[i]
@@ -99,16 +99,16 @@ end
 
 function contractvertex(
         g::AG,
-        cheapest_source_node::Vector{Int},
-        cheapest_target_node::Vector{Int},
-        cheapest::Vector{Float64},
-        joined_nodes::Dict{Int, Vector{Int}},
+        cheapest_source_node::Vector{U},
+        cheapest_target_node::Vector{U},
+        cheapest::Vector{T},
+        joined_nodes::Dict{U, Vector{U}},
         connected_vs::IntDisjointSets,
         mst::Vector,
-        MAX_WEIGHT::Float64, 
+        MAX_WEIGHT::T, 
         mode::Int
-    )::Float64  where {U, AG<:AbstractGraph{U}}
-    res = zero(Float64)
+    )::T  where {T<:Real, U, AG<:AbstractGraph{U}}
+    res = zero(T)
     for i in vertices(g)
         if(cheapest[i]!= MAX_WEIGHT && !in_same_set(connected_vs, cheapest_source_node[i], cheapest_target_node[i]))
             # Connect the vertices, add mst to answer
