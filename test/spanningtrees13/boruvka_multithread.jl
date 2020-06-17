@@ -1,4 +1,4 @@
-@testset "Boruvka" begin
+@testset "Boruvka-Multithread" begin
 
 g4 = complete_graph(4)
 

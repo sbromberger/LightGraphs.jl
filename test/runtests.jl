@@ -59,6 +59,7 @@ tests = [
     "graphcut13/normalized_cut",
     "graphcut13/karger_min_cut",
     "spanningtrees13/boruvka",
+    "spanningtrees13/boruvka_multithread",
     "spanningtrees13/kruskal",
     "spanningtrees13/prim",
     "VertexSubsets/runtests",
