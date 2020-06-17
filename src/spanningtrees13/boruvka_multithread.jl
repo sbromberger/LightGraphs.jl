@@ -1,5 +1,4 @@
 using LightGraphs, SimpleWeightedGraphs
-using CPUTime
 using DelimitedFiles
 using Base
 using DataStructures
@@ -19,9 +18,9 @@ The algorithm requires that all edges have different weights to correctly genera
 """
 function boruvka_mst_multithread(
     g::AG, 
-    max_iter = round(Int64, log2(nv(g)) + 1), 
     distmx::AbstractMatrix{T} = weights(g);
-    minimize = true
+    minimize = true,
+    max_iter = round(Int64, log2(nv(g)) + 1)
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
     nvg = nv(g)
     connected_vs = IntDisjointSets(nvg)
@@ -39,7 +38,7 @@ function boruvka_mst_multithread(
     sizehint!(mst, nvg - 1)
     weight = zero(Float64)
     current_iteration = 1
-    println("Max iteration: ", max_iter)
+    @debug "Max iteration:  $max_iter"
     while(current_iteration< max_iter && length(mst) < nvg - 1)
         current_iteration += 1
         initcheapestarray(g, cheapest_source_node, cheapest_target_node, cheapest, MAX_WEIGHT)
@@ -78,11 +77,11 @@ function findcheapestvertex(
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
     source_vertices = Vector{Int}(first.(keys(joined_nodes)))
     @threads for i in source_vertices
-        # println("Accessing set ",i, " with sources ", joined_nodes[i])
+        # @debug "Accessing set $i with sources $joined_nodes[i]"
         for src in joined_nodes[i]
             for dst in neighbors(g, src)
                 weight = distmx[src, dst]
-                # println(src," -> ", dst, "=", weight, " ",  !in_same_set(connected_vs, src, dst) )
+                # @debug "$src -> $dst = $weight $(!in_same_set(connected_vs, src, dst))"
                 root_src = find_root(connected_vs, src)
                 root_dst = find_root(connected_vs, dst)
                 if root_src != root_dst
@@ -117,7 +116,7 @@ function contractvertex(
             set2 = find_root(connected_vs, cheapest_target_node[i])
             union!(connected_vs, cheapest_source_node[i], cheapest_target_node[i])
             res += cheapest[i] * mode
-            push!(mst, SimpleWeightedEdge(cheapest_source_node[i], cheapest_target_node[i], cheapest[i] * mode))
+            push!(mst, edgetype(g)(cheapest_source_node[i], cheapest_target_node[i]))
             # Merge Vertices that has been connected together
             merge_target = find_root(connected_vs, cheapest_source_node[i])
             if merge_target != set1
