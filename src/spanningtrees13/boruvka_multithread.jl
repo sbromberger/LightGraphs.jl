@@ -1,4 +1,4 @@
-using LightGraphs, SimpleWeightedGraphs
+using LightGraphs
 using DelimitedFiles
 using Base
 using DataStructures
