@@ -133,7 +133,7 @@ smallgraph,
 euclidean_graph,
 
 # deprecated minimum_spanning_trees
-boruvka_mst, kruskal_mst, prim_mst,
+boruvka_mst, boruvka_mst_multithread, kruskal_mst, prim_mst,
 
 #steinertree
 steiner_tree,
