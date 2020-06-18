@@ -1,9 +1,3 @@
-#=
-boruvka_multithread_lightgraph:
-- Julia version: 1.3.1
-- Author: hanstananda
-- Date: 2020-03-15
-=#
 using Distributed
 using SharedArrays
 
