@@ -133,7 +133,7 @@ smallgraph,
 euclidean_graph,
 
 # deprecated minimum_spanning_trees
-boruvka_mst, boruvka_mst_multithread, kruskal_mst, prim_mst,
+boruvka_mst, boruvka_mst_multithread, boruvka_mst_distributed, kruskal_mst, prim_mst,
 
 #steinertree
 steiner_tree,
@@ -243,6 +243,7 @@ include("deprecations13/community13/cliques.jl")
 include("deprecations13/community13/clique_percolation.jl")
 include("spanningtrees13/boruvka.jl")
 include("spanningtrees13/boruvka_multithread.jl")
+include("spanningtrees13/boruvka_distributed.jl")
 include("spanningtrees13/kruskal.jl")
 include("spanningtrees13/prim.jl")
 include("steinertree13/steiner_tree.jl")

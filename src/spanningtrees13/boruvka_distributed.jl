@@ -4,12 +4,12 @@ boruvka_multithread_lightgraph:
 - Author: hanstananda
 - Date: 2020-03-15
 =#
-@everywhere using LightGraphs, SimpleWeightedGraphs
-using DelimitedFiles
+using Distributed
+using SharedArrays
+
+@everywhere using LightGraphs
 @everywhere using Base
 @everywhere using DataStructures
-using SharedArrays
-using Distributed
 
 """
     boruvka_mst_distributed(g)
@@ -45,7 +45,7 @@ function boruvka_mst_distributed(
     sizehint!(mst, nvg - 1)
     weight = zero(T)
     current_iteration = 1
-    println("Max iteration: ", max_iter)
+    @debug "Max iteration:  $max_iter"
     while(current_iteration< max_iter && length(mst) < nvg - 1)
         current_iteration += 1
         initcheapestarray(g, cheapest_source_node, cheapest_target_node, cheapest, MAX_WEIGHT)
@@ -84,11 +84,11 @@ function findcheapestvertex(
     )  where {T<:Real, U, AG<:AbstractGraph{U}}
     source_vertices = Vector{U}(first.(keys(joined_nodes)))
     @sync @distributed for i in source_vertices
-        # println("Accessing set ",i, " with sources ", joined_nodes[i])
+        # @debug "Accessing set $i with sources $joined_nodes[i]"
         for src in joined_nodes[i]
             for dst in neighbors(g, src)
                 weight = distmx[src, dst]
-                # println(src," -> ", dst, "=", weight, " ",  !in_same_set(connected_vs, src, dst) )
+                # @debug "$src -> $dst = $weight $(!in_same_set(connected_vs, src, dst))"
                 root_src = find_root(connected_vs, src)
                 root_dst = find_root(connected_vs, dst)
                 if root_src != root_dst
@@ -123,7 +123,7 @@ function contractvertex(
             set2 = find_root(connected_vs, cheapest_target_node[i])
             union!(connected_vs, cheapest_source_node[i], cheapest_target_node[i])
             res += cheapest[i] * mode
-            push!(mst, SimpleWeightedEdge(cheapest_source_node[i], cheapest_target_node[i], cheapest[i] * mode))
+            push!(mst, edgetype(g)(cheapest_source_node[i], cheapest_target_node[i]))
             # Merge Vertices that has been connected together
             merge_target = find_root(connected_vs, cheapest_source_node[i])
             if merge_target != set1
