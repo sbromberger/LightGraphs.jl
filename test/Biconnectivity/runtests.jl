@@ -11,7 +11,7 @@ const biconntests = [
 ]
 
 @testset "LightGraphs.Biconnectivity" begin
-    for t in conntests
+    for t in biconntests
         tp = joinpath(biconntestdir, "$t")
         include(tp)
     end
