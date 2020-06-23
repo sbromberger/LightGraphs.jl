@@ -79,8 +79,10 @@ function articulation end
 
     articulation_points = Vector{T}()
 
-    for u in findall(is_articulation_pt)
-        push!(articulation_points, T(u))
+    for u in vertices(g)
+        if is_articulation_pt[u]
+            push!(articulation_points, u)
+        end
     end
 
     return articulation_points
