@@ -2,9 +2,9 @@ using LightGraphs.Biconnectivity
 
 const LBC = LightGraphs.Biconnectivity
 
-const conntestdir = dirname(@__FILE__)
+const biconntestdir = dirname(@__FILE__)
 
-const conntests = [
+const biconntests = [
     "articulation.jl",
     "biconnect.jl",
     "bridge.jl"
@@ -12,7 +12,7 @@ const conntests = [
 
 @testset "LightGraphs.Biconnectivity" begin
     for t in conntests
-        tp = joinpath(conntestdir, "$t")
+        tp = joinpath(biconntestdir, "$t")
         include(tp)
     end
 end
