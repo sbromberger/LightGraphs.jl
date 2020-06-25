@@ -15,7 +15,7 @@ Return total number of triangles in the undirected graph `g`.
         for v in neighbors(g, u)
             degv = degree(g, v)
             degu = degree(g, u)
-            # only add edge u => v in new graph only if degv > degu
+            # add edge u => v in pruned graph only if degv > degu
             # (or v > u for tie breaking)
             if degv > degu || (degv == degu && v > u)
                 push!(adjlist[u], v)
