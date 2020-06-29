@@ -77,5 +77,5 @@ function articulation end
         end
     end
 
-    return vertices(g)[is_articulation_point]
+    return vertices(g)[is_articulation_pt]
 end
