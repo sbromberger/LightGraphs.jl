@@ -14,7 +14,8 @@ vstests = [
   "distributed-random_vertex_cover.jl",
   "threaded-random_ind_set.jl",
   "threaded-random_dom_set.jl",
-  "threaded-random_vertex_cover.jl"
+  "threaded-random_vertex_cover.jl",
+  "luby_maximal_ind_set.jl"
 ]
 
 @testset "LightGraphs.VertexSubsets" begin
