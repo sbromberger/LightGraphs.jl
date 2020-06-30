@@ -19,9 +19,9 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
     nvg = nv(g)
     nthrds = nthreads()
     deg = degree(g)
-    V = collect(vertices(g))      # vertex set
-    inV = ones(Bool, nvg)         # used mark vertices present in vertex set
-    deleted = zeros(Bool, nvg)    # used to mark vertices deleted from vertex set
+    in_oldV = ones(Bool, nvg)     # used to mark vertices that were present in vertex set
+    V = filter(u -> !has_edge(g, u, u), vertices(g))    # vertex set
+    deleted = [!has_edge(g, u, u) for u in vertices(g)] # used to mark vertices deleted from vertex set
     V_new = Vector{T}()           # temp array for storing new vertex set after each iteration
     ind_set = Vector{T}()         # independent set
     in_ind_set = zeros(Bool, nvg) # used to mark vertices present in independent set
@@ -78,15 +78,15 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
         @threads for u in V_new
             for v in neighbors(g, u)
                 # check if neighbor was in the vertex set and now deleted
-                if inV[v] && deleted[v]
+                if in_oldV[v] && deleted[v]
                     deg[u] -= 1
                 end
             end
         end
-        # update inV  after degrees have been updated
+        # update in_oldV  after degrees have been updated
         @threads for u in V
             if deleted[u]
-                inV[u] = false
+                in_oldV[u] = false
             end
         end
         empty!(V)
