@@ -1,17 +1,34 @@
 """
-    triangle_count(g)
+    triangle_count(g, alg::TriangleCountAlgorithm)
 
-Return total number of triangles in the undirected graph `g`.
+Return total number of triangles in graph `g` using [`TriangleCountAlgorithm`](@ref)
+algorithm `alg`.
+"""
+function triangle_count end
+
+"""
+    abstract type TriangleCountAlgorithm
+
+An abstract type representing an algorithm for finding the total triangle count.
+"""
+abstract type TriangleCountAlgorithm end
+
+"""
+    struct DODG <: TriangleCountAlgorithm
+
+Struct representing an algorithm for finding triangle count in an undirected graph.
 
 ### References
 - [One Quadrillion Triangles Queried on One Million Processors](https://ieeexplore.ieee.org/document/8916243).
 """
-@traitfn function triangle_count(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+struct DODG <: TriangleCountAlgorithm end
+
+@traitfn function triangle_count(g::AG::(!IsDirected), ::DODG) where {T, AG<:AbstractGraph{T}}
     ntri = 0
     # create a degree-ordered directed graph where the original
     # undirected edges are directed from low-degree to high-degree
-    adjlist = [T[] for _ in vertices(g)]
-    for u in vertices(g)
+    adjlist = [Vector{T}() for _ in vertices(g)]
+    @inbounds for u in vertices(g)
         for v in neighbors(g, u)
             degv = degree(g, v)
             degu = degree(g, u)
@@ -22,7 +39,7 @@ Return total number of triangles in the undirected graph `g`.
             end
         end
     end
-    for u in vertices(g)
+    @inbounds for u in vertices(g)
         adju = adjlist[u]
         lenu = length(adju)
         # chose u as pivot and check all pairs of its neighbors
@@ -40,18 +57,19 @@ Return total number of triangles in the undirected graph `g`.
 end
 
 """
-    ThreadedTriangleCount
+    struct ThreadedDODG <: TriangleCountAlgorithm
 
-Struct representing a multithreaded algorithm for triangle count
+Struct representing the multithreaded version of [`DODG`](@ref) algorithm used
+to find triangle count in an undirected graph.
 """
-struct ThreadedTriangleCount end
+struct ThreadedDODG <: TriangleCountAlgorithm end
 
-@traitfn function triangle_count(g::AG::(!IsDirected), ::ThreadedTriangleCount) where {T, AG<:AbstractGraph{T}}
+@traitfn function triangle_count(g::AG::(!IsDirected), ::ThreadedDODG) where {T, AG<:AbstractGraph{T}}
     ntri = zeros(Int64, nthreads())
     adjlist = [T[] for _ in vertices(g)]
     partitions = optimal_contiguous_partition(degree(g), nthreads())
     @threads for u_set in partitions
-        for u in u_set
+        @inbounds for u in u_set
             for v in neighbors(g, u)
                 degv = degree(g, v)
                 degu = degree(g, u)
@@ -64,7 +82,7 @@ struct ThreadedTriangleCount end
     partitions = optimal_contiguous_partition(length.(adjlist), nthreads())
     @threads for u_set in partitions
         tid = threadid()
-        for u in u_set
+        @inbounds for u in u_set
             adju = adjlist[u]
             lenu = length(adju)
             for i = 1:lenu, j = i+1:lenu
