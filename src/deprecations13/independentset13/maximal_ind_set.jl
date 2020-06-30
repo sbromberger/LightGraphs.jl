@@ -1,4 +1,4 @@
-Base.@deprecate_binding MaximalIndependentSet LightGraphs.VertexSubsets.MaximalSubset
+Base.@deprecate_binding MaximalIndependentSet LightGraphs.VertexSubsets.RandomSubset
 
 function independent_set(
     g::AbstractGraph{T},
@@ -8,5 +8,5 @@ function independent_set(
 
     Base.depwarn("`independent_set` is deprecated. Equivalent functionality has been moved to `LightGraphs.VertexSubsets.independent_set`.", :independent_set)
     rng = LightGraphs.getRNG(seed)
-    LightGraphs.VertexSubsets.independent_set(g, LightGraphs.VertexSubsets.MaximalSubset(rng=rng))
+    LightGraphs.VertexSubsets.independent_set(g, LightGraphs.VertexSubsets.RandomSubset(rng=rng))
 end

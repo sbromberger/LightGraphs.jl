@@ -1,10 +1,3 @@
-"""
-    struct DegreeSubset <: VertexSubset
-
-A struct representing a degree-based greedy algorithm to calculate the vertex subset.
-"""
-struct DegreeSubset <: VertexSubset end
-
 function vertex_cover(g::AbstractGraph{T}, ::DegreeSubset) where {T <: Integer}
     nvg = nv(g)
     in_cover = falses(nvg)

@@ -1,6 +1,5 @@
-using LightGraphs.VertexSubsets
-export DegreeVertexCover
-struct DegreeVertexCover end
+Base.@deprecate_binding DegreeVertexCover LightGraphs.VertexSubsets.DegreeSubset
+
 function vertex_cover(
     g::AbstractGraph{T},
     alg::DegreeVertexCover
