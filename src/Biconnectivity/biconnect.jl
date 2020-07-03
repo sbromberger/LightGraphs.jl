@@ -35,7 +35,7 @@ function biconnected_components end
     track = Vector{SimpleEdge{T}}()
     bcc = Vector{Vector{SimpleEdge{T}}}()
 
-    for w in vertices(g)
+    @inbounds for w in vertices(g)
         disc[w] != 0 && continue
         children = 0
         push!(stk, (w, 0, 0))
