@@ -21,10 +21,10 @@
     for g in testgraphs(gint)
         brd = @inferred(LBC.bridges(g))
         ans = [
-            Edge(1, 2),
-            Edge(8, 9),
-            Edge(7, 8),
-            Edge(11, 12),
+            SimpleEdge(1, 2),
+            SimpleEdge(8, 9),
+            SimpleEdge(7, 8),
+            SimpleEdge(11, 12),
         ]
         @test brd == ans
     end
@@ -41,7 +41,7 @@
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
         @test @inferred(LBC.bridges(h)) == [
-            Edge(5, 6),
+            SimpleEdge(5, 6),
         ]
     end
 

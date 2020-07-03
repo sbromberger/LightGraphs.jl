@@ -1,4 +1,5 @@
 using LightGraphs.Biconnectivity
+using LightGraphs.SimpleGraphsCore: SimpleEdge
 
 const LBC = LightGraphs.Biconnectivity
 
