@@ -6,7 +6,7 @@ using LightGraphs.Connectivity
 using SimpleTraits
 using LightGraphs: getRNG, range_shuffle!
 using Base.Threads
-using LightGraphs: optimal_contiguous_partition
+using LightGraphs: optimal_contiguous_partition, insorted
 
 """
     abstract type ClusteringScope

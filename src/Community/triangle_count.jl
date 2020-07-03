@@ -24,17 +24,16 @@ Struct representing an algorithm for finding triangle count in an undirected gra
 struct DODG <: TriangleCountAlgorithm end
 
 @traitfn function triangle_count(g::AG::(!IsDirected), ::DODG) where {T, AG<:AbstractGraph{T}}
-    ntri = 0
+    ntri = UInt64(0)
+    deg = degree(g)
     # create a degree-ordered directed graph where the original
     # undirected edges are directed from low-degree to high-degree
     adjlist = [Vector{T}() for _ in vertices(g)]
     @inbounds for u in vertices(g)
         for v in neighbors(g, u)
-            degv = degree(g, v)
-            degu = degree(g, u)
             # add edge u => v in pruned graph only if degv > degu
             # (or v > u for tie breaking)
-            if degv > degu || (degv == degu && v > u)
+            if deg[v] > deg[u] || (deg[v] == deg[u] && v > u)
                 push!(adjlist[u], v)
             end
         end
@@ -43,13 +42,19 @@ struct DODG <: TriangleCountAlgorithm end
         adju = adjlist[u]
         lenu = length(adju)
         # chose u as pivot and check all pairs of its neighbors
-        for i = 1:lenu, j = i+1:lenu
+        for i = 1:lenu
             v = adju[i]
-            w = adju[j]
-            # for a pair of edges u => v & u => w, if there is an edge
-            # v => w in the original graph then we've found a triangle
-            if has_edge(g, v, w)
-                ntri += 1
+            for j = i+1:lenu
+                w = adju[j]
+                # for every pair of edges u => v, u => w in the pruned graph
+                # if an edge exists between v, w in the original graph we have found
+                # a triangle. we check this by searching in the pruned graph instead
+                # of the original graph to reduce search space
+                wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
+                if (wTov && insorted(v, adjlist[w])) ||
+                        (!wTov && insorted(w, adjlist[v]))
+                    ntri += 1
+                end
             end
         end
     end
@@ -65,15 +70,14 @@ to find triangle count in an undirected graph.
 struct ThreadedDODG <: TriangleCountAlgorithm end
 
 @traitfn function triangle_count(g::AG::(!IsDirected), ::ThreadedDODG) where {T, AG<:AbstractGraph{T}}
-    ntri = zeros(Int64, nthreads())
+    ntri = zeros(UInt64, nthreads())
+    deg = degree(g)
     adjlist = [T[] for _ in vertices(g)]
-    partitions = optimal_contiguous_partition(degree(g), nthreads())
+    partitions = optimal_contiguous_partition(deg, nthreads())
     @threads for u_set in partitions
         @inbounds for u in u_set
             for v in neighbors(g, u)
-                degv = degree(g, v)
-                degu = degree(g, u)
-                if degv > degu || (degv == degu && v > u)
+                if deg[v] > deg[u] || (deg[v] == deg[u] && v > u)
                     push!(adjlist[u], v)
                 end
             end
@@ -85,11 +89,15 @@ struct ThreadedDODG <: TriangleCountAlgorithm end
         @inbounds for u in u_set
             adju = adjlist[u]
             lenu = length(adju)
-            for i = 1:lenu, j = i+1:lenu
+            for i = 1:lenu
                 v = adju[i]
-                w = adju[j]
-                if has_edge(g, v, w)
-                    ntri[tid] += 1
+                for j = i+1:lenu
+                    w = adju[j]
+                    wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
+                    if (wTov && insorted(v, adjlist[w])) ||
+                            (!wTov && insorted(w, adjlist[v]))
+                        ntri[tid] += 1
+                    end
                 end
             end
         end
