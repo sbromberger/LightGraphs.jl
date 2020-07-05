@@ -1,5 +1,5 @@
 """
-    is_plane_description(g, g.fadjlist)
+    is_plane_description(g, description)
 
 Returns `true` if the given combinatorial description of graph `g` is plane.
 
