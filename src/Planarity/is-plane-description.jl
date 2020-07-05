@@ -20,15 +20,23 @@ This algorithm is presented in the dissertation available at https://www.ime.usp
 
 function is_plane_description end
 
-@traitfn function is_plane_description(g::SG,
+function is_plane_description(g::SG,
                     description::Vector{Vector{T}}) where 
                     {T <: Integer, U, SG <: SimpleGraph{U}}
 
     nvg = nv(g)
     neg = ne(g)
-    
-    nvg >= 3 && neg > 3*nvg && return false
-        
+    neg_diff = zero(Int)
+
+    for e in edges(g)
+        if src(e) != dst(e)
+            neg_diff +=1 
+        end
+    end
+
+    loops = neg - neg_diff
+    nvg >= 3 && neg_diff > 3*nvg - 6 && return false
+
     # duplicating edges because each edge `e` participates of at most two facial cycles
     # the direction is important due to the clockwise description, so the second copy is reversed
     # used[e] indicates if edge e has been used in a facial cycle
@@ -37,7 +45,6 @@ function is_plane_description end
         used[e] = false
         used[reverse(e)] = false
     end
-
     faces = zero(T)
     # counting facial cycles
     for e in edges(g)
@@ -71,5 +78,5 @@ function is_plane_description end
         end
     end
     # using Euler's formula
-    return faces == neg - nvg + 2
+    return faces + loops == neg - nvg + 2
 end
