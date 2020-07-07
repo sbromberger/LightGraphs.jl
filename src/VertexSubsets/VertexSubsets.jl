@@ -1,6 +1,6 @@
 module VertexSubsets
 using LightGraphs
-using LightGraphs: shuffle!, greedy_contiguous_partition
+using LightGraphs: shuffle!
 using DataStructures: PriorityQueue, dequeue!, peek
 using Random: AbstractRNG, GLOBAL_RNG, shuffle, randperm
 using Base.Threads: @threads, nthreads

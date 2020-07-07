@@ -26,22 +26,20 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
     ind_set = Vector{T}()         # independent set
     in_ind_set = zeros(Bool, nvg) # used to mark vertices present in independent set
     sizehint!(ind_set, nvg)
-    S = Vector{T}()
+    lo = 1
+    hi = 1
 
     while !isempty(V)
         # mark vertices to be included in ind_set with probability 1/(2*degree)
-        for u in V
+        @threads for u in V
             if deg[u] == 0 || (rand(alg.rng) <= 1.0/(2*deg[u]))
                 in_ind_set[u] = true
-                push!(S, u)
             end
         end
-        partitions = greedy_contiguous_partition(map(u -> degree(g, u), S), nthrds)
         # resolve conflicts in chosen vertices. if any of the chosen vertices
         # are neighbors, then unmark the vertex with lower degree
-        @threads for i_set in partitions
-            for i in i_set
-                u = S[i]
+        @threads for u in V
+            if in_ind_set[u]
                 for v in neighbors(g, u)
                     deleted[v] && continue
                     if in_ind_set[v]
@@ -55,20 +53,19 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
                 end
             end
         end
-        empty!(S)
+        # push marked vertices to ind_set
         for u in V
             if in_ind_set[u]
-                push!(S, u)
+                push!(ind_set, u)
             end
         end
-        partitions = greedy_contiguous_partition(map(u -> degree(g, u), S), nthrds)
-        @threads for i_set in partitions
-            for i in i_set
-                u = S[i]
-                deleted[u] = true
-                for v in neighbors(g, u)
-                    deleted[v] = true
-                end
+        hi = length(ind_set)
+        # mark all vertices in ind_set and their neighbors as deleted from vertex set
+        @threads for i = lo:hi
+            u = ind_set[i]
+            deleted[u] = true
+            for v in neighbors(g, u)
+                deleted[v] = true
             end
         end
         # create new vertex set with vertices that are not marked deleted
@@ -77,16 +74,12 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
                 push!(V_new, u)
             end
         end
-        partitions = greedy_contiguous_partition(map(u -> degree(g, u), V_new), nthrds)
         # update degrees of vertices in new vertex set
-        @threads for i_set in partitions
-            for i in i_set
-                u = V_new[i]
-                for v in neighbors(g, u)
-                    # check if neighbor was in the vertex set and now deleted
-                    if inV[v] && deleted[v]
-                        deg[u] -= 1
-                    end
+        @threads for u in V_new
+            for v in neighbors(g, u)
+                # check if neighbor was in the vertex set and now deleted
+                if inV[v] && deleted[v]
+                    deg[u] -= 1
                 end
             end
         end
@@ -96,10 +89,9 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
                 inV[u] = false
             end
         end
-        append!(ind_set, S)
         empty!(V)
         V, V_new = V_new, V
-        empty!(S)
+        lo = hi+1
     end
 
     return ind_set
