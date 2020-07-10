@@ -170,15 +170,15 @@ end
             lenu = length(adju)
             for i = 1:lenu
                 v = adju[i]
-                euv = u < v ? SimpleEdge(u, v) : SimpleEdge(v, u)
+                euv = u < v ? SimpleEdge{T}(u, v) : SimpleEdge{T}(v, u)
                 euv_tcount = 0
                 for j = i+1:lenu
                     w = adju[j]
-                    euw = w < u ? SimpleEdge(w, u) : SimpleEdge(u, w)
+                    euw = w < u ? SimpleEdge{T}(w, u) : SimpleEdge{T}(u, w)
                     wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
                     if (wTov && insorted(v, adjlist[w])) ||
                             (!wTov && insorted(w, adjlist[v]))
-                        evw = w < v ? SimpleEdge(w, v) : SimpleEdge(v, w)
+                        evw = w < v ? SimpleEdge{T}(w, v) : SimpleEdge{T}(v, w)
                         atomic_add!(res[evw], 1)
                         atomic_add!(res[euw], 1)
                         euv_tcount += 1
