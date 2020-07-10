@@ -58,7 +58,7 @@ struct DODG <: TriangleCountAlgorithm end
             end
         end
     end
-    return ntri
+    return Float64(ntri)
 end
 
 """
@@ -102,7 +102,7 @@ struct ThreadedDODG <: TriangleCountAlgorithm end
             end
         end
     end
-    return sum(ntri)
+    return Float64(sum(ntri))
 end
 
 """
