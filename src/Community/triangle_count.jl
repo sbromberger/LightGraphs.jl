@@ -181,7 +181,7 @@ end
                         evw = w < v ? SimpleEdge{T}(w, v) : SimpleEdge{T}(v, w)
                         atomic_add!(res[evw], one(T))
                         atomic_add!(res[euw], one(T))
-                        euv_tcount += 1
+                        euv_tcount += one(T)
                     end
                 end
                 atomic_add!(res[euv], euv_tcount)
