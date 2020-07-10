@@ -83,7 +83,7 @@ struct ThreadedDODG <: TriangleCountAlgorithm end
             end
         end
     end
-    partitions = optimal_contiguous_partition(length.(adjlist), nthreads())
+    partitions = optimal_contiguous_partition(map(v -> length(adjlist[v])^2, vertices(g)), nthreads())
     @threads for u_set in partitions
         tid = threadid()
         @inbounds for u in u_set
@@ -162,7 +162,7 @@ end
             end
         end
     end
-    partitions = optimal_contiguous_partition(length.(adjlist), nthreads())
+    partitions = optimal_contiguous_partition(map(v -> length(adjlist[v])^2, vertices(g)), nthreads())
     @threads for u_set in partitions
         tid = threadid()
         @inbounds for u in u_set
