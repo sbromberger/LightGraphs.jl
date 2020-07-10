@@ -104,3 +104,89 @@ struct ThreadedDODG <: TriangleCountAlgorithm end
     end
     return sum(ntri)
 end
+
+"""
+    edge_triangle_count(g, alg::TriangleCountAlgorithm)
+
+Return a Dict mapping every edge to the number of triangles it is part of
+in graph `g` using [`TriangleCountAlgorithm`](@ref) algorithm `alg`.
+"""
+
+@traitfn function edge_triangle_count(g::AG::(!IsDirected), ::DODG) where {T, AG<:AbstractGraph{T}}
+    res = Dict(e => zero(T) for e in edges(g))
+    deg = degree(g)
+    adjlist = [Vector{T}() for _ in vertices(g)]
+    @inbounds for u in vertices(g)
+        for v in neighbors(g, u)
+            if deg[v] > deg[u] || (deg[v] == deg[u] && v > u)
+                push!(adjlist[u], v)
+            end
+        end
+    end
+    @inbounds for u in vertices(g)
+        adju = adjlist[u]
+        lenu = length(adju)
+        for i = 1:lenu
+            v = adju[i]
+            euv = u < v ? SimpleEdge(u, v) : SimpleEdge(v, u)
+            euv_tcount = 0
+            for j = i+1:lenu
+                w = adju[j]
+                euw = w < u ? SimpleEdge(w, u) : SimpleEdge(u, w)
+                wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
+                if (wTov && insorted(v, adjlist[w])) ||
+                        (!wTov && insorted(w, adjlist[v]))
+                    evw = w < v ? SimpleEdge(w, v) : SimpleEdge(v, w)
+                    res[evw] += 1
+                    res[euw] += 1
+                    euv_tcount += 1
+                end
+            end
+            res[euv] += euv_tcount
+        end
+    end
+    return res
+end
+
+@traitfn function edge_triangle_count(g::AG::(!IsDirected), ::ThreadedDODG) where {T, AG<:AbstractGraph{T}}
+    res = Dict(e => Atomic{T}(0) for e in edges(g))
+    deg = degree(g)
+    adjlist = [T[] for _ in vertices(g)]
+    partitions = optimal_contiguous_partition(deg, nthreads())
+    @threads for u_set in partitions
+        @inbounds for u in u_set
+            for v in neighbors(g, u)
+                if deg[v] > deg[u] || (deg[v] == deg[u] && v > u)
+                    push!(adjlist[u], v)
+                end
+            end
+        end
+    end
+    partitions = optimal_contiguous_partition(length.(adjlist), nthreads())
+    @threads for u_set in partitions
+        tid = threadid()
+        @inbounds for u in u_set
+            adju = adjlist[u]
+            lenu = length(adju)
+            for i = 1:lenu
+                v = adju[i]
+                euv = u < v ? SimpleEdge(u, v) : SimpleEdge(v, u)
+                euv_tcount = 0
+                for j = i+1:lenu
+                    w = adju[j]
+                    euw = w < u ? SimpleEdge(w, u) : SimpleEdge(u, w)
+                    wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
+                    if (wTov && insorted(v, adjlist[w])) ||
+                            (!wTov && insorted(w, adjlist[v]))
+                        evw = w < v ? SimpleEdge(w, v) : SimpleEdge(v, w)
+                        atomic_add!(res[evw], 1)
+                        atomic_add!(res[euw], 1)
+                        euv_tcount += 1
+                    end
+                end
+                atomic_add!(res[euv], euv_tcount)
+            end
+        end
+    end
+    return res
+end
