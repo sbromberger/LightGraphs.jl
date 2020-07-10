@@ -171,7 +171,7 @@ end
             for i = 1:lenu
                 v = adju[i]
                 euv = u < v ? SimpleEdge{T}(u, v) : SimpleEdge{T}(v, u)
-                euv_tcount = 0
+                euv_tcount = zero(T)
                 for j = i+1:lenu
                     w = adju[j]
                     euw = w < u ? SimpleEdge{T}(w, u) : SimpleEdge{T}(u, w)
@@ -179,8 +179,8 @@ end
                     if (wTov && insorted(v, adjlist[w])) ||
                             (!wTov && insorted(w, adjlist[v]))
                         evw = w < v ? SimpleEdge{T}(w, v) : SimpleEdge{T}(v, w)
-                        atomic_add!(res[evw], 1)
-                        atomic_add!(res[euw], 1)
+                        atomic_add!(res[evw], one(T))
+                        atomic_add!(res[euw], one(T))
                         euv_tcount += 1
                     end
                 end
