@@ -19,7 +19,7 @@ abstract type TriangleCountAlgorithm end
     hi = n+1
     @inbounds while hi-lo > 1
         m = lo + ((hi - lo) >>> 0x01)
-        if v[m] < x
+        if A[m] < x
             lo = m
         else
             hi = m
