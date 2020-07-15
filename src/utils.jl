@@ -57,6 +57,22 @@ function insorted(item, collection; rev=false)
     return !isempty(index)
 end
 
+function insorted(x::T, A::AbstractVector{T}) where T
+    n = length(A)
+    lo = 0
+    hi = n+1
+    @inbounds while hi-lo > 1
+        m = lo + ((hi - lo) >>> 0x01)
+        if A[m] < x
+            lo = m
+        else
+            hi = m
+        end
+    end
+    hi > n && return false
+    return A[hi] == x
+end
+
 """
     findall!(A, B)
 
