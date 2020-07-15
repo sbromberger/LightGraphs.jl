@@ -10,7 +10,7 @@ communitytests = [
 	"communities.jl",
 	"core-periphery.jl",
 	"modularity.jl",
-	"triangle_count.jl"
+	"triangle_count.jl",
 ]
 
 @testset "LightGraphs.Community" begin

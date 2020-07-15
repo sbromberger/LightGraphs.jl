@@ -13,7 +13,7 @@ An abstract type representing an algorithm for finding the total triangle count.
 """
 abstract type TriangleCountAlgorithm end
 
-@inline function bsearch(x::T, A::Vector{T}) where T
+@inline function bsearch(x::T, A::AbstractVector{T}) where T
     n = length(A)
     lo = 0
     hi = n+1
@@ -127,6 +127,7 @@ end
 Return a Dict mapping every edge to the number of triangles it is part of
 in graph `g` using [`TriangleCountAlgorithm`](@ref) algorithm `alg`.
 """
+function edge_triangle_count end
 
 @traitfn function edge_triangle_count(g::AG::(!IsDirected), ::DODG) where {T, AG<:AbstractGraph{T}}
     res = Dict(e => zero(T) for e in edges(g))
