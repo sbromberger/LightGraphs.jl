@@ -28,11 +28,13 @@ function independent_set(g::AbstractGraph{T}, alg::LubyMaximalIndSet) where T <:
     sizehint!(ind_set, nvg)
     lo = 1
     hi = 1
+    rngs = MersenneTwister.(rand(alg.rng, UInt32, nthrds))
 
     while !isempty(V)
         # mark vertices to be included in ind_set with probability 1/(2*degree)
         @threads for u in V
-            if deg[u] == 0 || (rand(alg.rng) <= 1.0/(2*deg[u]))
+            tid = threadid()
+            if deg[u] == 0 || (rand(rngs[tid]) <= 1.0/(2*deg[u]))
                 in_ind_set[u] = true
             end
         end

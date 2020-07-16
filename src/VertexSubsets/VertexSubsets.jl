@@ -2,8 +2,8 @@ module VertexSubsets
 using LightGraphs
 using LightGraphs: shuffle!
 using DataStructures: PriorityQueue, dequeue!, peek
-using Random: AbstractRNG, GLOBAL_RNG, shuffle, randperm
-using Base.Threads: @threads, nthreads
+using Random: AbstractRNG, GLOBAL_RNG, shuffle, randperm, MersenneTwister
+using Base.Threads
 
 """
     abstract type VertexSubset
