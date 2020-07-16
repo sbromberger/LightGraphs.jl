@@ -1,6 +1,6 @@
 module Coloring
 
-using Base.Threads: @threads, nthreads, Atomic, atomic_add!
+using Base.Threads
 using SimpleTraits
 using Distributed
 using Random: AbstractRNG, GLOBAL_RNG, shuffle, shuffle!
