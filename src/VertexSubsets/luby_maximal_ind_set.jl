@@ -7,6 +7,10 @@ of a graph.
 ### Optional Arguments
 - `rng<:AbstractRNG`: override default random number generator (`GLOBAL_RNG`).
 
+### Implementation Notes
+The RNG used internally is a thread-safe Mersenne Twister. The implementation consists of a vector of Mersenne Twisters, one per thread.
+The RNG optionally passed to the `LubyMaximalIndSet` struct is used to seed these Mersenne Twisters.
+
 ### References
 - [Luby's Algorithm](http://people.disim.univaq.it/guido.proietti/slide_algdist2015/Luby%27s%20Algorithm.pdf)
 """
