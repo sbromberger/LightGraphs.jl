@@ -52,9 +52,21 @@ Return true if `item` is in sorted collection `collection`.
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-function insorted(item, collection; rev=false)
-    index = searchsorted(collection, item, rev=rev)
-    return !isempty(index)
+@inline function insorted(item, collection; rev=false)
+    n = length(collection)
+    lo = 0
+    hi = n+1
+    lt = rev ? Base.isgreater : Base.isless
+    @inbounds while hi-lo > 1
+        m = lo + ((hi - lo) >>> 0x01)
+        if lt(collection[m], item)
+            lo = m
+        else
+            hi = m
+        end
+    end
+    hi > n && return false
+    return collection[hi] == item
 end
 
 """
