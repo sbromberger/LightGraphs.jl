@@ -4,6 +4,7 @@
 Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges, i.e edges
 whose deletion increases the number of connected components of the graph.
+
 # Examples
 ```jldoctest
 julia> using LightGraphs
@@ -28,7 +29,7 @@ function bridges end
     s = Vector{Tuple{T, T, T}}()
     low = zeros(T, nv(g)) #keeps track of the earliest accesible time of a vertex in DFS-stack, effect of having back-edges is considered here
     pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
-    bridges = Edge{T}[]   #keeps record of the bridge-edges
+    bridges = SimpleEdge{T}[]   #keeps record of the bridge-edges
 
     # We iterate over all vertices, and if they have already been visited (pre != 0), we don't start a DFS from that vertex.
     # The purpose is to create a DFS forest.
@@ -55,7 +56,7 @@ function bridges end
                 w = v_neighbors[wi]
                 low[v] = min(low[v], low[w]) # condition check for (v, w) being a tree-edge
                 if low[w] > pre[v]
-                    edge = v < w ? Edge(v, w) : Edge(w, v)
+                    edge = v < w ? SimpleEdge(v, w) : SimpleEdge(w, v)
                     push!(bridges, edge)
                 end
                 wi += 1

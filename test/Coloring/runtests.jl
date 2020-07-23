@@ -8,8 +8,9 @@ const coloringtestdir = dirname(@__FILE__)
 
 coloringtests = [
     "bipartition.jl"
-    "greedy_color.jl"
-    "threaded-greedy_color.jl"
+    "random_color.jl"
+    "fixed_color.jl"
+    "distributed-random_color.jl"
 ]
 
 @testset "LightGraphs.Coloring" begin

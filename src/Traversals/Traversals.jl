@@ -373,10 +373,8 @@ include("randomwalks.jl")
 # export tree, parents, visited_vertices, dists, distances, has_path
 # export BreadthFirst
 # export ThreadedBreadthFirst
-# export is_bipartite, bipartite_map
 # export DepthFirst, is_cyclic, topological_sort, CycleError 
 # export randomwalk, self_avoiding_walk, non_backtracking_randomwalk
 # export diffusion, diffusion_rate
-# export FixedColoring, RandomColoring, DegreeColoring, greedy_color
 # export mincut, maximum_adjacency_visit
 end #module
