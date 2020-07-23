@@ -1,10 +1,13 @@
 module Community
 
 using LightGraphs
-using LightGraphs.SimpleGraphsCore: SimpleGraph
+using LightGraphs.SimpleGraphsCore: SimpleGraph, SimpleEdge
 using LightGraphs.Connectivity
 using SimpleTraits
 using LightGraphs: getRNG, range_shuffle!
+using Base.Threads
+using LightGraphs: optimal_contiguous_partition, insorted
+using Base.Threads: Atomic, atomic_add!
 
 """
     abstract type ClusteringScope
@@ -57,5 +60,6 @@ include("clustering.jl")
 include("core-periphery.jl")
 include("label_propagation.jl")
 include("modularity.jl")
+include("triangle_count.jl")
 
 end #module
