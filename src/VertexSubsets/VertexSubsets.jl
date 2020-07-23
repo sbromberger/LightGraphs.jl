@@ -2,7 +2,8 @@ module VertexSubsets
 using LightGraphs
 using LightGraphs: shuffle!
 using DataStructures: PriorityQueue, dequeue!, peek
-using Random: AbstractRNG, GLOBAL_RNG, shuffle, randperm
+using Random: AbstractRNG, GLOBAL_RNG, shuffle, randperm, MersenneTwister
+using Base.Threads
 
 """
     abstract type VertexSubset
@@ -120,5 +121,6 @@ include("degree_ind_set.jl")
 include("random_ind_set.jl")
 include("threaded-random_ind_set.jl")
 include("distributed-random_ind_set.jl")
+include("luby_maximal_ind_set.jl")
 
 end # module
