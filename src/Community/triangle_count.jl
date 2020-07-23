@@ -13,22 +13,6 @@ An abstract type representing an algorithm for finding the total triangle count.
 """
 abstract type TriangleCountAlgorithm end
 
-@inline function bsearch(x::T, A::AbstractVector{T}) where T
-    n = length(A)
-    lo = 0
-    hi = n+1
-    @inbounds while hi-lo > 1
-        m = lo + ((hi - lo) >>> 0x01)
-        if A[m] < x
-            lo = m
-        else
-            hi = m
-        end
-    end
-    hi > n && return false
-    return A[hi] == x
-end
-
 """
     struct DODG <: TriangleCountAlgorithm
 
@@ -67,8 +51,8 @@ struct DODG <: TriangleCountAlgorithm end
                 # a triangle. we check this by searching in the pruned graph instead
                 # of the original graph to reduce search space
                 wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
-                if (wTov && bsearch(v, adjlist[w])) ||
-                        (!wTov && bsearch(w, adjlist[v]))
+                if (wTov && insorted(v, adjlist[w])) ||
+                        (!wTov && insorted(w, adjlist[v]))
                     ntri += 1
                 end
             end
@@ -110,8 +94,8 @@ struct ThreadedDODG <: TriangleCountAlgorithm end
                 for j = i+1:lenu
                     w = adju[j]
                     wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
-                    if (wTov && bsearch(v, adjlist[w])) ||
-                            (!wTov && bsearch(w, adjlist[v]))
+                    if (wTov && insorted(v, adjlist[w])) ||
+                            (!wTov && insorted(w, adjlist[v]))
                         ntri[tid] += 1
                     end
                 end
@@ -151,8 +135,8 @@ function edge_triangle_count end
                 w = adju[j]
                 euw = w < u ? SimpleEdge(w, u) : SimpleEdge(u, w)
                 wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
-                if (wTov && bsearch(v, adjlist[w])) ||
-                        (!wTov && bsearch(w, adjlist[v]))
+                if (wTov && insorted(v, adjlist[w])) ||
+                        (!wTov && insorted(w, adjlist[v]))
                     evw = w < v ? SimpleEdge(w, v) : SimpleEdge(v, w)
                     res[evw] += 1
                     res[euw] += 1
@@ -193,8 +177,8 @@ end
                     w = adju[j]
                     euw = w < u ? SimpleEdge{T}(w, u) : SimpleEdge{T}(u, w)
                     wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
-                    if (wTov && bsearch(v, adjlist[w])) ||
-                            (!wTov && bsearch(w, adjlist[v]))
+                    if (wTov && insorted(v, adjlist[w])) ||
+                            (!wTov && insorted(w, adjlist[v]))
                         evw = w < v ? SimpleEdge{T}(w, v) : SimpleEdge{T}(v, w)
                         atomic_add!(res[evw], one(T))
                         atomic_add!(res[euw], one(T))
