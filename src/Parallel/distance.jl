@@ -1,7 +1,7 @@
 # used in shortest path calculations
 
 function eccentricity(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
+    vs=vertices(g),
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
