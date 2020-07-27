@@ -30,7 +30,7 @@ julia> stress_centrality(cycle_graph(4))
  2
 ```
 """
-function stress_centrality(g::AbstractGraph, vs::AbstractVector=vertices(g))
+function stress_centrality(g::AbstractGraph, vs=vertices(g))
     n_v = nv(g)
     k = length(vs)
     isdir = is_directed(g)
@@ -75,4 +75,3 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     end
     return nothing
 end
-
