@@ -4,7 +4,7 @@ using Base.Threads
 using SimpleTraits
 using Distributed
 using Random: AbstractRNG, GLOBAL_RNG, shuffle, shuffle!
-using DataStructures: Queue, enqueue!, dequeue!
+using DataStructures: Queue, enqueue!, dequeue!, IntSet
 using LightGraphs
 using LightGraphs.Connectivity: connected_components, UnionMerge, DFSQ
 
@@ -44,5 +44,6 @@ include("bipartition.jl")
 include("fixed_color.jl")
 include("random_color.jl")
 include("distributed-random_color.jl")
+include("jonesplassmann.jl")
 
 end # module

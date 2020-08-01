@@ -42,6 +42,7 @@ end
 
 """
     DegreeColoring
+
 A function that creates a [`FixedColoring`](@ref) that colors a graph iteratively in
 descending order of the degree of the vertices.
 """
