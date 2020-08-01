@@ -11,6 +11,7 @@ coloringtests = [
     "random_color.jl"
     "fixed_color.jl"
     "distributed-random_color.jl"
+    "jonesplassmann.jl"
 ]
 
 @testset "LightGraphs.Coloring" begin
