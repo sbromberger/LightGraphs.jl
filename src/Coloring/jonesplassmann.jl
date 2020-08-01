@@ -21,7 +21,7 @@ function color(g::AbstractGraph{T}, alg::JonesPlassmann) where {T <: Integer}
     indset = Vector{T}(undef, nvg)
     i = Atomic{Int64}(1)
     wts = shuffle(alg.rng, vertices(g))
-    C = zeros(Int64, nvg)
+    C = zeros(T, nvg)
     S = [IntSet() for _ in 1:nthreads()]
 
     while !isempty(V)
