@@ -44,7 +44,7 @@ julia> betweenness_centrality(path_graph(4))
 ```
 """
 function betweenness_centrality(g::AbstractGraph,
-    vs::AbstractVector=vertices(g),
+    vs=vertices(g),
     distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false)

@@ -17,7 +17,7 @@ an optional distance matrix `distmx`. Return a [`Parallel.MultipleDijkstraState`
 traversal information.
 """
 function dijkstra_shortest_paths(g::AbstractGraph{U},
-    sources::AbstractVector=vertices(g),
+    sources=vertices(g),
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U
 
     n_v = nv(g)
