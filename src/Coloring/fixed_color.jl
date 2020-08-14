@@ -15,33 +15,30 @@ FixedColoring(ordering::AbstractVector) = FixedColoring(_->ordering)
 FixedColoring(;ordering::AbstractVector) = FixedColoring(_->ordering)
 
 function color(g::AbstractGraph{T}, alg::FixedColoring) where {T <: Integer}
-    nvg::T = nv(g)
-    cols = Vector{T}(undef, nvg)
-    seen = zeros(Bool, nvg + 1)
+    nvg = nv(g)
+    cols = zeros(T, nvg)
+    S = IntSet()
 
-    for v in alg.ordering(g)
-        v = T(v)
-        seen[v] = true
-        colors_used = zeros(Bool, nvg)
-
-        for w in neighbors(g, v)
-            if seen[w]
-                colors_used[cols[w]] = true
+    for u in alg.ordering(g)
+        mincolor = one(T)
+        for v in neighbors(g, u)
+            if cols[v] != 0
+                push!(S, cols[v])
             end
         end
-
-        for i in one(T):nvg
-            if colors_used[i] == false
-                cols[v] = i
-                break;
-            end
+        for c in S
+            c != mincolor && break
+            mincolor += one(T)
         end
+        cols[u] = mincolor
+        empty!(S)
     end
     return GraphColoring{T}(maximum(cols), cols)
 end
 
 """
     DegreeColoring
+
 A function that creates a [`FixedColoring`](@ref) that colors a graph iteratively in
 descending order of the degree of the vertices.
 """
