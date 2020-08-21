@@ -37,31 +37,27 @@ function is_plane_description(g::SG,
     loops = neg - neg_diff
     nvg >= 3 && neg_diff > 3*nvg - 6 && return false
 
-    # duplicating edges because each edge `e` participates of at most two facial cycles
     # the direction is important due to the clockwise description, so the second copy is reversed
-    # used[e] indicates if edge e has been used in a facial cycle
-    used = Dict{Edge,Bool}()
-    for e in edges(g)
-        used[e] = false
-        used[reverse(e)] = false
-    end
+    # in(e, used) indicates if edge e has been used in a facial cycle
+    used = Set{edgetype(g)}()
     faces = zero(T)
+    
     # counting facial cycles
     for e in edges(g)
         e1 = nothing
         start = nothing
 
-        if !used[e]
+        if !in(e, used)
             e1 = e
             start = e
-        elseif !used[reverse(e)]
+        elseif !in(reverse(e), used)
             e1 = reverse(e)
             start = reverse(e)
         end
 
         if e1 !== nothing
             while true
-                used[e1] = true
+                push!(used, e1)
                 # we find the successor of src(e1) in the list of dst(e1)
                 u, v = src(e1), dst(e1)
                 v_list = description[v]
