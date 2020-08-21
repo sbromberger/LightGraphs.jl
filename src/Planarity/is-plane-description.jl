@@ -1,3 +1,5 @@
+using LightGraphs
+
 """
     is_plane_description(g, description)
 
@@ -22,7 +24,7 @@ function is_plane_description end
 
 function is_plane_description(g::SG,
                     description::Vector{Vector{T}}) where 
-                    {T <: Integer, U, SG <: SimpleGraph{U}}
+                    {T <: Integer, SG <: SimpleGraph{T}}
 
     nvg = nv(g)
     neg = ne(g)
