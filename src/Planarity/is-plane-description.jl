@@ -1,4 +1,3 @@
-using LightGraphs
 
 """
     is_plane_description(g, description)
