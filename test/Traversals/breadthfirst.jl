@@ -1,9 +1,9 @@
-import LightGraphs.Traversals: preinitfn!, TraversalState
+import LightGraphs.Traversals: preinitfn!, TraversalState, VTERMINATE
 @testset "BreadthFirst" begin
 
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    g6 = smallgraph(:house)
+    g6 = SimpleGraph(SGGEN.House())
     struct DummyState <: LT.TraversalState end
 
     @testset "default traverse_graph!" begin
@@ -39,7 +39,7 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
     end
 
     @testset "distances" begin
-        LT.preinitfn!(::DummyState, u) = false
+        LT.preinitfn!(::DummyState, u) = VTERMINATE
 
         @testset "$g" for g in testgraphs(g6)
             @test @inferred(LT.distances(g, 2)) == @inferred(LT.distances(g, 2, LT.BreadthFirst(sort_alg=MergeSort))) == [1, 0, 2, 1, 2]
@@ -51,16 +51,6 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         end
     end
 
-    @testset "is_bipartite" begin
-        gx = SimpleGraph(5)
-        add_edge!(gx, 1, 2); add_edge!(gx, 1, 4)
-        add_edge!(gx, 2, 3); add_edge!(gx, 2, 5)
-        add_edge!(gx, 3, 4)
-
-        @testset "$g" for g in testgraphs(gx)
-            @test @inferred(LT.is_bipartite(g))
-        end
-    end
 
     @testset "LT.has_path" begin
         gx = SimpleGraph(6)
@@ -89,7 +79,7 @@ import LightGraphs.Traversals: preinitfn!, TraversalState
         end
     end
     @testset "visited_vertices" begin
-        gt = binary_tree(3)
+        gt = SimpleGraph(SGGEN.BinaryTree(3))
         for g in testgraphs(gt)
             @test LT.visited_vertices(g, 1, LT.BreadthFirst()) == 1:7
         end

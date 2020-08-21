@@ -1,4 +1,5 @@
 using LightGraphs.Centrality
+using LightGraphs.SimpleGraphs
 const LCENT = LightGraphs.Centrality
 
 const centralitydir = dirname(@__FILE__)

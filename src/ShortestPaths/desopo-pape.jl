@@ -1,5 +1,5 @@
 """
-    struct DEsopoPape <: ShortestPathAlgorithm
+    struct DEsopoPape <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
@@ -12,7 +12,7 @@ should use the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf)
 - non-negative distance matrices / weights
 - all destinations
 """
-struct DEsopoPape{T<:Real} <: ShortestPathAlgorithm
+struct DEsopoPape{T<:Real} <: SSSPAlgorithm
     maxdist::T
 end
 

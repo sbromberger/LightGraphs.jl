@@ -1,9 +1,10 @@
 import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvisitfn!, postvisitfn!, postlevelfn!
+using LightGraphs.Traversals: VSUCCESS, VTERMINATE
 
 @testset "LT.ThreadedBreadthFirst" begin
     g5 = SimpleDiGraph(4)
     add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
-    g6 = smallgraph(:house)
+    g6 = SimpleGraph(SGGEN.House())
 
     @testset "$g" for g in testdigraphs(g5)
       T = eltype(g)
@@ -43,33 +44,33 @@ import LightGraphs.Traversals: preinitfn!, initfn!, previsitfn!, visitfn!, newvi
         @test t == t2
     end
 
-    g7 = binary_tree(4)
+    g7 = SimpleGraph(SGGEN.BinaryTree(4))
     struct DummyState <: LT.TraversalState end
-    LT.preinitfn!(::DummyState, u) = false
+    LT.preinitfn!(::DummyState, u) = VTERMINATE
 
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.preinitfn!(::DummyState, u) = true
-    LT.initfn!(::DummyState, u) = false
+    LT.preinitfn!(::DummyState, u) = VSUCCESS
+    LT.initfn!(::DummyState, u) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.initfn!(::DummyState, u) = true
-    LT.previsitfn!(::DummyState, u, t::Integer) = false
+    LT.initfn!(::DummyState, u) = VSUCCESS
+    LT.previsitfn!(::DummyState, u, t::Integer) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.previsitfn!(::DummyState, u, t::Integer) = true
-    LT.visitfn!(::DummyState, u, v, t::Integer) = false
+    LT.previsitfn!(::DummyState, u, t::Integer) = VSUCCESS
+    LT.visitfn!(::DummyState, u, v, t::Integer) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.visitfn!(::DummyState, u, v, t::Integer) = true
-    LT.newvisitfn!(::DummyState, u, v, t::Integer) = false
+    LT.visitfn!(::DummyState, u, v, t::Integer) = VSUCCESS
+    LT.newvisitfn!(::DummyState, u, v, t::Integer) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.newvisitfn!(::DummyState, u, v, t::Integer) = true
-    LT.postvisitfn!(::DummyState, u, t::Integer) = false
+    LT.newvisitfn!(::DummyState, u, v, t::Integer) = VSUCCESS
+    LT.postvisitfn!(::DummyState, u, t::Integer) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 
-    LT.postvisitfn!(::DummyState, u, t::Integer) = true
-    LT.postlevelfn!(::DummyState) = false
+    LT.postvisitfn!(::DummyState, u, t::Integer) = VSUCCESS
+    LT.postlevelfn!(::DummyState) = VTERMINATE
     @test !LT.traverse_graph!(g7, 1, LT.ThreadedBreadthFirst(), DummyState())
 end

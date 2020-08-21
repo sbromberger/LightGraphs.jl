@@ -1,5 +1,5 @@
 """
-    struct ThreadedBFS <: ShortestPathAlgorithm
+    struct ThreadedBFS <: SSSPAlgorithm
         queue_segment_size::Int
     end
 
@@ -15,7 +15,7 @@ improve performance.
 - [Avoiding Locks and Atomic Instructions in Shared-Memory Parallel BFS Using Optimistic 
 Parallelization](https://www.computer.org/csdl/proceedings/ipdpsw/2013/4979/00/4979b628-abs.html).
 """
-struct ThreadedBFS <: ShortestPathAlgorithm
+struct ThreadedBFS <: SSSPAlgorithm
     queue_segment_size::Int
 end
 

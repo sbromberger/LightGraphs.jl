@@ -1,6 +1,6 @@
 @testset "Connectivity" begin
-    g6 = smallgraph(:house)
-    gx = path_graph(4)
+    g6 = SimpleGraph(SGGEN.House())
+    gx = SimpleGraph(SGGEN.Path(4))
     add_vertices!(gx, 10)
     add_edge!(gx, 5, 6)
     add_edge!(gx, 6, 7)
@@ -27,10 +27,39 @@
         end
     end # basic connectivity testset
 
+    @testset "multi-threaded connected components" begin
+        @testset "$g" for g in testgraphs(gx)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc == LC.connected_components(g)
+            @test cc[1] == [1, 2, 3, 4]
+            @test cc[2] == [5, 6, 7]
+            @test cc[3] == [8, 9, 10]
+            @test cc[4] == [11]
+            @test cc[5] == [12]
+        end
+        g3 = SimpleGraph(7, 3)
+        @testset "$g" for g in testgraphs(g3)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc == LC.connected_components(g)
+        end
+        gd = SimpleDiGraph(6)
+        add_edge!(gd, 1, 2)
+        add_edge!(gd, 1, 3)
+        add_edge!(gd, 2, 3)
+        add_edge!(gd, 2, 4)
+        add_edge!(gd, 5, 6)
+        @testset "$g" for g in testgraphs(gd)
+            cc = @inferred(LC.connected_components(g, LC.ThreadedPointerJumping()))
+            @test cc[1] == [1, 2, 3, 4]
+            @test cc[2] == [5, 6]
+            @test cc == LC.connected_components(g, LC.UnionMerge())
+        end
+    end
+
     @testset "neighborhood / neighborhood_dists" begin
         g10dists = ones(10, 10)
         g10dists[1,2] = 10.0
-        g10 = star_graph(10)
+        g10 = SimpleGraph(SGGEN.Star(10))
         @testset "$g" for g in testgraphs(g10)
             @test @inferred(LC.neighborhood_dists(g, 1, 0)) == [(1, 0)]
             @test length(@inferred(LC.neighborhood(g, 1, 1))) == 10
@@ -40,7 +69,7 @@
             @test length(@inferred(LC.neighborhood(g, 2, 2))) == 10
             @test length(@inferred(LC.neighborhood(g, 2, -1))) == 0
         end
-        g10 = star_digraph(10)
+        g10 = SimpleDiGraph(SGGEN.Star(10))
         @testset "$g" for g in testgraphs(g10)
             @test @inferred(LC.neighborhood_dists(g10, 1, 0; neighborfn=outneighbors)) == [(1, 0)]
             @test length(@inferred(LC.neighborhood(g, 1, 1, neighborfn=outneighbors))) == 10
@@ -63,15 +92,15 @@
               @test (4, 2) ∉ z
         end
         @testset "test #1363" begin
-            g = complete_graph(3)
+            g = SimpleGraph(SGGEN.Complete(3))
             d = zeros(3, 3)
             d[1, 2] = 10
             d[1, 3] = 1
             d[3, 2] = 1
-            @test sort(neighborhood(g, 1, 4, d)) == [1, 2, 3]
+            @test sort(LC.neighborhood(g, 1, 4, d)) == [1, 2, 3]
         end
         @testset "test #1116" begin
-        gc = cycle_graph(4)
+            gc = SimpleGraph(SGGEN.Cycle(4))
             @testset "$g" for g in testgraphs(gc)
                 z = @inferred(LC.neighborhood(g, 3, 3))
                 @test (z == [3, 2, 4, 1] || z == [3, 4, 2, 1])

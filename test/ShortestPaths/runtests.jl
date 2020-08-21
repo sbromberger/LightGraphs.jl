@@ -22,8 +22,8 @@ sptests = [
 ]
 
 @testset "LightGraphs.ShortestPaths" begin
-    @test !ShortestPaths.has_negative_weight_cycle(path_graph(5))
-    @test !ShortestPaths.has_negative_weight_cycle(path_digraph(5))
+    @test !ShortestPaths.has_negative_weight_cycle(SimpleGraph(SGGEN.Path(5)))
+    @test !ShortestPaths.has_negative_weight_cycle(SimpleDiGraph(SGGEN.Path(5)))
     for t in sptests
         tp = joinpath(sptestdir, "$t")
         include(tp)

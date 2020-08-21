@@ -23,23 +23,31 @@ function simple_cycles end
 @traitfn simple_cycles(g::::IsDirected) = simple_cycles(g, Johnson())
 
 """
-    ncycles_n_i(n::Integer, i::Integer)
+    ncycles_n_i(n::Integer, i::Integer, self::Bool = false)
 
 Compute the theoretical maximum number of cycles of size `i` in a directed graph of `n`
- vertices.
+ vertices. If `self` is true, it assumes that the directed graph has self-loops.
 """
-ncycles_n_i(n::Integer, i::Integer) = binomial(big(n), big(n - i + 1)) * factorial(big(n - i))
+function ncycles_n_i(n::Integer, i::Integer, self::Bool = false)
+    if !self & (i == 1)
+        return 0
+    else
+        return binomial(big(n), big(i)) * factorial(i - 1)
+    end
+end
 
 """
-    max_simple_cycles(n::Integer)
+    max_simple_cycles(n::Integer, self::Bool = false)
 
-Compute the theoretical maximum number of cycles in a directed graph of `n` vertices,
-assuming there are no self-loops.
+Compute the theoretical maximum number of cycles in a directed graph of `n` vertices.
+If `self` is true, it assumes that the directed graph has self-loops.
 
 ### References
-- [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
+- The  formula comes from Johnson's article, updated to take into account self-loops.
+To get the formula, you have to perform the change of indices ``i=n-k+1`` in the sum.
+[Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
 """
-max_simple_cycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
+max_simple_cycles(n::Integer, self::Bool = false) = sum(x -> ncycles_n_i(n, x, self), 1:n)
 
 """
     count_simple_cycles(dg::DiGraph, ::SimpleCyclesAlgorithm)

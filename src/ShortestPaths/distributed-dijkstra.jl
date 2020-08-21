@@ -1,5 +1,5 @@
 """
-    struct DistributedDijkstra <: ShortestPathAlgorithm end
+    struct DistributedDijkstra <: SSSPAlgorithm end
 
 A struct representing a parallel implementation of the Dijkstra shortest-paths algorithm. Optional
 fields for this structure incldue
@@ -7,7 +7,7 @@ fields for this structure incldue
 - `neighborfn::Function` (default: [`outneighbors`](@ref) - specify the neighbor function to use during the
    graph traversal.
 """
-struct DistributedDijkstra{F<:Function} <: ShortestPathAlgorithm
+struct DistributedDijkstra{F<:Function} <: SSSPAlgorithm
     neighborfn::F
 end
 
@@ -21,7 +21,7 @@ A [`ShortestPathResult`](@ref) designed for parallel Dijkstra shortest paths cal
 struct DistributedDijkstraResult{T <: Real,U <: Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
-    pathcounts::Matrix{U}
+    pathcounts::Matrix{Float64}
 end
 
 # """
@@ -41,7 +41,7 @@ function shortest_paths(g::AbstractGraph{U},
     # TODO: remove `Int` once julialang/#23029 / #23032 are resolved
     dists      = SharedMatrix{T}(Int(r_v), Int(n_v))
     parents    = SharedMatrix{U}(Int(r_v), Int(n_v))
-    pathcounts = SharedMatrix{U}(Int(r_v), Int(n_v))
+    pathcounts = SharedMatrix{Float64}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
         state = shortest_paths(g, sources[i], distmx, ShortestPaths.Dijkstra(neighborfn=alg.neighborfn))

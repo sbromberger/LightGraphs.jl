@@ -20,7 +20,6 @@ tests = [
     "dominatingset/minimal_dom_set",
     "independentset/maximal_ind_set",
     "vertexcover/random_vertex_cover",
-    "utils"
 ]
 
 @testset "LightGraphs.Parallel" begin

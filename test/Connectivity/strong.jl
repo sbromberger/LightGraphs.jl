@@ -1,7 +1,7 @@
 for alg in [LC.Tarjan, LC.Kosaraju]
     @testset "$alg" begin
-        g6 = smallgraph(:house)
-        gx = path_graph(4)
+        g6 = SimpleGraph(SGGEN.House())
+        gx = SimpleGraph(SGGEN.Path(4))
         add_vertices!(gx, 10)
         add_edge!(gx, 5, 6)
         add_edge!(gx, 6, 7)
@@ -140,7 +140,7 @@ for alg in [LC.Tarjan, LC.Kosaraju]
 
             # construct a n-number edge ring graph (period = n)
             n = 10
-            n_ring = cycle_digraph(n)
+            n_ring = SimpleDiGraph(SGGEN.Cycle(n))
             n_ring_shortcut = copy(n_ring); add_edge!(n_ring_shortcut, 1, 4)
 
 

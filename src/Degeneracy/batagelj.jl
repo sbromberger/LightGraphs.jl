@@ -47,7 +47,7 @@ function core_number(g::AbstractGraph{T}, ::Batagelj) where {T}
     for i = 1:n
         v = vert[i]
         # for each neighbor u of vertex v with higher degree we have to decrease its degree and move it for one bin to the left
-        for u in all_neighbors(g, v)
+        for u in outneighbors(g, v)
             if deg[u] > deg[v]
                 du = deg[u]
                 pu = pos[u]
@@ -61,6 +61,24 @@ function core_number(g::AbstractGraph{T}, ::Batagelj) where {T}
                 end
                 bin[du+1] += one(T)
                 deg[u] -= one(T)
+            end
+        end
+        if is_directed(g)
+            for u in inneighbors(g, v)
+                if deg[u] > deg[v]
+                    du = deg[u]
+                    pu = pos[u]
+                    pw = bin[du+1]
+                    w = vert[pw]
+                    if u != w
+                        pos[u] = pw
+                        vert[pu] = w
+                        pos[w] = pu
+                        vert[pw] = u
+                    end
+                    bin[du+1] += one(T)
+                    deg[u] -= one(T)
+                end
             end
         end
     end

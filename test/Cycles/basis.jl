@@ -7,7 +7,7 @@
     end
 
     # No Edges
-    ex = Graph(1)
+    ex = SimpleGraph(1)
     expected_cyclebasis = Array{Int64,1}[]
     @testset "no edges $g" for g in testgraphs(ex)
         ex_cyclebasis = @inferred LCY.cycle_basis(g)
@@ -16,16 +16,16 @@
 
     # Only one self-edge
     elist = [(1,1)]
-    ex = Graph(SimpleEdge.(elist))
+    ex = SimpleGraph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[[1]]
     @testset "one self-edge $g" for g in testgraphs(ex)
         ex_cyclebasis = LCY.cycle_basis(g)
         evaluate(ex_cyclebasis, expected_cyclebasis)
     end
 
-    # Graph with one cycle
+    # SimpleGraph with one cycle
     elist = [(1,2),(2,3),(3,4),(4,1),(1,5)]
-    ex = Graph(SimpleEdge.(elist))
+    ex = SimpleGraph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [1,2,3,4] ]
     @testset "one cycle $g" for g in testgraphs(ex)
@@ -33,9 +33,9 @@
         evaluate(ex_cyclebasis, expected_cyclebasis)
     end
 
-    # Graph with 2 of 3 cycles forming a basis
+    # SimpleGraph with 2 of 3 cycles forming a basis
     elist = [(1,2),(1,3),(2,3),(2,4),(3,4)]
-    ex = Graph(SimpleEdge.(elist))
+    ex = SimpleGraph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [2,3,4],
         [2,1,3] ]
@@ -46,7 +46,7 @@
 
     # Testing root argument
     elist = [(1,2),(1,3),(2,3),(2,4),(3,4),(1,5),(5,6),(6,4)]
-    ex = Graph(SimpleEdge.(elist))
+    ex = SimpleGraph(SimpleEdge.(elist))
     expected_cyclebasis = Array{Int64,1}[
         [2, 4, 3],
         [1, 5, 6, 4, 3],
@@ -57,7 +57,9 @@
     end
 
     @testset "two isolated cycles" begin
-        ex = blockdiag(cycle_graph(3), cycle_graph(4))
+        cg3 = SimpleGraph(SGGEN.Cycle(3))
+        cg4 = SimpleGraph(SGGEN.Cycle(4))
+        ex = blockdiag(cg3, cg4)
         expected_cyclebasis = [[1, 2, 3], [4, 5, 6, 7]]
         @testset "$g" for g in testgraphs(ex)
             found_cyclebasis = @inferred LCY.cycle_basis(g)

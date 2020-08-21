@@ -1,5 +1,5 @@
     @testset "Floyd Warshall" begin
-        g3 = path_graph(5)
+        g3 = SimpleGraph(SGGEN.Path(5))
         d = [0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]
         @testset "$g" for g in testgraphs(g3)
             z = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall()))
@@ -9,7 +9,7 @@
             @test @inferred(ShortestPaths.paths(z))[2][2] == []
             @test @inferred(ShortestPaths.paths(z))[2][4] == ShortestPaths.paths(z, 2)[4] == ShortestPaths.paths(z, 2, 4) == [2, 3, 4]
         end
-        g4 = path_digraph(4)
+        g4 = SimpleDiGraph(SGGEN.Path(4))
         d = ones(4, 4)
         @testset "$g" for g in testdigraphs(g4)
             z = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall()))
@@ -18,7 +18,7 @@
             @test length(ShortestPaths.paths(z, 2, 3)) == 2
         end
 
-        g5 = DiGraph([1 1 1 0 1; 0 1 0 1 1; 0 1 1 0 0; 1 0 1 1 0; 0 0 0 1 1])
+        g5 = SimpleDiGraph([1 1 1 0 1; 0 1 0 1 1; 0 1 1 0 0; 1 0 1 1 0; 0 0 0 1 1])
         d = [0 3 8 0 -4; 0 0 0 1 7; 0 4 0 0 0; 2 0 -5 0 0; 0 0 0 6 0]
         @testset "$g" for g in testdigraphs(g5)
             z = @inferred(ShortestPaths.shortest_paths(g, d, ShortestPaths.FloydWarshall()))
@@ -41,8 +41,8 @@
                 Vector{Vector{Int}}[[[], [1, 2]], [[2, 1], []]]
         end
         @testset "default for no source, no alg" begin
-            g = path_graph(4)
-            w = zeros(4,4)
+            g = SimpleGraph(SGGEN.Path(4))
+            w = zeros(4, 4)
             for i in 1:3
                 w[i, i+1] = 1.0
                 w[i+1, i] = 1.0

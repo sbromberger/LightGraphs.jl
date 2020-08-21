@@ -2,6 +2,9 @@ using LightGraphs.LinAlg
 using Random
 using SparseArrays
 using LinearAlgebra
+using LightGraphs
+using LightGraphs.SimpleGraphs
+
 const linalgtestdir = dirname(@__FILE__)
 
 tests = [

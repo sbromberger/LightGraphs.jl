@@ -31,13 +31,13 @@
 
     # Path DiGraph
     ex2_size = 10
-    @testset "empty $g" for g in testgraphs(path_digraph(ex2_size))
+    @testset "empty $g" for g in testgraphs(SimpleDiGraph(SGGEN.Path(ex2_size)))
         @test isempty(LCY.simple_cycles(g, LCY.HawickJames()))
     end
 
     # Complete DiGraph
     ex3_size = 5
-    ex3 = testgraphs(complete_digraph(ex3_size))
+    ex3 = testgraphs(SimpleDiGraph(SGGEN.Complete(ex3_size)))
     @testset "length $g" for g in ex3
         ex3_circuits = LCY.simple_cycles(g, LCY.HawickJames())
         @test length(ex3_circuits) == length(unique(ex3_circuits))
@@ -57,7 +57,8 @@
 
     # These test cases cover a bug that occurred in a previous version
     @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
-        g = erdos_renyi(n, k, is_directed=true, seed=seed)
+        rng = MersenneTwister(seed)
+        g = SimpleDiGraph(SGGEN.ErdosRenyi(n, k, rng=rng))
         cycles1 = LCY.simple_cycles(g)
         cycles2 = LCY.simple_cycles(g, LCY.HawickJames())
         foreach(sort!, cycles1)

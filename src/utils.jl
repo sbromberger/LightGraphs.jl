@@ -52,9 +52,21 @@ Return true if `item` is in sorted collection `collection`.
 ### Implementation Notes
 Does not verify that `collection` is sorted.
 """
-function insorted(item, collection; rev=false)
-    index = searchsorted(collection, item, rev=rev)
-    return !isempty(index)
+@inline function insorted(item, collection; rev=false)
+    n = length(collection)
+    lo = 0
+    hi = n+1
+    lt = rev ? Base.isgreater : Base.isless
+    @inbounds while hi-lo > 1
+        m = lo + ((hi - lo) >>> 0x01)
+        if lt(collection[m], item)
+            lo = m
+        else
+            hi = m
+        end
+    end
+    hi > n && return false
+    return collection[hi] == item
 end
 
 """
@@ -64,7 +76,7 @@ Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
-function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where T<:Integer
+function findall!(A::Union{BitVector, Vector{Bool}}, B::Vector{T}) where {T<:Integer}
     len = 0
     @inbounds for (i, a) in enumerate(A)
         if a
@@ -122,7 +134,7 @@ function greedy_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U=length(weight)
-    ) where U <: Integer
+   ) where {U<:Integer}
 
     suffix_sum = cumsum(reverse(weight))
     reverse!(suffix_sum)
@@ -176,7 +188,7 @@ function optimal_contiguous_partition(
     weight::Vector{<:Integer},
     required_partitions::Integer,
     num_items::U=length(weight)
-    ) where U <: Integer
+   ) where {U<:Integer}
 
     item_it = Iterators.take(weight, num_items)
 
@@ -241,32 +253,129 @@ isbounded(n::BigInt) = false
 
 Returns true if `typemax(T)` of a type `T <: Integer` exists.
 """
-isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
+isbounded(::Type{T}) where {T<:Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """
-    deepcopy_adjlist(adjlist::Vector{Vector{T}})
+    range_shuffle!(r, a; seed=-1)
 
-Internal utility function for copying adjacency lists.
-On adjacency lists this function is more efficient than `deepcopy` for two reasons:
--  As of Julia v1.0.2, `deepcopy` is not typestable.
-- `deepcopy` needs to track all references when traversing a recursive data structure
-    in order to ensure that references to the same location do need get assigned to
-    different locations in the copy. Because we can assume that all lists in our
-    adjacency list are different, we don't need to keep track of them.
-If `T` is not a bitstype (e.g. `BigInt`), we use the standard `deepcopy`.
+Fast shuffle Array `a` in UnitRange `r`.
+Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
 """
-function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
-    isbitstype(T) || return deepcopy(adjlist)
+function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
+    rng = getRNG(seed)
+    (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
+    @inbounds for i = length(r):-1:2
+        j = rand(rng, 1:i)
+        ii = i + r.start - 1
+        jj = j + r.start - 1
+        a[ii], a[jj] = a[jj], a[ii]
+    end
+end
 
-    result = Vector{Vector{T}}(undef, length(adjlist))
-    @inbounds for (i, list) in enumerate(adjlist)
-        result_list = Vector{T}(undef, length(list))
-        for (j, item) in enumerate(list)
-            result_list[j] = item
+"""
+    randbn(n, p, seed=-1)
+
+Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
+
+### References
+- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
+- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
+function randbn(n::Integer, p::Real, rng::AbstractRNG)
+    log_q = log(1.0 - p)
+    x = 0
+    sum = 0.0
+    while true
+        sum += log(rand(rng)) / (n - x)
+        sum < log_q && break
+        x += 1
+    end
+    return x
+end
+
+"""
+    is_graphical(degs)
+
+Return `true` if the degree sequence `degs` is graphical.
+A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.
+
+### Performance
+Time complexity: ``\\mathcal{O}(|degs|*\\log(|degs|))``.
+
+### Implementation Notes
+According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (sorted in descending order) is graphical iff the sum of vertex degrees is even and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
+```
+for each integer r <= n-1
+"""
+function is_graphical(degs::Vector{<:Integer})
+    iseven(sum(degs)) || return false
+    sorted_degs = sort(degs, rev = true)
+    n = length(sorted_degs)
+    cur_sum = zero(UInt64)
+    mindeg = Vector{UInt64}(undef, n)
+    @inbounds for i = 1:n
+        mindeg[i] = min(i, sorted_degs[i])
+    end
+    cum_min = sum(mindeg)
+    @inbounds for r = 1:(n - 1)
+        cur_sum += sorted_degs[r]
+        cum_min -= mindeg[r]
+        cond = cur_sum <= (r * (r - 1) + cum_min)
+        cond || return false
+    end
+    return true
+end
+
+"""
+    distributed_generate_min_set(g, gen_func, comp, reps)
+
+Distributed implementation of [`LightGraphs.generate_reduce`](@ref).
+"""
+function distributed_generate_reduce(
+    g::AbstractGraph{T},
+    gen_func::Function,
+    comp::Comp,
+    reps::Integer
+)::Vector{T} where {T<:Integer, Comp}
+    # Type assert required for type stability
+    min_set::Vector{T} = @distributed ((x, y)->comp(x, y) ? x : y) for _ in 1:reps
+        gen_func(g)
+    end
+    return min_set
+end
+
+"""
+    threaded_generate_reduce(g, gen_func, comp reps)
+
+Multi-threaded implementation of [`LightGraphs.generate_reduce`](@ref).
+"""
+function threaded_generate_reduce(
+    g::AbstractGraph{T},
+    gen_func::Function,
+    comp::Comp,
+    reps::Integer
+)::Vector{T} where {T<:Integer, Comp}
+    n_t = Base.Threads.nthreads()
+    is_undef = ones(Bool, n_t)
+    min_set = [Vector{T}() for _ in 1:n_t]
+    Base.Threads.@threads for _ in 1:reps
+        t = Base.Threads.threadid()
+        next_set = gen_func(g)
+        if is_undef[t] || comp(next_set, min_set[t])
+            min_set[t] = next_set
+            is_undef[t] = false
         end
-        result[i] = result_list
     end
 
-    return result
+    min_ind = 0
+    for i in filter((j)->!is_undef[j], 1:n_t)
+        if min_ind == 0 || comp(min_set[i], min_set[min_ind])
+            min_ind = i
+        end
+    end
+
+    return min_set[min_ind]
 end

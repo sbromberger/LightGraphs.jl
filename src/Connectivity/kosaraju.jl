@@ -14,13 +14,13 @@ end
 
 @inline function previsitfn!(s::RevPostOrderState{T}, u) where T
     s.lastnode = u
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(s::RevPostOrderState{T}) where T
     s.result[s.cnt] = s.lastnode
     s.cnt -= 1
-    return true
+    return VSUCCESS
 end
 
 mutable struct KosarajuState{T <: Integer} <: LightGraphs.Traversals.TraversalState
@@ -33,12 +33,12 @@ end
         push!(s.comps, s.curr_comp)
     end
     s.curr_comp = Vector{T}([u])
-    return true
+    return VSUCCESS
 end
 
 @inline function newvisitfn!(s::KosarajuState, u, v)
     push!(s.curr_comp, v)
-    return true
+    return VSUCCESS
 end
 
 @traitfn function connected_components(g::AG::IsDirected, ::Kosaraju) where {T<:Integer, AG<:AbstractGraph{T}}

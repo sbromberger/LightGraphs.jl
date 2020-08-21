@@ -1,5 +1,5 @@
 """
-    struct TrackingBFS <: ShortestPathAlgorithm
+    struct TrackingBFS <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
@@ -22,7 +22,7 @@ beyond which all path distances are assumed to be infinite (that is, they do not
 - redundant equivalent path tracking
 - vertex tracking
 """
-struct TrackingBFS{T} <: ShortestPathAlgorithm
+struct TrackingBFS{T} <: SSSPAlgorithm
     traversal::T
     maxdist::Int64
 end
@@ -34,7 +34,7 @@ mutable struct TrackingBFSSPState{U} <: Traversals.TraversalState
     parents::Vector{U}
     dists::Vector{U}
     n_level::U
-    pathcounts::Vector{U}
+    pathcounts::Vector{Float64}
     predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
     maxdist::U
@@ -42,9 +42,9 @@ end
 
 @inline function initfn!(s::TrackingBFSSPState, u)
     s.dists[u] = 0
-    s.pathcounts[u] = 1
+    s.pathcounts[u] = one(Float64)
     push!(s.closest_vertices, u)
-    return true
+    return VSUCCESS
 end
 
 @inline function newvisitfn!(s::TrackingBFSSPState, u, v) 
@@ -53,7 +53,7 @@ end
     push!(s.closest_vertices, v)
     s.pathcounts[v] = s.pathcounts[u]
     s.predecessors[v] = [u;]
-    return true
+    return VSUCCESS
 end
 
 function revisitfn!(s::TrackingBFSSPState, u, v)
@@ -61,12 +61,12 @@ function revisitfn!(s::TrackingBFSSPState, u, v)
         s.pathcounts[v] += s.pathcounts[u] 
         push!(s.predecessors[v], u)
     end
-    return true
+    return VSUCCESS
 end
 
 @inline function postlevelfn!(s::TrackingBFSSPState{U}) where {U}
     s.n_level += one(U)
-    return true
+    return VSUCCESS
 end
 
 
@@ -74,7 +74,7 @@ end
 struct TrackingBFSResult{U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{U}
-    pathcounts::Vector{U}
+    pathcounts::Vector{Float64}
     predecessors::Vector{Vector{U}}
     closest_vertices::Vector{U}
 end
@@ -89,7 +89,7 @@ function shortest_paths(
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
     predecessors = fill(Vector{U}(), n)
-    pathcounts = zeros(U, n)
+    pathcounts = zeros(n)
     closest_vertices = Vector{U}()
     sizehint!(closest_vertices, n)
 

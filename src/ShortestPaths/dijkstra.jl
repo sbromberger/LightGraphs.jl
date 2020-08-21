@@ -2,12 +2,12 @@ struct DijkstraResult{T, U<:Integer}  <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
-    pathcounts::Vector{UInt64}
+    pathcounts::Vector{Float64}
     closest_vertices::Vector{U}
 end
 
 """
-    struct Dijkstra <: ShortestPathAlgorithm
+    struct Dijkstra <: SSSPAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
@@ -39,7 +39,7 @@ D = transpose(sparse(transpose(D)))
 Be aware that realizing the sparse transpose of `D` incurs a heavy one-time penalty, so this strategy
 should only be used when multiple calls to [`shortest_paths`](@ref) with the distance matrix are planned.
 """
-struct Dijkstra{F<:Function, T<:Real} <: ShortestPathAlgorithm
+struct Dijkstra{F<:Function, T<:Real} <: SSSPAlgorithm
     all_paths::Bool
     track_vertices::Bool
     maxdist::T
@@ -55,7 +55,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
 
-    pathcounts = zeros(UInt64, nvg)
+    pathcounts = zeros(nvg)
     preds = fill(Vector{U}(), nvg)
     H = PriorityQueue{U,T}()
     # fill creates only one array.
@@ -63,7 +63,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     for src in srcs
         dists[src] = zero(T)
         visited[src] = true
-        pathcounts[src] = 1
+        pathcounts[src] = one(Float64)
         H[src] = zero(T)
     end
 
@@ -121,7 +121,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
     end
 
     for src in srcs
-        pathcounts[src] = 1
+        pathcounts[src] = one(Float64)
         parents[src] = 0
         empty!(preds[src])
     end

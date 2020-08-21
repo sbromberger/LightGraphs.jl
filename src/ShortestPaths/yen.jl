@@ -1,7 +1,5 @@
 """
     struct Yen <: ShortestPathAlgorithm
-        k::Int
-    end
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
 should use [Yen's algorithm](https://en.wikipedia.org/wiki/Yen%27s_algorithm)

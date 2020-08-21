@@ -1,7 +1,7 @@
 module Experimental
 
 using LightGraphs
-using LightGraphs.SimpleGraphs
+using LightGraphs.SimpleGraphsCore
 
 export description,
     #isomorphism

@@ -108,7 +108,7 @@ end
 @traitfn function minimum_cycle_mean(g::::IsDirected, distmx::AbstractMatrix, ::Karp)
     cycle = Int[]
     λmin = Inf
-    for component in strongly_connected_components(g)
+    for component in connected_components(g, Tarjan())
         c, λ = _karp_minimum_cycle_mean(g, distmx, component)
         if λ < λmin
             cycle = c

@@ -1,7 +1,7 @@
 for alg in [LC.DFS, LC.DFSQ, LC.UnionMerge]
     @testset "$alg" begin
-        g6 = smallgraph(:house)
-        gx = path_graph(4)
+        g6 = SimpleGraph(SGGEN.House())
+        gx = SimpleGraph(SGGEN.Path(4))
         add_vertices!(gx, 10)
         add_edge!(gx, 5, 6)
         add_edge!(gx, 6, 7)

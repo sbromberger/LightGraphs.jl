@@ -26,25 +26,6 @@ false
 is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
-    add_vertices!(g, n)
-
-Add `n` new vertices to the graph `g`.
-Return the number of vertices that were added successfully.
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> g = SimpleGraph()
-{0, 0} undirected simple Int64 graph
-
-julia> add_vertices!(g, 2)
-2
-```
-"""
-add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
-
-"""
     indegree(g[, v])
 
 Return a vector corresponding to the number of edges which end at each vertex in
@@ -203,7 +184,6 @@ function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
     end
     return hist
 end
-
 
 """
     neighbors(g, v)
@@ -385,22 +365,6 @@ ne(g) / (nv(g) * (nv(g) - 1))
 @traitfn density(g::::(!IsDirected)) =
 (2 * ne(g)) / (nv(g) * (nv(g) - 1))
 
-
-"""
-    squash(g)
-
-Return a copy of a graph with the smallest practical type that
-can accommodate all vertices.
-"""
-function squash(g::AbstractGraph)
-    gtype = is_directed(g) ? DiGraph : Graph
-    validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
-    nvg = nv(g)
-    for T in validtypes
-        nvg < typemax(T) && return gtype{T}(g)
-    end
-end
-
 """
     weights(g)
 
@@ -412,3 +376,11 @@ In general, referencing the weight of a nonexistent edge is undefined behavior. 
 as a substitute for the graph's [`adjacency_matrix`](@ref).
 """
 weights(g::AbstractGraph) = DefaultDistance(nv(g))
+
+add_edge!(::AbstractGraph, x...) = _NI("add_edge!")
+rem_edge!(::AbstractGraph, x...) = _NI("rem_edge!")
+add_vertex!(::AbstractGraph, x...) = _NI("add_vertex!")
+rem_vertex!(::AbstractGraph, x...) = _NI("rem_vertex!")
+add_vertices!(::AbstractGraph, x...) = _NI("add_vertices!")
+rem_vertices!(g::AbstractGraph, x) = _NI("rem_vertices!")
+squash(g::AbstractGraph) = _NI("squash")

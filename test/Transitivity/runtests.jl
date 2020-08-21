@@ -4,12 +4,12 @@ using LightGraphs.Connectivity: Tarjan, UnionMerge
 const LTR = LightGraphs.Transitivity
 
 @testset "Transitivity" begin
-    completedg = complete_digraph(4)
-    circledg = path_digraph(4)
+    completedg = SimpleDiGraph(SGGEN.Complete(4))
+    circledg = SimpleDiGraph(SGGEN.Path(4))
     add_edge!(circledg, 4, 1)
     @testset "$circle" for circle in testgraphs(circledg)
         T = eltype(circle)
-        complete = DiGraph{T}(completedg)
+        complete = SimpleDiGraph{T}(completedg)
         @testset "no self-loops" begin
             newcircle = @inferred(LTR.transitive_closure(circle))
             @test newcircle == complete
@@ -45,7 +45,7 @@ const LTR = LightGraphs.Transitivity
 
         # transitive reduction of a path is a path again
         @testset "pathgraph reduction" begin
-            pathgraph = path_digraph(10)
+            pathgraph = SimpleDiGraph(SGGEN.Path(10))
             @testset "$g" for g in testgraphs(pathgraph)
                 @test g == @inferred(LTR.transitive_reduction(g))
 
@@ -57,7 +57,7 @@ const LTR = LightGraphs.Transitivity
 
         # Transitive reduction of a complete graph should be s simple cycle
         @testset "completegraph reduction" begin
-            completegraph = complete_digraph(9)
+            completegraph = SimpleDiGraph(SGGEN.Complete(9))
             @testset "$g" for g in testgraphs(completegraph)
                 greduced = @inferred(LTR.transitive_reduction(g))
                 @test length(Connectivity.connected_components(greduced, UnionMerge())) == 1 &&
