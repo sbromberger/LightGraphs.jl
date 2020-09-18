@@ -29,8 +29,8 @@ function boruvka_mst end
         # find cheapest edge that connects two components
         found_edge = false
         for edge in edges(g)
-            set1 = find_root(djset, src(edge))
-            set2 = find_root(djset, dst(edge))
+            set1 = find_root!(djset, src(edge))
+            set2 = find_root!(djset, dst(edge))
             if set1 != set2
                 found_edge = true
                 e1 = cheapest[set1]
