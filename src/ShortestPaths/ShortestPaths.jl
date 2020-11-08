@@ -1,7 +1,7 @@
 module ShortestPaths
 using LightGraphs
 using LightGraphs.Traversals
-import LightGraphs.Traversals: tree, parents, distances
+import LightGraphs.Traversals: tree, parents, distances, topological_sort
 using DataStructures: PriorityQueue, Queue, Deque, dequeue!, enqueue!, peek
 using SparseArrays: sparse
 using Distributed: @distributed
@@ -30,7 +30,7 @@ calculation.
 """
 abstract type ShortestPathResult <: AbstractGraphResult end
 
-==(a::T, b::T) where {T<:ShortestPathResult} = parents(a) == parents(b) && distances(a) == distances(b)
+==(a::T, b::T) where {T <: ShortestPathResult} = parents(a) == parents(b) && distances(a) == distances(b)
 
 """
     ShortestPathAlgorithm <: AbstractGraphAlgorithm
@@ -112,8 +112,8 @@ shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm) =
     shortest_paths(g, s, weights(g), alg)
 
 # If we don't specify an algorithm AND there are no dists, use BFS.
-shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer} = shortest_paths(g, s, BFS())
-shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = shortest_paths(g, ss, BFS())
+shortest_paths(g::AbstractGraph{T}, s::Integer) where {T <: Integer} = shortest_paths(g, s, BFS())
+shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T <: Integer} = shortest_paths(g, ss, BFS())
 
 # Full-formed methods.
 """
@@ -235,6 +235,7 @@ include("threaded-bellman-ford.jl")
 include("threaded-bfs.jl")
 include("threaded-floyd-warshall.jl")
 include("yen.jl")
+include("dag-topo.jl")
 
 # TODO 2.0.0: uncomment this
 # export ShortestPathAlgorithm, NegativeCycleError
