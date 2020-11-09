@@ -1,7 +1,7 @@
 module ShortestPaths
 using LightGraphs
 using LightGraphs.Traversals
-import LightGraphs.Traversals: tree, parents, distances, topological_sort
+import LightGraphs.Traversals: tree, parents, distances
 using DataStructures: PriorityQueue, Queue, Deque, dequeue!, enqueue!, peek
 using SparseArrays: sparse
 using Distributed: @distributed

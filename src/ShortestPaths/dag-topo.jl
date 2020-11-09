@@ -1,17 +1,24 @@
-struct DagTopoResult{T,U <: Integer}  <: ShortestPathResult
+import LightGraphs.Traversals: topological_sort, CycleError
+import Base.showerror
+
+struct DAGError <: Exception end
+Base.showerror(io::IO, e::DAGError) = 
+    print(io, "This method is only applicable for Directed Acyclic Graphs. Use Dijkstra for graphs with cycles.")
+
+struct DAGTopoResult{T,U <: Integer}  <: ShortestPathResult
     dists::Vector{T}
     parents::Vector{U}
 end
 
 """
-    struct DagTopo <: SSSPAlgorithm
+    struct DAGTopo <: SSSPAlgorithm
 
-The structure used to configure and specify that [`shortest_paths`](@ref)
-should use [Topo Sort + DP](https://en.wikipedia.org/wiki/Topological_sorting#Application_to_shortest_path_finding)
+The structure used to configure and specify that [`shortest_paths`](@ref) should use 
+[Topo Sort + DP](https://en.wikipedia.org/wiki/Topological_sorting#Application_to_shortest_path_finding)
 to compute shortest paths. 
 
 ### Implementation Notes
-`DagTopo` supports the following shortest-path functionality:
+`DAGTopo` supports the following shortest-path functionality:
 - (required) directed acyclic graphs 
 - negative and non-negative edge weights
 - (optional) multiple sources
@@ -20,9 +27,9 @@ to compute shortest paths.
 ### Performance
 Time and space complexity is of the order O(V+E).
 """
-struct DagTopo <: SSSPAlgorithm end
+struct DAGTopo <: SSSPAlgorithm end
 
-function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::DagTopo) where {T,U <: Integer}
+function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::DAGTopo) where {T,U <: Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -31,7 +38,11 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         dists[src] = zero(T)
     end
 
-    topo_sorted = topological_sort(g)
+    try
+        topo_sorted = topological_sort(g)
+    catch e
+        isa(e, CycleError) && throw(DAGError())
+    end
 
     for u in topo_sorted
         d = dists[u]
@@ -46,7 +57,7 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         end
     end
 
-    return DagTopoResult{T,U}(dists, parents)
+    return DAGTopoResult{T,U}(dists, parents)
 end
 
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DagTopo) = shortest_paths(g, [s], distmx, alg)
+shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::DAGTopo) = shortest_paths(g, [s], distmx, alg)
