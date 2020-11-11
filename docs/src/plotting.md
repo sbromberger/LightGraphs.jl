@@ -2,21 +2,6 @@
 
 *LightGraphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
 
-## [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
-
-This excellent graph visualization package can be used with *LightGraphs.jl*
-as follows:
-
-```julia
-julia> g = wheel_graph(10); am = Matrix(adjacency_matrix(g))
-julia> loc_x, loc_y = layout_spring_adj(am)
-julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
-```
-
-producing a graph like this:
-
-![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
-
 ## [TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
 
 Another nice graph visualization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
@@ -66,3 +51,17 @@ end
 The above code produces the following output:
 
 ![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
+
+## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
+
+GraphRecipes is a collection of recipes for visualizing graphs. Users specify a graph through an adjacency matrix, an adjacency list, or an AbstractGraph via LightGraphs.
+
+```julia
+julia> using GraphRecipes, Plots
+julia> using LightGraphs
+
+julia> g = wheel_graph(10)
+julia> graphplot(g, curves=false)
+```
+
+![WheelGraph](https://user-images.githubusercontent.com/8610352/74631053-de196b80-51c0-11ea-8cba-ddbdc2c6312f.png)
