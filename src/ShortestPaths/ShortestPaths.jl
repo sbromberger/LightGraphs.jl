@@ -235,6 +235,7 @@ include("threaded-bellman-ford.jl")
 include("threaded-bfs.jl")
 include("threaded-floyd-warshall.jl")
 include("yen.jl")
+include("bidir_astar.jl")
 
 # TODO 2.0.0: uncomment this
 # export ShortestPathAlgorithm, NegativeCycleError

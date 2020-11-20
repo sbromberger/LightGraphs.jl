@@ -18,7 +18,7 @@ sptests = [
     "distributed-johnson.jl",
     "spfa.jl",
     "threaded-bfs.jl",
-    "threaded-floyd-warshall.jl"
+    "bidir_astar.jl"
 ]
 
 @testset "LightGraphs.ShortestPaths" begin
