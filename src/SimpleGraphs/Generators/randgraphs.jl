@@ -18,7 +18,7 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=GLOBAL_RNG) w
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3)  && return complement(SimpleGraph{T}(tnv, maxe - ne))
+    ne > div((2 * maxe), 3)  && return complement(SimpleGraph{T}(tnv, maxe - ne, rng=rng))
 
     g = SimpleGraph(tnv)
 
@@ -53,7 +53,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; rng::AbstractRNG=GLOBAL_RNG)
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne))
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne, rng=rng))
 
     g = SimpleDiGraph(tnv)
     while g.ne < ne

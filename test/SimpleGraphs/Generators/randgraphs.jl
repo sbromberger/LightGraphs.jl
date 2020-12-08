@@ -12,7 +12,9 @@
         @test eltype(r2) == Int
 
         @test SG.SimpleGraph(10, 20, rng=rng1) == SG.SimpleGraph(10, 20, rng=rng2)
+        @test SG.SimpleGraph(10, 40, rng=rng1) == SG.SimpleGraph(10, 40, rng=rng2)
         @test SG.SimpleDiGraph(10, 20, rng=rng1) == SG.SimpleDiGraph(10, 20, rng=rng2)
+        @test SG.SimpleDiGraph(10, 80, rng=rng1) == SG.SimpleDiGraph(10, 80, rng=rng2)
         @test SG.SimpleGraph(10, 20, rng=rng1) == SG.SimpleGraph(SGGEN.ErdosRenyi(10, 20, rng=rng2))
         @test ne(SG.SimpleGraph(10, 40, rng=rng1)) == 40
         @test ne(SG.SimpleDiGraph(10, 80, rng=rng1)) == 80
