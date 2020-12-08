@@ -10,7 +10,9 @@
         @test eltype(r2) == Int
 
         @test SimpleGraph(10, 20, seed=3) == SimpleGraph(10, 20, seed=3)
+        @test SimpleGraph(10, 40, seed=3) == SimpleGraph(10, 40, seed=3)
         @test SimpleDiGraph(10, 20, seed=3) == SimpleDiGraph(10, 20, seed=3)
+        @test SimpleDiGraph(10, 80, seed=3) == SimpleDiGraph(10, 80, seed=3)
         @test SimpleGraph(10, 20, seed=3) == erdos_renyi(10, 20, seed=3)
         @test ne(Graph(10, 40, seed=3)) == 40
         @test ne(DiGraph(10, 80, seed=3)) == 80
