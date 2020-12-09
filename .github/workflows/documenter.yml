@@ -1,7 +1,7 @@
 name: Documenter
 on:
   push:
-    branches: [master]
+    branches: [stable]
     tags: [v*]
   pull_request:
 
