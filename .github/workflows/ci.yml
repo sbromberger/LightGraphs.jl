@@ -1,0 +1,31 @@
+name: CI
+on:
+  push:
+    branches: [stable]
+    tags: [v*]
+  pull_request:
+
+jobs:
+  test:
+    name: Julia ${{ matrix.julia-version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        julia-version: [1]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.julia-version }}
+          arch: x64
+      - uses: julia-actions/julia-buildpkg@latest
+      # remove this after 2.0
+      - name: test package
+        run: julia --color=yes --project -e 'using Pkg; Pkg.test(coverage=true, julia_args=["--depwarn=no"])'
+      # uncomment after 2.0
+      # - uses: julia-actions/julia-runtest@latest
+      - uses: julia-actions/julia-uploadcodecov@latest
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: ${{ matrix.julia-version == '1' && matrix.os =='ubuntu-latest' }}
