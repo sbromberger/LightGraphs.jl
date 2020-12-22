@@ -65,3 +65,15 @@ julia> graphplot(g, curves=false)
 ```
 
 ![WheelGraph](https://user-images.githubusercontent.com/8610352/74631053-de196b80-51c0-11ea-8cba-ddbdc2c6312f.png)
+
+Example of using GraphRecipes to plot a directed graph given an asymmetric adjacency matrix:
+```julia
+using GraphRecipes, Plots
+g = [0 1 1;
+     0 0 1;
+     0 1 0]
+
+graphplot(g, names=1:3, curvature_scalar=0.1)
+```
+
+![](https://user-images.githubusercontent.com/8610352/74631107-04d7a200-51c1-11ea-87c1-be9cbf1b02eb.png)
