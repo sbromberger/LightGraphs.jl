@@ -77,3 +77,6 @@ graphplot(g, names=1:3, curvature_scalar=0.1)
 ```
 
 ![](https://user-images.githubusercontent.com/8610352/74631107-04d7a200-51c1-11ea-87c1-be9cbf1b02eb.png)
+
+More examples of using GraphRecipes are here:
+http://docs.juliaplots.org/latest/graphrecipes/examples/
