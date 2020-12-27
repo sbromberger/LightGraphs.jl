@@ -27,7 +27,7 @@ test = ["Base64", "DelimitedFiles", "Test"]
 
 [compat]
 julia = "1"
-ArnoldiMethod = "0.0"
+ArnoldiMethod = "0.0, 0.1"
 DataStructures = "0.17, 0.18"
 Inflate = "0.1"
 SimpleTraits = "0.9"
