@@ -72,11 +72,15 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
 
     @inbounds while !isempty(fwd_frontier) || !isempty(bwd_frontier)
 
+
         # Forward or backward search based on bit
         # Terminate when expanded vertex has been scanned by other search
         if search_bit == 0 && !isempty(fwd_frontier)
             (cost_so_far, u) = dequeue!(fwd_frontier)
-            bwd_colormap[u] == 2 && return AStarResult(best_path, best_path_cost)
+
+            if cost_so_far + alg.fwd_heuristic(u, t) > best_path_cost
+                return AStarResult(best_path, best_path_cost)
+            end
             
             for v in LightGraphs.outneighbors(g, u)
                 if fwd_colormap[v] < 2
@@ -110,7 +114,10 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
 
         elseif search_bit == 1 && !isempty(bwd_frontier)
             (cost_so_far, u) = dequeue!(bwd_frontier)
-            fwd_colormap[u] == 2 && return AStarResult(best_path, best_path_cost)
+            
+            if cost_so_far + alg.bwd_heuristic(u, s) > best_path_cost
+                return AStarResult(best_path, best_path_cost)
+            end
             
             for v in LightGraphs.inneighbors(g, u)
                 if bwd_colormap[v] < 2
