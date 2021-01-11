@@ -10,4 +10,4 @@ used. This implementation is more efficient if `reps` is large.
 """
 independent_set(g::AbstractGraph{T}, reps::Integer, alg::MaximalIndependentSet; parallel=:threads) where T <: Integer = 
 LightGraphs.Parallel.generate_reduce(g, (g::AbstractGraph{T})->LightGraphs.independent_set(g, alg), 
-(x::Vector{T}, y::Vector{T})->length(x)>length(y), reps; parallel=parallel)
+                                     (x::Vector{T}, y::Vector{T})->length(x)>length(y), reps; parallel=parallel)::Vector{T}
