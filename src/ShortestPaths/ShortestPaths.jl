@@ -223,6 +223,7 @@ has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix) = has_negati
 include("astar.jl")
 include("bellman-ford.jl")
 include("bfs.jl")
+include("bidir-astar.jl")
 include("trackingbfs.jl")
 include("desopo-pape.jl")
 include("dijkstra.jl")

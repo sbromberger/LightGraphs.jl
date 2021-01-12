@@ -9,6 +9,7 @@ sptests = [
     "astar.jl",
     "bellman-ford.jl",
     "bfs.jl",
+    "bidir-astar.jl",
     "desopo-pape.jl",
     "dijkstra.jl",
     "distributed-dijkstra.jl",
