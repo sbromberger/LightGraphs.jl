@@ -1,4 +1,7 @@
 @testset "ShortestPaths.BidirAStar" begin
+using Random
+using LinearAlgebra
+
 p5 = SGGEN.Path(5)
 g3 = SimpleGraph(p5)
 g4 = SimpleDiGraph(p5)
@@ -26,4 +29,29 @@ end
 g = SimpleGraph(SGGEN.Complete(4))
 w = float([1 1 1 4; 1 1 1 1; 1 1 1 1; 4 1 1 1])
 @test length(first(ShortestPaths.paths(ShortestPaths.shortest_paths(g, 1, 4, w, ShortestPaths.BidirAStar())))) == 3
+
+RNG = MersenneTwister(12345)
+num_verts = 100
+num_edges = 1000
+trials = 5
+
+for t = 1:trials
+    vset = rand(RNG, num_verts, 2)
+    graph = LightGraphs.SimpleDiGraph(num_verts, num_edges, rng=RNG)
+    distmx = reshape( [norm(vset[i, :] - vset[j, :]) for i = 1:num_verts for j = 1:num_verts] , num_verts, num_verts)
+
+    source = rand(RNG, 1:num_verts)
+    target = rand(RNG, 1:num_verts)
+
+    heuristic(u, t) = norm(vset[u, :] - vset[t, :])
+    astar_alg = LightGraphs.ShortestPaths.AStar(heuristic)
+    bidir_alg = LightGraphs.ShortestPaths.BidirAStar(heuristic, heuristic)
+
+    astar_res = LightGraphs.ShortestPaths.shortest_paths(graph, source, target, distmx, astar_alg)
+    bidir_res = LightGraphs.ShortestPaths.shortest_paths(graph, source, target, distmx, bidir_alg)
+
+    @test astar_res.path == bidir_res.path
+
+end
+
 end
