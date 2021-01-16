@@ -4,7 +4,7 @@ using Random, Statistics
     # Test definition of assortativity as Pearson correlation coefficient
     # between excess of degrees
     @testset "Small graphs" for n = 5:10
-        @test assortativity(wheel_digraph(n)) ≈ -1/3
+        @test assortativity(wheel_graph(n)) ≈ -1/3
     end
     @testset "Directed ($seed)" for seed in [1, 2, 3], (n, ne) in [(14, 18), (10, 22), (7, 16)]
         g = erdos_renyi(n, ne; is_directed=true, seed=seed)
