@@ -59,7 +59,7 @@ tests = [
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",
-    "community/assortativity"
+    "community/assortativity",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
