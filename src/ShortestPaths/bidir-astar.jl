@@ -9,8 +9,6 @@ end
 
 BidirAStar(T::Type=Float64) = BidirAStar((u, v) -> zero(T), (u, v) -> zero(T))
 
-# NOTE: Use AStarResult for output
-
 function reconstruct_path(fwd_parents::Vector{T}, bwd_parents::Vector{T}, u::Integer, s::Integer, t::Integer) where {T<:Integer}
     # Use fwd_parents from s to u and bwd_parents from t to u
     route = Vector{T}()
@@ -69,18 +67,13 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
 
     # TODO (v2): There should be a more code-efficient way to alternate the searches
     # where the outneighbors or inneighbors are called and the corresponding bookkeeping is used
-
     @inbounds while !isempty(fwd_frontier) || !isempty(bwd_frontier)
-
-
         # Forward or backward search based on bit
         # Terminate when expanded vertex has been scanned by other search
         if search_bit == 0 && !isempty(fwd_frontier)
             (cost_so_far, u) = dequeue!(fwd_frontier)
 
-            if cost_so_far + alg.fwd_heuristic(u, t) > best_path_cost
-                return AStarResult(best_path, best_path_cost)
-            end
+            cost_so_far + alg.fwd_heuristic(u, t) > best_path_cost && return AStarResult(best_path, best_path_cost)
             
             for v in LightGraphs.outneighbors(g, u)
                 if fwd_colormap[v] < 2
@@ -101,8 +94,7 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
                             fwd_dists[v] = path_cost
                             fwd_frontier[path_cost, v] = path_cost + alg.fwd_heuristic(v, t)
                         end
-                    end
-                    
+                    end     
                     # If v scanned by bwd search and path through u->v is better than best, update
                     if bwd_colormap[v] == 2 && fwd_dists[v] + bwd_dists[v] < best_path_cost
                         best_path_cost = fwd_dists[v] + bwd_dists[v]
@@ -111,13 +103,10 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
                 end # fwd_colormap[v] < 2
             end # v in outneighbors
             fwd_colormap[u] = 2
-
         elseif search_bit == 1 && !isempty(bwd_frontier)
             (cost_so_far, u) = dequeue!(bwd_frontier)
             
-            if cost_so_far + alg.bwd_heuristic(u, s) > best_path_cost
-                return AStarResult(best_path, best_path_cost)
-            end
+            cost_so_far + alg.bwd_heuristic(u, s) > best_path_cost && return AStarResult(best_path, best_path_cost)
             
             for v in LightGraphs.inneighbors(g, u)
                 if bwd_colormap[v] < 2
@@ -138,7 +127,6 @@ function shortest_paths(g::AbstractGraph{U}, s::Integer, t::Integer, distmx::Abs
                             bwd_frontier[path_cost, v] = path_cost + alg.bwd_heuristic(v, s)
                         end
                     end
-
                     if fwd_colormap[v] == 2 && fwd_dists[v] + bwd_dists[v] < best_path_cost
                         best_path_cost = fwd_dists[v] + bwd_dists[v]
                         best_path = reconstruct_path(fwd_parents, bwd_parents, v, s, t)
