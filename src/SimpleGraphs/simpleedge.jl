@@ -1,4 +1,4 @@
-import Base: Pair, Tuple, show, ==
+import Base: Pair, Tuple, show, ==, hash
 import LightGraphs: AbstractEdge, src, dst, reverse
 
 abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
@@ -31,3 +31,4 @@ SimpleEdge{T}(e::AbstractSimpleEdge) where T <: Integer = SimpleEdge{T}(T(e.src)
 # Convenience functions
 reverse(e::T) where T<:AbstractSimpleEdge = T(dst(e), src(e))
 ==(e1::AbstractSimpleEdge, e2::AbstractSimpleEdge) = (src(e1) == src(e2) && dst(e1) == dst(e2))
+hash(e::AbstractSimpleEdge, h::UInt) = hash(src(e), hash(dst(e), h))
