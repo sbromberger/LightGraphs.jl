@@ -25,6 +25,9 @@
         @test SimpleEdge(t1) == SimpleEdge{UInt8}(t1) == SimpleEdge{Int16}(t1)
         @test SimpleEdge{Int64}(ep1) == e
 
+        @test hash(SimpleEdge(t1)) == hash(SimpleEdge{UInt8}(t1)) == hash(SimpleEdge{UInt16}(t1))
+        @test hash(SimpleEdge(1, 2)) != hash(SimpleEdge(2, 1))
+
         @test Pair(e) == p
         @test Tuple(e) == t1
         @test reverse(ep1) == re
