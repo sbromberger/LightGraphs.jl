@@ -158,7 +158,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     J = vcat(1:n_e, 1:n_e)
     V = vcat(
         fill((isdir || oriented) ? -one(T) : one(T), n_e),
-        fill(one(T), n_e)
+        fill(one(T), n_e),
     )
     return sparse(I, J, V)
 end
