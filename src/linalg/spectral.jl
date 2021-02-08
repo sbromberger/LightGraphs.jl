@@ -153,34 +153,14 @@ between `v` and `i`.
 """
 function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     isdir = is_directed(g)
-    n_v = nv(g)
     n_e = ne(g)
-    nz = 2 * n_e
-
-    # every col has the same 2 entries
-    colpt = collect(1:2:(nz + 1))
-    nzval = repeat([(isdir || oriented) ? -one(T) : one(T), one(T)], n_e)
-
-    # iterate over edges for row indices
-    rowval = zeros(Int, nz)
-    i = 1
-    for u in vertices(g)
-        for v in outneighbors(g, u)
-            if isdir || u < v # add every edge only once
-                if u > v
-                    v, u = u, v
-                    # need to make sure that columns of the CSC matrix are sorted
-                    nzval[2 * i - 1], nzval[2 * i] = nzval[2 * i], nzval[2 * i - 1]
-                end
-                rowval[2 * i - 1] = u
-                rowval[2 * i] = v
-                i += 1
-            end
-        end
-    end
-
-    spmx = SparseMatrixCSC(n_v, n_e, colpt, rowval, nzval)
-    return spmx
+    I = vcat(src.(edges(g)), dst.(edges(g)))
+    J = vcat(1:n_e, 1:n_e)
+    V = vcat(
+        fill((isdir || oriented) ? -one(T) : one(T), n_e),
+        fill(one(T), n_e)
+    )
+    return sparse(I, J, V)
 end
 
 """
