@@ -223,8 +223,24 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small model random graph with `n` vertices, each with degree `k`. Edges are
-randomized per the model based on probability `β`.
+small world random graph with `n` vertices, each with expected degree `k` (or `k
+- 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
+
+The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or `k
+- 1` in total). Then the following steps are repeated for a hop length `i` of
+`1` through `div(k, 2)`.
+
+1. Consider each vertex `s` in turn, along with the edge to its `i`th nearest
+   neighbor `t`, in a clockwise sense.
+
+2. Generate a uniformly random number `r`. If `r ≥ β`, then the edge `(s, t)` is
+   left unaltered. Otherwise, the edge is deleted and *rewired* so that `s` is
+   connected to some vertex `d`, chosen uniformly at random from the entire
+   graph, excluding `s` and its neighbors. (Note that `t` is a valid candidate.)
+
+For `β = 1`, the graph will remain a 1-lattice, and for `β = 0`, all edges will
+be rewired randomly.
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
@@ -237,39 +253,52 @@ julia> watts_strogatz(10, 4, 0.3)
 
 julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 {10, 20} directed simple Int8 graph
+
+### References
+- Collective dynamics of ‘small-world’ networks, Duncan J. Watts, Steven H. Strogatz. [https://doi.org/10.1038/30918](https://doi.org/10.1038/30918)
+- Small Worlds, Duncan J. watts. [https://en.wikipedia.org/wiki/Special:BookSources?isbn=978-0691005416](https://en.wikipedia.org/wiki/Special:BookSources?isbn=978-0691005416)
 ```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
+
     @assert k < n
-    if is_directed
-        g = SimpleDiGraph(n)
-    else
-        g = SimpleGraph(n)
+
+    if k == n - 1 && iseven(k)
+        return is_directed ? complete_digraph(n) : complete_graph(n)
     end
+
+    g = is_directed ? SimpleDiGraph(n) : SimpleGraph(n)
+
     rng = getRNG(seed)
-    for s in 1:n
-        for i in 1:(floor(Integer, k / 2))
-            target = ((s + i - 1) % n) + 1
-            if rand(rng) > β && !has_edge(g, s, target) # TODO: optimize this based on return of add_edge!
-                add_edge!(g, s, target)
-            else
-                while true
-                    d = target
-                    while d == target
-                        d = rand(rng, 1:(n - 1))
-                        if s < d
-                            d += 1
-                        end
-                    end
-                    if s != d
-                        add_edge!(g, s, d) && break
-                    end
-                end
-            end
-        end
+
+    target(s, i) = ((s + i - 1) % n) + 1
+
+    # Phase 1:
+
+    for i = 1:div(k, 2), s = 1:n
+        add_edge!(g, s, target(s, i))
     end
+
+    # Phase 2:
+
+    for i = 1:div(k, 2), s = 1:n
+
+        (rand(rng) < β && degree(g, s) < n - 1) || continue
+
+        t = target(s, i)
+
+        for d in randperm(rng, n)
+            d == s && continue
+            d == t && break
+            add_edge!(g, s, d) && rem_edge!(g, s, t) && break
+        end
+
+    end
+
     return g
+
 end
+
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where T <: Integer
     isempty(potential_edges) && return true
