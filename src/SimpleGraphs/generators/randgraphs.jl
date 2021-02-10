@@ -1,5 +1,5 @@
 using Random:
-    AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
+    AbstractRNG, MersenneTwister, randperm, randperm!, seed!, shuffle!
 using Statistics: mean
 
 using LightGraphs:
@@ -281,13 +281,16 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
 
     # Phase 2:
 
+    ns = collect(1:n)
+
     for i = 1:div(k, 2), s = 1:n
 
         (rand(rng) < β && degree(g, s) < n - 1) || continue
 
         t = target(s, i)
 
-        for d in randperm(rng, n)
+        randperm!(rng, ns)
+        for d in ns
             d == s && continue
             d == t && break
             add_edge!(g, s, d) && rem_edge!(g, s, t) && break
