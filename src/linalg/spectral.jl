@@ -160,7 +160,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     (isdir || oriented) ? -fill(one(T), n_e) : fill(one(T), n_e),
         fill(one(T), n_e),
     )
-    return sparse(I, J, V)
+    return sparse(I, J, V, nv(g), ne(g))
 end
 
 """
