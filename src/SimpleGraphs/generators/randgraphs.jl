@@ -260,9 +260,10 @@ julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 ```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
-
     @assert k < n
 
+    # If we have n - 1 neighbors (exactly k/2 on each side), then the graph is
+    # necessarily complete. No need to run the Watts-Strogatz procedure:
     if k == n - 1 && iseven(k)
         return is_directed ? complete_digraph(n) : complete_graph(n)
     end
@@ -271,33 +272,44 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
 
     rng = getRNG(seed)
 
+    # The ith next vertex, in clockwise order.
+    # (Reduce to zero-based indexing, so the modulo works, by subtracting 1
+    # before and adding 1 after.)
     target(s, i) = ((s + i - 1) % n) + 1
 
-    # Phase 1:
+    # Phase 1: For each step size i, add an edge from each vertex s to the ith
+    # next vertex, in clockwise order.
 
     for i = 1:div(k, 2), s = 1:n
         add_edge!(g, s, target(s, i))
     end
 
-    # Phase 2:
+    # Phase 2: For each step size i and each vertex s, consider the edge to the
+    # ith next vertex, in clockwise order. With probability β, delete the edge
+    # and rewire it to any (valid) target, chosen uniformly at random.
 
     for i = 1:div(k, 2), s = 1:n
 
+        # We only rewire with a probability β, and we only worry about rewiring
+        # if there is some vertex not connected to s; otherwise, the only valid
+        # rewiring is to reconnect to the ith next vertex, and there is no work
+        # to do.
         (rand(rng) < β && degree(g, s) < n - 1) || continue
 
         t = target(s, i)
 
         while true
-            d = rand(1:n)
-            d == s && continue
-            d == t && break
-            add_edge!(g, s, d) && rem_edge!(g, s, t) && break
+            d = rand(1:n)               # Tentative new target
+            d == s && continue          # Self-loops prohibited
+            d == t && break             # Rewired to original target
+            if add_edge!(g, s, d)       # Was this valid (i.e., unconnected)?
+                rem_edge!(g, s, t)      # True rewiring: Delete original edge
+                break                   # We found a valid target
+            end
         end
 
     end
-
     return g
-
 end
 
 
