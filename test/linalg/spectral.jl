@@ -129,6 +129,16 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test incidence_matrix(g; oriented=true)[2, 1] == 1
         @test incidence_matrix(g; oriented=true)[3, 1] == 0
     end
+
+    # Check size of incidence matrix with isolated vertices
+    g6 = complete_graph(4)
+    for k = 1:3
+        add_vertex!(g6)
+    end
+    for g in testgraphs(g6)
+        @test size(incidence_matrix(g6)) == (7, 6)
+    end
+
     # TESTS FOR Nonbacktracking operator.
 
     n = 10; k = 5
