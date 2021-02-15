@@ -18,12 +18,13 @@ julia> assortativity(star_graph(4))
 -1.0
 ```
 """
-function assortativity(g::AbstractGraph)
+function assortativity(g::AbstractGraph{T}) where T
+    P = promote_type(Int64, T) # at least Int64 to reduce risk of overflow
     nue  = ne(g)
-    sjk = sj = sk = sjs = sks = 0
+    sjk = sj = sk = sjs = sks = zero(P)
     for d in edges(g)
-        j = outdegree(g, src(d)) - 1
-        k = indegree(g, dst(d)) - 1
+        j = P(outdegree(g, src(d)) - 1)
+        k = P(indegree(g, dst(d)) - 1)
         sjk += j*k
         sj  += j
         sk  += k
@@ -33,20 +34,20 @@ function assortativity(g::AbstractGraph)
     return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
-"""
+#=
 assortativity coefficient for directed graphs: 
 see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
 http://arxiv.org/abs/cond-mat/0209450
-"""
+=#
 @traitfn function assortativity_coefficient(g::::IsDirected, sjk, sj, sk, sjs, sks, nue)
     return (sjk - sj*sk/nue) / sqrt((sjs - sj^2/nue)*(sks - sk^2/nue))
 end
 
-"""
+#=
 assortativity coefficient for undirected graphs: 
 see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002), 
 http://arxiv.org/abs/cond-mat/0205405/
-"""
+=#
 @traitfn function assortativity_coefficient(g::::(!IsDirected), sjk, sj, sk, sjs, sks, nue)
     return (sjk/nue - ((sj + sk)/(2*nue))^2) / ((sjs + sks)/(2*nue) - ((sj + sk)/(2*nue))^2)
 end
