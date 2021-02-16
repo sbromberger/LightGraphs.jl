@@ -275,7 +275,7 @@ function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, see
     # The ith next vertex, in clockwise order.
     # (Reduce to zero-based indexing, so the modulo works, by subtracting 1
     # before and adding 1 after.)
-    target(s, i) = ((s + i - 1) % n) + 1
+    @inline target(s, i) = ((s + i - 1) % n) + 1
 
     # Phase 1: For each step size i, add an edge from each vertex s to the ith
     # next vertex, in clockwise order.
