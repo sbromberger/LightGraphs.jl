@@ -227,8 +227,8 @@ small world random graph with `n` vertices, each with expected degree `k` (or `k
 - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
-where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or `k
-- 1` in total). Then the following steps are repeated for a hop length `i` of
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
+`k - 1` in total). Then the following steps are repeated for a hop length `i` of
 `1` through `div(k, 2)`.
 
 1. Consider each vertex `s` in turn, along with the edge to its `i`th nearest
@@ -253,11 +253,11 @@ julia> watts_strogatz(10, 4, 0.3)
 
 julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 {10, 20} directed simple Int8 graph
+```
 
 ### References
 - Collective dynamics of ‘small-world’ networks, Duncan J. Watts, Steven H. Strogatz. [https://doi.org/10.1038/30918](https://doi.org/10.1038/30918)
 - Small Worlds, Duncan J. watts. [https://en.wikipedia.org/wiki/Special:BookSources?isbn=978-0691005416](https://en.wikipedia.org/wiki/Special:BookSources?isbn=978-0691005416)
-```
 """
 function watts_strogatz(n::Integer, k::Integer, β::Real; is_directed=false, seed::Int=-1)
     @assert k < n
