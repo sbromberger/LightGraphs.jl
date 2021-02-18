@@ -63,7 +63,7 @@ function _parse_header(s::AbstractString)
     if occursin(",", graphname) # version number and type
         graphname, _ver, _dtype, graphcode = split(graphname, r"s*,s*")
         ver = parse(Int, _ver)
-        dtype = eval(Symbol(_dtype))
+        dtype = getfield(Main, Symbol(_dtype))
         addl_info = true
     end
     n_v = parse(Int, nvstr)
