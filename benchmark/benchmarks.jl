@@ -24,5 +24,8 @@ include("edges.jl")
 include("insertions.jl")
 include("traversals.jl")
 
+# include parallel benchmarks
+include("parallel/parallel_benchmarks.jl")
+
 tune!(suite);
 results = run(suite, verbose = true, seconds = 10)
