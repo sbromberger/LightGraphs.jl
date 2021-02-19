@@ -34,8 +34,8 @@ end
 
 
 n = 10000
-suite["centrality"]["fille"] = @benchmarkable fille($n)
-suite["centrality"]["fillp"] = @benchmarkable fillp($n)
+suite["edges"]["fille"] = @benchmarkable fille($n)
+suite["edges"]["fillp"] = @benchmarkable fillp($n)
 a, b = fille(n), fillp(n)
-suite["centrality"]["tsume"] = @benchmarkable tsum($a)
-suite["centrality"]["tsump"] = @benchmarkable tsum($b)
+suite["edges"]["tsume"] = @benchmarkable tsum($a)
+suite["edges"]["tsump"] = @benchmarkable tsum($b)
