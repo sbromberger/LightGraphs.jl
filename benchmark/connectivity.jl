@@ -1,12 +1,3 @@
-@benchgroup "connectivity" begin
-  @benchgroup "digraphs" begin
-    for (name, g) in DIGRAPHS
-      @bench "$(name): strongly_connected_components" LightGraphs.strongly_connected_components($g)
-    end
-  end # digraphs
-  @benchgroup "graphs" begin
-    for (name, g) in GRAPHS
-        @bench "$(name): connected_components" LightGraphs.connected_components($g)
-    end
-  end # graphs
-end # connectivity
+suite["centrality"] = BenchmarkGroup(["graphs", "digraphs"])
+suite["centrality"]["graphs"] = @benchmarkable [LightGraphs.connected_components(g) for (n,g) in $GRAPHS]
+suite["centrality"]["digraphs"] = @benchmarkable [LightGraphs.strongly_connected_components(g) for (n,g) in $DIGRAPHS]
