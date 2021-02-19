@@ -20,6 +20,7 @@ suite = BenchmarkGroup()
 include("core.jl")
 include("centrality.jl")
 include("connectivity.jl")
+include("edges.jl")
 include("insertions.jl")
 include("traversals.jl")
 
