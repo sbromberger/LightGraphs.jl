@@ -16,6 +16,7 @@ GRAPHS = Dict{String,Graph}(
 
 suite = BenchmarkGroup()
 include("core.jl")
+include("centrality.jl")
 
 
 tune!(suite);
