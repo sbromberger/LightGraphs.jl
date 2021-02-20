@@ -54,6 +54,9 @@ difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
+# allsimplepaths
+all_simple_paths,
+
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
 
@@ -219,6 +222,7 @@ include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("cycles/limited_length.jl")
+include("traversals/allsimplepaths.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
