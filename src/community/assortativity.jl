@@ -34,9 +34,43 @@ function assortativity(g::AbstractGraph{T}) where T
     return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
+"""
+    assortativity(g,labels)
+Similar to `assortativity(g)` except that Pearson correlation is calculated
+from the correlation between some values associated to each node and stored in
+`labels`.
+
+# Arguments
+- `labels` is a dictionary that associates to each vertex index a scalar value
+
+# Examples
+```jldoctest
+julia> using LightGraphs
+
+julia> labels = Dict(collect(1:4) .=> [-1., -1., 1., 1.])
+
+julia> assortativity(star_graph(4),labels)
+-0.5
+```
+"""
+function assortativity(g::AbstractGraph{T},labels::Dict{T,N}) where {T,N<:Number}
+    nue  = ne(g)
+    sjk = sj = sk = sjs = sks = zero(N)
+    for d in edges(g)
+        j = labels[src(d)]
+        k = labels[dst(d)]
+        sjk += j*k
+        sj  += j
+        sk  += k
+        sjs += j^2
+        sks += k^2
+    end
+    return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
+end
+
 #=
-assortativity coefficient for directed graphs: 
-see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003), 
+assortativity coefficient for directed graphs:
+see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 67, 026126 (2003),
 http://arxiv.org/abs/cond-mat/0209450
 =#
 @traitfn function assortativity_coefficient(g::::IsDirected, sjk, sj, sk, sjs, sks, nue)
@@ -44,8 +78,8 @@ http://arxiv.org/abs/cond-mat/0209450
 end
 
 #=
-assortativity coefficient for undirected graphs: 
-see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002), 
+assortativity coefficient for undirected graphs:
+see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. Lett. 89, 208701 (2002),
 http://arxiv.org/abs/cond-mat/0205405/
 =#
 @traitfn function assortativity_coefficient(g::::(!IsDirected), sjk, sj, sk, sjs, sks, nue)
