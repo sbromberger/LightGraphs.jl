@@ -35,30 +35,30 @@ function assortativity(g::AbstractGraph{T}) where T
 end
 
 """
-    assortativity(g,labels)
+    assortativity(g,attributes)
 Similar to `assortativity(g)` except that Pearson correlation is calculated
-from the correlation between some values associated to each node and stored in
-`labels`.
+from the correlation between some atrribute values associated to each node and stored in
+`attributes`.
 
 # Arguments
-- `labels` is a dictionary that associates to each vertex index a scalar value
+- `attributes` is a dictionary that associates to each vertex index a scalar value
 
 # Examples
 ```jldoctest
 julia> using LightGraphs
 
-julia> labels = Dict(collect(1:4) .=> [-1., -1., 1., 1.])
+julia> attributes = Dict(collect(1:4) .=> [-1., -1., 1., 1.])
 
-julia> assortativity(star_graph(4),labels)
+julia> assortativity(star_graph(4),attributes)
 -0.5
 ```
 """
-function assortativity(g::AbstractGraph{T},labels::Dict{T,N}) where {T,N<:Number}
+function assortativity(g::AbstractGraph{T},attributes::Dict{T,N}) where {T,N<:Number}
     nue  = ne(g)
     sjk = sj = sk = sjs = sks = zero(N)
     for d in edges(g)
-        j = labels[src(d)]
-        k = labels[dst(d)]
+        j = attributes[src(d)]
+        k = attributes[dst(d)]
         sjk += j*k
         sj  += j
         sk  += k
