@@ -19,7 +19,6 @@ Pages   = [
     "community/label_propagation.jl",
     "community/modularity.jl",
     "community/assortativity.jl"
-    "community/rich_club.jl"
 ]
 Private = false
 ```
