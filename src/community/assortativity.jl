@@ -1,14 +1,23 @@
 """
     assortativity(g)
+    assortativity(g,attributes)
 
 Return the [assortativity coefficient](https://en.wikipedia.org/wiki/Assortativity)
 of graph `g`, defined as the Pearson correlation of excess degree between
 the end vertices of all the edges of the graph.
 
+If `attributes` is provided, Pearson correlation is calculated
+from atrribute values associated to each vertex and stored in
+vector `attributes`.
+
 The excess degree is equal to the degree of linked vertices minus one,
 i.e. discounting the edge that links the pair.
 In directed graphs, the paired values are the out-degree of source vertices
 and the in-degree of destination vertices.
+
+# Arguments
+- `attributes` (optional) is a vector that associates to each vertex `i` a scalar value
+`attributes[i]`.
 
 # Examples
 ```jldoctest
@@ -16,6 +25,11 @@ julia> using LightGraphs
 
 julia> assortativity(star_graph(4))
 -1.0
+
+julia> attributes = [-1., -1., 1., 1.]
+
+julia> assortativity(star_graph(4),attributes)
+-0.5
 ```
 """
 function assortativity(g::AbstractGraph{T}) where T
@@ -34,26 +48,7 @@ function assortativity(g::AbstractGraph{T}) where T
     return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
-"""
-    assortativity(g,attributes)
-Similar to `assortativity(g)` except that Pearson correlation is calculated
-from the correlation between some atrribute values associated to each node and stored in
-`attributes`.
-
-# Arguments
-- `attributes` is a dictionary that associates to each vertex index a scalar value
-
-# Examples
-```jldoctest
-julia> using LightGraphs
-
-julia> attributes = Dict(collect(1:4) .=> [-1., -1., 1., 1.])
-
-julia> assortativity(star_graph(4),attributes)
--0.5
-```
-"""
-function assortativity(g::AbstractGraph{T},attributes::Dict{T,N}) where {T,N<:Number}
+function assortativity(g::AbstractGraph{T},attributes::Vector{N}) where {T,N<:Number}
     nue  = ne(g)
     sjk = sj = sk = sjs = sks = zero(N)
     for d in edges(g)
