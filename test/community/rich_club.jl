@@ -1,6 +1,6 @@
 
 @testset "Rich club coefficient" begin
-    @testset "Small graphs" for n = 5:10
+    @testset "Small graphs" for _n in 5:10
         @test @inferred rich_club(star_graph(_n),1) ≈ 2 / _n
         @test @inferred rich_club(DiGraph(star_graph(_n)),1) ≈ 2 / _n
     end
