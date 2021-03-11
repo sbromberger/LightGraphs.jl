@@ -60,7 +60,7 @@ tests = [
     "community/clustering",
     "community/clique_percolation",
     "community/assortativity",
-    "rich_club",
+    "community/rich_club",
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
