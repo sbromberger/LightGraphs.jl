@@ -1,6 +1,6 @@
 """
     assortativity(g)
-    assortativity(g,attributes)
+    assortativity(g, attributes)
 
 Return the [assortativity coefficient](https://en.wikipedia.org/wiki/Assortativity)
 of graph `g`, defined as the Pearson correlation of excess degree between
@@ -48,9 +48,10 @@ function assortativity(g::AbstractGraph{T}) where T
     return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
-function assortativity(g::AbstractGraph{T},attributes::Vector{N}) where {T,N<:Number}
+function assortativity(g::AbstractGraph{T}, attributes::Vector{N}) where {T,N<:Number}
+    P = promote_type(Int64, N) # at least Int64 to reduce risk of overflow
     nue  = ne(g)
-    sjk = sj = sk = sjs = sks = zero(N)
+    sjk = sj = sk = sjs = sks = zero(P)
     for d in edges(g)
         j = attributes[src(d)]
         k = attributes[dst(d)]
