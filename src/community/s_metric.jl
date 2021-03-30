@@ -1,5 +1,5 @@
 """
-    s_metric(g;norm=true)
+    s_metric(g; norm=true)
 
 Return the normalised s-metric of `g`.
 
@@ -21,10 +21,10 @@ julia> s_metric(star_graph(4))
 ```
 """
 
-function s_metric(g::AbstractGraph{T};norm=true) where T
+function s_metric(g::AbstractGraph{T}; norm=true) where T
     s = zero(T)
     for e in edges(g)
-        s += outdegree(g,src(e)) * indegree(g,dst(e))
+        s += outdegree(g, src(e)) * indegree(g, dst(e))
     end
     if norm
         sm = sum(degree(g).^3)/2
