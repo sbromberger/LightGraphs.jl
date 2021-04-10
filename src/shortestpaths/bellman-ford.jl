@@ -110,7 +110,7 @@ will return a vector (indexed by destination vertex) of paths from source `v`
 to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
 a vector representing the path from vertex `v` to vertex `d`.
 """
-function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
+function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer})
     parents = state.parents
     T = eltype(parents)
 
@@ -131,6 +131,6 @@ function enumerate_paths(state::AbstractPathState, vs::Vector{<:Integer})
     return all_paths
 end
 
-enumerate_paths(state::AbstractPathState, v) = enumerate_paths(state, [v])[1]
+enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, [v])[1]
 enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
 
