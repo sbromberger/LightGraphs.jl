@@ -219,31 +219,31 @@ julia> strongly_connected_components(g)
 
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
+empty_graph_data(type,g::AG) where {T, AG <: AbstractGraph{T}} = Dict{T,type}()
+empty_graph_data(type,g::AG) where {T<:Integer, AG <: AbstractGraph{T}} = zeros(type,nv(g))
+is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
+is_unvisited(data::Dict,v) = !haskey(data,v)
+
+@traitfn function strongly_connected_components_modified(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     zero_t = zero(T)
-    one_t = one(T)
     nvg = nv(g)
-    count = one_t
-    
-    
-    index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
-    onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
-    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
-    parents = zeros(T, nvg)       # parent of every vertex in dfs
+    count = 1  # Visitation order for the branch being explored. Backtracks when we pop an scc.
+    component_count = nvg - 1  # Reversed Index of the current component being discovered.
+    # Invariant: count is always smaller than component_count.
+    # This lets us tell if a node belongs to a previously discovered scc without any extra bits.
+
+    component_root = empty_graph_data(Bool,g)    
+    rindex = empty_graph_data(Int,g)          # The arrays should not be T-valued for integer T, the rindexes should be the same type as nvg
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
-    
+    stack = Vector{T}()     # stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
     
     @inbounds for s in vertices(g)
-        if index[s] == zero_t
-            index[s] = count
-            lowlink[s] = count
-            onstack[s] = true
-            parents[s] = s
-            push!(stack, s)
-            count = count + one_t
+        if is_unvisited(rindex,s)
+            rindex[s] = count
+            component_root[s] = true
+            count += 1
 
             # start dfs from 's'
             push!(dfs_stack, s) 
@@ -252,16 +252,16 @@ function strongly_connected_components end
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
                 @inbounds for v_neighbor in outneighbors(g, v)
-                    if index[v_neighbor] == zero_t
-                        # unvisited neighbor found
+                    if is_unvisited(rindex,v_neighbor)
                         u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[v_neighbor]
-                        # we have already seen n, but can update the lowlink of v
-                        # which has the effect of possibly keeping v on the stack until n is ready to pop.
-                        # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[v_neighbor])
+                        # TODO: This is accidentally quadratic for tournament graphs or star graphs.
+                        # Breaking the for loop to resume it from the beginning when returning leads to issues for graphs with high node orders like the star graph.
+                        # One option is to save the iteration state in a third stack, but there may be other approaches.
+                    elseif (rindex[v_neighbor] < rindex[v])
+                        rindex[v] = rindex[v_neighbor]
+                        component_root[v] = false
                     end
                 end
                 if u == zero_t
@@ -269,48 +269,45 @@ function strongly_connected_components end
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
                     popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
-                    
-                    if index[v] == lowlink[v]
-                        # found a cycle in a completed dfs tree.
-                        component = Vector{T}()
-                        
-                        while !isempty(stack) #break when popped == v
-                            # drain stack until we see v.
-                            # everything on the stack until we see v is in the SCC rooted at v.
-                            popped = pop!(stack)
-                            push!(component, popped)
-                            onstack[popped] = false
-                            # popped has been assigned a component, so we will never see it again.
-                            if popped == v
-                                # we have drained the stack of an entire component.
-                                break
-                            end
+                    if component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
+                        component = T[popped]
+                        count -= 1   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
+                        while !isempty(stack) && (rindex[popped] <= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
+                            newpopped = pop!(stack)
+                            rindex[newpopped] = component_count # Bigger than the value of anything unexplored.
+                            push!(component, newpopped) # popped has been assigned a component, so we will never see it again.
+                            count -=1
                         end
-                        
-                        reverse!(component)
-                        push!(components, component)
+                        rindex[popped] = component_count
+                        component_count -= 1
+                        push!(components,component)                    
+                    else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
+                        if (rindex[popped] < rindex[dfs_stack[end]])
+                            rindex[dfs_stack[end]] = rindex[popped]
+                            component_root[dfs_stack[end]] = false
+                        end
+                        # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
+                        # For DAG inputs, the stack variable never gets touched at all.
+                        push!(stack,popped) 
                     end
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
-                    index[u] = count
-                    lowlink[u] = count
-                    onstack[u] = true
-                    parents[u] = v
-                    count = count + one_t
-                    
-                    push!(stack, u)
                     push!(dfs_stack, u)
+                    component_root[u] = true
+                    rindex[u] = count
+                    count += 1
                     # next iteration of while loop will expand the DFS tree from u.
                 end
             end
         end
     end
 
+    #Unlike in the original Tajans, rindex are potentially also worth returning here. 
+    # Lowlink values are topologically sorted in the same order as components.
+    # Scipy's graph library returns only that and lets the user sort by its values.
     return components
 end
-
 
 """
     strongly_connected_components_kosaraju(g)
