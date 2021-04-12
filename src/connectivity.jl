@@ -224,7 +224,7 @@ empty_graph_data(type,g::AG) where {T<:Integer, AG <: AbstractGraph{T}} = zeros(
 is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 is_unvisited(data::Dict,v) = !haskey(data,v)
 
-@traitfn function strongly_connected_components_modified(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     nvg = nv(g)
     count = 1  # Visitation order for the branch being explored. Backtracks when we pop an scc.
