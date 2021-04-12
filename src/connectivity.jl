@@ -291,7 +291,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     end
                     next = iterate(outn, state)
                 end
-                if u == zero_t
+                iszero(u)
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
