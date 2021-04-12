@@ -227,23 +227,24 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     nvg = nv(g)
-    count = 1  # Visitation order for the branch being explored. Backtracks when we pop an scc.
-    component_count = nvg - 1  # Reversed Index of the current component being discovered.
-    # Invariant: count is always smaller than component_count.
-    # This lets us tell if a node belongs to a previously discovered scc without any extra bits.
+    count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
+    component_count = 1  # Index of the current component being discovered.
+    # Invariant 1: count is always smaller than component_count.
+    # Invariant 2: if rindex[v] < component_count, then v is in components[rindex[v]].
+    # This trivially lets us tell if a node belongs to a previously discovered scc without any extra bits, just inequalities.
 
     component_root = empty_graph_data(Bool,g)    
-    rindex = empty_graph_data(Int,g)          # The arrays should not be T-valued for integer T, the rindexes should be the same type as nvg
+    rindex = empty_graph_data(Int,g)          # The arrays should not be T-valued for integer T, the rindexes should be the same type as nvg.
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
-    stack = Vector{T}()     # stores vertices which have been discovered and not yet assigned to any component
+    stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
     
     @inbounds for s in vertices(g)
         if is_unvisited(rindex,s)
             rindex[s] = count
             component_root[s] = true
-            count += 1
+            count -= 1
 
             # start dfs from 's'
             push!(dfs_stack, s) 
@@ -256,10 +257,11 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
                         u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
-                        # TODO: This is accidentally quadratic for tournament graphs or star graphs.
-                        # Breaking the for loop to resume it from the beginning when returning leads to issues for graphs with high node orders like the star graph.
+                        # TODO: This is accidentally(?) quadratic for (very large) tournament graphs or star graphs,
+                        # but the loop turns out to be very tight so this still benchmarks well unless the vertex orders are huge.
+                        # Breaking the for loop to resume it from the beginning when returning leads to this being quadratic as a function of node order.
                         # One option is to save the iteration state in a third stack, but there may be other approaches.
-                    elseif (rindex[v_neighbor] < rindex[v])
+                    elseif (rindex[v_neighbor] > rindex[v])
                         rindex[v] = rindex[v_neighbor]
                         component_root[v] = false
                     end
@@ -271,24 +273,23 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
                     popped = pop!(dfs_stack)
                     if component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
                         component = T[popped]
-                        count -= 1   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
-                        while !isempty(stack) && (rindex[popped] <= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
+                        count += 1   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
+                        while !isempty(stack) && (rindex[popped] >= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
                             newpopped = pop!(stack)
                             rindex[newpopped] = component_count # Bigger than the value of anything unexplored.
                             push!(component, newpopped) # popped has been assigned a component, so we will never see it again.
-                            count -=1
+                            count +=1
                         end
                         rindex[popped] = component_count
-                        component_count -= 1
+                        component_count += 1
                         push!(components,component)                    
                     else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
-                        if (rindex[popped] < rindex[dfs_stack[end]])
+                        if (rindex[popped] > rindex[dfs_stack[end]])
                             rindex[dfs_stack[end]] = rindex[popped]
                             component_root[dfs_stack[end]] = false
                         end
                         # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
-                        # For DAG inputs, the stack variable never gets touched at all.
-                        push!(stack,popped) 
+                        push!(stack,popped)  # For DAG inputs, the stack variable never gets touched at all.
                     end
                     
                 else #LABEL A
@@ -296,19 +297,19 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
                     push!(dfs_stack, u)
                     component_root[u] = true
                     rindex[u] = count
-                    count += 1
+                    count -= 1
                     # next iteration of while loop will expand the DFS tree from u.
                 end
             end
         end
     end
 
-    #Unlike in the original Tajans, rindex are potentially also worth returning here. 
-    # Lowlink values are topologically sorted in the same order as components.
+    #Unlike in the original Tarjans, rindex are potentially also worth returning here. 
+    # For any v, v is in components[rindex[v]], s it acts as a lookup table for components.
     # Scipy's graph library returns only that and lets the user sort by its values.
-    return components
+    return components # ,rindex
 end
-
+                            
 """
     strongly_connected_components_kosaraju(g)
 
