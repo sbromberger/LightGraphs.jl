@@ -214,64 +214,89 @@ julia> strongly_connected_components(g)
  [1, 2, 3, 4]
  [10, 11]    
 
+
+This currently uses a modern variation on Tarjan's algorithm, largely derived from algorithm 3 in David J. Pearce's 
+preprint: https://homepages.ecs.vuw.ac.nz/~djp/files/IPL15-preprint.pdf   , with some changes & tradeoffs when unrolling it to an
+imperative algorithm.
 ```
 """
 
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-empty_graph_data(type,g::AG) where {T, AG <: AbstractGraph{T}} = Dict{T,type}()
-empty_graph_data(type,g::AG) where {T<:Integer, AG <: AbstractGraph{T}} = zeros(type,nv(g))
-is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
-is_unvisited(data::Dict,v) = !haskey(data,v)
 
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+
+# Required to prevent quadratic time in star graphs without causing type instability. Returns the type of the state object returned by iterate that may be saved to a stack.
+neighbor_iter_statetype(::Type{AG}) where {AG <: AbstractGraph} = Any   # Analogous to eltype, but for the state of the iterator rather than the elements.
+neighbor_iter_statetype(::Type{AG}) where {AG <: LightGraphs.SimpleGraphs.AbstractSimpleGraph} = Int # Since outneighbours is an array.
+
+# Threshold below which it isn't worth keeping the DFS iteration state.
+is_large_vertex(g,v) = length(outneighbors(g,v)) >= 16 
+is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
+
+
+# The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
+# Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
+# which we accumulate in a stack while backtracking, until we reach a local root.
+# A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
+# As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
     zero_t = zero(T)
     nvg = nv(g)
-    count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
+    count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = 1  # Index of the current component being discovered.
     # Invariant 1: count is always smaller than component_count.
     # Invariant 2: if rindex[v] < component_count, then v is in components[rindex[v]].
-    # This trivially lets us tell if a node belongs to a previously discovered scc without any extra bits, just inequalities.
+    # This trivially lets us tell if a vertex belongs to a previously discovered scc without any extra bits, 
+    # just inequalities that combine naturally with other checks.
 
-    component_root = empty_graph_data(Bool,g)    
-    rindex = empty_graph_data(Int,g)          # The arrays should not be T-valued for integer T, the rindexes should be the same type as nvg.
+    is_component_root = Vector{Bool}(undef,nvg) # Fields are set when tracing and read when backtracking, so can be initialized undef.
+    rindex = zeros(Int,nvg)
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    
+    largev_iterstate_stack = Vector{Tuple{T,neighbor_iter_statetype(AG)}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
+
     @inbounds for s in vertices(g)
-        if is_unvisited(rindex,s)
+        if is_unvisited(rindex, s)
             rindex[s] = count
-            component_root[s] = true
+            is_component_root[s] = true
             count -= 1
 
             # start dfs from 's'
-            push!(dfs_stack, s) 
+            push!(dfs_stack, s)
+            if is_large_vertex(g, s)
+                push!(largev_iterstate_stack, iterate(outneighbors(g, s)))
+            end 
             
-            while !isempty(dfs_stack)
+            @inbounds while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 u = zero_t
-                @inbounds for v_neighbor in outneighbors(g, v)
-                    if is_unvisited(rindex,v_neighbor)
+                outn = outneighbors(g, v)
+                v_is_large = is_large_vertex(g, v)
+                next = v_is_large ? pop!(largev_iterstate_stack) : iterate(outn)
+                while next !== nothing
+                    (v_neighbor, state) = next
+                    if is_unvisited(rindex, v_neighbor)
                         u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
-                        # TODO: This is accidentally(?) quadratic for (very large) tournament graphs or star graphs,
-                        # but the loop turns out to be very tight so this still benchmarks well unless the vertex orders are huge.
-                        # Breaking the for loop to resume it from the beginning when returning leads to this being quadratic as a function of node order.
-                        # One option is to save the iteration state in a third stack, but there may be other approaches.
+                        # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
+                        # as we save the iteration state in largev_iterstate_stack for large vertices.
+                        # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
                     elseif (rindex[v_neighbor] > rindex[v])
                         rindex[v] = rindex[v_neighbor]
-                        component_root[v] = false
+                        is_component_root[v] = false
                     end
+                    next = iterate(outn, state)
                 end
                 if u == zero_t
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
                     popped = pop!(dfs_stack)
-                    if component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
+                    if is_component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
                         component = T[popped]
                         count += 1   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
                         while !isempty(stack) && (rindex[popped] >= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
@@ -282,20 +307,26 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
                         end
                         rindex[popped] = component_count
                         component_count += 1
-                        push!(components,component)                    
+                        push!(components, component)                    
                     else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
                         if (rindex[popped] > rindex[dfs_stack[end]])
                             rindex[dfs_stack[end]] = rindex[popped]
-                            component_root[dfs_stack[end]] = false
+                            is_component_root[dfs_stack[end]] = false
                         end
                         # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
-                        push!(stack,popped)  # For DAG inputs, the stack variable never gets touched at all.
+                        push!(stack, popped)  # For DAG inputs, the stack variable never gets touched at all.
                     end
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
                     push!(dfs_stack, u)
-                    component_root[u] = true
+                    if v_is_large
+                        push!(largev_iterstate_stack, next)
+                    end
+                    if is_large_vertex(g, u)
+                        push!(largev_iterstate_stack, iterate(outneighbors(g, u)))
+                    end
+                    is_component_root[u] = true
                     rindex[u] = count
                     count -= 1
                     # next iteration of while loop will expand the DFS tree from u.
@@ -309,6 +340,7 @@ is_unvisited(data::Dict,v) = !haskey(data,v)
     # Scipy's graph library returns only that and lets the user sort by its values.
     return components # ,rindex
 end
+
                             
 """
     strongly_connected_components_kosaraju(g)
