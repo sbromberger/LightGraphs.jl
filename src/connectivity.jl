@@ -316,7 +316,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
-                    (u, state) = next
+                    u = next[1]
                     push!(dfs_stack, u)
                     if v_is_large
                         push!(largev_iterstate_stack, next)
