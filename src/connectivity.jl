@@ -239,7 +239,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-@traitfn function strongly_connected_components_4(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
     nvg = nv(g)
     count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = 1  # Index of the current component being discovered.
