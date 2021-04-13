@@ -240,7 +240,6 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
-    zero_t = zero(T)
     nvg = nv(g)
     count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = 1  # Index of the current component being discovered.
@@ -272,14 +271,12 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
             
             @inbounds while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
-                u = zero_t
                 outn = outneighbors(g, v)
                 v_is_large = is_large_vertex(g, v)
                 next = v_is_large ? pop!(largev_iterstate_stack) : iterate(outn)
                 while next !== nothing
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
-                        u = v_neighbor
                         break
                         #GOTO A push u onto DFS stack and continue DFS
                         # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
@@ -291,7 +288,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     end
                     next = iterate(outn, state)
                 end
-                if iszero(u)
+                if isnothing(state) # natural loop end
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
@@ -319,6 +316,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
+                    (u, state) = next
                     push!(dfs_stack, u)
                     if v_is_large
                         push!(largev_iterstate_stack, next)
