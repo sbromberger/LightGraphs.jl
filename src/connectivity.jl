@@ -256,6 +256,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
     dfs_stack = Vector{T}()
     largev_iterstate_stack = Vector{Tuple{T,neighbor_iter_statetype(AG)}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
+    # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into thise last stack.
 
     @inbounds for s in vertices(g)
         if is_unvisited(rindex, s)
@@ -278,7 +279,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
                         break
-                        #GOTO A push v_neighbor onto DFS stack and continue DFS
+                        #GOTO A: push v_neighbor onto DFS stack and continue DFS
                         # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
                         # as we save the iteration state in largev_iterstate_stack for large vertices.
                         # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
@@ -319,10 +320,10 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     (u, state) = next
                     push!(dfs_stack, u)
                     if v_is_large
-                        push!(largev_iterstate_stack, next)
+                        push!(largev_iterstate_stack, next) # Because this is the else branch of isnothing(state), we can push this on the stack.
                     end
                     if is_large_vertex(g, u)
-                        push!(largev_iterstate_stack, iterate(outneighbors(g, u)))
+                        push!(largev_iterstate_stack, iterate(outneighbors(g, u)))  # Because u is large, iterate cannot return nothing, so we can push this on stack.
                     end
                     is_component_root[u] = true
                     rindex[u] = count
