@@ -239,7 +239,7 @@ function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
      destructure_type(x) = Any
      destructure_type(x::Type{Union{Nothing,Tuple{A,B}}}) where {A,B} = B
      # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
-     destructure_type(Base.Iterators.approx_iter_type(outneighbors(g,one(T))))
+     destructure_type(Base.Iterators.approx_iter_type(typeof(outneighbors(g,one(T)))))
 end
 
 
