@@ -225,21 +225,34 @@ function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 
 
-# Required to prevent quadratic time in star graphs without causing type instability. Returns the type of the state object returned by iterate that may be saved to a stack.
-neighbor_iter_statetype(::Type{AG}) where {AG <: AbstractGraph} = Any   # Analogous to eltype, but for the state of the iterator rather than the elements.
-neighbor_iter_statetype(::Type{AG}) where {AG <: LightGraphs.SimpleGraphs.AbstractSimpleGraph} = Int # Since outneighbours is an array.
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
+    if iszero(nv(g)) return Vector{Vector{T}}() end
+    strongly_connected_components_tarjan(g,infer_nb_iterstate_type(g))    
+end
 
-# Threshold below which it isn't worth keeping the DFS iteration state.
+#  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
+#  To save the loop state of each recursive step in a stack efficiently, 
+#  we need to infer the type of its state (which should almost always be an int).
+infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
+function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
+     infer_iterstate(outneighbors(g,one(T))) # If we don't have a static dispatch, peek at the first vertex and check the type at runtime.
+end
+infer_iterstate(container::AbstractVector) = Int
+function infer_iterstate(container)
+    next = iterate(container)
+    isnothing(next) ? Any : typeof(next[2])
+end
+
+# Vertex size threshold below which it isn't worth keeping the DFS iteration state.
 is_large_vertex(g,v) = length(outneighbors(g,v)) >= 16 
 is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
-
 
 # The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
 # Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components_tarjan(g::AG::IsDirected, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
     nvg = nv(g)
     count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = 1  # Index of the current component being discovered.
@@ -254,7 +267,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    largev_iterstate_stack = Vector{Tuple{T,neighbor_iter_statetype(AG)}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    largev_iterstate_stack = Vector{Tuple{T,S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
     # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into thise last stack.
 
