@@ -234,14 +234,14 @@ end
 #  To save the loop state of each recursive step in a stack efficiently, 
 #  we need to infer the type of its state (which should almost always be an int).
 infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
+
 function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
-     infer_iterstate(outneighbors(g,one(T))) # If we don't have a static dispatch, peek at the first vertex and check the type at runtime.
+     destructure_type(x) = Any
+     destructure_type(x::Type{Union{Nothing,Tuple{A,B}}}) where {A,B} = B
+     # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
+     destructure_type(Base.Iterators.approx_iter_type(outneighbors(g,one(T))))
 end
-infer_iterstate(container::AbstractVector) = Int
-function infer_iterstate(container)
-    next = iterate(container)
-    isnothing(next) ? Any : typeof(next[2])
-end
+
 
 # Vertex size threshold below which it isn't worth keeping the DFS iteration state.
 is_large_vertex(g,v) = length(outneighbors(g,v)) >= 16 
