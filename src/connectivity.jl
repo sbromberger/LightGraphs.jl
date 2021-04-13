@@ -239,7 +239,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
+@traitfn function strongly_connected_components_4(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
     nvg = nv(g)
     count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = 1  # Index of the current component being discovered.
@@ -278,7 +278,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
                         break
-                        #GOTO A push u onto DFS stack and continue DFS
+                        #GOTO A push v_neighbor onto DFS stack and continue DFS
                         # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
                         # as we save the iteration state in largev_iterstate_stack for large vertices.
                         # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
@@ -288,7 +288,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     end
                     next = iterate(outn, state)
                 end
-                if isnothing(state) # natural loop end
+                if isnothing(next) # Natural loop end.
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
@@ -316,7 +316,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
-                    u = next[1]
+                    (u, state) = next
                     push!(dfs_stack, u)
                     if v_is_large
                         push!(largev_iterstate_stack, next)
@@ -338,7 +338,6 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
     # Scipy's graph library returns only that and lets the user sort by its values.
     return components # ,rindex
 end
-
                             
 """
     strongly_connected_components_kosaraju(g)
