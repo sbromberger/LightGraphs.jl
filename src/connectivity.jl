@@ -244,7 +244,7 @@ end
 
 
 # Vertex size threshold below which it isn't worth keeping the DFS iteration state.
-is_large_vertex(g,v) = length(outneighbors(g,v)) >= 16 
+is_large_vertex(g,v) = length(outneighbors(g,v)) >= 1024
 is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 
 # The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
