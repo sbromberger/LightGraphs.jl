@@ -252,17 +252,18 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-@traitfn function strongly_connected_components_tarjan(g::AG::IsDirected, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
+function strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
     nvg = nv(g)
-    count = Int(nvg)  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
-    component_count = 1  # Index of the current component being discovered.
+    one_count = one(T)
+    count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
+    component_count = one_count  # Index of the current component being discovered.
     # Invariant 1: count is always smaller than component_count.
     # Invariant 2: if rindex[v] < component_count, then v is in components[rindex[v]].
     # This trivially lets us tell if a vertex belongs to a previously discovered scc without any extra bits, 
     # just inequalities that combine naturally with other checks.
 
     is_component_root = Vector{Bool}(undef,nvg) # Fields are set when tracing and read when backtracking, so can be initialized undef.
-    rindex = zeros(Int,nvg)
+    rindex = zeros(T,nvg)
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
@@ -275,7 +276,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
         if is_unvisited(rindex, s)
             rindex[s] = count
             is_component_root[s] = true
-            count -= 1
+            count -= one_count
 
             # start dfs from 's'
             push!(dfs_stack, s)
@@ -309,15 +310,15 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     popped = pop!(dfs_stack)
                     if is_component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
                         component = T[popped]
-                        count += 1   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
+                        count += one_count   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
                         while !isempty(stack) && (rindex[popped] >= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
                             newpopped = pop!(stack)
                             rindex[newpopped] = component_count # Bigger than the value of anything unexplored.
                             push!(component, newpopped) # popped has been assigned a component, so we will never see it again.
-                            count +=1
+                            count += one_count
                         end
                         rindex[popped] = component_count
-                        component_count += 1
+                        component_count += one_count
                         push!(components, component)                    
                     else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
                         if (rindex[popped] > rindex[dfs_stack[end]])
@@ -340,7 +341,7 @@ is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
                     end
                     is_component_root[u] = true
                     rindex[u] = count
-                    count -= 1
+                    count -= one_count
                     # next iteration of while loop will expand the DFS tree from u.
                 end
             end
