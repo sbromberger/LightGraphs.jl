@@ -227,7 +227,7 @@ function strongly_connected_components end
 
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
     if iszero(nv(g)) return Vector{Vector{T}}() end
-    strongly_connected_components_tarjan(g,infer_nb_iterstate_type(g))    
+    strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
 end
 
 #  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
@@ -237,15 +237,15 @@ infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
 
 function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
      destructure_type(x) = Any
-     destructure_type(x::Type{Union{Nothing,Tuple{A,B}}}) where {A,B} = B
+     destructure_type(x::Type{Union{Nothing, Tuple{A,B}}}) where {A,B} = B
      # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
-     destructure_type(Base.Iterators.approx_iter_type(typeof(outneighbors(g,one(T)))))
+     destructure_type(Base.Iterators.approx_iter_type(typeof(outneighbors(g, one(T)))))
 end
 
 
 # Vertex size threshold below which it isn't worth keeping the DFS iteration state.
-is_large_vertex(g,v) = length(outneighbors(g,v)) >= 1024
-is_unvisited(data::AbstractVector,v::Integer) = iszero(data[v])
+is_large_vertex(g, v) = length(outneighbors(g, v)) >= 1024
+is_unvisited(data::AbstractVector, v::Integer) = iszero(data[v])
 
 # The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
 # Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
@@ -262,13 +262,13 @@ function strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S})
     # This trivially lets us tell if a vertex belongs to a previously discovered scc without any extra bits, 
     # just inequalities that combine naturally with other checks.
 
-    is_component_root = Vector{Bool}(undef,nvg) # Fields are set when tracing and read when backtracking, so can be initialized undef.
-    rindex = zeros(T,nvg)
+    is_component_root = Vector{Bool}(undef, nvg) # Fields are set when tracing and read when backtracking, so can be initialized undef.
+    rindex = zeros(T, nvg)
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    largev_iterstate_stack = Vector{Tuple{T,S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    largev_iterstate_stack = Vector{Tuple{T, S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
     # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into thise last stack.
 
