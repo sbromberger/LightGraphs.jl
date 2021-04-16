@@ -227,7 +227,7 @@ function strongly_connected_components end
 
 @traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
     if iszero(nv(g)) return Vector{Vector{T}}() end
-    strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
+    _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
 end
 
 #  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
@@ -252,7 +252,7 @@ is_unvisited(data::AbstractVector, v::Integer) = iszero(data[v])
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-function strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
+function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
     nvg = nv(g)
     one_count = one(T)
     count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
