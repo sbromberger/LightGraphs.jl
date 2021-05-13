@@ -1,9 +1,8 @@
 # LightGraphs
 
-[![Build Status](https://travis-ci.org/JuliaGraphs/LightGraphs.jl.svg?branch=master)](https://travis-ci.org/JuliaGraphs/LightGraphs.jl)
+[![Build Status](https://github.com/JuliaGraphs/LightGraphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/LightGraphs.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/LightGraphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/LightGraphs.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/LightGraphs.jl/latest)
-[![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.889971.svg)](https://doi.org/10.5281/zenodo.889971)
 
 LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
