@@ -48,8 +48,8 @@ function assortativity(g::AbstractGraph{T}) where T
     return assortativity_coefficient(g, sjk, sj, sk, sjs, sks, nue)
 end
 
-function assortativity(g::AbstractGraph{T}, attributes::Vector{N}) where {T,N<:Number}
-    P = promote_type(Int64, N) # at least Int64 to reduce risk of overflow
+function assortativity(g::AbstractGraph{T}, attributes::Vector{R}) where {T<:Integer,R<:Real}
+    P = promote_type(Float64, R) # at least Float64 to reduce risk of overflow
     nue  = ne(g)
     sjk = sj = sk = sjs = sks = zero(P)
     for d in edges(g)
