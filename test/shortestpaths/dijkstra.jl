@@ -17,6 +17,9 @@
         @test @inferred(enumerate_paths(z)) == enumerate_paths(y)
         @test @inferred(enumerate_paths(z))[4] ==
           enumerate_paths(z, 4) ==
+          # test that we can pass a range into enumerate_paths - previously this caused
+          # infinite recursion - see #1552
+          enumerate_paths(z, 3:4)[2] ==
           enumerate_paths(y, 4) == [2, 3, 4]
     end
 
