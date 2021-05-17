@@ -1,7 +1,7 @@
 using DataStructures
 
 """
-    all_simple_paths(g, source, targets, cutoff=nothing)
+    all_simple_paths(g, source, targets, cutoff)
 
 Returns an iterator that generates all simple paths in the graph `g` from `source` to `targets`.
 If `cutoff` is given, the paths' lengths are limited to equal or less than `cutoff`.
@@ -23,21 +23,21 @@ julia> collect(all_simple_paths(g, 1, [4]))
  [1, 2, 3, 4]
  ```
 """
-function all_simple_paths(g::AbstractGraph, source::T, targets::Vector{T}; cutoff::Union{Int,Nothing}=nothing) where T <: Integer
-    return SimplePathIterator(g, source, targets, cutoff=cutoff)
+function all_simple_paths(g::AbstractGraph, source::T, targets::Vector{T}; cutoff::T=typemax(T)) where T <: Integer
+    return SimplePathIterator(g, source, Set(targets), cutoff=cutoff)
 end
 
 
 """
-    all_simple_paths(g, source, target, cutoff=nothing)
+    all_simple_paths(g, source, target, cutoff)
 
 This function is equivalent to `all_simple_paths(g, source, [target], cutoff)`.
 This is provided for convenience.
 
 See also `all_simple_paths(g, source, targets, cutoff)`.
 """
-function all_simple_paths(g::AbstractGraph, source::T, target::T; cutoff::Union{Int,Nothing}=nothing) where T <: Integer
-    return SimplePathIterator(g, source, [target], cutoff=cutoff)
+function all_simple_paths(g::AbstractGraph, source::T, target::T; cutoff::T=typemax(T)) where T <: Integer
+    return SimplePathIterator(g, source, Set(target), cutoff=cutoff)
 end
 
 
@@ -51,10 +51,10 @@ struct SimplePathIterator{T <: Integer}
     g::AbstractGraph
     source::T  # Starting node
     targets::Set{T}  # Target nodes
-    cutoff::Union{Int,Nothing}  # Max length of resulting paths
+    cutoff::T  # Max length of resulting paths
 
-    function SimplePathIterator(g::AbstractGraph, source::T, targets::Vector{T}; cutoff::Union{Int,Nothing}=nothing) where T <: Integer
-        new{T}(g, source, Set(targets), cutoff)
+    function SimplePathIterator(g::AbstractGraph, source::T, targets::Set{T}; cutoff::T=typemax(T)) where T <: Integer
+        new{T}(g, source, targets, cutoff)
     end
 end
 
@@ -79,12 +79,12 @@ mutable struct SimplePathIteratorState{T <: Integer}
 end
 
 """
-    function stepback!(state)
+    function _stepback!(state)
 
 A helper function that updates iterator state.
 For internal use only.
 """
-function stepback!(state::SimplePathIteratorState)
+function _stepback!(state::SimplePathIteratorState)
     pop!(state.stack)
     pop!(state.visited)
 end
@@ -107,7 +107,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
             target = pop!(state.queued_targets)
             result = vcat(reverse(collect(state.visited)), target)
             if isempty(state.queued_targets)
-                stepback!(state)
+                _stepback!(state)
             end
             return result, state
         end
@@ -116,7 +116,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
 
         if isempty(children)
             # Now leaf node, step back.
-            stepback!(state)
+            _stepback!(state)
             continue
         end
 
@@ -126,7 +126,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
             continue
         end
 
-        if isnothing(spi.cutoff) || length(state.visited) < spi.cutoff
+        if length(state.visited) < spi.cutoff
             result = (child in spi.targets) ? vcat(reverse(collect(state.visited)), [child]) : nothing
 
             # Update state variables
@@ -148,7 +148,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
             state.queued_targets = collect(setdiff(intersect(spi.targets, rest_children), Set(state.visited)))
 
             if isempty(state.queued_targets)
-                stepback!(state)
+                _stepback!(state)
             end
         end
     end
@@ -178,7 +178,7 @@ Note that this can take much cpu time when the graph is dense.
 """
 function Base.length(spi::SimplePathIterator{T}) where T <: Integer
     c = 0
-    for x in spi
+    for _ in spi
         c += 1
     end
     return c
