@@ -65,7 +65,7 @@ end
 SimplePathIterator's state.
 """
 mutable struct SimplePathIteratorState{T <: Integer}
-    stack::Stack{Vector{T}}  # Store child nodes
+    stack::Stack{Vector{T}}  # Store information used to restore iteration of child nodes. Each vector has two elements which are a parent node and an index of children.
     visited::Stack{T}  # Store current path candidate
     queued_targets::Vector{T}  # Store rest targets if path length reached cutoff.
     function SimplePathIteratorState(spi::SimplePathIterator{T}) where T <: Integer
@@ -73,7 +73,7 @@ mutable struct SimplePathIteratorState{T <: Integer}
         visited = Stack{T}()
         queued_targets = Vector{T}()
         push!(visited, spi.source)  # Add a starting node to the path candidate
-        push!(stack, copy(outneighbors(spi.g, spi.source)))  # Add child nodes from the start
+        push!(stack, [spi.source, 1])  # Add a child node with index = 1
         new{T}(stack, visited, queued_targets)
     end
 end
@@ -94,7 +94,7 @@ end
     Base.iterate(spi::SimplePathIterator{T}, state=nothing)
 
 Returns a next simple path based on DFS.
-If `cutoff` is specified in `SimplePathIterator`, the path length is limited up to `cutoff`
+If `cutoff` is specified in `SimplePathIterator`, the path length is limited up to `cutoff`.
 """
 function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIteratorState,Nothing}=nothing) where T <: Integer
 
@@ -112,15 +112,18 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
             return result, state
         end
 
-        children = first(state.stack)
-
-        if isempty(children)
-            # Now leaf node, step back.
+        parent_node, next_childe_index = first(state.stack)
+        children = outneighbors(spi.g, parent_node)
+        if length(children) < next_childe_index
+            # All children have been checked, step back.
             _stepback!(state)
             continue
         end
 
-        child = pop!(children)
+        child = children[next_childe_index]    
+        # Move child index forward.
+        first(state.stack)[2] += 1
+
         if child in state.visited
             # Avoid loop
             continue
@@ -132,7 +135,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
             # Update state variables
             push!(state.visited, child)  # Move to child node
             if !isempty(setdiff(spi.targets, state.visited))  # Expand stack until find all targets
-                push!(state.stack, copy(outneighbors(spi.g, child)))  # Add child nodes and step forward
+                push!(state.stack, [child, 1])  #  Add the child node as a parent for next iteration.
             else
                 pop!(state.visited)  # Step back and explore the remaining child nodes
             end
@@ -144,7 +147,7 @@ function Base.iterate(spi::SimplePathIterator{T}, state::Union{SimplePathIterato
         else
             # Now length(visited) == cutoff
             # Collect adjacent targets if exist and add them to queue.
-            rest_children = union(Set(children), Set(child))
+            rest_children = Set(children[next_childe_index: end])
             state.queued_targets = collect(setdiff(intersect(spi.targets, rest_children), Set(state.visited)))
 
             if isempty(state.queued_targets)
