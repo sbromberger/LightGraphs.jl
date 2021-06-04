@@ -21,7 +21,6 @@ Note: to use the `has_edge(g, e)` method safely, it is important to understand t
 - `all_neighbors`:  Returns array of all neighbors (both `inneighbors` and `outneighbors`). For undirected graphs, equivalent to `neighbors`.
 - `inneighbors`: Return array of in-neighbors. Equivalent to `neighbors` for undirected graphs.
 - `outneighbors`: Return array of out-neighbors. Equivalent to `neighbors` for undirected graphs.
-- `degree`: Return the sum of incoming and outgoing edges. Equivalent to the number of connected edges for undirected graphs.
 
 ## Edge Properties
 
