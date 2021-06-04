@@ -256,7 +256,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
     one_count = one(T)
     count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
     component_count = one_count  # Index of the current component being discovered.
-    # Invariant 1: count is always smaller than component_count.
+    # Invariant 1: component_count is always smaller than count.
     # Invariant 2: if rindex[v] < component_count, then v is in components[rindex[v]].
     # This trivially lets us tell if a vertex belongs to a previously discovered scc without any extra bits, 
     # just inequalities that combine naturally with other checks.
