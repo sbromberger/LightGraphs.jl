@@ -19,7 +19,7 @@ makedocs(
         "Making and Modifying Graphs"       => "generators.md",
         "Reading / Writing Graphs"          => "persistence.md",
         "Operators"                         => "operators.md",
-        "Core functions"                    => "core.md",
+        "Core Functions"                    => "core.md",
         "Plotting Graphs"                   => "plotting.md",
         "Path and Traversal"                => "pathing.md",
         "Coloring"                          => "coloring.md",
