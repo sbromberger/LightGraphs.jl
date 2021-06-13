@@ -66,3 +66,22 @@ end
 The above code produces the following output:
 
 ![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
+
+
+## [SGtSNEpi.jl](https://github.com/fcdimitr/SGtSNEpi.jl)
+SGtSNEpi.jl is a high-performance software for swift embedding of a large, sparse graph into a d-dimensional space (d = 1,2,3). The [Makie](http://makie.juliaplots.org) plotting ecosystem is used for interactive plots.
+
+```julia
+
+using GLMakie, SGtSNEpi, SNAPDatasets
+
+GLMakie.activate!()
+
+g = loadsnap(:as_caida)
+y = sgtsnepi(g);
+show_embedding(y)
+```
+
+The above code produces the following output:
+
+![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
