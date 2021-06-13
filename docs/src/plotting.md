@@ -78,7 +78,11 @@ GLMakie.activate!()
 
 g = loadsnap(:as_caida)
 y = sgtsnepi(g);
-show_embedding(y)
+show_embedding(y; 
+  A = adjacency_matrix(g),        # show edges on embedding 
+  mrk_size = 1,                   # control marker size
+  lwd_in = 0.01, lwd_out = 0.001, # control line widths
+  edge_alpha = 0.03 )             # control line transparency
 ```
 
 The above code produces the following output:
