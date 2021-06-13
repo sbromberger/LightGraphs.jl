@@ -89,9 +89,6 @@ The above code produces the following output:
 
 ![alt tag](https://github.com/fcdimitr/SGtSNEpi.jl/raw/master/docs/src/assets/as_caida.png)
 
-SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of
-the weighted undirected graph
-[ML\_Graph/optdigits\_10NN](https://sparse.tamu.edu/ML_Graph/optdigits_10NN)
-is shown below:
+SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted undirected graph [ML\_Graph/optdigits\_10NN](https://sparse.tamu.edu/ML_Graph/optdigits_10NN) is shown below. It consists of 26,475 nodes and 53,381 edges. Nodes are colored according to labels provided with the dataset.
 
 ![alt tag](https://fcdimitr.github.io/SGtSNEpi.jl/v0.1.0/sgtsnepi-animation.gif)
