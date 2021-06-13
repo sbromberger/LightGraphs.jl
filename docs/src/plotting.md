@@ -66,3 +66,29 @@ end
 The above code produces the following output:
 
 ![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
+
+
+## [SGtSNEpi.jl](https://github.com/fcdimitr/SGtSNEpi.jl)
+SGtSNEpi.jl is a high-performance software for swift embedding of a large, sparse graph into a d-dimensional space (d = 1,2,3). The [Makie](http://makie.juliaplots.org) plotting ecosystem is used for interactive plots.
+
+```julia
+using GLMakie, SGtSNEpi, SNAPDatasets
+
+GLMakie.activate!()
+
+g = loadsnap(:as_caida)
+y = sgtsnepi(g);
+show_embedding(y; 
+  A = adjacency_matrix(g),        # show edges on embedding 
+  mrk_size = 1,                   # control node sizes
+  lwd_in = 0.01, lwd_out = 0.001, # control edge widths
+  edge_alpha = 0.03 )             # control edge transparency
+```
+
+The above code produces the following output:
+
+![alt tag](https://github.com/fcdimitr/SGtSNEpi.jl/raw/master/docs/src/assets/as_caida.png)
+
+SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted undirected graph [ML\_Graph/optdigits\_10NN](https://sparse.tamu.edu/ML_Graph/optdigits_10NN) is shown below. It consists of 26,475 nodes and 53,381 edges. Nodes are colored according to labels provided with the dataset.
+
+![alt tag](https://fcdimitr.github.io/SGtSNEpi.jl/v0.1.0/sgtsnepi-animation.gif)
