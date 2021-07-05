@@ -659,6 +659,10 @@ function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGra
     return h, vmap
 end
 
+function induced_subgraph(g::AbstractGraph, vlist::AbstractVector{Bool})
+    length(vlist) == length(g) || throw(BoundsError(g, vlist))
+    return induced_subgraph(g, findall(vlist))
+end
 
 function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractGraph{T} where T where U <: AbstractEdge
     h = zero(g)
