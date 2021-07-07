@@ -2,6 +2,10 @@
 
 *LightGraphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
 
+## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
+
+GraphRecipes and Plots can be used to create a wide variety of visualizations. See examples in the [Plots docs](https://docs.juliaplots.org/latest/graphrecipes/examples/).
+
 ## [GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
 
 A graph visualization package that is very simple to use.
