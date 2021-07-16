@@ -167,7 +167,7 @@ function loop_erased_randomwalk(
         else
             cur_pos += 1
             if length(visited) < cur_pos
-                resize!(visited, max(2*cur_pos, nv(g)))
+                resize!(visited, min(2*cur_pos, nv(g)))
             end
             visited[cur_pos] = v
             visited_view = view(visited, 1:cur_pos)
