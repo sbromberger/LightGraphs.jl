@@ -23,7 +23,7 @@ dst(e::AbstractSimpleEdge) = e.dst
 show(io::IO, e::AbstractSimpleEdge) = print(io, "Edge $(e.src) => $(e.dst)")
 
 # Conversions
-Pair(e::AbstractSimpleEdge) = Pair(src(e), dst(e))
+#Pair(e::AbstractSimpleEdge) = Pair(src(e), dst(e))
 Tuple(e::AbstractSimpleEdge) = (src(e), dst(e))
 
 SimpleEdge{T}(e::AbstractSimpleEdge) where T <: Integer = SimpleEdge{T}(T(e.src), T(e.dst))

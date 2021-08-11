@@ -83,7 +83,7 @@ julia> dst(first(edges(g)))
 """
 dst(e::AbstractEdge) = _NI("dst")
 
-Pair(e::AbstractEdge) = _NI("Pair")
+#Pair(e::AbstractEdge) = _NI("Pair")
 Tuple(e::AbstractEdge) = _NI("Tuple")
 
 """
