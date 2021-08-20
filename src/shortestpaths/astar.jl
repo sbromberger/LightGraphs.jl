@@ -86,7 +86,7 @@ function a_star(g::AbstractGraph{U},  # the g
     f_score = fill(Inf, nv(g))
     f_score[s] = heuristic(s)
 
-    came_from = -ones(Integer, nv(g))
+    came_from = fill(-one(s), nv(g))
     came_from[s] = s
 
     a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, heuristic)
