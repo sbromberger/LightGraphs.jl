@@ -103,6 +103,13 @@
             @test neighbors(h2, 5) == [2]
             @test ne(h2) == 3
             @test nv(h2) == 5
+
+            h3 = star_graph(5)
+            h3merged = merge_vertices(h3, [1,2])
+            @test neighbors(h3merged, 1) == [2,3,4]
+            @test neighbors(h3merged, 2) == [1]
+            @test neighbors(h3merged, 3) == [1]
+            @test neighbors(h3merged, 4) == [1]
         end
     end
 
