@@ -56,3 +56,28 @@ The above code produces the following output:
 SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted undirected graph [ML\_Graph/optdigits\_10NN](https://sparse.tamu.edu/ML_Graph/optdigits_10NN) is shown below. It consists of 26,475 nodes and 53,381 edges. Nodes are colored according to labels provided with the dataset.
 
 ![alt tag](https://fcdimitr.github.io/SGtSNEpi.jl/v0.1.0/sgtsnepi-animation.gif)
+
+
+## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
+GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem.
+There are a lot of different recipes and styles to choose from, check out the
+[examples page](http://docs.juliaplots.org/latest/graphrecipes/examples/) to see more of them.
+```julia
+using Plots, GraphRecipes
+g = wheel_graph(10)
+graphplot(g, curves=false)
+```
+![wheel graph with GraphRecipes.jl](https://user-images.githubusercontent.com/8610352/74631053-de196b80-51c0-11ea-8cba-ddbdc2c6312f.png)
+
+
+## [GraphMakie.jl](https://github.com/JuliaPlots/GraphMakie.jl)
+GraphMakie.jl is a graph plotting recipe for the Makie.jl ecosystem. It uses [NetworkLayout.jl](https://github.com/JuliaGraphs/NetworkLayout.jl) for the node placement and supports 2D and 3D plots.
+Check out the [docs](http://juliaplots.org/GraphMakie.jl/stable/) for more examples and tutorials.
+```julia
+using GLMakie, GraphMakie
+using GraphMakie.NetworkLayout
+
+g = smallgraph(:dodecahedral)
+graphplot(g; layout=Stress(dim=3))
+```
+![GraphMakie example plot](https://user-images.githubusercontent.com/35867212/133593687-b92b8af9-7bf1-4c43-999b-e2847edb869d.png)
