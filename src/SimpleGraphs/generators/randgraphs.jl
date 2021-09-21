@@ -26,12 +26,12 @@ function SimpleGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Integ
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne, seed=seed))
+    ne > div((2 * maxe), 3) && return complement(SimpleGraph(tnv, maxe - ne, seed=seed))
 
     rng = getRNG(seed)
     g = SimpleGraph(tnv)
 
-    while g.ne < ne
+    while LightGraphs.ne(g) < ne
         source = rand(rng, one(T):tnv)
         dest = rand(rng, one(T):tnv)
         source != dest && add_edge!(g, source, dest)
@@ -67,7 +67,7 @@ function SimpleDiGraph{T}(nv::Integer, ne::Integer; seed::Int=-1) where T <: Int
 
     rng = getRNG(seed)
     g = SimpleDiGraph(tnv)
-    while g.ne < ne
+    while LightGraphs.ne(g) < ne
         source = rand(rng, one(T):tnv)
         dest = rand(rng, one(T):tnv)
         source != dest && add_edge!(g, source, dest)

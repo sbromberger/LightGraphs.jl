@@ -31,7 +31,7 @@ function isvalid_simplegraph(g::SimpleGraph{T}) where {T <: Integer}
             edge_count += 1
         end
     end
-    g.ne == edge_count || return false
+    ne(g) == edge_count || return false
     #  checks for backwards edge
     for u in one(T):n
         listu = g.fadjlist[u]
@@ -62,12 +62,12 @@ function isvalid_simplegraph(g::SimpleDiGraph{T}) where {T <: Integer}
     for u in one(T):n
         edge_count += length(g.fadjlist[u])
     end
-    g.ne == edge_count || return false
+    ne(g) == edge_count || return false
     edge_count = 0
     for u in one(T):n
         edge_count += length(g.badjlist[u])
     end
-    g.ne == edge_count || return false
+    ne(g) == edge_count || return false
     #  checks for backwards edge
     for u in one(T):n
         listu = g.fadjlist[u]

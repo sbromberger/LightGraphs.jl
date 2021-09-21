@@ -5,8 +5,8 @@ const SimpleDiGraphEdge = SimpleEdge
 
 A type representing a directed graph.
 """
-mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
-    ne::Int
+struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
+    ne::Base.RefValue{Int}
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
 
@@ -17,7 +17,7 @@ mutable struct SimpleDiGraph{T <: Integer} <: AbstractSimpleGraph{T}
     ) where T
 
         throw_if_invalid_eltype(T)
-        return new(ne, fadjlist, badjlist)
+        return new(Ref(ne), fadjlist, badjlist)
     end
 end
 
@@ -32,6 +32,8 @@ end
 
 
 eltype(x::SimpleDiGraph{T}) where T = T
+
+ne(g::SimpleDiGraph) = getfield(g, :ne)[]
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """
@@ -163,11 +165,11 @@ julia> SimpleDiGraph(g)
 ```
 """
 function SimpleDiGraph(g::AbstractSimpleGraph)
-    h = SimpleDiGraph(nv(g))
-    h.ne = ne(g) * 2 - num_self_loops(g)
-    h.fadjlist = deepcopy_adjlist(fadj(g))
-    h.badjlist = deepcopy_adjlist(badj(g))
-    return h
+    SimpleDiGraph(
+        ne(g) * 2 - num_self_loops(g),
+        deepcopy_adjlist(fadj(g)),
+        deepcopy_adjlist(badj(g))
+    )
 end
 
 
@@ -248,12 +250,7 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where T <: Integ
     end)
 
     neg = cleanupedges!(fadjlist, badjlist)
-    g = SimpleDiGraph{T}()
-    g.fadjlist = fadjlist
-    g.badjlist = badjlist
-    g.ne = neg
-
-    return g
+    return SimpleDiGraph{T}(neg, fadjlist, badjlist)
 end
 
 
@@ -285,7 +282,6 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     end
 
     T = eltype(e)
-    g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}() 
     badjlist = Vector{Vector{T}}() 
 
@@ -304,16 +300,11 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     end
 
     neg  = cleanupedges!(fadjlist, badjlist)
-    g.fadjlist = fadjlist
-    g.badjlist = badjlist
-    g.ne = neg
-
-    return g
+    return SimpleDiGraph{T}(neg, fadjlist, badjlist)
 end
 
 function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
 
-    g = SimpleDiGraph{T}()
     fadjlist = Vector{Vector{T}}() 
     badjlist = Vector{Vector{T}}() 
 
@@ -326,11 +317,7 @@ function _SimpleDiGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
     end)
 
     neg  = cleanupedges!(fadjlist, badjlist)
-    g.fadjlist = fadjlist
-    g.badjlist = badjlist
-    g.ne = neg
-
-    return g
+    return SimpleDiGraph{T}(neg, fadjlist, badjlist)
 end
 
 """
@@ -383,7 +370,7 @@ badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
 
 
 copy(g::SimpleDiGraph{T}) where T <: Integer =
-SimpleDiGraph{T}(g.ne, deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
+SimpleDiGraph{T}(ne(g), deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -420,7 +407,7 @@ function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
     insert!(list, index, d)
 
-    g.ne += 1
+    g.ne[] += 1
 
     @inbounds list = g.badjlist[d]
     index = searchsortedfirst(list, s)
@@ -438,7 +425,7 @@ function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     @inbounds (index <= length(list) && list[index] == d) || return false   # edge not in graph
     deleteat!(list, index)
 
-    g.ne -= 1
+    g.ne[] -= 1
 
     @inbounds list = g.badjlist[d] 
     index = searchsortedfirst(list, s)
@@ -523,7 +510,7 @@ function rem_vertices!(g::SimpleDiGraph{T},
             end
         end
     end
-    g.ne -= num_removed_edges
+    g.ne[] -= num_removed_edges
 
     # move the lists in the adjacency list to their new position
     # order of traversing is important!

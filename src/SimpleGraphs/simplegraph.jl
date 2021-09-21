@@ -5,13 +5,13 @@ const SimpleGraphEdge = SimpleEdge
 
 A type representing an undirected graph.
 """
-mutable struct SimpleGraph{T <: Integer} <: AbstractSimpleGraph{T}
-    ne::Int
+struct SimpleGraph{T <: Integer} <: AbstractSimpleGraph{T}
+    ne::Base.RefValue{Int}
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 
     function SimpleGraph{T}(ne::Int, fadjlist::Vector{Vector{T}}) where T
         throw_if_invalid_eltype(T)
-        return new{T}(ne, fadjlist)
+        return new{T}(Ref(ne), fadjlist)
     end
 end
 
@@ -24,6 +24,8 @@ function SimpleGraph(
 end
 
 eltype(x::SimpleGraph{T}) where T = T
+
+ne(g::SimpleGraph) = getfield(g, :ne)[]
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
@@ -239,11 +241,7 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where T <: Integer
     end)
 
     neg = cleanupedges!(fadjlist)
-    g = SimpleGraph{T}()
-    g.fadjlist = fadjlist
-    g.ne = neg
-
-    return g
+    return SimpleGraph{T}(neg, fadjlist)
 end
 
 
@@ -276,9 +274,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     end
 
     T = eltype(e)
-    g = SimpleGraph{T}()
-    fadjlist = Vector{Vector{T}}() 
-
+    fadjlist = Vector{Vector{T}}()
     while next != nothing
         (e, state) = next
 
@@ -294,16 +290,12 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     end
 
     neg  = cleanupedges!(fadjlist)
-    g.fadjlist = fadjlist
-    g.ne = neg
-
-    return g
+    return SimpleGraph{T}(neg, fadjlist)
 end
 
 
 function _SimpleGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
 
-    g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}() 
 
     @inbounds(
@@ -314,10 +306,7 @@ function _SimpleGraphFromIterator(iter, ::Type{T}) where {T <: Integer}
     end)
 
     neg  = cleanupedges!(fadjlist)
-    g.fadjlist = fadjlist
-    g.ne = neg
-
-    return g
+    return SimpleGraph{T}(neg, fadjlist)
 end
 
 """
@@ -391,7 +380,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
-copy(g::SimpleGraph) =  SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
+copy(g::SimpleGraph) =  SimpleGraph(ne(g), deepcopy_adjlist(g.fadjlist))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
 vertices(g) == vertices(h) &&
@@ -451,7 +440,7 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
     insert!(list, index, d)
 
-    g.ne += 1
+    g.ne[] += 1
     s == d && return true  # selfloop
 
     @inbounds list = g.fadjlist[d]
@@ -494,7 +483,7 @@ function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
     deleteat!(list, index)
 
-    g.ne -= 1
+    g.ne[] -= 1
     s == d && return true  # selfloop
 
     @inbounds list = g.fadjlist[d] 
@@ -631,7 +620,7 @@ function rem_vertices!(g::SimpleGraph{T},
             end
         end
     end
-    g.ne -= num_removed_edges
+    g.ne[] -= num_removed_edges
 
     # move the lists in the adjacency list to their new position
     # The order of traversal is very important here, as otherwise we
