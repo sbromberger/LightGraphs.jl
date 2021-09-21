@@ -223,8 +223,8 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k` (or `k
-- 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
+small world random graph with `n` vertices, each with expected degree `k` 
+(or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
 where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
