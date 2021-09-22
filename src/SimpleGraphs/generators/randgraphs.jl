@@ -456,7 +456,7 @@ function barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer; seed::Int=-1
     rng = getRNG(seed)
 
     # add missing vertices
-    sizehint!(g.fadjlist, n)
+    sizehint!(fadj(g), n)
     add_vertices!(g, n - n0)
 
     # if initial graph doesn't contain any edges
@@ -1222,7 +1222,7 @@ julia> random_orientation_dag(star_graph(Int8(10)), 123)
 ```
 """
 function random_orientation_dag(g::SimpleGraph{T}, seed::Int=-1) where {T <: Integer}
-    nvg = length(g.fadjlist)
+    nvg = length(fadj(g))
     rng = getRNG(seed)
     order = randperm(rng, nvg)
     g2 = SimpleDiGraph(nv(g))

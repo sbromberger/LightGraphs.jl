@@ -78,13 +78,10 @@ function reverse end
 @traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
     gnv = nv(g)
     gne = ne(g)
-    h = SimpleDiGraph(gnv)
-    h.fadjlist = deepcopy_adjlist(g.badjlist)
-    h.badjlist = deepcopy_adjlist(g.fadjlist)
-    h.ne = gne
-    return h
+    return SimpleDiGraph(gne, deepcopy_adjlist(fadj(g)), deepcopy_adjlist(badj(g)))
 end
 
+# TODO ensure this works as intended
 """
     reverse!(g)
 
@@ -93,7 +90,14 @@ See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
 @traitfn function reverse!(g::G::IsDirected) where G<:AbstractSimpleGraph
-    g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
+    fadjlist = fadj(g)
+    badjlist = badj(g)
+    @inbounds for i in vertices(g)
+        f_i = fadjlist[i]
+        b_i = badjlist[i]
+        fadjlist[i] = b_i
+        badjlist[i] = f_i
+    end
     return g
 end
 
@@ -294,9 +298,9 @@ function union(g::T, h::T) where T <: AbstractSimpleGraph
     r = T(max(gnv, hnv))
     r.ne = ne(g)
     for i in vertices(g)
-        r.fadjlist[i] = deepcopy(g.fadjlist[i])
+        fadj(r)[i] = deepcopy(fadj(g)[i])
         if is_directed(g)
-            r.badjlist[i] = deepcopy(g.badjlist[i])
+            badj(r)[i] = deepcopy(badj(g)[i])
         end
     end
     for e in edges(h)
@@ -831,13 +835,13 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
                     push!(nbrs_to_rewire, new_vertex_ids[j])
                 end
             end
-            g.fadjlist[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
+            fadj(g)[new_vertex_ids[i]] = sort(collect(nbrs_to_rewire))
 
 
         # Collect connections to new merged vertex
         else
             nbrs_to_merge = Set{T}()
-            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), g.fadjlist[i])
+            for element in filter(x -> !(insorted(x, vs)) && (x != merged_vertex), fadj(g)[i])
                 push!(nbrs_to_merge, new_vertex_ids[element])
             end
 
@@ -846,15 +850,16 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
                     push!(nbrs_to_merge, new_vertex_ids[e])
                 end
             end
-            g.fadjlist[i] = sort(collect(nbrs_to_merge))
+            fadj(g)[i] = sort(collect(nbrs_to_merge))
         end
     end
 
-    # Drop excess vertices
-    g.fadjlist = g.fadjlist[1:(end - length(vs))]
+    # TODO ensure this works
+    fadjlist = fadj(g)
+    resize!(fadjlist, length(fadjlist) - length(vs))
 
     # Correct edge counts
-    g.ne = sum(degree(g, i) for i in vertices(g)) / 2
+    g.ne[] = sum(degree(g, i) for i in vertices(g)) / 2
 
     return new_vertex_ids
 end

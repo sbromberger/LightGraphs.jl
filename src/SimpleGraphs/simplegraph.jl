@@ -142,7 +142,7 @@ julia> SimpleGraph(g)
 function SimpleGraph(g::SimpleDiGraph)
     gnv = nv(g)
     edgect = 0
-    newfadj = deepcopy_adjlist(g.fadjlist)
+    newfadj = deepcopy_adjlist(fadj(g))
     @inbounds for i in vertices(g)
         for j in badj(g, i)
             index = searchsortedfirst(newfadj[i], j)
@@ -380,7 +380,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 adj(g::SimpleGraph) = fadj(g)
 adj(g::SimpleGraph, v::Integer) = fadj(g, v)
 
-copy(g::SimpleGraph) =  SimpleGraph(ne(g), deepcopy_adjlist(g.fadjlist))
+copy(g::SimpleGraph) =  SimpleGraph(ne(g), deepcopy_adjlist(fadj(g)))
 
 ==(g::SimpleGraph, h::SimpleGraph) =
 vertices(g) == vertices(h) &&
@@ -398,8 +398,8 @@ is_directed(::Type{<:SimpleGraph}) = false
 function has_edge(g::SimpleGraph{T}, s, d) where T
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list_s = g.fadjlist[s]
-    @inbounds list_d = g.fadjlist[d]
+    @inbounds list_s = fadj(g)[s]
+    @inbounds list_d = fadj(g)[d]
     if length(list_s) > length(list_d)
         d = s
         list_s = list_d
@@ -435,7 +435,7 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s]
+    @inbounds list = fadj(g)[s]
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
     insert!(list, index, d)
@@ -443,7 +443,7 @@ function add_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     g.ne[] += 1
     s == d && return true  # selfloop
 
-    @inbounds list = g.fadjlist[d]
+    @inbounds list = fadj(g)[d]
     index = searchsortedfirst(list, s)
     insert!(list, index, s)
     return true  # edge successfully added
@@ -478,7 +478,7 @@ function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s] 
+    @inbounds list = fadj(g)[s] 
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) || return false  # edge not in graph   
     deleteat!(list, index)
@@ -486,7 +486,7 @@ function rem_edge!(g::SimpleGraph{T}, e::SimpleGraphEdge{T}) where T
     g.ne[] -= 1
     s == d && return true  # selfloop
 
-    @inbounds list = g.fadjlist[d] 
+    @inbounds list = fadj(g)[d] 
     index = searchsortedfirst(list, s)
     deleteat!(list, index)
     return true  # edge successfully removed
@@ -514,7 +514,7 @@ false
 """
 function add_vertex!(g::SimpleGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
-    push!(g.fadjlist, Vector{T}())
+    push!(fadj(g), Vector{T}())
     return true
 end
 
@@ -606,7 +606,7 @@ function rem_vertices!(g::SimpleGraph{T},
         end
     end
 
-    fadjlist = g.fadjlist
+    fadjlist = fadj(g)
 
     # count the number of edges that will be removed
     # for an edge that gets removed we have to ensure that

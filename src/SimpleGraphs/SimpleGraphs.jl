@@ -74,7 +74,6 @@ end
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
 
-
 fadj(g::AbstractSimpleGraph) = g.fadjlist
 fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 
@@ -200,9 +199,9 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
     if self_loop_n
         add_edge!(g, edgetype(g)(v, v))
     end
-    pop!(g.fadjlist)
+    pop!(fadj(g))
     if is_directed(g)
-        pop!(g.badjlist)
+        pop!(badj(g))
     end
     return true
 end
