@@ -32,6 +32,7 @@ Any graph traversal  will traverse an edge only if it is present in the graph. W
 
 ```@docs
 bfs_tree
+topological_sort_by_dfs
 dfs_tree
 maximum_adjacency_visit
 bfs_parents
