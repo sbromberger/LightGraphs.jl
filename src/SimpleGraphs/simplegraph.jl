@@ -25,7 +25,7 @@ end
 
 eltype(x::SimpleGraph{T}) where T = T
 
-ne(g::SimpleGraph) = getfield(g, :ne)[]
+@inline ne(g::SimpleGraph) = getfield(getfield(g, :ne), :x)
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """

@@ -33,7 +33,7 @@ end
 
 eltype(x::SimpleDiGraph{T}) where T = T
 
-ne(g::SimpleDiGraph) = getfield(g, :ne)[]
+@inline ne(g::SimpleDiGraph) = getfield(getfield(g, :ne), :x)
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """
