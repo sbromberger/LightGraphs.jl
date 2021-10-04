@@ -369,7 +369,7 @@ edgetype(::SimpleDiGraph{T}) where T <: Integer = SimpleGraphEdge{T}
 @inline fadj(g::SimpleDiGraph) = getfield(g, :fadjlist)
 
 copy(g::SimpleDiGraph{T}) where T <: Integer =
-SimpleDiGraph{T}(ne(g), deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
+SimpleDiGraph{T}(ne(g), deepcopy_adjlist(fadj(g)), deepcopy_adjlist(badj(g)))
 
 
 ==(g::SimpleDiGraph, h::SimpleDiGraph) =
@@ -401,7 +401,7 @@ function add_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s]
+    @inbounds list = fadj(g)[s]
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) && return false  # edge already in graph
     insert!(list, index, d)
@@ -419,7 +419,7 @@ function rem_edge!(g::SimpleDiGraph{T}, e::SimpleDiGraphEdge{T}) where T
     s, d = T.(Tuple(e))
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s] 
+    @inbounds list = fadj(g)[s] 
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) || return false   # edge not in graph
     deleteat!(list, index)
@@ -434,8 +434,8 @@ end
 
 function add_vertex!(g::SimpleDiGraph{T}) where T
     (nv(g) + one(T) <= nv(g)) && return false       # test for overflow
-    push!(g.badjlist, Vector{T}())
-    push!(g.fadjlist, Vector{T}())
+    push!(badj(g), Vector{T}())
+    push!(fadj(g), Vector{T}())
 
     return true
 end
@@ -494,13 +494,13 @@ function rem_vertices!(g::SimpleDiGraph{T},
         end
     end
 
-    fadjlist = g.fadjlist
-    badjlist = g.badjlist
+    fadjlist = fadj(g)
+    badjlist = badj(g)
 
     # count the number of edges that will be removed
     num_removed_edges = 0
     @inbounds for u in remove
-        for v in fadjlist[u]
+        for v in fadjlst[u]
             num_removed_edges += 1
         end
         for v in badjlist[u]
