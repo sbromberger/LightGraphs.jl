@@ -34,5 +34,5 @@ function all_has_edge(g::AbstractGraph)
 end
 
 suite["core"]["has_edge"] = BenchmarkGroup(["graphs", "digraphs"])
-suite["core"]["has_edge"]["graphs"] = @benchmark [all_has_edge(g) for (n,g) in $GRAPHS]
-suite["core"]["has_edge"]["digraphs"] = @benchmark [all_has_edge(g) for (n,g) in $DIGRAPHS]
+suite["core"]["has_edge"]["graphs"] = @benchmarkable [all_has_edge(g) for (n,g) in $GRAPHS]
+suite["core"]["has_edge"]["digraphs"] = @benchmarkable [all_has_edge(g) for (n,g) in $DIGRAPHS]
