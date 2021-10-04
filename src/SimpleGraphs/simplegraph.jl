@@ -26,6 +26,7 @@ end
 eltype(x::SimpleGraph{T}) where T = T
 
 @inline ne(g::SimpleGraph) = getfield(getfield(g, :ne), :x)
+@inline fadj(g::SimpleGraph) = getfield(g, :fadjlist)
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """

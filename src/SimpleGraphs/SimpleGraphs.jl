@@ -74,9 +74,8 @@ end
 
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
 
-fadj(g::AbstractSimpleGraph) = g.fadjlist
-fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
-
+fadj(g::AbstractSimpleGraph, v::Integer) = fadj(g)[v]
+badj(g::AbstractSimpleGraph, v::Integer) = badj(g)[v]
 
 badj(x...) = _NI("badj")
 

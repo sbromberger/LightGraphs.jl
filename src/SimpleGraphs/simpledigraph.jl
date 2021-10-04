@@ -365,9 +365,8 @@ end
 edgetype(::SimpleDiGraph{T}) where T <: Integer = SimpleGraphEdge{T}
 
 
-badj(g::SimpleDiGraph) = g.badjlist
-badj(g::SimpleDiGraph, v::Integer) = badj(g)[v]
-
+@inline badj(g::SimpleDiGraph) = getfield(g, :badjlist)
+@inline fadj(g::SimpleDiGraph) = getfield(g, :fadjlist)
 
 copy(g::SimpleDiGraph{T}) where T <: Integer =
 SimpleDiGraph{T}(ne(g), deepcopy_adjlist(g.fadjlist), deepcopy_adjlist(g.badjlist))
@@ -384,8 +383,8 @@ is_directed(::Type{<:SimpleDiGraph}) = true
 function has_edge(g::SimpleDiGraph{T}, s, d) where T
     verts = vertices(g)
     (s in verts && d in verts) || return false  # edge out of bounds
-    @inbounds list = g.fadjlist[s]
-    @inbounds list_backedge = g.badjlist[d]
+    @inbounds list = fadj(g)[s]
+    @inbounds list_backedge = badj(g)[d]
     if length(list) > length(list_backedge)
         d = s
         list = list_backedge
