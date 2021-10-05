@@ -500,7 +500,7 @@ function rem_vertices!(g::SimpleDiGraph{T},
     # count the number of edges that will be removed
     num_removed_edges = 0
     @inbounds for u in remove
-        for v in fadjlst[u]
+        for v in fadjlist[u]
             num_removed_edges += 1
         end
         for v in badjlist[u]

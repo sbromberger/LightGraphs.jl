@@ -76,12 +76,9 @@ Edge 5 => 4
 """
 function reverse end
 @traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
-    gnv = nv(g)
-    gne = ne(g)
-    return SimpleDiGraph(gne, deepcopy_adjlist(SimpleGraphs.badj(g)), deepcopy_adjlist(SimpleGraphs.fadj(g)))
+    return SimpleDiGraph(ne(g), deepcopy_adjlist(SimpleGraphs.badj(g)), deepcopy_adjlist(SimpleGraphs.fadj(g)))
 end
 
-# TODO ensure this works as intended
 """
     reverse!(g)
 
@@ -93,10 +90,7 @@ function reverse! end
     fadjlist = SimpleGraphs.fadj(g)
     badjlist = SimpleGraphs.badj(g)
     @inbounds for i in vertices(g)
-        f_i = copy(fadjlist[i])
-        b_i = copy(badjlist[i])
-        fadjlist[i] = b_i
-        badjlist[i] = f_i
+        fadjlist[i], badjlist[i] = badjlist[i], fadjlist[i]
     end
     return g
 end
@@ -854,7 +848,6 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
         end
     end
 
-    # TODO ensure this works
     fadjlist = SimpleGraphs.fadj(g)
     resize!(fadjlist, length(fadjlist) - length(vs))
 
