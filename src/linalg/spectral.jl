@@ -55,6 +55,9 @@ function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, 
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
+            if !(T <: Bool) && !is_directed(g)
+                nz -= 1
+            end
         end
         dsts = sort(neighborfn(g, j)) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
