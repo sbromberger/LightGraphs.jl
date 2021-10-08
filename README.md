@@ -5,6 +5,8 @@
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/LightGraphs.jl/latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.889971.svg)](https://doi.org/10.5281/zenodo.889971)
 
+**Project Status:** As of 8 October 2021 LightGraphs is no longer under active development. It will remain available on Github at [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). The JuliaGraphs organization will continue to maintain packages that use LightGraphs and transition development over the long term.
+
 LightGraphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for
 the development of more sophisticated graph implementations under the `AbstractGraph`
