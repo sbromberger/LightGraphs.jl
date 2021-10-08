@@ -2,21 +2,6 @@
 
 *LightGraphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
 
-## [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
-
-This excellent graph visualization package can be used with *LightGraphs.jl*
-as follows:
-
-```julia
-julia> g = wheel_graph(10); am = Matrix(adjacency_matrix(g))
-julia> loc_x, loc_y = layout_spring_adj(am)
-julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
-```
-
-producing a graph like this:
-
-![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
-
 ## [TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
 
 Another nice graph visualization package. ([TikzPictures.jl](https://github.com/sisl/TikzPictures.jl)
@@ -32,6 +17,7 @@ producing a graph like this:
 
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960499/17f703c0-35c5-11e5-935e-044be51bc531.png)
 
+
 ## [GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
 
 Another graph visualization package that is very simple to use.
@@ -44,28 +30,6 @@ julia> g = wheel_graph(10)
 
 julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 ```
-
-
-## [NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
-NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
-
-```julia
-#Run this code in Escher
-
-using NetworkViz
-using LightGraphs
-
-main(window) = begin
-  push!(window.assets, "widgets")
-  push!(window.assets,("ThreeJS","threejs"))
-  g = complete_graph(10)
-  drawGraph(g)
-end
-```
-
-The above code produces the following output:
-
-![alt tag](https://raw.githubusercontent.com/abhijithanilkumar/NetworkViz.jl/master/examples/networkviz.gif)
 
 
 ## [SGtSNEpi.jl](https://github.com/fcdimitr/SGtSNEpi.jl)
@@ -92,3 +56,28 @@ The above code produces the following output:
 SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted undirected graph [ML\_Graph/optdigits\_10NN](https://sparse.tamu.edu/ML_Graph/optdigits_10NN) is shown below. It consists of 26,475 nodes and 53,381 edges. Nodes are colored according to labels provided with the dataset.
 
 ![alt tag](https://fcdimitr.github.io/SGtSNEpi.jl/v0.1.0/sgtsnepi-animation.gif)
+
+
+## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
+GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem.
+There are a lot of different recipes and styles to choose from, check out the
+[examples page](http://docs.juliaplots.org/latest/graphrecipes/examples/) to see more of them.
+```julia
+using Plots, GraphRecipes
+g = wheel_graph(10)
+graphplot(g, curves=false)
+```
+![wheel graph with GraphRecipes.jl](https://user-images.githubusercontent.com/8610352/74631053-de196b80-51c0-11ea-8cba-ddbdc2c6312f.png)
+
+
+## [GraphMakie.jl](https://github.com/JuliaPlots/GraphMakie.jl)
+GraphMakie.jl is a graph plotting recipe for the Makie.jl ecosystem. It uses [NetworkLayout.jl](https://github.com/JuliaGraphs/NetworkLayout.jl) for the node placement and supports 2D and 3D plots.
+Check out the [docs](http://juliaplots.org/GraphMakie.jl/stable/) for more examples and tutorials.
+```julia
+using GLMakie, GraphMakie
+using GraphMakie.NetworkLayout
+
+g = smallgraph(:dodecahedral)
+graphplot(g; layout=Stress(dim=3))
+```
+![GraphMakie example plot](https://user-images.githubusercontent.com/35867212/133593687-b92b8af9-7bf1-4c43-999b-e2847edb869d.png)
