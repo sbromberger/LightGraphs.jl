@@ -85,6 +85,7 @@ In graph theory, a cycle is defined to be a path that starts from some vertex
 
 ```@docs
 is_cyclic
+cycle_basis
 maxsimplecycles
 simplecycles
 simplecycles_iter
