@@ -1,4 +1,4 @@
-@benchgroup "insertions" begin
-  n = 10000
-  @bench "ER Generation" g = SimpleGraph($n, 16 * $n)
-end
+suite["insertions"] = BenchmarkGroup(["ER Generation"])
+
+n = 10000
+suite["insertions"]["ER Generation"] = @benchmarkable SimpleGraph($n, 16 * $n)

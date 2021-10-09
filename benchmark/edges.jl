@@ -1,11 +1,13 @@
 import Base: convert
 
+suite["edges"] = BenchmarkGroup(["fille", "fillp", "tsume", "tsump"])
+
 const P = Pair{Int,Int}
 
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 
 function fille(n)
-    t = Array{LightGraphs.Edge,1}(n)
+    t = Array{LightGraphs.Edge,1}(undef, n)
     for i in 1:n
         t[i] = LightGraphs.Edge(i, i + 1)
     end
@@ -13,7 +15,7 @@ function fille(n)
 end
 
 function fillp(n)
-    t = Array{P,1}(n)
+    t = Array{P,1}(undef, n)
     for i in 1:n
         t[i] = P(i, i + 1)
     end
@@ -30,11 +32,10 @@ function tsum(t)
     return x
 end
 
+
 n = 10000
-@benchgroup "edges" begin
-  @bench "$(n): fille" fille($n)
-  @bench "$(n): fillp" fillp($n)
-  a, b = fille(n), fillp(n)
-  @bench "$(n): tsume" tsum($a)
-  @bench "$(n): tsump" tsum($b)
-end # edges
+suite["edges"]["fille"] = @benchmarkable fille($n)
+suite["edges"]["fillp"] = @benchmarkable fillp($n)
+a, b = fille(n), fillp(n)
+suite["edges"]["tsume"] = @benchmarkable tsum($a)
+suite["edges"]["tsump"] = @benchmarkable tsum($b)

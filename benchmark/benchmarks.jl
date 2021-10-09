@@ -15,8 +15,17 @@ GRAPHS = Dict{String,Graph}(
 
 
 suite = BenchmarkGroup()
-include("core.jl")
 
+# include all benchmarks
+include("core.jl")
+include("centrality.jl")
+include("connectivity.jl")
+include("edges.jl")
+include("insertions.jl")
+include("traversals.jl")
+
+# include parallel benchmarks
+include("parallel/parallel_benchmarks.jl")
 
 tune!(suite);
 results = run(suite, verbose = true, seconds = 10)
