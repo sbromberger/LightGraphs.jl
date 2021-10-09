@@ -2,20 +2,22 @@
 
 *LightGraphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
 
-## [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
+## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
 
-This excellent graph visualization package can be used with *LightGraphs.jl*
-as follows:
+GraphRecipes and Plots can be used to create a wide variety of visualizations. See examples in the [Plots docs](https://docs.juliaplots.org/latest/graphrecipes/examples/).
+
+## [GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
+
+A graph visualization package that is very simple to use.
+[Compose.jl](https://github.com/dcjones/Compose.jl) is required for most rendering functionality:
 
 ```julia
-julia> g = wheel_graph(10); am = Matrix(adjacency_matrix(g))
-julia> loc_x, loc_y = layout_spring_adj(am)
-julia> draw_layout_adj(am, loc_x, loc_y, filename="wheel10.svg")
+julia> using GraphPlot, Compose
+
+julia> g = wheel_graph(10)
+
+julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 ```
-
-producing a graph like this:
-
-![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960521/35582c1e-35c5-11e5-82d7-cd641dff424c.png)
 
 ## [TikzGraphs.jl](https://github.com/sisl/TikzGraphs.jl)
 
@@ -31,19 +33,6 @@ julia> save(SVG("wheel10.svg"), t)
 producing a graph like this:
 
 ![Wheel Graph](https://cloud.githubusercontent.com/assets/941359/8960499/17f703c0-35c5-11e5-935e-044be51bc531.png)
-
-## [GraphPlot.jl](https://github.com/afternone/GraphPlot.jl)
-
-Another graph visualization package that is very simple to use.
-[Compose.jl](https://github.com/dcjones/Compose.jl) is required for most rendering functionality:
-
-```julia
-julia> using GraphPlot, Compose
-
-julia> g = wheel_graph(10)
-
-julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
-```
 
 
 ## [NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
