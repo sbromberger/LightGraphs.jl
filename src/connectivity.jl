@@ -214,103 +214,145 @@ julia> strongly_connected_components(g)
  [1, 2, 3, 4]
  [10, 11]    
 
+
+This currently uses a modern variation on Tarjan's algorithm, largely derived from algorithm 3 in David J. Pearce's 
+preprint: https://homepages.ecs.vuw.ac.nz/~djp/files/IPL15-preprint.pdf   , with some changes & tradeoffs when unrolling it to an
+imperative algorithm.
 ```
 """
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-    zero_t = zero(T)
-    one_t = one(T)
+
+
+@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
+    if iszero(nv(g)) return Vector{Vector{T}}() end
+    _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
+end
+
+#  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
+#  To save the loop state of each recursive step in a stack efficiently, 
+#  we need to infer the type of its state (which should almost always be an int).
+infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
+
+function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
+     destructure_type(x) = Any
+     destructure_type(x::Type{Union{Nothing, Tuple{A,B}}}) where {A,B} = B
+     # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
+     destructure_type(Base.Iterators.approx_iter_type(typeof(outneighbors(g, one(T)))))
+end
+
+
+# Vertex size threshold below which it isn't worth keeping the DFS iteration state.
+is_large_vertex(g, v) = length(outneighbors(g, v)) >= 1024
+is_unvisited(data::AbstractVector, v::Integer) = iszero(data[v])
+
+# The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
+# Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
+# which we accumulate in a stack while backtracking, until we reach a local root.
+# A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
+# As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
+function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
     nvg = nv(g)
-    count = one_t
-    
-    
-    index = zeros(T, nvg)         # first time in which vertex is discovered
-    stack = Vector{T}()           # stores vertices which have been discovered and not yet assigned to any component
-    onstack = zeros(Bool, nvg)    # false if a vertex is waiting in the stack to receive a component assignment
-    lowlink = zeros(T, nvg)       # lowest index vertex that it can reach through back edge (index array not vertex id number)
-    parents = zeros(T, nvg)       # parent of every vertex in dfs
+    one_count = one(T)
+    count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
+    component_count = one_count  # Index of the current component being discovered.
+    # Invariant 1: component_count is always smaller than count.
+    # Invariant 2: if rindex[v] < component_count, then v is in components[rindex[v]].
+    # This trivially lets us tell if a vertex belongs to a previously discovered scc without any extra bits, 
+    # just inequalities that combine naturally with other checks.
+
+    is_component_root = Vector{Bool}(undef, nvg) # Fields are set when tracing and read when backtracking, so can be initialized undef.
+    rindex = zeros(T, nvg)
     components = Vector{Vector{T}}()    # maintains a list of scc (order is not guaranteed in API)
 
-    
+    stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    
+    largev_iterstate_stack = Vector{Tuple{T, S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
+    # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into thise last stack.
+
     @inbounds for s in vertices(g)
-        if index[s] == zero_t
-            index[s] = count
-            lowlink[s] = count
-            onstack[s] = true
-            parents[s] = s
-            push!(stack, s)
-            count = count + one_t
+        if is_unvisited(rindex, s)
+            rindex[s] = count
+            is_component_root[s] = true
+            count -= one_count
 
             # start dfs from 's'
-            push!(dfs_stack, s) 
+            push!(dfs_stack, s)
+            if is_large_vertex(g, s)
+                push!(largev_iterstate_stack, iterate(outneighbors(g, s)))
+            end 
             
-            while !isempty(dfs_stack)
+            @inbounds while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
-                u = zero_t
-                @inbounds for v_neighbor in outneighbors(g, v)
-                    if index[v_neighbor] == zero_t
-                        # unvisited neighbor found
-                        u = v_neighbor
+                outn = outneighbors(g, v)
+                v_is_large = is_large_vertex(g, v)
+                next = v_is_large ? pop!(largev_iterstate_stack) : iterate(outn)
+                while next !== nothing
+                    (v_neighbor, state) = next
+                    if is_unvisited(rindex, v_neighbor)
                         break
-                        #GOTO A push u onto DFS stack and continue DFS
-                    elseif onstack[v_neighbor]
-                        # we have already seen n, but can update the lowlink of v
-                        # which has the effect of possibly keeping v on the stack until n is ready to pop.
-                        # update lowest index 'v' can reach through out neighbors
-                        lowlink[v] = min(lowlink[v], index[v_neighbor])
+                        #GOTO A: push v_neighbor onto DFS stack and continue DFS
+                        # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
+                        # as we save the iteration state in largev_iterstate_stack for large vertices.
+                        # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
+                    elseif (rindex[v_neighbor] > rindex[v])
+                        rindex[v] = rindex[v_neighbor]
+                        is_component_root[v] = false
                     end
+                    next = iterate(outn, state)
                 end
-                if u == zero_t
+                if isnothing(next) # Natural loop end.
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
                     popped = pop!(dfs_stack)
-                    lowlink[parents[popped]] = min(lowlink[parents[popped]], lowlink[popped])
-                    
-                    if index[v] == lowlink[v]
-                        # found a cycle in a completed dfs tree.
-                        component = Vector{T}()
-                        
-                        while !isempty(stack) #break when popped == v
-                            # drain stack until we see v.
-                            # everything on the stack until we see v is in the SCC rooted at v.
-                            popped = pop!(stack)
-                            push!(component, popped)
-                            onstack[popped] = false
-                            # popped has been assigned a component, so we will never see it again.
-                            if popped == v
-                                # we have drained the stack of an entire component.
-                                break
-                            end
+                    if is_component_root[popped]  # Found an SCC rooted at popped which is a bottom cycle in remaining graph.
+                        component = T[popped]
+                        count += one_count   # We also backtrack the count to reset it to what it would be if the component were never in the graph.
+                        while !isempty(stack) && (rindex[popped] >= rindex[stack[end]])  # Keep popping its children from the backtracking stack.
+                            newpopped = pop!(stack)
+                            rindex[newpopped] = component_count # Bigger than the value of anything unexplored.
+                            push!(component, newpopped) # popped has been assigned a component, so we will never see it again.
+                            count += one_count
                         end
-                        
-                        reverse!(component)
-                        push!(components, component)
+                        rindex[popped] = component_count
+                        component_count += one_count
+                        push!(components, component)                    
+                    else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
+                        if (rindex[popped] > rindex[dfs_stack[end]])
+                            rindex[dfs_stack[end]] = rindex[popped]
+                            is_component_root[dfs_stack[end]] = false
+                        end
+                        # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
+                        push!(stack, popped)  # For DAG inputs, the stack variable never gets touched at all.
                     end
                     
                 else #LABEL A
                     # add unvisited neighbor to dfs
-                    index[u] = count
-                    lowlink[u] = count
-                    onstack[u] = true
-                    parents[u] = v
-                    count = count + one_t
-                    
-                    push!(stack, u)
+                    (u, state) = next
                     push!(dfs_stack, u)
+                    if v_is_large
+                        push!(largev_iterstate_stack, next) # Because this is the else branch of isnothing(state), we can push this on the stack.
+                    end
+                    if is_large_vertex(g, u)
+                        push!(largev_iterstate_stack, iterate(outneighbors(g, u)))  # Because u is large, iterate cannot return nothing, so we can push this on stack.
+                    end
+                    is_component_root[u] = true
+                    rindex[u] = count
+                    count -= one_count
                     # next iteration of while loop will expand the DFS tree from u.
                 end
             end
         end
     end
 
-    return components
+    #Unlike in the original Tarjans, rindex are potentially also worth returning here. 
+    # For any v, v is in components[rindex[v]], s it acts as a lookup table for components.
+    # Scipy's graph library returns only that and lets the user sort by its values.
+    return components # ,rindex
 end
-
-
+                            
 """
     strongly_connected_components_kosaraju(g)
 
