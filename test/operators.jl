@@ -266,6 +266,14 @@
         @test h2 == h
         @test vm == collect(r)
         @test h2 == g[r]
+
+        r2 = falses(length(g))
+        r2[r] .= true
+        h2, vm = @inferred(induced_subgraph(g, r2))
+        @test h2 == h
+        @test vm == findall(r2)
+        @test h2 == g[r2]
+
     end
 
     g10 = complete_graph(10)
@@ -275,6 +283,12 @@
         @test ne(sg) == 6
 
         sg2, vm = @inferred(induced_subgraph(g, [5, 6, 7, 8]))
+        @test sg2 == sg
+        @test vm[4] == 8
+
+        bv = falses(length(g))
+        bv[5:8] .= true
+        sg2, vm = @inferred(induced_subgraph(g, bv))
         @test sg2 == sg
         @test vm[4] == 8
 
