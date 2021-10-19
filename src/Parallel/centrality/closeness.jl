@@ -23,6 +23,8 @@ function distr_closeness_centrality(g::AbstractGraph,
                     n = l * 1.0 / (n_v - 1)
                     closeness[u] *= n
                 end
+            else
+                closeness[u] = 0.0
             end
         end
     end
@@ -50,6 +52,8 @@ function threaded_closeness_centrality(g::AbstractGraph,
                     n = l * 1.0 / (n_v - 1)
                     closeness[u] *= n
                 end
+            else
+                closeness[u] = 0.0
             end
         end
     end
