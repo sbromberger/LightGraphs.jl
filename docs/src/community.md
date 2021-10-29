@@ -19,6 +19,7 @@ Pages   = [
     "community/label_propagation.jl",
     "community/modularity.jl",
     "community/assortativity.jl"
+    "community/s_metric.jl"
 ]
 Private = false
 ```
