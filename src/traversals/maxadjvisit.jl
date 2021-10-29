@@ -71,20 +71,21 @@ end
 
 
 """
-    maximum_adjacency_visit(g[, distmx][, log][, io])
+    maximum_adjacency_visit(g[, distmx][, log][, io][, s])
+    maximum_adjacency_visit(g[, s])
 
-Return the vertices in `g` traversed by maximum adjacency search. An optional
-`distmx` matrix may be specified; if omitted, edge distances are assumed to
-be 1. If `log` (default `false`) is `true`, visitor events will be printed to
-`io`, which defaults to `STDOUT`; otherwise, no event information will be
-displayed.
+Return the vertices in `g` traversed by maximum adjacency search, optionally
+starting from vertex `s` (default `1`). An optional `distmx` matrix may be
+specified; if omitted, edge distances are assumed to be 1. If `log` (default
+`false`) is `true`, visitor events will be printed to `io`, which defaults to
+`STDOUT`; otherwise, no event information will be displayed.
 """
-function maximum_adjacency_visit(g::AbstractGraph,
+function maximum_adjacency_visit(g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
     log::Bool=false,
-    io::IO=stdout) where T <: Real
+    io::IO=stdout,
+    s::U=one(U)) where {U, T <: Real}
 
-    U = eltype(g)
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
@@ -98,8 +99,8 @@ function maximum_adjacency_visit(g::AbstractGraph,
     end
 
 
-    #Give vertex `1` maximum priority
-    pq[one(U)] = one(T)
+    # Give start vertex maximum priority
+    pq[s] = one(T)
 
     #start traversing the graph
     while !isempty(pq)
@@ -119,8 +120,9 @@ function maximum_adjacency_visit(g::AbstractGraph,
     return vertices_order
 end
 
-maximum_adjacency_visit(g::AbstractGraph) = maximum_adjacency_visit(g,
+maximum_adjacency_visit(g::AbstractGraph{U}, s::U=one(U)) where {U} = maximum_adjacency_visit(g,
     weights(g),
     false,
-    stdout)
+    stdout,
+    s)
 

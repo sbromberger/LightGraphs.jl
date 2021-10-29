@@ -53,4 +53,6 @@
         @test @inferred(maximum_adjacency_visit(g)) == collect(vertices(g))
         @test @inferred(mincut(g)) == ([1], zero(eltype(g)))
     end
+    @test maximum_adjacency_visit(gx, 1) == [1, 2, 5, 6, 3, 7, 4, 8]
+    @test maximum_adjacency_visit(gx, 3) == [3, 2, 7, 4, 6, 8, 5, 1]
 end
