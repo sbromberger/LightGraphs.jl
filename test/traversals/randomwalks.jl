@@ -34,6 +34,8 @@
       @test_throws BoundsError randomwalk(g, 20, 20)
       @test @inferred(non_backtracking_randomwalk(g, 10, 20)) == [10]
       @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
+      lerw = loop_erased_randomwalk(g, 1, 20)
+      @test lerw == [1:length(lerw);]
     end
 
     gx = path_graph(10)
@@ -42,12 +44,18 @@
       @test_throws BoundsError self_avoiding_walk(g, 20, 20)
       @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
+      visited = @inferred(loop_erased_randomwalk(g, 1, 20))
+      @test visited == [1:length(visited);]
+      @test_throws BoundsError loop_erased_randomwalk(g, 20, 20)
     end
 
     gx = SimpleDiGraph(path_graph(10))
     for g in testdigraphs(gx)
       @test @inferred(non_backtracking_randomwalk(g, 1, 20)) == [1:10;]
       @test_throws BoundsError non_backtracking_randomwalk(g, 20, 20)
+      visited = @inferred(loop_erased_randomwalk(g, 1, 20))
+      @test visited == [1:length(visited);]
+      @test_throws BoundsError loop_erased_randomwalk(g, 20, 20)
     end
 
     gx = cycle_graph(10)

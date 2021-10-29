@@ -73,6 +73,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "spanningtrees/wilson",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",

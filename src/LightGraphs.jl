@@ -64,7 +64,7 @@ is_bipartite, bipartite_map,
 is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
 
 # random
-randomwalk, self_avoiding_walk, non_backtracking_randomwalk,
+randomwalk, self_avoiding_walk, non_backtracking_randomwalk, loop_erased_randomwalk,
 
 # diffusion
 diffusion, diffusion_rate,
@@ -143,6 +143,9 @@ euclidean_graph,
 
 #minimum_spanning_trees
 boruvka_mst, kruskal_mst, prim_mst,
+
+#random_spanning_trees
+wilson_rst,
 
 #steinertree
 steiner_tree,
@@ -259,6 +262,7 @@ include("community/assortativity.jl")
 include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("spanningtrees/wilson.jl")
 include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
