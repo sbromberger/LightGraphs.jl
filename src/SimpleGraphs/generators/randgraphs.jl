@@ -358,7 +358,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where T <: Integer
             return Set{SimpleEdge{T}}()
         end
 
-        stubs = Vector{Int}()
+        stubs = Vector{T}()
         for (e, ct) in potential_edges
             append!(stubs, fill(e, ct))
         end
